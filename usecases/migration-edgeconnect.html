@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HPE Aruba EdgeConnect (Silver Peak) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Move from EdgeConnect SD-WAN and Orchestrator to the Cato platform — overlay co-existence, Boost/QoS intent translation and staged branch cutover.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-edgeconnect">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / EdgeConnect to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>HPE Aruba EdgeConnect (Silver Peak) to Cato</h1>
+    <p class="lede">
+      A typical EdgeConnect estate is SD-WAN-only by design: EC appliances and Business Intent
+      Overlays handle the WAN, while full security inspection is service-chained to a separate
+      SSE vendor — two consoles, two policy models, two contracts. This page maps each
+      EdgeConnect construct to its Cato equivalent and walks a five-phase path: early
+      Orchestrator export, eBGP hub co-existence with the EC fabric left intact, regional
+      cutover waves with mirror-image rollback, security consolidation wave by wave — and an
+      honest treatment of what Boost does that Cato deliberately does differently.
+    </p>
+    <div class="meta-row">
+      <span class="tag">EdgeConnect</span><span class="tag">Silver Peak</span><span class="tag">Orchestrator</span>
+      <span class="tag">SD-WAN</span><span class="tag">HPE Aruba</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Three decision points: an SD-WAN-only estate, a separate SSE vendor, a portfolio in flux</h2>
+      <p>
+        EdgeConnect customers run the former Silver Peak platform: EC appliances (or EC-V
+        virtual instances) at branches and data centres, driven from <strong>Orchestrator</strong>
+        as SaaS or self-hosted. Its signature constructs are up to seven <strong>Business Intent
+        Overlays</strong> — each with its own topology, link-bonding policy, QoS priority and
+        internet-breakout behaviour — tunnel bonding with path conditioning (forward error
+        correction, packet order correction) for private-line-like behaviour over broadband,
+        First-Packet iQ application steering, and <strong>Boost</strong>, the WAN-optimisation
+        pack licensed separately per-Mbps. The security design centre, though, is
+        <strong>service chaining to a cloud SSE partner</strong>: Orchestrator has native
+        workflows that build IPsec/GRE tunnels to Zscaler, Netskope and others, and HPE's own
+        SSE — the former Axis Security platform, acquired March 2023 — is a separate product
+        with its own console and licensing, orchestrated the same way. A typical account is
+        therefore running at least two policy planes.
+      </p>
+      <p>
+        The second decision point is the portfolio. HPE completed the $925M Silver Peak
+        acquisition on 21 September 2020, then closed the ~$13.4bn Juniper Networks acquisition
+        on 2 July 2025 — and now sells three branch-WAN propositions with three management
+        planes: EdgeConnect SD-WAN (Orchestrator), EdgeConnect SD-Branch/Microbranch (Aruba
+        Central) and Juniper Session Smart SD-WAN (Mist). <strong>No EdgeConnect end-of-life has
+        been announced — say so honestly.</strong> But analysts flagged the rationalisation
+        question well before close: Dell'Oro noted the HPE/Juniper overlap "is limited to SASE"
+        and urged HPE to align quickly on one SSE; SDxCentral openly asked whether HPE would
+        eliminate Juniper's SASE in favour of Aruba plus Axis. Asking HPE in writing which line
+        carries the roadmap is legitimate customer diligence, not FUD. Meanwhile the lifecycle
+        clocks keep running: HPE's published policy sets ECOS 9.4 End of Maintenance at
+        31 December 2026 and End of Support at 31 December 2028, so fleet upgrade planning
+        continues for the life of the estate.
+      </p>
+      <p>
+        The objective of this migration: a thin Socket at the edge, elastic inspection and
+        optimisation in the PoP, and one console — the Cato Management Application — for
+        networking <em>and</em> security. No per-site bandwidth-tier or Boost sizing, no SSE
+        tunnels to orchestrate, and the SD-WAN + SSE consolidation happens in a single move.
+      </p>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The case for moving</div>
+      <h2>What the estate costs to keep</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">3<span class="unit"> SD-WAN lines</span></div><div class="stat-label">under one roof post-Juniper — EdgeConnect, SD-Branch and Session Smart, on three management planes</div></div>
+        <div class="stat-tile"><div class="stat-value">9.4<span class="unit"> ECOS</span></div><div class="stat-label">End of Maintenance 31 Dec 2026, End of Support 31 Dec 2028 — fleet upgrades never stop</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">$5<span class="unit">/Mbps/mo</span></div><div class="stat-label">Boost WAN optimisation, historic list price — a metered add-on sold in 100 Mbps and 10 Gbps blocks</div></div>
+        <div class="stat-tile"><div class="stat-value">2<span class="unit"> policy planes</span></div><div class="stat-label">Orchestrator for the WAN plus a separate SSE console for security — tunnels as the seam between them</div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Two acquisitions, three lines</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Silver Peak joined HPE in September 2020; Juniper closed in
+          July 2025. Community buyer's guides describe the standard pattern — dual lines coexist
+          12–24 months before one goes to sustaining mode — and the Axis SSE vs Juniper Secure
+          Edge overlap is unresolved. A written roadmap commitment is a reasonable procurement ask.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The SSE seam</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Full inspection means Orchestrator-built tunnels to Zscaler,
+          Netskope or HPE SSE: two consoles, two policy models, two support contracts, and tunnel
+          orchestration as the operational seam. Every site cutover and every policy change
+          touches both planes.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The appliance anchor</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Sizing, HA pairs, per-appliance bandwidth-tier licences and
+          movable Boost blocks all live at the branch, with hardware refresh and ECOS/Orchestrator
+          compatibility to manage. Cato's counter is architectural: a thin Socket at the edge,
+          elastic inspection and optimisation in the PoP.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;When your EdgeConnect renewal lands, can HPE tell you in writing which of its
+        three SD-WAN lines — and which SSE — carries the long-term roadmap? And do you know what
+        Boost and your SSE subscription cost per year, side by side, across the estate?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">What maps to what</div>
+      <h2>Component-by-component mapping</h2>
+      <p>
+        The conversion is <strong>intent recovery, not lift-and-shift</strong>: the BIO table is
+        the customer's real network policy, and it becomes Cato network rules, bandwidth
+        profiles and firewall policy expressed once in a cloud rulebase — not seven overlay
+        topologies transliterated one-to-one.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>EdgeConnect component</th><th>Cato equivalent</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>EC appliance (EC-XS…EC-XL, HA pairs)</td><td>Cato Socket</td><td>Thin edge: tunnel termination, path selection, QoS, LAN firewall. Deep inspection moves to the PoP — no per-site bandwidth-tier or Boost sizing.</td></tr>
+            <tr><td>EC-V virtual appliance (hypervisor or cloud)</td><td>vSocket (AWS/Azure), IPsec to the PoP, or cloud cross-connect</td><td>Disposition per platform, decided in discovery — cloud transit EC-Vs often become vSockets or native IPsec; hypervisor EC-Vs usually become physical Sockets.</td></tr>
+            <tr><td>Orchestrator (SaaS or self-hosted)</td><td>Cato Management Application (CMA)</td><td>One console for networking and security. pyedgeconnect/preconfig-YAML pipelines re-target to the GraphQL API and Terraform provider — most of the problem class disappears with one rulebase.</td></tr>
+            <tr><td>Business Intent Overlays (up to 7) + QoS classes</td><td>Network rules + bandwidth management profiles</td><td>Steering intent survives; per-overlay <em>tunnel topologies</em> do not — one global fabric with app-aware rules, QoS priorities, and WAN Firewall for reachability intent.</td></tr>
+            <tr><td>Tunnel bonding + path conditioning (FEC, POC, DPC)</td><td>Socket last-mile management</td><td>Active/active links, packet-loss mitigation (packet duplication across links; UDP retransmission on single links), bandwidth management. The middle mile rides the private backbone, where loss is rare.</td></tr>
+            <tr><td>Boost (TCP acceleration + data reduction + CIFS acceleration)</td><td>Backbone TCP acceleration + packet-loss mitigation + optimised backbone routing</td><td><strong>Architecturally different — no like-for-like dedup.</strong> Cato accelerates via split-TCP proxying at the PoP and the backbone, not byte-level deduplication stores or CIFS read-ahead. See the honest answer below.</td></tr>
+            <tr><td>First-Packet iQ classification</td><td>Application-aware network rules (PoP DPI)</td><td>Classification and enforcement happen in the PoP on the same single pass as security inspection — no appliance-then-SWG double hop.</td></tr>
+            <tr><td>Zone-based firewall / IDPS on the appliance</td><td>WAN/Internet Firewall, IPS, NGAM at the PoP; Socket LAN firewall for local segmentation</td><td>One cloud rulebase replaces per-appliance and per-template zone policy.</td></tr>
+            <tr><td>Service chaining to Zscaler / Netskope / HPE SSE</td><td>Native single-pass inspection (SPACE) at every PoP</td><td>No tunnels to a third-party SWG, no second policy plane, no tunnel orchestration seam — the seam is removed, not re-plumbed.</td></tr>
+            <tr><td>HPE Aruba Networking SSE (Axis), where adopted</td><td>Cato Client (SDP): ZTNA, SWG, CASB, DLP, Device Posture</td><td>Users get the same PoP stack as sites — SD-WAN + SSE consolidation in one move, one policy for users and sites.</td></tr>
+            <tr><td>Subnet sharing + LAN-side BGP/OSPF</td><td>Cato backbone routing; eBGP at the edges</td><td>Cato is eBGP-only (default ASN 64515). The EdgeConnect fabric stays intact during co-existence; the domains meet at eBGP handoffs at the hubs.</td></tr>
+            <tr><td>EdgeConnect HA appliance pairs</td><td>Socket HA (primary/secondary) + PoP- and backbone-level resilience</td><td>The site survives socket, link and PoP failure independently.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">The honest Boost answer</h3>
+      <p>
+        One row above needs saying in plain words: <strong>Boost's byte-level data reduction and
+        CIFS acceleration have no like-for-like Cato equivalent.</strong> Boost deduplicates
+        between appliance pairs that both hold Boost capacity; Cato's optimisation is
+        architectural. Never hand-wave this — quantify it in the PoV with the customer's real
+        flows before any Boost-heavy site migrates.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">What transfers</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Latency-bound applications regularly get their fix from the
+          architecture: split-TCP proxying at the PoP (larger effective windows, round-trip
+          mitigation), packet-loss mitigation on the last mile, and a private backbone with
+          optimised routing in the middle mile. First-mile loss and long-haul latency — the
+          problems path conditioning and TCP acceleration were bought for — are handled
+          platform-wide, with nothing metered per-Mbps.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What doesn't — and the honest mitigations</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">For bandwidth-bound bulk transfer over thin links the dedup
+          benefit disappears. Mitigations, in order: <strong>right-size the last mile</strong>
+          (broadband economics usually allow it); schedule replication windows;
+          <strong>use application-native dedup/compression</strong> — modern backup and storage
+          replication tools ship their own; or re-architect the workload (cloud storage/DR).
+          CIFS over distance is an application-architecture item — DFS placement, cloud file
+          services — not a network-feature negotiation.</p>
+        </div>
+      </div>
+    </section>
+    <section id="path" class="reveal">
+      <div class="section-kicker">The migration path</div>
+      <h2>Five phases from Orchestrator to one platform</h2>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the design — especially the eBGP
+        handoff, subnet-sharing propagation, filtering and rollback details, and anything
+        contract-dependent — with Cato Professional Services before committing it to a customer plan.</p>
+      </div>
+      <p>
+        The arc follows the Cato PS four-phase methodology (Discover &amp; Design → Pilot, Build
+        &amp; Initial Rollout → Advanced Security &amp; Broader Rollout → Tune, Optimise &amp;
+        Handover; the reference plan is four months), with co-existence and security
+        consolidation broken out because they are the load-bearing steps in an EdgeConnect estate.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 1 — Discover &amp; design: export Orchestrator early, inventory intent</h4>
+          <p>Run Orchestrator's scheduled backup (Orchestrator database plus per-appliance
+          backups), export the template groups, and pull any preconfiguration YAML — sites built
+          via preconfig are self-documenting; sites configured by hand are not, so diff templates
+          against per-appliance state. The pyedgeconnect SDK and Orchestrator REST API can
+          bulk-export appliance and overlay configuration for offline analysis. Then build the
+          <strong>overlay intent inventory — the core artefact</strong>: for each BIO record the
+          match criteria, topology (mesh vs hub-and-spoke, regions), link-bonding policy, QoS
+          priority, brownout thresholds and internet-breakout behaviour (direct, backhaul, or
+          service-chained to which SSE). That table <em>is</em> the customer's network policy —
+          collapse duplicate intents rather than transliterating seven overlays.</p>
+          <p>In parallel: the <strong>Boost-dependency inventory</strong> — Orchestrator's
+          data-reduction reports show per-application reduction ratios; separate workloads that
+          materially depend on deduplication (replication, backup, CIFS over distance) from those
+          that mainly benefit from latency mitigation. Audit routing (LAN-side OSPF/BGP peer
+          types — Branch/Branch-transit routes are shared into the fabric, BGP-PE routes
+          deliberately are not — plus subnet-sharing metrics, statics, inbound NAT). Inventory
+          the SSE estate: which BIOs chain to which tenant, what policy lives in the SSE console,
+          contract end dates and notice periods, remote-access population. Classify sites (hubs,
+          HA pairs, EC-V, any Aruba Central SD-Branch population — a different product, scoped
+          explicitly in or out), flag dual-broadband sites surviving on heavy FEC for circuit
+          upgrade, fix the co-existence design (eBGP handoff, AS numbering — the Cato side is
+          eBGP-only, default ASN 64515 — filtering, cutover template per site class), and stand
+          up the foundation: CMA baseline, IdP/SCIM, Client packaging, TLS-inspection
+          certificates, socket logistics, SIEM planning.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Co-existence: parallel Sockets at the EC hubs (PS Option F)</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Stand up Sockets (or vSockets) at the data centres and at <strong>each EdgeConnect
+          hub site, alongside the EC appliances</strong>; establish eBGP handoffs into each hub's
+          LAN-side routing and validate route exchange, symmetry and failover before any branch
+          moves. The EdgeConnect fabric — subnet sharing and all BIOs — stays fully intact on its
+          side of the handoff. Confirm in design that Cato-learned prefixes actually propagate
+          into subnet sharing at the hub (peer typing matters: BGP-PE-learned routes are not
+          shared). Filter the default route and the prefixes of any half-migrated site at every
+          handoff; use BGP summaries and Cato's BGP filtering to keep the exchange tidy. Convert
+          policy from the BIO inventory: network rules and bandwidth profiles recreating overlay
+          steering intent (real-time, business-critical, bulk), WAN Firewall for any BIO topology
+          restrictions, the Internet Firewall wizard absorbing the breakout policy, IPS/NGAM in
+          monitor-then-block.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Regional branch waves: cutover as a routing event</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Cut over one representative branch first and soak it, then migrate region by region
+          behind each regional hub handoff: simple single-WAN branches → HA-pair branches →
+          complex sites (local inbound services, Boost-heavy sites, EC-V hosts) → hubs last. Each
+          spoke is a routing event: <strong>1)</strong> disable the EdgeConnect spoke in
+          Orchestrator so its subnets are withdrawn from subnet sharing and the eBGP exchange;
+          <strong>2)</strong> bring up the Cato socket site; <strong>3)</strong> routes propagate
+          automatically to both domains; <strong>4)</strong> rollback is the mirror image — down
+          the socket site, re-enable the EC spoke, and routing reconverges. No per-site route
+          engineering during the window.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Security consolidation, wave by wave</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Security moves <em>with each site's cutover</em>: the socket sends all traffic to
+          the Cato PoP, so the site's SSE tunnels are simply not rebuilt — retire the
+          Orchestrator SSE tunnel config for migrated sites rather than leaving dead tunnels, and
+          keep the SSE tenant alive until its last consuming site and user cohort have moved.
+          Migrate SSE/VPN user populations in parallel cohorts to the Cato Client, re-modelling
+          ZTNA policy with Device Posture. Enable TLS inspection in phases by category and test
+          group (PS reference: four phases over four weeks), then CASB discovery, tenant controls
+          and DLP monitor-mode → enforcement. <strong>Time SSE contract notice against the final
+          wave, not the first.</strong></p>
+        </li>
+        <li>
+          <h4>Phase 5 — Tune, re-baseline Boost, decommission</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Tune QoS against the former BIO priority model and validate security controls; bring
+          the SIEM integration live. For sites flagged Boost-dependent in Phase 1,
+          <strong>measure the workload on Cato during the wave window</strong> and apply the
+          mitigations — last-mile sizing, replication windows, application-native dedup — before
+          the EC pair is switched off. Then decommission in order: remove eBGP handoffs as each
+          region completes → retire EC hub appliances → cancel or let lapse bandwidth-tier, Boost
+          and SSE subscriptions per the contract map → decommission self-hosted Orchestrator (or
+          close the OaaS tenancy) once config and reporting exports are archived → return or
+          dispose of appliances. Close with documentation, admin training and operational handover.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Two fabrics, one eBGP seam</h2>
+      <p>
+        <strong>Asymmetry is the enemy.</strong> With two overlays joined in more than one place,
+        a flow can exit through one region's hub and return through another — breaking stateful
+        inspection on the EdgeConnect firewalls. The PS multi-region pattern (Option F —
+        demonstrated against a FortiGate estate and applied unchanged here, because the legacy
+        hub only needs to speak eBGP, which EdgeConnect supports on the LAN side) puts a parallel
+        Socket at each EdgeConnect hub with an eBGP handoff, and lets AS-path length anchor each
+        region's traffic to its local hub: cross-region routes carry an extra inter-hub AS hop,
+        so traffic exits and returns through the same hub. The EdgeConnect overlay — subnet
+        sharing plus BIO tunnels — stays intact and segmented on its side of the handoff.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 480" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">eBGP hub co-existence between Cato and an EdgeConnect fabric during migration</title>
+          <desc id="dg1-desc">A migrated branch connects through a Cato Socket to a Cato PoP on the global private backbone; its old tunnel to the third-party SSE is marked retired with a red X. At the EdgeConnect hub site a parallel Cato Socket exchanges routes with the EC hub over an eBGP handoff, with AS-path length keeping traffic symmetric. A legacy branch still rides the EC fabric and BIO overlays to the EC hub, which service-chains to the SSE. Orchestrator manages the fabric and is retired after the final wave. A dashed rollback arrow shows that re-enabling the EC spoke reverts a migrated site.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="420" cy="200" rx="148" ry="50"/>
+          <circle cx="285" cy="218" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="553" cy="182" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="345" y="266" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="420" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="420" cy="200" r="30"/>
+
+          <!-- Migrated spoke (top left) -->
+          <rect class="dg-node-green" x="40" y="72" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="96" text-anchor="middle">Reading branch</text>
+          <text class="dg-sub" x="132" y="114" text-anchor="middle">Cato Socket · migrated</text>
+          <text class="dg-tiny" x="132" y="132" text-anchor="middle">inspected at the PoP</text>
+
+          <!-- Retired SSE tunnel from migrated spoke -->
+          <path d="M 225 88 C 300 70, 380 60, 424 58" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 6"/>
+          <g aria-label="SSE tunnel retired">
+            <path class="lane-x" d="M 428 46 L 452 70"/><path class="lane-x" d="M 452 46 L 428 70"/>
+          </g>
+          <text class="dg-tiny" x="330" y="48" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SSE tunnel · retired</text>
+
+          <!-- Third-party SSE (top centre) -->
+          <rect class="dg-node" x="470" y="26" width="190" height="62" rx="10"/>
+          <text class="dg-label" x="565" y="50" text-anchor="middle">Third-party SSE</text>
+          <text class="dg-sub" x="565" y="68" text-anchor="middle">Zscaler · HPE SSE tenant</text>
+
+          <!-- Orchestrator (top right) -->
+          <text class="dg-tiny" x="830" y="36" text-anchor="middle">retire after final wave</text>
+          <rect class="dg-node-dark" x="730" y="44" width="200" height="66" rx="10"/>
+          <text class="dg-label-inv" x="830" y="72" text-anchor="middle">Orchestrator</text>
+          <text class="dg-sub-inv" x="830" y="90" text-anchor="middle">templates · preconfig YAML</text>
+
+          <!-- Control plane (Orchestrator to EC hub) -->
+          <path class="lane-static" d="M 818 110 L 795 336"/>
+          <text class="dg-tiny" x="832" y="206" text-anchor="start">control plane:</text>
+          <text class="dg-tiny" x="832" y="222" text-anchor="start">BIOs · templates</text>
+
+          <!-- Legacy spoke (bottom left) -->
+          <rect class="dg-node" x="40" y="336" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="360" text-anchor="middle">Glasgow branch</text>
+          <text class="dg-sub" x="132" y="378" text-anchor="middle">EC appliance spoke</text>
+          <text class="dg-tiny" x="132" y="396" text-anchor="middle">BIO overlays · wave 2</text>
+
+          <!-- Rollback arrow (between left nodes) -->
+          <path d="M 100 154 L 100 314" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 6"/>
+          <path d="M 93 312 L 107 312 L 100 328 Z" fill="var(--ink-3)"/>
+          <text class="dg-tiny" x="114" y="214" text-anchor="start">rollback: re-enable</text>
+          <text class="dg-tiny" x="114" y="230" text-anchor="start">the EC spoke —</text>
+          <text class="dg-tiny" x="114" y="246" text-anchor="start">routing reconverges</text>
+
+          <!-- EC hub site — parallel Cato leg (bottom centre) -->
+          <rect class="dg-node-green" x="380" y="336" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="470" y="360" text-anchor="middle">Manchester hub</text>
+          <text class="dg-sub" x="470" y="378" text-anchor="middle">parallel Cato Socket</text>
+          <text class="dg-tiny" x="470" y="396" text-anchor="middle">same site, new leg</text>
+
+          <!-- EC hub site — EC leg (bottom right) -->
+          <rect class="dg-node-dark" x="690" y="336" width="180" height="74" rx="10"/>
+          <text class="dg-label-inv" x="780" y="366" text-anchor="middle">Manchester hub</text>
+          <text class="dg-sub-inv" x="780" y="384" text-anchor="middle">EC hub · subnet sharing</text>
+
+          <!-- Service chain from EC hub to SSE (interim) -->
+          <path class="lane lane-limit" d="M 782 336 C 750 260, 680 150, 618 92"/>
+          <text class="dg-tiny" x="640" y="132" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">service chain · GRE/IPsec</text>
+
+          <!-- Migrated flows (green) -->
+          <path class="lane lane-allow" d="M 225 105 C 295 125, 340 158, 392 184"/>
+          <path class="lane lane-allow" d="M 468 336 C 460 300, 450 265, 436 230"/>
+
+          <!-- eBGP handoff (static) -->
+          <path class="lane-static" d="M 560 373 L 690 373"/>
+          <text class="dg-tiny" x="625" y="362" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">eBGP handoff</text>
+          <text class="dg-tiny" x="625" y="392" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AS-path symmetry</text>
+
+          <!-- Legacy overlay flow (amber) -->
+          <path class="lane lane-limit" d="M 225 392 C 380 452, 560 452, 690 402"/>
+          <text class="dg-tiny" x="455" y="458" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">EC fabric · BIO overlays</text>
+
+          <!-- Cato PoP labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="420" y="132" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="420" y="148" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SPACE · FWaaS · SWG · ZTNA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Socket to the nearest PoP, one policy plane</span>
+          <span class="key"><span class="swatch limit"></span> Interim — EC fabric + SSE service chain until each wave completes</span>
+        </div>
+        <div class="diagram-caption">Option-F co-existence at an EdgeConnect hub: a parallel Socket exchanges routes with the EC hub over eBGP, and AS-path length anchors each region's traffic to its local hub. A migrated spoke is inspected at the PoP — its SSE tunnel is retired, not rebuilt. Cutover per spoke is a routing event; rollback is its mirror image. Orchestrator is retired only after the final wave.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Symmetric by construction</h4><p>AS-path anchoring makes each side prefer its local regional hub — no cross-region return paths through a different stateful EC firewall.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>Reversible per spoke</h4><p>Disable the EC spoke and its subnets withdraw from subnet sharing and the eBGP exchange automatically; re-enable it and routing reconverges.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>The fabric is left intact</h4><p>Subnet sharing and every BIO keep running, segmented on their side of the handoff — un-migrated branches never notice the migration.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Security moves with the site</h4><p>Each migrated site is inspected at the PoP from day one; its SSE tunnels are simply not rebuilt. No big-bang security cutover, no dead tunnels.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Branch-level patterns (pick per site class)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Pattern</th><th>Default gateway</th><th>Mechanics</th><th>Rollback</th></tr></thead>
+          <tbody>
+            <tr><td>EC appliance stays DG, static routes</td><td>EC appliance</td><td>Socket on a LAN transit; EC routes migrated subnets to the Socket</td><td>Remove the statics — traffic reverts to the EC overlay instantly</td></tr>
+            <tr><td>EC appliance stays DG, eBGP over LAN transit</td><td>EC appliance</td><td>eBGP Socket ↔ EC (LAN-side BGP); phased subnet migration</td><td>Withdraw advertisements or drop the peering</td></tr>
+            <tr><td>L3 switch decides</td><td>L3 switch</td><td>Core switch routes between legacy and Cato-migrated subnets</td><td>Flip routes on the switch</td></tr>
+            <tr><td>Socket as DG, eBGP LAN handoff</td><td>Cato Socket</td><td>Socket is the gateway; eBGP handoff for legacy prefixes; full Socket HA</td><td>Re-point the DG to the EC appliance</td></tr>
+            <tr><td>Socket as DG, Alt-WAN BGP / Gradual Deployment</td><td>Cato Socket</td><td>Legacy overlay reached via Alt-WAN with eBGP, or unknown RFC1918 routed via Alt-WAN</td><td>Routes revert via BGP — see caveats below</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        Alt-WAN caveats: configure local routing so Alt-WAN-destined flows are not first carried
+        to the PoP (avoiding asymmetry), and note that Alt-WAN failure does not trigger Socket HA
+        failover — prefer BGP on a LAN handoff where HA matters. Gradual Deployment handles
+        private (RFC1918) destinations only.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Where BGP is unavailable at a hub</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The PS static alternative is an <strong>interconnect site with
+          routed ranges</strong> — pre-stage real subnets on the interconnect and dummy ranges on
+          the future Cato sites; at cutover delete the routed range and update the dummy range;
+          rollback is re-adding the statics. Slower per site than BGP, but every step remains
+          reversible.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Security plane during transition</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Migrated sites are inspected by Cato; unmigrated sites keep their
+          EC→SSE service chains untouched. Freeze both security policies except for mirrored
+          changes during the window, and run one client (SSE/VPN or Cato) active per endpoint per
+          cohort. Published/inbound services on EC appliances migrate deliberately — re-publish
+          via Cato (remote port forwarding or static-IP egress) or leave them on a retained leg
+          until their own change window.</p>
+        </div>
+      </div>
+    </section>
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What bites, and what they'll say</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;Boost gives us 60–90% data reduction on replication — can Cato match that?&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Answer it honestly: no like-for-like feature exists. Boost's data
+          reduction is byte-level deduplication between appliance pairs; Cato's optimisation is
+          architectural — split-TCP proxying at the PoP, packet-loss mitigation on the last mile,
+          a private backbone in the middle. For latency-bound applications this regularly
+          <em>is</em> the fix; for bandwidth-bound bulk transfer over thin links the dedup benefit
+          disappears, and the mitigations are last-mile sizing, replication windows,
+          application-native dedup, or re-architecting the workload. Quantify in the PoV with the
+          customer's real flows before the Boost-heavy sites migrate.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">CIFS and WAN-op-dependent legacy apps</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Boost's CIFS read-ahead/write-behind masks chatty-protocol latency.
+          If discovery finds users opening file shares across continents, treat it as an
+          application-architecture item — DFS placement, cloud file services — rather than a
+          network-feature negotiation, and validate the experience on Cato's TCP acceleration
+          during the pilot. An estate that has quietly grown dependent on WAN optimisation needs
+          those workloads found in Phase 1, not at cutover.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Seven overlays don't become seven rule blocks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Up to seven BIOs can each have a different topology, bonding policy
+          and breakout rule; Cato is one global fabric. Steering intent becomes app-aware network
+          rules and bandwidth profiles; reachability intent (which overlay meshed where) becomes
+          WAN Firewall policy. Most estates use far fewer distinct intents than they have
+          overlays — collapse duplicates during the inventory rather than transliterating. Also
+          flag dual-broadband sites surviving on heavy FEC: Cato mitigates loss with packet
+          duplication across active/active links, but a genuinely poor circuit belongs on the
+          upgrade list in the wave plan.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">EC-V virtual estates</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cloud EC-Vs (AWS/Azure/GCP transit hubs) map to vSockets, native
+          IPsec to the PoP, or cloud interconnect — decide per VPC/VNet during discovery.
+          Hypervisor EC-Vs at branches usually become physical Sockets; check anything unusual —
+          an EC-V on a host doing double duty — early, and put the disposition of every virtual
+          instance in the Phase 1 estate classification.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;First-Packet iQ steers on packet one — a PoP round trip must be slower&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato classifies and inspects in the PoP on the same single pass;
+          the PoP is the security edge, so there is no appliance-then-SWG double hop as in the
+          EC + SSE service-chain model. Compare end-to-end paths — branch→SSE PoP versus
+          branch→Cato PoP — not packet-one behaviour in isolation.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;HPE says EdgeConnect is strategic — the Juniper deal changes nothing&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Possibly true; no end-of-life is announced, and say so. But the
+          customer is entitled to ask which of three SD-WAN lines and which of two management
+          clouds (Aruba Central vs Mist) carries the long-term roadmap, and what happens to the
+          Axis SSE vs Juniper Secure Edge overlap. Analyst and community commentary consistently
+          frames this as a rationalisation-in-waiting. A written roadmap commitment is a
+          reasonable procurement ask — and the comparison is between that uncertainty and a
+          single-vendor, single-platform alternative.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Scope and PoV hygiene</div>
+        <p>&ldquo;EdgeConnect SD-Branch&rdquo; (Aruba Central-managed gateways and Microbranch APs) is a
+        different product with a different console — scope it explicitly in or out, and don't
+        assume Orchestrator exports cover it. Routing edge cases — subnet-sharing metrics,
+        BGP-PE non-sharing, overlay-specific route policies, inbound NAT on EC appliances —
+        should be listed in discovery and validated in the PoV by name, not assumed.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360006675977-Explaining-the-Cato-TCP-Acceleration-and-Best-Practices" target="_blank" rel="noopener">Cato TCP acceleration and best practices (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360011176237-Packet-Loss-Mitigation-for-Multi-Tunnel-Links" target="_blank" rel="noopener">Packet-loss mitigation for multi-tunnel links (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7785698733341-Configuring-Network-Rules" target="_blank" rel="noopener">Configuring network rules (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413280514065-What-are-the-Cato-Bandwidth-Management-Profiles" target="_blank" rel="noopener">Bandwidth management profiles (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/glossary-use-cases/wan-optimization/" target="_blank" rel="noopener">Cato on WAN optimisation as a SASE use case</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan/docs/orch/configuration/overlays/bios/" target="_blank" rel="noopener">HPE — Business Intent Overlays (Orchestrator docs)</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan-PDFs/docs/eula/EC_LifecyclePolicy_latest.pdf" target="_blank" rel="noopener">HPE — EdgeConnect product lifecycle policy (PDF)</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan-PDFs/docs/tips/Subnet_Sharing_Tech_Note_Latest.pdf" target="_blank" rel="noopener">HPE — subnet sharing tech note (PDF)</a></li>
+            <li><a href="https://www.hpe.com/us/en/newsroom/press-release/2025/07/hewlett-packard-enterprise-closes-acquisition-of-juniper-networks-to-offer-industry-leading-comprehensive-cloud-native-ai-driven-portfolio.html" target="_blank" rel="noopener">HPE closes Juniper Networks acquisition (press release)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-edgeconnect-policy.html">EdgeConnect Policy Migration</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

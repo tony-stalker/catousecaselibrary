@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resilient Site Design — Cato Use Case Library</title>
+<meta name="description" content="Design sites that stay up — HA socket pairs, dual last miles, LTE/5G failover, BGP options and off-cloud behaviour, with the patterns to match site criticality.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-resilient-site-design">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / Resilient Site Design</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Resilient Site Design</h1>
+    <p class="lede">
+      Every site fails eventually — a digger through the fibre, a dead power supply, a PoP taken
+      out of rotation. Resilience isn't a default you inherit; it's a design decision made per site
+      class, and a kiosk shouldn't get the same design (or the same spend) as a datacentre. This
+      page sets out the reference patterns from small branch to critical DC, the Cato building
+      blocks behind them — dual last miles, LTE last resort, HA Socket pairs, PoP failover and
+      off-cloud recovery — and the runbook to prove they actually work.
+    </p>
+    <div class="meta-row">
+      <span class="tag">HA</span><span class="tag">Last Mile</span><span class="tag">LTE Failover</span>
+      <span class="tag">BGP</span><span class="tag">Site Design</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Design against the failure, not the brochure</h2>
+      <p>
+        Most availability conversations start with an SLA percentage and end with an invoice.
+        A better conversation starts with the question: <strong>what exactly can fail at this site,
+        and what happens to the people in the building when it does?</strong> On Cato there are four
+        distinct failure domains, and each has its own building block — so you can match resilience
+        (and cost) to how much each site actually matters.
+      </p>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin-top:0">1 · Last-mile loss</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The everyday failure: a cut circuit, a
+          provider maintenance window, a degraded DSL line. Answered by a second last mile with
+          SLA-driven steering — and LTE/5G as the final backstop.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">2 · Socket hardware loss</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A failed PSU or a bricked device. Answered
+          by an HA Socket pair on sites that can't wait for a hardware swap — and a cold-spare
+          process everywhere else.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">3 · PoP unreachable or degraded</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rarer: trouble between the ISP and the
+          Cato PoP, or a PoP out of rotation. Answered automatically — the Socket evaluates its
+          links and moves to another PoP, with preferred primary and secondary locations if you
+          want to steer it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">4 · Total off-cloud</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The site is powered, the LAN is up, but no
+          PoP is reachable. Answered by recovery modes: internet traffic breaks out locally, WAN
+          traffic re-forms over Socket-to-Socket DTLS tunnels, and the local LAN firewall keeps
+          east-west policy running.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="patterns" class="reveal">
+      <div class="section-kicker">Site-class patterns</div>
+      <h2>Match the design to the site class</h2>
+      <p>
+        These are reference patterns — recommended practice, not doctrine. The point is that every
+        site gets a <em>deliberate</em> tier, with an honest statement of what fails gracefully and
+        what still hurts.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Site class</th><th>Reference design</th><th>Fails gracefully</th><th>Plan for it anyway</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Small branch / kiosk</strong></td>
+              <td>Single Socket · broadband active + LTE/5G last resort (precedence 3)</td>
+              <td>ISP loss (Socket shifts to LTE), PoP loss (automatic reconnect), Cato Cloud unreachable (Internet Recovery keeps local breakout alive)</td>
+              <td>Socket hardware — site is down until a spare is swapped in. Keep a cold-spare process and accept the RTO.</td>
+            </tr>
+            <tr>
+              <td><strong>Standard branch</strong></td>
+              <td>Single Socket · two wired ISPs active/active · optional LTE last resort</td>
+              <td>Either ISP failing or degrading — SLA scoring re-homes flows to the healthy link; PoP loss</td>
+              <td>Socket hardware, and both circuits sharing one duct — order genuinely diverse paths, not two logos on one fibre.</td>
+            </tr>
+            <tr>
+              <td><strong>Critical site / DC</strong></td>
+              <td>HA Socket pair (e.g. X1700) · two diverse last miles · preferred primary + secondary PoP · BGP to the core · LTE last resort</td>
+              <td>Socket loss (standby takes over on 3&nbsp;s of missed keepalives), ISP loss, PoP loss, Cato Cloud unreachable (WAN + Internet Recovery)</td>
+              <td>Whole-site loss — power, fire, flood. Pair with a DR site and let BGP route withdrawal move traffic to it.</td>
+            </tr>
+            <tr>
+              <td><strong>Cloud / IPsec site</strong></td>
+              <td>vSocket HA pair in AWS/Azure; or for third-party firewalls, primary + secondary IPsec tunnels to two different PoPs</td>
+              <td>PoP loss, single-tunnel loss — the 99.999% uptime SLA for IPsec requires tunnels to at least two PoPs</td>
+              <td>IPsec and cloud-interconnect sites have no Internet or WAN Recovery — off-cloud resilience must live in the tunnel design itself.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which of your sites could you genuinely not afford to lose for a morning — and when did
+        someone last deliberately pull a link there to prove the failover works?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One critical site, four failure domains covered</h2>
+      <p>
+        The diagram shows the full critical-site pattern mid-incident: the primary last mile has
+        been cut, and the Socket's per-second SLA scoring has already re-homed every flow onto the
+        second, diverse last mile. The HA standby Socket holds its own tunnel to the Cato Cloud and
+        is ready to take over; the LTE link idles at precedence&nbsp;3, deliberately carrying almost
+        nothing until it's needed.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 500" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Critical site resilience: HA Socket pair, diverse last miles, LTE last resort and two PoPs</title>
+          <desc id="dg1-desc">A critical site contains a site LAN connected to an HA pair of Sockets and an LTE modem. The primary last mile to PoP 1 has failed and is marked with a red X. All flows re-home over the second last mile, shown green, to PoP 2. The LTE last-resort lane stays idle, shown amber. Both PoPs sit on the Cato Global Private Backbone.</desc>
+
+          <!-- Site boundary -->
+          <rect x="24" y="84" width="400" height="392" rx="14" fill="none" stroke="var(--hairline)" stroke-dasharray="7 7"/>
+          <text class="dg-label" x="44" y="114">Critical site — London DC</text>
+          <text class="dg-tiny" x="44" y="132">HA pair · diverse last miles · LTE</text>
+
+          <!-- LAN node -->
+          <rect class="dg-node" x="44" y="240" width="140" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="265" text-anchor="middle">Site LAN</text>
+          <text class="dg-tiny" x="114" y="283" text-anchor="middle">users · servers · OT</text>
+
+          <!-- Sockets -->
+          <rect class="dg-node-dark" x="228" y="150" width="172" height="62" rx="10"/>
+          <text class="dg-label-inv" x="314" y="176" text-anchor="middle">Socket A — X1700</text>
+          <text class="dg-sub-inv" x="314" y="194" text-anchor="middle">HA master · active</text>
+
+          <rect class="dg-node" x="228" y="310" width="172" height="62" rx="10"/>
+          <text class="dg-label" x="314" y="336" text-anchor="middle">Socket B — X1700</text>
+          <text class="dg-sub" x="314" y="354" text-anchor="middle">Standby · Ready</text>
+
+          <!-- LTE modem -->
+          <rect class="dg-node" x="228" y="408" width="172" height="50" rx="10"/>
+          <text class="dg-label" x="314" y="429" text-anchor="middle">LTE / 5G modem</text>
+          <text class="dg-tiny" x="314" y="446" text-anchor="middle">precedence 3 · last resort</text>
+
+          <!-- LAN cabling -->
+          <path class="lane-static" fill="none" d="M 184 258 C 205 244, 208 212, 228 194"/>
+          <path class="lane-static" fill="none" d="M 184 280 C 205 296, 208 318, 228 334"/>
+          <!-- HA keepalive -->
+          <path class="lane-static" fill="none" d="M 314 212 L 314 310"/>
+          <text class="dg-tiny" x="324" y="252">VRRP keepalive</text>
+          <text class="dg-tiny" x="324" y="268">3 s → failover</text>
+          <!-- Modem connector -->
+          <path class="lane-static" fill="none" d="M 314 372 L 314 408"/>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="760" cy="280" rx="150" ry="190"/>
+          <text class="dg-tiny" x="810" y="286" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- PoPs -->
+          <circle class="pulse-ring" cx="700" cy="170" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="700" cy="170" r="30"/>
+          <text class="dg-label" x="700" y="116" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PoP 1 — London</text>
+          <text class="dg-tiny" x="700" y="131" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">primary preferred</text>
+
+          <circle class="dg-pop" cx="700" cy="390" r="30"/>
+          <text class="dg-label" x="700" y="440" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PoP 2 — Manchester</text>
+          <text class="dg-tiny" x="700" y="455" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">secondary preferred</text>
+
+          <!-- Failed last mile -->
+          <path class="lane lane-block" d="M 400 168 C 460 152, 510 142, 550 140"/>
+          <g aria-label="failed link">
+            <path class="lane-x" d="M 550 128 L 574 152"/><path class="lane-x" d="M 574 128 L 550 152"/>
+          </g>
+          <text class="dg-tiny" x="488" y="120" text-anchor="middle">ISP A fibre — cut</text>
+
+          <!-- Re-homed active last mile -->
+          <path class="lane lane-allow" d="M 400 196 C 500 232, 592 322, 674 374"/>
+          <text class="dg-tiny" x="490" y="322" text-anchor="middle">ISP B — all flows re-home</text>
+
+          <!-- LTE last resort (idle) -->
+          <path class="lane lane-limit" d="M 400 430 C 480 428, 580 414, 666 396"/>
+          <text class="dg-tiny" x="520" y="458" text-anchor="middle">idle until wired links fail</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Active last mile — carries all flows</span>
+          <span class="key"><span class="swatch limit"></span> LTE last resort — idle, minimal system traffic</span>
+          <span class="key"><span class="swatch block"></span> Failed last mile — flows re-homed by SLA scoring</span>
+        </div>
+        <div class="diagram-caption">Failure domains, separated: a cut last mile re-homes flows to the surviving link; a dead Socket fails over to its HA peer after 3 s of missed keepalives; an unhealthy PoP is swapped for the secondary; and if no PoP is reachable at all, off-cloud recovery keeps WAN and internet traffic moving.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Per-second SLA steering</h4><p>The Socket scores every link every second on loss, jitter and latency, and distributes flows by bandwidth ratio. A degrading link sheds traffic before users open tickets.</p></div></div>
+        <div class="benefit"><div class="b-icon">👥</div><div><h4>HA without drama</h4><p>Standby takes over after 3&nbsp;s of missed keepalives, announcing itself with GARP for fast Layer-2 convergence — and the Cato Cloud maintains flow state through the transition.</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>LTE that doesn't surprise finance</h4><p>Last-resort links carry only minimal Cato system traffic while idle, precisely to keep cellular data cost near zero until the day you need it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Graceful degradation off-cloud</h4><p>Internet Recovery, Socket-to-Socket WAN Recovery tunnels and the on-Socket LAN firewall mean “no PoP reachable” degrades the site — it doesn't kill it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="building-blocks" class="reveal">
+      <div class="section-kicker">The building blocks</div>
+      <h2>The building blocks in detail</h2>
+      <p>Everything below is standard platform behaviour documented in the Cato knowledge base — the design skill is choosing which blocks each site class deserves.</p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">4</div><div class="stat-label">WAN links per Socket — mix active, passive and last-resort roles</div></div>
+        <div class="stat-tile"><div class="stat-value">3<span class="unit">s</span></div><div class="stat-label">Missed HA keepalives before the standby Socket takes over</div></div>
+        <div class="stat-tile"><div class="stat-value">40–50<span class="unit">s</span></div><div class="stat-label">Initial SLA evaluation when a Socket moves to a different PoP</div></div>
+        <div class="stat-tile"><div class="stat-value">10<span class="unit">min</span></div><div class="stat-label">Continuous link health before backup links stand down again</div></div>
+      </div>
+
+      <h3>Dual last miles — active/active with link precedence</h3>
+      <p>
+        WAN links take a precedence role: <strong>1 (active)</strong>, <strong>2 (passive)</strong>
+        or <strong>3 (last resort)</strong>. Active/active distribution is flow-based (5-tuple), so
+        a conversation sticks to one link; flows are shared in proportion to configured bandwidth —
+        a 100&nbsp;Mbps and a 20&nbsp;Mbps link get flows at roughly 5:1. Every second, each link is
+        scored against health thresholds (packet loss 3%, jitter 30&nbsp;ms, latency 600&nbsp;ms);
+        links that miss them are deprioritised, and a dead link's flows move to the surviving link
+        immediately. The Socket steers upstream; the PoP steers downstream — so both directions are
+        managed. Passive links activate when all active links are down or fail the Connection SLA,
+        and stand down after 10 minutes of restored health on the higher-precedence links.
+      </p>
+
+      <h3>LTE / 5G as last resort — and its caveats</h3>
+      <p>
+        A last-resort (precedence&nbsp;3) link — typically cellular, via the X1600 LTE Socket or an
+        external modem — activates only when <em>all</em> active and passive links are down or fail
+        the SLA thresholds, and deactivates once a precedence 1 or 2 link has met the SLA for a
+        continuous 10 minutes. Design caveats from the documentation worth repeating in the room:
+      </p>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li>While idle it carries only minimal Cato system traffic — good for cost, but it means the cellular path is not continuously proven under load. Test it.</li>
+        <li>Off-cloud (Socket-to-Socket) traffic is not supported over last-resort links, and off-cloud transport is automatically disabled on precedence-3 links.</li>
+        <li>An optional grace timer (default 0&nbsp;s) delays activation to ride out blips — but any value above 0 means the site is dark during the wait.</li>
+        <li>Recommended configuration: exclude the link from last-mile monitoring and relax its keepalive settings, so monitoring itself doesn't burn the data plan.</li>
+      </ul>
+
+      <h3>HA Socket pairs — requirements and readiness</h3>
+      <p>
+        Socket HA is an active/standby pair of the same model family (X1500 pairs with X1500B; an
+        X1600 cannot pair with an X1600 LTE), supported for physical sites and AWS/Azure vSockets.
+        Cabling must be symmetrical — both Sockets mirrored into the same LAN and the same ISPs —
+        with the secondary's management IP inside the site's native range. The pair exchanges VRRP
+        keepalives over a designated LAN port (default VRID 100). Failover triggers: 3 seconds of
+        missed keepalives, primary hardware/power failure, or the master losing all internet
+        connectivity for more than 10 seconds; the standby announces itself with GARP, and an HA
+        event is raised if the secondary stays active beyond 35 seconds. The CMA rolls health into
+        one word — <strong>Ready</strong> — built from three indicators:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Indicator</th><th>Green means</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Connected</strong></td><td>Both Sockets hold their own working tunnel to the Cato Cloud</td></tr>
+            <tr><td><strong>Keepalive</strong></td><td>Exactly one primary and one secondary are talking — this is also the split-brain check</td></tr>
+            <tr><td><strong>Compatible Version</strong></td><td>Both Sockets run the same major Socket OS version</td></tr>
+            <tr><td><strong>Ready</strong></td><td>All three OK — the site can fail over cleanly. Anything else is a ticket, not trivia.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>PoP selection and failover</h3>
+      <p>
+        By default a connectivity algorithm picks the best PoP — the recommendation is to leave it
+        on Automatic and set the site's city. For critical sites you can define preferred primary
+        and secondary PoP locations, and optionally restrict the site to them. If every link fails
+        the SLA against the current PoP, the Socket connects to a different PoP and runs an initial
+        SLA evaluation of 40–50 seconds — returning to the original if nothing better is found. A
+        Socket that lands on a non-preferred PoP automatically moves back after 60 minutes by
+        default (tunable or disabled).
+      </p>
+
+      <h3>Off-cloud: what still works when no PoP is reachable</h3>
+      <p>
+        The Socket is not a thin client — it degrades deliberately when the Cato Cloud is
+        unreachable:
+      </p>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Internet Recovery</strong> (enabled by default) — on tunnel loss (100% packet loss, or three consecutive missed keepalives) the Socket designates a link and sends internet traffic straight out via the local ISP from its own public IP. Reconnection uses a back-off (8&nbsp;s doubling up to 1024&nbsp;s) to prevent flapping, and traffic returns to Cato the moment keepalives resume.</li>
+        <li><strong>WAN Recovery</strong> — site-to-site WAN traffic re-forms over encrypted off-cloud DTLS tunnels between Sockets, full mesh by default. Estates with hundreds of sites can use a hub-and-spoke off-cloud topology instead — spokes tunnel to hub sites only, which trades spoke-to-spoke recovery for far less tunnel/keepalive load on small Sockets. Off-cloud traffic doesn't count against the site's bandwidth licence; sites need unique public IPs, and a Socket supports at most three off-cloud links.</li>
+        <li><strong>Alt-WAN Recovery</strong> (limited release) — sites keeping an MPLS/alt-WAN underlay can automatically reroute via it to another Socket site, which forwards traffic on to the Cato Cloud. Not compatible with BGP-connected sites.</li>
+        <li><strong>The LAN keeps its firewall</strong> — the Socket Next Gen LAN Firewall enforces Layer 2–7 east-west policy on the Socket itself and routes matching traffic locally, so segmentation, OT and IoT keep operating even with the internet down entirely.</li>
+        <li><strong>IPsec and cloud-interconnect sites get none of this</strong> — no Internet or WAN Recovery. Their resilience is tunnel design: primary and secondary tunnels to two different PoPs.</li>
+      </ul>
+      <div class="callout warn">
+        <div class="co-title">Recovery is a degraded mode — treat it like one</div>
+        <p>Traffic in Internet, WAN or Alt-WAN Recovery bypasses Cato's cloud inspection — firewall,
+        IPS and threat protection are not applied, and off-cloud transport is likewise uninspected.
+        Recommended practice: decide per site class whether that trade is acceptable (a PCI estate
+        may prefer to disable Internet Recovery and accept the outage), and alert on recovery events
+        so nobody quietly runs uninspected for a week.</p>
+      </div>
+
+      <h3>BGP for the sites that route</h3>
+      <p>
+        Datacentres and MPLS-coexistence sites should speak BGP to the Cato Cloud over the LAN or
+        alt-WAN interface — no tunnels required — so routes are learned dynamically instead of
+        maintained by hand, inheriting the site's security policy. The resilience property that
+        matters: <strong>when a Socket disconnects, its site's ranges are withdrawn</strong>, so
+        traffic immediately follows the next-best BGP path — the standard active/standby DC
+        pattern. BFD can be configured for BGP neighbours to speed failure detection. Two limits to
+        design around: no graceful restart for route withdrawal, and 1024 received prefixes per
+        neighbour by default.
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Design review &amp; demo runbook</div>
+      <h2>Run the design review like an incident that hasn't happened yet</h2>
+      <div class="callout">
+        <div class="co-title">Testing discipline</div>
+        <p>Resilience you haven't tested is a diagram, not a design. Every pattern on this page ends
+        the same way: pull the link, in a change window, on purpose — and watch the platform do what
+        the slide claimed.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Tier the estate first</h4>
+          <p>Agree three or four site classes with the customer and an honest recovery objective for
+          each — “the kiosk can be down for a day; the DC can't be down for a minute”. Every design
+          choice below hangs off this, and it's recommended practice, not product configuration.</p>
+        </li>
+        <li>
+          <h4>Walk the link design of a real site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Open a branch site's Socket configuration: show each WAN port's precedence (1 active,
+          2 passive, 3 last resort), bandwidth settings, and the per-link off-cloud toggle. This is
+          where the site-class pattern becomes visible configuration.</p>
+        </li>
+        <li>
+          <h4>Show the SLA and last-resort safety rails</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Review the Connection SLA thresholds (account-level or per-site), the last-resort grace
+          timer, and the LTE link's exclusion from last-mile monitoring. Explain the 10-minute
+          stand-down: backup links don't flap back the moment the primary blinks healthy.</p>
+        </li>
+        <li>
+          <h4>Verify HA readiness on the critical sites</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Open an HA site and walk the three indicators behind <strong>Ready</strong> —
+          Connected, Keepalive, Compatible Version. Anything not green is a standing action. For
+          maintenance windows, note that failover can also be activated manually from the CMA.</p>
+        </li>
+        <li>
+          <h4>Confirm the PoP strategy</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Automatic PoP selection with the city set for standard sites; preferred primary and
+          secondary PoPs for critical ones. Mention the 60-minute automatic return to the preferred
+          PoP so nobody is surprised by a planned reconnect.</p>
+        </li>
+        <li>
+          <h4>Pull a link in a change window</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The proof. Disconnect the primary WAN at a pilot site and watch the link go down and
+          flows re-home to the surviving link in Topology; then restore it and watch the platform
+          settle back. On an HA site, fail the master Socket once too.</p>
+        </li>
+        <li>
+          <h4>Close on the audit trail</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events for the test site: link down, SLA violations, HA failover, recovery mode.
+          This is the evidence pack for the change record — and the alerting feed that should page
+          someone when a real failover happens. Re-run the test after ISP changes or Socket
+          upgrades.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-socket-ha" target="_blank" rel="noopener">What is Socket HA</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-sockets-in-an-ha-deployment" target="_blank" rel="noopener">Using Sockets in an HA Deployment</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/active-active-traffic-distribution" target="_blank" rel="noopener">Active/Active Traffic Distribution</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-a-last-resort-link" target="_blank" rel="noopener">Configuring a Last-Resort Link</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/defining-a-preferred-pop-for-a-site" target="_blank" rel="noopener">Defining a Preferred PoP for a Site</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recovery-mechanisms-for-cato-site-types" target="_blank" rel="noopener">Recovery Mechanisms for Cato Site Types</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-cato-networks-internet-recovery" target="_blank" rel="noopener">Using Cato Networks' Internet Recovery</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/routing-traffic-to-an-off-cloud-link" target="_blank" rel="noopener">Routing Traffic to an Off-Cloud Link</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-bgp-in-the-cato-cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)</a></li>
+            <li><a href="security-retail-pci.html">Retail Store Networks &amp; PCI DSS 4.0</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Integration Design — Cato Use Case Library</title>
+<meta name="description" content="The dependency every deployment shares — SCIM provisioning, Identity Agents, user awareness behind sockets, and SAML/MFA flows designed once, referenced everywhere.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-identity-design">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / Identity Integration Design</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Identity Integration Design</h1>
+    <p class="lede">
+      Nearly every Cato deployment shares one dependency: the platform must know <em>who</em> is behind
+      every flow before any identity-scoped policy can work. This page designs that dependency once —
+      SCIM provisioning from Entra ID or Okta, SSO with MFA for the Client, and user awareness behind
+      sockets — so every ZTNA rule, DLP scope and per-user event that follows lands on solid ground.
+    </p>
+    <div class="meta-row">
+      <span class="tag">SCIM</span><span class="tag">Entra ID</span><span class="tag">User Awareness</span>
+      <span class="tag">SAML</span><span class="tag">Identity Agent</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Identity is the policy foundation</h2>
+      <p>
+        Every valuable thing the platform does downstream — a ZTNA rule scoped to contractors, a DLP
+        policy scoped to finance, an event trail that names a person rather than an IP — depends on one
+        upstream fact: Cato knows who the user is. Cato's model makes this worth designing properly:
+        it maintains a <strong>single user identity</strong>, so once a user is added to a policy,
+        <em>“it is enforced whether the user is located behind a site or remotely”</em>. One identity,
+        one policy, both worlds.
+      </p>
+      <p>
+        Get identity wrong and the failure is quiet. Traffic from unrecognised users lands in the
+        <strong>All Unidentified Users</strong> system group, group-scoped rules never match, and users
+        fall through to whatever default rule sits at the bottom of the policy. That is the classic
+        stalled rollout: the policy looks right, the users complain, and nobody can see why.
+      </p>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin-top:0">Access rules miss</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">ZTNA and firewall rules scoped to groups silently
+          match nothing when the user behind the flow is unidentified — access is decided by the
+          fallback rule, not the design.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Data scopes drift</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">DLP and CASB policies scoped to “finance” or
+          “engineering” only bind if group membership is provisioned and current — stale sync means
+          stale protection.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Events lose names</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Investigations and audits need “Priya uploaded
+          the file”, not “10.20.4.17 uploaded the file”. Attribution is only as good as awareness
+          coverage.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“If I pick any flow out of your firewall logs right now, can you tell me the person behind it —
+        not the IP? And how many of your current rules are per-user exceptions rather than group-scoped
+        policy?”</p>
+      </div>
+    </section>
+
+    <section id="decisions" class="reveal">
+      <div class="section-kicker">The design decisions</div>
+      <h2>Four decisions, made once</h2>
+      <p>
+        Identity integration is four decisions. Each has a documented default; the point is to make all
+        four deliberately, before any policy is written that depends on them.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Decision</th><th>Options (documented)</th><th>Design call</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Directory &amp; provisioning</strong></td>
+              <td>SCIM (Entra ID, Okta, OneLogin, DTS) · LDAP from on-prem AD · manual users</td>
+              <td>SCIM from the corporate IdP — near real-time users <em>and groups</em>. Manual only for
+              lab and break-glass accounts.</td>
+            </tr>
+            <tr>
+              <td><strong>Authentication</strong></td>
+              <td>SSO via the IdP · Cato MFA (SMS / authenticator app) · username + password</td>
+              <td>SSO with MFA enforced in the IdP flow — the IdP stays authoritative for credentials,
+              MFA and conditional access.</td>
+            </tr>
+            <tr>
+              <td><strong>User awareness behind sites</strong></td>
+              <td>Identity Agent (Cato Client) · AD Query (WMI on DCs) · Windows Event Forwarding</td>
+              <td>Identity Agent wherever the Client can be deployed; AD Query or WEF to cover the
+              clientless remainder.</td>
+            </tr>
+            <tr>
+              <td><strong>Device posture</strong></td>
+              <td>Posture profiles evaluated alongside identity</td>
+              <td>Design as identity's sibling — the same groups pair with posture profiles in ZTNA
+              rules from day one.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <h3 style="margin-top:0">1 · Directory &amp; provisioning — SCIM</h3>
+          <p style="font-size:.93rem;color:var(--ink-2)">
+            SCIM creates, updates and disables Cato users straight from the IdP, syncing changes in near
+            real time — and, critically, it syncs <strong>user groups</strong>, the objects policy will
+            reference. Enable it under <span class="path">Access → Directory Services</span> (SCIM tab),
+            then paste the Base URL and bearer token into the IdP's provisioning app.
+          </p>
+          <ul style="margin:6px 0 0;padding-left:20px;font-size:.9rem;color:var(--ink-2)">
+            <li><strong>Entra ID:</strong> “Cato Networks Provisioning” enterprise app, automatic mode,
+            assign the specific users and groups to sync — Entra initiates sync roughly every 40 minutes.
+            Nested groups are not supported: flatten them in the IdP.</li>
+            <li><strong>Okta:</strong> enable Create / Update / Deactivate, then Push Groups to sync the
+            groups policy will use.</li>
+            <li><strong>Caveats:</strong> SCIM overrides existing LDAP groups with the same name; LDAP
+            and SCIM provisioning cannot run simultaneously; unassigning a user in the IdP disables
+            (not deletes) them in Cato.</li>
+          </ul>
+          <p style="font-size:.93rem;color:var(--ink-2);margin-bottom:0">
+            <strong>Group strategy (recommended practice):</strong> build purpose-named, flat groups in
+            the IdP for Cato to consume — <span class="mono">ztna-contractors</span>,
+            <span class="mono">dlp-finance</span> — rather than reusing the org chart. Group names become
+            part of your security policy; change-control them like firewall rules.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">2 · Authentication — SSO + MFA</h3>
+          <p style="font-size:.93rem;color:var(--ink-2)">
+            The authentication policy (<span class="path">Access → User Authentication</span>) sets how
+            SDP users authenticate account-wide — SSO, Cato MFA (SMS or an RFC-6238 authenticator app),
+            or username and password — with per-user overrides for exceptions. With SSO, the PoP hands
+            the user to the IdP, the user completes login <em>including the IdP's MFA</em>, and the PoP
+            validates the IdP token before issuing its own Cato token — so conditional-access policy
+            stays where it belongs, in the IdP.
+          </p>
+          <ul style="margin:6px 0 0;padding-left:20px;font-size:.9rem;color:var(--ink-2)">
+            <li>Sixteen IdPs are supported for user SSO; Entra ID (Azure) and Okta cover all six
+            authentication scenarios, including headless Linux.</li>
+            <li>Token validity: duration-based (silent renewal) or “Always Prompt”. Trusted devices skip
+            MFA for up to 30 days — a geolocation change forces re-authentication.</li>
+            <li>Users activated with registration codes cannot use SSO or MFA — reserve codes for lab
+            devices.</li>
+          </ul>
+          <p style="font-size:.93rem;color:var(--ink-2);margin-bottom:0">
+            <strong>Protocol note:</strong> the current KB states Cato user SSO integrates with
+            <em>OIDC-compatible</em> IdPs. If the estate is SAML-federated today, that is not a blocker —
+            you integrate at the IdP (Entra ID, Okta…), which fronts Cato over OIDC — but surface it in
+            design review rather than discovering it in week three.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">3 · User awareness behind sockets</h3>
+          <p style="font-size:.93rem;color:var(--ink-2)">
+            In the office there is no per-user tunnel — the socket carries everyone — so the PoP must
+            learn who sits behind each IP. The documented methods, all configured under
+            <span class="path">Access → User Awareness</span>:
+          </p>
+          <ul style="margin:6px 0 0;padding-left:20px;font-size:.9rem;color:var(--ink-2)">
+            <li><strong>Identity Agent</strong> — the Cato Client runs in the background and reports the
+            device's logged-in identity to the PoP about every 30 seconds, with IP changes reported
+            immediately. With Windows Client v5.18+ / macOS v5.11+ this needs only a one-time
+            authentication and no ZTNA licence. Best fidelity; first choice for managed fleets.</li>
+            <li><strong>AD Query</strong> — Cato queries domain controllers over WMI for login events
+            (dedicated AD account in Distributed COM Users + Event Log Readers; Directory Services
+            configured first). Covers clientless estates — thin clients, machines the Client can't
+            reach.</li>
+            <li><strong>Windows Event Forwarding</strong> — DCs forward login events to a collector
+            server that Cato queries; one collection point instead of WMI to every DC. Fits multi-DC
+            estates and locked-down server policies.</li>
+          </ul>
+          <p style="font-size:.93rem;color:var(--ink-2);margin-bottom:0">
+            Mixed estates mix methods. Design for coverage: every office subnet should have an awareness
+            path, or its users will surface as unidentified.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">4 · Device posture — identity's sibling</h3>
+          <p style="font-size:.93rem;color:var(--ink-2)">
+            Access decisions pair <strong>who</strong> (identity and group) with <strong>the state of the
+            device</strong> (posture profile: EPP/EDR running, disk encryption, OS version), evaluated
+            continuously. Posture is not this page's story — see
+            <a href="access-third-party.html">De-risking 3rd-Party Access</a> for the full treatment —
+            but it belongs in the same design session.
+          </p>
+          <p style="font-size:.93rem;color:var(--ink-2);margin-bottom:0">
+            Define posture profiles under <span class="path">Access → Device Posture</span> at design
+            time, named with the same discipline as your groups, so ZTNA rules can pair
+            <span class="mono">group + posture</span> from day one. Retrofitting posture into per-user
+            exceptions later is the same anti-pattern as per-user identity rules.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">How it fits together</div>
+      <h2>One identity plane, every enforcement point</h2>
+      <p>
+        The four decisions interlock: SCIM builds the user and group objects in the Cato Management
+        Application; SSO with MFA authenticates the remote user's Client; the Identity Agent (or AD
+        Query) attributes office traffic behind the socket; and the PoP enforces the same group-scoped
+        policy on both. The amber lane is what this design exists to prevent — a device with no
+        awareness path, matching only <strong>All Unidentified Users</strong> and the fallback rules.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Identity integration design — provisioning, authentication and awareness feeding identity-scoped policy</title>
+          <desc id="dg1-desc">An identity provider at the top provisions users and groups over SCIM into the Cato Management Application, which feeds policy at the Cato PoP. An office user behind a socket is identified by the Identity Agent; a remote user connects with the Cato Client after SSO with MFA. Both reach identity-scoped policy at the PoP over green lanes. A shared PC with no awareness path follows an amber lane, matching only the All Unidentified Users group.</desc>
+
+          <!-- Control plane: IdP and CMA -->
+          <rect class="dg-node" x="390" y="26" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="480" y="50" text-anchor="middle">Identity Provider</text>
+          <text class="dg-sub" x="480" y="68" text-anchor="middle">Entra ID · Okta</text>
+
+          <rect class="dg-node-dark" x="730" y="26" width="196" height="58" rx="10"/>
+          <text class="dg-label-inv" x="828" y="50" text-anchor="middle">Cato Management App</text>
+          <text class="dg-sub-inv" x="828" y="68" text-anchor="middle">users &amp; groups via SCIM</text>
+
+          <!-- SCIM provisioning lane -->
+          <path class="lane lane-allow" d="M 570 55 L 730 55"/>
+          <text class="dg-tiny" x="650" y="42" text-anchor="middle">SCIM provisioning</text>
+          <text class="dg-tiny" x="650" y="74" text-anchor="middle">users &amp; groups</text>
+
+          <!-- CMA -> PoP policy lane -->
+          <path class="lane-static" fill="none" d="M 828 84 C 826 180, 690 265, 514 292"/>
+          <text class="dg-tiny" x="815" y="210" text-anchor="middle">policy references</text>
+          <text class="dg-tiny" x="815" y="225" text-anchor="middle">IdP groups</text>
+
+          <!-- Auth lanes to IdP -->
+          <path class="lane-static" fill="none" d="M 126 276 C 190 170, 300 100, 388 68"/>
+          <path class="lane-static" fill="none" d="M 856 294 C 810 180, 700 92, 572 66"/>
+          <text class="dg-tiny" x="480" y="108" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SSO + MFA (OIDC)</text>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="480" cy="302" rx="170" ry="52"/>
+          <circle cx="318" cy="318" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="286" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="369" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="480" cy="300" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="300" r="30"/>
+
+          <!-- Office user behind socket -->
+          <rect class="dg-node" x="36" y="280" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="126" y="305" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="126" y="323" text-anchor="middle">Priya · Socket X1500</text>
+          <path class="lane lane-allow" d="M 216 311 C 290 312, 380 306, 446 301"/>
+          <text class="dg-tiny" x="330" y="288" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Identity Agent</text>
+
+          <!-- Unidentified shared PC -->
+          <rect class="dg-node" x="36" y="380" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="126" y="403" text-anchor="middle">Warehouse shared PC</text>
+          <text class="dg-sub" x="126" y="421" text-anchor="middle">no Client · no AD Query</text>
+          <path class="lane lane-limit" d="M 216 408 C 300 408, 390 360, 454 320"/>
+          <text class="dg-tiny" x="335" y="362" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">All Unidentified Users</text>
+
+          <!-- Remote user -->
+          <g>
+            <circle cx="856" cy="320" r="23" fill="var(--status-good)"/>
+            <circle cx="856" cy="313" r="6.5" fill="#fff"/>
+            <path d="M 843 333 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="856" y="363" text-anchor="middle">Marcus — remote</text>
+            <text class="dg-sub" x="856" y="379" text-anchor="middle">Cato Client · SSO + MFA</text>
+          </g>
+          <path class="lane lane-allow" d="M 833 320 C 740 320, 620 310, 514 302"/>
+          <text class="dg-tiny" x="714" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Client identity</text>
+
+          <!-- PoP labels -->
+          <text class="dg-label" x="480" y="238" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="253" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Identity-scoped policy</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Identified &amp; provisioned — group-scoped policy matches</span>
+          <span class="key"><span class="swatch limit"></span> Unidentified — only fallback rules apply</span>
+        </div>
+        <div class="diagram-caption">Thin grey lines are the control plane: SCIM-provisioned groups become policy objects, and users authenticate to the IdP with SSO and MFA. Every data lane ends at the same identity-scoped policy — the amber lane is the coverage gap this design closes.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>One identity, both worlds</h4><p>A single user identity means a policy written once is enforced whether the user is behind a site or remote — no duplicate rulebases for office and home.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Groups as the policy contract</h4><p>Access is decided by IdP group membership, synced in near real time. Joiners, movers and leavers propagate from HR-driven IdP changes — no firewall change tickets.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕵️</div><div><h4>Attribution in every event</h4><p>Events and analytics carry the user's name, host and IP — the audit trail investigations and regulators actually ask for.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚨</div><div><h4>Unidentified as a signal</h4><p>The All Unidentified Users system group turns coverage gaps into something you can see and burn down — before they surface as policy failures.</p></div></div>
+      </div>
+    </section>
+
+    <section id="sequencing" class="reveal">
+      <div class="section-kicker">Sequencing</div>
+      <h2>Identity before policy — the order that works</h2>
+      <p>
+        The dependency chain is strict: policy references groups; groups come from provisioning; users
+        must authenticate and be recognised before any of it matters. Stage the work in that order, with
+        exit criteria between stages.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Stage</th><th>Do</th><th>Exit criteria before the next stage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td><strong>Provision.</strong> Enable SCIM, connect the IdP app, assign a pilot set of
+              users and the purpose-built groups.</td>
+              <td>Users and groups appear under <span class="mono">Access → Users / User Groups</span>
+              with the IdP shown as the directory source.</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td><strong>Verify groups.</strong> Compare member counts against the IdP; flatten any
+              nested groups at source (nesting is not supported over SCIM).</td>
+              <td>Group membership matches the IdP and updates when you move a test user.</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td><strong>Authenticate.</strong> Set the authentication policy to SSO + MFA; pilot users
+              connect with the Client end to end.</td>
+              <td>Pilot users connect via SSO, MFA prompted in the IdP flow, sessions visible per user.</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td><strong>Attribute.</strong> Turn on the Identity Agent and/or AD Query so office
+              traffic behind sockets carries a name.</td>
+              <td>Office events in <span class="mono">Monitor → Events</span> show usernames, not bare
+              IPs; unidentified traffic is trending down.</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td><strong>Only now: policy.</strong> Write (or migrate) ZTNA, firewall and DLP rules that
+              reference the synced groups — never individual users.</td>
+              <td>Rules match in monitoring; All Unidentified Users hit counts near zero.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">The pitfall — migrating policy before identity is stable</div>
+        <p>Rules imported against groups that are empty, half-synced or misnamed match nothing — silently.
+        Users fall through to defaults, the project team responds with per-user emergency exceptions, and
+        those exceptions never get removed. Never translate a legacy per-user rulebase one-to-one: map it
+        to groups first, prove the groups populate, then migrate. And treat the IdP group model as part of
+        the security policy — rename a synced group and every rule that referenced it is orphaned.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Design review / demo runbook</div>
+      <h2>How to walk it in the CMA</h2>
+      <div class="callout">
+        <div class="co-title">Framing</div>
+        <p>This is a design-review walkthrough as much as a demo. Run it with the identity team in the
+        room — the IdP admin owns half of these decisions, and rollouts stall when they hear about SCIM
+        assignments and group strategy last.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Start where identity enters: provisioning</h4>
+          <p><span class="path">Access → Directory Services</span></p>
+          <p>Open the SCIM tab: the Base URL and bearer token are all the IdP needs — the IdP pushes,
+          Cato receives. Contrast with manual user admin: joiners and leavers handled by the IdP, in
+          near real time.</p>
+        </li>
+        <li>
+          <h4>Show the synced objects policy will use</h4>
+          <p><span class="path">Access → Users</span> · <span class="path">Access → User Groups</span></p>
+          <p>Point out the directory source against each user, then open a synced group and its Members
+          tab. This group object is the contract between the IdP and every rule you will write.</p>
+        </li>
+        <li>
+          <h4>Walk the authentication policy</h4>
+          <p><span class="path">Access → User Authentication</span></p>
+          <p>Show the account-wide method (SSO, MFA, or password), token validity options, and where
+          per-user overrides live. Explain the dual-token flow: MFA and conditional access happen in the
+          IdP; the PoP validates and issues the Cato token.</p>
+        </li>
+        <li>
+          <h4>Show awareness for the office</h4>
+          <p><span class="path">Access → User Awareness</span></p>
+          <p>Show the Identity Agent enablement — the Client reports the logged-in identity roughly every
+          30 seconds — and where AD Query domain controllers are configured for the clientless
+          remainder.</p>
+        </li>
+        <li>
+          <h4>Show identity-scoped policy</h4>
+          <p><span class="path">Security → Internet Firewall</span> · <span class="path">Security → WAN Firewall</span></p>
+          <p>Walk a rulebase where every rule references a group and no rule references an individual.
+          One rule for <span class="mono">ztna-contractors</span> replaces a page of per-user
+          exceptions.</p>
+        </li>
+        <li>
+          <h4>Prove attribution end to end</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events for a pilot user — say Priya — and show office and remote activity under one
+          identity: same name behind the Reading Office socket in the morning, on the Client from home
+          in the afternoon.</p>
+        </li>
+        <li>
+          <h4>Close on the gap detector</h4>
+          <p>Search for traffic with no user attribution and frame All Unidentified Users as the
+          burn-down list: “when this trends to zero, your policy means what it says — that's the state
+          you migrate policy on top of.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/overview-of-directory-services-and-user-awareness" target="_blank" rel="noopener">Overview of Directory Services and User Awareness</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/provisioning-users-with-scim" target="_blank" rel="noopener">Provisioning Users with SCIM</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/scim-provisioning-with-entra-id-formerly-azure" target="_blank" rel="noopener">SCIM Provisioning with Entra ID</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/scim-provisioning-with-okta" target="_blank" rel="noopener">SCIM Provisioning with Okta</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-cato-identity-agents-for-user-awareness" target="_blank" rel="noopener">Using Cato Identity Agents for User Awareness</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-ad-query-for-user-awareness" target="_blank" rel="noopener">Using AD Query for User Awareness</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/sso-authentication-for-users-with-cato" target="_blank" rel="noopener">SSO Authentication for Users with Cato</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-the-authentication-policy-for-cato-clients" target="_blank" rel="noopener">Configuring the Authentication Policy for Cato Clients</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/understanding-the-single-user-identity" target="_blank" rel="noopener">Understanding the Single User Identity</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-user-and-system-groups" target="_blank" rel="noopener">Working with User and System Groups</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

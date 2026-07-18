@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Public Sector: Cyber Essentials &amp; NCSC CAF — Cato Use Case Library</title>
+<meta name="description" content="Map Cato capabilities to Cyber Essentials Plus controls and the NCSC Cyber Assessment Framework — evidence-led conversations for councils, health, education and central government.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  /* CE 4-column mapping table: let headers wrap so all columns fit the card */
+  #cyber-essentials table.data th { white-space: normal; }
+  #cyber-essentials table.data th:nth-child(1) { width: 17%; }
+  #cyber-essentials table.data th:nth-child(2) { width: 25%; }
+  #cyber-essentials table.data th:nth-child(3) { width: 33%; }
+  #cyber-essentials table.data th:nth-child(4) { width: 25%; }
+  #caf table.data th { white-space: normal; }
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-uk-public-sector">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / UK Public Sector</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>UK Public Sector: Cyber Essentials &amp; NCSC CAF</h1>
+    <p class="lede">
+      Two frameworks shape almost every UK public-sector security conversation: Cyber Essentials,
+      the procurement gate suppliers must pass, and the NCSC Cyber Assessment Framework, the lens
+      through which government bodies, health organisations and essential services are assessed.
+      Both are ultimately evidence conversations — and this use case maps Cato capabilities to the
+      five Cyber Essentials control themes and CAF objectives A–D, honestly, at outcome level.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Cyber Essentials</span><span class="tag">NCSC CAF</span>
+      <span class="tag">Public Sector</span><span class="tag">UK</span><span class="tag">Compliance</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        <strong>Cyber Essentials</strong> is the NCSC-backed certification the UK government calls
+        the minimum standard of cyber security for organisations of all sizes, delivered through
+        IASME, the NCSC's Cyber Essentials delivery partner. It is also a procurement gate:
+        Procurement Policy Note 014 requires in-scope central government bodies to ask suppliers
+        for Cyber Essentials (or Plus) on contracts that involve handling certain personal data —
+        and a growing number of public bodies, frameworks and insurers ask for it well beyond that.
+      </p>
+      <p>
+        The <strong>NCSC Cyber Assessment Framework (CAF)</strong> works from the other direction:
+        it is how operators of essential services and public bodies themselves are assessed. It is
+        used by nearly all UK cyber regulators, underpins GovAssure — the assurance scheme for the
+        critical systems of government organisations — and, since September 2024, the CAF-aligned
+        Data Security and Protection Toolkit (DSPT) for NHS trusts, ICBs, CSUs and DHSC arm's-length
+        bodies.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">5<span class="unit"> themes</span></div><div class="stat-label">Cyber Essentials technical controls — firewalls · secure configuration · security update management · user access control · malware protection</div></div>
+        <div class="stat-tile"><div class="stat-value">4<span class="unit"> objectives</span></div><div class="stat-label">CAF 4.0 (Aug 2025) — 14 outcome-based principles across objectives A–D</div></div>
+        <div class="stat-tile"><div class="stat-value">27 Apr 2026</div><div class="stat-label">"Danzell" (v3.3) question set in force — MFA on cloud services and 14-day patching become auto-fail</div></div>
+      </div>
+      <p>
+        Neither framework is a product checklist. Cyber Essentials is scored against your whole IT
+        estate, and CAF judgments belong to the assessor. What a converged platform changes is the
+        <strong>shape of the conversation</strong>: fewer boundaries to control, one policy to
+        evidence, and one place the proof lives.
+      </p>
+    </section>
+
+    <section id="landscape" class="reveal">
+      <div class="section-kicker">The 2026 picture</div>
+      <h2>Who is asked for what</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Central government suppliers</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PPN 014 (in force since February 2025):
+          departments, executive agencies and NDPBs require Cyber Essentials or Plus where contracts
+          involve handling certain personal data. Departments themselves are assessed against the
+          CAF through GovAssure.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NHS &amp; health bodies</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The DSPT has been CAF-aligned since
+          September 2024 for trusts, ICBs, CSUs and arm's-length bodies, using a health-and-care
+          overlay of the CAF — outcome-based assessment, independently reviewed.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Councils &amp; education</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cyber Essentials is the baseline most
+          commonly asked of councils, schools, trusts and their suppliers — in procurement, funding
+          conditions and cyber-insurance questionnaires — with CE Plus increasingly preferred where
+          data sensitivity is higher.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:22px">What changed in April 2026 — Willow to Danzell</h3>
+      <p>
+        The "Willow" question set (v3.2) ran from April 2025. Its successor —
+        <strong>"Danzell" (v3.3)</strong>, published by IASME in February 2026 — is in force for new
+        assessments from <strong>27 April 2026</strong>, with a six-month transition for
+        applications already under way on Willow. Danzell is a tightening, not a rewrite: the five
+        control themes are unchanged, but <strong>MFA on cloud services</strong> (wherever the
+        service offers it) and <strong>applying high-risk and critical security updates within 14
+        days</strong> become automatic-failure questions, cloud services are formally defined and
+        always in scope, passwordless methods such as passkeys are recognised, and Cyber Essentials
+        Plus testing rules are stricter.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Which conversation is in front of you this year — a Cyber Essentials renewal that now
+        lands under Danzell, or a CAF-based assessment such as GovAssure or the CAF-aligned DSPT?”
+        · “When the assessor asks how the internet boundary is controlled for every site, depot and
+        home worker, how many consoles does that answer live in?” · “Who owns the 14-day patching
+        clock — and how much of your security infrastructure is on it?”</p>
+      </div>
+    </section>
+
+    <section id="cyber-essentials" class="reveal">
+      <div class="section-kicker">Framework mapping — Cyber Essentials</div>
+      <h2>The five control themes, mapped to Cato</h2>
+      <p>
+        Cyber Essentials certifies the organisation, not any vendor's product — and much of its
+        scope is end-user devices, which stay firmly the customer's programme. Where Cato materially
+        helps is the network side of every theme: one boundary control for the whole estate, one
+        configuration to keep secure, and enforcement infrastructure the customer never has to
+        patch. Walk the table honestly — the fourth column is what keeps the conversation credible.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Control theme</th><th>What the assessor looks for</th><th>How Cato helps</th><th>What stays with you</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Firewalls</strong></td>
+              <td>Every in-scope device protected by a correctly configured boundary firewall or equivalent — including home and remote workers.</td>
+              <td>FWaaS puts every site, remote worker and cloud workload behind the same default-deny boundary at the PoP — one firewall policy for the whole estate, with no per-site firewall boxes to configure, patch or age out. Remote workers get the identical boundary via the Cato Client.</td>
+              <td>Software firewalls on in-scope end-user devices, and any routers left outside the SASE estate.</td>
+            </tr>
+            <tr>
+              <td><strong>Secure configuration</strong></td>
+              <td>Services and accounts configured securely: defaults removed, unnecessary functionality disabled, changes controlled.</td>
+              <td>One global rule base replaces dozens of per-appliance configurations — no drift between sites, and nothing "temporarily open" on a forgotten box. Every policy change is attributable in the Audit Trail: secure configuration you can demonstrate, not just assert.</td>
+              <td>Hardening of servers and end-user devices — default passwords, unused services, autorun, local builds.</td>
+            </tr>
+            <tr>
+              <td><strong>Security update management</strong></td>
+              <td>Licensed, supported software; high-risk and critical updates applied within 14 days — an auto-fail under Danzell.</td>
+              <td>The enforcement stack (FWaaS, SWG, IPS, anti-malware) runs at the PoP and is kept current by Cato — a whole class of security infrastructure leaves your patching scope. IPS virtual patching (rapid CVE mitigation) shields exposed systems while your teams work the 14-day window.</td>
+              <td>OS, application and firmware patching on in-scope devices and servers — the 14-day clock is yours.</td>
+            </tr>
+            <tr>
+              <td><strong>User access control</strong></td>
+              <td>Accounts limited to those who need them; admin separation; MFA on cloud services wherever offered — an auto-fail under Danzell.</td>
+              <td>Identity-driven ZTNA with SSO/MFA in the access path and least-privilege rules per user and group; RBAC plus MFA for CMA administrators; CASB shows which cloud services are actually in use — the list you need before you can evidence MFA on each of them.</td>
+              <td>Account lifecycle (joiners/leavers), admin account separation, and MFA settings inside each cloud service.</td>
+            </tr>
+            <tr>
+              <td><strong>Malware protection</strong></td>
+              <td>Anti-malware (or equivalent, e.g. allow-listing) active on in-scope devices.</td>
+              <td>Layered network protection — anti-malware, next-gen anti-malware, IPS and DNS/web filtering — scrubs traffic at the PoP before it reaches a device, and logs every block as evidence in one event stream.</td>
+              <td>Endpoint anti-malware/EDR on the devices themselves — CE assesses the device-level control.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The Cyber Essentials Plus angle: verification needs evidence</h3>
+      <p>
+        Cyber Essentials Plus is the same five controls with rigorous, independent technical
+        testing — an assessor verifying that the controls actually operate, not just that the
+        questionnaire says so. That is where the CMA earns its place in the conversation: the
+        policy itself (one rule base, exportable), events showing controls firing on real traffic,
+        device posture state, and an attributable change history — one evidence pack from one
+        console, instead of a screenshot hunt across a rack of point products.
+      </p>
+    </section>
+
+    <section id="caf" class="reveal">
+      <div class="section-kicker">Framework mapping — NCSC CAF</div>
+      <h2>CAF 4.0 objectives A–D at outcome level</h2>
+      <p>
+        The CAF is deliberately outcome-based — 14 principles under four objectives, assessed on
+        what is <em>achieved</em> rather than which products are owned. CAF 4.0 (released
+        6 August 2025) sharpened it further: deeper understanding of attacker methods, secure
+        software development, expanded security monitoring and threat hunting, and AI-related
+        risk woven throughout. Cato contributes to outcomes; the judgment stays with the assessor.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>CAF objective</th><th>What good looks like</th><th>How Cato contributes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A — Managing security risk</strong><br><span style="font-size:.85rem;color:var(--ink-3)">Governance · Risk · Asset Management · Supply Chain</span></td>
+              <td>Clear governance and risk processes, an accurate picture of systems and dependencies, and managed supplier risk.</td>
+              <td>One platform shrinks the estate there is to govern; App Analytics and Device Inventory feed the asset picture with what is actually on the network; one assessed provider (with published certifications) replaces a stack of point-vendor supply-chain assessments; RBAC and the Audit Trail evidence governance over the security estate itself.</td>
+            </tr>
+            <tr>
+              <td><strong>B — Protecting against cyber attack</strong><br><span style="font-size:.85rem;color:var(--ink-3)">Policies · Identity &amp; Access · Data · Systems · Resilience · Training</span></td>
+              <td>Proportionate, enforced protection: identity and access control, data security, system security, resilient networks.</td>
+              <td>The security stack, enforced identically everywhere: ZTNA with continuous posture checks (B2), DLP and TLS inspection with encrypted transport (B3), FWaaS/IPS/anti-malware on every flow (B4), and a self-healing global backbone in place of single-appliance chokepoints (B5).</td>
+            </tr>
+            <tr>
+              <td><strong>C — Detecting cyber security events</strong><br><span style="font-size:.85rem;color:var(--ink-3)">Security Monitoring · Threat Hunting</span></td>
+              <td>Monitoring that actually covers the estate, and — expanded in CAF 4.0 — proactive threat hunting.</td>
+              <td>Every flow from every edge lands in one event store with one clock — coverage is architectural, not a log-shipping project. XDR correlates events into incident stories, the same data supports hunting queries, and MDR adds analyst depth where the in-house SOC is thin.</td>
+            </tr>
+            <tr>
+              <td><strong>D — Minimising the impact of incidents</strong><br><span style="font-size:.85rem;color:var(--ink-3)">Response &amp; Recovery Planning · Lessons Learned</span></td>
+              <td>Tested response and recovery capability, and evidence that lessons are captured and acted on.</td>
+              <td>XDR incident stories give responders a correlated timeline from the first minute; MDR provides guided containment; PoP failover across the backbone keeps sites and workers connected through disruption; the full record supports the lessons-learned write-up afterwards.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One estate, one policy, one evidence plane</h2>
+      <p>
+        A typical public-body estate — a civic-centre HQ, depots, libraries and schools, plus a
+        large hybrid workforce — traditionally means a firewall estate to patch, per-site
+        configurations to keep honest, and evidence scattered across every box. Converged on Cato,
+        every site and user reaches the internet and internal services through the same PoP-enforced
+        policy, and every decision lands in the CMA — which is exactly the evidence a CE Plus
+        assessor or CAF reviewer asks to see.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 410" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">A public-body estate under one policy, with one evidence lane to assessors</title>
+          <desc id="dg1-desc">A council HQ, depots and schools, and remote and field staff all connect through a UK Cato PoP, where one policy — firewall as a service, IPS, anti-malware, ZTNA and DLP — is enforced for the whole estate before traffic reaches cloud and internet services. A grey evidence lane carries policy, posture and event data from the PoP into the Cato Management Application, which feeds evidence to a Cyber Essentials Plus assessor and a CAF assessment.</desc>
+
+          <!-- Policy umbrella label -->
+          <text class="dg-label" x="400" y="94" text-anchor="middle">One policy umbrella</text>
+          <text class="dg-tiny" x="400" y="111" text-anchor="middle">FWaaS · IPS · Anti-Malware · ZTNA · DLP</text>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="400" cy="235" rx="135" ry="95"/>
+          <circle cx="288" cy="182" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="512" cy="288" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="400" y="170" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="400" cy="235" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="400" cy="235" r="30"/>
+          <text class="dg-label" x="400" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">UK PoP</text>
+          <text class="dg-tiny" x="400" y="308" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">full stack on every flow</text>
+
+          <!-- Estate (left) -->
+          <rect class="dg-node" x="34" y="54" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="78" text-anchor="middle">Council HQ</text>
+          <text class="dg-sub" x="122" y="96" text-anchor="middle">Socket · civic centre</text>
+
+          <rect class="dg-node" x="34" y="190" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="214" text-anchor="middle">Depots &amp; schools</text>
+          <text class="dg-sub" x="122" y="232" text-anchor="middle">branch Sockets · IPsec</text>
+
+          <rect class="dg-node" x="34" y="326" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="350" text-anchor="middle">Remote &amp; field staff</text>
+          <text class="dg-sub" x="122" y="368" text-anchor="middle">Cato Client · ZTNA</text>
+
+          <!-- Estate traffic into the PoP (green) -->
+          <path class="lane lane-allow" d="M 210 83 C 290 118, 330 180, 372 216"/>
+          <path class="lane lane-allow" d="M 210 219 C 280 224, 320 228, 366 232"/>
+          <path class="lane lane-allow" d="M 210 355 C 290 332, 330 282, 372 254"/>
+
+          <!-- Egress to cloud & internet (green) -->
+          <path class="lane lane-allow" d="M 426 212 C 540 160, 620 105, 736 80"/>
+
+          <!-- Evidence lane to CMA (grey) -->
+          <path class="lane-static" fill="none" d="M 430 244 C 490 262, 520 274, 556 288"/>
+
+          <!-- Cloud & internet (top right) -->
+          <rect class="dg-node" x="740" y="44" width="186" height="58" rx="10"/>
+          <text class="dg-label" x="833" y="68" text-anchor="middle">Cloud &amp; internet</text>
+          <text class="dg-sub" x="833" y="86" text-anchor="middle">gov services · M365 · SaaS</text>
+
+          <!-- CMA evidence node -->
+          <rect class="dg-node-dark" x="558" y="262" width="180" height="76" rx="10"/>
+          <text class="dg-label-inv" x="648" y="288" text-anchor="middle">CMA — evidence</text>
+          <text class="dg-sub-inv" x="648" y="306" text-anchor="middle">policy · posture · events</text>
+          <text class="dg-sub-inv" x="648" y="323" text-anchor="middle">Audit Trail · exports</text>
+
+          <!-- Evidence to assessors (grey) -->
+          <path class="lane-static" fill="none" d="M 738 285 C 756 272, 764 258, 780 246"/>
+          <path class="lane-static" fill="none" d="M 738 322 C 756 334, 764 344, 780 352"/>
+
+          <rect class="dg-node-green" x="784" y="214" width="146" height="52" rx="10"/>
+          <text class="dg-label" x="857" y="236" text-anchor="middle">CE Plus assessor</text>
+          <text class="dg-sub" x="857" y="253" text-anchor="middle">verification evidence</text>
+
+          <rect class="dg-node-green" x="784" y="330" width="146" height="52" rx="10"/>
+          <text class="dg-label" x="857" y="352" text-anchor="middle">CAF assessment</text>
+          <text class="dg-sub" x="857" y="369" text-anchor="middle">objectives A–D</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Estate traffic — one policy enforced at the PoP</span>
+        </div>
+        <div class="diagram-caption">HQ, depots, schools and remote workers all cross the same PoP-enforced policy. The grey lane is the evidence path: policy, posture and event data flow into the CMA, ready for a CE Plus assessor or a CAF-based review.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>One boundary for the whole estate</h4><p>Default-deny FWaaS in front of every site, home worker and cloud workload — the firewalls theme answered once, not per box.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛠️</div><div><h4>Less infrastructure on the 14-day clock</h4><p>Cato maintains the enforcement stack at the PoP; IPS virtual patching buys time on exposed systems while teams patch within Danzell's window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Access control that maps to the ask</h4><p>ZTNA with SSO/MFA and least privilege for users; RBAC and MFA for administrators; CASB visibility of the cloud services MFA must cover.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>Evidence on demand</h4><p>Policy, posture, events and an attributable Audit Trail in one console — the assessor pack assembles itself as a by-product of operation.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Position with care</div>
+        <p>Say “Cato <strong>supports</strong> your Cyber Essentials and CAF work” — never “Cato
+        makes you compliant” or “Cato is CE certified for you”. Certification is scored against the
+        customer's whole estate (including endpoints Cato does not manage), and CAF judgments belong
+        to the assessor. For claims about Cato's own certifications, use only what is listed on
+        Cato's published security, compliance &amp; privacy page — do not assert UK-specific
+        certifications beyond it.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the framework and the date</div>
+        <p>Ask which assessment is next and when: a CE renewal (now under Danzell), a CE Plus
+        audit, GovAssure, or a CAF-aligned DSPT submission. Then anchor every screen you show to
+        the evidence that assessment will ask for.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame with the two mapping tables</h4>
+          <p>Walk the Cyber Essentials table — including the “what stays with you” column — and the
+          CAF objectives. Agreeing what Cato does <em>not</em> cover builds the credibility that
+          carries the rest of the meeting.</p>
+        </li>
+        <li>
+          <h4>The boundary control, once</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show the ordered, default-deny rule base that fronts every site and user. One policy
+          is the firewalls answer for the civic centre, every depot and school, and each home
+          worker — no per-site boxes, no drift.</p>
+        </li>
+        <li>
+          <h4>Secure configuration you can prove</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show who changed which rule, when, from where — and export it. This is the change
+          control evidence behind the secure-configuration theme and CAF Objective A governance in
+          one screen.</p>
+        </li>
+        <li>
+          <h4>Posture checks in the access path</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Open a posture profile — anti-malware running, disk encryption, OS version — and show
+          it gating access continuously. This is user access control plus supporting evidence a CE
+          Plus assessor can see operating.</p>
+        </li>
+        <li>
+          <h4>Protection layers and the 14-day window</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>Show IPS and Anti-Malware protections applied at the PoP, updated by Cato. Position
+          virtual patching honestly: it shields exposed services while the customer's teams patch —
+          it does not stop Danzell's 14-day clock on their own devices.</p>
+        </li>
+        <li>
+          <h4>Detection and the assessor pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter the unified event stream: blocks, detections and user attribution with one
+          clock — CAF Objective C in a single view. Close by assembling “the pack”: policy export,
+          posture state, events and Audit Trail from one console.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.ncsc.gov.uk/cyberessentials/overview" target="_blank" rel="noopener">Cyber Essentials — NCSC overview</a></li>
+            <li><a href="https://iasme.co.uk/articles/important-update-changes-to-cyber-essentials-for-april-2026/" target="_blank" rel="noopener">IASME — Cyber Essentials changes for April 2026 (Danzell, v3.3)</a></li>
+            <li><a href="https://www.ncsc.gov.uk/collection/cyber-assessment-framework" target="_blank" rel="noopener">NCSC Cyber Assessment Framework (CAF)</a></li>
+            <li><a href="https://www.ncsc.gov.uk/blog-post/caf-v4-0-released-in-response-to-growing-threat" target="_blank" rel="noopener">NCSC — CAF v4.0 release (6 Aug 2025)</a></li>
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy — published certifications</a></li>
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Cato rapid CVE mitigation (virtual patching)</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">FWaaS / NGFW — solution page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+            <li><a href="security-finance-dora.html">Financial Services Resilience (DORA)</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

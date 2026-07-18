@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running a Cato PoV — Cato Use Case Library</title>
+<meta name="description" content="A repeatable proof-of-value framework — scope, success criteria, test-case tables, weekly cadence and the wrap-up that converts evidence into a decision.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-pov-framework">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / Running a Cato PoV</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Running a Cato PoV</h1>
+    <p class="lede">
+      A proof of value that isn't scoped is a free trial that never ends. This page is the repeatable
+      framework for turning a Cato evaluation into a decision: an agreed scope, measurable success
+      criteria, a fixed timeline and a register of evidence — closed out in a meeting where somebody
+      says yes. Wrap it around any use case in this library; the attached Visibility PoV deck is the
+      worked example.
+    </p>
+    <div class="meta-row">
+      <span class="tag">PoV</span><span class="tag">Success Criteria</span><span class="tag">Test Cases</span>
+      <span class="tag">Evaluation</span><span class="tag">Framework</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../2%20-%20Management%20use%20cases/Visibility/Cato%20SASE%20Platform%20-%20Visibility%20PoV.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Turn evaluation into a decision</h2>
+      <p>
+        Every Cato PoV proves something different — failover for one customer, TLS inspection coverage
+        for another, shadow-AI discovery for a third. What should never differ is the <strong>shape</strong>
+        of the engagement. A well-run PoV has four fixed properties: a scope both sides agreed before
+        anything was built, success criteria written down as measurable statements, a timeline with an
+        end date, and evidence collected as it lands rather than reconstructed at the end. Remove any
+        one of them and the evaluation drifts into an open-ended trial that consumes SE time and
+        customer goodwill without ever producing a verdict.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">1<span class="unit">workshop</span></div><div class="stat-label">Scope and success criteria agreed before anything is built</div></div>
+        <div class="stat-tile"><div class="stat-value">30<span class="unit">min</span></div><div class="stat-label">Weekly sync — findings reviewed while they are fresh</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">4<span class="unit">weeks</span></div><div class="stat-label">The packaged AI Visibility Assessment — proof this frame runs on a fixed clock</div></div>
+      </div>
+      <div class="callout">
+        <div class="co-title">This page and the Visibility PoV deck</div>
+        <p>The attached deck runs a visibility-led PoV: its eight business objectives and demo sequence
+        are covered in <a href="management-visibility.html">Operational &amp; Executive Visibility</a>.
+        This page extracts the reusable frame around that content — scope, criteria, cadence, wrap-up —
+        so you can run the same engagement with any use-case bundle from this library.</p>
+      </div>
+    </section>
+
+    <section id="drift" class="reveal">
+      <div class="section-kicker">The failure mode</div>
+      <h2>How a PoV becomes a free trial</h2>
+      <p>Four ways an evaluation loses its way — each one avoidable, and each one common:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">No success criteria</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Impressive demos, no decision. If nobody wrote
+          down what "proven" means, the evaluation cannot converge — every session ends with
+          "interesting, can we also look at…" and the goalposts move weekly.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Unscoped drift</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">"Can it also…?" is a compliment — and a trap.
+          Every untracked ask stretches the timeline, and by the time the answer is yes, the sponsor
+          has forgotten why the evaluation started.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">No cadence</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Weeks pass between contacts. Findings are
+          reconstructed from memory at the end instead of recorded as they land, the champion goes
+          quiet, and momentum dies exactly when the evidence was strongest.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">No decision meeting</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The trial licence expires and nobody was ever
+          asked to decide. The strongest evidence in the world does nothing if there is no meeting on
+          the calendar where it is put next to the success criteria.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Before we switch anything on — what would you need to see proven, on your own traffic,
+        for this evaluation to end in a decision? And who, besides you, has to see it?"</p>
+      </div>
+    </section>
+
+    <section id="framework" class="reveal">
+      <div class="section-kicker">The framework</div>
+      <h2>Five stages, one decision</h2>
+      <p>
+        The pipeline below is the whole method. Success criteria are agreed once, at the workshop, and
+        travel with the PoV from that point on: the build exists to enable them, the test cycles exist
+        to evidence them, and the wrap-up puts findings next to them. Anything raised mid-flight that
+        is not on the register gets parked — visibly, respectfully, and in writing — in the next-steps
+        register.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 412" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The Cato PoV pipeline</title>
+          <desc id="dg1-desc">A five-stage pipeline runs left to right: scope workshop, build, test cycles, wrap-up and decision, connected by a green success-criteria lane. A weekly sync loop circles above the test cycles stage, and evidence bars accumulate beneath it. An amber unscoped-drift branch leaves the test cycles stage and is cut off with an X, its asks parked in the next-steps register.</desc>
+
+          <!-- Weekly sync loop above test cycles -->
+          <text class="dg-tiny" x="489" y="44" text-anchor="middle">Weekly 30-min sync — findings recorded as they land</text>
+          <ellipse class="lane lane-allow" cx="489" cy="88" rx="56" ry="28"/>
+
+          <!-- Green success-criteria connectors between stages -->
+          <path class="lane lane-allow" d="M 187 159 L 219 159"/>
+          <path class="lane lane-allow" d="M 375 159 L 407 159"/>
+          <path class="lane lane-allow" d="M 571 159 L 603 159"/>
+          <path class="lane lane-allow" d="M 759 159 L 791 159"/>
+
+          <!-- Amber drift branch, cut off -->
+          <path class="lane lane-limit" d="M 566 182 C 630 214, 668 262, 694 310"/>
+          <g aria-label="drift cut off">
+            <path class="lane-x" d="M 688 318 L 712 342"/><path class="lane-x" d="M 712 318 L 688 342"/>
+          </g>
+          <text class="dg-tiny" x="700" y="366" text-anchor="middle">Unscoped asks — "can it also…?"</text>
+          <text class="dg-tiny" x="700" y="382" text-anchor="middle">cut here → next-steps register, not the PoV</text>
+
+          <!-- Evidence feed under test cycles -->
+          <path class="lane-static" d="M 489 190 L 489 308"/>
+          <rect x="433" y="352" width="18" height="20" rx="3" fill="var(--green-300)"/>
+          <rect x="461" y="340" width="18" height="32" rx="3" fill="var(--green-300)"/>
+          <rect x="489" y="328" width="18" height="44" rx="3" fill="var(--green-600)"/>
+          <rect x="517" y="316" width="18" height="56" rx="3" fill="var(--green-600)"/>
+          <path d="M 425 372 L 545 372" stroke="var(--hairline)" stroke-width="1.5"/>
+          <text class="dg-tiny" x="485" y="392" text-anchor="middle">Evidence accumulates weekly</text>
+
+          <!-- Pipeline nodes -->
+          <rect class="dg-node" x="25" y="128" width="162" height="62" rx="10"/>
+          <text class="dg-label" x="106" y="152" text-anchor="middle">Scope workshop</text>
+          <text class="dg-sub" x="106" y="170" text-anchor="middle">Success criteria agreed</text>
+
+          <rect class="dg-node" x="219" y="128" width="156" height="62" rx="10"/>
+          <text class="dg-label" x="297" y="152" text-anchor="middle">Build</text>
+          <text class="dg-sub" x="297" y="170" text-anchor="middle">Prereqs · IdP · TLSi</text>
+
+          <rect class="dg-node" x="407" y="128" width="164" height="62" rx="10"/>
+          <text class="dg-label" x="489" y="152" text-anchor="middle">Test cycles</text>
+          <text class="dg-sub" x="489" y="170" text-anchor="middle">Register worked wk 1–N</text>
+
+          <rect class="dg-node" x="603" y="128" width="156" height="62" rx="10"/>
+          <text class="dg-label" x="681" y="152" text-anchor="middle">Wrap-up</text>
+          <text class="dg-sub" x="681" y="170" text-anchor="middle">Findings vs criteria</text>
+
+          <rect class="dg-node-green" x="791" y="128" width="148" height="62" rx="10"/>
+          <text class="dg-label" x="865" y="152" text-anchor="middle">Decision</text>
+          <text class="dg-sub" x="865" y="170" text-anchor="middle">Go · next steps</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Agreed scope — the success-criteria thread</span>
+          <span class="key"><span class="swatch limit"></span> Unscoped drift — cut and parked</span>
+          <span class="key"><span class="swatch" style="border-top-style:solid;border-color:var(--ink-3)"></span> Evidence feed</span>
+        </div>
+        <div class="diagram-caption">Success criteria agreed at the workshop carry through every stage — every weekly cycle lands evidence against a criterion, and the decision meeting reads the register, not memories.</div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Scope &amp; success criteria workshop</h4>
+          <p>One structured session before anything is built. Ask what the customer must see proven —
+          then push every answer until it is testable, and map each one to a use-case page in this
+          library (the library is the menu; see
+          <a href="#use-cases">choosing the PoV use cases</a> below). "We want to see our traffic"
+          becomes "App Analytics shows top applications by user for the pilot site". Output: a list of
+          success criteria, each with a measurement and a named owner on the customer side.</p>
+        </li>
+        <li>
+          <h4>Environment &amp; prerequisites</h4>
+          <p>Agree the footprint: which sites and users are in scope (typically one branch socket plus
+          a pilot group of remote users), which licences or trials are needed, and the two enablers
+          that most often gate the timeline — TLS inspection where content-level proof is required
+          (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>) and
+          identity integration (see <a href="access-identity-design.html">Identity Integration
+          Design</a>), because identity-attributed evidence is the difference between "an IP did this"
+          and "Priya did this".</p>
+          <div class="callout warn">
+            <div class="co-title">Prerequisites gate the timeline — agree before week 1</div>
+            <ul style="margin:6px 0 0;padding-left:20px">
+              <li>Trial licences confirmed for every capability under test.</li>
+              <li>TLSi scope and exclusions approved by whoever owns privacy — before traffic is inspected, not after.</li>
+              <li>IdP integration connected and the pilot group syncing.</li>
+              <li>Change windows booked for connecting the pilot site.</li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <h4>The test-case register</h4>
+          <p>Every success criterion becomes a row: what we test, how important it is, how it is
+          measured, and where it stands. This is the single artefact the whole PoV runs on — reviewed
+          at every sync, read out at the wrap-up. A worked sample:</p>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="data">
+              <thead>
+                <tr><th>Use case</th><th>What we test</th><th>Priority</th><th>Measurement / evidence</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="network-sdwan.html">Branch SD-WAN resilience</a></td>
+                  <td>Pull the primary link on the pilot socket mid-call</td>
+                  <td>Must prove</td>
+                  <td>Voice call continues; Socket metrics show seamless failover</td>
+                  <td>Passed — wk 2</td>
+                </tr>
+                <tr>
+                  <td><a href="network-global-app-performance.html">Global app performance</a></td>
+                  <td>UK ↔ Dubai transfer over the backbone vs today's path</td>
+                  <td>Must prove</td>
+                  <td>Side-by-side transfer times; PoP-to-PoP latency from Topology</td>
+                  <td>In progress</td>
+                </tr>
+                <tr>
+                  <td><a href="security-consistent.html">Threat prevention</a></td>
+                  <td>IPS &amp; anti-malware on pilot-site traffic, monitor first</td>
+                  <td>Must prove</td>
+                  <td>Test threat blocked; event attributed to user and device in Events</td>
+                  <td>Scheduled — wk 3</td>
+                </tr>
+                <tr>
+                  <td><a href="access-hybrid-workforce.html">Remote-user ZTNA</a></td>
+                  <td>Pilot group works a full week through the Cato Client</td>
+                  <td>Should prove</td>
+                  <td>Experience Monitoring stats; no helpdesk tickets from the group</td>
+                  <td>In progress</td>
+                </tr>
+                <tr>
+                  <td><a href="security-ai-visibility.html">Shadow AI discovery</a></td>
+                  <td>AI app inventory on real traffic, monitor mode only</td>
+                  <td>Nice to have</td>
+                  <td>Discovery inventory and GenAI report export</td>
+                  <td>Scheduled — wk 3</td>
+                </tr>
+                <tr>
+                  <td>CASB tenant control</td>
+                  <td>Raised in week 2 — not in the agreed scope</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td>Parked — next-steps register</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li>
+          <h4>Weekly cadence</h4>
+          <p>A 30-minute sync, same slot every week. Walk the register top to bottom, update statuses
+          live on screen, and record findings as they land — a screenshot, an event export or a metric
+          into the shared evidence doc, dated, against its criterion. New asks are triaged in the
+          meeting: onto the register (with a criterion and a trade-off) or into the next-steps
+          register. Evidence recorded weekly is what makes the wrap-up a formality rather than an
+          archaeology project.</p>
+        </li>
+        <li>
+          <h4>Wrap-up &amp; the decision meeting</h4>
+          <p>One page: findings against success criteria, pass by pass. Present it in a meeting booked
+          at the workshop — with the economic buyer in the room, not just the technical champion. If a
+          criterion failed, say so plainly; credibility is the product. The next-steps register — every
+          parked ask — becomes the expansion roadmap, and for most engagements the natural next page is
+          <a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a>.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Decision by design</h4><p>The timeline ends in a meeting where the question is actually asked — a verdict is scheduled, not hoped for.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Evidence, not opinion</h4><p>Every claim in the wrap-up has a dated screenshot, event or metric behind it, gathered while it happened.</p></div></div>
+        <div class="benefit"><div class="b-icon">📏</div><div><h4>Scope discipline</h4><p>New asks are honoured by parking them in writing — the customer feels heard and the PoV keeps its end date.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Repeatable by any SE</h4><p>The same frame fits any use-case bundle — a new SE can run week one straight from this page.</p></div></div>
+      </div>
+    </section>
+
+    <section id="use-cases" class="reveal">
+      <div class="section-kicker">Choosing the PoV use cases</div>
+      <h2>The library is the menu</h2>
+      <p>
+        Pick a small bundle — four to six use cases, of which only two or three are "must prove" — and
+        take the success criteria straight from the relevant library pages, each of which carries its
+        own demo runbook and evidence points. Three example bundles:
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Network PoV</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Typical criteria: link failover with voice
+          continuity, global transfer times over the backbone, per-app QoS.</p>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem">
+            <li><a href="network-sdwan.html">SD-WAN &amp; Last-Mile Resilience</a></li>
+            <li><a href="network-mpls-migration.html">MPLS Migration</a></li>
+            <li><a href="network-global-app-performance.html">Global App Performance</a></li>
+          </ul>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="../index.html#cat-network">Browse the Network category →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Security PoV</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Typical criteria: threat verdicts attributed
+          to identity, one policy plane across sites and users, inspection coverage.</p>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem">
+            <li><a href="security-firewall-refresh.html">Firewall Refresh</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="security-tls-inspection.html">TLS Inspection Rollout</a></li>
+          </ul>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="../index.html#cat-security">Browse the Security category →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">AI visibility assessment</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A fully packaged instance of this framework:
+          fixed four-week scope, monitor mode only, weekly 30-minute syncs and a defined report
+          deliverable. Copy its shape when packaging your own.</p>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem">
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+          </ul>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="../index.html#cat-ai-security">Browse the AI Security category →</a></p>
+        </div>
+      </div>
+      <p style="margin-top:14px">
+        Whatever the bundle, <strong>visibility is the evidence layer every PoV leans on</strong> — the
+        eight visibility objectives, their business outcomes and the console demo sequence are on
+        <a href="management-visibility.html">Operational &amp; Executive Visibility</a>. Use that page
+        for the content of a visibility-led PoV; use this one for the frame around it.
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How the SE runs week one</h2>
+      <ol class="steps">
+        <li>
+          <h4>Do the homework before the workshop</h4>
+          <p>From discovery notes, shortlist candidate use-case pages from this library and pre-draft a
+          success criterion for each. The workshop then edits a straw man instead of staring at a blank
+          whiteboard — and you control the altitude of the conversation.</p>
+        </li>
+        <li>
+          <h4>Run the scope workshop</h4>
+          <p>For every ask, push until it is measurable, and agree what is explicitly out of scope —
+          writing things out is as valuable as writing things in. Close by booking two meetings on the
+          spot: the weekly sync slot and the wrap-up/decision meeting with the economic buyer.</p>
+        </li>
+        <li>
+          <h4>Build the pilot</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Access → Users</span></p>
+          <p>Connect the pilot branch socket, enrol the pilot group on the Cato Client, and confirm the
+          IdP sync is populating users and groups. Work through the prerequisites callout above —
+          licences, TLSi approvals, change windows — before the first test cycle is due.</p>
+        </li>
+        <li>
+          <h4>Capture evidence item zero</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>On the day the pilot connects, take the baseline: tunnels up, link quality to the nearest
+          PoP, first traffic flowing. Dated screenshots into the evidence doc — the week-one sync opens
+          with proof the environment is real, which sets the tone for everything after.</p>
+        </li>
+        <li>
+          <h4>Hold the first weekly sync</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Thirty minutes: register top to bottom, statuses updated live, findings recorded in the
+          meeting. Land one quick win on their own traffic — App Analytics for the pilot site is the
+          reliable opener, because seeing their applications and users named on screen makes the PoV
+          feel real on day five, not day thirty.</p>
+        </li>
+        <li>
+          <h4>Guard the scope from day one</h4>
+          <p>The first "can it also…?" usually arrives in week one. Park it in the next-steps register
+          on screen, in the meeting — the customer sees it captured, not dismissed. If it is genuinely
+          must-prove, trade it in explicitly: add a criterion with an owner and a measurement, and
+          agree what drops or how the timeline moves.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Platform architecture — the story behind the evidence</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

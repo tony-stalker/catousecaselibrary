@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Point Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate SmartConsole policy to Cato — access layers and NAT, HTTPS inspection, URL filtering and DLP blades mapped to the CMA policy model, clean-up first.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-checkpoint-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Check Point Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Check Point Policy Migration</h1>
+    <p class="lede">
+      The network cutover from Quantum gateways to Cato is a solved routing problem — the policy
+      estate is where migrations stall. This page works domain by domain through the SmartConsole
+      policy stack — Access Control layers and the NAT rulebase, the URL Filtering and Application
+      Control blades with their HTTPS Inspection dependency, inline CASB intent and the DLP blade —
+      showing what each construct becomes in the Cato Management Application, the semantic traps in
+      between (layer semantics first among them), and the four-phase process that rationalises the
+      rulebase on hit counts before a single rule is translated.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why policy translation is the long pole</h2>
+      <p>
+        Sockets ship, BGP converges, sites cut over — and then the project meets a decade of
+        accumulated SmartConsole policy: Ordered Layers chained so that every layer must pass,
+        Inline Layers nesting parent and sub-rules, layers shared across policy packages so
+        different teams could edit them, a NAT rulebase living entirely apart from access policy,
+        thousands of objects and per-gateway blade carve-outs. Translating that estate badly does
+        more damage than translating it slowly: lift-and-shift faithfully reproduces every dead
+        rule, every any-any exception and every layer of delegation debt in a brand new platform,
+        and the customer inherits their old technical debt with a new logo on it.
+      </p>
+      <p>
+        The Cato Professional Services approach is a four-phase pipeline, applied per policy domain:
+        <strong>EXPORT</strong> the configuration and its usage evidence →
+        <strong>REVIEW &amp; MAP</strong> — rationalise on hit counts, discard dead weight, then map
+        surviving intent to Cato constructs → <strong>DEPLOY</strong> monitor-first, so every
+        translated rule earns evidence before it can hurt anyone → <strong>OPTIMISE</strong> against
+        events and hit counts until the policy is demonstrably right. Never lift-and-shift: the
+        clean-up is not a nice-to-have, it is what makes the mapping tractable.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many of your access-control rules have zero hits in the last 90 days — and which of
+        your layers exist because traffic needs a boundary, rather than because a past
+        administrator needed delegation?”</p>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the mapping and sequencing with
+        Cato Professional Services before using it with a customer.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>SmartConsole Access Control layers &amp; NAT</h2>
+      <p>
+        <strong>The construct.</strong> Check Point access policy is a hierarchy, not a list.
+        A policy package holds one or more <strong>Ordered Layers</strong> — a packet must pass
+        every layer, so an Accept in layer one only stands if no later layer drops the flow — and
+        each layer carries its <em>own</em> implicit cleanup action. <strong>Inline Layers</strong>
+        nest a sub-rulebase under a parent rule: match the parent but no sub-rule and the inline
+        layer's cleanup drops you, even where a flat rulebase would have kept matching. Layers can
+        be shared across packages and delegated to different administrator teams, objects live in a
+        central database, and <strong>NAT is a separate rulebase</strong> — automatic (object-driven)
+        and manual rules evaluated first-match, independent of access policy. Multi-Domain estates
+        repeat all of this per domain.
+      </p>
+      <p>
+        <strong>Export.</strong> The Management API pulls each layer with hit counts and resolved
+        objects — the raw material for rationalisation:
+      </p>
+      <pre class="code"><span class="cmt"># Per layer — rulebase with hit counts, objects resolved via a dictionary</span>
+<span class="kw">mgmt_cli show access-rulebase</span> name "Corp-Policy Network" use-object-dictionary true \
+  show-hits true limit 500 offset 0 --format json
+
+<span class="cmt"># limit caps at 500 — paginate with offset. One layer per call: inline layers are</span>
+<span class="cmt"># queried separately. On Multi-Domain (MDS), repeat per domain.</span>
+<span class="cmt"># Full offline export: CheckPointSW/ExportImportPolicyPackage (R80.10+).</span>
+<span class="cmt"># Also capture: NAT rulebase, Threat Prevention profiles, HTTPS Inspection policy,</span>
+<span class="cmt"># VPN communities and Identity Awareness sources.</span></pre>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Check Point construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ordered Layers (chained — every layer must pass)</td>
+              <td>Flattened effective policy across WAN + Internet Firewall</td>
+              <td>Model what actually passes <em>all</em> layers — an Accept only stands if no later layer drops the flow</td>
+            </tr>
+            <tr>
+              <td>Inline Layers (parent rule + sub-rules)</td>
+              <td>Rule sections / grouped rules in one flat rulebase</td>
+              <td>Each inline layer's own implicit cleanup becomes an explicit rule where the intent requires it</td>
+            </tr>
+            <tr>
+              <td>Site-to-site / east-west rules</td>
+              <td>WAN Firewall rules</td>
+              <td>Default-block allowlist — matches the cleanup-drop habit of most estates</td>
+            </tr>
+            <tr>
+              <td>Internet-egress rules</td>
+              <td>Internet Firewall rules</td>
+              <td>Default-allow blocklist — the opposite posture; add an explicit final block for allowlist egress</td>
+            </tr>
+            <tr>
+              <td>Intra-site / inter-VLAN rules</td>
+              <td>Socket LAN Firewall policy</td>
+              <td>Enforced locally on the socket; or retain the gateway as an interim LAN firewall</td>
+            </tr>
+            <tr>
+              <td>Network / host / group objects</td>
+              <td>Hosts, IP ranges, subnets and groups</td>
+              <td>Export with <code>use-object-dictionary</code>; dedupe before import; creation is scriptable via the GraphQL API or Terraform</td>
+            </tr>
+            <tr>
+              <td>Services &amp; service groups</td>
+              <td>Custom services</td>
+              <td>Protocol/port definitions translate almost mechanically</td>
+            </tr>
+            <tr>
+              <td>Identity Awareness access roles</td>
+              <td>Identity-scoped rules (users / groups)</td>
+              <td>Identity comes from SCIM/LDAP sync and the Client — AD Query and Identity Collector servers are decommissioned</td>
+            </tr>
+            <tr>
+              <td>Automatic hide NAT (branch egress)</td>
+              <td>PoP egress NAT</td>
+              <td>Disappears — the PoP handles Internet SNAT natively</td>
+            </tr>
+            <tr>
+              <td>Manual / static NAT &amp; DNAT-published services</td>
+              <td>Site-level NAT policy; Remote / Local Port Forwarding</td>
+              <td>Line-by-line disposition; re-home inbound services to Cato allocated IPs and update external DNS before gateway retirement</td>
+            </tr>
+            <tr>
+              <td>Threat Prevention profiles (IPS · AV · Anti-Bot · TE)</td>
+              <td>Cato IPS and Next-Gen Anti-Malware</td>
+              <td>Account-level layers of the single-pass engine — per-gateway profile carve-outs become explicit exceptions</td>
+            </tr>
+            <tr>
+              <td>Policy packages / MDS domains / shared layers</td>
+              <td>Policy sections and site/segment-scoped rules in one rulebase</td>
+              <td>Separate Cato accounts only where hard tenancy is required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> Layer semantics are the number-one gotcha of the whole
+        migration. An inline layer's implicit cleanup differs from a flat rulebase: a packet that
+        matches the parent rule but no sub-rule is dropped there and then, and an Accept in an
+        ordered layer merely continues matching into the next layer — so a mechanical rule-for-rule
+        copy silently changes what is allowed. Translate the <em>effective</em> policy — what
+        actually passes every layer — never the layer structure, and budget conversion effort by
+        the number of layers and inter-layer dependencies, not the raw rule count. NAT is its own
+        rulebase evaluated apart from access policy: inventory automatic and manual rules
+        separately, and treat every DNAT-published service as its own change window with a return-path
+        check. Finally, layers are often delegation artefacts — in CMA that intent becomes rule
+        sections, scoped admin roles and the audit trail, not policy structure.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Export every layer with hit counts and the object dictionary;
+        strip zero-hit, disabled and shadowed rules before any mapping — zero-hit extraction is
+        scriptable against the API export; model the effective policy across layers before touching
+        CMA; push the deduped object model through the GraphQL API or Terraform first; then deploy
+        WAN and Internet Firewall rules monitor-first and let events prove them before enforcement.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>URL Filtering &amp; Application Control blades</h2>
+      <p>
+        <strong>The construct.</strong> On R8x, the URL Filtering and Application Control blades
+        enforce through the Access Control policy — typically a dedicated layer whose rules match
+        applications and site categories, with actions Accept, Drop, Ask and Inform (UserCheck
+        pages) and per-rule bandwidth limits, plus custom Applications/Sites objects for anything
+        niche. What those rules can actually see is decided elsewhere: the <strong>HTTPS Inspection
+        policy</strong> is its own rulebase of inspect/bypass rules, and on appliances it is
+        commonly constrained or switched off for performance and complexity reasons — Check Point
+        maintains a dedicated best-practice SK for it.
+      </p>
+      <p>
+        <strong>Export.</strong> The application/URL-filtering layers come out through the same
+        <code>mgmt_cli</code> rulebase export; capture the HTTPS Inspection rulebase and its bypass
+        list separately, and pull SmartLog/SmartEvent web reports as the evidence base for what each
+        category action actually affects.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Check Point construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>App Control / URL Filtering layer rules</td>
+              <td>Internet Firewall rules with app and category conditions</td>
+              <td>One rulebase governs apps and URLs — no blade licences per gateway</td>
+            </tr>
+            <tr>
+              <td>Check Point URL categories</td>
+              <td>Cato URL categories</td>
+              <td>Taxonomies differ in names and granularity — map by intent, review every blocked category individually</td>
+            </tr>
+            <tr>
+              <td>Ask / Inform actions (UserCheck pages)</td>
+              <td>Prompt action</td>
+              <td>User coaching — proceed after acknowledging the warning</td>
+            </tr>
+            <tr>
+              <td>Custom Applications/Sites &amp; groups</td>
+              <td>Custom apps and custom categories</td>
+              <td>Consolidate allow/block lists and re-categorisations into custom categories referenced by rules</td>
+            </tr>
+            <tr>
+              <td>Access roles in web rules</td>
+              <td>User/group-scoped Internet Firewall rules</td>
+              <td>Depends on SCIM/LDAP group provisioning — sequence it first</td>
+            </tr>
+            <tr>
+              <td>Per-rule Limit action</td>
+              <td>Bandwidth management rules</td>
+              <td>Re-model the throttling intent, don't transliterate</td>
+            </tr>
+            <tr>
+              <td>HTTPS Inspection policy (inspect / bypass rules)</td>
+              <td>Cato TLS Inspection — staged rebuild</td>
+              <td>Never ported 1:1 — carry the bypass <em>intent</em> (banking/health categories, pinned apps), not the rules</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> The taxonomy mismatch is the headline risk: a Check Point
+        category and a similarly-named Cato category are not guaranteed to cover the same sites, so
+        a mechanical name-for-name mapping silently changes what is blocked. The honest second: in
+        many estates HTTPS Inspection never ran at full coverage, so the web policy has never been
+        enforced against decrypted traffic — expect new detections as Cato TLSi stages in, and judge
+        SWG parity only after decryption is staged. During co-existence, avoid double inspection:
+        disable gateway HTTPS Inspection for Cato-routed traffic, or scope Cato TLSi bypasses to
+        those paths until cutover — certificate-on-certificate failures break pinned apps twice over.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Build a category translation sheet mapping each category-action
+        to a Cato category and action by intent; consolidate custom Sites into custom categories;
+        deploy the blocked set in monitor mode and compare events against SmartEvent web reports;
+        rebuild TLS inspection through Cato's phased best practice — QUIC blocked and the root
+        certificate deployed first, then gradual enablement from high-risk/low-impact categories
+        outward, tuning bypasses as pinned apps surface — using Prompt where the customer used
+        UserCheck pages.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>Inline CASB intent</h2>
+      <p>
+        <strong>The construct.</strong> There is no inline CASB blade in the Quantum rulebase to
+        migrate. What exists is adjacent: Application Control signatures doing coarse SaaS gating in
+        the access layers, and — where the customer bought it — <strong>Harmony SASE</strong> (the
+        Perimeter 81-derived stack) with its own agent, its own Infinity Portal application and its
+        own SaaS controls, in a policy plane entirely separate from SmartConsole. Expect a handful
+        of configured controls at most: this is an <strong>intent-mapping</strong> exercise on top
+        of a greenfield build, not an object migration.
+      </p>
+      <p>
+        <strong>Export.</strong> The Harmony SASE tenant configuration (if present) from its portal;
+        any App Control rules touching SaaS applications from the access-policy export; SmartEvent
+        application reporting as the more valuable artefact — it shows what the organisation
+        actually uses, sanctioned or not.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Check Point construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Harmony SASE SaaS / web controls (if present)</td>
+              <td>Cato CASB application rules</td>
+              <td>Map the intent — different catalogue, different agent, different portal</td>
+            </tr>
+            <tr>
+              <td>App Control SaaS gating in access layers</td>
+              <td>CASB granular activity rules</td>
+              <td>Upload, download, share, log-in — per app and user group</td>
+            </tr>
+            <tr>
+              <td>Corporate-tenant enforcement intent</td>
+              <td>Cato tenant control rules</td>
+              <td>Corporate-tenant-only access to sanctioned suites</td>
+            </tr>
+            <tr>
+              <td>SmartEvent application reporting</td>
+              <td>Cloud Apps Dashboard / App Analytics</td>
+              <td>Shadow-IT discovery with app risk scoring, on by default</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> The current state is genuinely split-brain — a Quantum
+        rulebase and a Harmony SASE portal that share neither objects nor policy model — so
+        inventory both planes before agreeing scope. Activity-level control on any platform requires
+        TLS inspection: a CASB "migration" judged before decryption is staged will look falsely
+        thin. And because the configured estate is usually near-empty, the real risk is anchoring
+        scope to the old config rather than to discovered usage — migrate what the organisation
+        <em>needs</em>, not the two controls it happened to have.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Discovery first — let the Cloud Apps Dashboard build the real
+        SaaS usage picture during the monitor phase, agree the sanctioned-app list with the
+        customer, rebuild the few genuine controls as Cato CASB and tenant-control rules, then
+        tighten from monitor to enforcement. Keep the Harmony SASE tenant warm until the final user
+        cohort has migrated — it is a rollback lever, not day-one waste — and retire it with the
+        last wave.
+      </p>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy</div>
+      <h2>The DLP blade</h2>
+      <p>
+        <strong>The construct.</strong> The Check Point DLP blade defines <strong>data types</strong>
+        — keywords, dictionaries, regex patterns, file attributes and compound types — evaluated in
+        rules with actions from Detect and Inform through Ask User to Prevent. In most estates it
+        was licensed in a bundle and minimally deployed: Detect-only on a few gateways, bounded by
+        the same HTTPS Inspection coverage that constrains the web blades. Frame this domain as
+        <strong>greenfield-plus-migrate</strong>: build a data-protection programme on Cato DLP, and
+        carry in the few custom patterns worth keeping.
+      </p>
+      <p>
+        <strong>Export.</strong> The DLP rulebase and data-type definitions from the management
+        server. The custom regex patterns and keyword dictionaries are the only assets worth
+        carrying forward — capture them verbatim.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Check Point construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Built-in data types (PCI · PII · financial)</td>
+              <td>Cato predefined data types</td>
+              <td>Prefer these over ported regexes — maintained by Cato, tuned for the engine</td>
+            </tr>
+            <tr>
+              <td>Custom patterns &amp; dictionaries</td>
+              <td>Custom data types</td>
+              <td>Regex dialects differ — re-test every pattern against sample data</td>
+            </tr>
+            <tr>
+              <td>File attributes / compound data types</td>
+              <td>File attribute conditions in DLP rules</td>
+              <td>Combine with data types for precision</td>
+            </tr>
+            <tr>
+              <td>Detect / Inform actions</td>
+              <td>DLP monitor mode</td>
+              <td>The evidence-gathering phase — watched from the Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>Ask User (UserCheck coaching)</td>
+              <td>Validate the requirement with Cato PS</td>
+              <td>Map the intent in discovery rather than assuming parity</td>
+            </tr>
+            <tr>
+              <td>Prevent action</td>
+              <td>Block — after monitor</td>
+              <td>Enforcement earned per rule with event evidence</td>
+            </tr>
+            <tr>
+              <td>Repository fingerprints / whitelisted documents</td>
+              <td>Exact Data Matching (EDM)</td>
+              <td>Structured matching against customer-supplied datasets</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> This is a rebuild, not a conversion — there is no
+        importer, and that is the right outcome: a gateway-bound blade whose reach ended where
+        HTTPS Inspection did does not map onto a cloud DLP engine that inspects everything the TLS
+        policy decrypts. TLS inspection is the hard prerequisite; regex behaviour differs between
+        engines; UserCheck-style Ask flows need their intent re-decided rather than assumed. And
+        because blade deployments are typically thin, this migration is in practice an
+        <em>upgrade</em> — from Detect-only rules on two gateways to an actual data-protection
+        programme.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Inventory the data types actually referenced by enforcing rules;
+        recreate custom patterns as custom data types and swap built-ins for Cato's predefined
+        types; run the whole policy in monitor with the Data Protection Dashboard as the evidence
+        loop; tune false positives with the data owners; then enforce rule by rule.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Every Check Point layer carried its own implicit cleanup; Cato has two fixed postures — WAN Firewall allowlist (implicit block), Internet Firewall blocklist (implicit allow). Egress posture is therefore a decision, not a translation: if the customer wants allowlist egress, add an explicit final block rule. Don't discover the difference in production.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection early</h4><p>HTTPS Inspection rarely ran at full coverage on the appliances, and SWG fidelity, CASB activity control and DLP content inspection all hang off decryption. Phased Cato TLSi — QUIC blocked, root certificate deployed in advance, category by category with pilot groups — is the fidelity prerequisite for three of the four domains.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every translated rule, IPS/NGAM protection, CASB control and DLP rule starts in monitor. Enforcement is earned with event evidence, per rule — the pipeline's amber-to-green transition, never a big-bang flip.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>SCIM first, then identity rules</h4><p>Access roles ran on AD Query and Identity Collector servers — infrastructure Cato replaces with SCIM/LDAP sync, the Client and the Identity Agent. Provision the directory sync before policy deployment, and prove every identity-dependent rule on the Cato side before gateway-side identity sources are switched off.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Objects before rules</h4><p>Export with the object dictionary, dedupe the network/host/service objects, and push the clean model through the GraphQL API or Terraform provider first — then build rules on top of it. Rules referencing ad-hoc objects recreate the sprawl you just removed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events &amp; hit counts</h4><p>The <code>show-hits</code> export is the baseline; Monitor → Events is the loop. Compare each translated rule's hits against its SmartConsole ancestor, investigate the deltas, and treat zero-hit rules after a full business cycle as candidates to delete — on the new platform as ruthlessly as on the old.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE</h2>
+      <p>
+        The same pipeline runs for each domain, offset in time — firewall first, SWG behind it,
+        CASB and DLP once TLS inspection and discovery data are in place. Dead rules and layer debt
+        leave the pipeline at review and are never translated; everything that survives deploys in
+        monitor and is promoted to enforcement on evidence.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 496" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">SmartConsole to Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four Check Point policy domains — Access Control layers with NAT, the App Control and URL Filtering blades with HTTPS Inspection, inline CASB intent from Harmony SASE, and the DLP blade — feed an export stage, then a review and clean stage where dead rules are discarded, marked with a red X. Surviving intent is mapped to Cato Management Application constructs, deployed in monitor mode (amber) and finally enforced (green). Telemetry from deploy and enforce flows to an events and hit-counts node that validates every stage.</desc>
+
+          <!-- Check Point source domains -->
+          <text class="dg-tiny" x="115" y="24" text-anchor="middle">SmartConsole policy domains</text>
+          <rect class="dg-node" x="30" y="36" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="57" text-anchor="middle">Access layers</text>
+          <text class="dg-sub" x="115" y="74" text-anchor="middle">ordered · inline · NAT</text>
+
+          <rect class="dg-node" x="30" y="100" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="121" text-anchor="middle">App Control · URLF</text>
+          <text class="dg-sub" x="115" y="138" text-anchor="middle">+ HTTPS Inspection</text>
+
+          <rect class="dg-node" x="30" y="164" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="185" text-anchor="middle">Inline CASB intent</text>
+          <text class="dg-sub" x="115" y="202" text-anchor="middle">Harmony SASE (if any)</text>
+
+          <rect class="dg-node" x="30" y="228" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="249" text-anchor="middle">DLP blade</text>
+          <text class="dg-sub" x="115" y="266" text-anchor="middle">data types · rules</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 200 61 C 250 61, 255 148, 300 150"/>
+          <path class="lane-static" fill="none" d="M 200 125 C 245 125, 255 156, 300 158"/>
+          <path class="lane-static" fill="none" d="M 200 189 C 245 189, 255 172, 300 170"/>
+          <path class="lane-static" fill="none" d="M 200 253 C 250 253, 255 182, 300 178"/>
+
+          <!-- EXPORT -->
+          <rect class="dg-node-dark" x="300" y="132" width="160" height="64" rx="10"/>
+          <text class="dg-label-inv" x="380" y="158" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="380" y="176" text-anchor="middle">mgmt_cli · Web API</text>
+
+          <path class="lane-static" d="M 460 164 L 560 164"/>
+
+          <!-- REVIEW & CLEAN -->
+          <rect class="dg-node" x="560" y="132" width="200" height="64" rx="10"/>
+          <text class="dg-label" x="660" y="158" text-anchor="middle">REVIEW &amp; CLEAN</text>
+          <text class="dg-sub" x="660" y="176" text-anchor="middle">rationalise on hit counts</text>
+
+          <!-- Discarded dead rules -->
+          <path class="lane lane-block" d="M 690 198 C 730 218, 758 232, 782 246"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 790 245 L 814 269"/><path class="lane-x" d="M 814 245 L 790 269"/>
+          </g>
+          <text class="dg-tiny" x="802" y="292" text-anchor="middle">zero-hit rules · layer debt</text>
+
+          <!-- Survivors flow to MAP -->
+          <path class="lane-static" fill="none" d="M 610 198 C 540 265, 330 240, 215 294"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="90" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="185" y="322" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="185" y="340" text-anchor="middle">FW · SWG · CASB · DLP</text>
+          <text class="dg-tiny" x="185" y="378" text-anchor="middle">hosts · services · categories</text>
+
+          <path class="lane lane-limit" d="M 280 328 L 400 328"/>
+
+          <!-- DEPLOY (monitor) -->
+          <rect class="dg-node" x="400" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="495" y="322" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="495" y="340" text-anchor="middle">log-only · no user impact</text>
+
+          <path class="lane lane-allow" d="M 590 328 L 690 328"/>
+
+          <!-- ENFORCE -->
+          <rect class="dg-node-green" x="690" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="785" y="322" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="785" y="340" text-anchor="middle">flip to block per rule</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 490 362 C 488 386, 490 400, 498 414"/>
+          <path class="lane-static" fill="none" d="M 780 362 C 762 398, 690 410, 622 426"/>
+
+          <rect class="dg-node-dark" x="400" y="416" width="220" height="56" rx="10"/>
+          <text class="dg-label-inv" x="510" y="440" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="510" y="458" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-tiny" x="510" y="490" text-anchor="middle">telemetry validates every stage</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Monitor first — log, don't block</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead rules never migrate</span>
+        </div>
+        <div class="diagram-caption">
+          The four SmartConsole policy domains are exported once via the Management API, rationalised
+          against hit-count evidence — zero-hit rules and layer debt exit the pipeline here — and only
+          the surviving intent is mapped to CMA constructs. Every mapped rule deploys in monitor
+          (amber) and is promoted to enforcement (green) when events and hit counts prove it behaves
+          as intended.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This runs best as a working session, not a show-and-tell: ask the customer to bring a
+        Management API export (or an ExportImportPolicyPackage archive) and translate a few real
+        rules live. Nothing sells the model like watching their own policy land in it.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE diagram. Agree scope: which
+          policy packages (and MDS domains), which layers with which inter-layer dependencies,
+          which of the four domains are actually in use, and who owns the decision to retire a
+          dead rule.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>One flat, first-match rulebase per direction — no ordered layers, no inline cleanups,
+          no policy packages. Point out the opposite defaults — WAN allowlist, Internet blocklist —
+          and flatten one of their layered rules live, discussing which egress posture they want.</p>
+        </li>
+        <li>
+          <h4>Walk the object model and automation path</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show hosts, groups and custom services, then the API keys page — the
+          <code>use-object-dictionary</code> export resolves every object reference, so object
+          translation is scriptable end-to-end via the GraphQL API or the Terraform provider
+          rather than re-keyed by hand.</p>
+        </li>
+        <li>
+          <h4>Translate a URL Filtering / App Control rule</h4>
+          <p>Open an Internet Firewall rule and walk the category picker against one of their web
+          rules: map two or three categories by intent, show the Prompt action standing in for
+          their UserCheck Ask pages, and a custom category absorbing their custom Sites objects.</p>
+        </li>
+        <li>
+          <h4>Show CASB and DLP as the destination state</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Show shadow-IT discovery running with zero configuration, a tenant-control rule, and a
+          DLP rule combining a predefined data type with a file-type condition — be honest that
+          this is a greenfield build with a small migrate-in component, and better for it.</p>
+        </li>
+        <li>
+          <h4>Show the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged TLS inspection policy — by category and pilot group, certificates
+          deployed in advance — and be explicit that their HTTPS Inspection blade was probably
+          constrained on the appliances, so full-coverage decryption will surface things they have
+          never seen.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a single monitor-mode rule and show the hit evidence that would
+          justify flipping it to block — the OPTIMISE phase they will live in for the first months,
+          and the audit trail for every promotion decision.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413265660305-What-is-the-Cato-WAN-Firewall" target="_blank" rel="noopener">What is the Cato WAN Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Recommendations for Internet and WAN Firewall policies (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/15601094616861-Configuring-a-Site-Level-NAT-Policy" target="_blank" rel="noopener">Configuring a site-level NAT policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7784979714333-Configuring-Remote-Port-Forwarding-for-the-Account" target="_blank" rel="noopener">Remote Port Forwarding for the account (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360011316297-Best-Practices-for-Implementing-Cato-Threat-Prevention" target="_blank" rel="noopener">Best practices for Cato threat prevention (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5352915107869-Creating-DLP-Content-Profiles" target="_blank" rel="noopener">Creating DLP content profiles (KB)</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://sc1.checkpoint.com/documents/R81/WebAdminGuides/EN/CP_R81_SecurityManagement_AdminGuide/Topics-SECMG/Ordered-Layers-and-Inline-Layers.htm" target="_blank" rel="noopener">Check Point: Ordered Layers and Inline Layers</a></li>
+            <li><a href="https://github.com/CheckPointSW/ExportImportPolicyPackage" target="_blank" rel="noopener">CheckPointSW/ExportImportPolicyPackage (GitHub)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-checkpoint.html">Check Point (Quantum &amp; Harmony) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

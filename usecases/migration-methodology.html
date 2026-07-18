@@ -619,6 +619,24 @@
               <td>Per-OU/site wave cutover; Cato egress IPs dual-listed in SaaS allowlists before each wave</td>
               <td>Re-point the PAC or re-enable the iboss agent profile</td>
             </tr>
+            <tr>
+              <td><a href="migration-checkpoint.html">Check Point</a> · <a href="migration-checkpoint-policy.html">policy</a></td>
+              <td>Quantum gateways + SmartConsole policy layers; Harmony SASE agents</td>
+              <td>Parallel sockets with Check Point as default gateway; static/eBGP transit-VLAN handoff (community 32768)</td>
+              <td>Per-prefix route withdrawal — traffic falls back to the gateway instantly</td>
+            </tr>
+            <tr>
+              <td><a href="migration-edgeconnect.html">EdgeConnect</a> · <a href="migration-edgeconnect-policy.html">policy</a></td>
+              <td>EC appliances + Orchestrator intent overlays — often service-chained to a separate SSE</td>
+              <td>Parallel sockets at EC hub sites, eBGP handoff; EC fabric and subnet sharing left intact</td>
+              <td>Re-enable the EC spoke — BGP reconverges; SSE tenant retires only after the final wave</td>
+            </tr>
+            <tr>
+              <td><a href="migration-symantec.html">Symantec</a> · <a href="migration-symantec-policy.html">policy</a></td>
+              <td>ProxySG/ASG + WSS + CloudSOC — PAC/explicit-proxy steering</td>
+              <td>Dual steering planes — PAC cohorts stay on Symantec while Cato cohorts steer transparently</td>
+              <td>PAC/GPO revert; appliances policy-frozen until retirement</td>
+            </tr>
           </tbody>
         </table>
       </div>

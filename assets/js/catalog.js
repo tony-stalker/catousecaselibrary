@@ -44,6 +44,17 @@ window.UC_CATALOG = [
     deck: null
   },
 
+  {
+    id: "access-identity-design",
+    file: "usecases/access-identity-design.html",
+    category: "Access",
+    title: "Identity Integration Design",
+    summary: "The dependency every deployment shares — SCIM provisioning, Identity Agents, user awareness behind sockets, and SAML/MFA flows designed once, referenced everywhere.",
+    tags: ["SCIM", "Entra ID", "User Awareness", "SSO / MFA", "Identity Agent"],
+    status: "new",
+    deck: null
+  },
+
   /* ---------------- 2 · Management ---------------- */
   {
     id: "management-visibility",
@@ -95,6 +106,17 @@ window.UC_CATALOG = [
     tags: ["XDR", "MDR", "SOC", "MITRE ATT&CK", "Incident Response"],
     status: "new",
     deck: null
+  },
+
+  {
+    id: "management-pov-framework",
+    file: "usecases/management-pov-framework.html",
+    category: "Management",
+    title: "Running a Cato PoV",
+    summary: "A repeatable proof-of-value framework — scope, success criteria, test-case tables, weekly cadence and the wrap-up that converts evidence into a decision.",
+    tags: ["PoV", "Success Criteria", "Test Cases", "Evaluation", "Framework"],
+    status: "new",
+    deck: "2 - Management use cases/Visibility/Cato SASE Platform - Visibility PoV.pptx"
   },
 
   /* ---------------- 3 · Network ---------------- */
@@ -176,6 +198,17 @@ window.UC_CATALOG = [
     title: "Global Expansion & China Connectivity",
     summary: "Open offices and plants in new regions in weeks — nearest-PoP reach on day one, and compliant, performant China connectivity without building infrastructure.",
     tags: ["Global Expansion", "China", "PoPs", "Zero-Touch"],
+    status: "new",
+    deck: null
+  },
+
+  {
+    id: "network-resilient-site-design",
+    file: "usecases/network-resilient-site-design.html",
+    category: "Network",
+    title: "Resilient Site Design",
+    summary: "Design sites that stay up — HA socket pairs, dual last miles, LTE/5G failover, BGP options and off-cloud behaviour, with the patterns to match site criticality.",
+    tags: ["HA", "Last Mile", "LTE Failover", "BGP", "Site Design"],
     status: "new",
     deck: null
   },
@@ -278,6 +311,27 @@ window.UC_CATALOG = [
     title: "Ransomware & Advanced Threat Prevention",
     summary: "Break the ransomware kill chain in the cloud — IPS, NGAM, sandboxing and DNS security inspecting every flow, with XDR correlating what remains.",
     tags: ["IPS", "Anti-Malware", "XDR", "DNS Security"],
+    status: "new",
+    deck: null
+  },
+
+  {
+    id: "security-tls-inspection",
+    file: "usecases/security-tls-inspection.html",
+    category: "Security",
+    title: "TLS Inspection: Staged Rollout Playbook",
+    summary: "The prerequisite everything else depends on — certificate deployment, category-by-category enablement, QUIC handling, pilot cohorts and breakage triage, done in the right order.",
+    tags: ["TLS Inspection", "Certificates", "QUIC", "Staged Rollout", "Best Practice"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "security-uk-public-sector",
+    file: "usecases/security-uk-public-sector.html",
+    category: "Security",
+    title: "UK Public Sector: Cyber Essentials & NCSC CAF",
+    summary: "Map Cato capabilities to Cyber Essentials Plus controls and the NCSC Cyber Assessment Framework — evidence-led conversations for councils, health, education and central government.",
+    tags: ["Cyber Essentials", "NCSC CAF", "Public Sector", "UK", "Compliance"],
     status: "new",
     deck: null
   },
@@ -446,6 +500,37 @@ window.UC_CATALOG = [
     deck: null
   },
   {
+    id: "migration-checkpoint",
+    file: "usecases/migration-checkpoint.html",
+    category: "Migration",
+    title: "Check Point (Quantum & Harmony) to Cato",
+    summary: "Retire the Check Point estate — Quantum gateways, SmartConsole policy and Harmony SASE mapped to the Cato platform with phased cutover and simple rollback.",
+    tags: ["Check Point", "Quantum", "SmartConsole", "Harmony", "NGFW"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-edgeconnect",
+    file: "usecases/migration-edgeconnect.html",
+    category: "Migration",
+    title: "HPE Aruba EdgeConnect (Silver Peak) to Cato",
+    summary: "Move from EdgeConnect SD-WAN and Orchestrator to the Cato platform — overlay co-existence, Boost/QoS intent translation and staged branch cutover.",
+    tags: ["EdgeConnect", "Silver Peak", "Orchestrator", "SD-WAN", "HPE Aruba"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-symantec",
+    file: "usecases/migration-symantec.html",
+    category: "Migration",
+    title: "Symantec (Broadcom) to Cato",
+    summary: "Replace ageing Symantec web security — ProxySG/ASG appliances, WSS cloud and CloudSOC CASB — with cloud-delivered SWG, CASB and DLP on one platform.",
+    tags: ["Symantec", "ProxySG", "WSS", "CloudSOC", "Broadcom"],
+    status: "new",
+    deck: null
+  },
+
+  {
     id: "migration-zscaler-policy",
     file: "usecases/migration-zscaler-policy.html",
     category: "Migration",
@@ -532,6 +617,36 @@ window.UC_CATALOG = [
     title: "Cloudflare Policy Migration",
     summary: "Translate Cloudflare Gateway and Access policy to Cato — HTTP/DNS/network policies, API CASB findings and DLP profiles mapped to the converged CMA policy model.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-checkpoint-policy",
+    file: "usecases/migration-checkpoint-policy.html",
+    category: "Migration",
+    title: "Check Point Policy Migration",
+    summary: "Translate SmartConsole policy to Cato — access layers and NAT, HTTPS inspection, URL filtering and DLP blades mapped to the CMA policy model, clean-up first.",
+    tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-edgeconnect-policy",
+    file: "usecases/migration-edgeconnect-policy.html",
+    category: "Migration",
+    title: "EdgeConnect Policy Migration",
+    summary: "Translate EdgeConnect Orchestrator config to Cato — business intent overlays, firewall zones and QoS classes re-expressed as CMA network rules and policy, plus greenfield SWG/CASB/DLP.",
+    tags: ["Policy Migration", "FW Rules", "QoS", "Overlays", "Greenfield SSE"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-symantec-policy",
+    file: "usecases/migration-symantec-policy.html",
+    category: "Migration",
+    title: "Symantec Policy Migration",
+    summary: "Translate Symantec policy to Cato — ProxySG CPL and WSS web policy, CloudSOC CASB and DLP rules mapped to the CMA model without lifting twenty years of proxy logic.",
+    tags: ["Policy Migration", "CPL", "SWG", "CASB", "DLP"],
     status: "new",
     deck: null
   }

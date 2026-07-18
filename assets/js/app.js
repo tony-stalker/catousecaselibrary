@@ -68,6 +68,17 @@
     }
 
     if (searchBox) searchBox.addEventListener("input", function () { state.q = this.value.trim(); render(); });
+    // clickable tags: filter the library by the clicked tag instead of opening the card
+    grid.addEventListener("click", function (e) {
+      var t = e.target;
+      if (!t.classList || !t.classList.contains("tag")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      state.q = t.textContent.trim();
+      if (searchBox) searchBox.value = state.q;
+      render();
+      if (searchBox) searchBox.focus();
+    });
     $$(".filter-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         $$(".filter-btn").forEach(function (b) { b.classList.remove("active"); });

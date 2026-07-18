@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeConnect Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate EdgeConnect Orchestrator config to Cato — business intent overlays, firewall zones and QoS classes re-expressed as CMA network rules and policy, plus greenfield SWG/CASB/DLP.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-edgeconnect-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / EdgeConnect Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>EdgeConnect Policy Migration</h1>
+    <p class="lede">
+      An EdgeConnect estate splits its policy across two planes: steering, QoS and breakout
+      intent live in up to seven Business Intent Overlays in Orchestrator, while web security is
+      usually service-chained to a separate SSE tenant with its own console and rulebase. This
+      page works the translation domain by domain — overlay intent, zone firewall and QoS classes
+      into CMA network rules, bandwidth profiles and firewall policy; SWG extracted from
+      whichever SSE actually holds it; CASB and DLP as greenfield best-practice builds — through
+      one pipeline: export, rationalise, map to CMA constructs, deploy in monitor mode, enforce
+      on evidence.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">QoS</span>
+      <span class="tag">Overlays</span><span class="tag">Greenfield SSE</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Two policy planes — and the deepest translation is intent</h2>
+      <p>
+        Policy is the long pole in almost every SD-WAN and security migration, and EdgeConnect
+        adds a twist of its own: the policy is not in one place. Steering, QoS priority, topology
+        and internet-breakout behaviour live in up to seven <strong>Business Intent Overlays</strong>
+        in Orchestrator; appliance-level access control lives in the zone-based firewall; and full
+        web inspection usually lives on <em>another vendor's platform entirely</em> — Orchestrator's
+        design centre is service chaining to a cloud SSE (Zscaler, Netskope or HPE Aruba SSE),
+        each with its own console, licensing and policy model. &ldquo;Export the policy&rdquo; is
+        therefore two export projects across two vendors — and the deepest translation is not a
+        rulebase at all, but intent: what each overlay was <em>for</em>.
+      </p>
+      <p>
+        The Cato PS approach is a four-phase pipeline applied to every policy domain:
+        <strong>EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</strong>. The
+        cardinal rule is <strong>never lift-and-shift</strong>: seven overlays are usually three
+        or four genuine intents wearing different topologies, and a zone rulebase grown across
+        template revisions carries dead rules and duplicate objects. Collapse and rationalise
+        first, translate only what still earns its place, and let CMA events prove each rule
+        before it blocks — or shapes — anything.
+      </p>
+      <p>
+        This page covers the policy workstream only. The network side — eBGP hub co-existence
+        with subnet sharing, branch cutover waves, Boost re-baselining and per-spoke rollback —
+        is the companion page, <a href="migration-edgeconnect.html">HPE Aruba EdgeConnect
+        (Silver Peak) to Cato</a>.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the mappings, the TLS-inspection
+        staging and anything contract-dependent (SSE tenancy, Orchestrator access) with Cato
+        Professional Services before committing it to a customer plan.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules &amp; QoS</div>
+      <h2>Overlay intent, zone rules &amp; QoS classes</h2>
+      <p>
+        <strong>The vendor construct.</strong> EdgeConnect ships a zone-based firewall on the
+        appliance (with IDPS in the Advanced tier), but the constructs that actually encode
+        policy are the Business Intent Overlays: up to seven application-specific WAN overlays,
+        each defining its own match criteria (applications, DSCP, ACLs), topology (full mesh vs
+        hub-and-spoke, per region), link-bonding policy, QoS priority, brownout thresholds and
+        internet-breakout behaviour, with First-Packet iQ classifying flows on packet one to
+        select the overlay. The signature work of this migration is re-expressing that overlay
+        intent as Cato constructs — network rules for steering, bandwidth profiles for priority,
+        WAN Firewall for reachability, Internet Firewall for breakout.
+      </p>
+      <p>
+        <strong>The export.</strong> Run Orchestrator's scheduled backup (Orchestrator database
+        plus per-appliance backups), export the template groups, and pull any preconfiguration
+        YAML — preconfig-built sites are self-documenting; hand-built sites are not, so diff the
+        templates against per-appliance state to find silent divergence. The pyedgeconnect SDK
+        and Orchestrator REST API bulk-export appliance and overlay configuration for offline
+        analysis. The core artefact is the <strong>overlay-intent inventory</strong>: one row per
+        BIO recording match criteria, topology, bonding policy, QoS priority, thresholds and
+        breakout policy (direct, backhaul, or which SSE). That table <em>is</em> the customer's
+        network policy.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>EdgeConnect construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>BIO match criteria (applications / DSCP / ACLs)</td><td>Application-aware network rules</td><td>Steering intent maps by application; classification happens at the PoP on the same pass as security inspection.</td></tr>
+            <tr><td>BIO QoS priority + link-bonding policy</td><td>Bandwidth management profiles + rule priorities</td><td>Real-time / business-critical / bulk tiering. Bonding mechanics (FEC, path conditioning) are platform behaviour on Cato, not policy — covered on the network page.</td></tr>
+            <tr><td>BIO topology (per-overlay mesh / hub-and-spoke)</td><td>WAN Firewall policy (allowlist)</td><td>Reachability intent survives; per-overlay tunnel topologies do not — one global fabric, with which-sites-reach-which stated as rules.</td></tr>
+            <tr><td>BIO breakout policy (direct / backhaul / service-chain)</td><td>Internet Firewall + network rules</td><td>Every site breaks out via its nearest PoP; policy states what is allowed, not where to exit.</td></tr>
+            <tr><td>Zone rules, LAN → WAN (internet egress)</td><td>Internet Firewall rule</td><td>Default-allow blocklist — carry over only the rules that change the default.</td></tr>
+            <tr><td>Zone rules across the overlay (site-to-site)</td><td>WAN Firewall rule</td><td>Default-deny allowlist — every needed flow must be stated; a good forcing function for segmentation intent.</td></tr>
+            <tr><td>Intra-site zone pairs on the appliance</td><td>Socket LAN Firewall policy</td><td>Local east-west stays local — enforced on the Socket, managed from CMA.</td></tr>
+            <tr><td>IDPS (Advanced tier)</td><td>Cato IPS — one managed, global policy</td><td>No per-appliance signature sets; variance becomes scoped allowlist exceptions, deployed monitor-then-block.</td></tr>
+            <tr><td>Address / service objects in templates</td><td>Hosts, network ranges, groups, services</td><td>Collapse template-drift duplicates first; push via the GraphQL API or Terraform provider.</td></tr>
+            <tr><td>Template groups + preconfig YAML pipelines</td><td>CMA policy sections + one cloud rulebase</td><td>The keep-hundreds-of-boxes-consistent problem disappears; re-target pyedgeconnect automation at GraphQL / Terraform for onboarding and policy-as-code.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>Seven overlays rarely mean seven intents.</strong> Most estates express three or four genuine intents across their BIOs. Collapse duplicates during the inventory — transliterating each overlay into its own rule block imports structure, not policy.</li>
+        <li><strong>Topology is policy in disguise.</strong> A BIO restricted to hub-and-spoke was often doing segmentation. On Cato, reachability is explicit WAN Firewall policy — write the intent as rules rather than mourning the tunnels.</li>
+        <li><strong>One rulebase becomes two policies with opposite defaults.</strong> Classify every zone rule by destination first: WAN-bound rules land in an allowlist (default deny), internet-bound rules in a blocklist (default allow). A rule copied into the wrong policy either opens nothing or opens everything.</li>
+        <li><strong>First-Packet iQ is not a policy artefact.</strong> It steers on packet one; Cato classifies at the PoP on the same single pass as inspection, and there is no appliance-then-SWG double hop to preserve. Compare end-to-end paths, not packet-one behaviour in isolation.</li>
+        <li><strong>Templates hide divergence.</strong> Translating a template alone misses what changed per site. Diff template groups against per-appliance effective config — the diffs are the genuine site exceptions; everything else is common intent, expressed once.</li>
+      </ul>
+
+      <p>
+        <strong>Strategy.</strong> Export early (Orchestrator backup + templates + preconfig
+        YAML) → build the overlay-intent inventory → collapse duplicate intents → split zone
+        rules by destination into WAN / Internet / LAN policies → recreate steering as network
+        rules and bandwidth profiles → push objects via API or Terraform → deploy with IPS in
+        monitor mode → promote to enforcement on CMA event evidence.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;How many of your overlays could you justify today — which applications actually
+        ride each one, and why does its topology or QoS differ from the next? If two overlays
+        share the same answer, that&rsquo;s one Cato intent, not two.&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Web policy lives in the SSE tenant — extract it there</h2>
+      <p>
+        <strong>The vendor construct.</strong> EdgeConnect's design centre for full web
+        inspection is service chaining: Orchestrator's automated workflows build IPsec/GRE
+        tunnels to a cloud SSE — Zscaler, Netskope, or HPE's own SSE (the former Axis Security
+        platform). The consequence for the policy workstream is that <strong>there is usually no
+        EdgeConnect web policy to export</strong>: the SWG rulebase lives in the SSE tenant, and
+        Orchestrator only knows which sites tunnel to it. What Orchestrator does contribute is
+        the scoping map — which BIOs at which sites break out directly, and which chain to which
+        SSE.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Where the web policy sits</th><th>The policy work</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Breakout BIOs chained to Zscaler (ZIA)</td><td>Export and translate the ZIA tenant policy</td><td>Follow <a href="migration-zscaler-policy.html">Zscaler Policy Migration</a> for the URL-filtering, Cloud App Control and DLP translation; this page only sequences it.</td></tr>
+            <tr><td>Breakout BIOs chained to Netskope</td><td>Export and translate Real-time Protection policy</td><td>Follow <a href="migration-netskope-policy.html">Netskope Policy Migration</a> — same pipeline, Netskope-specific constructs.</td></tr>
+            <tr><td>Chained to HPE Aruba SSE (Axis)</td><td>Export SWG / ZTNA policy from the SSE console</td><td>No dedicated page — apply the same discipline: map category intent to Internet Firewall rules, and re-model the ZTNA population on the Cato Client with device posture.</td></tr>
+            <tr><td>Direct breakout, zone firewall only</td><td>Greenfield Cato Internet Firewall build</td><td>Nothing to translate: start from the Internet Firewall wizard baseline, add deliberate category deltas, run with tracking before enforcing.</td></tr>
+            <tr><td>Orchestrator tunnel-orchestration config</td><td>Nothing to migrate — the seam disappears</td><td>Migrated sites are inspected natively at the PoP; use the tunnel config as the inventory of which sites carry which web posture today.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>One estate, several web postures.</strong> Different BIOs can break out differently — some direct, some backhauled, some chained — so different site classes may run different web policy today. Inventory who has what before assuming one policy exists.</li>
+        <li><strong>Freeze both planes during the window.</strong> Orchestrator and the SSE tenant are two policy planes with a tunnel seam between them. Keep both frozen except for mirrored changes, and keep the SSE tenant alive until its last consuming site and user cohort have moved.</li>
+        <li><strong>Don't rebuild the chain.</strong> The temptation is to service-chain Cato to the incumbent SSE &ldquo;temporarily&rdquo;. Resist it: migrated sites get single-pass inspection at the PoP; unmigrated sites keep their EC → SSE chains untouched until their wave.</li>
+        <li><strong>Category parity needs TLS inspection.</strong> Without TLSi, Cato classifies on domain/SNI; full-path URL matching and precise app identification need it. Stage TLSi before judging match parity against the SSE tenant.</li>
+      </ul>
+      <p>
+        <strong>Strategy.</strong> Map which sites chain where (from the Orchestrator tunnel
+        config) → run the relevant SSE policy page's export-and-translate workstream for that
+        tenant → greenfield the direct-breakout population from the wizard baseline → run the
+        whole policy with tracking before enforcing — a week of events answers every
+        &ldquo;will this break the business&rdquo; question with data.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy · greenfield</div>
+      <h2>CASB: not a translation — an upgrade</h2>
+      <p>
+        <strong>There is usually nothing to export.</strong> CASB never lived on EdgeConnect: the
+        appliance steers and firewalls, it does not govern SaaS activity. Where the chained SSE
+        tenant carried CASB licences, its inline rules translate via the relevant policy page —
+        but in most EdgeConnect estates the honest answer is &ldquo;nothing deployed&rdquo;.
+        Frame this section honestly in the room: <strong>this is not a migration gap, it is the
+        upgrade the customer is buying</strong>. The CASB policy is built greenfield from Cato
+        best practice, not translated from a rulebase that does not exist.
+      </p>
+      <p>
+        <strong>What the estate does contribute:</strong> First-Packet iQ application statistics
+        in Orchestrator's dashboards seed the sanctioned-app conversation — which SaaS the
+        business already lives in — and the SSE scoping map from the SWG domain flags any
+        informal SaaS blocks worth preserving as proper CASB rules.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>In the EdgeConnect estate</th><th>Cato construct</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td>Orchestrator app visibility (First-Packet iQ stats)</td><td>App Analytics + Cloud Apps Dashboard</td><td>Continuous shadow-IT discovery with risk scores — not steering telemetry read after the fact.</td></tr>
+            <tr><td>SSE-tenant inline CASB, where licensed</td><td>CASB application rules with activity controls</td><td>Translate via the SSE's policy page; verify the licence was actually deployed, not just bought.</td></tr>
+            <tr><td>Nothing — no app risk model</td><td>Application catalogue with risk scoring</td><td>Sanctioned / tolerated / unsanctioned decisions made on evidence, per app.</td></tr>
+            <tr><td>Nothing — no tenant awareness</td><td>Tenant restrictions on sanctioned apps</td><td>Corporate tenant allowed, personal instances of the same app controlled.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Build sequence (best practice).</strong> Stage TLS inspection first — CASB
+        activity-level control depends on it. Run shadow-IT discovery over a representative
+        business cycle in App Analytics and the Cloud Apps Dashboard; classify the estate into
+        sanctioned / tolerated / unsanctioned with the risk scores as evidence; write CASB rules
+        in <strong>monitor mode</strong>; review the hits with the business owners; then enforce,
+        strictest-risk apps first.
+      </p>
+      <div class="callout">
+        <div class="co-title">Position it as the upgrade it is</div>
+        <p>&ldquo;Day one on Cato you will see every SaaS app in use, scored for risk —
+        visibility the WAN estate has never had, in the same console as the network. We turn that
+        into control at your pace: monitor first, then enforce.&rdquo; That is a selling point,
+        not a migration risk.</p>
+      </div>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy · greenfield</div>
+      <h2>DLP: build from the data, not from a rulebase</h2>
+      <p>
+        <strong>Again, nothing to export.</strong> EdgeConnect has no content awareness at all —
+        the zone firewall and IDPS inspect traffic, not data. If the chained SSE tenant ran DLP,
+        those dictionaries and profiles translate via its policy page (exact-match content is
+        rebuilt from source, never exported). Otherwise this is a greenfield build, and the input
+        is not a config file but a conversation: a short data-protection workshop with the
+        compliance or security owner on what data matters (cardholder data, PII, credentials,
+        source code), where it lives, and who legitimately moves it.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>In the EdgeConnect estate</th><th>Cato construct</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td>Nothing on the appliance — no content awareness</td><td>DLP content profiles with predefined data types (PCI, PII, credentials, source code)</td><td>Start from the predefined types — do not hand-build patterns on day one.</td></tr>
+            <tr><td>SSE-tenant DLP, where licensed</td><td>DLP rules translated via the SSE policy page</td><td>Dictionaries map by intent; exact-match datasets are re-indexed from the source data.</td></tr>
+            <tr><td>Nothing — no SaaS-aware data policy</td><td>DLP rules scoped by app, category, user and direction</td><td>&ldquo;Finance may upload PCI to the sanctioned tenant; nobody uploads it anywhere else.&rdquo;</td></tr>
+            <tr><td>Nothing — no evidence trail</td><td>Data Protection Dashboard + DLP events</td><td>Every match attributed to user, app and data type — the audit trail the estate never had.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Build sequence (best practice).</strong> TLS inspection staged first — DLP cannot
+        inspect what it cannot see. Enable the predefined data types that match the workshop
+        outcomes in <strong>monitor mode</strong>; review matches on the Data Protection
+        Dashboard and tune false positives with the data owners; enforce on the
+        highest-confidence rules first (cardholder data before &ldquo;possible PII&rdquo;), and
+        widen coverage iteratively. Day-one blocking is how DLP projects die — monitor-mode
+        evidence is how they succeed.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>The rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Work with the default postures</h4><p>Cato's WAN Firewall is an allowlist (default deny); the Internet Firewall is a blocklist (default allow). Classify every legacy rule by destination first and let each policy's default do the heavy lifting — do not recreate any-any scaffolding.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Stage TLS inspection early</h4><p>TLSi is the fidelity prerequisite for the SWG, CASB and DLP domains alike — URL paths, app activities and content are invisible without it. Phase it by URL category and pilot group (the PS reference is four phases over four weeks) before judging policy parity.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Monitor, then block</h4><p>Every domain deploys watching first: firewall rules tracked, IPS in monitor, CASB and DLP in monitor mode. Promotion to block is an evidence decision made from events, never an assumption.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity is a dependency, not a detail</h4><p>Group-scoped rules across all four domains depend on IdP integration and SCIM-provisioned groups. Stand identity up in the foundation phase — before mapping begins — or the mapped policy has nothing to bind to.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧵</div><div><h4>One rulebase replaces two planes</h4><p>Orchestrator plus an SSE tenant is two consoles with a tunnel seam between them. During the window, freeze both except for mirrored changes; retire SSE tunnel config as each site migrates, and time contract notice against the final wave, not the first.</p></div></div>
+        <div class="benefit"><div class="b-icon">✂️</div><div><h4>Never lift-and-shift</h4><p>Seven overlays collapse into the three or four intents they express; dead zone rules and template-drift duplicates never migrate. The clean-up stage is the highest-value hour of the whole policy workstream.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>Four domains, one pipeline</h2>
+      <p>
+        Every domain rides the same pipeline. The firewall/QoS domain enters with the
+        Orchestrator export; the SWG domain enters with the incumbent SSE tenant's export; the
+        two greenfield domains (CASB, DLP) enter with discovery inputs — First-Packet iQ app
+        statistics and the data-protection workshop — and skip straight past translation to a
+        best-practice build. Nothing reaches enforcement without surviving the clean-up filter
+        and a monitor-mode soak.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">EdgeConnect-to-Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four policy-domain boxes — seven business intent overlays, the zone firewall with IDPS, web policy held in an SSE tenant, and greenfield CASB and DLP inputs — feed an export stage covering Orchestrator and the SSE console, then a clean-up filter where dead rules and duplicate overlays are discarded at a red X, then mapping to CMA constructs, then deployment in monitor mode (amber) and finally enforcement (green). Both deploy and enforce send telemetry to an events and hit-counts node that provides promotion evidence.</desc>
+
+          <!-- Policy-domain input boxes -->
+          <rect class="dg-node" x="28" y="36" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="60" text-anchor="middle">Intent overlays ×7</text>
+          <text class="dg-sub" x="118" y="78" text-anchor="middle">topology, QoS, breakout</text>
+
+          <rect class="dg-node" x="28" y="108" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="132" text-anchor="middle">Zone firewall + IDPS</text>
+          <text class="dg-sub" x="118" y="150" text-anchor="middle">Orchestrator rulebase</text>
+
+          <rect class="dg-node" x="28" y="180" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="204" text-anchor="middle">SWG — in SSE tenant</text>
+          <text class="dg-sub" x="118" y="222" text-anchor="middle">Zscaler · Netskope · HPE</text>
+
+          <rect class="dg-node" x="28" y="252" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="276" text-anchor="middle">CASB / DLP — none</text>
+          <text class="dg-sub" x="118" y="294" text-anchor="middle">greenfield builds</text>
+
+          <!-- Convergence into EXPORT -->
+          <path class="lane-static" fill="none" d="M 208 64 C 235 64, 242 150, 258 172"/>
+          <path class="lane-static" fill="none" d="M 208 136 C 230 136, 240 165, 258 180"/>
+          <path class="lane-static" fill="none" d="M 208 208 C 230 208, 240 200, 258 192"/>
+          <path class="lane-static" fill="none" d="M 208 280 C 235 280, 242 215, 258 200"/>
+
+          <!-- EXPORT -->
+          <text class="dg-tiny" x="319" y="148" text-anchor="middle">backups + tenant exports</text>
+          <rect class="dg-node-dark" x="258" y="160" width="122" height="64" rx="10"/>
+          <text class="dg-label-inv" x="319" y="187" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="319" y="205" text-anchor="middle">Orch · SSE console</text>
+
+          <path class="lane-static" fill="none" d="M 380 192 L 414 192"/>
+
+          <!-- CLEAN-UP -->
+          <rect class="dg-node" x="414" y="160" width="132" height="64" rx="10"/>
+          <text class="dg-label" x="480" y="187" text-anchor="middle">CLEAN-UP</text>
+          <text class="dg-sub" x="480" y="205" text-anchor="middle">collapse overlays</text>
+
+          <!-- Discard branch -->
+          <path class="lane lane-block" fill="none" d="M 480 224 C 480 254, 480 274, 480 296"/>
+          <g aria-label="dead rules and duplicate overlays discarded">
+            <path class="lane-x" d="M 468 296 L 492 320"/><path class="lane-x" d="M 492 296 L 468 320"/>
+          </g>
+          <text class="dg-tiny" x="480" y="346" text-anchor="middle">dead rules &amp; spare overlays</text>
+
+          <path class="lane-static" fill="none" d="M 546 192 L 590 192"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="590" y="160" width="132" height="64" rx="10"/>
+          <text class="dg-label" x="656" y="187" text-anchor="middle">MAP</text>
+          <text class="dg-sub" x="656" y="205" text-anchor="middle">to CMA constructs</text>
+
+          <!-- MAP to DEPLOY (monitor = amber) -->
+          <path class="lane lane-limit" fill="none" d="M 722 176 C 748 152, 758 122, 772 102"/>
+
+          <!-- DEPLOY -->
+          <rect class="dg-node" x="772" y="64" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="852" y="91" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="852" y="109" text-anchor="middle">watch, don't block</text>
+
+          <!-- DEPLOY to ENFORCE (green) -->
+          <path class="lane lane-allow" fill="none" d="M 852 128 L 852 220"/>
+
+          <!-- ENFORCE -->
+          <rect class="dg-node-green" x="772" y="220" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="852" y="247" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="852" y="265" text-anchor="middle">block on evidence</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 812 128 C 780 220, 745 292, 712 344"/>
+          <path class="lane-static" fill="none" d="M 832 284 C 802 314, 776 330, 752 346"/>
+          <text class="dg-tiny" x="762" y="318" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry</text>
+
+          <!-- Events node -->
+          <rect class="dg-node-dark" x="600" y="344" width="190" height="60" rx="10"/>
+          <text class="dg-label-inv" x="695" y="370" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="695" y="388" text-anchor="middle">promotion evidence</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy — monitor mode first</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead rules and duplicate overlays never migrate</span>
+        </div>
+        <div class="diagram-caption">The four policy domains ride one pipeline: export (Orchestrator backup and templates on one side, the SSE tenant's console on the other), clean-up where seven overlays collapse into their genuine intents and dead rules are cut, mapping to CMA constructs, deployment in monitor mode, and promotion to enforcement on event evidence. The greenfield domains carry discovery inputs rather than rulebases — they skip translation, not the monitor-first discipline.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their estate</div>
+        <p>Ask how many BIOs they run and what each is for, whether breakout traffic chains to an
+        SSE (and whose), and who owns that SSE console. The CASB/DLP answer is almost always
+        &ldquo;nothing deployed&rdquo; — that sets up the upgrade story before you open the
+        console.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the diagram above: export, clean-up, map, monitor, enforce. Land the two rules
+          that shape everything — never lift-and-shift, and nothing blocks until events prove it.
+          Point at the CLEAN-UP stage and ask how many of their seven overlays are genuinely
+          different intents.</p>
+        </li>
+        <li>
+          <h4>Overlay intent lands in network rules</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>Show an application-aware rule paired with a bandwidth-priority profile under
+          <span class="path">Network → Bandwidth Management</span> — a BIO's steering and QoS
+          intent expressed in two clean constructs instead of an overlay. Note that its topology
+          went to the WAN Firewall and its breakout policy to the Internet Firewall.</p>
+        </li>
+        <li>
+          <h4>WAN Firewall — topology intent becomes an allowlist</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show the default-deny model and policy sections organising rules by intent — the
+          hub-and-spoke restrictions a BIO used to imply, now stated explicitly as
+          which-sites-reach-which rules.</p>
+        </li>
+        <li>
+          <h4>Internet Firewall — breakout without the service chain</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show the blocklist posture, category-based rules and the configuration wizard
+          baseline. Point out action versus tracking on a rule — how a monitor rule becomes a
+          block rule when the evidence is in — and that no tunnel to a third-party SWG exists
+          anywhere in the policy.</p>
+        </li>
+        <li>
+          <h4>TLS inspection — the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show staged TLSi rules (by category, then pilot groups) and explain why the SWG,
+          CASB and DLP domains all depend on this being enabled early.</p>
+        </li>
+        <li>
+          <h4>CASB and DLP — the greenfield upgrade</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show shadow-IT discovery and app risk scores — visibility the WAN estate never had.
+          Open <span class="path">Security → CASB</span> for a monitor-mode rule with
+          activity-level control, then <span class="path">Security → DLP Configuration</span> for
+          a content profile on predefined data types scoped by app and user group.</p>
+        </li>
+        <li>
+          <h4>Close on evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to firewall and DLP events: every allow, block and monitor hit, attributed to
+          user, rule and data type — and review data matches on
+          <span class="path">Monitor → Data Protection Dashboard</span>. &ldquo;This is how a
+          monitor rule earns promotion to block — and the audit trail two consoles never gave
+          you.&rdquo;</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7785698733341-Configuring-Network-Rules" target="_blank" rel="noopener">Configuring network rules (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413280514065-What-are-the-Cato-Bandwidth-Management-Profiles" target="_blank" rel="noopener">Bandwidth management profiles (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/27286761010205-Using-the-Internet-Firewall-Configuration-Wizard" target="_blank" rel="noopener">Internet Firewall configuration wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/10642755314205-Configuring-the-Socket-LAN-Firewall-Policy" target="_blank" rel="noopener">Configuring the Socket LAN Firewall policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/12545093882909-Understanding-Packet-Flow-with-Cato-SPACE-Architecture" target="_blank" rel="noopener">Packet flow with Cato SPACE (KB)</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan/docs/orch/configuration/overlays/bios/" target="_blank" rel="noopener">EdgeConnect — Business Intent Overlays (Orchestrator docs)</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan/docs/orch/orchestrator/sw-setup/schedule-backup/" target="_blank" rel="noopener">EdgeConnect — schedule Orchestrator backup</a></li>
+            <li><a href="https://arubanetworking.hpe.com/techdocs/sdwan/docs/orch/configuration/cloud/zscaler/" target="_blank" rel="noopener">EdgeConnect — Zscaler tunnel orchestration</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-edgeconnect.html">HPE Aruba EdgeConnect (Silver Peak) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-versa-policy.html">Versa Policy Migration</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

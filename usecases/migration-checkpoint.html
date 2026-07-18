@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Point (Quantum &amp; Harmony) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire the Check Point estate — Quantum gateways, SmartConsole policy and Harmony SASE mapped to the Cato platform with phased cutover and simple rollback.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-checkpoint">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Check Point to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Check Point (Quantum &amp; Harmony) to Cato</h1>
+    <p class="lede">
+      A Check Point estate concentrates pressure in two calendars — the December 2025 appliance
+      end-of-support wave and R81.10's March 2026 software deadline — and in a management-heavy
+      operating model: SmartConsole layers, per-gateway blades, identity collectors and, since the
+      Perimeter 81 acquisition, a second policy plane in Harmony SASE. This page maps Quantum,
+      SmartConsole and Harmony to the Cato platform and lays out a phased migration in which every
+      cutover is a route announcement — and every rollback a withdrawal.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Check Point</span><span class="tag">Quantum</span><span class="tag">SmartConsole</span>
+      <span class="tag">Harmony</span><span class="tag">NGFW</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <p>
+        Nobody replaces a working Quantum estate on a whim. What puts this migration on the table is
+        that Check Point's own lifecycle calendar is forcing spend on the status quo. A large cohort
+        of widely deployed appliances — the 3100/3200, 5100–5900, 15400/15600 and 23500/23800/23900
+        series — reaches end of support in <strong>December 2025</strong>, so Quantum Force refresh
+        quotes are landing now. Estates on R81.10 face its <strong>March 2026</strong> end of support
+        — a forced major-version upgrade project that must touch the management servers first, then
+        every gateway. Either way, money and change windows are about to be spent; the honest
+        question is whether to spend them renewing the appliance model or retiring it.
+      </p>
+      <p>
+        The second decision point is the operating model itself. Security value is sold as software
+        blades enabled per gateway; policy lives in SmartConsole's ordered and inline layers; identity
+        needs its own collector servers; and since the Perimeter 81 acquisition, Check Point's SASE
+        answer — Harmony SASE — runs in its own portal application with its own agent and its own
+        policy model, separate from the Quantum rulebase. Customers of the previous cloud service,
+        Harmony Connect, have already been through one forced platform migration inside the same
+        vendor (sk184452). The objective: <strong>retire the appliance and management estate on the
+        customer's timetable, co-existing cleanly with Check Point throughout, with per-prefix
+        rollback designed into every step.</strong>
+      </p>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The forcing functions</div>
+      <h2>The calendar, not the FUD</h2>
+      <p>
+        Everything below is on the public record, and most Check Point customers know it better than
+        we do. Use it to frame <em>timing</em> — the cost of buying another appliance cycle — not to
+        score points.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">Dec 2025</div><div class="stat-label">End of support for the 3100/3200, 5100–5900, 15400/15600 and 23500–23900 appliance families</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">Mar 2026</div><div class="stat-label">R81.10 end of support — the upgrade project must do management before any gateway</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2</div><div class="stat-label">Policy planes in the current Check Point model — Quantum rulebase plus the Harmony SASE portal</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The hardware EOS wave <span class="tag">Dec 2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Check Point's published support life cycle puts a broad set of branch and DC appliances out of support in December 2025. Refresh quotes for Quantum Force replacements arrive at exactly the moment a SASE alternative can be tabled — the spend is happening either way.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The software deadline <span class="tag">R81.10 · Mar 2026</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">R80.40 went end of support in April 2024, R81 in October 2024, and R81.10 follows in March 2026. Staying current means a major-version project across the Security Management Server (first) and every gateway — recurring engineering effort that a cloud-delivered service simply removes.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">One forced migration already <span class="tag">sk184452</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Harmony Connect — Check Point's first-generation cloud SSE — went end of sale at the end of 2023 with a formal EOL and service-termination notice. Its replacement, Harmony SASE, is the acquired Perimeter 81 stack (~$490m, completed September 2023): its own Infinity Portal application, agent and policy model, distinct from the Quantum rulebase. The "single platform" is in practice at least two policy planes.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The appliance is attack surface <span class="tag">CVE-2024-24919</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A zero-day information disclosure in internet-exposed Quantum gateways with Remote Access VPN or Mobile Access enabled was exploited in the wild from April 2024 and added to CISA's Known Exploited Vulnerabilities catalogue. Hotfixes were required across R80.40–R81.20, Maestro, Scalable Chassis and Spark. On Cato, the PoPs are patched by Cato — there is no customer-side gateway hotfix cycle.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Which of your gateways are on the December 2025 end-of-support list — and is there a
+        Quantum Force quote on the table? What's the R81.10 plan before March 2026, and who owns the
+        management upgrade that has to come first? If you run Harmony SASE too: how many consoles and
+        policy models does your team operate today?”</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        The estate collapses into one cloud platform and one console. The table below is the
+        translation sheet — including the pieces that need explicit design decisions rather than
+        mechanical conversion (policy layers, NAT, identity, Maestro and VSX).
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Check Point component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Quantum Security Gateway / ClusterXL pair / Spark</td>
+              <td>Cato Socket (X-series) or vSocket + single-pass inspection (FWaaS) at the PoP</td>
+              <td>The socket is a thin SD-WAN edge — all security runs in the PoP. The Socket LAN Firewall covers local intra-site flows</td>
+            </tr>
+            <tr>
+              <td>SmartConsole + Security Management Server / MDS</td>
+              <td>Cato Management Application (CMA)</td>
+              <td>SaaS console — no management server to size, upgrade or licence; audit trail and analytics native, SIEM export available</td>
+            </tr>
+            <tr>
+              <td>Access Control policy — Ordered Layers &amp; Inline Layers</td>
+              <td>WAN Firewall (allowlist, implicit block) + Internet Firewall (blocklist, implicit allow) + Socket LAN Firewall</td>
+              <td>Cato has no layer construct — the hierarchy is flattened into the three rulebases, and the opposite default postures must be designed for (see gotchas)</td>
+            </tr>
+            <tr>
+              <td>NAT rulebase (automatic + manual rules)</td>
+              <td>Site-level NAT policy; Remote / Local Port Forwarding for inbound</td>
+              <td>Most branch hide-NAT disappears — the PoP handles internet SNAT. Audit DC manual NAT line by line</td>
+            </tr>
+            <tr>
+              <td>Identity Awareness (AD Query, Identity Collector, Captive Portal; PDP/PEP)</td>
+              <td>Cato User Awareness — SCIM (Entra ID / Okta), LDAP sync, Cato Identity Agent</td>
+              <td>Identity comes from the directory/IdP and the Client, not gateway-side collectors — the Identity Collector servers are decommissioned</td>
+            </tr>
+            <tr>
+              <td>Remote Access VPN / Mobile Access (Endpoint Security VPN) and the Harmony SASE agent</td>
+              <td>Cato Client (SDP/ZTNA) + clientless browser access</td>
+              <td>One agent and one policy plane for users and sites — and it removes the exposed VPN surface implicated in CVE-2024-24919</td>
+            </tr>
+            <tr>
+              <td>HTTPS Inspection blade</td>
+              <td>Cato TLS Inspection — account-level, wizard-assisted, executed at the PoP</td>
+              <td>Does <strong>not</strong> port 1:1 — rebuilt via Cato's phased best practice; carry over the <em>intent</em> of the bypass list, never the rules</td>
+            </tr>
+            <tr>
+              <td>Threat Prevention blades — IPS, Anti-Virus, Anti-Bot, Threat Emulation (SandBlast)</td>
+              <td>Cato IPS, Next-Gen Anti-Malware, sandboxing, DNS protection</td>
+              <td>Platform capabilities at every PoP, not per-gateway blade licences; enable monitor-then-block per Cato best practice</td>
+            </tr>
+            <tr>
+              <td>Quantum Maestro (MHO orchestrators + Security Groups)</td>
+              <td>Cato PoP capacity — scaling is the provider's problem</td>
+              <td>Honestly: Maestro solves an appliance-scaling problem Cato does not have. DC throughput becomes a socket/vSocket sizing and HA design exercise — size formally</td>
+            </tr>
+            <tr>
+              <td>VSX Virtual Systems</td>
+              <td>Policy scoping in one CMA account; separate accounts only for true multi-tenant needs</td>
+              <td>No per-context config plane. Overlapping IP space across Virtual Systems is the hard case — surface it in discovery</td>
+            </tr>
+            <tr>
+              <td>Site-to-site VPN communities (star / mesh)</td>
+              <td>Cato IPsec sites (IKEv1/v2), BGP supported</td>
+              <td>Partner and third-party VPNs terminate on the PoP, not on site hardware</td>
+            </tr>
+            <tr>
+              <td>SmartLog / SmartEvent</td>
+              <td>CMA events and analytics + SIEM integration</td>
+              <td>Plan retention and export <em>before</em> the management estate is decommissioned — it goes last for exactly this reason</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Recommended migration path</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and the Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the plan with Cato Professional
+        Services before using it with a customer.</p>
+      </div>
+
+      <p>
+        The plan follows the Cato PS methodology — Discover &amp; Design → Pilot, Build &amp; Initial
+        Rollout → Advanced Security &amp; Broader Rollout → Tune, Optimise &amp; Handover, across a
+        typical four-month reference plan. Its heart is the <strong>parallel-socket pattern</strong>:
+        the socket is installed alongside the Check Point edge, the Quantum gateway keeps the default
+        gateway role, and a transit-VLAN handoff — static routes or eBGP (Gaia supports BGP natively)
+        — moves subnets to Cato one prefix at a time. Cato-side routes are tagged with the Cato ASN
+        and community 32768 so they can be isolated and filtered cleanly; for multi-site estates, an
+        interconnecting hub site keeps legacy and Cato islands talking throughout.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 500" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff</title>
+          <desc id="dg1-desc">A Cato Socket is deployed in parallel with an end-of-support Quantum gateway that remains the site's default gateway. A transit-VLAN handoff, static or eBGP with Cato routes tagged community 32768, moves subnets to the Cato PoP one prefix at a time. A migrated user cohort connects with the Cato Client to the PoP; a legacy cohort still uses Endpoint Security VPN to the Quantum gateway. A dashed rollback arrow shows that withdrawing a prefix reverts its traffic to Check Point.</desc>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="280" cy="140" rx="155" ry="50"/>
+          <circle cx="145" cy="160" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="415" cy="120" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="302" y="208" text-anchor="middle">Global private backbone</text>
+
+          <circle class="pulse-ring" cx="280" cy="140" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="280" cy="140" r="30"/>
+          <text class="dg-label" x="280" y="76" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="280" y="92" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">FWaaS · SWG · IPS · TLSi — single pass</text>
+
+          <!-- Site container -->
+          <rect x="60" y="310" width="520" height="120" rx="12" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text class="dg-tiny" x="352" y="300" text-anchor="middle">Branch / DC site — parallel build, per-prefix cutover</text>
+
+          <!-- Parallel socket -->
+          <rect class="dg-node-green" x="95" y="336" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="180" y="360" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub" x="180" y="378" text-anchor="middle">migrated prefixes</text>
+
+          <!-- Quantum gateway -->
+          <rect class="dg-node-dark" x="355" y="336" width="195" height="58" rx="10"/>
+          <text class="dg-label-inv" x="452" y="360" text-anchor="middle">Quantum gateway</text>
+          <text class="dg-sub-inv" x="452" y="378" text-anchor="middle">default GW · EOS Dec 2025</text>
+
+          <!-- Handoff -->
+          <path class="lane-static" d="M 265 365 L 355 365"/>
+          <text class="dg-sub" x="310" y="352" text-anchor="middle">eBGP / static</text>
+          <text class="dg-tiny" x="310" y="414" text-anchor="middle">transit VLAN · community 32768</text>
+
+          <!-- Flows -->
+          <path class="lane lane-allow" d="M 180 334 C 180 268, 220 205, 262 164"/>
+          <path class="lane lane-allow" d="M 814 100 C 700 108, 470 122, 316 138"/>
+          <path class="lane lane-limit" d="M 818 266 C 730 296, 610 322, 508 338"/>
+
+          <!-- Migrated user cohort -->
+          <g>
+            <circle cx="840" cy="95" r="23" fill="var(--status-good)"/>
+            <circle cx="840" cy="88" r="6.5" fill="#fff"/>
+            <path d="M 827 108 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="840" y="137" text-anchor="middle">Migrated cohort</text>
+            <text class="dg-sub" x="840" y="153" text-anchor="middle">Cato Client (SDP)</text>
+          </g>
+
+          <!-- Legacy user cohort -->
+          <g>
+            <circle cx="840" cy="250" r="23" fill="var(--lane-limit)"/>
+            <circle cx="840" cy="243" r="6.5" fill="#fff"/>
+            <path d="M 827 263 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="840" y="292" text-anchor="middle">Legacy cohort</text>
+            <text class="dg-sub" x="840" y="308" text-anchor="middle">Endpoint Security VPN</text>
+            <text class="dg-tiny" x="840" y="324" text-anchor="middle">or Harmony SASE agent</text>
+          </g>
+
+          <!-- Rollback -->
+          <path d="M 185 442 C 300 484, 420 484, 505 448" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 6"/>
+          <path d="M 505 448 L 490 444 M 505 448 L 493 458" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+          <text class="dg-tiny" x="345" y="494" text-anchor="middle">Rollback — withdraw the prefix and traffic reverts to Check Point</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — via the Cato PoP (socket / Cato Client)</span>
+          <span class="key"><span class="swatch limit"></span> Legacy — via the Quantum gateway (Endpoint VPN)</span>
+        </div>
+        <div class="diagram-caption">
+          Parallel build: the socket sits alongside the Quantum gateway, which keeps the default
+          gateway role. The transit-VLAN handoff moves subnets to Cato one prefix at a time while
+          user cohorts swap from Endpoint Security VPN (or the Harmony SASE agent) to the Cato
+          Client in waves. Rollback at every step is a route withdrawal, not a rebuild.
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Export the estate and clean the rulebase</h4>
+          <p>Pull each Access Control layer with <code>mgmt_cli show access-rulebase</code> (or the
+          Web API) using <code>use-object-dictionary true</code>, <code>show-hits true</code> and
+          <code>--format json</code>. Two API realities to plan for: <code>limit</code> caps at 500
+          per call (paginate with <code>offset</code>), and each query returns a single layer —
+          <strong>inline layers must be queried separately</strong>. The open-source
+          ExportImportPolicyPackage tool exports a full policy package (R80.10+) for offline
+          analysis. Capture NAT rules, Threat Prevention profiles, HTTPS Inspection policy, VPN
+          communities, Identity Awareness sources and any Harmony SASE tenant configuration; on
+          MDS, repeat per domain. Then clean before translating: use hit counts and last-modified
+          metadata to strip zero-hit, disabled and shadowed rules and collapse duplicate objects —
+          a decade of SmartConsole history translated verbatim just imports the mess.</p>
+        </li>
+        <li>
+          <h4>Build the parallel network</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Stand up sockets (or vSockets) alongside the Check Point estate with the Quantum
+          gateway — or Maestro Security Group — still the L3 default gateway. Establish the
+          transit-VLAN handoff per site: static routes or eBGP between socket and gateway, with
+          Cato-side routes isolated by the Cato ASN and community 32768. Below roughly 20 sites,
+          parallel connectivity at every site is the preferred pattern; at scale, add an
+          interconnecting hub site (legacy CPE + socket) so legacy and Cato islands keep talking.
+          Validate routing symmetry and return paths with test prefixes before any production move.
+          Foundation work lands here too: CMA baseline, IdP/SCIM integration, SIEM export, and
+          early distribution of the Cato Client and TLS root certificate.</p>
+        </li>
+        <li>
+          <h4>Swap user cohorts — SDP Migration Groups</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Run remote access as phased waves (the PS reference plan uses SDP Migration Groups 1–4
+          across months 2–4). Per cohort: enrol users via SCIM → enable the Cato Client → confirm
+          application access → <strong>remove the legacy client</strong> — Endpoint Security VPN or
+          the Harmony SASE agent — from that cohort's devices. Keep the swap short and scripted:
+          third-party VPN drivers on the same machine can conflict with the Cato Client. Start
+          Client Connectivity and Device Posture policy in monitor mode for device discovery, and
+          tune between waves.</p>
+        </li>
+        <li>
+          <h4>Migrate sites in waves, one prefix at a time</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Move branches in groups; at each site's window, shift its subnets to the socket via the
+          static or eBGP handoff rather than a big-bang LAN cutover — every prefix is individually
+          revertible by withdrawing the route. Re-home anything DNAT-published through the Check
+          Point NAT rulebase to Remote Port Forwarding (Cato allocated IPs) or Local Port
+          Forwarding, update external DNS, and validate the return path <em>before</em> the gateway
+          is retired. In parallel, rebuild HTTPS Inspection as phased Cato TLSi — block QUIC,
+          certificate deployed, then gradual enablement from high-risk/low-impact categories
+          outward — and bring IPS/NGAM through monitor-then-block, with CASB discovery and DLP in
+          monitor mode once the baseline is stable.</p>
+        </li>
+        <li>
+          <h4>Decommission — management goes last</h4>
+          <p>Retire in dependency order: the legacy remote-access surface (Remote Access VPN /
+          Mobile Access blades, Harmony SASE tenant) once the final cohort has migrated → branch
+          gateways → DC gateways, Maestro Security Groups and orchestrators once traffic and events
+          verify clean → Identity Collector servers → <strong>the Security Management Server / MDS
+          last</strong>, only after SmartLog/SmartEvent data is exported or archived to satisfy
+          retention obligations. Terminate blade subscriptions and support contracts at renewal.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🗂️</div><div><h4>One policy plane</h4><p>Quantum rulebase, Harmony SASE portal and Infinity Portal apps converge into the CMA — one console for sites, users, security and analytics.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Rollback is a route withdrawal</h4><p>Per-prefix cutover over the handoff means reverting any step is withdrawing a route — no rebuild, no emergency change window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🩹</div><div><h4>No more hotfix cycles</h4><p>CVE-2024-24919-class emergencies became a fleet-wide hotfix project on Check Point. Cato patches the PoPs; there is no customer-side gateway to patch.</p></div></div>
+        <div class="benefit"><div class="b-icon">📅</div><div><h4>The EOS calendar goes away</h4><p>No appliance families to refresh, no major-version upgrade trains, no management server sizing — capacity and currency are the platform's problem.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Running both networks without breaking either</h2>
+      <p>
+        Placement is decided per site class in discovery: an L3 core switch can own the routing
+        decision (keeping interim throughput off the Quantum gateway), the Check Point can stay as
+        default gateway with the transit-VLAN handoff (the conservative default shown above), or
+        the socket becomes default gateway with Alt-WAN / LAN BGP routing not-yet-migrated traffic
+        back to the legacy network. Whichever pattern is chosen, every phase keeps a designed
+        rollback lever:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Phase</th><th>Rollback lever</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Pilot site</td><td>Remove the static route or withdraw the BGP prefix at the switch or gateway — traffic reverts to Check Point instantly</td></tr>
+            <tr><td>Subnet migration (routed-range pattern)</td><td>Re-add the dummy range on the Cato site and restore the statics at the interconnect — the designed rollback</td></tr>
+            <tr><td>BGP handoff</td><td>Withdraw the prefix; routes propagate back automatically</td></tr>
+            <tr><td>User cohorts</td><td>Re-enable the legacy client for the affected cohort — keep the VPN blades / Harmony SASE tenant warm until the final wave completes</td></tr>
+            <tr><td>TLS inspection</td><td>Roll back to an earlier enablement phase without disabling TLSi entirely</td></tr>
+            <tr><td>Full site</td><td>Physical LAN cutover reversal — big-bang cutovers rate as “complex rollback”, which is why the parallel patterns are preferred</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">The big one: asymmetric routing through a stateful Check Point</div>
+        <p>If traffic egresses via Cato but returns via the Quantum gateway — or crosses regions
+        through different hubs — Check Point's stateful inspection drops the unseen flow.
+        ClusterXL and Maestro flow ownership make it strict about this. Design it out with parallel
+        connectivity per region, hub anchoring, or AS-path design that keeps regional symmetry —
+        and validate return paths before every cutover.</p>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Double TLS inspection</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">If the HTTPS Inspection blade stays enabled on a path Cato now also inspects, users hit certificate-on-certificate failures and pinned apps break twice over. Disable gateway HTTPS Inspection for Cato-routed traffic, or scope Cato TLSi to bypass those paths until cutover.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Dual tunnel clients</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato documents that third-party VPN drivers on the same machine can conflict with and override Cato Client settings. Keep the per-cohort swap short and scripted — install Cato Client → validate → uninstall Endpoint Security VPN or the Harmony SASE agent — and never leave two tunnel clients active long-term.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Inbound published services</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Anything DNAT-published through the Check Point NAT rulebase must be consciously re-homed to Remote Port Forwarding (Cato allocated IPs) or Local Port Forwarding — with external DNS updated and the return route validated — before the gateway is retired. These move on their own change windows.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Identity continuity</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rules that depend on Identity Awareness (PDP/PEP-shared identities) need their Cato-side equivalents proven — SCIM/LDAP sync populated, Identity Agent deployed where non-Client users must be identified — before any gateway-side identity source is switched off.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What will come up in the room</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Layer semantics do not translate mechanically</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">In Check Point, an Accept in one Ordered Layer <em>continues</em> matching into the next (every layer must pass), each layer carries its own implicit cleanup action, Inline Layers nest parent/sub rules, and layers can be shared and delegated across policy packages. Cato's WAN/Internet/LAN firewalls are flat, first-match rulebases with fixed default postures. Model the <em>effective</em> policy — what actually passes all layers — not the layer structure, and budget conversion effort by layers and inter-layer dependencies, not raw rule count.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NAT lives in its own rulebase</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Access policy and NAT policy are separate in SmartConsole, with automatic (object-driven) and manual NAT rules evaluated first-match. Inventory both types during export. Most branch hide-NAT simply disappears behind the PoP; DC manual NAT — static NAT, port translation, no-NAT exemptions between internal networks — needs line-by-line disposition against Cato's site-level NAT and RPF/LPF model.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Identity Awareness has infrastructure of its own</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">AD Query needs privileged WMI access to domain controllers; Identity Collector runs on Windows servers polling identity sources; PDP gateways share identities with PEP enforcement points. These are components to inventory <em>and decommission</em> — and rules that silently depend on identity (including in HTTPS Inspection and Application Control layers) must be flagged in discovery. Verify Cato licence coverage for every user the policy must identify.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We need Maestro-class hyperscale”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Maestro load-shares up to 52 appliances behind orchestrators as one logical gateway — it solves an appliance scaling problem Cato does not have, because inspection capacity lives in the PoPs. The honest counter: DC egress/WAN throughput becomes a socket/vSocket sizing and HA design conversation, and the Maestro-specific operational surface — MHO firmware, SGM membership, Security Group design, dual-site sync — disappears entirely. Size formally; never quote throughput figures from memory.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">VSX estates need a target tenancy model</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Each Virtual System has its own interfaces, routing and policy. A single Cato account with scoped WAN FW / LAN FW rules usually replaces context separation; genuine multi-tenant requirements (divested units, regulated separation) may justify separate accounts. The hard case is overlapping IP space across Virtual Systems — surface it in week one, because it forces re-addressing or NAT design either way.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Check Point has the best threat prevention”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Efficacy debates rarely land — anchor on operational reality instead. Blade-based protections are bounded by the appliance's sizing and software train; HTTPS Inspection is commonly constrained or switched off on appliances for performance and complexity reasons (Check Point maintains a dedicated best-practice SK for it); and CVE-2024-24919 showed the gateway itself is attack surface. Cato delivers IPS, NGAM, sandboxing and TLSi at every PoP, always current, with no customer patch cycle.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We already own Harmony SASE”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">It is a separate stack — the Perimeter 81-derived cloud, with its own agent and portal application, distinct from the Quantum rulebase. The estate still runs two policy planes and two inspection paths, and Harmony Connect customers have already been through one forced platform migration inside the same vendor (sk184452). Argue consoles-and-policies, not feature checklists.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Timing leverage</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The December 2025 hardware EOS wave and the R81.10 March 2026 software deadline both force spend on the status quo. Align the business case and pilot to land <em>before</em> the customer signs a Quantum Force refresh or an R81.20/R82 upgrade project — after that, the window closes for years.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.checkpoint.com/support-services/support-life-cycle-policy/" target="_blank" rel="noopener">Check Point support life cycle policy (EOS dates)</a></li>
+            <li><a href="https://support.checkpoint.com/results/sk/sk184452" target="_blank" rel="noopener">sk184452 — Harmony Connect EOL &amp; service termination</a></li>
+            <li><a href="https://nvd.nist.gov/vuln/detail/cve-2024-24919" target="_blank" rel="noopener">NVD — CVE-2024-24919</a></li>
+            <li><a href="https://github.com/CheckPointSW/ExportImportPolicyPackage" target="_blank" rel="noopener">ExportImportPolicyPackage (Check Point, GitHub)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/11968052021277-Understanding-Rollout-to-the-Cato-Cloud" target="_blank" rel="noopener">Understanding rollout to the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet &amp; WAN Firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7784979714333-Configuring-Remote-Port-Forwarding-for-the-Account" target="_blank" rel="noopener">Configuring Remote Port Forwarding (KB)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-checkpoint-policy.html">Check Point Policy Migration</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

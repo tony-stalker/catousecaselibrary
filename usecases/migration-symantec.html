@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symantec (Broadcom) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Replace ageing Symantec web security — ProxySG/ASG appliances, WSS cloud and CloudSOC CASB — with cloud-delivered SWG, CASB and DLP on one platform.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-symantec">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Symantec to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Symantec (Broadcom) to Cato</h1>
+    <p class="lede">
+      The Blue Coat estate a customer bought from Symantec is now a Broadcom infrastructure line:
+      the classic ProxySG/ASG hardware is on a published EOL calendar, on-prem Reporter is
+      discontinued, services were divested and renewals are subscription-only. This use case walks
+      the path onto the Cato SASE Cloud — retire PAC and WCCP steering cohort by cohort,
+      rationalise decades of CPL rather than porting it, and land WSS, CloudSOC and DLP policy in
+      one console — while staying honest about where a Symantec DLP footprint should remain.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Symantec</span><span class="tag">ProxySG</span><span class="tag">WSS</span>
+      <span class="tag">CloudSOC</span><span class="tag">Broadcom</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this migration is on the table</h2>
+      <div class="callout warn">
+        <div class="co-title">Research-authored page — validate before customer use</div>
+        <p>This page is built from public research (July 2026), not a delivery-verified runbook.
+        Review the plan with Cato Professional Services — and verify every serial-specific
+        lifecycle date against the customer's own Broadcom support-portal notices — before using
+        it in a customer engagement.</p>
+      </div>
+      <p>
+        Broadcom completed its US$10.7bn acquisition of Symantec's enterprise security business in
+        November 2019; the cyber-security services arm was sold to Accenture within six months.
+        Since then the portfolio has been rebranded (<strong>ProxySG became Edge SWG</strong>,
+        <strong>WSS became Cloud SWG</strong>) and restructured: perpetual licences gave way to
+        subscription — with licensing consultancies reporting steep renewal uplifts — and the
+        dedicated proxy hardware line was collapsed, with Edge SWG and Content Analysis now
+        running as VMs on the ISG hypervisor on SSP appliances (Broadcom's own material describes
+        consolidating roughly thirty appliance models down to four).
+      </p>
+      <p>
+        The forcing functions are concrete and dated. These are Broadcom's published backstop
+        dates — always pull the serial-specific dates from the customer's portal and letters:
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">31 Oct 2026</div><div class="stat-label">SG-S200/400/500 hardware EOL backstop — 5 years from purchase, not to exceed this date</div></div>
+        <div class="stat-tile"><div class="stat-value">30 Apr 2027</div><div class="stat-label">ASG-S200/400/500 hardware EOL backstop for later purchases</div></div>
+        <div class="stat-tile"><div class="stat-value">Dec 2026</div><div class="stat-label">SGOS 7.3 LTR limited-support window closes — EOL announced 31 Dec 2024; the path forward is 7.4 on ISG/SSP</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">1 Mar 2025</div><div class="stat-label">On-prem Reporter EOL announced — all on-prem Reporter products discontinued</div></div>
+      </div>
+      <p>
+        Be precise about what is and is not end-of-life: <strong>Cloud SWG, CloudSOC and Symantec
+        DLP remain active products</strong> — never claim an EOL you cannot cite. The pressure is
+        structural: hardware EOL waves, the SGOS 7.3 sunset, Reporter's discontinuation, and a
+        vendor whose stated model concentrates on its largest accounts. Anchor the conversation on
+        the customer's own renewal quote and appliance EOL letters, and plan the migration waves
+        backwards from the contract end-date.
+      </p>
+      <p>
+        The Reporter EOL also creates a hard discovery imperative: <strong>rule hit data and
+        historic web-usage records live in Reporter databases and access logs that will not
+        migrate anywhere</strong>. Export the hit data that drives CPL rationalisation — and
+        archive any history needed for HR, compliance or legal cases — before Reporter is
+        switched off.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Which Symantec components are actually deployed — ProxySG/ASG models and SGOS
+        versions, WSS, UPE, CloudSOC, DLP, SSL Visibility, Content Analysis, Reporter — when does
+        each renew, and do you have Broadcom EOL letters in hand? And now that on-prem Reporter is
+        end-of-life: who consumes its output today, and what history must you retain?"</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Steering is the fundamental difference. Symantec web security is <strong>explicit</strong> —
+        a PAC file, browser proxy setting, WCCP redirect or agent decides what reaches it, and only
+        proxied web ports are inspected. Cato is <strong>transparent</strong> — the Cato Client
+        steers users and the Socket/IPsec tunnel steers sites, and every port and protocol is
+        inspected in a single pass at the PoP. That difference is also what makes co-existence
+        clean (see below).
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Symantec component</th><th>Cato equivalent</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>ProxySG / ASG appliances (Edge SWG)</td><td>Cato SWG / Internet Firewall</td><td>Transparent Client/Socket steering — no PAC files, no explicit-proxy settings, no WCCP service groups; all ports and protocols inspected at the PoP.</td></tr>
+            <tr><td>CPL policy (VPM + Local/Central files)</td><td>Internet Firewall rules + App Control</td><td><strong>Rationalised, not ported</strong> — no automated CPL converter exists. Much CPL volume is proxy plumbing (auth exemptions, pinned-cert bypasses, WCCP quirks) that simply ceases to exist in a transparent model.</td></tr>
+            <tr><td>WSS / Cloud SWG</td><td>Cato PoP-delivered SWG</td><td>Same cloud idea, different architecture: single-pass inspection at a PoP that also carries SD-WAN, ZTNA, CASB and DLP — one policy engine, no per-function agents or tenants.</td></tr>
+            <tr><td>WSS Agent / SEP Web Traffic Redirection</td><td>Cato Client</td><td>Remove at cutover — Broadcom's own KBs document WSS Agent conflicts with third-party VPN/tunnel clients. Never run it alongside the Cato Client.</td></tr>
+            <tr><td>CloudSOC CASB (+ SpanVA collectors)</td><td>Cato CASB (inline + API)</td><td>Securlets map to Cato API-CASB scope per app — validate coverage app by app in design. SpanVA log collectors are not needed: Cato sees the traffic at the PoP.</td></tr>
+            <tr><td>Symantec DLP (Network Prevent, Cloud Detection Service)</td><td>Cato DLP (Data Control + Content Profiles)</td><td>350+ predefined data types, custom regex/keyword types, EDM, MIP sensitivity labels, OCR. Symantec EDM → Cato EDM; <strong>IDM fingerprinting and VML classifiers have no direct equivalent</strong> — redesign or retain Symantec DLP for those policies.</td></tr>
+            <tr><td>Symantec DLP Endpoint + Discover</td><td><strong>No direct equivalent</strong></td><td>USB/print/clipboard channels and data-at-rest scanning are out of SASE scope — retain the agent/Discover where mandated; Cato device posture can require the agent to be running.</td></tr>
+            <tr><td>SSL Visibility Appliance (SV series)</td><td>Cato TLS Inspection</td><td>Single-pass decryption inside the PoP — no dedicated decrypt appliance or tool-farm steering. Out-of-band tool feeds become event/log feeds to the SIEM instead.</td></tr>
+            <tr><td>Content Analysis / Malware Analysis</td><td>Cato Anti-Malware / NGAM + IPS</td><td>Inline scanning without an ICAP hop. Where a formal detonation-sandbox requirement exists, scope it explicitly against Cato's documented services — do not overclaim.</td></tr>
+            <tr><td>Management Center + Reporter</td><td>Cato Management Application (CMA)</td><td>Reporter is EOL regardless of the customer's decision — its replacement is already forced. CMA covers day-to-day analytics; long-term retention goes to the customer's SIEM. Export historic data first.</td></tr>
+            <tr><td>IWA realms / BCAAA / Auth Connector</td><td>Cato Client identity + IdP (SCIM/SSO)</td><td>Identity comes from the Client and IdP, not proxy challenges. BCAAA servers, Kerberos SPNs, virtual URLs and auth-exemption CPL all retire — inventory anything consuming forwarded user headers first.</td></tr>
+            <tr><td>Cloud SWG egress IPs (allowlisted by SaaS/partners)</td><td>Cato allocated egress IPs</td><td>3 allocated IPs included per account (more purchasable); per-app egress rules pin traffic to fixed IPs — repoint allowlists wave by wave.</td></tr>
+            <tr><td>Email Security.cloud / SMG</td><td><strong>No native equivalent</strong></td><td>Scope out explicitly — pair with M365/Google native controls or a dedicated email security vendor.</td></tr>
+            <tr><td>ProxySG reverse proxy / MACH5 WAN-op</td><td><strong>Not a Cato SWG use case</strong></td><td>Workforce access to internal apps maps to Cato ZTNA; a true reverse-proxy/ADC or WAN-op estate needs its own successor plan. Say so early.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Be honest about DLP scope — it wins the room</div>
+        <p>Symantec DLP has real depth Cato's network DLP does not replicate: IDM document
+        fingerprinting, VML trained classifiers, endpoint channels and Discover data-at-rest
+        scanning. Do not contest it — reframe the scope. Cato enforces DLP inline on
+        <em>all</em> traffic crossing the PoP, not just proxied web ports; the recommended design
+        is a <strong>hybrid</strong> that keeps the Symantec DLP endpoint agent wherever
+        endpoint-channel or data-at-rest mandates exist, with Cato device posture confirming the
+        agent is running. Lead with this design — it is a scope statement, not a concession.</p>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">Recommended migration path</div>
+      <h2>Five phases, each independently reversible</h2>
+      <p>
+        The sequence follows the Cato Professional Services methodology — discovery and design,
+        parallel build and pilot, then phased cutover of users and sites, closing with optimise
+        and decommission. Policy work follows the PS pattern: export → review &amp; map → deploy →
+        optimise. Broadcom's subscription terms make the contract end-date the real deadline — plan
+        the waves backwards from it.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Discovery &amp; design — export the CPL, capture hit data before Reporter dies</h4>
+          <p>Pull the VPM, Local, Central and Forward policy files from each appliance — or the
+          UPE reference device via Management Center, treating the UPE policy as the single CPL
+          corpus. Use <strong>Reporter and access-log hit data, while they still exist</strong>, to
+          find what actually fires; classify every layer as business intent (map to Cato), proxy
+          plumbing (dies with the proxy), or dead (delete). Expect the mapped set to be a fraction
+          of the CPL line count — that is the value story, not a loss.</p>
+          <p>Inventory the steering layer — every PAC and its GPO/PFMS distribution, hardcoded
+          proxy settings (browsers, OS images, Java, npm/pip, curl, WPAD), WCCP service groups and
+          the router configs behind them, proxy-forwarding chains, and the WSS Agent / SEP WTR
+          population. <strong>The PAC/GPO estate is the rollback lever — document it before
+          touching it.</strong> Map IWA-Direct/BCAAA authentication and every consumer of forwarded
+          user headers; enumerate egress-IP-pinned SaaS and partner allowlists. Rationalise DLP by
+          detection tech (described content → data types; EDM → EDM; IDM/VML → redesign or retain)
+          and decide the endpoint-DLP hybrid now, not at cutover.</p>
+        </li>
+        <li>
+          <h4>Pilot &amp; parallel build — Sockets alongside, certificate ahead of need</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Build the CMA account to best practice with <strong>SIEM integration from day one</strong> —
+          that is the reporting-continuity answer to the Reporter EOL. Deploy Sockets/IPsec at
+          pilot and hub sites <em>in parallel</em> with the proxy path: Cato carries the traffic
+          while the PAC still points browsers at ProxySG/WSS, so users notice nothing. Give the
+          IT pilot cohort the Cato Client — <strong>after removing the WSS Agent</strong>. Roll the
+          Cato CA certificate out fleet-wide ahead of need; enable TLS Inspection gradually (test
+          group first, expand by category) with QUIC blocked; rebuild the pinned-app bypass list
+          from the ProxySG/SSLV exemptions — verify, don't copy. Switch CASB discovery and DLP to
+          monitor mode early and reconcile Cato DLP events against Symantec DLP incidents.</p>
+        </li>
+        <li>
+          <h4>User cutover — PAC to Client, cohort by cohort</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Per cohort: remove or neutralise the PAC and explicit-proxy settings via GPO,
+          uninstall WSS Agent/SEP WTR, enable the Cato Client with <strong>Always-On</strong>. Run
+          weekly waves with analysis and tuning between them. Cato's Proxy Configuration Policy can
+          centrally serve a transitional PAC for stragglers that still need one. Repoint SaaS
+          tenant restrictions and partner allowlists to Cato allocated egress IPs <em>before</em>
+          the owning cohort flips.</p>
+        </li>
+        <li>
+          <h4>Site cutover — unwind WCCP, retire inline appliances in sequence</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Cut each site's internet breakout to the Socket and Cato PoP; unwind the WCCP service
+          groups on the routers and retire inline/bridged appliances once policy parity is
+          confirmed on sampled rules. UPE estates: freeze Management Center policy edits per wave
+          so the frozen Symantec policy and the live Cato policy cannot drift apart mid-migration.</p>
+        </li>
+        <li>
+          <h4>Optimise &amp; decommission — aligned to the contract end-date</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Event-driven tuning across firewall, TLS, CASB and DLP; convert mapped DLP policies
+          from monitor to block in stages, keeping the Symantec DLP endpoint agent live for its
+          exclusive channels. Run CMA/SIEM reporting in parallel with any remaining
+          Reporter/Hosted Reporting until stakeholders sign off — then export and archive the
+          historic log data. Decommission the WSS/Cloud SWG tenant, CloudSOC (after API-CASB
+          parity), ProxySG/ASG/ISG appliances, SSLV, Content Analysis, BCAAA servers, Management
+          Center and any residual Reporter; reclaim GPO objects, PAC hosting and WCCP router
+          config. Align licence non-renewal with the final wave, and re-evaluate the DLP hybrid:
+          if endpoint and Discover mandates persist, keep a deliberately scoped Symantec DLP
+          footprint with Cato enforcing everything in motion.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Two steering planes that don't collide</h2>
+      <p>
+        This pairing co-exists unusually cleanly. Symantec's steering is <strong>explicit</strong> —
+        a PAC, browser setting, WCCP redirect or agent decides what reaches it; Cato's is
+        <strong>transparent</strong> — the Client and Socket own the path. The two planes are
+        independent, so both platforms run in parallel without conflict: in <strong>stage A</strong>
+        Sockets carry site traffic underneath while the PAC still steers web traffic to ProxySG or
+        WSS; in <strong>stage B</strong> each cohort's PAC is retired, the WSS Agent removed, and
+        the Client/Socket steers that cohort to the PoP where Internet Firewall, SWG, TLS and DLP
+        policy now apply.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 480" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Dual steering planes during the Symantec-to-Cato transition</title>
+          <desc id="dg1-desc">Two user cohorts. Cohort A still uses a PAC file distributed by GPO and steers explicitly to the EOL-marked ProxySG appliances and WSS cloud, which remain the interim web-policy enforcement point on the way to the internet. Cohort B has migrated: the Cato Client and site Sockets steer transparently to a Cato PoP on the global private backbone, which breaks out directly to the internet and SaaS. The old WCCP redirect path from migrated sites to the proxy is retired, shown terminated with an X. A note node records the DLP hybrid: the Symantec DLP endpoint agent stays for USB, print and Discover.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="500" cy="355" rx="150" ry="46"/>
+          <circle cx="358" cy="371" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="339" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="500" y="421" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="500" cy="355" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="500" cy="355" r="30"/>
+          <text class="dg-label" x="500" y="287" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="500" y="303" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · TLSi · CASB · DLP</text>
+
+          <!-- Cohort A (explicit plane) -->
+          <rect class="dg-node" x="30" y="48" width="200" height="78" rx="10"/>
+          <text class="dg-label" x="130" y="72" text-anchor="middle">Cohort A — on PAC</text>
+          <text class="dg-sub" x="130" y="90" text-anchor="middle">Explicit proxy · GPO/PFMS</text>
+          <text class="dg-tiny" x="130" y="107" text-anchor="middle">roamers on WSS Agent</text>
+
+          <!-- ProxySG / WSS (interim, EOL) -->
+          <rect class="dg-node-dark" x="400" y="40" width="220" height="86" rx="10"/>
+          <text class="dg-label-inv" x="510" y="68" text-anchor="middle">ProxySG / ASG · WSS</text>
+          <text class="dg-sub-inv" x="510" y="88" text-anchor="middle">appliances EOL — retiring</text>
+          <text class="dg-sub-inv" x="510" y="108" text-anchor="middle">policy-frozen · interim</text>
+
+          <!-- Cohort B (transparent plane) -->
+          <rect class="dg-node" x="30" y="270" width="200" height="78" rx="10"/>
+          <text class="dg-label" x="130" y="294" text-anchor="middle">Cohort B — migrated</text>
+          <text class="dg-sub" x="130" y="312" text-anchor="middle">Cato Client · Always-On</text>
+          <text class="dg-tiny" x="130" y="329" text-anchor="middle">sites steer via Socket</text>
+
+          <!-- DLP hybrid note -->
+          <rect class="dg-node" x="30" y="386" width="200" height="76" rx="10"/>
+          <text class="dg-label" x="130" y="410" text-anchor="middle">DLP hybrid</text>
+          <text class="dg-sub" x="130" y="428" text-anchor="middle">Symantec DLP agent stays</text>
+          <text class="dg-tiny" x="130" y="445" text-anchor="middle">USB · print · Discover</text>
+          <path class="lane-static" d="M 130 348 L 130 386"/>
+
+          <!-- Internet & SaaS -->
+          <rect class="dg-node-green" x="745" y="200" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="838" y="228" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="838" y="246" text-anchor="middle">M365 · web · SaaS apps</text>
+
+          <!-- Retired WCCP path (terminated with an X) -->
+          <path class="lane-static" fill="none" d="M 230 288 C 300 244, 345 192, 388 152"/>
+          <g aria-label="WCCP redirect retired">
+            <path class="lane-x" d="M 378 140 L 402 164"/><path class="lane-x" d="M 402 140 L 378 164"/>
+          </g>
+          <text class="dg-tiny" x="296" y="200" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">WCCP redirect — retired</text>
+
+          <!-- Explicit plane (amber) -->
+          <path class="lane lane-limit" d="M 230 84 C 290 82, 340 80, 400 78"/>
+          <text class="dg-tiny" x="313" y="62" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PAC — explicit steering</text>
+          <path class="lane lane-limit" d="M 620 96 C 676 118, 708 160, 748 204"/>
+          <text class="dg-tiny" x="716" y="134" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">web policy still here</text>
+
+          <!-- Transparent plane (green) -->
+          <path class="lane lane-allow" d="M 230 309 C 320 320, 390 335, 468 350"/>
+          <text class="dg-tiny" x="336" y="296" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">transparent — no PAC</text>
+          <path class="lane lane-allow" d="M 530 346 C 620 314, 680 276, 745 246"/>
+          <text class="dg-tiny" x="662" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">single-pass breakout</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Explicit — PAC → ProxySG/WSS (interim)</span>
+          <span class="key"><span class="swatch allow"></span> Transparent — Cato Client / Socket</span>
+        </div>
+        <div class="diagram-caption">The two steering planes are independent: cohort A's PAC still sends web traffic to the EOL-marked ProxySG/WSS estate while cohort B steers transparently to the Cato PoP — and the old WCCP redirect from migrated sites is retired. Exactly one platform owns TLS inspection per cohort, and the Symantec DLP endpoint agent stays for its exclusive channels.</div>
+      </div>
+
+      <p>
+        <strong>One TLS inspection owner per cohort — never decrypt the same flow twice.</strong>
+        While a cohort's web traffic still terminates at ProxySG, SSLV or WSS, scope Cato TLS
+        Inspection away from that cohort, and flip inspection ownership at cutover. Rebuild the
+        certificate-pinned app bypass list on the Cato side from the ProxySG/SSLV SSL-intercept
+        exemptions — verify each entry rather than copying the lists blindly.
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Independent steering planes</h4><p>Explicit PAC/WCCP steering and transparent Client/Socket steering never fight over the same flow — both platforms run in parallel for as long as the waves need.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏪</div><div><h4>Rollback is a config event, not a project</h4><p>Reinstate the PAC/GPO (or WCCP redirect) for the affected cohort, reinstall the WSS Agent where roamers need it, relax Always-On for that group — traffic returns to Symantec at the next policy refresh.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>One tunnel agent per device</h4><p>Broadcom's own KBs document WSS Agent conflicts with third-party tunnels. Uninstall WSS Agent/SEP WTR before enabling the Cato Client — and script the reverse for rollback.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧊</div><div><h4>Policy-frozen fallback</h4><p>Keep the tenant and appliances licensed and policy-frozen until final sign-off, and freeze parallel edits on both platforms during waves so rollback stays a known-good state.</p></div></div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objection handling</div>
+      <h2>Where this migration bites — and what to say</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">"We have 20 years of CPL — you can't replicate it"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True as stated — and the wrong goal. No automated
+          CPL-to-Cato converter exists, and none is claimed. CPL sprawls across VPM-generated and
+          hand-written files in order-dependent layers, much of it managing the proxy itself.
+          Rationalise, don't port: use hit data to find the live subset and position the reduction
+          as risk removal — unauditable legacy logic is a liability.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Proxy-embedded auth (IWA / BCAAA / Kerberos)</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Kerberos SPNs, virtual URLs, NTLM fallback and forwarded
+          user headers all die with the proxy. Identity moves to the Cato Client + IdP
+          (SCIM/SSO) — inventory every downstream consumer of proxy auth in phase 1; anything
+          reading user headers needs a redesign, not a mapping.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Egress-IP-pinned SaaS &amp; partners</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Conditional access and partner allowlists keyed to Cloud
+          SWG's published ranges — or to appliance egress IPs — break silently at cutover.
+          Enumerate them in phase 1 and move each to Cato allocated egress IPs with per-app egress
+          rules before the owning cohort flips.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Reporter data archiving</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">On-prem Reporter is EOL (announced 1 Mar 2025). Historic
+          web-usage data for HR, compliance and legal cases lives in Reporter databases and access
+          logs that will not migrate anywhere. Export and archive before decommissioning, land
+          future logs in the SIEM from day one, and confirm Cato analytics retention against the
+          customer's reporting obligations.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"Symantec DLP is deeper than Cato DLP"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Partly true — don't contest depth, reframe scope. Map the
+          <em>actually used</em> policies: EDM → EDM; described content → Cato data types; IDM/VML →
+          redesign or retain hybrid; endpoint channels and Discover → retain where mandated, with
+          Cato posture requiring the agent. Test OCR limits against real policies in the pilot.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Custom categories &amp; local databases</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">ProxySG local category databases and WSS custom categories
+          won't transfer. Export the lists in discovery and rebuild as Cato custom categories and
+          FQDN objects — mechanical but voluminous, so budget real time for it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"Broadcom hasn't EOL'd the cloud service"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True — Cloud SWG, CloudSOC and DLP remain active. The
+          pressure is structural: hardware EOL waves, the SGOS 7.3 sunset, Reporter's EOL, services
+          sold to Accenture and subscription-only renewals. Anchor on the customer's own renewal
+          quote and EOL letters — never claim an EOL you cannot cite.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Sandboxing &amp; caching claims</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Map Content Analysis/Malware Analysis honestly to Cato
+          anti-malware, NGAM and IPS — scope any formal detonation-sandbox requirement explicitly
+          rather than overclaiming. And before treating the SGOS cache as a loss, validate actual
+          byte-hit rates: TLS-everywhere and CDN delivery have eroded forward-proxy cache value.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">Same play: Skyhigh Security (ex-McAfee)</div>
+        <p>Skyhigh Security was spun out of McAfee Enterprise by Symphony Technology Group in
+        March 2022, and the estate you meet is the same shape: on-prem Secure Web Gateway
+        appliances steered by PAC or WCCP, a cloud SWG, Skyhigh CASB and DLP — under an owner that
+        has been through carve-outs and rebrands. The Cato displacement play is identical:
+        transparent Client/Socket steering replaces PAC/WCCP, PoP SWG/TLSi replaces the proxies,
+        Cato CASB/DLP replaces the bolt-ons — and the same rationalise-don't-port rule applies to
+        MWG rulesets as to CPL. Re-use this page's phases; only the export tooling and product
+        names change.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Cato documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273487633-Managing-the-Internet-Firewall-Policy" target="_blank" rel="noopener">Managing the Internet Firewall Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16231563119901-Centralized-Management-of-Proxy-Configuration-Proxy-Configuration-Policy" target="_blank" rel="noopener">Proxy Configuration Policy — centralised PAC (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4405498289053-What-is-the-Unified-CASB-Solution" target="_blank" rel="noopener">Unified CASB solution (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5606495447197-What-is-the-Cato-DLP-Service" target="_blank" rel="noopener">What is the Cato DLP Service (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16676236807453-Working-with-Exact-Data-Matching-EDM-for-DLP" target="_blank" rel="noopener">Exact Data Matching (EDM) for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273467153-Allocating-IP-Addresses-for-the-Account" target="_blank" rel="noopener">Allocated egress IP addresses (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services (runs the methodology)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Symantec sources (techdocs.broadcom.com)</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://techdocs.broadcom.com/us/en/symantec-security-software/web-and-network-security/edge-swg/7-3/overview4/writing_CPL.html" target="_blank" rel="noopener">Writing policy using CPL — the corpus you're rationalising</a></li>
+            <li><a href="https://techdocs.broadcom.com/us/en/symantec-security-software/web-and-network-security/cloud-swg/help/conn-matrix.html" target="_blank" rel="noopener">Cloud SWG connectivity matrix — the steering estate you're retiring</a></li>
+            <li><a href="https://techdocs.broadcom.com/us/en/symantec-security-software/web-and-network-security/management-center/3-3/about_upe_co.html" target="_blank" rel="noopener">Universal Policy Enforcement (UPE) — export from the reference device</a></li>
+            <li><a href="https://techdocs.broadcom.com/us/en/symantec-security-software/information-security/data-loss-prevention/16-1.html" target="_blank" rel="noopener">Symantec DLP 16.1 Help Center — for the hybrid design</a></li>
+            <li><a href="https://techdocs.broadcom.com/us/en/symantec-security-software/web-and-network-security/hardware-appliances/1-0/ssl-visibility-hardware-appliances.html" target="_blank" rel="noopener">SSL Visibility appliance guides — the TLSi you're replacing</a></li>
+          </ul>
+          <p style="font-size:.84rem;color:var(--ink-3);margin:10px 0 0">Serial-specific hardware EOL dates and the
+          Reporter EOL notice live on the Broadcom support portal — always verify against the
+          customer's own letters.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-symantec-policy.html">Symantec Policy Migration</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

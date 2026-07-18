@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TLS Inspection: Staged Rollout Playbook — Cato Use Case Library</title>
+<meta name="description" content="The prerequisite everything else depends on — certificate deployment, category-by-category enablement, QUIC handling, pilot cohorts and breakage triage, done in the right order.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-tls-inspection">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / TLS Inspection Rollout</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>TLS Inspection: Staged Rollout Playbook</h1>
+    <p class="lede">
+      TLS inspection is the fidelity prerequisite for nearly every other security play in this library —
+      without it, SWG, CASB, DLP and AI Security can only judge encrypted traffic by its handshake.
+      But switching on decryption everywhere at once breaks pinned apps, dev tools and legacy clients,
+      and burns trust with the business. This playbook stages the rollout: certificates first, QUIC handled,
+      a monitored pilot, category-by-category expansion, then enforcement — with governed exceptions, not silent ones.
+    </p>
+    <div class="meta-row">
+      <span class="tag">TLS Inspection</span><span class="tag">Certificates</span><span class="tag">QUIC</span>
+      <span class="tag">Staged Rollout</span><span class="tag">Best Practice</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The overwhelming majority of enterprise traffic is now encrypted. Without TLS inspection, every
+        engine that needs to see <em>payload</em> is limited to what the handshake exposes — a domain name
+        and a certificate. In practice that means:
+      </p>
+      <div class="grid-2" style="margin:16px 0">
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>SWG loses category fidelity</h4><p>URL filtering falls back to domain-level decisions. Full-path categorisation, file-type control and content-aware verdicts need the decrypted stream.</p></div></div>
+        <div class="benefit"><div class="b-icon">☁️</div><div><h4>CASB loses granularity</h4><p>Tenant restrictions and action-level controls (upload vs. view, personal vs. corporate instance) live inside the encrypted session, not in the SNI.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>DLP is blind</h4><p>Data protection cannot match content it cannot read. An encrypted upload of a customer database looks identical to an encrypted cat photo.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤖</div><div><h4>AI Security is blind</h4><p>Prompt-level GenAI controls — what is being pasted into which assistant — only exist once the session is decrypted and inspected.</p></div></div>
+      </div>
+      <p>
+        So the objective is not “turn on TLS inspection”. It is: <strong>reach high inspection coverage
+        without an outage story that poisons the project.</strong> Cato’s own guidance is to start gradually —
+        pilot user groups or test sites before full deployment — and the out-of-the-box policy direction is
+        to inspect all HTTPS traffic by default, carving out only what genuinely cannot be inspected.
+        Big-bang decryption fails not because inspection is hard, but because the estate contains a long tail
+        of things that legitimately break under it. Staging is how you find them on your terms.
+      </p>
+    </section>
+
+    <section id="breakage" class="reveal">
+      <div class="section-kicker">Know your enemy</div>
+      <h2>What breaks under decryption — and the documented handling</h2>
+      <p>
+        TLS inspection is a sanctioned man-in-the-middle: the PoP terminates the client’s TLS session,
+        inspects, then re-encrypts towards the server. Four families of traffic object to that — each has
+        a documented answer.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">📌 Certificate-pinned apps</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Some sites and applications pin their server certificate for security and refuse any other issuer — including Cato’s. The KB is unambiguous: these applications don’t work when TLS inspection is active, so you must add them as a <strong>bypass rule</strong>. Cato also maintains a built-in bypass list of known apps, applied automatically at the top of the rule base.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">🪪 Mutual TLS / client authentication</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Sites that require a client certificate (smart-card portals, some banking and government services) conflict with the man-in-the-middle model — the PoP cannot present the user’s client certificate. Documented handling: exempt them with a <strong>bypass rule</strong>, scoped as tightly as possible.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">🧰 Legacy clients &amp; dev tool stores</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Installing the root certificate in the OS store is not always enough: Java SE keeps its own store (import with <code>keytool</code>), and IntelliJ and Git each manage their own trust. Firefox before version 120 needed a manual import (Settings → Certificates → Authorities); from 120 it can trust the OS store. Devices that can’t take a certificate at all — Android, Linux and unidentified OS — are bypassed by default rules you cannot edit.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">⚡ QUIC sidesteps inspection</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">QUIC and GQUIC run over UDP and cannot be inspected like TCP-based TLS. Documented handling: the first time TLS inspection is enabled, Cato automatically creates <strong>Internet Firewall rules that block QUIC and GQUIC</strong>. Browsers then fall back to standard TLS over TCP 443 — where your inspection policy applies. Leave those rules in place.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“What percentage of your web traffic is actually decrypted today — and when your current gateway
+        hit a pinned app or a QUIC flow, did anyone make a deliberate decision, or did it just silently pass through?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The playbook</div>
+      <h2>The staged rollout</h2>
+      <p>
+        Every stage gates the next. Nothing is decrypted until certificates are verified; nothing expands
+        until the pilot is quiet; nothing is enforced until the bypass list is deliberate and owned.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Staged TLS inspection rollout funnel</title>
+          <desc id="dg1-desc">All HTTPS traffic flows through a staged funnel: a root certificate is deployed fleet-wide first, then a pilot cohort is inspected in monitor-first mode, then inspection expands category by category, ending in full enforcement. A neutral bypass lane carries pinned and exempt applications past decryption under governance, and QUIC is blocked so browsers fall back to TCP.</desc>
+
+          <!-- QUIC blocked lane (top left) -->
+          <path class="lane lane-block" d="M 113 176 C 113 104, 150 84, 198 84"/>
+          <g aria-label="QUIC blocked">
+            <path class="lane-x" d="M 204 72 L 228 96"/><path class="lane-x" d="M 228 72 L 204 96"/>
+          </g>
+          <text class="dg-tiny" x="140" y="48" text-anchor="middle">QUIC / UDP 443 blocked</text>
+          <text class="dg-tiny" x="140" y="63" text-anchor="middle">browsers fall back to TCP</text>
+
+          <!-- Certificate prerequisite (top) -->
+          <rect class="dg-node-green" x="288" y="64" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="373" y="87" text-anchor="middle">Root cert fleet-wide</text>
+          <text class="dg-sub" x="373" y="105" text-anchor="middle">MDM / GPO · verified</text>
+          <path class="lane-static" fill="none" d="M 373 120 L 373 176"/>
+
+          <!-- Main funnel row -->
+          <rect class="dg-node-dark" x="28" y="176" width="170" height="64" rx="10"/>
+          <text class="dg-label-inv" x="113" y="202" text-anchor="middle">All HTTPS traffic</text>
+          <text class="dg-sub-inv" x="113" y="220" text-anchor="middle">users · sites · cloud</text>
+
+          <rect class="dg-node" x="288" y="176" width="170" height="64" rx="10"/>
+          <text class="dg-label" x="373" y="202" text-anchor="middle">Pilot cohort</text>
+          <text class="dg-sub" x="373" y="220" text-anchor="middle">monitor-first inspect</text>
+
+          <rect class="dg-node-green" x="518" y="176" width="170" height="64" rx="10"/>
+          <text class="dg-label" x="603" y="202" text-anchor="middle">Category expansion</text>
+          <text class="dg-sub" x="603" y="220" text-anchor="middle">inspect · wave by wave</text>
+
+          <rect class="dg-node-dark" x="748" y="176" width="184" height="64" rx="10"/>
+          <text class="dg-label-inv" x="840" y="202" text-anchor="middle">Full enforcement</text>
+          <text class="dg-sub-inv" x="840" y="220" text-anchor="middle">inspect by default</text>
+
+          <!-- Funnel lanes -->
+          <path class="lane lane-limit" d="M 198 208 L 288 208"/>
+          <path class="lane lane-allow" d="M 458 208 L 518 208"/>
+          <path class="lane lane-allow" d="M 688 208 L 748 208"/>
+
+          <!-- Stage gates -->
+          <text class="dg-tiny" x="243" y="264" text-anchor="middle">gate: certs verified</text>
+          <text class="dg-tiny" x="488" y="264" text-anchor="middle">gate: pilot quiet</text>
+          <text class="dg-tiny" x="718" y="264" text-anchor="middle">gate: bypasses owned</text>
+
+          <!-- Bypass lane (bottom) -->
+          <path class="lane-static" fill="none" d="M 113 240 C 113 348, 300 348, 518 348"/>
+          <rect class="dg-node" x="518" y="316" width="170" height="64" rx="10"/>
+          <text class="dg-label" x="603" y="342" text-anchor="middle">Bypass lane</text>
+          <text class="dg-sub" x="603" y="360" text-anchor="middle">pinned · mTLS · legacy</text>
+          <path class="lane-static" fill="none" d="M 688 348 C 760 348, 840 320, 840 240"/>
+          <text class="dg-tiny" x="300" y="332" text-anchor="middle">no decryption — explicit bypass rules</text>
+          <text class="dg-tiny" x="603" y="404" text-anchor="middle">time-bound · reviewed · audited</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Pilot — inspect, engines in monitor</span>
+          <span class="key"><span class="swatch allow"></span> Inspect — decrypt, scan, re-encrypt</span>
+          <span class="key"><span class="swatch block"></span> QUIC — blocked, falls back to TCP</span>
+        </div>
+        <div class="diagram-caption">Staging discipline: certificates before decryption, a quiet pilot before expansion, owned bypasses before enforcement. The solid lane is the governed exception path — never a silent one.</div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Deploy the root certificate fleet-wide — before anything else</h4>
+          <p><span class="path">Security → Certificate Management</span></p>
+          <p>Decide the trust anchor first: the default Cato certificate, or a private certificate / CSR signed
+          by your own CA (only one can be active at a time). Download it in PEM or DER and push it to every
+          managed device’s trusted root store — on Windows that is <strong>Trusted Root Certification
+          Authorities</strong> — via your MDM/GPO/Intune/Jamf tooling (distribution mechanism is standard
+          endpoint practice; the KB documents the per-OS manual installs, and the Cato Client installs the
+          certificate automatically). Don’t forget the long tail: Java’s own store via <code>keytool</code>,
+          Git, IntelliJ, and Firefox builds before 120.</p>
+        </li>
+        <li>
+          <h4>Verify trust before you decrypt a single flow</h4>
+          <p>Documented check: browse to an HTTPS site, open the padlock, and confirm the certificate issuer
+          reads <strong>Cato Networks plus the PoP name</strong> (Chrome: “Issued by”; Firefox: “Verified by”).
+          Do this on <em>every device type and operating system the organisation uses</em> — the KB is explicit
+          on that scope. A device without the certificate experiences every HTTPS site, and every block page,
+          as a browser security warning.</p>
+        </li>
+        <li>
+          <h4>Let Cato block QUIC — and leave it blocked</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>On first enablement of TLS inspection, Cato automatically creates Internet Firewall rules blocking
+          QUIC and GQUIC, because they can’t be inspected. Keep them: browsers fall back to TCP 443, where the
+          inspection policy actually applies. Removing them re-opens an uninspected side door.</p>
+        </li>
+        <li>
+          <h4>Pilot: small cohort, limited categories, engines in monitor</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Use the documented pilot pattern: a <strong>Bypass</strong> rule with Source = Any, and above it an
+          <strong>Inspect</strong> rule naming only the pilot users. Scope the inspect rule with the wizard’s
+          high-confidence sets (Popular Cloud Apps, Cato-Recommended Domains, Malicious and Suspicious
+          Categories) rather than everything at once. Recommended practice: keep the downstream engines
+          (IPS, Anti-Malware, SWG categories) tracking rather than blocking for this cohort at first, so
+          breakage surfaces as events, not outages. Pilot users work normally and log anything odd.</p>
+        </li>
+        <li>
+          <h4>Expand category by category — and bypass deliberately</h4>
+          <p>Add a category wave, watch, then add the next. When an app breaks — pinning, client
+          authentication — use the documented answer: a narrow <strong>Bypass</strong> rule for that
+          application, recorded with a reason and an owner. Device conditions (Platforms, Countries, Posture
+          Profiles, Connection Origin) let you stage by estate segment too — e.g. inspect managed Windows and
+          macOS first. Note the documented limitation: posture-profile conditions only apply to users connected
+          with the Cato Client.</p>
+        </li>
+        <li>
+          <h4>The enforcement flip</h4>
+          <p>When a full wave has run quietly: widen the Inspect rule’s Source from the pilot group towards
+          Any (the final implicit rule inspects all unmatched traffic), turn the downstream engines from
+          monitor to block, and make the untrusted-server-certificate decision per inspect rule — the
+          documented options are <strong>Allow</strong> (the default), <strong>Prompt</strong> the user, or
+          <strong>Block</strong>. Recommended practice: tighten this as you mature rather than on day one.</p>
+        </li>
+        <li>
+          <h4>Govern exceptions forever after</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>The bypass list is now your attack surface. Recommended practice: every bypass rule carries an
+          owner and an expiry date in its name or description, gets reviewed on a fixed cadence, and its
+          changes are evidenced from the Audit Trail. A bypass without an owner is a finding, not a rule.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="triage" class="reveal">
+      <div class="section-kicker">When something breaks</div>
+      <h2>Breakage triage</h2>
+      <p>
+        Most rollout pain follows a small number of patterns. Triage by symptom before touching the policy —
+        the fix for a missing certificate is very different from the fix for a pinned app.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Certificate warnings on <em>every</em> HTTPS site on one device</td>
+              <td>Root certificate missing from that device’s OS store</td>
+              <td>Re-push via MDM/GPO; verify the padlock shows “Cato Networks + PoP” as issuer before returning the device to an inspect scope</td>
+            </tr>
+            <tr>
+              <td>One app fails or hangs while the browser works fine</td>
+              <td>Certificate pinning — the app refuses any issuer but its own</td>
+              <td>Documented handling: add the application as a bypass rule (check whether it is already on Cato’s built-in bypass list)</td>
+            </tr>
+            <tr>
+              <td>Smart-card / client-certificate site rejects login</td>
+              <td>Mutual TLS — the PoP cannot present the user’s client certificate</td>
+              <td>Narrow bypass rule for that destination; record owner and review date</td>
+            </tr>
+            <tr>
+              <td>Browsers fine, but <code>git</code>, Java or IDE builds fail on TLS errors</td>
+              <td>Tool keeps its own trust store, separate from the OS</td>
+              <td>Import the certificate into the tool’s store (Java <code>keytool</code>; IntelliJ and Git per their own trust settings)</td>
+            </tr>
+            <tr>
+              <td>Warnings only in Firefox</td>
+              <td>Firefox pre-120 uses its own certificate store</td>
+              <td>Import via Settings → Certificates → Authorities, or move the fleet to Firefox 120+ which can trust the OS store</td>
+            </tr>
+            <tr>
+              <td>User sees a browser security error instead of the Cato block page</td>
+              <td>Blocked HTTPS site + no certificate: serving a block page over HTTPS requires the trusted Cato certificate</td>
+              <td>Install / verify the certificate — the warning becomes a clean block page</td>
+            </tr>
+            <tr>
+              <td>Traffic to some sites shows no inspection events at all</td>
+              <td>QUIC still reaching the internet over UDP 443, or a broad bypass rule matching first</td>
+              <td>Confirm the auto-created QUIC/GQUIC block rules are enabled; review bypass rule order — first match wins</td>
+            </tr>
+            <tr>
+              <td>Events show untrusted server certificates on inspected sites</td>
+              <td>Destination presents a self-signed, expired or otherwise untrusted certificate</td>
+              <td>Set the inspect rule’s untrusted-certificate action deliberately: Allow (default), Prompt, or Block</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Field lesson — plan diagnostic windows up front</div>
+        <p>TLS inspection issues rarely arrive as a wave on day one. They trickle in through change control for
+        weeks — a finance app here, a build pipeline there — often reported without any mention of TLS.
+        Book recurring diagnostic windows with the desk and app owners <em>before</em> each expansion wave,
+        teach first-line support the triage table above, and tag every TLSi-suspected ticket so the pattern
+        is visible. Slow-burn breakage that nobody connects to the rollout is how these projects lose sponsorship.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Policy workshop: how to run it</h2>
+      <div class="callout">
+        <div class="co-title">Frame it as the fidelity prerequisite</div>
+        <p>Open with the dependency, not the feature: “Every control we’ve shown you — SWG categories, CASB
+        actions, DLP, GenAI governance — reaches full fidelity only on decrypted traffic. Here is how we get
+        you there without breaking anything.”</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Walk the rule base as shipped</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show the ordered, first-match rule base and the two actions — Inspect and Bypass. Point out the
+          default bypass rules pinned at the top (Android, Linux, unknown OS, plus Cato’s maintained
+          application bypass list) that cannot be edited, and the implicit final rule that inspects everything
+          unmatched. This is the “inspect by default, bypass by exception” posture.</p>
+        </li>
+        <li>
+          <h4>Run the Configuration Wizard</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Click <strong>Start Review</strong> and walk the five recommended rules: Bypass Embedded Operating
+          Systems, Bypass Sensitive Categories, Inspect Popular Cloud Apps, Inspect Cato-Recommended Domains,
+          Inspect Malicious and Suspicious Categories. Customise, <strong>Apply &amp; Continue</strong> through
+          each, then <strong>Apply &amp; Complete Review</strong> and Save. Message: the safe starting rule set
+          is data-driven and takes minutes, not a services engagement.</p>
+        </li>
+        <li>
+          <h4>Show the certificate options</h4>
+          <p><span class="path">Security → Certificate Management</span></p>
+          <p>Show the default Cato certificate alongside the private certificate / CSR option, the single
+          active certificate model, expiry dates, and PEM/DER download — this is the artefact their MDM/GPO
+          team distributes in stage 1 of the playbook.</p>
+        </li>
+        <li>
+          <h4>Build the pilot scoping live</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Create the documented test pattern in front of them: a Bypass rule with Source = Any, and above it
+          an Inspect rule naming a pilot group (e.g. “Priya” and the IT early-adopters). Open the Device column
+          and show the conditions — Platforms, Countries, Posture Profiles, Connection Origin — as the levers
+          for staging by estate segment.</p>
+        </li>
+        <li>
+          <h4>Prove inspection in the browser</h4>
+          <p>As a pilot user, open any HTTPS site and inspect the padlock: the certificate issuer reads Cato
+          Networks plus the serving PoP. Then show a blocked HTTPS site rendering the branded block page — and
+          explain that without the certificate this would be a scary browser warning instead.</p>
+        </li>
+        <li>
+          <h4>Close on visibility and governance</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events for the pilot user: inspected sessions, bypassed apps, untrusted-certificate hits,
+          QUIC blocks. Then show <span class="path">Administration → Audit Trail</span> for policy-change
+          evidence — the governance story that keeps the bypass list honest.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring TLS Inspection Policy for the Account</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">Best Practices for TLS Inspection</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-tls-inspection-configuration-wizard" target="_blank" rel="noopener">Using the TLS Inspection Configuration Wizard</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/testing-tls-inspection-in-the-cato-cloud" target="_blank" rel="noopener">Testing TLS Inspection in the Cato Cloud</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/installing-the-cato-certificate-on-devices" target="_blank" rel="noopener">Installing the Cato Certificate on Devices</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-certificates-for-tls-inspection" target="_blank" rel="noopener">Managing Certificates for TLS Inspection</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/adding-device-conditions-for-tls-inspection" target="_blank" rel="noopener">Adding Device Conditions for TLS Inspection</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/certificate-warnings-with-blocked-https-websites" target="_blank" rel="noopener">Certificate Warnings with Blocked HTTPS Websites</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="migration-zscaler-policy.html">Zscaler Policy Migration</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
