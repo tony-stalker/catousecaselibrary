@@ -400,6 +400,138 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: three policies translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative only</div>
+        <p>The tables below are composed to show the translation pattern — they are not console
+        screenshots, and a real rulebase runs to hundreds of rows. Every surviving row still
+        travels the full pipeline: rationalise on hit counts, map, deploy monitor-first, then
+        enforce on evidence.</p>
+      </div>
+
+      <h3>Before — FortiOS policy table (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>From/To</th><th>Source</th><th>Destination</th><th>Service</th><th>Action</th><th>Security profiles</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12</td>
+              <td>Corp-Internet-Access</td>
+              <td><code>internal</code> → <code>wan1</code></td>
+              <td>Corp-Subnets</td>
+              <td>all</td>
+              <td>ALL</td>
+              <td>ACCEPT</td>
+              <td>default-webfilter · corp-ips · av-default · certificate-inspection</td>
+            </tr>
+            <tr>
+              <td>27</td>
+              <td>Guest-WiFi-Web-Only</td>
+              <td><code>guest-vlan</code> → <code>wan1</code></td>
+              <td>Guest-VLAN-Net</td>
+              <td>all</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>ACCEPT</td>
+              <td>guest-webfilter-strict · av-default</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Legacy-Partner-FTP</td>
+              <td><code>internal</code> → <code>wan1</code></td>
+              <td>Old-App-Server</td>
+              <td>Partner-FTP-Host</td>
+              <td>FTP</td>
+              <td>ACCEPT</td>
+              <td>— <em>(zero hits in 90 days — flagged for discard)</em></td>
+            </tr>
+            <tr>
+              <td>0</td>
+              <td>Implicit Deny</td>
+              <td><code>any</code> → <code>any</code></td>
+              <td>all</td>
+              <td>all</td>
+              <td>ALL</td>
+              <td>DENY</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Guest Wi-Fi — allow web</td>
+              <td>Guest-VLAN-Net</td>
+              <td>Any</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Guest Wi-Fi — block everything else</td>
+              <td>Guest-VLAN-Net</td>
+              <td>Any</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Corp — block restricted categories</td>
+              <td>Corp-Subnets</td>
+              <td>Categories mapped by intent from default-webfilter</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        Several Before rows have no After row — deliberately. The <code>corp-ips</code> and
+        <code>av-default</code> profiles on policy 12 are no longer per-rule attachments: they
+        become the account-level IPS and Next-Gen Anti-Malware layers of the single-pass engine,
+        applied to everything it sees. There is no "Corp-Internet-Access" allow rule either — the
+        Internet Firewall's default-allow posture does that job, so what survives of policy 12 is
+        its webfilter intent, as rule 3. Policy 3 exits the pipeline at REVIEW &amp; MAP on its
+        hit-count evidence, and policy 0 — the implicit deny — is a posture decision, not a rule:
+        the WAN Firewall is implicit-block already, and if the customer wants allowlist egress it
+        becomes an explicit final block rule.
+      </p>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px">
+        <li><strong>Profile pairs became layers.</strong> The webfilter + IPS + AV pair attached to
+        policy 12 decomposed into an Internet Firewall category rule plus account-level IPS and
+        NGAM — separate global policy layers of the single-pass engine, with the old per-policy
+        carve-outs re-expressed as explicit, auditable exceptions.</li>
+        <li><strong>Interface pairs became scopes.</strong> <code>internal</code> → <code>wan1</code>
+        has no equivalent construct — the intent (which segment reaches the internet, under what
+        constraints) is recovered as source scopes in one global rulebase, as the guest rules
+        show.</li>
+        <li><strong>Categories were mapped by intent, not name.</strong> The FortiGuard categories
+        behind <code>default-webfilter</code> were re-selected individually against the Cato
+        taxonomy — similarly-named categories do not cover the same sites — and deployed
+        monitor-first before enforcement.</li>
+        <li><strong>Hit counts decided what never made the journey.</strong> The zero-hit legacy
+        rule was discarded at review rather than translated — the discard pile, and the posture
+        decision that replaces the implicit deny, are outputs of the migration as much as the
+        rules that survive.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain practices</div>
       <h2>Rules that hold across all four domains</h2>

@@ -300,6 +300,75 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: four policies translated</h2>
+
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console exports</div>
+        <p>These tables are composed to show the translation pattern; they are not screenshots of
+        either console, and names and groups are generic. A real conversion works from the
+        customer's own export pack and firing subset — and every translated rule deploys
+        monitor-first, so the actions shown are the enforcement end-state, not day one.</p>
+      </div>
+
+      <h3>Before — Netskope Real-time Protection (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Policy name</th><th>Users/groups</th><th>App / instance &amp; activity</th><th>Profile</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Personal-GDrive-Upload</td><td>All users</td><td>Google Drive — instance ≠ corporate · Upload</td><td>—</td><td>User Alert</td></tr>
+            <tr><td>2</td><td>PCI-CloudStorage-Upload</td><td>All users</td><td>Cloud Storage category (any app) · Upload</td><td>PCI DLP profile</td><td>Block</td></tr>
+            <tr><td>3</td><td>GenAI-Coaching</td><td>All users</td><td>Generative AI category · Upload, Post</td><td>—</td><td>User Alert (justification)</td></tr>
+            <tr><td>4</td><td>Block-HighRisk-Web</td><td>All users excl. Web-Filter-Exempt</td><td>URL categories: Gambling, Weapons · Browse</td><td>—</td><td>Block</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category &amp; activity</th><th>DLP profile</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1a</td><td>Corp-GWorkspace-Tenant</td><td>Any</td><td>Tenant Restrictions — Google Workspace, corporate tenant allowed (header injection)</td><td>—</td><td>Restrict to corporate tenant</td><td>Event</td></tr>
+            <tr><td>1b</td><td>GDrive-Upload-Prompt</td><td>Any</td><td>App Control — Google Drive · Upload (tenant-aware)</td><td>—</td><td>Prompt</td><td>Event</td></tr>
+            <tr><td>2</td><td>PCI-CloudStorage-Block</td><td>Any</td><td>Data Control — Cloud Storage category · Upload</td><td>PCI content profile</td><td>Block</td><td>Event</td></tr>
+            <tr><td>3</td><td>GenAI-Prompt</td><td>Any</td><td>App Control — Generative AI category · Upload</td><td>—</td><td>Prompt&thinsp;*</td><td>Event</td></tr>
+            <tr><td>4</td><td>Block-HighRisk-Web</td><td>Any excl. Web-Filter-Exempt group</td><td>Internet Firewall — URL categories: Gambling, Weapons</td><td>—</td><td>Block</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-2)">
+        * Prompt is warn-and-continue only — it does not capture written justification the way
+        Netskope's User Alert can. Where a justification workflow is a hard requirement, agree
+        compensating controls (event follow-up via CMA/SIEM) rather than claiming parity.
+      </p>
+
+      <h3>What changed in translation</h3>
+      <ul>
+        <li><strong>Instance awareness became a tenant-control model.</strong> Netskope's per-rule
+        instance condition (rule 1) has no construct-for-construct twin: the intent lands as a
+        Tenant Restrictions rule allowing the corporate Google Workspace tenant by header
+        injection, plus tenant awareness in the App Control rule — one Netskope rule became two
+        Cato constructs, mapped by intent.</li>
+        <li><strong>User Alert became Prompt — with less depth.</strong> Rules 1 and 3 keep their
+        coaching behaviour, but Prompt is warn-and-continue: the written-justification capture in
+        rule 3 has no Cato equivalent, so it goes in the mapping workbook as an intent not fully
+        expressed.</li>
+        <li><strong>The DLP profile was rebuilt, not moved.</strong> Rule 2's PCI profile maps
+        onto Cato's predefined PCI data types; had it carried EDM identifiers, that dataset would
+        be regenerated from the system of record — EDM content never exports from Netskope.</li>
+        <li><strong>Activity granularity needs app-by-app validation.</strong> Upload translated
+        cleanly here, but Netskope's activity matrix is finer for some apps — validate each
+        translated activity in the pilot and record any that cannot be expressed, per the CASB
+        gotchas above.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>The rules that apply to every domain</h2>

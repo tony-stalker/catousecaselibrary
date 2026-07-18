@@ -296,6 +296,63 @@
       </div>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: four rules translated</h2>
+
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console exports</div>
+        <p>The two tables below were composed for this page to show the translation pattern.
+        They are not screenshots of either console, and the column layouts only approximate what
+        the ZIA and CMA consoles actually display. Object names are generic placeholders.</p>
+      </div>
+
+      <p>
+        The mapping tables above say <em>what</em> converts to <em>what</em> — this is what it
+        looks like on a handful of rules. Four everyday ZIA rules, one from each policy engine
+        this page covers: a URL-filtering Caution, a Cloud App Control upload block, a File Type
+        Control block, and an SSL-inspection exemption.
+      </p>
+
+      <h3>Before — Zscaler ZIA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Rule name</th><th>Criteria (users/groups, URL categories / cloud apps)</th><th>Action</th><th>State</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Social-Networking-Caution</td><td>All-Employees · URL category: Social Networking</td><td>Caution</td><td>Enabled</td></tr>
+            <tr><td>2</td><td>Block-Personal-OneDrive-Upload</td><td>All-Employees · Cloud app: OneDrive — non-corporate instances · activity: Upload</td><td>Block</td><td>Enabled</td></tr>
+            <tr><td>3</td><td>Block-Exe-Downloads</td><td>All-Employees · File type: Windows Executables · any URL category</td><td>Block</td><td>Enabled</td></tr>
+            <tr><td>4</td><td>SSL-Exempt-Banking</td><td>Finance-Users · URL category: Finance (online banking)</td><td>Do Not Inspect</td><td>Enabled</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <p>
+        The same four intents no longer share one console page: rule 1 lands in the Internet
+        firewall, rules 2 and 3 in App Control, and rule 4 in the TLS Inspection policy.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Prompt-Social</td><td>All-Employees</td><td>Category: Social</td><td>Any</td><td>Prompt</td><td>Event</td></tr>
+            <tr><td>2</td><td>Block-Personal-OneDrive-Upload</td><td>All-Employees</td><td>OneDrive — tenant-restricted · activity: Upload</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>3</td><td>Block-Exe-Downloads</td><td>All-Employees</td><td>Any app · file attribute: Executables · Download</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>4</td><td>Bypass-Banking</td><td>Finance-Users</td><td>Category: Finance</td><td>HTTPS</td><td>Bypass</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Caution became Prompt</strong> — same intent, different user experience, so demo it before committing acceptance criteria (see the SWG section above).</li>
+        <li><strong>The OneDrive rule changed model</strong> — ZIA's per-category Cloud App Control rule with instance profiles becomes one App Control granular rule scoped to the Upload activity, with corporate-tenant enforcement handled by the Tenant Restrictions policy.</li>
+        <li><strong>File Type Control lost its own rulebase</strong> — the executable block is now a file attribute on an App Control rule, exactly as the SWG mapping table shows.</li>
+        <li><strong>The SSL exemption moved policies</strong> — it does not travel with any web rule; it is rebuilt deliberately as a bypass rule in the TLS Inspection policy, not ported from the old exemption list.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain</div>
       <h2>Best practices that span all four domains</h2>

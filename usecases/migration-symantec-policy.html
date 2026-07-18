@@ -284,6 +284,71 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: CPL translated to intent</h2>
+
+      <div class="callout">
+        <div class="co-title">Illustrative extract — not a console export</div>
+        <p>The CPL below and the CMA table that follows were composed for this page to show the
+        translation pattern. They are not screenshots of either console, and the CPL is a
+        simplified sketch of what a real Local policy file looks like. All names are generic
+        placeholders.</p>
+      </div>
+
+      <p>
+        The mapping tables above say <em>what</em> converts to <em>what</em> — this is what the
+        triage looks like on a few lines of policy. One Local-file extract containing four CPL
+        constructs: a custom-category definition, a group-scoped deny, an SSL-intercept exception
+        for online banking, and a legacy user-agent auth exemption nobody has dared touch.
+      </p>
+
+      <h3>Before — ProxySG CPL extract (illustrative)</h3>
+      <pre class="code"><span class="cmt">; Local policy file — extract</span>
+<span class="kw">define condition</span> Unapproved_FileSharing
+  url.domain=fileshare.example url.domain=bulkdrop.example
+<span class="kw">end</span>
+
+<span class="kw">&lt;Proxy "Web-Access-Standard"&gt;</span>
+  group="Standard-Users" condition=Unapproved_FileSharing <span class="kw">deny</span>
+  <span class="cmt">; legacy Java updater could not complete NTLM — Reporter shows zero hits since audit</span>
+  request.header.User-Agent="Java/1.6" authenticate(no)
+
+<span class="kw">&lt;SSL-Intercept "Intercept-Exceptions"&gt;</span>
+  category="Financial Services" ssl.forward_proxy(no)</pre>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <p>
+        Only the intent crosses, and it lands in two policies: the file-sharing deny becomes an
+        Internet Firewall rule, the intercept exception is rebuilt in the TLS Inspection policy —
+        and the dead rule goes to the discard pile with the hit data as evidence.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Block-Unapproved-FileSharing</td><td>Standard-Users (SCIM group)</td><td>Custom category: Unapproved File Sharing</td><td>Block</td><td>Event</td></tr>
+            <tr><td>2</td><td>TLSi-Bypass-Banking</td><td>Any</td><td>Category: Financial Services</td><td>Bypass (TLS Inspection policy)</td><td>Event</td></tr>
+            <tr><td>—</td><td>Java-updater auth exemption</td><td>—</td><td>—</td><td>Discarded at review — zero hits</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Notice what has no row at all: the <code>authenticate(no)</code> exemption mechanics, the
+        IWA realm behind <code>group=</code>, and any proxy-chaining or virtual-URL redirects
+        around this policy. That is plumbing — nothing challenges the browser any more, so there
+        is nothing to migrate.
+      </p>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Order-dependent CPL became declarative criteria</strong> — the <code>define condition</code> plus its layer rule collapse into one Internet Firewall rule whose criteria (group, custom category, action) travel together; there is no layer evaluation order left to reason about.</li>
+        <li><strong>The triage did the real work</strong> — of four CPL constructs, two carried business intent, one was dead on the Reporter evidence, and the auth exemption was proxy plumbing. Only the intent crossed; that ratio is typical, and it is the value story.</li>
+        <li><strong>IWA/BCAAA gave way to SCIM identity</strong> — <code>group=</code> no longer resolves through an IWA realm, BCAAA server or Kerberos SPN: Standard-Users is a SCIM-provisioned IdP group referenced directly in the rule, provisioned before the rule was imported.</li>
+        <li><strong>The SSL-intercept exception changed policies</strong> — <code>ssl.forward_proxy(no)</code> does not travel with any web rule; it is deliberately rebuilt as a TLS Inspection bypass rule, verified against current banking-app behaviour rather than copied from the old exception list.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>Rules that hold across all four domains</h2>

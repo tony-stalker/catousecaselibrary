@@ -310,6 +310,71 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: three rules translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console exports</div>
+        <p>These tables are composed to show the translation pattern; they are not screenshots of
+        either console. Rule and object names are generic — in the workshop, run the same exercise
+        on the customer's own rulebase export.</p>
+      </div>
+
+      <h3>Before — PAN-OS security policy (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Zone (from→to)</th><th>Source</th><th>Application</th><th>Service</th><th>Profile group</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Allow-Office-365</td><td>trust → untrust</td><td>grp-all-staff</td><td>ms-office365</td><td>application-default</td><td>PG-Standard-Threat (IPS, AV, URL)</td><td>Allow</td></tr>
+            <tr><td>2</td><td>Allow-General-Web</td><td>trust → untrust</td><td>grp-all-staff</td><td>web-browsing, ssl</td><td>application-default</td><td>PG-Web-Strict — URL profile blocks gambling, hacking</td><td>Allow</td></tr>
+            <tr><td>3</td><td>Legacy-App-8080</td><td>trust → untrust</td><td>grp-legacy-users</td><td>any</td><td>tcp-8080</td><td>none</td><td>Allow — zero hits in 90 days; cull candidate</td></tr>
+            <tr><td>4</td><td>Deny-All</td><td>any → any</td><td>any</td><td>any</td><td>any</td><td>none</td><td>Deny — log at session end</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Note the classic PAN-OS shapes: the URL block lives <em>inside</em> a profile on an allow
+        rule, not in the rule action; the ports are bound silently by
+        <em>application-default</em>; and the explicit Deny-All exists mostly to log what the
+        interzone default would drop anyway.
+      </p>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Both surviving internet-bound rules land on the Internet Firewall — ordered, first-match,
+        with event tracking on from day one.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Allow Office 365<br><span style="font-size:.85rem;color:var(--ink-2)">IPS &amp; Anti-Malware apply platform-wide — no profile group to attach</span></td><td>All Staff (SCIM group)</td><td>Office 365 (app catalogue)</td><td>TCP 443, 80 — re-pinned</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>2</td><td>Block risky web categories</td><td>Any</td><td>Gambling · Hacking (URL categories)</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>—</td><td colspan="6" style="color:var(--ink-2);font-size:.9rem"><strong>Legacy-App-8080 — not rebuilt.</strong> Zero hits in 90 days: culled at rationalisation, so it never reaches CMA.</td></tr>
+            <tr><td>—</td><td colspan="6" style="color:var(--ink-2);font-size:.9rem"><strong>Deny-All — unnecessary.</strong> The Internet Firewall is a blocklist with implicit allow — the deny intent is carried by the explicit block rule above — and the WAN Firewall is an allowlist whose implicit block <em>is</em> the cleanup rule.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What changed in translation</h3>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Zones became rule placement.</strong> trust → untrust told PAN-OS where the
+        traffic flowed; on Cato each rule consciously lands on a surface — these two on the
+        Internet Firewall, east-west equivalents on the WAN Firewall, local flows on the Socket
+        LAN Firewall.</li>
+        <li><strong>Profile groups became platform layers.</strong> PG-Standard-Threat has no
+        translation: IPS, NGAM and DNS protection run account-wide rather than attaching per rule.
+        And the URL block that lived inside PG-Web-Strict on an <em>allow</em> rule became an
+        ordered block rule of its own.</li>
+        <li><strong>application-default became explicit ports.</strong> Cato's app awareness
+        identifies Office 365, but PA's silent app-to-port binding does not carry over — TCP
+        443/80 is re-pinned in the translated rule so it is no broader than the original.</li>
+        <li><strong>The default postures flipped.</strong> PAN-OS ends in interzone deny; the
+        Internet Firewall ends in implicit allow and the WAN Firewall in implicit block — which is
+        why Deny-All translates to nothing, and why every explicit block must be deliberate.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>The disciplines that hold all four domains together</h2>

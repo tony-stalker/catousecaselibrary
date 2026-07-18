@@ -439,6 +439,80 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: a layered rulebase flattened</h2>
+
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console exports</div>
+        <p>The two tables below were composed for this page to show the translation pattern. They
+        are not screenshots of either console, and the column layouts only approximate what
+        SmartConsole and the CMA actually display. Object names are generic placeholders.</p>
+      </div>
+
+      <p>
+        The mapping tables above say <em>what</em> converts to <em>what</em> — this is what the
+        number-one gotcha looks like on a handful of rules. A parent rule hands branch web traffic
+        to an inline "Web-Access" layer; inside it, one sub-rule allows a URL category and the
+        layer's own implicit cleanup silently drops everything else that matched the parent.
+        A top-layer cleanup rule closes the rulebase.
+      </p>
+
+      <h3>Before — SmartConsole access policy (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>Destination</th><th>VPN/Services &amp; Applications</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>5</td><td>Branch-Web-Access</td><td>Branch-Networks</td><td>Internet</td><td>http · https</td><td>Web-Access <em>(inline layer)</em></td><td>Log</td></tr>
+            <tr><td>5.1</td><td>↳ Allow-Business-Web</td><td>Any</td><td>Internet</td><td>URL category: Business / Economy</td><td>Accept</td><td>Log</td></tr>
+            <tr><td>5.2</td><td>↳ Web-Access cleanup <em>(implicit)</em></td><td>Any</td><td>Any</td><td>Any</td><td>Drop</td><td>Log</td></tr>
+            <tr><td>14</td><td>Cleanup rule</td><td>Any</td><td>Any</td><td>Any</td><td>Drop</td><td>Log</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <p>
+        The hierarchy is gone: the inline layer's sub-rules become ordered, first-match Internet
+        Firewall rules carrying the parent rule's scope explicitly — sub-rule 5.1's
+        <em>Source: Any</em> only ever meant "any traffic that matched the parent", so the
+        flattened rule must say <em>Branch-Networks</em> out loud.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Branch-Web-Allow-Business</td><td>Branch-Networks</td><td>Category: Business &amp; Economy</td><td>HTTP · HTTPS</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>2</td><td>Branch-Web-Block-Remainder</td><td>Branch-Networks</td><td>Any category</td><td>HTTP · HTTPS</td><td>Block</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Rule 2 is the rule that never existed</strong> — the inline layer's implicit
+        cleanup (5.2) was configuration nobody wrote, but on Cato's default-allow Internet
+        Firewall it must become an explicit block with the same scope, or the flattening silently
+        allows what the layer used to drop. This is the page's number-one gotcha made visible.</li>
+      </ul>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>The hierarchy flattened</strong> — ordered and inline layers became one flat,
+        first-match rulebase per firewall; every sub-rule now carries its effective scope
+        explicitly instead of inheriting it from a parent rule.</li>
+        <li><strong>Implicit cleanups became decisions</strong> — the inline layer's cleanup is now
+        explicit rule 2, and the top-layer cleanup (rule 14) stops being a rule at all: east-west
+        it maps to the WAN Firewall's implicit block, and for Internet egress it survives only as
+        an explicit final block if the customer wants allowlist egress.</li>
+        <li><strong>NAT travelled separately</strong> — nothing in either table touches NAT; the
+        branch hide NAT disappears into PoP egress SNAT, and manual/static rules get their own
+        line-by-line disposition in the site-level NAT policy, exactly as the FW-rules section
+        describes.</li>
+        <li><strong>Hit counts decided what got translated</strong> — the
+        <code>show-hits</code> export ran before any of this: zero-hit sub-rules and dead layers
+        exited at review, so the flattened rulebase is smaller than the layered one it replaces.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain practices</div>
       <h2>Rules that hold across all four domains</h2>

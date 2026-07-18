@@ -265,6 +265,56 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: three rules translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative, not screenshots</div>
+        <p>The tables below are <strong>composed to show the translation pattern</strong> — generic
+        names, documentation-range IPs and invented hit counts, not console exports. The real
+        exercise runs on the customer&rsquo;s own artefacts.</p>
+      </div>
+      <h3>Before — Umbrella web policy</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Ruleset</th><th>Identities</th><th>Destinations / categories</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Corporate web policy</td><td>AD group: All Staff</td><td>Destination list: Legacy-Blocked-Sites (312 entries)</td><td>Block</td></tr>
+            <tr><td class="num">2</td><td>Corporate web policy</td><td>Network: HQ egress IP</td><td>Category: Social Networking</td><td>Warn</td></tr>
+            <tr><td class="num">3</td><td>Corporate web policy</td><td>Network: branch egress IPs</td><td>Tenant controls: Microsoft 365 — corporate tenant only</td><td>Allow</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Before — ASA ACL extract</h3>
+      <pre class="code"><span class="cmt"># show access-list — extract (hitcnt = the usage evidence)</span>
+access-list INSIDE-OUT line 12 extended permit tcp object-group BRANCH-NETS object-group DC-APP-SERVERS eq https (hitcnt=48211)
+access-list INSIDE-OUT line 13 extended permit tcp any host 203.0.113.40 eq 8443 (hitcnt=1937)
+access-list INSIDE-OUT line 14 extended deny ip any 198.51.100.0 255.255.255.0 (hitcnt=0)</pre>
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td colspan="7" style="background:var(--page);font-weight:600;color:var(--ink-2)">Internet firewall — blocklist posture</td></tr>
+            <tr><td class="num">1</td><td>Legacy blocked sites</td><td>Any</td><td>Custom category: Legacy Blocked Sites</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td class="num">2</td><td>Social networking — prompt</td><td>Group: All Staff</td><td>Category: Social</td><td>Any</td><td>Prompt</td><td>Event</td></tr>
+            <tr><td class="num">3</td><td>Microsoft 365 — corporate tenant</td><td>Group: All Staff</td><td>App: Microsoft 365 (tenant restriction via App Control)</td><td>Any</td><td>Allow</td><td>Event</td></tr>
+            <tr><td colspan="7" style="background:var(--page);font-weight:600;color:var(--ink-2)">WAN firewall — allowlist posture</td></tr>
+            <tr><td class="num">1</td><td>Branches → DC app servers</td><td>Sites: all branch sites</td><td>Host group: DC-App-Servers</td><td>HTTPS (TCP/443)</td><td>Allow</td><td>Event</td></tr>
+            <tr><td class="num">2</td><td>Branches → partner gateway</td><td>Sites: all branch sites</td><td>Host: 203.0.113.40</td><td>TCP/8443</td><td>Allow</td><td>Event</td></tr>
+            <tr><td colspan="7" style="color:var(--ink-3);font-size:.88rem">ACL line 14 (deny, hitcnt=0) is not recreated — zero hits, and the WAN firewall&rsquo;s default deny covers it anyway.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Identity is real, not inferred.</strong> Umbrella rows 2–3 matched network identities keyed to the sites&rsquo; public egress IPs — meaningless the moment those sites egress from a Cato PoP. The Cato rules match SCIM-provisioned user groups and site objects directly.</li>
+        <li><strong>Warn becomes Prompt.</strong> Umbrella&rsquo;s Warn interstitial maps to Cato&rsquo;s Prompt action — the user can proceed and the event is logged. Re-baseline the category match in monitor first: the taxonomies differ.</li>
+        <li><strong>Hit counts culled the ACL.</strong> Two of three ACEs survive; the zero-hit deny is dropped at Rationalise (with change-control sign-off), not imported &ldquo;to be safe&rdquo;.</li>
+        <li><strong>Object-groups become CMA objects.</strong> BRANCH-NETS and DC-APP-SERVERS flatten into hosts, ranges and groups — expand nested groups first (<code>show access-list</code> does this for you) so dead entries are visible before translation.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain practice</div>
       <h2>Rules that hold across all four domains</h2>

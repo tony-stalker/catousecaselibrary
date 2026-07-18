@@ -275,6 +275,58 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: a VOS policy translated</h2>
+      <p>
+        The mappings above are abstract until one rulebase actually goes through them. Here is a
+        four-rule slice of an everyday VOS branch egress policy traced through the firewall and
+        SWG domains into the rules an engineer would write in CMA — including the rule that never
+        makes the journey.
+      </p>
+      <div class="callout">
+        <div class="co-title">Illustrative, not exported</div>
+        <p>These tables are <strong>composed to show the translation pattern</strong> — they are
+        not console screenshots or a real customer export. Rule names, objects and categories are
+        generic; in a live engagement the &ldquo;before&rdquo; table is the customer's own
+        Director export, rebuilt per site from the template stack and bind data.</p>
+      </div>
+
+      <h3 style="margin-top:22px">Before — VOS security policy (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Rule</th><th>Zone/segment</th><th>Source</th><th>Application / URL category</th><th>Action</th><th>UTM profile</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td>Branch-Web-Allow</td><td>Zone-LAN → Zone-Internet</td><td>LAN-Users (address group)</td><td>Web browsing (HTTP/HTTPS)</td><td>Allow</td><td>URLF-Standard + IPS-Branch + AV-Default</td></tr>
+            <tr><td>20</td><td>Guest-Web-Restrict</td><td>Zone-Guest → Zone-Internet</td><td>Guest-Subnets</td><td>Web only — Streaming &amp; File-Sharing categories blocked in profile</td><td>Allow</td><td>URLF-Guest-Strict (no IPS)</td></tr>
+            <tr><td>30</td><td>Cloud-ERP-Allow <span style="color:var(--ink-3)">(inherited from post-staging template)</span></td><td>Zone-LAN → Zone-Internet</td><td><code>{$v_LAN1_Subnet}</code> — bind-data variable, resolves per device</td><td>Custom app: Corp-ERP-SaaS</td><td>Allow</td><td>IPS-Branch</td></tr>
+            <tr><td>40</td><td>Legacy-FTP-Allow <span style="color:var(--ink-3)">(zero Analytics hits, 12&nbsp;months)</span></td><td>Zone-LAN → Zone-Internet</td><td>LAN-Users</td><td>FTP</td><td>Allow</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Guest — block streaming &amp; file sharing</td><td>Guest VLAN ranges (all sites)</td><td>Streaming Media; File Sharing categories</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>2</td><td>Cloud ERP — branch access</td><td>Site group: UK-Branches</td><td>Custom app: Corp-ERP</td><td>HTTPS</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>3</td><td>Branch web access</td><td>All sites</td><td>Any</td><td>HTTP, HTTPS</td><td>Allow</td><td>Event</td></tr>
+            <tr><td colspan="7" style="color:var(--ink-3);font-style:italic">VOS rule 40 (Legacy-FTP-Allow) is not carried — zero Analytics hits over twelve months; retired at the clean-up stage. IPS and NGAM run as single global policies (monitor first), and the URLF-Standard category deltas become Internet Firewall category rules per the SWG domain — none of it reappears per rule.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>Per-rule UTM became global layers.</strong> URLF-Standard, IPS-Branch and AV-Default vanish from the rule table: IPS and NGAM are single cloud policies deployed in monitor mode and promoted on event evidence, and web-category intent moves into Internet Firewall category rules. Profile <em>variants</em> — Guest-Strict versus Standard — survive as scoped rules, not signature tuning.</li>
+        <li><strong>Template and bind-data indirection became explicit scopes.</strong> <code>{$v_LAN1_Subnet}</code> only meant something after Director resolved it per device; in CMA the same intent is a named site group (UK-Branches) readable on the rule itself. Regenerating the effective config per appliance — the template-stack gotcha above — is what proved which sites the variable actually covered.</li>
+        <li><strong>Zones and segments became scopes.</strong> The Zone-LAN → Zone-Internet pair told you this slice belongs in the Internet Firewall (blocklist, default allow); the guest zone survives as a network-range scope on the block rule rather than a zone object. WAN-bound zone pairs would have landed in the WAN Firewall instead.</li>
+        <li><strong>Hit counts did the rationalisation.</strong> Four VOS rules became three CMA rules: Legacy-FTP-Allow showed zero hits in Versa Analytics and was retired, not translated — dead weight discarded at the clean-up stage, exactly as the pipeline demands.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>The rules that hold across all four domains</h2>

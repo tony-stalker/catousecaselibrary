@@ -289,6 +289,56 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: a business intent overlay translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative, not exported</div>
+        <p>The tables below are <strong>composed to show the translation pattern</strong> — they
+        are not console screenshots or a real customer export. Overlay names, app groups and
+        priorities are generic; substitute the customer&rsquo;s own overlay-intent inventory when
+        you run the exercise for real.</p>
+      </div>
+      <p>
+        Take a typical three-intent estate — a real-time overlay, a business-critical overlay and
+        a default catch-all — and run it through the pipeline. The first table is what the
+        overlay-intent inventory looks like at the end of EXPORT; the second is the same intent
+        re-expressed as CMA network rules and bandwidth profiles at the end of MAP.
+      </p>
+
+      <h3 style="margin-top:22px">Before — EdgeConnect BIO (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Overlay</th><th>Match (app/DSCP)</th><th>Topology</th><th>Link bonding / QoS</th><th>Breakout</th></tr></thead>
+          <tbody>
+            <tr><td>RealTime</td><td>Voice &amp; UC apps; DSCP EF</td><td>Dual hub-and-spoke</td><td>High Availability bonding (packets on both links); real-time priority</td><td>Local breakout for trusted SaaS (the UCaaS platform); everything else backhauled</td></tr>
+            <tr><td>CriticalApps</td><td>Business app groups (ERP, CRM, file services)</td><td>Hub-and-spoke</td><td>Load-balanced bonding (High Throughput); business-critical priority</td><td>Backhaul to the data-centre hubs</td></tr>
+            <tr><td>Default</td><td>Everything else</td><td>Full mesh</td><td>High Efficiency bonding; best-effort priority</td><td>Internet via service chain to the SSE tenant</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Network rule</th><th>Source/App</th><th>Bandwidth priority</th><th>Route/egress</th><th>TLS/inspection</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Real-time — voice &amp; UC</td><td>Any site → voice &amp; UC apps</td><td>P10 (real-time) — packet-loss mitigation on</td><td>Cato backbone end-to-end; egress at the PoP nearest the UCaaS platform</td><td>TLSi bypass (certificate-pinned UC apps) — flows still classified and tracked</td></tr>
+            <tr><td>2</td><td>Business-critical apps</td><td>Any site → ERP / CRM / file-services categories</td><td>P20 (business-critical)</td><td>Backbone to the PoP nearest the app — DC-hosted or SaaS</td><td>Inspected — TLSi, IPS and anti-malware at the PoP</td></tr>
+            <tr><td>3</td><td>Default internet</td><td>Any site → all remaining traffic</td><td>P255 (default)</td><td>Egress at each site&rsquo;s nearest PoP</td><td>Full single-pass inspection natively — the SSE service chain is retired</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>One overlay became a rule and a profile, not a tunnel set.</strong> Each BIO&rsquo;s steering and priority intent lands in two clean constructs — an application-aware network rule plus a bandwidth-management profile — instead of an overlay carrying topology, bonding and breakout in one object.</li>
+        <li><strong>Topology settings dissolved into backbone routing.</strong> Dual hub-and-spoke versus full mesh is no longer configuration — every site rides the same global backbone, and there are no per-overlay topologies to manage. What the topology was <em>doing</em> (reachability) is stated explicitly as WAN Firewall rules.</li>
+        <li><strong>The service-chained SWG became native single-pass inspection.</strong> The Default overlay&rsquo;s tunnel to the SSE tenant has no successor: default traffic is inspected at the PoP on the same pass that classifies it, and the two-console seam disappears.</li>
+        <li><strong>Boost-dependent flows were re-baselined, not translated.</strong> Where an overlay leaned on Boost (WAN optimisation, deduplication) there is no one-for-one equivalent — throughput expectations are re-baselined on evidence during the monitor soak, as covered on the <a href="migration-edgeconnect.html">network companion page</a>.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>The rules that hold across all four domains</h2>

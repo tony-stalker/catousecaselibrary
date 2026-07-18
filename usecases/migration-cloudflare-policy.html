@@ -290,6 +290,78 @@
       profile change.</p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: four Gateway policies translated</h2>
+
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console screenshots</div>
+        <p>Both tables below are <strong>composed to show the translation pattern</strong>, not
+        exported from a real tenant or captured from either console. Names, groups, categories and
+        CIDRs are generic; expressions follow Gateway's selector style without claiming to be
+        syntactically exact. Use the shape, not the values.</p>
+      </div>
+
+      <p>
+        Four representative Gateway policies — one DNS, two HTTP, one network — and where each
+        lands on Cato. In the after table, <strong>IFW</strong> marks Internet Firewall rules
+        (with the DNS-layer intent carried in-line by DNS Security) and <strong>WAN FW</strong>
+        marks the WAN Firewall rule built against an app segment under SDP.
+      </p>
+
+      <h3>Before — Cloudflare Gateway (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Policy</th><th>Type</th><th>Selector / expression</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Block gambling &amp; adult content</td><td>DNS</td><td><code>any(dns.content_category[*] in {"Gambling" "Adult Themes"})</code></td><td>Block</td></tr>
+            <tr><td>2</td><td>Social media — everyone except Marketing</td><td>HTTP</td><td><code>any(http.request.uri.content_category[*] in {"Social Networking"}) and not(any(identity.groups.name[*] in {"Marketing"}))</code></td><td>Block (with block page)</td></tr>
+            <tr><td>3</td><td>Isolate uncategorised destinations</td><td>HTTP</td><td><code>any(http.request.uri.content_category[*] in {"New Domains" "No Content"})</code></td><td>Isolate</td></tr>
+            <tr><td>4</td><td>Engineering access to internal tools (over WARP)</td><td>Network</td><td><code>net.dst.ip in {10.20.0.0/16} and net.dst.port == 443 and any(identity.groups.name[*] in {"Engineering"})</code></td><td>Allow</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>IFW · Block gambling &amp; adult</td><td>Any</td><td>Categories — Gambling, Adult Content</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>2a</td><td>IFW · Allow social media — Marketing</td><td>Group — Marketing</td><td>Category — Social Media</td><td>Any</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>2b</td><td>IFW · Block social media — everyone else</td><td>Any</td><td>Category — Social Media</td><td>Any</td><td>Block</td><td>Event</td></tr>
+            <tr><td>3</td><td>IFW · Isolate uncategorised &amp; new domains</td><td>Any</td><td>Categories — Uncategorised, New Domains</td><td>Any</td><td>RBI (Isolate)</td><td>Event</td></tr>
+            <tr><td>4</td><td>WAN FW · Engineering → Internal Tools</td><td>Group — Engineering (SDP users)</td><td>App segment — Internal Tools (10.20.8.0/22)</td><td>HTTPS (TCP/443)</td><td>Allow</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">What changed in translation</h3>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Expression-based selectors → rule criteria model.</strong> Gateway's free-form
+        expressions become structured rule fields — source, app/category, service, action, track.
+        Negations translate as ordering: the <code>not(…Marketing…)</code> clause in policy 2
+        becomes an allow-above-block pair (2a/2b), because Cato rules are evaluated top-down rather
+        than composed with boolean operators.</li>
+        <li><strong>DNS / HTTP / network policy split → converged rulebase ordering.</strong>
+        Gateway evaluated three policy types as a sequence; the same intents now sit as
+        independently ordered rules in the Internet Firewall (DNS Security in-line, no DNS-location
+        construct) and the WAN Firewall — re-verify ordering per rulebase, as flagged in the
+        FW-rules domain above.</li>
+        <li><strong>Isolate → RBI.</strong> The Browser Isolation add-on's "Isolate" action becomes
+        the RBI policy action beside Allow, Block and Prompt in the same rulebase — one rule (3),
+        no separate SKU or policy type.</li>
+        <li><strong>WARP CIDR access → app segments.</strong> The network policy's whole
+        <code>10.20.0.0/16</code> collapses to a named app segment holding only the application
+        subnets, allowed to the Engineering group under SDP — least privilege by application, and
+        the natural point to tighten a broad range down to what the flows actually use.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>The rules that hold across all four domains</h2>

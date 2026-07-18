@@ -297,6 +297,66 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: an education web policy translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative, not exported</div>
+        <p>The tables below are composed to show the translation pattern — typical of an iboss
+        education deployment, but not screenshots of any console. Use them to walk a customer
+        through what their own exported policy will look like on the other side of the MAP
+        phase; the real rule names, categories and counts come from their export.</p>
+      </div>
+      <h3>Before — iboss group policy (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Group/OU</th><th>Rule</th><th>Categories / controls</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Students-OU</td><td>Search &amp; video controls</td><td>SafeSearch enforced across search engines; YouTube restricted (moderate)</td><td>Enforce</td></tr>
+            <tr><td>Students-OU</td><td>Social media in school hours</td><td>Social Networking category, scheduled 08:30–15:30 on school days</td><td>Block</td></tr>
+            <tr><td>Staff-OU</td><td>Streaming for teaching use</td><td>Streaming Media &amp; Downloads</td><td>Allow — bandwidth watched at peak times</td></tr>
+            <tr><td>All OUs</td><td>Exam platform bypass</td><td>Online exam platform domains — SSL decryption bypass list + PAC exception</td><td>Bypass decryption</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source (group)</th><th>App/Category / Content Restrictions</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Students — SafeSearch + YouTube Moderate</td><td>Students (SCIM group)</td><td>Content Restrictions — SafeSearch enforced; YouTube Moderate*</td><td>Enforce</td><td>Event</td></tr>
+            <tr><td class="num">2</td><td>Students — social media, school hours</td><td>Students (SCIM group)</td><td>URL category: Social Networking, rule time condition for school hours</td><td>Monitor → Block</td><td>Event</td></tr>
+            <tr><td class="num">3</td><td>Staff — streaming allow</td><td>Staff (SCIM group)</td><td>URL category: Streaming Media</td><td>Allow</td><td>Event</td></tr>
+            <tr><td class="num">4</td><td>Exam platform — inspection bypass</td><td>Any</td><td>TLS Inspection policy — bypass rule on a custom app of exam-platform domains, seeded from the PAC/SSL lists</td><td>Bypass inspection</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.84rem;color:var(--ink-3);margin-top:8px">* Content Restrictions are
+      bypassed by browsers using DNS-over-HTTPS — ship the DoH controls in the same change, per
+      <a href="#swg-policy">the DoH caveat in the SWG section</a>.</p>
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>OU scoping → SCIM group scoping.</strong> The per-OU policy objects become
+        group-scoped rules in one ordered global policy — Students rules sit above Staff in the
+        tier ladder, and the groups must exist via SCIM before any of these rules can be
+        built.</li>
+        <li><strong>SafeSearch and YouTube move to Content Restrictions.</strong> Same intent,
+        new dependency: enforcement holds only if DoH is controlled — browser management policy
+        plus the DNS-over-HTTPS block in the Internet firewall, deployed with the rule, not
+        after the first bypass.</li>
+        <li><strong>Schedules carry over as rule time conditions — verify, don't assume.</strong>
+        The school-hours window translates to a time condition on the CMA rule, but this page's
+        mappings are research-based and its gotcha sections don't cover schedule semantics:
+        treat timezone handling and term-date exceptions as exactly the kind of behaviour the
+        monitor wave exists to prove before the block goes live.</li>
+        <li><strong>Bypass lists → TLS inspection bypasses and rule exceptions.</strong> The
+        exam-platform PAC and SSL entries seed a TLS Inspection bypass rule (plus an allow above
+        any category block that would catch it) — remembering that a bypassed destination is
+        invisible to CASB and DLP, so keep the bypass as narrow as the harvested list
+        allows.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain practices</div>
       <h2>Rules that hold across all four domains</h2>

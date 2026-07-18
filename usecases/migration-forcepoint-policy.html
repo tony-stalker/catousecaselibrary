@@ -270,6 +270,64 @@
       </p>
     </section>
 
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: a DLP policy translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative tables — not console screenshots</div>
+        <p>The tables below are composed to show the translation pattern, not exported from
+        either console. Names are generic, and the actions shown are the <em>end state</em> —
+        in a real migration every mapped rule ships in monitor first and earns its Block with
+        telemetry. Validate the pattern against the customer's real policies.</p>
+      </div>
+      <h3>Before — Forcepoint DLP policy (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Policy</th><th>Classifier(s)</th><th>Channel</th><th>Severity / threshold</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>PCI — cardholder data outbound</td><td>Predefined credit-card pattern (regex + checksum validator)</td><td>Web upload</td><td>High — ≥ 5 matches</td><td>Block</td></tr>
+            <tr><td>Customer records export</td><td>Structured fingerprint of the CRM customer table (name + email + account number)</td><td>Web upload + endpoint (removable media)</td><td>High — any 2-field match</td><td>Block</td></tr>
+            <tr><td>Source-code exfiltration</td><td>Machine-learning classifier trained on internal repositories</td><td>Web upload</td><td>Medium</td><td>Audit only</td></tr>
+            <tr><td>(Web Security) Personal cloud storage</td><td>URL category — personal network storage / backup</td><td>Web browsing</td><td>—</td><td>Confirm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category &amp; activity</th><th>DLP profile / data types</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>DLP — PCI outbound</td><td>Any</td><td>Any app — file upload</td><td>PCI content profile — predefined payment-card data types (validated patterns)</td><td>Block</td><td>Event</td></tr>
+            <tr><td>2</td><td>DLP — customer records (EDM)</td><td>Any</td><td>Any app — file upload / attach</td><td>EDM profile <strong>rebuilt from the source CRM table</strong> — fingerprint hashes are not portable</td><td>Block</td><td>Event</td></tr>
+            <tr><td>3</td><td>DLP — source code (redesign)</td><td>Developer groups</td><td>Any app — file upload</td><td>No ML equivalent — <strong>redesign</strong> on custom data types / MIP labels, <strong>or retain on the endpoint (hybrid)</strong>; decision recorded per policy</td><td>Monitor</td><td>Event</td></tr>
+            <tr><td>4</td><td>Web — personal cloud storage</td><td>Any</td><td>URL category: personal storage &amp; backup</td><td>—</td><td>Prompt</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>What changed in translation</h3>
+      <ul>
+        <li><strong>Described content mapped directly.</strong> The regex-plus-validator PCI
+        classifier lands on Cato's predefined payment-card data types in a content profile —
+        but severities and match thresholds are tuned differently on each platform, so the
+        threshold is re-proven in monitor against known samples, not copied on paper.</li>
+        <li><strong>The fingerprint was rebuilt, not ported.</strong> Rule 2's structured
+        fingerprint became an EDM profile regenerated from the source CRM table — fingerprint
+        hashes never transfer between vendors, so plan the rebuild as a task, not a mapping.</li>
+        <li><strong>The ML classifier forced a recorded decision.</strong> There is no trained
+        classifier to migrate to — rule 3 is either redesigned around custom data types, EDM or
+        MIP labels, or explicitly retained on the Forcepoint endpoint as part of the hybrid.
+        Either way the per-policy decision is written down in the review phase.</li>
+        <li><strong>Confirm became Prompt.</strong> The Web Security warn-and-continue action
+        translates directly to Cato's Prompt — the nearest miss is Quota, which has no
+        time-based equivalent and needs a policy-by-policy conversation.</li>
+        <li><strong>Channel coverage changed shape.</strong> Cato enforces rules 1–3 on all
+        traffic through the PoP, across all ports and protocols — broader than a proxy-scoped
+        web channel. But the removable-media half of rule 2 is an endpoint channel Cato does
+        not see: it stays with the Forcepoint agent under the hybrid design, with a device
+        posture check confirming the agent is running.</li>
+      </ul>
+    </section>
+
     <section id="best-practices" class="reveal">
       <div class="section-kicker">Cross-domain best practices</div>
       <h2>Rules that hold across all four domains</h2>
