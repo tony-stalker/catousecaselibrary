@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forcepoint (Web Security &amp; NGFW) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Move from Forcepoint web security and NGFW to cloud-delivered SWG, CASB and DLP — proxy/PAC retirement, DLP policy mapping and appliance decommissioning.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-forcepoint">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Forcepoint to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Forcepoint (Web Security &amp; NGFW) to Cato</h1>
+    <p class="lede">
+      Forcepoint estates are proxy-heritage: PAC files pushed by GPO, Content Gateway appliances,
+      a Stonesoft-heritage NGFW managed from SMC — and, in the middle of it, genuinely deep
+      enterprise DLP. This use case walks the path onto the Cato SASE Cloud: retire explicit-proxy
+      steering cohort by cohort, map web and firewall policy into one console, rationalise DLP
+      honestly (including where a Forcepoint endpoint agent should stay), and decommission the
+      appliance estate on the customer's contract timeline.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Forcepoint</span><span class="tag">SWG</span><span class="tag">DLP</span>
+      <span class="tag">NGFW</span><span class="tag">PAC</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this migration is on the table</h2>
+      <div class="callout warn">
+        <div class="co-title">Research-authored page — validate before customer use</div>
+        <p>This page is built from public research (July 2026), not a delivery-verified runbook.
+        Review the plan with Cato Professional Services — and verify any Forcepoint lifecycle
+        claim against the customer's own support-portal notices — before using it in a customer
+        engagement.</p>
+      </div>
+      <p>
+        Forcepoint has publicly repositioned itself as an <strong>AI-powered data-security
+        company</strong>. The moves are on the record: the Global Governments and Critical
+        Infrastructure (G2CI) business was sold to TPG (completed October 2023, rebranded
+        <strong>Everfox</strong>); Getvisibility (DSPM) was acquired in March 2025; and in April
+        2025 Forcepoint launched <strong>Forcepoint Data Security Cloud</strong> — with the former
+        Forcepoint ONE SSE documentation now branded "Forcepoint Data Security Cloud | SSE".
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">$2.45<span class="unit">bn</span></div><div class="stat-label">G2CI business sold to TPG — completed Oct 2023, rebranded Everfox in Jan 2024</div></div>
+        <div class="stat-tile"><div class="stat-value">Apr 2025</div><div class="stat-label">"Forcepoint Data Security Cloud" launch — the platform pivot to AI-powered data security</div></div>
+        <div class="stat-tile"><div class="stat-value">EoS / EoL</div><div class="stat-label">Model-level NGFW end-of-sale/end-of-life notices published on the Forcepoint support portal — verify per model</div></div>
+      </div>
+      <p>
+        None of that is an end-of-life announcement for the web security or NGFW products — do not
+        claim one you cannot cite. The pressure is strategic, and it is best raised as questions
+        the customer should ask their account team: <em>where do a proxy-heritage web stack and a
+        Stonesoft-heritage firewall estate sit in a data-security-first roadmap? What is the
+        investment trajectory for Content Gateway, SMC and the NGFW line? Which appliance models
+        in our estate already have EoS/EoL notices on the support portal?</em> Where the customer
+        holds a model-level NGFW notice in hand, that is the concrete, citable trigger.
+      </p>
+      <p>
+        The operational case stands on its own: PAC files and GPOs to maintain, proxy-embedded
+        authentication, separate consoles for web, firewall and SSE (the ex-Bitglass Forcepoint
+        ONE stack), and appliances to patch and refresh. Cato replaces the steering, web security,
+        firewalling and remote access with one cloud platform and one console — while being honest
+        that Forcepoint's endpoint DLP depth may deserve to stay.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Which Forcepoint products are actually deployed — cloud web security, Content Gateway,
+        Forcepoint ONE, NGFW/SMC, DLP, email — when does each contract renew, and do you have any
+        appliance EoS/EoL notices in hand?" The answers shape everything below.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Steering is the fundamental difference. Forcepoint web security is <strong>explicit</strong> —
+        a PAC file or proxy setting decides what reaches it, and only proxied web ports are
+        inspected. Cato is <strong>transparent</strong> — the Cato Client steers users and the
+        Socket/IPsec tunnel steers sites, and every port and protocol is inspected at the PoP.
+        That difference is also what makes co-existence clean (see below).
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Forcepoint component</th><th>Cato equivalent</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Web Security Cloud / on-prem Content Gateway</td><td>Cato SWG / Internet Firewall</td><td>Transparent Client/Socket steering — no PAC or explicit-proxy settings to maintain; all ports and protocols inspected.</td></tr>
+            <tr><td>Category / URL policy (Websense categories)</td><td>Internet Firewall rules — categories, custom categories, apps, FQDNs</td><td>Websense "quota/confirm" maps to Cato <strong>Prompt</strong>; time-based quota browsing has no direct equivalent — validate per policy.</td></tr>
+            <tr><td>Content Gateway TLS decryption</td><td>Cato TLS Inspection</td><td>Wizard-driven, single-pass at the PoP; Cato CA on devices; gradual rollout by category; block QUIC so traffic is inspectable.</td></tr>
+            <tr><td>Forcepoint ONE SWG/CASB/ZTNA (ex-Bitglass)</td><td>Cato SSE 360 — SWG + CASB (inline &amp; API) + ZTNA</td><td>One policy engine and console instead of a bolted-on acquisition; shadow-IT dashboards, app risk scores, GenAI app catalogue.</td></tr>
+            <tr><td>Forcepoint DLP — network &amp; cloud channels</td><td>Cato DLP (Data Control policy + Content Profiles)</td><td>350+ predefined data types, custom regex/keyword types, Exact Data Matching (EDM), MIP sensitivity labels, OCR on images.</td></tr>
+            <tr><td>Forcepoint DLP Endpoint agent</td><td><strong>No direct equivalent</strong></td><td>USB, print and clipboard channels are endpoint-enforced — retain the agent where mandated; Cato device posture can require it running.</td></tr>
+            <tr><td>Forcepoint DLP Discover / DSPM</td><td><strong>No Cato equivalent</strong></td><td>Data-at-rest discovery is out of SASE scope — position Cato as the data-in-motion layer alongside a data-at-rest tool.</td></tr>
+            <tr><td>NGFW (ex-Stonesoft) + Secure SD-WAN</td><td>Cato Socket + FWaaS (Internet &amp; WAN Firewall), IPS, NGAM, Cato SD-WAN</td><td>Firewalling and threat prevention move to the PoP; SMC templates flatten into CMA ordered rulebases — rationalise, don't lift-and-shift.</td></tr>
+            <tr><td>SMC (Security Management Center)</td><td>Cato Management Application (CMA)</td><td>Single console and API — no separate manager to host, patch or license.</td></tr>
+            <tr><td>NGFW VPN client / legacy SSL VPN</td><td>Cato ZTNA via the Cato Client</td><td>Identity + MFA + continuous device posture; Always-On prevents bypass; clientless browser access for third parties/BYOD.</td></tr>
+            <tr><td>Cloud proxy egress IPs (allowlisted by SaaS/partners)</td><td>Cato allocated egress IPs</td><td>3 allocated IPs included per account (more purchasable); egress rules pin traffic per app — migrates third-party allowlists.</td></tr>
+            <tr><td>Forcepoint Email Security</td><td><strong>No native equivalent</strong></td><td>Scope out explicitly — keep or replace separately (e.g. M365-native email security and DLP).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Be honest about DLP scope — it wins the room</div>
+        <p>Forcepoint enterprise DLP has real depth Cato's network DLP does not replicate:
+        N-gram document fingerprinting, trainable ML classifiers, an OCR server with language
+        packs, endpoint channels (USB, print, clipboard) and data-at-rest discovery. Do not
+        contest it — reframe the scope. Cato enforces DLP inline on <em>all</em> traffic crossing
+        the PoP, not just proxied web ports; the recommended design is a <strong>hybrid</strong>
+        that keeps the Forcepoint endpoint agent wherever endpoint-channel mandates exist, with
+        Cato device posture confirming the agent is running before granting access.</p>
+      </div>
+      <figure class="shot">
+        <img class="zoomable" src="../assets/img/dlp-incident-cma.png" alt="Cato Management Application DLP incident detail: a blocked upload of a document containing credit card numbers to Microsoft Copilot, showing user, application, matched data types, the triggering rule and a secured forensics evidence panel">
+        <figcaption>Where Forcepoint DLP policies land: a Cato DLP incident in CMA — blocked credit-card-data upload to Microsoft Copilot, with matched data types, the triggering rule and secured forensic evidence.</figcaption>
+      </figure>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">Recommended migration path</div>
+      <h2>Five phases, each independently reversible</h2>
+      <p>
+        The sequence follows the Cato Professional Services methodology — discovery and design,
+        parallel build and pilot, then phased cutover of users and sites, closing with optimise
+        and decommission. Policy work follows the PS pattern: export → review &amp; map → deploy →
+        optimise.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Discovery &amp; design — inventory the steering layer and rationalise DLP first</h4>
+          <p>Document every PAC file and its GPO distribution points, policy-specific PAC URLs,
+          WPAD, proxy settings hardcoded in apps and build tooling, and Content Gateway
+          transparent-mode hooks (WCCP/policy routing) — the PAC estate is the rollback lever.
+          Find <strong>proxy-embedded authentication</strong>: NTLM/Kerberos proxy auth and
+          X-Authenticated-User headers consumed downstream — in Cato, identity comes from the
+          Client and IdP integration, so every consumer needs an identity path. Enumerate
+          <strong>egress-IP-pinned allowlists</strong> (SaaS tenant restrictions, conditional
+          access, partner firewalls) for replacement with Cato allocated IPs.</p>
+          <p><strong>Rationalise DLP before mapping:</strong> age out unused policies, then
+          classify what remains — dictionary/regex/predefined classifiers map directly to Cato
+          data types; structured fingerprints re-implement as <strong>EDM</strong>; unstructured
+          document fingerprints and ML classifiers have no direct equivalent — redesign around
+          data types/EDM/MIP labels or explicitly retain Forcepoint for those policies. Decide the
+          endpoint-DLP hybrid now, not at cutover.</p>
+        </li>
+        <li>
+          <h4>Pilot &amp; parallel build — sockets alongside, certificate ahead of need</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Deploy Sockets/IPsec at pilot and hub sites <em>in parallel</em> with the existing
+          NGFW/proxy egress — Cato carries traffic while Forcepoint still enforces web policy for
+          everyone else. Roll the Cato CA certificate out fleet-wide before it is needed, then
+          enable TLS Inspection gradually — test group first, expanding by URL category — with
+          QUIC blocked via the Internet Firewall. Switch CASB discovery and DLP to monitor mode
+          early and reconcile DLP monitor events against Forcepoint incidents before any
+          enforcement.</p>
+        </li>
+        <li>
+          <h4>User cutover — remove the PAC cohort by cohort, Always-On Client in</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Per cohort: remove or modify the PAC via GPO, enable the Cato Client with
+          <strong>Always-On</strong>, and confirm nothing still steers web traffic to Forcepoint.
+          Run weekly waves with tuning in between. Cato's Proxy Configuration Policy can centrally
+          serve a transitional PAC for stragglers that still need one. Repoint SaaS tenant
+          restrictions and partner allowlists to Cato allocated egress IPs <em>before</em> the
+          owning cohort flips.</p>
+        </li>
+        <li>
+          <h4>Site cutover — retire NGFW and Content Gateway in sequence</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Cut each site's internet breakout to the Socket and Cato PoP; retire the local NGFW
+          and Content Gateway once WAN and internet policy are confirmed on Cato, converting
+          temporary routed-range designs to VLAN termination as firewalls come out. Retire the
+          NGFW VPN gateway per region once its user population is on Cato ZTNA — keep it
+          dark-standby until sign-off.</p>
+        </li>
+        <li>
+          <h4>Optimise &amp; decommission — aligned to contract end-dates</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Event-driven tuning across firewall, TLS, CASB and DLP; convert agreed DLP policies
+          from monitor to block in stages. Decommission the Forcepoint cloud tenant, Content
+          Gateway/V-Series appliances, SMC and NGFW estate and VPN gateways; reclaim GPO objects
+          and PAC hosting. Forcepoint licensing is non-cancellable with reinstatement fees for
+          lapsed support — so time non-renewal to the last cutover wave and align the plan to the
+          contract end-date, not vice versa. Re-evaluate the DLP hybrid: if endpoint-channel and
+          discovery mandates persist, keep a deliberately scoped endpoint-DLP licence, with Cato
+          enforcing everything in motion.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Two steering planes that don't collide</h2>
+      <p>
+        This pairing co-exists unusually cleanly. Forcepoint's steering is <strong>explicit</strong> —
+        the PAC decides what reaches it; Cato's is <strong>transparent</strong> — the Client and
+        Socket own the path. The two planes are independent, so both platforms run in parallel
+        without conflict: un-migrated cohorts keep the PAC pointing at Forcepoint (cloud or
+        Content Gateway) while migrated cohorts steer transparently to the Cato PoP, where
+        Internet Firewall, SWG, TLS and DLP policy now apply.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Dual steering planes during the Forcepoint-to-Cato transition</title>
+          <desc id="dg1-desc">Two user cohorts. Cohort A still uses a PAC file distributed by GPO and steers explicitly to the Forcepoint web cloud, which remains the interim enforcement point on the way to the internet. Cohort B has migrated: the Cato Client and site Sockets steer transparently to a Cato PoP on the global private backbone, which breaks out directly to the internet and SaaS. A note node records the DLP hybrid: the Forcepoint endpoint agent stays for USB, print and clipboard channels.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="500" cy="352" rx="150" ry="46"/>
+          <circle cx="358" cy="368" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="336" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="500" y="418" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="500" cy="352" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="500" cy="352" r="30"/>
+          <text class="dg-label" x="500" y="284" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="500" y="300" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · TLSi · CASB · DLP</text>
+
+          <!-- Cohort A (explicit plane) -->
+          <rect class="dg-node" x="30" y="54" width="195" height="78" rx="10"/>
+          <text class="dg-label" x="128" y="78" text-anchor="middle">Cohort A — on PAC</text>
+          <text class="dg-sub" x="128" y="96" text-anchor="middle">Explicit proxy via GPO</text>
+          <text class="dg-tiny" x="128" y="113" text-anchor="middle">browser → PAC → proxy</text>
+
+          <!-- Forcepoint cloud (interim) -->
+          <rect class="dg-node-dark" x="405" y="44" width="210" height="78" rx="10"/>
+          <text class="dg-label-inv" x="510" y="76" text-anchor="middle">Forcepoint cloud</text>
+          <text class="dg-sub-inv" x="510" y="96" text-anchor="middle">policy-frozen · interim</text>
+
+          <!-- Cohort B (transparent plane) -->
+          <rect class="dg-node" x="30" y="268" width="195" height="78" rx="10"/>
+          <text class="dg-label" x="128" y="292" text-anchor="middle">Cohort B — migrated</text>
+          <text class="dg-sub" x="128" y="310" text-anchor="middle">Cato Client · Always-On</text>
+          <text class="dg-tiny" x="128" y="327" text-anchor="middle">sites steer via Socket</text>
+
+          <!-- DLP hybrid note -->
+          <rect class="dg-node" x="30" y="382" width="195" height="76" rx="10"/>
+          <text class="dg-label" x="128" y="406" text-anchor="middle">DLP hybrid</text>
+          <text class="dg-sub" x="128" y="424" text-anchor="middle">FP endpoint agent stays</text>
+          <text class="dg-tiny" x="128" y="441" text-anchor="middle">USB · print · clipboard</text>
+          <path class="lane-static" d="M 128 346 L 128 382"/>
+
+          <!-- Internet & SaaS -->
+          <rect class="dg-node-green" x="745" y="196" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="838" y="224" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="838" y="242" text-anchor="middle">M365 · web · SaaS apps</text>
+
+          <!-- Explicit plane (amber) -->
+          <path class="lane lane-limit" d="M 225 88 C 290 84, 340 82, 405 80"/>
+          <text class="dg-tiny" x="315" y="66" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PAC via GPO — explicit</text>
+          <path class="lane lane-limit" d="M 615 92 C 672 110, 704 158, 748 202"/>
+          <text class="dg-tiny" x="712" y="132" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">web policy still here</text>
+
+          <!-- Transparent plane (green) -->
+          <path class="lane lane-allow" d="M 225 305 C 320 315, 390 330, 468 344"/>
+          <text class="dg-tiny" x="330" y="294" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">transparent — no PAC</text>
+          <path class="lane lane-allow" d="M 530 340 C 620 310, 680 272, 745 242"/>
+          <text class="dg-tiny" x="660" y="270" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">direct PoP breakout</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Explicit — PAC → Forcepoint (interim)</span>
+          <span class="key"><span class="swatch allow"></span> Transparent — Cato Client / Socket</span>
+        </div>
+        <div class="diagram-caption">The two steering planes are independent: cohort A's PAC still sends web traffic to Forcepoint while cohort B steers transparently to the Cato PoP. Exactly one platform owns TLS inspection per cohort, and the Forcepoint DLP endpoint agent stays for its exclusive channels.</div>
+      </div>
+
+      <p>
+        <strong>One TLS inspection owner per cohort — never decrypt the same flow twice.</strong>
+        While a cohort's web traffic still terminates at Forcepoint, bypass Cato TLS Inspection
+        for that cohort (or scope Cato TLSi to migrated cohorts only), and flip inspection
+        ownership at cutover. Rebuild the certificate-pinned app bypass list on the Cato side from
+        the Forcepoint bypass list — do not assume the two are identical.
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Independent steering planes</h4><p>Explicit PAC steering and transparent Client/Socket steering never fight over the same flow — both platforms run in parallel for as long as the waves need.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏪</div><div><h4>Rollback is a config event, not a project</h4><p>Reinstate the PAC/GPO for the affected cohort, relax Always-On for that group, and traffic returns to Forcepoint at the next policy refresh.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧊</div><div><h4>Policy-frozen fallback</h4><p>Keep the Forcepoint tenant and appliances licensed and policy-frozen until final sign-off — and freeze parallel edits on both platforms during waves to avoid drift.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>No protection gap on data</h4><p>Cato DLP runs in monitor then block on data in motion, while the Forcepoint endpoint agent keeps covering USB, print and clipboard throughout.</p></div></div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objection handling</div>
+      <h2>Where this migration bites — and what to say</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">"Forcepoint DLP is deeper than Cato DLP"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Partly true — don't contest it, reframe scope. Map each
+          <em>actually used</em> policy (most estates run far fewer than they own): structured
+          fingerprints → EDM; unstructured fingerprints and ML classifiers → redesign or retain
+          hybrid. Test Cato's OCR limits (image formats, 10&nbsp;KB–50&nbsp;MB, no OCR with EDM
+          profiles) against real policies in the pilot — never assert them.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Endpoint DLP channels</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato enforces DLP at the PoP on traffic in motion — it is not
+          an endpoint DLP agent. Regulated industries often have hard USB/print/clipboard
+          mandates: lead with the hybrid design, not a swap, and use Cato device posture to
+          require the endpoint agent before granting access.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Proxy-embedded authentication</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">NTLM/Kerberos proxy auth and X-Authenticated-User headers
+          disappear when the proxy does. Identity moves to the Cato Client + IdP (SCIM/SSO) —
+          anything downstream that reads proxy headers needs a redesign in phase 1, not a
+          mapping.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">PAC stragglers &amp; hardcoded proxies</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Apps and build tooling with hardcoded proxy settings keep
+          sending traffic to a proxy that no longer exists. Sweep for them in discovery; Cato's
+          Proxy Configuration Policy can serve a transitional PAC — the final state is no PAC at
+          all.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SaaS &amp; partners pinned to proxy egress IPs</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cutover silently breaks tenant restrictions, conditional
+          access and partner allowlists keyed to Forcepoint egress ranges. Enumerate them in
+          phase 1 and move each to Cato allocated egress IPs (per-app egress rules) before the
+          owning cohort flips.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Quota / confirm browsing actions</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Websense-era time-quota browsing has no like-for-like Cato
+          action. Cato Prompt (warn-and-continue) covers the common intent — validate
+          policy-by-policy rather than promising parity.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"Forcepoint says nothing is EOL"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Largely true for the cloud and DLP products — the pressure is
+          strategic, not contractual: the data-security pivot, G2CI divested to Everfox, and
+          console/agent fragmentation across ONE and the legacy stacks. Never claim an EOL you
+          cannot cite; a model-level NGFW EoS notice the customer holds is the concrete
+          trigger.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Email security is out of scope</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato does not replace Forcepoint Email Security — scope it out
+          explicitly and pair with M365-native or a dedicated vendor. Regulated customers should
+          also map DLP incident export (Cato events → SIEM/SOAR) early and run both incident
+          streams in parallel during monitor mode to build auditor confidence.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Cato documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5606495447197-What-is-the-Cato-DLP-Service" target="_blank" rel="noopener">What is the Cato DLP Service (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16676236807453-Working-with-Exact-Data-Matching-EDM-for-DLP" target="_blank" rel="noopener">Exact Data Matching (EDM) for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16231563119901-Centralized-Management-of-Proxy-Configuration-Proxy-Configuration-Policy" target="_blank" rel="noopener">Proxy Configuration Policy — centralised PAC (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273467153-Allocating-IP-Addresses-for-the-Account" target="_blank" rel="noopener">Allocated egress IP addresses (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services (runs the methodology)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Forcepoint sources (verify lifecycle claims here)</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.forcepoint.com/newsroom/2023/tpg-completes-acquisition-forcepoint-global-governments-and-critical-infrastructure" target="_blank" rel="noopener">TPG completes G2CI acquisition (Oct 2023)</a></li>
+            <li><a href="https://www.forcepoint.com/newsroom/2025/forcepoint-unveils-data-security-cloud-uniting-visibility-and-control-data-everywhere" target="_blank" rel="noopener">Forcepoint Data Security Cloud launch (Apr 2025)</a></li>
+            <li><a href="https://support.forcepoint.com/s/productsupportlifecycle" target="_blank" rel="noopener">Product Support Life Cycle portal (login required)</a></li>
+            <li><a href="https://www.forcepoint.com/sites/default/files/resources/datasheets/forcepoint-product-life-cycle-policy-en.pdf" target="_blank" rel="noopener">Product Life Cycle Policy (PDF)</a></li>
+            <li><a href="https://help.forcepoint.com/websec/en-us/on-prem/85/pac_file_best_practices/wsop_85x_pacfbp_en-us.pdf" target="_blank" rel="noopener">PAC file best practices (PDF) — the steering estate you're retiring</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-forcepoint-policy.html">Forcepoint Policy Migration</a></li>
+            <li><a href="migration-iboss.html">iboss Proxy to Cato</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

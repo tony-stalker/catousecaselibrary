@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Versa Networks (SD-WAN &amp; SASE) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Move from Versa's VOS appliance estate and Director-managed SD-WAN to the Cato platform — policy translation, eBGP hub co-existence and staged branch cutover with simple rollback.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-versa">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Versa to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Versa Networks (SD-WAN &amp; SASE) to Cato</h1>
+    <p class="lede">
+      A Versa estate pairs a capable VOS edge with a head-end — Director, Controller, Analytics,
+      often Concerto — that someone must host, size, patch and upgrade; in many accounts that
+      someone is a carrier, and every change rides a provider ticket. This page maps each Versa
+      component to its Cato equivalent and walks a five-phase path — early config export, eBGP
+      hub co-existence with the MP-BGP overlay left intact, regional cutover waves with per-spoke
+      rollback — sequenced around the provider contract where the SD-WAN is carrier-delivered.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Versa</span><span class="tag">VOS</span><span class="tag">Director</span>
+      <span class="tag">SD-WAN</span><span class="tag">eBGP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Two decision points: who runs the head-end, and who owns the contract</h2>
+      <p>
+        Versa's architecture is honest about where the work lives. VOS on a CSG appliance,
+        certified white box or VM is the branch edge — SD-WAN routing plus an on-box NGFW/UTM
+        stack. Behind the edges sits real server infrastructure: <strong>Versa Director</strong>
+        (management, templates, workflows) in active-standby pairs, <strong>Versa
+        Controller</strong> — a multi-instance MP-BGP route reflector distributing routes and
+        IPsec security associations to every branch — in active-active pairs, a <strong>Versa
+        Analytics</strong> cluster, and often <strong>Concerto</strong> as the orchestration
+        portal on top. All components must run the same Versa software version, so upgrades are
+        coordinated fleet events; the published requirements list Ubuntu 18.04 as the supported
+        base OS for on-premises head-ends. Versa now sells a hosted-and-managed head-end service
+        (VHM) — tacit acknowledgement that this is a burden many customers do not want.
+      </p>
+      <p>
+        The second decision point is commercial. Versa sells heavily through service providers —
+        Verizon's managed SD-Branch and Lumen's SD-WAN and SASE services are built on Versa — and
+        in those estates the <em>provider</em> owns the Director tenancy, often the CPE and
+        sometimes the underlay circuits. The enterprise raises change tickets rather than making
+        changes, and the network architecture is bound to the carrier contract term. Contract
+        renewal, a dissatisfaction window, or Versa's own VersaONE re-platforming conversation
+        (announced November 2024) are the natural moments to evaluate an alternative.
+      </p>
+      <p>
+        The objective of this migration: Sockets on the WAN edge, the global private backbone as
+        the middle mile, single-pass inspection at the PoP, and one console — the Cato Management
+        Application — with <strong>no head-end anywhere in the customer's or provider's
+        estate</strong>. The control plane, the analytics store and the patching cycle become the
+        vendor's problem, permanently.
+      </p>
+    </section>
+
+    <section id="headend" class="reveal">
+      <div class="section-kicker">The operational case</div>
+      <h2>The head-end burden, in Versa's own numbers</h2>
+      <p>
+        These figures are from Versa's published head-end hardware and software requirements —
+        the sizing for a 2,500-CPE / 500-tenant estate, deployed across Tier 3/4 data centres or
+        cloud availability zones for geo-redundancy:
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">24<span class="unit"> cores</span></div><div class="stat-label">and 64 GB RAM per Director server — two servers, active-standby, at 2,500-CPE scale</div></div>
+        <div class="stat-tile"><div class="stat-value">6<span class="unit"> servers</span></div><div class="stat-label">Analytics cluster at the same scale — 16 cores / 64 GB each, 2 TB storage on analytics nodes</div></div>
+        <div class="stat-tile"><div class="stat-value">2,500<span class="unit"> CPEs</span></div><div class="stat-label">ceiling per Analytics cluster — a 20,000-CPE estate needs eight clusters</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">10.0<span class="unit"> CVSS</span></div><div class="stat-label">CVE-2025-34027 — Concerto authentication bypass to remote code execution (2025)</div></div>
+      </div>
+
+      <p>
+        The security record matters here not as FUD but as evidence of what self- or
+        provider-hosted management infrastructure costs. State the facts accurately — patches
+        exist for everything below — and let the operating model make the argument:
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Director zero-day <span class="tag">2024</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CVE-2024-39717, a file-upload flaw in Director's GUI, was exploited
+          as a zero-day from at least June 2024 and added to the CISA KEV catalogue in August 2024.
+          Black Lotus Labs attributed the campaign with moderate confidence to Volt Typhoon, which
+          planted the in-memory &ldquo;VersaMem&rdquo; web shell on Director servers to harvest
+          credentials — with victims in the ISP, MSP and IT sectors: the providers running Director
+          for downstream enterprises. Fixed in Director 22.1.4+.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Concerto disclosures <span class="tag">2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">In May 2025, after a 90-day disclosure window, ProjectDiscovery
+          published three Concerto vulnerabilities: CVE-2025-34027 (CVSS 10.0 — authentication bypass
+          to file upload and RCE), CVE-2025-34026 (CVSS 9.2 — reverse-proxy Actuator bypass exposing
+          heap dumps and session tokens) and CVE-2025-34025 (privileged container escape). Versa
+          states hotfixes were available from March 2025 and a remediated release from 16 April 2025.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The provider-delivered model</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Where the SD-WAN is carrier-managed (Verizon, Lumen and others),
+          the enterprise typically cannot touch Director at all: config exports, policy changes and
+          spoke operations all go through provider change tickets on provider timescales — and the
+          patch cadence for the head-end components above is the provider's, not the customer's,
+          decision. Cato has publicly positioned for enterprises opting out of carrier SD-WAN.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;Who patched your Director, Controller, Analytics and Concerto in August 2024 and
+        April 2025 — you, your carrier or Versa — and how long did it take? And if you asked for a
+        full config export today, is that a console click or a change ticket with a lead time?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">What maps to what</div>
+      <h2>Component-by-component mapping</h2>
+      <p>
+        The conversion is <strong>intent recovery, not lift-and-shift</strong>: Versa's template
+        layers exist to keep hundreds of VOS instances consistent, and that whole problem class
+        disappears when policy is expressed once in a cloud rulebase. What remains — site
+        onboarding, policy-as-code — maps to the Cato GraphQL API and Terraform provider.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Versa component</th><th>Cato equivalent</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>VOS on CSG appliance / white box / VM (branch edge)</td><td>Cato Socket (vSocket in AWS/Azure)</td><td>The Socket is a thin edge — tunnels, path selection, QoS, LAN firewall. Deep inspection moves to the PoP; no per-site security sizing.</td></tr>
+            <tr><td>Versa Director (templates, workflows, device management)</td><td>Cato Management Application (CMA)</td><td>Nothing for the customer or provider to host, patch or upgrade; automation via the GraphQL API and the catonetworks/cato Terraform provider.</td></tr>
+            <tr><td>Versa Controller (multi-instance MP-BGP route reflector + IPsec SA distribution)</td><td>Cato PoPs and backbone — the control plane is part of the service</td><td>No customer-operated route reflectors; Sockets connect to the nearest PoP and any-to-any routing is a property of the backbone.</td></tr>
+            <tr><td>Versa Concerto (orchestration portal)</td><td>CMA — same single console</td><td>No separate orchestration tier to deploy or patch (cf. the 2025 Concerto CVEs).</td></tr>
+            <tr><td>Versa Analytics cluster</td><td>CMA events and analytics, XDR storyboards, SIEM integrations</td><td>No cluster sizing per 2,500 CPEs; events are generated once, in the cloud.</td></tr>
+            <tr><td>Versa Secure SD-WAN overlay (Controller-distributed IPsec SAs, branch-to-branch)</td><td>Socket tunnels to the nearest PoP + global private backbone</td><td>No SA mesh to operate. Network rules with bandwidth profiles recreate steering intent; per-link last-mile monitoring is built in.</td></tr>
+            <tr><td>VOS UTM stack (NGFW, IPS, AV, URL filtering on the box)</td><td>Cato single-pass inspection at the PoP (SPACE): WAN/Internet Firewall, IPS, NGAM, SWG</td><td>One cloud-global rulebase replaces per-template security policy; inspection capacity is the platform's problem.</td></tr>
+            <tr><td>Versa Secure Access Client (VSAC) + Cloud Gateways + VSPA</td><td>Cato Client (SDP) with Device Posture and Client Connectivity Policy</td><td>The same PoP-delivered stack that serves sites — one policy for users and sites.</td></tr>
+            <tr><td>Versa Titan (cloud-managed tier)</td><td>CMA — the only tier; every customer gets the full console</td><td>Titan estates have no head-end to migrate — mostly a CPE swap and policy re-model, but see the gotchas below.</td></tr>
+            <tr><td>uCPE / service-chained third-party VNFs on CSG</td><td>No direct equivalent — disposition per function</td><td>Absorb into Cato (firewall, SWG…), retain a dedicated appliance, or re-platform. Must be inventoried in discovery.</td></tr>
+            <tr><td>Director multi-tenancy (SP tenants, white label)</td><td>Policy scoping within one CMA account; separate accounts for hard tenancy</td><td>The enterprise leaves the provider's tenant entirely — history and exports need provider cooperation.</td></tr>
+            <tr><td>Paired CSG HA at a site</td><td>Socket HA (primary/secondary) + PoP- and backbone-level resilience</td><td>The site survives socket, link and PoP failures independently.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">The migration path</div>
+      <h2>Five phases from Director-managed to one platform</h2>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the design — especially the eBGP
+        handoff, filtering and rollback details, and anything contract-dependent — with Cato
+        Professional Services before committing it to a customer plan.</p>
+      </div>
+      <p>
+        The arc follows the Cato PS four-phase methodology (Discover &amp; Design → Pilot, Build
+        &amp; Initial Rollout → Advanced Security &amp; Broader Rollout → Tune, Optimise &amp;
+        Handover; the reference plan is four months), with co-existence broken out below because
+        it is the load-bearing step in a Versa estate.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 1 — Discover &amp; design: start the Director export early</h4>
+          <p>Export per-appliance configuration from Director (Appliances → Export Configuration,
+          or <code>show configuration | display set</code> from the VOS CLI) <em>and</em> the
+          staging/post-staging and device templates that generate branch config. Pull Analytics
+          traffic data to build the real traffic matrix — Controller-distributed branch-to-branch
+          IPsec SAs mean spoke-to-spoke flows rarely appear in design documents.
+          <strong>In carrier-managed estates, raise the export request in week one</strong>: config,
+          templates and Analytics data all arrive via the provider's change process, with lead
+          time — and capture what the contract obliges the provider to hand over. In parallel,
+          inventory contract end dates, notice periods, early-exit terms and which assets (CPE,
+          circuits) are provider-owned.</p>
+          <p>Clean the rule base before translating it: retire dead rules using Analytics hit
+          data, collapse duplicate objects, flag any-any debt. Classify the estate — regional VOS
+          hubs, DCs, branch classes (paired-CSG HA vs single, LTE backup), tenants, inbound
+          NAT/published services, uCPE sites hosting VNFs, Titan vs Director-managed populations.
+          Then fix the co-existence design: eBGP hub handoff pattern, AS numbering (the Cato side
+          is eBGP-only; default Cato ASN 64515), route filtering and summarisation, and a cutover
+          template per site class. Stand up the foundation: CMA baseline, IdP/SCIM, Client
+          packaging and TLS-inspection certificates, socket logistics, SIEM planning.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Co-existence: parallel Sockets at the Versa hubs (PS Option F)</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Stand up Sockets (or vSockets) at the data centres and at <strong>each Versa
+          hub/gateway site, alongside the existing kit</strong>; establish eBGP handoffs into each
+          hub's LAN-side routing, and validate route exchange, symmetry and failover before any
+          branch moves. Path symmetry is maintained by AS-path length: cross-region routes carry
+          an extra inter-hub AS hop, so best-path selection anchors traffic to the local regional
+          hub — exiting and returning through the same stateful VOS firewall. The Versa overlay's
+          MP-BGP world stays intact and segmented on its side of the handoff; the two domains meet
+          only at eBGP. Filter the default route and the prefixes of any half-migrated site at
+          every handoff, and use BGP summaries and Cato's BGP filtering to keep the exchange tidy.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Pilot branch and pilot cohort, monitor-then-block</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Convert security policy from the cleaned rule base: WAN Firewall for site-to-site,
+          the Internet Firewall wizard for the initial egress policy, IPS and NGAM in
+          <strong>monitor mode first</strong>, and network rules with bandwidth profiles
+          recreating Versa's steering intent (voice, business-critical, bulk). Cut over one
+          representative branch with the chosen pattern and soak it. Deploy the Cato Client to a
+          pilot cohort — Client Connectivity Policy in monitor mode first — and validate access,
+          performance and UX. Keep one VPN/ZTNA data path active per endpoint during the overlap;
+          rollback for the pilot is the standard spoke rollback below. Promote monitor rules to
+          block only on evidence from real events.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Regional waves, sequenced with the provider</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Migrate branches region by region behind their regional hub handoff: simple
+          single-WAN branches first, then HA branches, then complex sites (uCPE/VNF hosts, local
+          inbound services), hubs last. <strong>In provider-managed estates every wave's
+          spoke-disable is a provider change ticket</strong> with a pre-agreed rollback window —
+          the provider is in the loop for every cutover. Users follow as VSAC → Cato Client
+          cohorts (the PS reference plan uses four waves): disable VSAC connectivity per cohort,
+          enable the Cato Client, re-model access as ZTNA policy with Device Posture profiles.
+          Enable TLS inspection in phases by URL category and pilot group. Keep provider circuits
+          alive until the sites they serve are validated on Cato — and where the last mile is
+          bundled with the managed SD-WAN, re-procure internet access per site <em>ahead</em> of
+          its wave, because circuit delivery, not configuration, is usually the true critical path.</p>
+        </li>
+        <li>
+          <h4>Phase 5 — Optimise, decommission, and exit the contract cleanly</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Tune QoS and policy from analytics, complete final site and user migrations, and
+          bring the SIEM integration live. Then decommission in order: remove eBGP handoffs as
+          each region completes → retire the VOS hubs → decommission the head-end (Director,
+          Controller, Analytics, Concerto servers/VMs) once logging-retention obligations are met
+          — having run CMA analytics in parallel since the pilot so trending exists before the
+          Analytics cluster goes dark. Finally, <strong>return provider-owned CPE and serve
+          contract notice</strong> per the terms mapped in Phase 1, and close with documentation,
+          admin training and operational handover.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Two overlays, one eBGP seam</h2>
+      <p>
+        <strong>Asymmetry is the enemy.</strong> With two overlays joined in more than one place,
+        a flow can exit through one region's hub and return through another — breaking stateful
+        inspection on the VOS firewalls. The PS multi-region pattern (Option F, demonstrated
+        against a FortiGate estate and applied unchanged here — the legacy hub only needs to
+        speak eBGP) puts a parallel Socket at each Versa hub with an eBGP handoff, and lets
+        AS-path length anchor each region's traffic to its local hub. Spoke migration is then a
+        routing event: <strong>1)</strong> disable the Versa spoke (via Director, or a provider
+        change ticket) so its prefixes are withdrawn from the overlay and the eBGP exchange;
+        <strong>2)</strong> bring up the Cato socket site; <strong>3)</strong> routes propagate
+        automatically to both domains; <strong>4)</strong> rollback is the mirror image — down
+        the socket site, re-enable the Versa spoke, and BGP reconverges.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">eBGP hub co-existence between Cato and a Versa MP-BGP overlay during migration</title>
+          <desc id="dg1-desc">A migrated branch connects through a Cato Socket to a Cato PoP on the global private backbone. At the Versa hub site a parallel Cato Socket exchanges routes with the VOS hub over an eBGP handoff, with AS-path length keeping traffic symmetric. A legacy branch still rides the Versa MP-BGP overlay to the VOS hub. The Director and Controller head-end manages the overlay and is retired after the final wave. A dashed rollback arrow shows that re-enabling the Versa spoke reverts a migrated site.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="430" cy="185" rx="150" ry="50"/>
+          <circle cx="292" cy="200" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="566" cy="172" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="352" y="254" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="430" cy="185" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="185" r="30"/>
+
+          <!-- Migrated spoke (top left) -->
+          <rect class="dg-node-green" x="40" y="48" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="72" text-anchor="middle">Bristol branch</text>
+          <text class="dg-sub" x="132" y="90" text-anchor="middle">Cato Socket · migrated</text>
+          <text class="dg-tiny" x="132" y="108" text-anchor="middle">one policy at the PoP</text>
+
+          <!-- Legacy spoke (bottom left) -->
+          <rect class="dg-node" x="40" y="336" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="360" text-anchor="middle">Leeds branch</text>
+          <text class="dg-sub" x="132" y="378" text-anchor="middle">VOS CSG spoke</text>
+          <text class="dg-tiny" x="132" y="396" text-anchor="middle">awaiting wave 2</text>
+
+          <!-- Rollback arrow (between left nodes) -->
+          <path d="M 100 140 L 100 314" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 6"/>
+          <path d="M 93 312 L 107 312 L 100 328 Z" fill="var(--ink-3)"/>
+          <text class="dg-tiny" x="114" y="216" text-anchor="start">rollback: re-enable</text>
+          <text class="dg-tiny" x="114" y="232" text-anchor="start">the VOS spoke —</text>
+          <text class="dg-tiny" x="114" y="248" text-anchor="start">BGP reconverges</text>
+
+          <!-- Versa hub site — parallel Cato leg (bottom centre) -->
+          <rect class="dg-node-green" x="380" y="336" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="470" y="360" text-anchor="middle">Manchester hub</text>
+          <text class="dg-sub" x="470" y="378" text-anchor="middle">parallel Cato Socket</text>
+          <text class="dg-tiny" x="470" y="396" text-anchor="middle">same site, new leg</text>
+
+          <!-- Versa hub site — VOS leg (bottom right) -->
+          <rect class="dg-node-dark" x="690" y="336" width="180" height="74" rx="10"/>
+          <text class="dg-label-inv" x="780" y="366" text-anchor="middle">Manchester hub</text>
+          <text class="dg-sub-inv" x="780" y="384" text-anchor="middle">VOS hub · MP-BGP intact</text>
+
+          <!-- Head-end (top right) -->
+          <text class="dg-tiny" x="820" y="44" text-anchor="middle">head-end · retire last</text>
+          <rect class="dg-node-dark" x="720" y="56" width="200" height="78" rx="10"/>
+          <text class="dg-label-inv" x="820" y="88" text-anchor="middle">Director · Controller</text>
+          <text class="dg-sub-inv" x="820" y="106" text-anchor="middle">Analytics · Concerto</text>
+
+          <!-- Control plane (head-end to VOS hub) -->
+          <path class="lane-static" d="M 800 134 L 782 336"/>
+          <text class="dg-tiny" x="815" y="230" text-anchor="start">control plane:</text>
+          <text class="dg-tiny" x="815" y="246" text-anchor="start">templates · MP-BGP SAs</text>
+
+          <!-- Migrated flows (green) -->
+          <path class="lane lane-allow" d="M 225 92 C 300 110, 350 148, 402 166"/>
+          <path class="lane lane-allow" d="M 468 336 C 462 300, 452 262, 440 222"/>
+
+          <!-- eBGP handoff (static) -->
+          <path class="lane-static" d="M 560 373 L 690 373"/>
+          <text class="dg-tiny" x="625" y="362" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">eBGP handoff</text>
+          <text class="dg-tiny" x="625" y="392" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AS-path symmetry</text>
+
+          <!-- Legacy overlay flow (amber) -->
+          <path class="lane lane-limit" d="M 225 392 C 380 448, 560 448, 690 400"/>
+          <text class="dg-tiny" x="455" y="452" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">MP-BGP overlay · IPsec SAs</text>
+
+          <!-- Cato PoP labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="430" y="118" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="430" y="134" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SPACE · FWaaS · ZTNA · SWG</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Socket to the nearest PoP</span>
+          <span class="key"><span class="swatch limit"></span> Interim — Versa MP-BGP overlay until each wave completes</span>
+        </div>
+        <div class="diagram-caption">Option-F co-existence at a Versa hub: a parallel Socket at the hub site exchanges routes with the VOS hub over eBGP, and AS-path length anchors each region's traffic to its local hub. Cutover per spoke is a routing event; rollback is its mirror image. The Director/Controller head-end is retired only after the final wave.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Symmetric by construction</h4><p>AS-path anchoring makes each side prefer its local regional hub — no cross-region return paths through a different stateful VOS firewall.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>Reversible per spoke</h4><p>Disable the Versa spoke and its prefixes withdraw from both domains automatically; re-enable it and BGP reconverges. No per-site route engineering.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>The overlay is left intact</h4><p>The Controller-distributed MP-BGP world keeps running, segmented on its side of the handoff — un-migrated branches never notice the migration.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤝</div><div><h4>Provider-friendly seams</h4><p>Where the provider owns the CPE, the L3-switch and socket-as-default-gateway patterns keep every change on customer-controlled equipment.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Branch-level patterns (pick per site class)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Pattern</th><th>Default gateway</th><th>Mechanics</th><th>Rollback</th></tr></thead>
+          <tbody>
+            <tr><td>VOS CPE stays DG, static routes</td><td>VOS CPE</td><td>Socket on a LAN transit; CPE routes migrated subnets to the Socket</td><td>Remove the statics — traffic reverts to the overlay instantly</td></tr>
+            <tr><td>VOS CPE stays DG, eBGP over LAN transit</td><td>VOS CPE</td><td>eBGP Socket ↔ CPE (LAN-side routing instance); phased subnet migration</td><td>Withdraw advertisements or drop the peering</td></tr>
+            <tr><td>L3 switch decides</td><td>L3 switch</td><td>Core switch routes between legacy and Cato-migrated subnets</td><td>Flip routes on the switch</td></tr>
+            <tr><td>Socket as DG, eBGP LAN handoff</td><td>Cato Socket</td><td>Socket is the gateway; eBGP handoff for legacy prefixes; full Socket HA</td><td>Re-point the DG to the VOS CPE</td></tr>
+            <tr><td>Socket as DG, Alt-WAN BGP / Gradual Deployment</td><td>Cato Socket</td><td>Legacy overlay reached via Alt-WAN with eBGP, or unknown RFC1918 routed via Alt-WAN</td><td>Routes revert via BGP — see caveats below</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        Alt-WAN caveats: configure local routing so Alt-WAN-destined flows are not first carried
+        to the PoP (avoiding asymmetry), and note that Alt-WAN failure does not trigger Socket HA
+        failover — prefer BGP on a LAN handoff where HA matters. Gradual Deployment handles
+        private (RFC1918) destinations only.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">If the provider won't open BGP</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Common in managed estates: no routing session into the provider's
+          VOS world. The PS static alternative is an <strong>interconnect site with routed
+          ranges</strong> — pre-stage real subnets on the interconnect and dummy ranges on the
+          future Cato sites; at cutover delete the routed range and update the dummy range;
+          rollback is re-adding the statics. Proven at scale in a ~300-site deployment.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Users and inbound services in transition</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Run VSAC and the Cato Client side by side only in a controlled
+          per-cohort overlap, with one VPN/ZTNA data path active at a time. Published/inbound
+          services on VOS CPEs migrate deliberately — re-publish via Cato (remote port forwarding
+          or static-IP egress) or leave them on a retained leg until their own change window.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What bites, and what they'll say</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;Our whole branch config is generated from Director templates&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True — and it cuts both ways. The effective config of any branch is
+          the product of workflows, staging and post-staging templates, device templates and
+          per-device bind data. Treat migration as intent recovery: export the templates and
+          per-appliance configs, identify what actually varies per site (the bind data), and express
+          the common intent once in CMA's single rulebase. The automation that keeps hundreds of VOS
+          instances consistent solves a problem class that disappears with one cloud rulebase; what
+          remains maps to the GraphQL API and Terraform provider.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;The provider runs it — we can't even export the config&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Common in carrier-managed estates: the enterprise has a read-only
+          portal, not Director admin. Mitigations: contractual data-handover clauses, provider
+          change tickets for exports, and reconstruction from customer-side artefacts (LAN
+          addressing, firewall change records, the Analytics reports the customer can see). Budget
+          discovery time accordingly, sequence waves around provider SLAs — and agree Analytics
+          retention and export format in Phase 1, because leaving the provider's tenant forfeits
+          historical reporting unless it is exported first.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Service chaining and uCPE VNFs</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CSG platforms can host third-party VNFs service-chained with VOS.
+          Every chained function needs an explicit disposition: absorbed into Cato's PoP inspection,
+          replaced by a dedicated device, or retained on separate hardware. Miss one in discovery
+          and a branch cutover strands a function nobody documented — inventory uCPE sites
+          explicitly in Phase 1 and validate their disposition in the pilot.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Titan estates are a different migration</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Titan is Versa's cloud-managed lean-IT tier — no customer head-end,
+          so the migration is lighter (CPE swap, policy re-model). But the config detail available
+          for export is shallower, and the estate was chosen precisely because the customer is
+          lean-IT: plan for Cato PS or partner-led delivery rather than customer self-service.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;Versa is single-pass and single-OS too&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Versa's single-pass claim applies to VOS on the appliance and to its
+          cloud gateways — but the architecture still requires someone (customer, carrier or Versa)
+          to host and operate Director, Controller, Analytics and Concerto, and VersaONE is
+          explicitly offered self-managed, co-managed or fully managed. The counter is not the
+          packet path but the operating model: one cloud service, one console, no head-end anywhere
+          in the estate, and the vendor — not the customer — patches the platform.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;We'll just patch Director and stay&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Be accurate: fixes shipped (Director 22.1.4+; a remediated Concerto
+          release in April 2025). But CVE-2024-39717 was exploited as a zero-day against the
+          management plane itself, by an actor targeting the ISP/MSP layer that operates Director
+          for downstream enterprises — and VersaMem harvested credentials in memory, so patching
+          alone did not settle the incident-response question. The Concerto disclosures then hit
+          the orchestration layer at CVSS 9.2–10.0. The pattern argument: every self- or
+          provider-hosted management component is attack surface the customer inherits.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Standard PoV hygiene</div>
+        <p>Niche VOS behaviours — bespoke NAT constructs, per-tenant routing instances, CGNAT,
+        local-breakout exceptions, voice SLA-steering specifics — should be listed in discovery and
+        validated in the PoV rather than assumed. Put them on the test plan by name.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273474065-Configuring-BGP-Neighbors-for-a-Cato-Socket" target="_blank" rel="noopener">Configuring BGP neighbours for a Cato Socket (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/23972529384733-Working-with-BGP-Filtering" target="_blank" rel="noopener">Working with BGP filtering (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360011175857-Integrating-Cato-with-an-Alt-WAN-Network" target="_blank" rel="noopener">Integrating Cato with an Alt-WAN network (KB)</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://docs.versa-networks.com/Getting_Started/Deployment_and_Initial_Configuration/Headend_Deployment/Headend_Basics/Hardware_and_Software_Requirements_for_Headend" target="_blank" rel="noopener">Versa head-end hardware &amp; software requirements</a></li>
+            <li><a href="https://support.versa-networks.com/support/solutions/articles/23000027499-export-appliance-configuration" target="_blank" rel="noopener">Versa — export appliance configuration</a></li>
+            <li><a href="https://docs.versa-networks.com/Secure_SD-WAN/01_Configuration_from_Director/SD-WAN_Configuration/Basic_SD-WAN_Configuration/01_Overview_of_Configuration_Templates" target="_blank" rel="noopener">Versa — overview of configuration templates</a></li>
+            <li><a href="https://docs.versa-networks.com/Secure_SD-WAN/01_Configuration_from_Director/Common_Configuration/Configure_uCPE_on_a_VOS_Device" target="_blank" rel="noopener">Versa — configure uCPE on a VOS device</a></li>
+            <li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA Known Exploited Vulnerabilities catalogue</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-versa-policy.html">Versa Policy Migration</a></li>
+            <li><a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

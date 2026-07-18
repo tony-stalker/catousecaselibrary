@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud-Delivered Inbound Protection — Cato Use Case Library</title>
+<meta name="description" content="Publish services safely without exposing them — remote port forwarding with inbound IPS scrubbing and virtual patching at the PoP edge.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-inbound-ips">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Inbound Protection</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Cloud-Delivered Inbound Protection</h1>
+    <p class="lede">
+      Every service you publish to the internet — a partner portal, a B2B API, a legacy web app —
+      is an open door that has to be defended and audited. This use case shows how to publish
+      services without exposing them: an allocated IP at a Cato PoP of your choice, Remote Port
+      Forwarding to the on-prem resource, and inbound IPS scrubbing every request before it ever
+      reaches your equipment — with virtual patching closing new CVEs in days, not maintenance windows.
+    </p>
+    <div class="meta-row">
+      <span class="tag">IPS</span><span class="tag">Remote Port Forwarding</span>
+      <span class="tag">Virtual Patching</span><span class="tag">CVE</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/Cato%20Inbound%20IPS%20Use%20Case.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Most organisations still have services that must face the internet from on-premise
+        infrastructure — and every one of them is a target for automated scanning and exploitation
+        from the moment it goes live. The traditional answer is a stack of appliances at the edge:
+        firewalls, WAFs, reverse proxies — each with its own patch cycle, its own downtime window,
+        and its own line in the audit report.
+      </p>
+      <p>
+        Increasingly the driver is not just security, it is <strong>compliance</strong>. The frameworks
+        customers are measured against all demand demonstrable controls over public-facing services:
+      </p>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin-top:0">ISO 27001</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A standard to establish, implement and maintain
+          information security — including controls over externally exposed systems and their patching.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NIS2</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The EU framework for protecting critical
+          infrastructure — ensuring security and resilience, and preventing, deterring and mitigating
+          major incidents.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SOC 2</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Auditing of controls on security, availability,
+          confidentiality and privacy — with evidence the auditor can actually inspect.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Public-facing services vs. the audit</h2>
+      <p>Four questions come up in almost every conversation about published services:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Public facing</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“How can I protect against attackers whilst
+          ensuring services are running?”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Audit evidence</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“How do I check I have controls in place —
+          and show the auditor proof?”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Virtual patching</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“Services need to stay active; I can’t afford
+          downtime to patch.”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Governance</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“How do I ensure I keep to compliance
+          requirements as services and threats change?”</p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">The business impact of falling out of compliance</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Reputational impact — lowering share value</li>
+          <li>Industry regulatory requirements — financial fines</li>
+          <li>Not able to sign new customers; the business unable to grow at the desired pace</li>
+          <li>Not able to insure the business against cyber attacks</li>
+        </ul>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which services do you publish to the internet today — and when the next critical CVE lands
+        on one of them, how long are you exposed before you can take it down to patch?”</p>
+      </div>
+    </section>
+
+    <section id="coverage" class="reveal">
+      <div class="section-kicker">Proof points</div>
+      <h2>Inbound IPS, by the numbers</h2>
+      <p>
+        Cato’s IPS runs inside the Single Pass Cloud Engine (SPACE) at every PoP, with signatures
+        written and deployed by Cato Security Research — no customer change windows, no appliance
+        firmware. The signature set is heavily weighted towards exactly the traffic a published
+        service receives:
+      </p>
+      <div class="stat-row" style="margin:18px 0 14px">
+        <div class="stat-tile stat-good"><div class="stat-value">93.2<span class="unit">%</span></div><div class="stat-label">of unique CVE signatures include inbound protection (1,089 of 1,168)</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">394<span class="unit">/395</span></div><div class="stat-label">WAF-style rules are inbound — SQLi, XSS, XXE, RCE, path traversal, command injection</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">64</div><div class="stat-label">scanner / recon detection rules catch inbound vulnerability scanning</div></div>
+      </div>
+      <div class="stat-row" style="margin:0 0 14px">
+        <div class="stat-tile stat-good"><div class="stat-value">313</div><div class="stat-label">inbound rules for 2024 CVEs</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">263</div><div class="stat-label">inbound rules for 2025 CVEs</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">23</div><div class="stat-label">inbound rules for 2026 CVEs — so far</div></div>
+      </div>
+      <p style="font-size:.92rem;color:var(--ink-2)">
+        Coverage spans CVEs from 1999 through 2026, with strong recent growth — nearly every CVE Cato
+        writes a signature for protects inbound-facing services, keeping published services up
+        <em>and</em> protected.
+      </p>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Publish the service, not the server</h2>
+      <p>
+        <strong>Remote Port Forwarding</strong> gives you an allocated IP at a Cato PoP of your
+        choosing — that IP, not your site, is what the world sees. Inbound connections terminate at
+        the PoP, where the SPACE engine and inbound IPS inspect and scrub every request. Flexible
+        access controls filter inbound sources, and only clean traffic is forwarded down the socket’s
+        existing DTLS tunnel to the on-prem resource. No inbound firewall holes, no DMZ, no
+        infrastructure or network topology changes — and no appliances to deploy on site.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Inbound protection via allocated IP, PoP-based IPS and Remote Port Forwarding</title>
+          <desc id="dg1-desc">A legitimate user and an attacker both connect to an allocated IP at the Cato PoP in London. The attacker's SQLi, XSS and RCE payloads are blocked by the inbound IPS at the PoP edge. The legitimate request is remote-port-forwarded over the socket's outbound DTLS tunnel to the on-prem web server at Bracknell Lab, which has no inbound ports open.</desc>
+
+          <!-- Sources (left) -->
+          <g>
+            <circle cx="88" cy="110" r="23" fill="var(--status-good)"/>
+            <circle cx="88" cy="103" r="6.5" fill="#fff"/>
+            <path d="M 75 123 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="88" y="152" text-anchor="middle">Legitimate user</text>
+            <text class="dg-sub" x="88" y="168" text-anchor="middle">HTTPS to published service</text>
+          </g>
+          <g>
+            <circle cx="88" cy="300" r="23" fill="var(--status-critical)"/>
+            <circle cx="88" cy="293" r="6.5" fill="#fff"/>
+            <path d="M 75 313 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="88" y="342" text-anchor="middle">Attacker</text>
+            <text class="dg-sub" x="88" y="358" text-anchor="middle">SQLi · XSS · RCE payloads</text>
+          </g>
+
+          <!-- Allocated IP -->
+          <rect class="dg-node-green" x="278" y="176" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="353" y="200" text-anchor="middle">Allocated IP</text>
+          <text class="dg-sub" x="353" y="218" text-anchor="middle">static IP · London PoP</text>
+          <text class="dg-tiny" x="353" y="252" text-anchor="middle">the only address you publish</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="560" cy="205" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="560" cy="205" r="30"/>
+          <text class="dg-label" x="560" y="138" text-anchor="middle">Cato PoP — London</text>
+          <text class="dg-tiny" x="560" y="154" text-anchor="middle">SPACE · Inbound IPS · Virtual patching</text>
+
+          <!-- Lanes: users to allocated IP -->
+          <path class="lane lane-allow" d="M 116 116 C 190 130, 230 165, 274 192"/>
+          <path class="lane lane-block" d="M 116 294 C 190 280, 230 245, 274 218"/>
+
+          <!-- Green continues into and beyond the PoP -->
+          <path class="lane lane-allow" d="M 432 196 C 470 196, 495 198, 522 202"/>
+          <path class="lane lane-allow" d="M 596 205 C 650 205, 668 205, 716 205"/>
+          <text class="dg-tiny" x="656" y="186" text-anchor="middle">Remote Port Forward</text>
+          <text class="dg-tiny" x="656" y="230" text-anchor="middle">outbound DTLS tunnel</text>
+          <text class="dg-tiny" x="764" y="262" text-anchor="middle">dialled out by the socket</text>
+
+          <!-- Red terminates at the IPS -->
+          <path class="lane lane-block" d="M 432 216 C 458 222, 476 230, 492 240"/>
+          <g aria-label="attack blocked by inbound IPS">
+            <path class="lane-x" d="M 493 241 L 515 263"/><path class="lane-x" d="M 515 241 L 493 263"/>
+          </g>
+          <text class="dg-tiny" x="500" y="288" text-anchor="middle">dropped by inbound IPS</text>
+
+          <!-- Socket + server (right) -->
+          <rect class="dg-node-green" x="716" y="178" width="96" height="54" rx="10"/>
+          <text class="dg-label" x="764" y="201" text-anchor="middle">Socket</text>
+          <text class="dg-sub" x="764" y="219" text-anchor="middle">X1500</text>
+
+          <path class="lane-static" d="M 812 205 L 838 205"/>
+
+          <rect class="dg-node" x="838" y="166" width="112" height="78" rx="10"/>
+          <text class="dg-label" x="894" y="194" text-anchor="middle">Web server</text>
+          <text class="dg-sub" x="894" y="212" text-anchor="middle">Bracknell Lab</text>
+          <text class="dg-tiny" x="894" y="230" text-anchor="middle">no inbound ports</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Legitimate request — forwarded to the on-prem service</span>
+          <span class="key"><span class="swatch block"></span> Attack traffic — scrubbed by inbound IPS at the PoP</span>
+        </div>
+        <div class="diagram-caption">Only the allocated IP is public. Requests terminate at the PoP, where SPACE and inbound IPS scrub them; Remote Port Forwarding carries clean traffic down the socket’s outbound DTLS tunnel.</div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/inbound-ips-flow.png" alt="Deck flow diagram: a legitimate HTTP request (green tick) and a malicious SQLi/XSS/RCE request (red X) both target a dedicated IP on the Cato PoP running the Single Pass Cloud Engine IPS; only the clean request is remote-port-forwarded over the DTLS tunnel to the on-prem resource behind a socket.">
+        <figcaption>The original deck graphic — malicious attempts never reach the on-premise equipment; the dedicated (allocated) IP absorbs them at the PoP.</figcaption>
+      </figure>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>A secure way to publish services</h4><p>Businesses can safely allow connections into the organisation — the allocated IP at the PoP fronts the service, so the site itself stays dark.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>Scrubbed before it arrives</h4><p>The SPACE engine inspects and secures every inbound flow — SQLi, XSS, XXE, RCE, path traversal and command injection are dropped at the PoP edge.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎛️</div><div><h4>Flexible access controls</h4><p>Inbound source filtering restricts who can even reach the published port — by source IP or country — before deeper inspection begins.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Evidence for the auditor</h4><p>Every allowed and blocked inbound request is an attributed event — the demonstrable control ISO 27001, NIS2 and SOC 2 all ask for.</p></div></div>
+      </div>
+    </section>
+
+    <section id="virtual-patching" class="reveal">
+      <div class="section-kicker">Virtual patching</div>
+      <h2>Rapid CVE mitigation — protected before you patch</h2>
+      <p>
+        When a critical CVE lands on a service you publish, the race is between the exploit kits and
+        your next maintenance window. Cato performs <strong>virtual patching</strong> in the IPS layer
+        of SPACE: Cato Security Research writes the signature and deploys it to every PoP worldwide,
+        without customer involvement and without touching the vulnerable service. The service stays
+        up; the exploit path is closed.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/rapid-cve-mitigation.png" alt="Rapid CVE Mitigation by Cato Security Research: a table of selected critical CVEs — GNU telnetd authentication bypass (CVE-2026-24061, CVSS 9.8), the React2Shell vulnerability targeting React Server Components (CVE-2025-55182, CVSS 10) and Open-WebUI external model server code injection (CVE-2025-64496, CVSS 8) — each moved from detection to global protection in 0 to 2 days.">
+        <figcaption>Selected critical CVEs mitigated by Cato — detect-to-protect in 0–2 days, published at catonetworks.com/rapid-cve-mitigation.</figcaption>
+      </figure>
+      <p style="font-size:.92rem;color:var(--ink-2)">
+        Show the live page in the meeting — it is public, updated as new CVEs are mitigated, and a
+        strong proof point that this is an operating practice, not a datasheet claim.
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — dig into the “why”</div>
+        <p>Ask what they publish today and how it is protected — a DMZ and a WAF appliance? A cloud
+        load balancer? Nothing but a port forward on the firewall? Anchor the demo to the service
+        they name and the framework they are audited against.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Configure an allocated IP at a PoP of your choosing</h4>
+          <p>Allocate an IP at the PoP nearest the audience — for a UK audience, the London PoP.
+          This static IP becomes the public address of the published service; nothing else about the
+          site is reachable from the internet.</p>
+        </li>
+        <li>
+          <h4>Create the Remote Port Forwarding rule</h4>
+          <p>Forward HTTP/HTTPS from the allocated IP to a lab web resource — an Azure or AWS tenancy
+          attached to your lab works well (e.g. a web server behind the “AWS Site eu-west-2” vSocket
+          or the Azure vSocket hub). Show the inbound source filtering options while you are there:
+          restrict by source IP or country if the service is only for known partners.</p>
+        </li>
+        <li>
+          <h4>Verify inbound IPS is turned on</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>Confirm IPS is enabled and protecting inbound traffic. Make the point that the signatures
+          are maintained and deployed by Cato Security Research — there is nothing here for the
+          customer to patch or update.</p>
+        </li>
+        <li>
+          <h4>Prove the legitimate path</h4>
+          <p>From an outside connection (phone hotspot works), browse to the allocated IP and show the
+          published service loading normally — the green lane on the diagram.</p>
+        </li>
+        <li>
+          <h4>Show live protection</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Review IPS events against the allocated IP — internet-facing IPs collect real scanner
+          traffic quickly. Or trigger the IPS deliberately with a known CVE that Cato has a signature
+          for, and watch the block appear as a fully attributed event.</p>
+        </li>
+        <li>
+          <h4>Close on virtual patching</h4>
+          <p>Open the <a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE Mitigation</a>
+          page and land the message: “When the next critical CVE hits this service, Cato closes the
+          exploit path at every PoP in 0–2 days — no downtime, no change on your side.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE Mitigation — Cato Security Research</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">SPACE architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall &amp; IPS — solution page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+            <li><a href="security-ransomware.html">Ransomware &amp; Advanced Threat Prevention</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

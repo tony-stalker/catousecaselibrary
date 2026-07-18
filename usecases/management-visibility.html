@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operational &amp; Executive Visibility — Cato Use Case Library</title>
+<meta name="description" content="Single-pane-of-glass visibility across network, security, users and applications — from live troubleshooting to executive reporting.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-visibility">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / Visibility</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Operational &amp; Executive Visibility</h1>
+    <p class="lede">
+      Most organisations assemble their picture of the network by stitching together firewall logs,
+      SD-WAN portals, VPN concentrators and carrier reports — and still can't answer "what is going
+      on right now?". This use case demonstrates the single pane of glass: because Cato processes
+      every flow once, in the cloud, one management plane carries network, security, user and
+      application context — from live troubleshooting all the way up to executive reporting.
+    </p>
+    <div class="meta-row">
+      <span class="tag">CMA</span><span class="tag">Analytics</span><span class="tag">DEM</span>
+      <span class="tag">XDR</span><span class="tag">Reporting</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../2%20-%20Management%20use%20cases/Visibility/Cato%20SASE%20Platform%20-%20Visibility%20PoV.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The objective is a <strong>single-pane-of-glass view of networking, security, users, sites,
+        devices, applications and traffic flows</strong> — eliminating the blind spots created by
+        disparate point solutions, regional firewalls, VPN concentrators and carrier-managed links.
+        Not just operational visibility for the engineer at 2am, but executive visibility with full
+        context: usage trends, risk posture, SLA compliance and cost impact, on the same data.
+      </p>
+      <div class="callout">
+        <div class="co-title">The analyst view</div>
+        <p>“After decades of focusing on network performance and features, future network innovation
+        will target operational simplicity, automation, reliability and flexible business models.”
+        — Gartner, <em>Strategic Roadmap for Networking</em>, 2019. Visibility is where that
+        simplicity is felt first: innovation is less about what the network does, and more about
+        how it is operated.</p>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The visibility gap</div>
+      <h2>Stitched-together visibility fails everyone</h2>
+      <p>Four complaints we hear from IT leaders in almost every meeting — all symptoms of the same fragmentation:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Poor visibility</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“I have no idea what's going on in my network — so much in the shadow.”
+          Answers require piecing together data from different technologies and service providers,
+          and by the time the picture is assembled, it is out of date.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">High complexity</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Many point solutions address many, often overlapping use cases — and multiple
+          MSPs each manage their own slice without a full picture. Nobody owns the end-to-end view.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Performance finger-pointing</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Users complain about VoIP quality and laggy applications. Where do you begin?
+          EUC, infrastructure, security, network and ops teams each check their own tool — and point
+          at each other.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Inconsistent policy</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Applying a uniform policy across separate firewall, network, DLP and IPS
+          products is almost impossible and prone to misconfiguration — and no single console can
+          even show you the drift.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When a user calls to say an application is slow, how many consoles do you open before you
+        can say whether it's their device, the Wi-Fi, the last mile, the backbone or the application —
+        and how long does that take?”</p>
+      </div>
+    </section>
+
+    <section id="objectives" class="reveal">
+      <div class="section-kicker">Visibility-driven business objectives</div>
+      <h2>Eight objectives, eight outcomes</h2>
+      <p>
+        The PoV frames eight business objectives that unified visibility unlocks. Use this table in
+        discovery: pick the two or three the customer cares about and anchor the demo to those rows.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Visibility objective</th><th>Business outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Unified visibility across the entire estate</strong><br>One view of networking, security, users, sites, cloud apps and traffic flows — no blind spots from point solutions or carrier-managed links.</td>
+              <td>Faster, more accurate decision-making with a complete understanding of how the business communicates.</td>
+            </tr>
+            <tr>
+              <td><strong>Improved threat detection through end-to-end insight</strong><br>Session-level visibility for all traffic — WAN, internet, cloud and remote users — with built-in threat intel and correlated events.</td>
+              <td>Reduced mean time to detect (MTTD) and a measurable decrease in security incidents.</td>
+            </tr>
+            <tr>
+              <td><strong>Reduced MTTR with deep analytics</strong><br>Real-time and historical latency, jitter, loss and app usage; signals from application, device, LAN, WAN and backbone converge to pinpoint root cause in minutes.</td>
+              <td>Accelerated incident remediation, higher uptime, fewer business disruptions.</td>
+            </tr>
+            <tr>
+              <td><strong>Policy governance &amp; compliance visibility</strong><br>Centralised view of policies, rule changes and access patterns, with auditable logs and reporting for PCI, HIPAA, GDPR and SOX.</td>
+              <td>Reduced compliance overhead and improved audit readiness.</td>
+            </tr>
+            <tr>
+              <td><strong>Experience monitoring for remote &amp; branch users</strong><br>Per-user performance, app access and device posture; isolate device vs last-mile ISP vs backbone vs application instantly.</td>
+              <td>Fewer helpdesk tickets, improved workforce productivity, less revenue lost to poor app performance.</td>
+            </tr>
+            <tr>
+              <td><strong>Executive-level insight into network &amp; security health</strong><br>Business-friendly dashboards showing usage trends, risk posture, SLA compliance and cost impact.</td>
+              <td>Executives measure ROI and prioritise investment, budget and resources on real data.</td>
+            </tr>
+            <tr>
+              <td><strong>Data-driven optimisation &amp; capacity planning</strong><br>Forecast bandwidth requirements, usage spikes and peak patterns from real utilisation and application priorities.</td>
+              <td>Better budget planning and elimination of over-provisioning and its costs.</td>
+            </tr>
+            <tr>
+              <td><strong>Reduced operational complexity via centralised observability</strong><br>One cloud-native observability platform replaces manual correlation across firewall, SD-WAN, VPN and cloud-security logs.</td>
+              <td>Simplified operations, lower OpEx, and teams freed for higher-value work.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One architecture, so one view</h2>
+      <p>
+        The single pane of glass is not a dashboard bolted on top of other products — it is a
+        by-product of the architecture. Every edge — sites on Socket SD-WAN, remote users on the
+        Cato Client, cloud datacentres on vSockets or IPsec — connects through the nearest PoP,
+        where the Single Pass Cloud Engine (SPACE) processes each flow <strong>once</strong> with
+        full networking and security context. That same context lands in one place: the Cato
+        Management Application.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">All edges feed one management and analytics plane</title>
+          <desc id="dg1-desc">Sites, remote users and cloud datacentres connect through Cato PoPs on the global private backbone. The Single Pass Cloud Engine inspects every flow once, and the full context feeds a single Cato Management Application plane containing dashboards and topology, app and user analytics, a unified event stream, and XDR incident stories.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="430" cy="220" rx="150" ry="58"/>
+          <circle cx="305" cy="252" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="548" cy="252" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="430" y="312" text-anchor="middle">Global Private Backbone — 80+ PoP locations</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="430" cy="215" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="215" r="30"/>
+          <text class="dg-label" x="430" y="138" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="430" y="153" text-anchor="middle">SPACE — every flow inspected once</text>
+
+          <!-- Edges (left) -->
+          <rect class="dg-node" x="30" y="40" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="120" y="65" text-anchor="middle">Sites — Socket SD-WAN</text>
+          <text class="dg-sub" x="120" y="83" text-anchor="middle">London DC · Manchester DC</text>
+
+          <rect class="dg-node" x="30" y="189" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="120" y="214" text-anchor="middle">Remote users</text>
+          <text class="dg-sub" x="120" y="232" text-anchor="middle">Cato Client · Priya, Marcus</text>
+
+          <rect class="dg-node" x="30" y="338" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="120" y="363" text-anchor="middle">Cloud datacentres</text>
+          <text class="dg-sub" x="120" y="381" text-anchor="middle">AWS eu-west-2 · Azure vSocket</text>
+
+          <!-- Traffic flows into the backbone -->
+          <path class="lane lane-allow" d="M 210 71 C 270 135, 330 195, 398 210"/>
+          <path class="lane lane-allow" d="M 210 220 C 280 220, 330 217, 396 215"/>
+          <path class="lane lane-allow" d="M 210 369 C 290 350, 340 282, 402 234"/>
+
+          <!-- Context feed into CMA -->
+          <path class="lane lane-static" d="M 462 212 C 530 202, 590 208, 656 216"/>
+
+          <!-- CMA plane (right) -->
+          <rect class="dg-node-dark" x="660" y="60" width="270" height="320" rx="10"/>
+          <text class="dg-label-inv" x="795" y="92" text-anchor="middle">Cato Management Application</text>
+          <text class="dg-sub-inv" x="795" y="110" text-anchor="middle">One management &amp; analytics plane</text>
+
+          <rect class="dg-node" x="680" y="128" width="230" height="48" rx="10"/>
+          <text class="dg-label" x="795" y="148" text-anchor="middle">Dashboards &amp; topology</text>
+          <text class="dg-tiny" x="795" y="165" text-anchor="middle">Sites · users · tunnels · link health</text>
+
+          <rect class="dg-node" x="680" y="188" width="230" height="48" rx="10"/>
+          <text class="dg-label" x="795" y="208" text-anchor="middle">App &amp; user analytics</text>
+          <text class="dg-tiny" x="795" y="225" text-anchor="middle">Usage · risk · shadow IT · DEM</text>
+
+          <rect class="dg-node" x="680" y="248" width="230" height="48" rx="10"/>
+          <text class="dg-label" x="795" y="268" text-anchor="middle">Unified event stream</text>
+          <text class="dg-tiny" x="795" y="285" text-anchor="middle">Network + security + access</text>
+
+          <rect class="dg-node" x="680" y="308" width="230" height="48" rx="10"/>
+          <text class="dg-label" x="795" y="328" text-anchor="middle">XDR incident stories</text>
+          <text class="dg-tiny" x="795" y="345" text-anchor="middle">Correlated · MITRE-mapped · Gen-AI</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Traffic — all edges, all ports &amp; protocols</span>
+          <span class="key"><span class="swatch" style="border-top-style:solid;border-color:var(--ink-3)"></span> Single-pass context feed — identity · device · app · risk</span>
+        </div>
+        <div class="diagram-caption">Because all edges send all traffic through the PoPs, the telemetry was never split across boxes — the grey link is the same single-pass context feeding one console, not a collector you deploy.</div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map showing Cato PoP locations as green ring markers concentrated across North America, Europe and Asia, with coverage in South America, the Middle East, Africa and Australia">
+        <figcaption>The Cato global private backbone — 80+ PoP locations. Every PoP runs the full software stack, so visibility is identical wherever users and sites connect.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="../assets/img/platform-capabilities.png" alt="Grid of capability buttons converged in the Cato platform: SD-WAN, Accelerate, MPLS, Optimize, Monitor, AIOps, NGFW, IPS, EDR/EPP, DLP, SWG, RBI, AI Security, XDR, ZTNA, CASB">
+        <figcaption>The converged capability stack. Each of these would normally be a separate console with its own logs — on Cato they share one policy engine and one data set.</figcaption>
+      </figure>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>One console, every edge</h4><p>Configuration, policies, analytics, troubleshooting and incident workflows in a single UI — no context switching, and no manual correlation across tools.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔗</div><div><h4>Shared context on every flow</h4><p>Each flow processed once by SPACE carries identity, device, application and risk context — so events correlate natively, without exporting to a SIEM.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤖</div><div><h4>XDR + AIOps built in</h4><p>XOps turns millions of raw events into prioritised incident stories — correlated across users, devices and locations, MITRE-mapped, with Gen-AI summaries.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Reporting for every audience</h4><p>From on-demand packet captures for engineers to scheduled executive reports on usage trends, risk posture and SLA compliance — same data, different altitude.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">The demo in one sentence</div>
+        <p>Start with global visibility → drill down by identity (user, site, app) → analyse traffic
+        and threats → show unified policy → troubleshoot in-context → resolve the incident — without
+        ever leaving the platform.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open on the global picture</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The whole estate on one live map: London DC, Manchester DC, Bracknell Lab, Dubai Office,
+          AWS eu-west-2, the Azure vSocket hub — plus every connected remote user. Hover a tunnel for
+          real-time latency, loss and jitter to the nearest PoP. Land the point: no probes, no
+          collectors — this is the platform observing itself.</p>
+        </li>
+        <li>
+          <h4>Drill down by identity</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Pick a user — Priya. Device, client version, active sessions, bandwidth, connected PoP,
+          and every security event tied to <em>her identity</em>, not an IP address. Mention login
+          geography and anomaly detection (impossible travel) as identity-anchored visibility.</p>
+        </li>
+        <li>
+          <h4>Application &amp; traffic visibility — layer-7 context</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Top applications by usage, performance and risk; sanctioned business apps versus shadow
+          IT side by side. Cross-filter user → site → app instantly — the pivot that normally means
+          opening a different product.</p>
+        </li>
+        <li>
+          <h4>Security events in full context</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span></p>
+          <p>Top attackers, geo view and MITRE ATT&amp;CK mapping, then pivot to
+          <span class="path">Monitor → Events</span> — the single timeline of IPS, DNS security, SWG
+          and CASB events with policy-hit context: visibility into <em>why</em> traffic was allowed
+          or blocked.</p>
+        </li>
+        <li>
+          <h4>One policy plane, with change history</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show the consistent rule anatomy shared across network and security modules, and which
+          rules apply to a given user or site. Then open <span class="path">Administration → Audit Trail</span>:
+          every change across every module, timestamped and attributable — the governance evidence
+          auditors ask for.</p>
+        </li>
+        <li>
+          <h4>Analytics that answer executive questions</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span></p>
+          <p>End-to-end path metrics — LAN → edge → PoP → destination — with SLA compliance and
+          historical trends. Show how the same data rolls up into scheduled, business-friendly
+          reports: usage trends, risk posture, capacity headroom for budget planning.</p>
+        </li>
+        <li>
+          <h4>Troubleshoot a user-reported issue in context</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Simulate the classic ticket: "the app is slow". Pivot alert → user → traffic → device in
+          a few clicks, trace the route with backbone visibility for every segment of the path, and
+          take an on-demand packet capture directly from the PoP. No truck roll, no separate tooling.</p>
+        </li>
+        <li>
+          <h4>Resolve the incident — and prove the efficiency claim</h4>
+          <p>Finish on an XDR incident story: IPS hits, malware alerts, access failures and anomalies
+          correlated into one case, MITRE-mapped, with built-in remediation (block the user, isolate
+          the device, update policy). Close on the business outcome: correlation cuts MTTD, integrated
+          tooling cuts MTTR, and one rule base ends cross-product sync errors.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="talk-track" class="reveal">
+      <div class="section-kicker">Talk track</div>
+      <h2>Narrative for the architecture slide</h2>
+      <div class="card">
+        <p><strong>The architecture is why the visibility exists.</strong> A global private backbone of
+        interconnected PoPs delivers the networking and security capabilities; each PoP runs the Single
+        Pass Cloud Engine, so every flow from every edge is processed once with full context. One data
+        set, therefore one console — the visibility isn't integrated, it was never separate.</p>
+        <p><strong>XOps turns events into answers.</strong> The AI layer (XDR + AIOps) transforms millions
+        of raw events into consumable incident stories — correlated across users, devices and locations,
+        prioritised by risk — so teams act quickly instead of drowning in alerts. It processes events
+        from all licensed Cato products automatically, with no manual setup.</p>
+        <p><strong>Flexible management, same visibility.</strong> The CMA supports granular access control,
+        full policy configuration and detailed analytics and event logs — whether the account is
+        self-managed, co-managed with a partner, or delivered as a fully managed service.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/extended-detection-and-response-xdr/" target="_blank" rel="noopener">XDR — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="management-dem.html">Proactive Digital Experience Monitoring</a></li>
+            <li><a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

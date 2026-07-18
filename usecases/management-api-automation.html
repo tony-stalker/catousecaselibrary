@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation at Scale with API, catocli &amp; Terraform — Cato Use Case Library</title>
+<meta name="description" content="Deploy and operate hundreds of sites as code — GraphQL API, catocli and the Cato Terraform provider for zero-touch rollout and CI/CD-driven policy.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-api-automation">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / API &amp; Automation</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Automation at Scale with API, catocli &amp; Terraform</h1>
+    <p class="lede">
+      Operating tens or hundreds of sites by clicking through a console is not a strategy.
+      Everything in the Cato Management Application is driven by the Cato GraphQL API — so sites,
+      policy and monitoring can be code: version-controlled, peer-reviewed, deployed by a pipeline
+      and rolled back like any other change.
+    </p>
+    <div class="meta-row">
+      <span class="tag">GraphQL API</span><span class="tag">catocli</span><span class="tag">Terraform</span><span class="tag">Zero-Touch</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Networks grow faster than network teams. An acquisition adds twenty sites overnight; a
+        retail rollout adds a hundred over a quarter. If every site, every firewall rule and every
+        report is a sequence of clicks, scale means either more head-count or more mistakes —
+        usually both.
+      </p>
+      <p>
+        The objective: <strong>make the network operable as code.</strong> New sites deploy from a
+        template with zero console time, policy changes go through review and can be rolled back,
+        and the security estate feeds the tooling the organisation already runs — SIEM, CI/CD,
+        ITSM. Because the CMA itself is built on the same GraphQL API that customers use, there is
+        no "automation subset": anything you can click, you can code.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Click-ops does not scale</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Operating by hand</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Every new site is a manual, snowflake configuration</li>
+            <li>Bulk policy changes mean hours of repetitive clicking</li>
+            <li>No review step — a typo goes straight to production</li>
+            <li>No rollback beyond "remember what it looked like"</li>
+            <li>Reporting is a person exporting screenshots monthly</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Operating as code</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Sites are templated resources — apply once, repeat forever</li>
+            <li>Policy lives in Git: diff, peer review, merge, deploy</li>
+            <li>Rollback is <code>git revert</code> plus a pipeline run</li>
+            <li>Events stream continuously into the SIEM</li>
+            <li>Reports generate and deliver themselves on a schedule</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Discovery question</div>
+        <p>“Walk me through your last multi-site change — how long did it take, how many people
+        touched a console, and if it had gone wrong, how would you have rolled it back?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One API, three ways to consume it</h2>
+      <p>
+        The Cato GraphQL API at <code>api.catonetworks.com</code> is the programmatic surface of
+        the entire platform — sites, sockets, policy, entities, events and analytics. Around it
+        sit two official tools, so teams can automate at whatever altitude suits them:
+      </p>
+      <div class="grid-3" style="margin:16px 0 18px">
+        <div class="card">
+          <h3 style="margin-top:0">GraphQL API</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Query and mutate anything in the account —
+          the same API the CMA runs on. Ideal for SIEM feeds, custom integrations and scripted
+          changes from any language.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">catocli</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The Python CLI that wraps the API — every
+          query and mutation as a shell command. Perfect for ad-hoc lookups, quick bulk jobs and
+          glue scripts in a pipeline.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Terraform provider</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The official <code>catonetworks/cato</code>
+          provider: declare sites, interfaces and policy as resources. Plan shows the diff; apply
+          converges the account to the code.</p>
+        </div>
+      </div>
+
+      <p>A realistic first hour with the toolchain looks like this:</p>
+<pre class="code"><span class="cmt"># pip install catocli</span>
+catocli query entityLookup -accountID &lt;your-account-id&gt; '{"type":"site"}'
+terraform plan   <span class="cmt"># cato_socket_site resources for 12 branch sites</span>
+terraform apply  <span class="cmt"># sites appear in CMA in minutes</span></pre>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Network as code: Git to CI to the Cato GraphQL API</title>
+          <desc id="dg1-desc">Site and policy definitions live in a Git repository. A CI runner executes Terraform and catocli against the Cato GraphQL API in the Cato cloud. The API fans out to create branch sites — Reading Office, Glasgow, Dubai Office — and apply a tagged WAN policy update, while a separate events feed streams from the API into the SIEM.</desc>
+
+          <!-- Code side -->
+          <rect class="dg-node-dark" x="36" y="190" width="150" height="62" rx="10"/>
+          <text class="dg-label-inv" x="111" y="216" text-anchor="middle">Git repository</text>
+          <text class="dg-sub-inv" x="111" y="234" text-anchor="middle">sites.tf · policy as code</text>
+
+          <rect class="dg-node-dark" x="246" y="190" width="150" height="62" rx="10"/>
+          <text class="dg-label-inv" x="321" y="216" text-anchor="middle">CI runner</text>
+          <text class="dg-sub-inv" x="321" y="234" text-anchor="middle">terraform · catocli</text>
+
+          <path class="lane-static" d="M 186 221 L 246 221"/>
+          <text class="dg-tiny" x="216" y="212" text-anchor="middle">merge</text>
+
+          <!-- Cato cloud ring + API -->
+          <ellipse class="dg-backbone" cx="520" cy="221" rx="110" ry="48"/>
+          <circle cx="418" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="622" cy="202" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle class="pulse-ring" cx="520" cy="221" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="221" r="30"/>
+          <text class="dg-label" x="520" y="128" text-anchor="middle">Cato GraphQL API</text>
+          <text class="dg-sub" x="520" y="146" text-anchor="middle">api.catonetworks.com</text>
+          <text class="dg-tiny" x="396" y="292" text-anchor="middle">Cato cloud · Global Private Backbone</text>
+
+          <!-- CI to API -->
+          <path class="lane lane-allow" d="M 396 221 C 428 221, 452 221, 482 221"/>
+
+          <!-- Fan-out: sites created -->
+          <path class="lane lane-allow" d="M 552 206 C 640 158, 700 88, 768 76"/>
+          <path class="lane lane-allow" d="M 554 216 C 640 200, 700 162, 768 155"/>
+          <path class="lane lane-allow" d="M 554 228 C 640 246, 700 236, 768 235"/>
+          <path class="lane lane-allow" d="M 550 238 C 630 282, 700 315, 768 315"/>
+
+          <rect class="dg-node" x="770" y="48" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="71" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="848" y="89" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node" x="770" y="128" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="151" text-anchor="middle">Glasgow</text>
+          <text class="dg-sub" x="848" y="169" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node" x="770" y="208" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="231" text-anchor="middle">Dubai Office</text>
+          <text class="dg-sub" x="848" y="249" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node-green" x="770" y="288" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="311" text-anchor="middle">WAN policy update</text>
+          <text class="dg-sub" x="848" y="329" text-anchor="middle">tagged · revertable</text>
+
+          <!-- Events feed to SIEM -->
+          <path class="lane lane-allow" d="M 520 256 C 520 288, 520 318, 520 350"/>
+          <text class="dg-tiny" x="534" y="312" text-anchor="start">events feed</text>
+          <rect class="dg-node-dark" x="440" y="352" width="160" height="56" rx="10"/>
+          <text class="dg-label-inv" x="520" y="376" text-anchor="middle">SIEM</text>
+          <text class="dg-sub-inv" x="520" y="394" text-anchor="middle">eventsFeed API</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> API-driven change / data flow</span>
+        </div>
+        <div class="diagram-caption">Site and policy definitions merge in Git; a CI runner drives the GraphQL API to create sites and apply policy, while the events feed streams continuously into the SIEM.</div>
+      </div>
+
+      <h3>What teams automate first</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🚀</div><div><h4>Zero-touch site rollout</h4><p>Template a branch once, then apply it per site — the M&amp;A play: an acquired estate becomes a Terraform module and lands on the WAN in days, not quarters.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Bulk policy with review &amp; rollback</h4><p>Firewall rules live in version control. A change is a pull request: diffed, reviewed, applied by pipeline — and reverted the same way if needed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Events into the SIEM</h4><p>The events feed streams security and connectivity events into Splunk, Sentinel or any collector — Cato telemetry alongside everything else the SOC watches.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗓️</div><div><h4>Scheduled reporting</h4><p>Pull analytics and entity data on a schedule and publish to whoever needs it — no more monthly screenshot-and-paste exercises.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Ask what they automate today — Terraform elsewhere? A SIEM in place? Anchor on their
+        toolchain: the message is that Cato joins it, not that they must adopt a new one.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Start at the API surface</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show where API keys are created and scoped. Make the architectural point: the CMA is a
+          client of this same GraphQL API — there is nothing the console can do that code cannot.</p>
+        </li>
+        <li>
+          <h4>First query with catocli</h4>
+          <p>Install the CLI (<code>pip install catocli</code>) and run an
+          <code>entityLookup</code> for sites against the demo account. Seconds from install to a
+          live inventory of the estate — no SDK, no boilerplate.</p>
+        </li>
+        <li>
+          <h4>Create a site with Terraform</h4>
+          <p>Run <code>terraform plan</code> on a <code>cato_socket_site</code> definition and walk
+          the diff, then <code>terraform apply</code>. Emphasise the plan step: the change is
+          reviewed before anything touches production.</p>
+        </li>
+        <li>
+          <h4>Watch it appear in the CMA</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The new site is on the topology map within minutes, alongside London DC, Glasgow and
+          the rest of the estate. Code on one screen, the live WAN on the other.</p>
+        </li>
+        <li>
+          <h4>Make a tagged policy change via API</h4>
+          <p>Push a firewall rule change through the API with a change tag (ticket reference or
+          commit hash). This is the bulk-change story: one script, every site, one audit entry per
+          mutation.</p>
+        </li>
+        <li>
+          <h4>Prove attribution in the Audit Trail</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show the API change attributed to its API key, with the before/after values. Automated
+          changes are as accountable as console changes — often more so.</p>
+        </li>
+        <li>
+          <h4>Close on the SIEM feed</h4>
+          <p>Mention the <code>eventsFeed</code> API: the same platform that just deployed a site
+          streams its security and connectivity events into their SIEM continuously — deployment,
+          operations and detection from one API.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://github.com/catonetworks/cato-cli" target="_blank" rel="noopener">catocli on GitHub</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider — registry</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-agility-mna.html">Agility: M&amp;A Integration at Speed</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

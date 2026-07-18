@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnyConnect to Cato Client — Cato Use Case Library</title>
+<meta name="description" content="Retire the VPN concentrators — replace AnyConnect remote access with Cato SDP in cohort-based waves: always-on ZTNA, device posture and IdP MFA, with no headends to size or patch.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-anyconnect">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / AnyConnect to Cato Client</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>AnyConnect to Cato Client</h1>
+    <p class="lede">
+      AnyConnect 4.x reaches end of support in March 2027, so every estate still running it must
+      repackage, re-test and redeploy a client anyway — the perfect moment to question the VPN
+      concentrator model itself, not just the agent. This page is the focused remote-access play:
+      replace AnyConnect and its ASA/Firepower headends with the Cato Client and SDP — always-on
+      ZTNA terminating at the nearest PoP, device posture and IdP MFA built in, and no
+      concentrators left to size, patch or expose to the internet.
+    </p>
+    <div class="meta-row">
+      <span class="tag">AnyConnect</span><span class="tag">Cato Client</span><span class="tag">SDP</span>
+      <span class="tag">VPN Replacement</span><span class="tag">Device Posture</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The forced decision point</h2>
+      <p>
+        Cisco has already made the decision to change the client for you. AnyConnect 4.x left
+        software maintenance in March 2024 and reaches end of support on 31&nbsp;March&nbsp;2027;
+        the sanctioned path is Cisco Secure Client 5.x — a free upgrade for entitled customers,
+        but still a full client transition: new packaging, new profiles, re-testing on every OS
+        image, a fresh MDM rollout. Meanwhile the ASA 5506-X, 5508-X and 5516-X headends that
+        terminate many of these tunnels reach end of support on 31&nbsp;August&nbsp;2026.
+      </p>
+      <p>
+        So the question is not <em>whether</em> to run a client migration project — it is whether,
+        having paid for one, you end up with the same architecture. The concentrator model has
+        structural problems no client upgrade fixes: every remote session hairpins through a
+        datacentre appliance that must be sized for the worst peak, patched on the vendor's
+        schedule, deployed in HA pairs and left listening on the public internet. Cato SDP inverts
+        the model — the Cato Client connects to the nearest of Cato's PoPs, where always-on ZTNA,
+        device posture and the full inspection stack are enforced in the cloud, and traffic
+        continues to datacentre or cloud applications directly over the global private backbone.
+        <strong>Same migration effort, fundamentally better end state.</strong>
+      </p>
+      <div class="callout">
+        <div class="co-title">Migrating more than remote access?</div>
+        <p>This page deliberately scopes to AnyConnect and its headends. If the account also runs
+        Umbrella, Catalyst (Viptela) or Meraki SD-WAN, or ASA/FTD edge firewalls, see the
+        full-estate play: <a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp;
+        SD-WAN) to Cato</a>.</p>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>What the concentrator model costs you</h2>
+      <p>Cisco's own end-of-life calendar sets the deadline; the architecture sets the pain.</p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">Mar 2024</div><div class="stat-label">AnyConnect 4.x end of software maintenance — no more fixes</div></div>
+        <div class="stat-tile"><div class="stat-value">Aug 2026</div><div class="stat-label">ASA 5506-X / 5508-X / 5516-X end of support</div></div>
+        <div class="stat-tile"><div class="stat-value">Mar 2027</div><div class="stat-label">AnyConnect 4.x end of support — Secure Client 5.x transition forced</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Capacity cliffs at peak</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Headends are sized for a guessed peak of concurrent tunnels. A snow day,
+          an office closure or an incident-response surge finds the cliff — and the fix is a
+          hardware refresh and licence uplift, not a dial.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Internet-exposed appliances</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">A VPN concentrator is by design a listening service on the public
+          internet, and VPN headends across the industry are a recurring target for exploitation.
+          Every advisory triggers an emergency patch window on infrastructure that carries all
+          remote access.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Backhaul latency to cloud apps</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Full-tunnel users hairpin through the datacentre to reach M365 or
+          Salesforce; split tunnelling avoids the hairpin by sending that traffic outside
+          inspection entirely. Either way, somebody loses.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">All-or-nothing network access</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">A tunnel-group typically lands users on a network segment, not an
+          application. Once connected, lateral reach is governed by whatever ACLs kept pace —
+          the opposite of least privilege.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>How many headends, and where? What is the peak concurrent user count — and the licensed
+        ceiling? How long is the split-tunnel exception list, and who owns it? Which posture checks
+        run today (ISE Posture, HostScan), and what do they actually enforce? And how do clients
+        get deployed — MDM, SCCM, or "users download it"?</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>From concentrator to nearest PoP</h2>
+      <p>
+        The Cato Client is a lightweight agent that connects each user to the nearest Cato PoP,
+        authenticating via your IdP (Entra ID, Okta, OneLogin — multiple IdPs supported) with SSO
+        and MFA, and checking device posture continuously throughout the session rather than only
+        at logon. From the PoP, traffic to private applications rides the global private backbone
+        to the datacentre Socket; internet and SaaS traffic breaks out locally through the same
+        inspection stack that protects sites. There is no headend: nothing to size, no HA pair to
+        maintain, no appliance CVE to patch over a weekend.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">AnyConnect concentrator hairpin versus Cato Client via the nearest PoP</title>
+          <desc id="dg1-desc">Two remote users. Priya on AnyConnect follows an amber lane across the internet to a datacentre VPN concentrator, then on to datacentre applications, with cloud-bound traffic hairpinning back out from the concentrator to SaaS. Marcus on the Cato Client follows a green lane to the nearest Cato PoP on the global private backbone, reaching datacentre applications and SaaS directly. The concentrator is marked for retirement; the green path is authenticated by SAML SSO with MFA and posture-checked at the PoP.</desc>
+
+          <!-- Legacy lane: Priya → concentrator → DC apps, hairpin to SaaS -->
+          <rect class="dg-node-dark" x="400" y="62" width="190" height="64" rx="10"/>
+          <text class="dg-label-inv" x="495" y="89" text-anchor="middle">VPN concentrator</text>
+          <text class="dg-sub-inv" x="495" y="107" text-anchor="middle">ASA/FTD headend</text>
+          <text class="dg-tiny" x="495" y="144" text-anchor="middle">Marked for retirement</text>
+
+          <path class="lane lane-limit" d="M 127 88 C 220 84, 310 86, 396 92"/>
+          <path class="lane lane-limit" d="M 594 88 C 650 86, 700 88, 756 92"/>
+          <path class="lane lane-limit" d="M 594 116 C 710 160, 740 280, 758 362"/>
+          <text class="dg-tiny" x="648" y="238" text-anchor="middle">hairpin — cloud traffic</text>
+          <text class="dg-tiny" x="648" y="254" text-anchor="middle">backhauled via the DC</text>
+
+          <!-- Backbone + Cato PoP -->
+          <ellipse class="dg-backbone" cx="490" cy="330" rx="155" ry="50"/>
+          <circle cx="610" cy="344" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="490" y="398" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="430" cy="322" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="322" r="30"/>
+
+          <!-- Cato lanes: Marcus → PoP → DC apps + SaaS -->
+          <path class="lane lane-allow" d="M 127 318 C 220 322, 310 322, 396 322"/>
+          <path class="lane lane-allow" d="M 452 300 C 560 220, 660 140, 756 106"/>
+          <path class="lane lane-allow" d="M 462 328 C 560 334, 660 356, 756 378"/>
+          <text class="dg-tiny" x="258" y="302" text-anchor="middle">SAML SSO + MFA at IdP</text>
+
+          <!-- PoP labels (painted above lanes, with halo) -->
+          <text class="dg-label" x="430" y="260" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Nearest Cato PoP</text>
+          <text class="dg-tiny" x="430" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">ZTNA · posture · inspection</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="760" y="64" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="845" y="88" text-anchor="middle">Datacentre apps</text>
+          <text class="dg-sub" x="845" y="106" text-anchor="middle">behind a Cato Socket</text>
+
+          <rect class="dg-node" x="760" y="356" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="845" y="380" text-anchor="middle">SaaS &amp; internet</text>
+          <text class="dg-sub" x="845" y="398" text-anchor="middle">M365 · Salesforce · WWW</text>
+
+          <!-- Users (left) -->
+          <g>
+            <circle cx="100" cy="88" r="23" fill="var(--lane-limit)"/>
+            <circle cx="100" cy="81" r="6.5" fill="#fff"/>
+            <path d="M 87 101 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="132" text-anchor="middle">Priya — AnyConnect</text>
+            <text class="dg-sub" x="100" y="148" text-anchor="middle">everything via the DC</text>
+          </g>
+          <g>
+            <circle cx="100" cy="318" r="23" fill="var(--status-good)"/>
+            <circle cx="100" cy="311" r="6.5" fill="#fff"/>
+            <path d="M 87 331 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="362" text-anchor="middle">Marcus — Cato Client</text>
+            <text class="dg-sub" x="100" y="378" text-anchor="middle">SDP · always-on ZTNA</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> AnyConnect — hairpin via the DC concentrator</span>
+          <span class="key"><span class="swatch allow"></span> Cato Client — nearest PoP, direct to apps</span>
+        </div>
+        <div class="diagram-caption">Two users, two architectures: AnyConnect backhauls every flow through an internet-exposed headend; the Cato Client terminates at the nearest PoP and reaches datacentre and cloud applications directly — posture-checked for the life of the session.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Nearest PoP, not nearest concentrator</h4><p>Users connect to the closest PoP and ride the backbone — no trans-continental hairpin to reach the one datacentre that runs the headend.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>No internet-exposed headend</h4><p>The concentrator attack surface disappears. The PoPs are Cato's to operate and patch — your remote access is no longer a weekend CVE drill.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Least privilege by default</h4><p>Policy grants named applications to named users and groups, gated by device posture — not a routed subnet with an ACL bolted on.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Elastic capacity</h4><p>No peak-concurrency sizing, no HA pairs, no licence-ceiling surprises — the cloud service absorbs the snow-day surge.</p></div></div>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">The migration path</div>
+      <h2>Six steps from headends to SDP</h2>
+      <p>The sequencing below reflects Cato's recommended practice for client migrations: swap
+      cohorts cleanly rather than running two full-tunnel agents side by side, and keep the legacy
+      path warm until the final wave clears its soak window.</p>
+      <ol class="steps">
+        <li>
+          <h4>Discovery &amp; profile inventory</h4>
+          <p>Export what the ASA/FTD estate actually encodes: tunnel-groups and connection
+          profiles, split-tunnel ACLs (the exception list <em>is</em> the app inventory nobody
+          wrote down), ISE/HostScan posture rules, and the SAML configuration — AnyConnect SAML is
+          configured per tunnel-group, so each one maps to an IdP integration on the Cato side.
+          Capture peak concurrent users per headend and the client deployment mechanism (MDM,
+          SCCM) that will drive the swap.</p>
+        </li>
+        <li>
+          <h4>Build the Cato side</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Connect the IdP with SSO and SCIM provisioning so users and groups stay in sync.
+          Recreate ISE posture rules as Device Posture profiles — anti-malware present, disk
+          encryption, OS version, certificate — and run them in monitor first. Build the Client
+          Connectivity Policy (who may connect, from where, on what device) and the app-level
+          access rules that replace tunnel-group network grants.</p>
+        </li>
+        <li>
+          <h4>Pilot cohort — swap, not dual-run</h4>
+          <p>Cato documents that third-party VPN clients can conflict with the Cato Client —
+          specifically, AnyConnect can override the Cato Client's DNS settings — and running the
+          Cato Client full-tunnel alongside another VPN is not recommended. So the pilot cohort
+          <strong>swaps</strong>: MDM removes the AnyConnect VPN profile and installs the Cato
+          Client in one change window. Validate SSO, posture verdicts and every app on the
+          cohort's list before scaling.</p>
+        </li>
+        <li>
+          <h4>Wave rollout with per-cohort rollback</h4>
+          <p>Roll cohorts by department or region, each with the same MDM-driven
+          uninstall/install and the same acceptance checklist. Rollback is per cohort and
+          mechanical: re-enable the AnyConnect profile via MDM and the user is back on the old
+          path in minutes. Keep the headends licensed and reachable until the final cohort clears
+          its soak window.</p>
+        </li>
+        <li>
+          <h4>Decommission the headends</h4>
+          <p>Drain remaining sessions, disable the tunnel-groups, then retire the ASA/Firepower
+          remote-access headends and cancel the associated support renewals and client licences.
+          Anything externally keyed to the VPN egress addresses — partner allowlists, conditional
+          access rules — is re-pointed as part of the wave plan.</p>
+        </li>
+        <li>
+          <h4>Optimise</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Flip Device Posture from monitor to enforce, enable always-on so users are protected
+          before they think about connecting, and tighten access from network-level grants to
+          app-level rules using real traffic evidence from Events. This is where the estate ends
+          up ahead of where a Secure Client upgrade would have left it.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Cohort mechanics, not client cohabitation</h2>
+      <p>
+        Site migrations co-exist by routing; client migrations co-exist by <strong>cohort</strong>.
+        At any moment during the rollout some users run AnyConnect and some run the Cato Client —
+        but no individual machine needs to run both as full-tunnel agents, which is exactly the
+        combination Cato's documentation cautions against. Where a genuine overlap is unavoidable
+        (a shared lab machine, a long-lived jump host), the workable interim pattern is Secure
+        Client for VPN only while the Cato Client runs split-tunnel — and it should be proven in
+        the pilot, not assumed.
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Cohort mechanics</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cohorts follow MDM rings: pilot → early adopters → departmental waves.
+          The swap is one scripted change — remove the AnyConnect profile, install the Cato
+          Client, confirm enrolment — with a per-cohort acceptance checklist of the apps that
+          cohort actually uses.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Helpdesk playbook</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">During the overlap the first triage question is "which client are you
+          on?". Give the service desk a one-page playbook: how to identify the client, the
+          known-good rollback command per cohort, and when a ticket means "roll this user back"
+          versus "fix the policy".</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What stays</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">ISE remains for wired 802.1X NAC, RADIUS CoA and switch-port
+          enforcement where those are in scope — that is LAN infrastructure, not remote access.
+          Its VPN-posture role is what moves to Cato Device Posture. Set that boundary early.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Rollback rule</div>
+        <p>Rollback stays cheap only while the old path exists. Keep the ASA/FTD headends racked,
+        licensed and monitored until the last cohort completes its soak window — then decommission
+        deliberately, not opportunistically.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Anchor on their trigger: is it the AnyConnect 4.x deadline, an ASA refresh quote, a
+        headend outage at peak, or an audit finding on network-level VPN access? Run the demo as
+        "the project you already have to do, done once, properly".</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Connect with the Cato Client</h4>
+          <p>Connect as a demo user — SSO and MFA at the IdP, then show that the client has
+          attached to the nearest PoP. Contrast: no concentrator address, no tunnel-group
+          drop-down, no "which gateway is least busy today?".</p>
+        </li>
+        <li>
+          <h4>Show the connection gate</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Walk the rules that decide who may establish a tunnel at all — user group, country,
+          device posture profile — the control an ASA expresses as a sprawl of tunnel-group and
+          DAP logic.</p>
+        </li>
+        <li>
+          <h4>Open a Device Posture profile</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Show the checks — anti-malware running, disk encryption, OS version, certificate,
+          client version — and make the point that they are evaluated continuously during the
+          session, not once at logon. This is the ISE Posture replacement conversation.</p>
+        </li>
+        <li>
+          <h4>App-level access vs network access</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show a rule granting a user group one named application in the datacentre, and the
+          absence of any rule granting the subnet. Then show the same user blocked from an
+          adjacent resource — least privilege as the default, not an ACL project.</p>
+        </li>
+        <li>
+          <h4>Close on the session trail</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to the demo user: connection, posture verdicts, every allow and block,
+          fully attributed to identity. This is the audit trail a concentrator syslog never quite
+          delivers.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/20824958359709-Troubleshooting-Scenarios-for-Issues-with-the-Cato-Client" target="_blank" rel="noopener">Cato Client troubleshooting — incl. AnyConnect DNS override (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/products/collateral/security/anyconnect-secure-mobility-client/anyconnect-secure-mobility-client-v4x-eol.html" target="_blank" rel="noopener">Cisco: AnyConnect 4.x end-of-life notice</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/products/collateral/security/asa-5500-series-next-generation-firewalls/eos-eol-notice-c51-744798.html" target="_blank" rel="noopener">Cisco: ASA 5508-X/5516-X end-of-life notice</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato — the full-estate playbook</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

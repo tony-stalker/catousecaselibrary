@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achieving Compliance (ISO 27001 · NIS2 · SOC 2) — Cato Use Case Library</title>
+<meta name="description" content="Map Cato capabilities to compliance frameworks — CASB, DLP and unified audit evidence to cut compliance overhead and pass the audit.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  /* NIS2 4-column mapping table: let headers wrap so all columns fit the card */
+  #nis2 table.data th { white-space: normal; }
+  #nis2 table.data th:nth-child(1) { width: 18%; }
+  #nis2 table.data th:nth-child(2) { width: 20%; }
+  #nis2 table.data th:nth-child(3) { width: 37%; }
+  #nis2 table.data th:nth-child(4) { width: 25%; }
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-compliance">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Achieving Compliance</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-wip">In development</span>
+    </div>
+    <h1>Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</h1>
+    <p class="lede">
+      The business must achieve and hold compliance — but a rack of point solutions makes every
+      control harder to configure, every edge harder to cover, and every audit a manual
+      evidence-hunt. This use case positions Cato CASB + DLP with one management plane:
+      risk-based SaaS control, protection of regulated data, and unified audit evidence
+      mapped to ISO 27001, NIS2 and SOC 2.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ISO 27001</span><span class="tag">NIS2</span><span class="tag">SOC 2</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/WIP%20-%20Helping%20Achieve%20Compliance%20with%20Cato%20Networks.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <div class="callout warn">
+        <div class="co-title">Work in progress</div>
+        <p>The source deck for this use case is marked WIP — the story arc and framework mappings
+        are solid, but the demo runbook below is <strong>starter guidance</strong> authored for this
+        library, not a field-validated script. Rehearse it in your own tenant before running it
+        with a customer.</p>
+      </div>
+      <p>
+        For most organisations compliance is not optional: it is a condition of trading.
+        Frameworks like ISO 27001, NIS2 and SOC 2 decide whether customers will sign, whether
+        regulators stay satisfied, and whether insurers will underwrite cyber risk.
+      </p>
+      <p>
+        The problem is <em>how</em> compliance is achieved. Security built from point solutions is
+        slow to manage, leaves gaps between tools, and adds supply-chain risk with every extra
+        vendor. Evidence lives in a dozen consoles, and every audit becomes a correlation project.
+        The position this use case builds:
+        <strong>Cato CASB + DLP, enforced everywhere and reported from one management plane,
+        gives you the controls and the evidence in one place</strong> — a deployment plan
+        that ends with compliance achieved, not just tooling bought.
+      </p>
+    </section>
+
+    <section id="frameworks" class="reveal">
+      <div class="section-kicker">The frameworks</div>
+      <h2>What ISO 27001, NIS2 and SOC 2 actually are</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">ISO 27001</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">An international standard to establish,
+          implement and maintain information security — an auditable Information Security
+          Management System (ISMS) with certification the business can show customers.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NIS2</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The EU framework for protecting critical
+          infrastructure: ensure the security and resilience of essential services and prevent,
+          deter and mitigate major incidents. Legally binding for in-scope entities.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SOC 2</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">An audit of the controls behind security,
+          availability, confidentiality and privacy — the attestation report enterprise buyers
+          increasingly demand before they will sign.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="challenges" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Six things compliance owners tell us</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Slow management</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“It takes us weeks to configure the same
+          policy across all the tools.”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Control sprawl</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“My network security is a mess. Just too
+          many boxes and models.”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Audit evidence</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“How do I correlate evidence across all
+          this tooling?”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">All edges</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“How do I make sure remote workers are
+          kept compliant?”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SaaS activity</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“I need to ensure my SaaS usage is
+          controlled.”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Governance</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“Shadow IT and unknown SaaS apps make it
+          difficult to comply.”</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which framework is driving you right now — and when the auditor asks for evidence that
+        a control worked last quarter, how many consoles do you have to open to answer?”</p>
+      </div>
+
+      <h3>The business impact of falling short</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Reputational impact</h4><p>A failed audit or a public incident undermines the trust the brand trades on.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>Regulatory exposure</h4><p>Industry regulatory requirements don't negotiate — non-compliance invites enforcement.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤝</div><div><h4>Blocked growth</h4><p>Without the certification or attestation, new customers can't be signed — the business can't grow at the desired pace.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Uninsurable risk</h4><p>Cyber insurers demand demonstrable controls; without them the business can't be insured against attack.</p></div></div>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>CASB + DLP, with one evidence plane</h2>
+      <p>
+        Cato converges the controls the frameworks keep asking for — cloud-service governance,
+        access control, information classification and transfer control — into the same
+        single-pass engine that carries the traffic. Every flow from every edge is inspected once
+        at the PoP, and every decision lands as an event in one management application. That is
+        the difference between <em>owning tools</em> and <em>producing evidence</em>.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 410" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">From enforcement at the PoP to unified compliance evidence</title>
+          <desc id="dg1-desc">CASB, DLP, FWaaS and IPS engines enforce policy on every flow at the Cato PoP. All events and telemetry feed the Cato Management Application — one management plane — which produces unified audit evidence for ISO 27001, NIS2 and SOC 2.</desc>
+
+          <!-- Column headings -->
+          <text class="dg-tiny" x="103" y="42" text-anchor="middle">Enforcement — every PoP, every edge</text>
+          <text class="dg-tiny" x="849" y="42" text-anchor="middle">Frameworks &amp; auditors</text>
+
+          <!-- Enforcement engines -->
+          <rect class="dg-node-green" x="30" y="62" width="130" height="46" rx="10"/>
+          <text class="dg-label" x="95" y="82" text-anchor="middle">CASB</text>
+          <text class="dg-sub" x="95" y="98" text-anchor="middle">SaaS access control</text>
+
+          <rect class="dg-node-green" x="30" y="152" width="130" height="46" rx="10"/>
+          <text class="dg-label" x="95" y="172" text-anchor="middle">DLP</text>
+          <text class="dg-sub" x="95" y="188" text-anchor="middle">Data protection</text>
+
+          <rect class="dg-node-green" x="30" y="242" width="130" height="46" rx="10"/>
+          <text class="dg-label" x="95" y="262" text-anchor="middle">FWaaS</text>
+          <text class="dg-sub" x="95" y="278" text-anchor="middle">Firewall as a service</text>
+
+          <rect class="dg-node-green" x="30" y="332" width="130" height="46" rx="10"/>
+          <text class="dg-label" x="95" y="352" text-anchor="middle">IPS</text>
+          <text class="dg-sub" x="95" y="368" text-anchor="middle">Threat prevention</text>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="290" cy="212" rx="118" ry="46"/>
+          <text class="dg-tiny" x="312" y="282" text-anchor="middle">Global Private Backbone</text>
+          <circle class="pulse-ring" cx="290" cy="210" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="290" cy="210" r="30"/>
+          <text class="dg-label" x="290" y="130" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="290" y="145" text-anchor="middle">Single Pass Cloud Engine</text>
+
+          <!-- Engine lanes into PoP -->
+          <path class="lane lane-allow" d="M 160 85 C 215 100, 228 165, 262 192"/>
+          <path class="lane lane-allow" d="M 160 175 C 200 182, 226 194, 254 203"/>
+          <path class="lane lane-allow" d="M 160 265 C 200 258, 226 226, 254 218"/>
+          <path class="lane lane-allow" d="M 160 355 C 205 345, 240 272, 271 235"/>
+
+          <!-- PoP to CMA -->
+          <path class="lane lane-allow" d="M 324 210 C 360 211, 392 212, 428 213"/>
+
+          <!-- CMA -->
+          <rect class="dg-node-dark" x="430" y="168" width="185" height="92" rx="10"/>
+          <text class="dg-label-inv" x="522" y="202" text-anchor="middle">Cato Management</text>
+          <text class="dg-label-inv" x="522" y="219" text-anchor="middle">Application (CMA)</text>
+          <text class="dg-sub-inv" x="522" y="242" text-anchor="middle">One plane · Audit Trail · data lake</text>
+
+          <!-- Evidence lanes to frameworks -->
+          <path class="lane lane-allow" d="M 615 192 C 670 165, 715 115, 768 92"/>
+          <path class="lane lane-allow" d="M 615 214 C 665 216, 715 217, 768 218"/>
+          <path class="lane lane-allow" d="M 615 236 C 670 262, 715 320, 768 348"/>
+          <text class="dg-tiny" x="700" y="204" text-anchor="middle">unified audit evidence</text>
+
+          <!-- Framework nodes -->
+          <rect class="dg-node" x="768" y="63" width="162" height="58" rx="10"/>
+          <text class="dg-label" x="849" y="87" text-anchor="middle">ISO 27001:2022</text>
+          <text class="dg-sub" x="849" y="105" text-anchor="middle">ISMS certification</text>
+
+          <rect class="dg-node" x="768" y="189" width="162" height="58" rx="10"/>
+          <text class="dg-label" x="849" y="213" text-anchor="middle">NIS2</text>
+          <text class="dg-sub" x="849" y="231" text-anchor="middle">EU critical infrastructure</text>
+
+          <rect class="dg-node" x="768" y="319" width="162" height="58" rx="10"/>
+          <text class="dg-label" x="849" y="343" text-anchor="middle">SOC 2</text>
+          <text class="dg-sub" x="849" y="361" text-anchor="middle">Trust-services audit</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> One data path: policy enforcement → unified events → audit evidence</span>
+        </div>
+        <div class="diagram-caption">Every flow is enforced once at the PoP by CASB, DLP, FWaaS and IPS. Every decision lands in one management plane — a single, correlated evidence source for ISO 27001, NIS2 and SOC 2.</div>
+      </div>
+
+      <h3>How CASB + DLP move the compliance needle</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Application Dashboard — shadow IT visibility</h4><p>Continuous monitoring of every cloud app in use, sanctioned or not, including DLP events with forensic evidence — the governance gap made visible.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚦</div><div><h4>Risk-based CASB controls</h4><p>Access to cloud services governed by application risk — allow the sanctioned, restrict the risky, block the unacceptable, from one rule base.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>DLP for regulated data</h4><p>Alerting and control of regulated and sensitive data — PCI, PII, financial records — as it moves between users, SaaS and the internet.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗂️</div><div><h4>App Catalogue — vendor due diligence</h4><p>Review which applications hold which compliance attestations before the business relies on them — supplier due diligence in minutes, not weeks.</p></div></div>
+      </div>
+    </section>
+
+    <section id="nis2" class="reveal">
+      <div class="section-kicker">Framework mapping — NIS2</div>
+      <h2>NIS2 Article 21 → NIST CSF → Cato</h2>
+      <p>
+        NIS2's Article 21 security areas align closely with the NIST Cybersecurity Framework
+        functions — and those functions are exactly what the Cato SASE Cloud already delivers.
+        Use the wheel to frame the conversation, then walk the mapping.
+      </p>
+
+      <figure class="shot" style="max-width:440px;margin-left:auto;margin-right:auto">
+        <img src="../assets/img/nist-csf-wheel.png" alt="NIST Cybersecurity Framework 2.0 wheel: five outer segments — Identify, Protect, Detect, Respond and Recover — around a central Govern ring.">
+        <figcaption>NIST CSF 2.0 — NIS2 Article 21 directives map cleanly onto these functions.</figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>NIS2 security area</th>
+              <th>NIST CSF function</th>
+              <th>Cato SASE Cloud approach</th>
+              <th>Cato technology / service</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Incident handling &amp; reporting</td>
+              <td>Detect · Respond</td>
+              <td>Thresholds for alerts and events; security scores; MITRE ATT&amp;CK dashboards; threat/incident reports; remediation</td>
+              <td>CMA · MDR · XDR</td>
+            </tr>
+            <tr>
+              <td>Business continuity</td>
+              <td>Identify — Business Environment</td>
+              <td>Cloud-native, fully meshed architecture; 99.999&nbsp;% uptime SLA between PoPs</td>
+              <td>Global private backbone · HA everywhere · redundant Tier-1 links</td>
+            </tr>
+            <tr>
+              <td>Supply-chain security</td>
+              <td>Detect — Continuous Monitoring</td>
+              <td>Granular access-control policies</td>
+              <td>NGFW · CASB · DLP</td>
+            </tr>
+            <tr>
+              <td>Systems acquisition, development &amp; maintenance</td>
+              <td>Identify — Risk Assessment · Protect — Data Security</td>
+              <td>Automatic security assessment against best practices; full encryption of data in transit and at rest with proprietary distributed KMS</td>
+              <td>CMA · Cato Socket · Cato Client · Cato PoPs / data lake</td>
+            </tr>
+            <tr>
+              <td>Cryptography &amp; encryption</td>
+              <td>Protect — Data Security</td>
+              <td>Full encryption of data in transit and at rest with proprietary distributed KMS</td>
+              <td>Cato Socket · Cato Client · Cato PoPs / data lake</td>
+            </tr>
+            <tr>
+              <td>Access-control policies</td>
+              <td>Protect — Access Control</td>
+              <td>RBAC; MFA; SSO</td>
+              <td>CMA</td>
+            </tr>
+            <tr>
+              <td>Asset management</td>
+              <td>Identify — Asset Management</td>
+              <td>Full application awareness; full context flow awareness</td>
+              <td>DPI · NGFW · CASB · IPS</td>
+            </tr>
+            <tr>
+              <td>Zero-trust security</td>
+              <td>Protect — Access Control</td>
+              <td>Universal ZTNA with continuous assessment; MFA; SSO</td>
+              <td>CMA · Cato Socket · Cato Client</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="iso27001" class="reveal">
+      <div class="section-kicker">Framework mapping — ISO 27001</div>
+      <h2>ISO/IEC 27001:2022 clauses 4–10 mapped to Cato</h2>
+      <div class="callout warn">
+        <div class="co-title">Important caveat — say this out loud</div>
+        <p>Clauses 4–10 are <strong>customer-owned ISMS requirements</strong>. Cato supports them
+        with controls, telemetry and evidence — but it does not replace your governance, risk,
+        audit or corrective-action processes. Position Cato as the engine inside the ISMS,
+        not a substitute for it.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Clause</th>
+              <th>How Cato maps</th>
+              <th>What customer still owns</th>
+              <th>Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>4 — Context</strong></td>
+              <td>Treat Cato as an externally provided cloud security/networking service inside scope, supplier and dependency analyses; Cato's security/compliance materials and DPA support supplier due diligence.</td>
+              <td>Scope boundaries, legal/regulatory requirements, interested-party expectations, supplier risk in business context.</td>
+              <td>Indirect</td>
+            </tr>
+            <tr>
+              <td><strong>5 — Leadership</strong></td>
+              <td>Very little direct product mapping — centralised administration and managed services support execution, but leadership evidence remains internal.</td>
+              <td>Approve policy, assign owners, fund the ISMS, run governance forums, demonstrate oversight.</td>
+              <td>Minimal</td>
+            </tr>
+            <tr>
+              <td><strong>6 — Planning</strong></td>
+              <td>Candidate technical treatments and evidence for the Statement of Applicability: ZTNA, NGFW, SWG, IPS, CASB, DLP, DNS Security, TLS inspection, logging, XDR and MDR.</td>
+              <td>Risk methodology, risk evaluation, control selection and exclusions, the SoA itself, measurable objectives.</td>
+              <td>Moderate</td>
+            </tr>
+            <tr>
+              <td><strong>7 — Support</strong></td>
+              <td>Unified management plane, telemetry, documentation, integrations and optional managed services that help run security operations and preserve evidence.</td>
+              <td>Training and awareness, document and record control, communications, competence records.</td>
+              <td>Partial</td>
+            </tr>
+            <tr>
+              <td><strong>8 — Operation</strong></td>
+              <td>The strongest fit: central enforcement of access control, network security, web filtering, cloud-app control, DLP, logging, monitoring and detection/response across users, sites and cloud traffic.</td>
+              <td>Operating procedures, change approval, exceptions, vendor supervision, event investigation, assurance over outsourced processes.</td>
+              <td>Strong</td>
+            </tr>
+            <tr>
+              <td><strong>9 — Performance evaluation</strong></td>
+              <td>Dashboards, event telemetry, the data lake, XDR stories and SIEM integrations supporting monitoring and control-effectiveness evidence.</td>
+              <td>KPIs, effectiveness reviews, internal audits, compliance evaluation, management reviews.</td>
+              <td>Moderate</td>
+            </tr>
+            <tr>
+              <td><strong>10 — Improvement</strong></td>
+              <td>Telemetry, threat stories and vendor-delivered service updates surface weaknesses and improvement opportunities — inputs to improvement, not the corrective-action process itself.</td>
+              <td>Root-cause analysis, nonconformity records, corrective actions and verification, continual improvement.</td>
+              <td>Partial</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook — starter guidance</div>
+      <h2>How to run the demo</h2>
+      <div class="callout warn">
+        <div class="co-title">Starter guidance</div>
+        <p>The source deck's demo slide is an empty placeholder, so this runbook was authored for
+        the library from the capabilities the deck positions. Validate each step in your own
+        tenant and adapt to the framework your prospect cares about.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open on shadow IT — the governance gap</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show the full picture of cloud application usage across the tenant: how many apps are
+          in use, sanctioned vs unsanctioned, and their risk scores. Tie it back to the quote —
+          “shadow IT and unknown SaaS apps make it difficult to comply.” You can't govern what
+          you can't see.</p>
+        </li>
+        <li>
+          <h4>Vendor due diligence in the App Catalogue</h4>
+          <p>Drill from the dashboard into a specific SaaS app's App Catalogue entry. Show its
+          risk score and compliance attributes — which certifications and attestations the vendor
+          holds. This is supplier due diligence (ISO 27001 clause 4, NIS2 supply-chain security)
+          reduced from weeks of questionnaires to a lookup.</p>
+        </li>
+        <li>
+          <h4>Build a DLP rule for PCI data</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Create (or walk through) a rule using a credit-card/PCI data profile: block uploads
+          containing cardholder data to unsanctioned apps, with an event logged on every match.
+          Narrate it as “information classification and transfer control” — the language auditors
+          use.</p>
+        </li>
+        <li>
+          <h4>Show the evidence — Data Protection Dashboard</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Switch from control to proof: DLP events over time, top triggered rules, the users
+          and apps involved. When Priya from finance trips the PCI rule, the event is right here
+          with full context — this is the control-effectiveness evidence clause 9 asks for.</p>
+        </li>
+        <li>
+          <h4>Change governance — Audit Trail</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show every administrative change in the tenant: who changed which policy, when, from
+          where. One attributable change record across the entire security stack — change
+          management evidence without correlating five consoles.</p>
+        </li>
+        <li>
+          <h4>Close on exportable reports</h4>
+          <p>Export the dashboards you have just shown and explain that reporting can be
+          generated on a recurring basis for the compliance team. The close: “when the auditor
+          asks, this is one evidence pack from one platform — not a quarter's worth of
+          screenshot-gathering.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application (CMA)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/20703361797277-Best-Practices-for-Cato-Event-Logs-and-Ingestion" target="_blank" rel="noopener">Best practices for Cato event logs &amp; ingestion (KB)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+            <li><a href="security-inbound-ips.html">Cloud-Delivered Inbound Protection</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Application &amp; UCaaS Performance — Cato Use Case Library</title>
+<meta name="description" content="Predictable voice, video and SaaS performance for global users — backbone routing, TCP acceleration, packet-loss mitigation and app-aware QoS.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-global-app-performance">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / Global App &amp; UCaaS Performance</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Global Application &amp; UCaaS Performance</h1>
+    <p class="lede">
+      Voice, video and SaaS are unforgiving of latency and loss — and the public internet between
+      continents delivers both, unpredictably, while global MPLS is unaffordable at that reach.
+      This use case shows how traffic enters the nearest Cato PoP and rides the private backbone —
+      accelerated, loss-protected and QoS-prioritised — so a user in Sydney gets the same
+      application experience as one sitting next to the London DC.
+    </p>
+    <div class="meta-row">
+      <span class="tag">UCaaS</span><span class="tag">QoS</span><span class="tag">Backbone</span><span class="tag">Acceleration</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The applications the business feels most — Teams and Zoom calls, video meetings, M365 and
+        the rest of the SaaS estate — are exactly the ones most sensitive to latency, jitter and
+        packet loss. A file sync that runs 20&thinsp;% slower is an annoyance; a choppy voice call
+        with the customer is a reputation problem, escalated the same afternoon.
+      </p>
+      <p>
+        The objective: <strong>give every user, in every region, predictable performance for
+        real-time and SaaS applications — without buying a global MPLS network to get it.</strong>
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Distance is the enemy — and you don't own the middle</h2>
+      <p>
+        Within a metro, the internet is usually fine. Between continents it is a chain of providers
+        you have no contract with, each making its own routing decisions. The traditional answer —
+        international MPLS — solves predictability but at a price and provisioning timescale that
+        rules it out for global reach, and it never covered SaaS or remote users anyway.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The public internet</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Best-effort, hot-potato routing across many providers</li>
+            <li>Latency, jitter and loss vary hour to hour — worst on long haul</li>
+            <li>Peering congestion you can't see and can't escalate</li>
+            <li>No SLA — nobody owns your Sydney→London path end to end</li>
+            <li>TCP throughput collapses over high-latency, lossy paths</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Global MPLS</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Predictable — but unaffordable at intercontinental scale</li>
+            <li>Months to provision a new international circuit</li>
+            <li>No on-ramp for SaaS, cloud or remote users</li>
+            <li>QoS stops at the provider edge, per-region contracts</li>
+            <li>Capacity upgrades are slow, disruptive and expensive</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When someone in Sydney says their Teams calls to London are choppy, what do you do today —
+        and when the problem sits in the middle mile, between providers, who do you even call?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Nearest PoP in, private backbone across</h2>
+      <p>
+        Every site, user and cloud instance connects to its nearest Cato PoP. From there, traffic
+        rides the <strong>global private backbone</strong> — PoPs interconnected across multiple
+        Tier-1 carriers, with the optimal route chosen continuously and a
+        <strong>99.999&thinsp;% uptime SLA</strong> between PoPs. Every PoP runs the full software
+        stack, so <strong>TCP proxy acceleration</strong>, <strong>packet-loss mitigation</strong>
+        and <strong>app- and identity-aware QoS</strong> are applied in the path, end to end.
+        SaaS traffic uses <strong>smart egress</strong>: it exits the backbone at the PoP closest
+        to the application instance, not back at head office.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 400" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Sydney to London application traffic over the Cato global private backbone</title>
+          <desc id="dg1-desc">A Sydney IPsec site connects to the Sydney PoP, where QoS queues prioritise voice, video and bulk traffic. Traffic crosses a chain of backbone PoPs with consistent latency to the London PoP, then on to the London DC socket and Microsoft 365 via smart egress near the app instance. A parallel grey line beneath shows the public internet path with variable latency and no SLA.</desc>
+
+          <!-- Backbone ellipse -->
+          <ellipse class="dg-backbone" cx="494" cy="205" rx="205" ry="55"/>
+          <text class="dg-tiny" x="494" y="278" text-anchor="middle">Cato Global Private Backbone</text>
+          <text class="dg-tiny" x="494" y="292" text-anchor="middle">Tier-1 carrier diversity · optimal routing per packet · 99.999&#8201;% SLA between PoPs</text>
+
+          <!-- Sydney site -->
+          <rect class="dg-node" x="24" y="170" width="180" height="60" rx="10"/>
+          <text class="dg-label" x="114" y="194" text-anchor="middle" style="font-size:13.5px">aws-ap-southeast-2-ipsec</text>
+          <text class="dg-sub" x="114" y="212" text-anchor="middle">Sydney · IPsec site</text>
+
+          <!-- Site to Sydney PoP -->
+          <path class="lane lane-allow" d="M 204 198 C 226 199, 248 200, 268 200"/>
+
+          <!-- Sydney PoP (ingress) -->
+          <circle class="pulse-ring" cx="300" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="200" r="30"/>
+          <text class="dg-label" x="300" y="128" text-anchor="middle">Sydney PoP</text>
+          <text class="dg-tiny" x="300" y="143" text-anchor="middle">nearest PoP — QoS applied at ingress</text>
+
+          <!-- QoS queue glyph -->
+          <g aria-label="QoS priority queues at the ingress PoP">
+            <rect x="200" y="246" width="46" height="7" rx="3.5" fill="var(--series-1)"/>
+            <rect x="200" y="258" width="34" height="7" rx="3.5" fill="var(--series-2)"/>
+            <rect x="200" y="270" width="22" height="7" rx="3.5" fill="var(--series-3)"/>
+            <text class="dg-tiny" x="252" y="253">voice P1</text>
+            <text class="dg-tiny" x="252" y="265">video P2</text>
+            <text class="dg-tiny" x="252" y="277">bulk P3</text>
+          </g>
+
+          <!-- Backbone chain Sydney → London -->
+          <path class="lane lane-allow" d="M 330 200 C 400 181, 588 181, 658 200"/>
+          <circle cx="400" cy="188" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="494" cy="185" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="588" cy="188" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="494" y="222" text-anchor="middle">SYD → LDN ~280&#8201;ms — consistent, every packet (illustrative)</text>
+
+          <!-- London PoP (egress) -->
+          <circle class="dg-pop" cx="688" cy="200" r="30"/>
+          <text class="dg-label" x="688" y="140" text-anchor="middle">London PoP</text>
+
+          <!-- London DC -->
+          <rect class="dg-node" x="792" y="84" width="156" height="58" rx="10"/>
+          <text class="dg-label" x="870" y="108" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="870" y="126" text-anchor="middle">Socket X1500 · file servers</text>
+          <path class="lane lane-allow" d="M 710 179 C 742 155, 764 138, 792 120"/>
+
+          <!-- Microsoft 365 -->
+          <rect class="dg-node" x="792" y="262" width="156" height="58" rx="10"/>
+          <text class="dg-label" x="870" y="286" text-anchor="middle">Microsoft 365</text>
+          <text class="dg-sub" x="870" y="304" text-anchor="middle">egress near the app</text>
+          <path class="lane lane-allow" d="M 710 221 C 742 245, 764 262, 792 284"/>
+
+          <!-- Public internet contrast lane -->
+          <path class="lane-static" fill="none" d="M 110 230 C 160 348, 700 366, 810 332"/>
+          <text class="dg-tiny" x="470" y="324" text-anchor="middle">Public internet — variable latency, jitter and loss · no SLA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Cato backbone — accelerated, QoS-enforced path</span>
+          <span class="key"><span class="swatch" style="border-top-style:solid;border-color:var(--ink-3)"></span> Public internet — best-effort contrast path</span>
+        </div>
+        <div class="diagram-caption">Sydney traffic enters the Sydney PoP and rides the backbone to London; M365 egresses at the PoP closest to the app instance. The 280&thinsp;ms label is illustrative — the point is consistency, not the number.</div>
+      </div>
+
+      <h3>What the PoPs do to the traffic</h3>
+      <div class="grid-3" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">TCP proxy acceleration</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The PoP terminates the TCP session locally and proxies it across the backbone, so window scaling isn't throttled by end-to-end round-trip time. Long-haul file transfers stop crawling.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Packet-loss mitigation</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Loss on the path is recovered between PoPs rather than punished with end-to-end retransmits — the difference between a glitch nobody notices and a robotic voice call.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Smart egress for SaaS</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">SaaS traffic exits at the PoP closest to the application instance — a Sydney user reaches M365 via the front door nearest the tenant, not via a UK breakout.</p>
+        </div>
+      </div>
+
+      <h3>What the customer gets</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">📞</div><div><h4>Predictable UCaaS quality</h4><p>Voice and video are classified and prioritised end to end — at the socket, at the ingress PoP and across the backbone — so calls survive the busy hour.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚀</div><div><h4>Faster long-haul transfers</h4><p>TCP acceleration turns intercontinental throughput from a function of round-trip time into a function of bandwidth — replication and large file moves finish sooner.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>No per-region tuning</h4><p>One backbone, one policy. There are no regional appliances to tune, no WAN optimisers to maintain, no “APAC exception” configs to drift.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Per-app QoS tied to identity</h4><p>Bandwidth priorities key on the application <em>and</em> the user — the exec's Zoom call and the payroll upload win over a background backup, per person, globally.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their pain</div>
+        <p>Ask which applications get the complaints and from which regions. If the answer includes
+        Teams, Zoom or “anything from APAC / the Americas”, this demo lands itself — use their app
+        and their far site in every step below.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Show how priorities are defined</h4>
+          <p><span class="path">Network → Bandwidth Management</span></p>
+          <p>Walk the priority tiers: voice in P1, video conferencing in P2, bulk and backup traffic
+          below. Point out that priorities key on application <em>and</em> identity, and that the same
+          policy is enforced at the socket and at every PoP — no per-region QoS configs.</p>
+        </li>
+        <li>
+          <h4>Live proof: a call from the far side of the world</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Make a Teams or Zoom call from a far site — the Sydney-homed
+          <strong>aws-ap-southeast-2-ipsec</strong> to London works well — then open App Analytics
+          and show the QoE view for that app: experience scored per user and site, with the latency,
+          jitter and loss behind the score.</p>
+        </li>
+        <li>
+          <h4>Separate last mile from middle mile</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Click the Sydney site and show last-mile metrics alongside backbone (PoP-to-PoP)
+          metrics. This is the fault-domain question from discovery, answered on one screen:
+          you can now <em>see</em> whether a bad hour was the local ISP or the long haul.</p>
+        </li>
+        <li>
+          <h4>Show the optimisations as policy</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>Open a WAN rule — file transfer to the London DC is a good example — and show the
+          TCP acceleration and packet-loss mitigation toggles. Optimisation is a per-rule policy
+          decision, not an appliance you deploy and tune per region.</p>
+        </li>
+        <li>
+          <h4>Contrast with the internet path</h4>
+          <p>Narrate the alternative: Sydney→London over the public internet crosses multiple
+          providers, each hot-potato routing onto the next, with congestion nobody owns. On Cato it
+          is one provider's backbone, entering at the Sydney PoP and exiting at the London PoP,
+          under a 99.999&thinsp;% SLA — the same argument for every region pair they care about.</p>
+        </li>
+        <li>
+          <h4>Close on SaaS with smart egress</h4>
+          <p>Finish on M365 or their main SaaS app: traffic exits at the PoP closest to the app
+          instance rather than backhauling to a regional breakout — global SaaS performance without
+          local internet breakout projects in every country.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE Cloud architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="management-dem.html">Proactive Digital Experience Monitoring</a></li>
+            <li><a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zscaler (ZIA / ZPA) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Replace ZIA and ZPA with the Cato SASE Cloud — four-phase policy conversion, interim ZIA integration over IPsec, phased agent cutover, and a real-world migration story.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-zscaler">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Zscaler to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Zscaler (ZIA / ZPA) to Cato</h1>
+    <p class="lede">
+      ZIA and ZPA leave the customer running two products, two policy sets and an agent that only
+      does security — with the WAN still on somebody else's kit. This use case walks the proven
+      path onto the Cato SASE Cloud: a four-phase policy conversion, interim architectures that
+      keep ZIA reachable while you migrate, and dual-agent co-existence that de-risks the endpoint
+      cutover — grounded in a real customer migration with the lessons learned left in.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Zscaler</span><span class="tag">ZIA</span><span class="tag">ZPA</span>
+      <span class="tag">SSE</span><span class="tag">Policy Conversion</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why organisations move off Zscaler</h2>
+      <p>
+        Zscaler customers run ZIA for internet security, ZPA for private access, and Zscaler Client
+        Connector (ZCC) on every endpoint — while the WAN itself lives on separate SD-WAN or MPLS
+        estate behind legacy firewalls. Every one of those boundaries is a policy set to maintain,
+        a console to check and a gap where visibility ends.
+      </p>
+      <p>
+        The long-term strategic goal of this migration is a <strong>simplified, standard
+        solution</strong>: one unified platform for security and networking, end-to-end visibility
+        of every flow, and direct internet breakout from the servicing Cato PoP with SD-WAN
+        preference routing — instead of hairpinning traffic into a separate security cloud.
+      </p>
+      <p>
+        The migration itself is the objection you have to beat. The rest of this page is the
+        answer: convert policy methodically, run both clouds in parallel, and cut over one cohort
+        at a time.
+      </p>
+    </section>
+
+    <section id="conversion" class="reveal">
+      <div class="section-kicker">Policy conversion</div>
+      <h2>Four phases from ZIA / ZPA policy to Cato policy</h2>
+      <p>
+        Cato Professional Services runs policy conversion as a four-phase process. It is
+        deliberately <em>not</em> a lift-and-shift: years of accumulated Zscaler rules get cleaned
+        up, refactored and gap-analysed against Cato best practices on the way across.
+      </p>
+
+      <div class="grid-2" style="margin:18px 0">
+        <div class="card">
+          <h3 style="margin-top:0">1 · Export <span class="tag">ZIA + ZPA</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2);margin-bottom:6px"><strong>ZIA:</strong> policies, URL filtering,
+          firewall, web security, DLP, Cloud App policies, Advanced Threat Protection, SSL
+          inspection, bandwidth control, and user/group settings.</p>
+          <p style="font-size:.92rem;color:var(--ink-2);margin:0"><strong>ZPA:</strong> segment groups, access policies,
+          Browser Access, Client Forwarding, inspection policies, trusted networks, server groups
+          and posture profiles.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">2 · Review &amp; map <span class="tag">Clean-up</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2);margin-bottom:6px"><strong>ZIA:</strong> map to the Cato Internet
+          firewall, App Control (tenant restrictions, CASB, DLP), Threat Prevention, SCIM groups
+          and TLS Inspection.</p>
+          <p style="font-size:.92rem;color:var(--ink-2);margin:0"><strong>ZPA:</strong> review groups and site hosts, then
+          map to the WAN firewall and access control. Dead rules and duplicates are refactored out
+          here, not copied across.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">3 · Deploy <span class="tag">Best practices</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2);margin-bottom:6px"><strong>ZIA:</strong> implement Cato best
+          practices — category and service restrictions, firewall, TLS Inspection, CASB, and DLP
+          monitoring policies.</p>
+          <p style="font-size:.92rem;color:var(--ink-2);margin:0"><strong>ZPA:</strong> WAN firewall, segmentation and
+          access control best practices, Browser Access, trusted networks, and group/host
+          configuration.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">4 · Optimise <span class="tag">Ongoing</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2);margin:0">Event analysis and performance tuning once real traffic
+          is flowing: adjust policy restrictions where they bite, and enhance security through
+          tighter segmentation. This is also where the gap analysis against Cato best practices
+          pays off — the converted estate ends up cleaner than the one it replaced.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Zscaler object</th><th>Cato destination</th></tr></thead>
+          <tbody>
+            <tr><td>ZIA URL filtering &amp; firewall policy</td><td>Internet firewall — categories &amp; service restrictions</td></tr>
+            <tr><td>ZIA Cloud App policies</td><td>App Control — tenant restrictions &amp; CASB</td></tr>
+            <tr><td>ZIA DLP</td><td>Cato DLP profiles &amp; rules</td></tr>
+            <tr><td>ZIA Advanced Threat Protection</td><td>Threat Prevention — IPS &amp; anti-malware</td></tr>
+            <tr><td>ZIA SSL inspection</td><td>TLS Inspection policy</td></tr>
+            <tr><td>ZIA bandwidth control</td><td>Bandwidth Management</td></tr>
+            <tr><td>ZIA users &amp; groups</td><td>SCIM-provisioned groups</td></tr>
+            <tr><td>ZPA segment groups &amp; access policies</td><td>WAN firewall &amp; access control</td></tr>
+            <tr><td>ZPA Browser Access</td><td>Clientless browser access</td></tr>
+            <tr><td>ZPA posture profiles</td><td>Device Posture profiles</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“If you exported your ZIA and ZPA policy base today, how much of it could you still
+        explain — and how much would you actually want to carry forward?” The honest answer is why
+        conversion starts with clean-up, not copy.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Co-exist first, cut over in phases</h2>
+      <p>
+        The pattern that de-risks the whole programme is <strong>dual-agent co-existence</strong>:
+        ZCC and the Cato Client run side by side on the same endpoint throughout the migration.
+        On-site, the ZCC tunnel simply rides <em>inside</em> the Cato socket tunnel; when remote,
+        the ZCC and Cato SDP tunnels co-exist on the workstation. Internet protection never has a
+        gap, and either agent can be backed out independently at any phase.
+      </p>
+      <p>
+        On the network side, Cato PoPs keep ZIA reachable during transition: multiple active IKEv2
+        IPsec tunnels from the Cato cloud to ZIA, load-balanced by source/destination, egressing
+        from the Cato PoP closest to Zscaler over the Tier-1 backbone. Sites and users move onto
+        Cato for transport and WAN security first — internet policy flips to direct PoP breakout
+        only once it has been converted and proven.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Phased co-existence of Cato and Zscaler ZIA during migration</title>
+          <desc id="dg1-desc">A branch site with a Cato Socket and a remote user running both the Cato Client and Zscaler Client Connector connect to a Cato PoP on the global private backbone. During transition, internet traffic is backhauled from the PoP to Zscaler ZIA over parallel IKEv2 IPsec tunnels. The target state is direct internet and SaaS breakout from the Cato PoP, after which the ZIA path is retired.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="430" cy="225" rx="155" ry="50"/>
+          <circle cx="284" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="578" cy="207" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="430" y="293" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="430" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="220" r="30"/>
+          <text class="dg-label" x="430" y="152" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="430" y="168" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · CASB/DLP · TLSi</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="30" y="88" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="120" y="112" text-anchor="middle">Branch site</text>
+          <text class="dg-sub" x="120" y="130" text-anchor="middle">Cato Socket X1500</text>
+          <text class="dg-tiny" x="120" y="148" text-anchor="middle">WAN + internet via PoP</text>
+
+          <rect class="dg-node" x="30" y="286" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="120" y="310" text-anchor="middle">Remote user</text>
+          <text class="dg-sub" x="120" y="328" text-anchor="middle">Cato Client + ZCC</text>
+          <text class="dg-tiny" x="120" y="346" text-anchor="middle">ZCC rides inside Cato tunnel</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node-dark" x="742" y="64" width="188" height="74" rx="10"/>
+          <text class="dg-label-inv" x="836" y="94" text-anchor="middle">Zscaler ZIA</text>
+          <text class="dg-sub-inv" x="836" y="112" text-anchor="middle">interim · being retired</text>
+
+          <rect class="dg-node-green" x="742" y="310" width="188" height="74" rx="10"/>
+          <text class="dg-label" x="836" y="340" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="836" y="358" text-anchor="middle">M365 · web · cloud apps</text>
+
+          <!-- Cato tunnels into the PoP -->
+          <path class="lane lane-allow" d="M 210 118 C 300 130, 350 170, 406 204"/>
+          <path class="lane lane-allow" d="M 210 330 C 300 320, 350 265, 406 234"/>
+
+          <!-- Interim backhaul to ZIA -->
+          <path class="lane lane-limit" d="M 456 204 C 560 160, 650 120, 742 101"/>
+          <text class="dg-tiny" x="600" y="124" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">IKEv2 IPsec · LB by src / dst</text>
+
+          <!-- Target breakout from PoP -->
+          <path class="lane lane-allow" d="M 456 236 C 560 280, 650 330, 742 347"/>
+          <text class="dg-tiny" x="640" y="348" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">direct breakout — target</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Cato tunnels &amp; target PoP breakout</span>
+          <span class="key"><span class="swatch limit"></span> Interim backhaul to ZIA (temporary)</span>
+        </div>
+        <div class="diagram-caption">Phased co-existence: sites and users connect to the nearest Cato PoP; internet traffic is tunnelled on to ZIA over parallel IKEv2 IPsec while policies are converted, then flipped to direct breakout from the Cato PoP — no big-bang cutover.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>No big-bang cutover</h4><p>Every phase is independently reversible. Internet protection stays on ZIA until the converted Cato policies are proven on a test cohort.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧳</div><div><h4>Dual agents, zero protection gap</h4><p>ZCC and the Cato Client co-exist on the same endpoint — ZCC tunnel inside the socket tunnel on-site, dual tunnels when remote.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Closest-PoP egress to Zscaler</h4><p>Interim ZIA tunnels ride the Tier-1 backbone and egress from the Cato PoP nearest Zscaler, with multiple interconnects supported.</p></div></div>
+        <div class="benefit"><div class="b-icon">💷</div><div><h4>Commercially neutral interim states</h4><p>The firewall-based patterns below keep internet breakout on existing kit — no Cato bandwidth or commercial impact during transition.</p></div></div>
+      </div>
+    </section>
+
+    <section id="architectures" class="reveal">
+      <div class="section-kicker">Interim architectures</div>
+      <h2>Four ways to keep ZIA reachable during transition</h2>
+      <p>
+        Pick per site, not per customer — most migrations mix these. The first two bridge internet
+        traffic to ZIA while Cato takes over transport; the second two phase Cato into sites that
+        keep their existing firewall running in parallel.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">IKEv2 multiple active tunnels <span class="tag">PoP → ZIA</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Cato builds parallel IPsec tunnels straight to ZIA — the deck's worked example runs 3 active + 3 backup</li>
+            <li>Backhaul load-balanced by source / destination</li>
+            <li>Egress from the closest Cato PoP to Zscaler, over the Tier-1 backbone</li>
+            <li>Support for multiple interconnects</li>
+            <li>Explicitly a temporary ZIA interim solution</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Internet backhaul to existing FW <span class="tag">Site FW → ZIA</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Internet breakout stays at existing sites during transition</li>
+            <li>Reuses the firewall's proven GRE / IPsec connectivity into ZIA — nothing new to build on the Zscaler side</li>
+            <li>Load-balancing and site redundancy across breakout sites</li>
+            <li>Backhaul load-balanced by source / destination</li>
+            <li>Temporary ZIA interim solution</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">FW VLAN termination <span class="tag">Phased replacement</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Existing firewall keeps its VLANs and parallel ZIA connectivity</li>
+            <li>Cato joins as a transit network — BGP or static routing</li>
+            <li>Site ranges land as temporary routed ranges: usable in Cato policy now, converted to VLANs at firewall retirement</li>
+            <li>Simple bypass of agent connectivity</li>
+            <li>No Cato bandwidth or commercial impact</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cato VLAN termination <span class="tag">Phased replacement</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>The socket terminates local VLANs — Cato-managed inter-VLAN routing and visibility from day one</li>
+            <li>Firewall DMZ handoff carries the socket's WAN uplink</li>
+            <li>Internet traffic bypasses the Cato WAN and still breaks out from the firewall during transition</li>
+            <li>Reuses existing local firewall ZIA connectivity</li>
+            <li>No Cato bandwidth or commercial impact</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="case-study" class="reveal">
+      <div class="section-kicker">Field evidence</div>
+      <h2>Case study: a UK professional-services firm</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Starting point</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>UK-headquartered professional-services firm</li>
+            <li>Zscaler ZIA for internet — GRE tunnels at sites plus ZCC on managed endpoints, with identity</li>
+            <li>Not using ZPA; heavy focus on ZTNA as the goal</li>
+            <li>MPLS WAN protected by legacy firewalls</li>
+            <li>Remote access on a legacy remote-access VPN</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Why they moved</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Extremely unhappy with the Zscaler solution</li>
+            <li>Purchased Zscaler CASB — but it was not working for them</li>
+            <li>Wanted the WAN protected with a ZTNA model, not just internet security</li>
+            <li>Bought Cato as a Zscaler ZIA replacement</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">The phased cutover</h3>
+      <ol class="steps">
+        <li>
+          <h4>Phase 0 — WAN first, internet untouched</h4>
+          <p>Sites stayed on ZIA GRE tunnels and endpoints on ZCC. Cato Sockets were deployed and
+          WAN protection built with user awareness <em>before</em> anyone moved off Zscaler:
+          policy-based routing steered WAN traffic to Cato while the default route (internet)
+          still pointed at ZIA.</p>
+        </li>
+        <li>
+          <h4>Phase 1 — SDP to every user</h4>
+          <p>Cato Client (SDP) rolled out to all users with a split tunnel for RFC 1918 over Cato —
+          not always-on, manually enabled when remote. Internet stayed on ZIA at sites and on ZCC
+          when remote: ZCC and SDP co-existing on the same workstations, dual tunnels while
+          remote.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Default route to Cato for WAN</h4>
+          <p>WAN rules completed on the ZTNA model, enforced purely on Cato identities. PBR was
+          removed and the default route migrated to Cato for WAN access; non-user systems
+          (servers, IoT) moved to Cato SWG via the socket on a minimal rule set, keeping
+          visibility and posture. ZIA still protected internet via ZCC — its tunnel now riding
+          inside the Cato socket tunnel on-site.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Copy SWG policies, prove on a test cohort</h4>
+          <p>Zscaler SWG policies were copied into Cato SWG. A subset of users had ZCC removed in
+          an on-prem sandbox to confirm functionality — deliberately isolating SDP policy
+          dependencies from the test methodology.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Always-on SDP, big-bang split-tunnel removal</h4>
+          <p>SDP switched to always-on (still split-tunnelling RFC 1918, still leaning on ZCC for
+          ZIA), then the split tunnel was removed in one move: SDP became the default route to the
+          internet via the Cato PoP, with ZCC forming its ZIA tunnel <em>through</em> Cato to the
+          Zscaler PoP. ZCC was then removed at convenience — internet traffic flipping from ZIA to
+          Cato SWG per endpoint.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">Results</h3>
+      <div class="stat-row" style="margin:14px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">2</div><div class="stat-label">Legacy platforms eliminated — Zscaler ZIA/ZCC and the remote-access VPN</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">5<span class="unit">phases</span></div><div class="stat-label">From first socket to ZCC removal (Phases 0–4), each independently reversible</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit">agent</span></div><div class="stat-label">Left on the endpoint — the Cato Client for SDP, SWG and WAN access</div></div>
+      </div>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Full SDP for remote access and SWG. Next on their roadmap: CASB &amp; DLP on Cato — the
+        security posture they originally wanted from Zscaler CASB — and retiring the legacy
+        firewall estate in favour of Cato NGFW.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Lessons learned — keep these in the room</div>
+        <p>This migration worked, but it was not friction-free. SEs who tell this part of the story
+        honestly build more trust than any polished slide.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Unidentified users broke SWG logic</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">All SDP users were being identified as the “All Unidentified
+          Users” group while user-group logic worked correctly behind the socket — causing SWG
+          policy logic failures. A flaw in Cato's logic (since being fixed), quickly worked around
+          with an exception for the All SDP Users group.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">TLS inspection vs Outlook</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">TLSi caused issues with Outlook, and the customer's change
+          management delayed diagnostic testing — a little over a month of rollout delay. Root
+          cause sat on the customer side and was resolved via a Cato support ticket.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Change windows set the pace</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Tight change control and narrow windows made progress extremely
+          slow. Agree the change-window cadence for every phase before the project starts — the
+          technology was never the bottleneck.</p>
+        </div>
+      </div>
+      <p style="font-size:.94rem;color:var(--ink-2);margin-top:14px">
+        <strong>Looking forward:</strong> integrating the recently released agent-based SDP
+        identity with WMI-based identity to improve the user-awareness experience, and using
+        user/group-based split-tunnel policies (as they release) to simplify Phase-3 test cohorts
+        and make the Phase-4 cutover gradual instead of big-bang.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE Cloud architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services (runs the policy conversion)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-zscaler-policy.html">Zscaler Policy Migration</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

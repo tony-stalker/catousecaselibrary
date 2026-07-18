@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Consolidate Umbrella DNS/SIG, AnyConnect VPN and Catalyst (Viptela) or Meraki SD-WAN into one platform — DNS security, remote access and WAN edge in a single policy.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cisco">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Cisco to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato</h1>
+    <p class="lede">
+      A &ldquo;Cisco SASE&rdquo; estate is rarely one product — it is Umbrella, AnyConnect on ASA or
+      FTD headends, a Viptela or Meraki overlay and a stack of consoles, each with its own renewal
+      and end-of-life date. This page maps every component to its Cato equivalent and walks a
+      five-phase path — regional eBGP co-existence, parallel pilots, wave cutover with per-site
+      rollback — that lands the whole estate in one platform and one policy.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Cisco</span><span class="tag">Umbrella</span><span class="tag">AnyConnect</span>
+      <span class="tag">Catalyst SD-WAN</span><span class="tag">Meraki</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The multi-console problem</h2>
+      <p>
+        Almost no Cisco account runs one product. The typical estate combines <strong>Umbrella</strong>
+        (its own dashboard, plus virtual appliances on-prem for internal-domain DNS),
+        <strong>AnyConnect / Cisco Secure Client</strong> terminating on ASA or Firepower headends,
+        <strong>Catalyst SD-WAN (Viptela)</strong> with the vManage/vSmart/vBond controller stack or
+        <strong>Meraki MX</strong> with Auto-VPN, <strong>ASA/FTD firewalls</strong> managed from
+        ASDM, FMC or CDO, and <strong>ISE</strong> for NAC and VPN posture. Each element carries a
+        separate console, licence model and renewal date — and a separate operational skill set.
+      </p>
+      <p>
+        Cisco itself is consolidating around the customer: vManage was renamed Catalyst SD-WAN
+        Manager, Umbrella capabilities are being folded into Cisco Secure Access, and Meraki has its
+        own SSE integration path. Customers describe genuine roadmap uncertainty across the
+        overlapping offers — and Secure Access adds yet another console (Security Cloud Control)
+        during any transition.
+      </p>
+      <p>
+        The objective of this migration is convergence: Sockets on the WAN edge, the global private
+        backbone as the middle mile, and FWaaS, SWG, DNS security, ZTNA, CASB and DLP delivered
+        inline at the PoP — all managed from the Cato Management Application. One platform, one
+        policy model, one renewal.
+      </p>
+    </section>
+
+    <section id="calendar" class="reveal">
+      <div class="section-kicker">Forced transitions</div>
+      <h2>Cisco&rsquo;s own calendar sets the timeline</h2>
+      <p>
+        You do not need FUD to create urgency in these accounts — Cisco has already published the
+        dates. Each milestone below is a forced project <em>inside</em> the Cisco portfolio: new
+        client software, new routers, new firewalls or a new SSE subscription, each with migration
+        effort of its own.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">Aug 2026</div><div class="stat-label">ASA 5506-X / 5508-X / 5516-X end of support</div></div>
+        <div class="stat-tile"><div class="stat-value">Sep 2026</div><div class="stat-label">Umbrella legacy SKUs end of software maintenance (end of sale passed Sep 2025)</div></div>
+        <div class="stat-tile"><div class="stat-value">Mar 2027</div><div class="stat-label">AnyConnect 4.x end of support (software maintenance ended Mar 2024)</div></div>
+        <div class="stat-tile"><div class="stat-value">Jul 2027</div><div class="stat-label">Meraki MX64/64W end of support (MX65/65W already passed, May 2026)</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Cisco product</th><th>Milestone</th><th>Date</th><th>Cisco&rsquo;s landing zone</th></tr></thead>
+          <tbody>
+            <tr><td>AnyConnect 4.x</td><td>End of software maintenance</td><td>31 Mar 2024</td><td>Secure Client 5.x (free for entitled customers)</td></tr>
+            <tr><td>Umbrella Roaming Client (standalone)</td><td>End of support</td><td>2 Apr 2025</td><td>Secure Client — Umbrella Roaming Security module</td></tr>
+            <tr><td>Umbrella legacy SKUs (Roaming, Professional, Branch, Insights/Platform, Cloud Security)</td><td>End of sale</td><td>30 Sep 2025</td><td>Cisco Secure Access</td></tr>
+            <tr><td>vEdge 100B / 100M / 1000</td><td>Support milestones run out</td><td>Jan 2026</td><td>Catalyst 8000 (cEdge)</td></tr>
+            <tr><td>Meraki MX65 / 65W</td><td>End of support</td><td>28 May 2026</td><td>MX67 / 68</td></tr>
+            <tr><td>ASA 5506-X / 5508-X / 5516-X</td><td>End of support</td><td>31 Aug 2026</td><td>Firepower 1000 / 3100</td></tr>
+            <tr><td>Umbrella legacy SKUs</td><td>End of software maintenance</td><td>30 Sep 2026 (TAC to 30 Sep 2030)</td><td>—</td></tr>
+            <tr><td>AnyConnect 4.x</td><td>End of support</td><td>31 Mar 2027</td><td>—</td></tr>
+            <tr><td>Meraki MX64 / 64W</td><td>End of support</td><td>26 Jul 2027</td><td>MX67 / 68</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:16px">
+        Be honest in the room: none of this makes Umbrella stop working tomorrow — legacy SKUs keep
+        TAC support to 2030, and a well-run Viptela estate will carry on routing. The argument is
+        the calendar. If the customer must re-plan, re-licence and re-deploy anyway, the incremental
+        cost of evaluating a platform change is low — and the end state removes the multi-console
+        estate instead of modernising each silo separately.
+      </p>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;Map your Cisco renewal and end-of-life dates over the next 18 months — how many
+        separate migrations has the portfolio already booked for you, and how many consoles do they
+        land in?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">What maps to what</div>
+      <h2>Component-by-component mapping</h2>
+      <p>
+        The conversion is <strong>review-and-map, not lift-and-shift</strong>: rule bases shrink
+        when separate DNS, web and firewall policies collapse into one inspection engine at the PoP.
+        This is where years of accumulated Umbrella destination lists and ASA rules get cleaned up
+        rather than copied across.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Cisco component</th><th>Cato equivalent</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Umbrella DNS Security (Essentials / Advantage)</td><td>Cato DNS Security (DNS Protections in IPS) + Internet firewall categories</td><td>All DNS traffic is inspected inline at the PoP regardless of resolver.</td></tr>
+            <tr><td>Umbrella SIG (SWG, cloud firewall, CASB, DLP)</td><td>Cato SWG / Internet firewall, CASB, DLP, TLS Inspection</td><td>One rule base — and no IPsec/GRE backhaul to a security cloud; sites are already on Cato tunnels.</td></tr>
+            <tr><td>Umbrella virtual appliances</td><td>Not required</td><td>Internal DNS stays on AD/Infoblox; Cato sees real source IPs natively over the tunnel.</td></tr>
+            <tr><td>AnyConnect / Secure Client VPN + ASA/FTD headends</td><td>Cato Client (SDP/ZTNA) + clientless browser access</td><td>No concentrators — users connect to the nearest PoP with the same inspection stack as sites.</td></tr>
+            <tr><td>Secure Client — ISE Posture module</td><td>Device Posture profiles + Client Connectivity Policy</td><td>Continuous posture checks throughout the session, not just at logon.</td></tr>
+            <tr><td>Umbrella Roaming Security module</td><td>Cato Client</td><td>One agent replaces the VPN + roaming-security module pair.</td></tr>
+            <tr><td>Catalyst SD-WAN — vEdge/cEdge + vManage/vSmart/vBond (OMP/TLOC)</td><td>Cato Socket + global private backbone</td><td>No customer-managed controllers; OMP route/TLOC state becomes Cato cloud routing + BGP at the edges.</td></tr>
+            <tr><td>Meraki MX + Auto-VPN</td><td>Cato Socket + backbone</td><td>Auto-VPN hub/spoke and hub-priority logic replaced by PoP-based any-to-any connectivity.</td></tr>
+            <tr><td>ASA/FTD branch and edge firewalls</td><td>Cato FWaaS: Internet + WAN firewall, IPS, anti-malware</td><td>Removes the appliance refresh and patching cycle; DC firewalls are often retained initially for local segmentation.</td></tr>
+            <tr><td>ISE (802.1X wired NAC, RADIUS)</td><td>Retained</td><td>Cato covers user and device posture for Cato-delivered access; wired port NAC stays with ISE — LAN infrastructure, out of SASE scope.</td></tr>
+            <tr><td>Umbrella dashboard · vManage · Meraki Dashboard · ASDM/FMC/CDO</td><td>Cato Management Application (CMA)</td><td>One console for networking, security, access and analytics; the Meraki Dashboard survives only where MS/MR LAN kit stays.</td></tr>
+            <tr><td>Talos intelligence</td><td>Cato threat intelligence (~250 ingested feeds) + Cato CTRL</td><td>Applied inline at the PoP for all customers — no signature or appliance updates to manage.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">The migration path</div>
+      <h2>Five phases from multi-console Cisco to one platform</h2>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the design — especially the
+        interconnect, redistribution and rollback details — with Cato Professional Services before
+        committing it to a customer plan.</p>
+      </div>
+      <p>
+        The arc follows the Cato PS methodology — <strong>Export → Review &amp; Map → Deploy →
+        Optimise</strong> — applied per estate component, inside a discovery → co-existence →
+        pilot → wave-cutover → decommission programme.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 1 — Discovery and design</h4>
+          <p>Inventory the whole estate: sites, links and bandwidths; the Viptela topology
+          (hub/spoke regions, OMP/TLOC design, app-route SLA policies buried in vManage templates);
+          Meraki Auto-VPN hubs and spoke modes (split vs full tunnel); the Umbrella policy set
+          (identities, destination lists, content categories, selective-decryption lists);
+          AnyConnect tunnel-groups with their SAML/ISE dependencies; and the ASA/FTD rule bases.</p>
+          <p>Capture the business intent hidden in vManage centralised policy and Meraki templates
+          <strong>before</strong> anything is decommissioned — that is the app-priority and SLA
+          design Cato must reproduce. Map licence co-termination dates (Cisco EA/DNA, Meraki
+          co-term, Umbrella renewal) to build the migration calendar around renewal leverage, and
+          agree success criteria and rollback rules per phase.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Co-existence foundation: regional interconnect hubs</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Stand up the Cato account: admin model, IdP SSO and SCIM provisioning (Entra ID /
+          Okta), and a base policy from Cato best-practice templates. Then build the co-existence
+          fabric: <strong>regional Cato interconnect hubs with an eBGP handoff to each region&rsquo;s
+          Viptela or Meraki hub</strong>, keeping traffic symmetric per region.</p>
+          <p>At the Viptela hub, redistribute OMP ↔ BGP so legacy-spoke routes reach Cato and
+          Cato-site routes propagate into the overlay. Meraki MX dynamic routing is limited — anchor
+          the handoff at the L3 core switch or firewall behind the MX, not the MX itself. Filter the
+          default route and parallel-site prefixes at the interconnect, and use Cato&rsquo;s reserved
+          BGP communities to keep migration routes isolated where needed.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Pilot in parallel</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Pick one to three low-risk, representative sites. Sockets ship zero-touch and
+          self-provision from the Cato Cloud; connect them in parallel (transit VLAN or L3-switch /
+          firewall handoff) and move a subnet at a time, validating WAN paths, internet breakout,
+          voice — and the rollback. Pilot a small user cohort on the Cato Client via MDM,
+          split-tunnel first, alongside the incumbent Secure Client.</p>
+          <p>For policy: <strong>export Umbrella destination lists to CSV</strong> (dashboard
+          download or the Destination Lists API), map content categories and block/allow lists to
+          Cato system categories, custom categories and Internet firewall rules, and recreate
+          DNS-layer controls in DNS Protections. Stage TLS Inspection and IPS in monitor mode
+          before enforcing anything.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Wave cutover: sites, then users, then DNS</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p><strong>Sites</strong> move in regional waves, keeping each region&rsquo;s legacy hub as
+          the interconnect until the region completes. Per site: pre-stage the Socket → move the
+          LAN VLANs or default gateway → disable the legacy spoke — OMP withdraws its routes
+          automatically (Meraki: remove the spoke from Auto-VPN) — Cato propagates the prefixes via
+          BGP at the interconnect → validate, then soak with the legacy CPE left racked and
+          configured. Rollback is the mirror image: re-enable the spoke and routing re-converges.
+          Move each site&rsquo;s Umbrella web/DNS policy to Cato <strong>in the same change
+          window</strong> — Umbrella network identities are keyed to the site&rsquo;s public egress
+          IP, which changes to a shared Cato PoP address the moment the Socket goes live. Re-point
+          third-party allowlists keyed to old egress IPs per wave.</p>
+          <p><strong>Users</strong> follow as AnyConnect → Cato Client cohorts: split-tunnel with
+          the incumbent VPN still available, validate the cohort&rsquo;s apps, then remove the VPN
+          profile and switch always-on with Client Connectivity Policy and Device Posture profiles
+          recreating the ISE posture rules. <strong>DNS</strong> cuts over in strict order: sites
+          first, roaming users next (the Client supersedes the Umbrella module), then re-point
+          internal DNS forwarders away from the Umbrella virtual appliances and retire the VAs last
+          — internal-domain handling stays on AD DNS throughout.</p>
+        </li>
+        <li>
+          <h4>Phase 5 — Optimise, then decommission in order</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Tune policy from real events: tighten monitor-mode rules to block, widen TLS
+          Inspection scope, refine app and bandwidth priorities on the backbone. Decommission in
+          sequence — legacy spokes → regional hubs and interconnects → vManage/vSmart/vBond
+          controllers → ASA/FTD headends → Umbrella tenancy at renewal (once event parity is
+          confirmed in CMA) → Meraki MX licences at co-term. <strong>Retain ISE for wired NAC and
+          Meraki MS/MR for the LAN</strong> where they remain in scope.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Two overlays, one region at a time</h2>
+      <p>
+        <strong>Asymmetry is the enemy.</strong> With two overlays joined in more than one place, a
+        flow can exit through one region&rsquo;s hub and return through another — breaking stateful
+        inspection and dropping traffic. The preferred pattern is <strong>regional interconnect
+        hubs with eBGP and AS-path anchoring</strong>: cross-region routes carry a longer AS-PATH
+        (the extra inter-hub hop), so each side always prefers its local regional hub — symmetric
+        by construction, with automatic route withdrawal on spoke cutover and simple rollback. It is
+        the same pattern Cato PS has deployed against FortiGate hub estates, applied unchanged to
+        Viptela hubs via OMP ↔ BGP redistribution and to Meraki hub sites via the L3 core.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Regional co-existence of Cato and a Cisco Viptela overlay during migration</title>
+          <desc id="dg1-desc">A migrated branch connects through a Cato Socket to a Cato PoP on the global private backbone, with DNS and web security enforced at the PoP and direct breakout to internet and SaaS — bypassing Cisco Umbrella. A legacy branch still rides the Viptela OMP overlay to a regional hub, which egresses to Umbrella for DNS and web security until its wave completes. A Cato interconnect hub site peers with the Viptela hub over eBGP, with OMP-to-BGP redistribution keeping routing symmetric.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="455" cy="200" rx="150" ry="50"/>
+          <circle cx="312" cy="214" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="600" cy="186" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="380" y="268" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="455" cy="195" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="455" cy="195" r="30"/>
+
+          <!-- Migrated spoke (top left) -->
+          <rect class="dg-node-green" x="40" y="56" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="80" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="132" y="98" text-anchor="middle">Cato Socket X1500 · live</text>
+          <text class="dg-tiny" x="132" y="116" text-anchor="middle">DNS + web policy at PoP</text>
+
+          <!-- Legacy spoke (bottom left) -->
+          <rect class="dg-node" x="40" y="336" width="185" height="74" rx="10"/>
+          <text class="dg-label" x="132" y="360" text-anchor="middle">Glasgow branch</text>
+          <text class="dg-sub" x="132" y="378" text-anchor="middle">cEdge spoke · OMP/TLOC</text>
+          <text class="dg-tiny" x="132" y="396" text-anchor="middle">waiting for wave 2</text>
+
+          <!-- Interconnect hub site (bottom centre) -->
+          <rect class="dg-node" x="395" y="336" width="190" height="74" rx="10"/>
+          <text class="dg-label" x="490" y="360" text-anchor="middle">Interconnect hub site</text>
+          <text class="dg-sub" x="490" y="378" text-anchor="middle">Cato Socket · eBGP peer</text>
+          <text class="dg-tiny" x="490" y="396" text-anchor="middle">AS-path keeps symmetry</text>
+
+          <!-- Viptela regional hub (bottom right) -->
+          <rect class="dg-node-dark" x="735" y="336" width="190" height="74" rx="10"/>
+          <text class="dg-label-inv" x="830" y="366" text-anchor="middle">Viptela regional hub</text>
+          <text class="dg-sub-inv" x="830" y="384" text-anchor="middle">OMP ↔ BGP redistribute</text>
+
+          <!-- Umbrella (mid right) -->
+          <rect class="dg-node-dark" x="735" y="180" width="190" height="74" rx="10"/>
+          <text class="dg-label-inv" x="830" y="210" text-anchor="middle">Cisco Umbrella</text>
+          <text class="dg-sub-inv" x="830" y="228" text-anchor="middle">DNS / SWG · retiring</text>
+
+          <!-- Internet & SaaS (top right) -->
+          <rect class="dg-node-green" x="735" y="44" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="830" y="70" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="830" y="88" text-anchor="middle">M365 · web · cloud apps</text>
+
+          <!-- Migrated flows (green) -->
+          <path class="lane lane-allow" d="M 225 96 C 310 110, 370 145, 428 178"/>
+          <path class="lane lane-allow" d="M 486 180 C 570 145, 650 100, 735 78"/>
+          <text class="dg-tiny" x="612" y="104" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Umbrella bypassed — enforced at PoP</text>
+          <path class="lane lane-allow" d="M 487 336 C 482 300, 472 262, 462 229"/>
+
+          <!-- eBGP handoff (static) -->
+          <path class="lane-static" d="M 585 373 L 735 373"/>
+          <text class="dg-tiny" x="660" y="362" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">eBGP handoff</text>
+
+          <!-- Legacy flows (amber) -->
+          <path class="lane lane-limit" d="M 225 392 C 380 448, 590 448, 733 402"/>
+          <text class="dg-tiny" x="480" y="452" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">OMP / TLOC overlay</text>
+          <path class="lane lane-limit" d="M 830 334 C 826 308, 826 282, 830 256"/>
+          <text class="dg-tiny" x="814" y="300" text-anchor="end" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">legacy DNS / web egress</text>
+
+          <!-- Cato PoP labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="455" y="128" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="455" y="144" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">FWaaS · SWG · DNS Security · ZTNA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Cato tunnel, DNS/SWG at the PoP</span>
+          <span class="key"><span class="swatch limit"></span> Interim — OMP overlay + Umbrella until the wave completes</span>
+        </div>
+        <div class="diagram-caption">Regional co-existence: the migrated spoke rides the Cato backbone with DNS and web security enforced at the PoP; the legacy spoke stays on the Viptela overlay and Umbrella. eBGP at the regional interconnect (with OMP ↔ BGP redistribution) keeps routing symmetric, and spoke cutover withdraws routes automatically.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Symmetric by construction</h4><p>AS-path anchoring makes each side prefer its local regional hub — no stateful-inspection breakage from cross-region return paths.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>Reversible per site</h4><p>Cutover is a routing event: disable the spoke and OMP/BGP withdraws the routes; re-enable it and everything converges back.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>No protection gap</h4><p>Umbrella keeps covering un-migrated sites and users throughout — nothing about the Cato rollout breaks it while egress IPs are unchanged.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎛️</div><div><h4>One policy at the end</h4><p>Every wave retires a console. The finish line is a single rule base in CMA for DNS, web, WAN and remote access.</p></div></div>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <h3 style="margin-top:0">If eBGP at the hub is not possible</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Parallel connectivity at every site — cleanest, but practical only below roughly 20 sites</li>
+            <li>A single interconnect hub — accept the hairpin latency and migrate one region at a time</li>
+            <li>NAT/PAT at the boundary to force symmetry — low cross-region volumes only; breaks IP-embedding protocols such as LDAP and WMI</li>
+            <li>Customer-managed PBR over GRE/IPsec — complex, generally avoided</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Umbrella during the transition</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Virtual appliances stay until the final DNS repoint — they forward internal domains independently of the WAN path</li>
+            <li>Watch the egress-IP dependency: a site behind Cato no longer matches its Umbrella network identity — move that site&rsquo;s policy at swap time, not later</li>
+            <li>Existing firewall IPsec/GRE tunnels into Umbrella SIG can keep running in parallel while WAN traffic moves to Cato</li>
+            <li>Let the subscription lapse at renewal once event parity is confirmed in CMA</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Rollback rules — agree them before wave one</h3>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Sites</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Legacy CPE stays racked, powered and configured through an agreed
+          soak window. Rollback = re-enable the spoke; BGP/OMP re-converges automatically.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Users</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rollback = re-enable the AnyConnect profile via MDM. Keep the
+          ASA/FTD headends licensed until the final cohort clears its soak window.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">DNS</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Keep the Umbrella VAs and tenancy alive until after the last
+          forwarder repoint — rollback is a forwarder change, nothing more.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What bites, and what they&rsquo;ll say</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">EIGRP / OSPF meets BGP</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato&rsquo;s dynamic routing integration is BGP, and Cisco shops
+          frequently run EIGRP or OSPF in the campus and DC. Plan EIGRP/OSPF ↔ BGP redistribution at
+          the handoff device (or static routes for smaller sites) — and watch
+          administrative-distance and metric-seeding quirks when routes re-enter the IGP.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Meraki is a full-stack dependency</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">MS switches and MR access points share the MX&rsquo;s Dashboard and
+          licensing — replacing the MX does not remove either. Scope it as &ldquo;WAN + security to
+          Cato, Meraki LAN retained&rdquo;, check co-termination impact, and never plan eBGP on the MX
+          itself — anchor the handoff at the L3 core. Cato&rsquo;s Meraki Experience Monitoring
+          integration (announced Oct 2025) gives LAN visibility from CMA.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">AnyConnect can override Cato Client DNS</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato documents this conflict directly — and running the Cato
+          Client full-tunnel alongside a third-party VPN is not recommended. Sequence the dual-agent
+          phase: Secure Client for VPN only while the Cato Client runs split-tunnel, or move remote
+          access to Cato first and leave only the Umbrella module until web parity. Audit what is
+          actually installed per cohort first — many estates mix the EOS standalone Roaming Client,
+          the Secure Client module and AnyConnect VPN. Prove it in the pilot.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SAML and ISE posture re-mapping</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">AnyConnect SAML is configured per tunnel-group on the ASA/FTD —
+          recreate it as Cato IdP SSO (Entra ID, Okta, OneLogin; multiple IdPs supported) with SCIM
+          keeping groups in sync. ISE posture rules map to Device Posture + Client Connectivity
+          Policy — but wired 802.1X, RADIUS CoA and switch-port enforcement stay with ISE. Set that
+          expectation in week one, not in the eleventh hour.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Umbrella&rsquo;s policy model is not Cato&rsquo;s</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Umbrella evaluates identity precedence (roaming &gt; AD
+          user/group &gt; internal network &gt; network); Cato is an ordered rule base with users,
+          groups and sites as sources. Selective-decryption lists become TLS Inspection rules.
+          Verify niche behaviours — block-page bypass codes, for one — during Review &amp; Map rather
+          than assuming 1:1 parity. And inventory everything keyed to office egress IPs (SaaS
+          allowlists, partner firewalls) in discovery.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;We&rsquo;ll just move to Secure Access&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A fair objection — with three counters. That path is itself a
+          migration (new SKUs, new console, an agent swap, a router refresh), not a renewal. It
+          preserves the multi-product estate — SD-WAN, SSE, firewalls and NAC remain separate
+          stacks. And Cato collapses the same scope into one platform and one policy model, with the
+          co-existence patterns above de-risking the transition.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7490318307229-Cato-Reserved-BGP-Communities" target="_blank" rel="noopener">Cato reserved BGP communities (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/6724699301661-Customizing-the-DNS-Protections-for-IPS" target="_blank" rel="noopener">Customising DNS Protections for IPS (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/20824958359709-Troubleshooting-Scenarios-for-Issues-with-the-Cato-Client" target="_blank" rel="noopener">Cato Client troubleshooting — third-party VPN conflicts (KB)</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/products/collateral/security/anyconnect-secure-mobility-client/anyconnect-secure-mobility-client-v4x-eol.html" target="_blank" rel="noopener">AnyConnect 4.x end-of-life notice (Cisco)</a></li>
+            <li><a href="https://www.cisco.com/site/us/en/products/security/secure-access/umbrella-migration.html" target="_blank" rel="noopener">Umbrella to Secure Access migration (Cisco)</a></li>
+            <li><a href="https://documentation.meraki.com/Platform_Management/Product_Information/End-of-Life_Notices/Meraki_End-of-Life_(EOL)_Products_and_Dates" target="_blank" rel="noopener">Meraki end-of-life products and dates</a></li>
+            <li><a href="https://developer.cisco.com/docs/cloud-security/get-destinations-and-export-to-csv-file/" target="_blank" rel="noopener">Umbrella Destination Lists API — export to CSV (Cisco DevNet)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-cisco-policy.html">Cisco Policy Migration</a></li>
+            <li><a href="migration-fortinet.html">Fortinet (FortiGate &amp; FortiSASE) to Cato</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="migration-anyconnect.html">AnyConnect to Cato Client</a></li>
+            <li><a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firewall Refresh to FWaaS — Cato Use Case Library</title>
+<meta name="description" content="The appliance estate is end-of-life again — replace the refresh cycle with cloud-delivered FWaaS: no sizing, no patching, no EOL, always-current protection.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-firewall-refresh">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Firewall Refresh</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Firewall Refresh to FWaaS</h1>
+    <p class="lede">
+      The branch and datacentre firewall estate has hit end-of-life again: another sizing exercise,
+      another capex round, another staged rollout — and years more patch management at the end of it.
+      This use case reframes the refresh as a consolidation moment: move enforcement to Cato's
+      cloud-delivered FWaaS, keep a socket on the last mile, and never size, patch or EOL a security
+      appliance again.
+    </p>
+    <div class="meta-row">
+      <span class="tag">FWaaS</span><span class="tag">NGFW</span><span class="tag">EOL</span><span class="tag">Lifecycle</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        End-of-life and end-of-support notices are the one calendar entry no firewall estate escapes.
+        When they land, the customer is pushed back into a cycle they already resent: forecast traffic
+        years ahead, size and quote new boxes, fight for capex, ship and stage hardware across every
+        site, and then own the firmware, hotfixes and emergency patches until the next EOL notice
+        restarts the whole thing.
+      </p>
+      <p>
+        The timing matters. A refresh is the one moment when doing nothing is not an option — and
+        when the customer is already questioning appliance economics, it is the natural moment to ask
+        a better question: <strong>should this refresh be the last one?</strong> The objective is to
+        replace the hardware lifecycle with a cloud service that is always current, always sized, and
+        always patched.
+      </p>
+    </section>
+
+    <section id="treadmill" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>The refresh treadmill</h2>
+      <p>Every appliance refresh carries the same three taxes, whatever the vendor on the bezel:</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">The sizing gamble</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Boxes are sized today against a multi-year guess at future traffic. Guess low and the estate
+          chokes; guess high and the budget is burnt on idle capacity. Turning on TLS inspection later
+          can push a correctly-sized appliance off a performance cliff — so it quietly stays off.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The capex &amp; rollout tax</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Quotes, budget approval, procurement, shipping, staging, site-by-site cutovers, project
+          management. A multi-site refresh is a programme measured in months — and it delivers the
+          same security posture the customer already had, on newer tin.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The lifecycle drag</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Firmware upgrades, hotfixes, vendor security advisories against the firewall itself, change
+          windows per site, and rising support-renewal costs as hardware ages — until the next EOL
+          notice arrives and the cycle restarts.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Which firewall models hit end-of-support next, and when? What does the annual support
+        renewal cost across the estate? And how long did your last firewall policy change take to
+        roll out to every site?”</p>
+      </div>
+    </section>
+
+    <section id="decision-tree" class="reveal">
+      <div class="section-kicker">The fork in the road</div>
+      <h2>The appliance-refresh decision tree</h2>
+      <p>
+        A refresh forces a decision anyway — so put both paths on the table. Like-for-like keeps the
+        familiar operating model but re-commits to every cost above for another cycle. Consolidating
+        into FWaaS treats the refresh as the exit ramp.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>At refresh time, ask…</th><th>Like-for-like appliance refresh</th><th>Consolidate to Cato FWaaS</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>How do we size it?</td><td>Re-size every box against a multi-year traffic guess</td><td>No sizing — capacity scales in the Cato cloud</td></tr>
+            <tr><td>How do we pay for it?</td><td>Capex spike plus rising annual support renewals</td><td>Predictable per-site / per-user subscription</td></tr>
+            <tr><td>How do we roll it out?</td><td>Ship, stage and cut over hardware at every site</td><td>Migrate policy once; sockets terminate the last mile</td></tr>
+            <tr><td>Who patches it?</td><td>Your team owns firmware, hotfixes and change windows</td><td>Cato operates and patches the enforcement stack</td></tr>
+            <tr><td>How do new capabilities arrive?</td><td>New hardware generations or licence SKUs</td><td>As software, continuously, in the platform</td></tr>
+            <tr><td>Can we inspect TLS everywhere?</td><td>Performance cliffs force over-sizing or switch-off</td><td>Inspected at scale in the PoP — a policy decision</td></tr>
+            <tr><td>When is the next refresh?</td><td>The cycle restarts at the next EOL notice</td><td>There is no next refresh</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The wider economics — appliance spend, licences, people time across the whole point-product
+        stack — are developed in
+        <a href="management-vendor-consolidation.html">Vendor Consolidation &amp; Network TCO</a>;
+        use that page to build the TCO story once this one lands the architectural argument.
+      </p>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Enforcement moves to the PoP — for good</h2>
+      <p>
+        With Cato, the firewall stops being a device and becomes a service. Sockets at each site
+        terminate the last mile — zero-touch edges with <strong>no security hardware to size or
+        patch</strong>. All enforcement (internet firewall, WAN firewall, IPS, anti-malware, TLS
+        inspection) runs in the Cato PoP's single-pass engine, where compute is elastic and the
+        software is maintained by Cato. One global rule base replaces the per-box configurations,
+        and a policy change made in the Cato Management Application propagates to every PoP in
+        seconds.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Firewall refresh to FWaaS: enforcement at the Cato PoP</title>
+          <desc id="dg1-desc">Branch sites with Cato sockets and no local firewalls connect to a Cato PoP, where the single-pass engine inspects traffic to the internet and to the London datacentre. The EOL firewall estate is retired rather than refreshed. An attacker's exploit attempt against an unpatched application server is blocked at the PoP by IPS virtual patching before it reaches the datacentre.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="165" ry="52"/>
+          <circle cx="318" cy="238" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="212" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="292" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+
+          <!-- Branches (left) -->
+          <rect class="dg-node" x="34" y="64" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="88" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="119" y="106" text-anchor="middle">Socket X1500 · no NGFW</text>
+
+          <rect class="dg-node-dark" x="34" y="196" width="170" height="58" rx="10"/>
+          <text class="dg-label-inv" x="119" y="220" text-anchor="middle">EOL firewalls</text>
+          <text class="dg-sub-inv" x="119" y="238" text-anchor="middle">Retired — no refresh</text>
+
+          <rect class="dg-node" x="34" y="330" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="354" text-anchor="middle">Glasgow</text>
+          <text class="dg-sub" x="119" y="372" text-anchor="middle">Socket X1600 · no NGFW</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="756" y="44" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="68" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="841" y="86" text-anchor="middle">M365 · Salesforce · WWW</text>
+
+          <rect class="dg-node-green" x="756" y="192" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="216" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="841" y="234" text-anchor="middle">Unpatched app server</text>
+          <text class="dg-tiny" x="841" y="268" text-anchor="middle">Shielded by virtual patching</text>
+
+          <!-- Allowed flows: branches → PoP → destinations -->
+          <path class="lane lane-allow" d="M 204 96 C 300 118, 390 165, 452 204"/>
+          <path class="lane lane-allow" d="M 204 356 C 300 336, 390 276, 452 236"/>
+          <path class="lane lane-allow" d="M 508 202 C 590 158, 670 100, 756 78"/>
+          <path class="lane lane-allow" d="M 514 221 C 600 221, 675 221, 756 221"/>
+
+          <!-- Blocked exploit: attacker → PoP -->
+          <path class="lane lane-block" d="M 806 372 C 740 366, 680 330, 630 296"/>
+          <g aria-label="exploit blocked at PoP">
+            <path class="lane-x" d="M 612 278 L 636 302"/><path class="lane-x" d="M 636 278 L 612 302"/>
+          </g>
+
+          <!-- PoP labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Single-pass: FWaaS · IPS · TLS</text>
+
+          <!-- Attacker (bottom right) -->
+          <g>
+            <circle cx="836" cy="372" r="23" fill="var(--status-critical)"/>
+            <circle cx="836" cy="365" r="6.5" fill="#fff"/>
+            <path d="M 823 385 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="414" text-anchor="middle">Attacker</text>
+            <text class="dg-sub" x="836" y="430" text-anchor="middle">New CVE exploit</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Inspected &amp; allowed by the single-pass engine</span>
+          <span class="key"><span class="swatch block"></span> Exploit blocked — IPS virtual patching</span>
+        </div>
+        <div class="diagram-caption">Sockets terminate the last mile; the PoP does the firewalling. The EOL estate is retired, not refreshed — and unpatched assets stay shielded by IPS while ops patch on their own schedule.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧮</div><div><h4>No sizing exercise, ever</h4><p>Capacity scales in the Cato cloud. TLS inspection runs at scale in the PoP — enabling it is a policy decision, not a hardware upgrade.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔄</div><div><h4>No patch windows, no EOL</h4><p>Cato operates and patches the enforcement software. There is no firmware to schedule, no PSIRT advisory against your firewall, and no end-of-support date on a cloud service.</p></div></div>
+        <div class="benefit"><div class="b-icon">✨</div><div><h4>New capabilities arrive as software</h4><p>IPS, anti-malware, CASB, DLP and whatever ships next are delivered into the same single-pass engine — no forklift, no new SKU on the branch shelf.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>One policy, everywhere</h4><p>A single global rule base replaces dozens of per-box configurations. Change a rule once and every site, user and cloud instance is enforcing it in seconds.</p></div></div>
+      </div>
+
+      <div class="stat-row" style="margin:22px 0 6px">
+        <div class="stat-tile stat-good"><div class="stat-value">0</div><div class="stat-label">Security appliances left to size, patch or refresh</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Global rule base for every site, user and cloud</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">Secs</div><div class="stat-label">For a policy change to reach every PoP worldwide</div></div>
+      </div>
+
+      <h3>Virtual patching: shielding what you can't patch yet</h3>
+      <p>
+        A refresh conversation is also a patching conversation. Cato Security Research writes and
+        deploys IPS protections for newly disclosed CVEs directly into the single-pass engine — no
+        customer change window, no appliance signature update to schedule. Assets behind Cato are
+        shielded while the ops team patches on its own timetable.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/rapid-cve-mitigation.png" alt="Rapid CVE Mitigation by Cato Security Research: table of selected critical CVEs virtually patched at the IPS layer, including CVE-2026-24061 (severity 9.8, protected globally in 2 days), CVE-2025-55182 'React2Shell' (severity 10, 2 days) and CVE-2025-64496 (severity 8, 0 days).">
+        <figcaption>Rapid CVE Mitigation — recent critical CVEs virtually patched at the IPS layer within days (or hours) of disclosure, with no customer involvement.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their refresh</div>
+        <p>Get the specifics first: which models are going end-of-support and when, what the support
+        renewal quote looks like, and how painful the last estate-wide change was. Then demo the
+        alternative against exactly those pain points.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open the rule base they'll inherit</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Walk the single ordered rule set: allow/block by identity, group, application and
+          category — enforced identically for London DC, Glasgow, Dubai Office and every remote
+          user. Make the point explicitly: this is the whole estate's internet policy, and there is
+          no box behind it.</p>
+        </li>
+        <li>
+          <h4>Show WAN segmentation without a datacentre firewall</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show east-west rules between sites, VLANs and user groups — the segmentation work their
+          DC firewall pair does today, done in the cloud with the same rule grammar as the internet
+          policy.</p>
+        </li>
+        <li>
+          <h4>Turn TLS inspection into a policy decision</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Open the TLS Inspection policy and show the enable toggle and scoping rules (inspect by
+          site, user group, category; bypass sensitive categories). Contrast with the appliance
+          world, where this switch is the one that halves throughput and triggers a re-sizing
+          exercise.</p>
+        </li>
+        <li>
+          <h4>Show IPS protections and virtual patching</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>Show the IPS policy and the protections maintained by Cato Security Research. Tie it to
+          the Rapid CVE Mitigation story above: new critical CVEs are virtually patched in the PoP
+          without a customer change window — their unpatched assets are shielded from day zero of
+          Cato's protection, not from their next maintenance weekend.</p>
+        </li>
+        <li>
+          <h4>Prove it: change once, live everywhere in seconds</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Make a small rule change — block a risky app category — and save. Then filter Events to
+          show the new rule enforcing across sites in different regions within seconds. Ask them to
+          compare that with the rollout time of their last estate-wide firewall change.</p>
+        </li>
+        <li>
+          <h4>Close on the economics</h4>
+          <p>End where the conversation started: the refresh quote. Like-for-like buys the same
+          posture on newer tin, with the next EOL date already ticking. FWaaS removes the sizing,
+          the rollout and the lifecycle entirely — then bridge to the
+          <a href="management-vendor-consolidation.html">vendor-consolidation TCO story</a> to widen
+          the case beyond firewalls.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-Generation Firewall (FWaaS) — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE Mitigation by Cato Security Research</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="management-vendor-consolidation.html">Vendor Consolidation &amp; Network TCO</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="security-inbound-ips.html">Cloud-Delivered Inbound Protection</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

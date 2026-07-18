@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iboss Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate iboss policy to Cato — URL and category rules, education-grade content controls, CASB and DLP patterns mapped to CMA policy with PAC-safe rollback.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-iboss-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / iboss Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>iboss Policy Migration</h1>
+    <p class="lede">
+      The steering swap gets the headlines; policy translation is where an iboss replacement
+      actually stalls. This page works through the four iboss policy domains — cloud firewall
+      rules, web policy with its education-grade content controls, CASB and DLP — and maps each
+      one to its Cato CMA construct: the export to take, the semantic traps, and a monitor-first
+      deployment path aligned to per-OU cohort waves with PAC kept hosted as the rollback rail.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is the long pole</h2>
+      <div class="callout warn">
+        <div class="co-title">Read this first — research, not a delivery-verified runbook</div>
+        <p>This page is authored from sourced vendor and Cato documentation research, not from a
+        completed customer migration. Review the mappings and the deployment sequence with Cato
+        Professional Services before using them in a customer engagement.</p>
+      </div>
+      <p>
+        Sockets and Clients move traffic in weeks; the years of accumulated policy are what keep
+        a legacy tenant licensed for months. An iboss estate carries per-OU web policy tiers,
+        allow/block lists, SSL decryption bypasses, CASB and DLP rules — much of it built up
+        exception by exception since the appliance-filter days, with nobody left who remembers
+        why half of it exists. The instinct to "just recreate everything in Cato" is how
+        migrations inherit a decade of technical debt on day one.
+      </p>
+      <p>
+        The Cato PS approach is a four-phase pipeline: <strong>EXPORT</strong> the policy and
+        objects per domain → <strong>REVIEW &amp; MAP</strong> — rationalise on hit counts,
+        discard dead and duplicate rules, then map the survivors to CMA constructs →
+        <strong>DEPLOY monitor-first</strong> — every translated rule lands tracking events, not
+        blocking → <strong>OPTIMISE</strong> from live telemetry before enforcement. Never
+        lift-and-shift: a rule that hasn't matched traffic in a year is documentation, not
+        policy, and it dies in the review phase — not in the CMA.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">4</div><div class="stat-label">Policy domains to translate — firewall, web/SWG, CASB, DLP — each with its own semantics</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">350<span class="unit">+</span></div><div class="stat-label">Data types in Cato DLP content profiles — rebuild iboss patterns against these, don't port regexes</div></div>
+        <div class="stat-tile"><div class="stat-value">3<span class="unit">IPs</span></div><div class="stat-label">Allocated egress IPs in the default Cato licence — the replacement for iboss dedicated cloud IPs</div></div>
+      </div>
+      <p>
+        Throughout this page the deployment unit is the <strong>cohort</strong> — an OU, year
+        group or school — matching the per-OU policy tiers iboss estates already run. Policy
+        waves ride the same cohort waves as steering, and because the iboss PAC stays hosted and
+        unchanged for the whole programme, any cohort can be re-pointed to the old world with a
+        single GPO/MDM change while the policy question is worked.
+      </p>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>iboss cloud firewall → Cato Internet firewall</h2>
+      <p>
+        iboss bundles FWaaS at every licence tier, but in a proxy-heritage estate the firewall
+        layer is usually modest: port/protocol controls for the GRE/IPsec-tunnelled guest, BYOD
+        and IoT traffic that can't run an agent, plus a handful of non-web protocol rules riding
+        alongside the web policy. <strong>Export:</strong> pull the rule set from the iboss admin
+        console as part of the Phase-0 policy export (rules, source groups, destination and
+        port/protocol objects). Where console exports are thin, transcribing a modest rule base by
+        hand is legitimate — validate the count with the customer's administrator so nothing is
+        missed.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>iboss construct</th><th>Cato construct</th><th>Mapping note</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud firewall rule (source group → destination, port/protocol, action)</td><td>Internet firewall rule — user group / site source, destination object, service, Allow/Block + track</td><td>One global ordered policy replaces per-gateway rule sets</td></tr>
+            <tr><td>Port/protocol objects</td><td>Cato services (standard or custom)</td><td>Prefer application-aware rules over raw ports where an app object exists</td></tr>
+            <tr><td>Destination host/IP lists</td><td>IP range objects / custom apps</td><td>Create objects before rules — object import precedes policy creation</td></tr>
+            <tr><td>Per-gateway or per-location variants</td><td>Site- or group-scoped rules in the single global policy</td><td>Duplicated per-location rules consolidate to one rule with multiple sources</td></tr>
+            <tr><td>Rules reaching private/internal apps</td><td>WAN firewall + Private Access policy — not the Internet firewall</td><td>Different policy, different default posture (see cross-domain practices)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Semantic gotchas.</strong> Cato runs two firewalls with opposite defaults: the
+        Internet firewall is a <em>blocklist</em> with a final implicit allow; the WAN firewall
+        is an <em>allowlist</em> with a final implicit deny. An iboss egress rule base built as
+        default-deny cannot be transplanted rule-for-rule into the Internet firewall without
+        deciding the target posture explicitly — either recreate the deny stance as a final
+        block-all rule with allow rules above it, or (usually better) adopt the Cato
+        best-practice block set and keep the implicit allow. Zone-ish per-gateway context also
+        disappears: reverse-engineer what each gateway's rules were really scoping before you
+        consolidate them.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"When did anyone last review firewall rule hit counts on the iboss side — and how many
+        of those rules would survive a zero-hit cull?" The answer sizes the REVIEW phase and
+        usually shrinks the migration by a third before mapping starts.</p>
+      </div>
+      <p>
+        <strong>Migration strategy.</strong> Rationalise first — dead, disabled and duplicate
+        rules are discarded at review, not migrated. Map the survivors to application-aware
+        Internet firewall rules, deploy the translated policy with every rule tracking events,
+        and let a full cohort wave of telemetry prove each rule matches the traffic it was
+        translated for before any block action goes live.
+      </p>
+    </section>
+
+    <section id="swg-policy" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Web policy: the deepest translation</h2>
+      <p>
+        This is the heart of an iboss estate and the deepest section of the workshop. The
+        constructs: per-group web policies aligned to OUs — year groups and staff tiers in
+        education — each with category allow/block decisions, URL allow/block lists,
+        SafeSearch enforcement, YouTube restriction tiers, and an SSL decryption policy with its
+        accumulated bypass lists. <strong>Export:</strong> categories, allow/block lists,
+        per-group overrides and SSL decryption bypass lists from the iboss console — and harvest
+        the PAC file exceptions alongside them. The PAC and bypass lists encode years of "this
+        app breaks under decryption" tribal knowledge: they are the cheapest policy-mining asset
+        in the whole project and the seed for the Cato TLS inspection bypass rules.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>iboss construct</th><th>Cato construct</th><th>Mapping note</th></tr></thead>
+          <tbody>
+            <tr><td>Web categories per group policy</td><td>Internet firewall rules — URL categories, source = SCIM user group</td><td>Taxonomies differ: map category-by-category, never assume 1:1</td></tr>
+            <tr><td>URL allow/block lists</td><td>Custom categories and rule exceptions in the Internet firewall</td><td>Rationalise on hits first — old exception lists are mostly dead entries</td></tr>
+            <tr><td>Per-OU policy tiers (year group / staff)</td><td>Ordered rule blocks scoped to user groups in one global policy</td><td>Rule order replaces per-group policy objects — document the tier ladder</td></tr>
+            <tr><td>SafeSearch enforcement</td><td>Content Restrictions — SafeSearch</td><td>Applies across supported search engines; see the DoH caveat below</td></tr>
+            <tr><td>YouTube restriction tiers</td><td>Content Restrictions — YouTube Moderate / Strict</td><td>Map each iboss tier to Moderate or Strict explicitly per cohort</td></tr>
+            <tr><td>SSL decryption scope + bypass lists</td><td>TLS Inspection policy + bypass rules</td><td>Seed bypasses from the harvested iboss/PAC lists, then tighten from events</td></tr>
+            <tr><td>iboss root MITM certificate</td><td>Cato root certificate, pushed via MDM</td><td>Both CAs side by side from day one; the iboss CA is removed last, at decommission</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>The CA swap is the fidelity prerequisite.</strong> Category matching without
+        decryption is SNI-level; the education-grade controls and everything in the CASB and DLP
+        domains below need TLS inspection to see payloads. Push the Cato root certificate to all
+        endpoints alongside the existing iboss CA <em>before</em> any policy wave moves — Cato
+        documents the certificate as mandatory for TLS inspection, downloadable from the CMA and
+        deployable via MDM. Then stage inspection the documented way: prerequisites (certificates
+        deployed, QUIC blocked, test groups defined) → initial policy with source/destination
+        bypasses → phased enablement per cohort → ongoing tuning of bypass rules from
+        certificate-error events.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">The DoH caveat — be upfront about it</div>
+        <p>Cato documents that browsers using DNS-over-HTTPS bypass Content Restrictions.
+        SafeSearch and YouTube enforcement therefore depend on controlling DoH — via browser
+        management policy, and by blocking the DNS-over-HTTPS service in the Internet firewall
+        per Cato best practice. Put the DoH control in the same change as the Content
+        Restrictions rules, not after the first bypass incident.</p>
+      </div>
+      <p>
+        <strong>Semantic gotchas.</strong> Category taxonomy mismatch is the big one — an iboss
+        category and a similarly-named Cato category are not guaranteed to cover the same sites,
+        so parity is proven with a test URL list per cohort, not asserted from names. For
+        fine-grained Google-service controls in education rulesets, run a feature-parity check
+        against the customer's actual iboss configuration rather than claiming equivalence.
+        Decide the uncategorised-site stance deliberately (Cato best practice is to restrict
+        uncategorised destinations). And remember education customers treat per-user reporting
+        as statutory safeguarding evidence — user-attributed CMA events are part of policy
+        parity, not an afterthought.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"How many distinct web policy tiers do you actually run across your OUs — and which
+        pairs differ by more than a handful of rules?" Tiers that differ cosmetically collapse
+        into shared rule blocks during mapping; tiers that differ materially define the cohort
+        wave plan.</p>
+      </div>
+      <p>
+        <strong>Migration strategy.</strong> Build the baseline Internet firewall from the Cato
+        best-practice block/prompt set, then layer the per-OU tiers as group-scoped rule blocks
+        in tier order. Deploy each cohort's web policy in monitor alongside its steering wave,
+        run the category-parity URL list and the SafeSearch/YouTube checks with safeguarding
+        staff verifying, and only then flip block actions live. PAC rollback stays available for
+        the whole exercise.
+      </p>
+    </section>
+
+    <section id="casb-policy" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>iboss CASB → App Control &amp; tenant restrictions</h2>
+      <p>
+        iboss provides inline CASB: shadow-IT visibility and cloud-app controls enforced in the
+        proxy path — and, distinctively, many customers enforce SaaS tenant restrictions on the
+        SaaS side, keyed to their iboss dedicated egress IPs. <strong>Export:</strong> the CASB
+        rule set from the policy export, plus a dependency register of every tenant restriction,
+        exam-platform allowlist and partner firewall rule keyed to the dedicated IPs — the
+        register matters more than the rules.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>iboss construct</th><th>Cato construct</th><th>Mapping note</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud app allow/block controls</td><td>App Control (CASB) rules — app, activity, user group, action</td><td>Cato adds granular activity control (e.g. upload vs view) — translate intent, then refine</td></tr>
+            <tr><td>Shadow-IT visibility / app discovery</td><td>App Analytics and Cloud Apps Dashboard in the CMA</td><td>Baseline both catalogues in discovery — coverage differs in both directions</td></tr>
+            <tr><td>App risk ratings</td><td>Cato app risk scores in App Analytics</td><td>Gartner flagged the small iboss SaaS risk catalogue — re-score, don't copy ratings</td></tr>
+            <tr><td>Tenant restriction via dedicated egress IPs</td><td>Allocated IPs + NAT egress rules, plus in-policy tenant enforcement</td><td>Dual-list both vendors' IPs on the SaaS side before each wave moves</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Semantic gotchas.</strong> The app catalogues will not line up — expect apps
+        iboss names that Cato classifies differently, and vice versa; resolve mismatches during
+        mapping, not during an incident. Activity-level CASB control requires TLS inspection on
+        the relevant traffic, so the CASB wave inherits the SWG domain's inspection scope. And
+        the dedicated-IP dependency is the classic "migration broke the exam platform" incident:
+        the default Cato licence includes three allocated IPs, so size the egress-IP design
+        early if the estate needs more or regional egress.
+      </p>
+      <p>
+        <strong>Migration strategy.</strong> Start from Cato's default recommended CASB policy
+        rather than a blank page, translate the surviving iboss app rules into it, and run the
+        whole domain in monitor. Review App Analytics against the customer's iboss shadow-IT
+        expectations for a full cohort wave, tighten activity rules from what monitor mode
+        reveals, then enforce per cohort — with the SaaS-side allowlists already dual-listed.
+      </p>
+    </section>
+
+    <section id="dlp-policy" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy</div>
+      <h2>iboss DLP patterns → Cato DLP profiles</h2>
+      <p>
+        iboss DLP inspects data in motion against patterns and dictionaries in the proxy path.
+        <strong>Export:</strong> capture the rule <em>intent</em>, not the engine — for each
+        iboss DLP rule, document the data types it protected (PII, safeguarding records,
+        finance data), the scope (which groups, which apps and directions) and the action.
+        Engines and match logic differ, so the patterns themselves do not port: rebuild against
+        Cato's content profiles rather than exporting regexes.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>iboss construct</th><th>Cato construct</th><th>Mapping note</th></tr></thead>
+          <tbody>
+            <tr><td>DLP patterns / dictionaries</td><td>DLP content profiles — 350+ predefined data types + custom types</td><td>Rebuild by data-type intent; do not port regexes blindly</td></tr>
+            <tr><td>DLP rules (scope, direction, action)</td><td>Data Control policy — app/user-group scope, upload/download, action</td><td>Translate scope to SCIM groups; actions start as monitor</td></tr>
+            <tr><td>Per-user incident reporting</td><td>Data Protection Dashboard + user-attributed DLP events; SIEM export</td><td>Demo user-level evidence early — it is the safeguarding/compliance expectation</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Semantic gotchas.</strong> A rebuilt profile has a different false-positive
+        signature to the rule it replaces — the old rule's precision tells you nothing about the
+        new one, which makes monitor-then-block mandatory here, not merely prudent. DLP content
+        matching also depends entirely on TLS inspection scope: a destination bypassed for
+        inspection is invisible to DLP, so review the bypass list from the SWG domain with DLP
+        eyes before trusting coverage.
+      </p>
+      <p>
+        <strong>Migration strategy.</strong> Recreate each surviving rule's intent from content
+        profiles, run the Data Control policy in monitor across a full cohort wave, review hits
+        in the Data Protection Dashboard with the data owners, tune profiles until precision is
+        proven, then flip rules to block one at a time. Archive the iboss DLP incident history
+        before the legacy subscription terminates — in education it is statutory evidence.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Know the two default postures</h4><p>Cato's WAN firewall is an allowlist (implicit deny); the Internet firewall is a blocklist (implicit allow). Every translated rule must land in the right policy with the posture decision made explicitly — transplanted defaults are silent policy bugs.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Staged TLS inspection first</h4><p>Inspection fidelity is the prerequisite for SWG category accuracy, CASB activity control and DLP content matching. Certificates → initial bypasses → phased enablement → tune. No decryption, no policy parity.</p></div></div>
+        <div class="benefit"><div class="b-icon">👁️</div><div><h4>Monitor, then block</h4><p>Every translated rule deploys tracking events with no block action. A full cohort wave of telemetry proves precision; enforcement is flipped rule-by-rule on evidence, never wholesale on a date.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity before policy</h4><p>Per-OU rules need the groups to exist first: SCIM provisioning (Entra ID, Okta, OneLogin) feeds the user groups every domain scopes to. Google Workspace schools need the identity design agreed in discovery — it gates the whole policy build.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>Hit counts rationalise the old estate and validate the new one: zero-hit legacy rules die at review, and translated rules earn enforcement by matching the traffic they were built for in CMA events.</p></div></div>
+        <div class="benefit"><div class="b-icon">⟲</div><div><h4>Cohort waves, PAC-safe</h4><p>Policy moves with steering, one OU / year group / school at a time, each device wholly on one vendor. The iboss PAC stays hosted and frozen throughout — rollback for any cohort is one GPO/MDM change.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>Export → rationalise → map → monitor → enforce</h2>
+      <p>
+        One pipeline, run per domain, per cohort wave. Dead rules are discarded at
+        rationalisation so the CMA starts clean; everything that survives deploys in monitor and
+        earns enforcement from telemetry.
+      </p>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The iboss-to-Cato policy translation pipeline</title>
+          <desc id="dg1-desc">Four iboss policy domains — firewall rules, web policy, CASB controls and DLP rules — feed an EXPORT stage, then a RATIONALISE stage where zero-hit, duplicate and stale rules are discarded at a red X. Surviving rules are mapped to CMA constructs, deployed in monitor mode shown in amber, then enforced shown in green. Telemetry from the deploy and enforce stages flows to a CMA events and hit-counts node that provides parity evidence per wave and feeds the optimise phase.</desc>
+
+          <!-- Vendor policy domains (left) -->
+          <text class="dg-tiny" x="90" y="28" text-anchor="middle">iboss policy domains</text>
+          <rect class="dg-node" x="20" y="42" width="140" height="50" rx="10"/>
+          <text class="dg-label" x="90" y="63" text-anchor="middle">FW rules</text>
+          <text class="dg-sub" x="90" y="81" text-anchor="middle">cloud firewall</text>
+
+          <rect class="dg-node" x="20" y="110" width="140" height="50" rx="10"/>
+          <text class="dg-label" x="90" y="131" text-anchor="middle">Web policy</text>
+          <text class="dg-sub" x="90" y="149" text-anchor="middle">categories · SSL</text>
+
+          <rect class="dg-node" x="20" y="178" width="140" height="50" rx="10"/>
+          <text class="dg-label" x="90" y="199" text-anchor="middle">CASB controls</text>
+          <text class="dg-sub" x="90" y="217" text-anchor="middle">apps · tenants</text>
+
+          <rect class="dg-node" x="20" y="246" width="140" height="50" rx="10"/>
+          <text class="dg-label" x="90" y="267" text-anchor="middle">DLP rules</text>
+          <text class="dg-sub" x="90" y="285" text-anchor="middle">patterns</text>
+
+          <!-- Converging feeds into EXPORT -->
+          <path class="lane-static" d="M 160 67 C 176 67, 180 130, 188 160" fill="none"/>
+          <path class="lane-static" d="M 160 135 C 172 135, 178 158, 188 174" fill="none"/>
+          <path class="lane-static" d="M 160 203 C 172 203, 178 200, 188 191" fill="none"/>
+          <path class="lane-static" d="M 160 271 C 176 271, 180 235, 188 205" fill="none"/>
+
+          <!-- Pipeline stages -->
+          <rect class="dg-node-dark" x="188" y="150" width="124" height="64" rx="10"/>
+          <text class="dg-label-inv" x="250" y="178" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="250" y="196" text-anchor="middle">per-domain dumps</text>
+
+          <rect class="dg-node" x="342" y="150" width="124" height="64" rx="10"/>
+          <text class="dg-label" x="404" y="178" text-anchor="middle">RATIONALISE</text>
+          <text class="dg-sub" x="404" y="196" text-anchor="middle">hit-count triage</text>
+
+          <rect class="dg-node" x="496" y="150" width="124" height="64" rx="10"/>
+          <text class="dg-label" x="558" y="178" text-anchor="middle">MAP</text>
+          <text class="dg-sub" x="558" y="196" text-anchor="middle">to CMA constructs</text>
+
+          <rect x="650" y="150" width="124" height="64" rx="10" fill="#fdf6e3" stroke="var(--lane-limit)" stroke-width="1.5"/>
+          <text class="dg-label" x="712" y="178" text-anchor="middle">DEPLOY</text>
+          <text class="dg-sub" x="712" y="196" text-anchor="middle">monitor first</text>
+
+          <rect class="dg-node-green" x="804" y="150" width="124" height="64" rx="10"/>
+          <text class="dg-label" x="866" y="178" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="866" y="196" text-anchor="middle">block on evidence</text>
+
+          <!-- Stage connectors -->
+          <path class="lane-static" d="M 312 182 L 338 182" fill="none"/>
+          <path d="M 338 182 l -10 -4 l 0 8 z" fill="var(--ink-2)"/>
+          <path class="lane-static" d="M 466 182 L 492 182" fill="none"/>
+          <path d="M 492 182 l -10 -4 l 0 8 z" fill="var(--ink-2)"/>
+          <path class="lane lane-limit" d="M 620 182 L 650 182"/>
+          <path class="lane lane-allow" d="M 774 182 L 804 182"/>
+
+          <!-- Discard branch: dead rules die at review -->
+          <path class="lane lane-block" d="M 404 214 C 398 250, 380 280, 358 304"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 340 300 L 364 324"/><path class="lane-x" d="M 364 300 L 340 324"/>
+          </g>
+          <text class="dg-tiny" x="352" y="352" text-anchor="middle">zero-hit · duplicate · stale rules discarded</text>
+
+          <!-- Telemetry to events / evidence -->
+          <path class="lane-static" d="M 712 214 C 712 258, 718 296, 728 330" stroke-dasharray="6 6" fill="none"/>
+          <path d="M 728 330 l -8 -8 l -3 11 z" fill="var(--ink-2)"/>
+          <path class="lane-static" d="M 866 214 C 862 258, 842 300, 812 330" stroke-dasharray="6 6" fill="none"/>
+          <path d="M 812 330 l 2 -11 l -9 5 z" fill="var(--ink-2)"/>
+          <text class="dg-tiny" x="770" y="304" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry → OPTIMISE</text>
+
+          <rect class="dg-node-dark" x="640" y="330" width="240" height="64" rx="10"/>
+          <text class="dg-label-inv" x="760" y="356" text-anchor="middle">CMA events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="760" y="374" text-anchor="middle">parity evidence per wave</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy in monitor — track events, no blocks</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — flipped rule-by-rule on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded at rationalisation — dead rules never reach CMA</span>
+        </div>
+        <div class="diagram-caption">The policy pipeline, run per domain and per cohort wave: export, rationalise on hit counts (dead rules die here, not in the CMA), map to CMA constructs, deploy in monitor, enforce on evidence — with events and hit counts feeding the OPTIMISE phase.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Policy workshop</div>
+      <h2>Running the policy-translation workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>Half a day with the customer's firewall/web-filtering owner and, in education, the
+        safeguarding lead. Work from their exported policy on one screen and a CMA demo tenant
+        on the other — the goal is a mapped, rationalised rule inventory and an agreed wave
+        plan, not a finished policy.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the diagram above: EXPORT → REVIEW &amp; MAP → DEPLOY monitor-first →
+          OPTIMISE. Set the expectation explicitly — this is translation and rationalisation,
+          not import; rules earn their place with hit counts.</p>
+        </li>
+        <li>
+          <h4>Rationalise a real export together</h4>
+          <p>Take one exported iboss policy tier and triage it live: zero-hit rules, duplicates
+          across groups, exceptions nobody can explain. Agree the discard list — this is
+          usually where the customer realises the migration is smaller than feared.</p>
+        </li>
+        <li>
+          <h4>Show the target: Internet firewall anatomy</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Walk a rule end-to-end: user-group source, category/app destination, action and
+          track settings. Show how one ordered global policy expresses their per-OU tier ladder
+          as group-scoped rule blocks — then show Content Restrictions for the SafeSearch and
+          YouTube Moderate/Strict controls, and name the DoH caveat unprompted.</p>
+        </li>
+        <li>
+          <h4>Stage the TLS inspection story</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show the inspection policy and bypass rules, seeded from their harvested PAC and
+          SSL bypass lists. Explain the CA swap: Cato root certificate via MDM alongside the
+          iboss CA from day one, iboss CA removed only at decommission — rollback never breaks
+          HTTPS.</p>
+        </li>
+        <li>
+          <h4>Map CASB and DLP intent</h4>
+          <p><span class="path">Security → CASB</span> · <span class="path">Security → DLP Configuration</span></p>
+          <p>Show App Control rules with activity granularity and the default recommended
+          policy as the starting point; then DLP content profiles against their documented rule
+          intent. Both domains land in monitor — and both depend on the inspection scope agreed
+          in the previous step.</p>
+        </li>
+        <li>
+          <h4>Prove the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span> · <span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Filter events to a user and to a rule: user-attributed allows, blocks and DLP
+          matches. For education stakeholders this is the safeguarding-reporting continuity
+          question answered on screen — and it is the same telemetry that flips monitor rules
+          to block.</p>
+        </li>
+        <li>
+          <h4>Close on the wave plan</h4>
+          <p>Agree the cohort order (OU / year group / school), the per-wave success gates —
+          category-parity URL checks, no false positives in monitor, SaaS logins from the new
+          egress IPs — and confirm the PAC rollback rail stays hosted until the last wave signs
+          off.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273491089-Restricting-Content-for-Internet-Traffic" target="_blank" rel="noopener">Content Restrictions — SafeSearch &amp; YouTube (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best Practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273491857-Configuring-TLS-Inspection-Policy-for-the-Account" target="_blank" rel="noopener">Configuring TLS Inspection Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32115505825821-Getting-Started-with-Cato-Certificates" target="_blank" rel="noopener">Getting Started with Cato Certificates (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/24373653130781-Using-the-Default-Recommended-CASB-DLP-Policy" target="_blank" rel="noopener">Default Recommended CASB/DLP Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5606495447197-What-is-the-Cato-DLP-Service" target="_blank" rel="noopener">What is the Cato DLP Service (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning Users with SCIM (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273467153-Allocating-IP-Addresses-for-the-Account" target="_blank" rel="noopener">Allocating IP Addresses for the Account (KB)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-iboss.html">iboss Proxy to Cato — the steering migration</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

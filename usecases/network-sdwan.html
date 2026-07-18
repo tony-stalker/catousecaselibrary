@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SD-WAN: Global Private Access — Cato Use Case Library</title>
+<meta name="description" content="Bring off-net sites on-net over the global private backbone — active/active last miles, app-aware QoS, and a 99.999 % SLA between PoPs.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-sdwan">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / SD-WAN: Global Private Access</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>SD-WAN: Global Private Access</h1>
+    <p class="lede">
+      Sites stuck off-net — new branches, acquisitions, locations where MPLS is slow to deliver or
+      simply unavailable — wait months for connectivity the business needed yesterday. This use case
+      shows how Cato brings any site on-net over whatever last mile is to hand: dual active/active
+      links into the nearest PoP, app- and identity-aware QoS, and a global private backbone with a
+      99.999&nbsp;% uptime SLA between PoPs.
+    </p>
+    <div class="meta-row">
+      <span class="tag">SD-WAN</span><span class="tag">Sockets</span><span class="tag">Backbone</span>
+      <span class="tag">QoS</span><span class="tag">API / Terraform</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../3%20-%20Network%20use%20cases/SDWAN%20use%20case%20overiview.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The objective is <strong>agility</strong>: moving from MPLS/VPLS — or from no connectivity at
+        all — to an elegant future network design that treats legacy sites and cloud as one network.
+        That means bringing off-net sites on-net quickly, deploying with ease and at scale, and
+        decreasing operational time to value.
+      </p>
+      <p>
+        The classic triggers are <strong>M&amp;A integration and initial deployment</strong>: deploy
+        <em>x</em> sites using the Cato API or Terraform, integrate with Entra ID for user provisioning
+        and identity awareness, then use those usernames directly inside network and QoS policy. One
+        converged approach unifies and simplifies the target operational model — connectivity,
+        optimisation and policy in a single platform instead of a stack of point products per site.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>What legacy WANs make hard</h2>
+      <p>
+        Every option short of SASE forces a trade-off: MPLS gives a predictable middle mile but a
+        single, slow-to-provision circuit per site and no cloud on-ramp; DIY internet VPN is quick
+        but leaves performance to the public internet and security to a per-site appliance stack.
+      </p>
+      <div class="table-wrap" style="margin:18px 0">
+        <table class="data">
+          <thead>
+            <tr><th></th><th>MPLS / VPLS</th><th>Internet VPN (DIY SD-WAN)</th><th>Cato SD-WAN</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>New site provisioning</strong></td><td>Carrier-dependent circuit orders with long lead times</td><td>Faster, but an appliance stack to build per site</td><td>Any available last mile; socket ships pre-provisioned, zero-touch</td></tr>
+            <tr><td><strong>Last mile</strong></td><td>Typically a single circuit — a single point of failure</td><td>Any link, but failover is DIY</td><td>Active/active broadband + fibre + LTE per site</td></tr>
+            <tr><td><strong>Middle mile</strong></td><td>Private and SLA-backed, at a premium</td><td>Public internet — best effort, no SLA</td><td>Global private backbone, 99.999&nbsp;% uptime SLA between PoPs</td></tr>
+            <tr><td><strong>Cloud &amp; SaaS</strong></td><td>Backhauled through the datacentre</td><td>Direct, but uninspected</td><td>On-ramp at the nearest PoP, fully inspected</td></tr>
+            <tr><td><strong>QoS</strong></td><td>Per-circuit CoS classes, per-carrier tickets to change</td><td>Best effort end-to-end</td><td>App- and identity-aware QoS, one global policy</td></tr>
+            <tr><td><strong>Operations</strong></td><td>Carrier change requests</td><td>Box-by-box configuration</td><td>One policy in CMA; automate via API/Terraform</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When did you last order a new MPLS circuit — how long did it take and what did it cost?
+        And at a site with one circuit, what happens to voice and ERP when it fails?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Any last mile in, private backbone across</h2>
+      <p>
+        A Cato Socket at the site bonds whatever links are available — broadband, fibre, LTE/5G —
+        into <strong>active/active encrypted tunnels</strong> to the nearest PoP. From there, traffic
+        rides the global private backbone: a full mesh of PoPs interconnected across multiple Tier-1
+        carriers, with <strong>TCP acceleration and packet-loss mitigation</strong> applied end-to-end
+        and optimal routing chosen per packet. The site is on-net the moment the socket comes up.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 415" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Glasgow branch on-net over dual last miles and the Cato global private backbone</title>
+          <desc id="dg1-desc">A Glasgow branch with a Socket X1600 connects over two active/active last miles — broadband and 4G/LTE — to the nearest Cato PoP in Manchester. Traffic crosses the global private backbone, an ellipse of interconnected PoPs with Tier-1 carrier diversity and a 99.999 percent uptime SLA, to the London PoP and on to the London DC socket and an AWS cloud datacentre. A legacy single MPLS circuit below the branch is marked retired with a red cross.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="560" cy="225" rx="172" ry="62"/>
+          <circle cx="560" cy="163" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="470" cy="281" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="650" cy="278" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="500" y="317" text-anchor="middle">Cato Global Private Backbone — full mesh of PoPs</text>
+          <text class="dg-tiny" x="500" y="331" text-anchor="middle">Tier-1 carrier diversity · TCP acceleration · packet-loss mitigation</text>
+          <text class="dg-tiny" x="500" y="345" text-anchor="middle">99.999&#8201;% uptime SLA between PoPs</text>
+
+          <!-- Glasgow branch -->
+          <rect class="dg-node" x="36" y="168" width="168" height="60" rx="10"/>
+          <text class="dg-label" x="120" y="192" text-anchor="middle">Glasgow branch</text>
+          <text class="dg-sub" x="120" y="210" text-anchor="middle">Socket X1600</text>
+
+          <!-- Dual last miles (active/active) -->
+          <path class="lane lane-allow" d="M 204 182 C 264 166, 324 172, 374 190"/>
+          <path class="lane lane-allow" d="M 204 214 C 264 240, 324 234, 374 212"/>
+          <text class="dg-tiny" x="289" y="196" text-anchor="middle">Broadband last mile</text>
+          <text class="dg-tiny" x="289" y="212" text-anchor="middle">4G/LTE last mile</text>
+
+          <!-- Legacy MPLS (retired) -->
+          <rect class="dg-node" x="36" y="330" width="168" height="56" rx="10" opacity="0.75"/>
+          <text class="dg-label" x="120" y="353" text-anchor="middle">Legacy MPLS</text>
+          <text class="dg-sub" x="120" y="371" text-anchor="middle">One circuit · no cloud on-ramp</text>
+          <path class="lane-static" d="M 100 228 L 100 330" style="stroke:var(--lane-block);stroke-dasharray:5 5;opacity:.55"/>
+          <g aria-label="retired">
+            <path class="lane-x" d="M 88 268 L 112 292"/><path class="lane-x" d="M 112 268 L 88 292"/>
+          </g>
+          <text class="dg-tiny" x="122" y="284">retired at cutover</text>
+
+          <!-- Manchester PoP (nearest) -->
+          <circle class="pulse-ring" cx="400" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="400" cy="200" r="30"/>
+          <text class="dg-label" x="400" y="140" text-anchor="middle">Manchester PoP</text>
+          <text class="dg-tiny" x="400" y="155" text-anchor="middle">nearest PoP — selected automatically</text>
+
+          <!-- Backbone hop Manchester → London -->
+          <path class="lane lane-allow" d="M 428 212 C 500 245, 600 255, 671 240"/>
+
+          <!-- London PoP -->
+          <circle class="dg-pop" cx="700" cy="245" r="30"/>
+          <text class="dg-label" x="700" y="300" text-anchor="middle">London PoP</text>
+
+          <!-- London DC -->
+          <rect class="dg-node" x="784" y="104" width="160" height="60" rx="10"/>
+          <text class="dg-label" x="864" y="128" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="864" y="146" text-anchor="middle">Socket X1500 · core apps</text>
+          <path class="lane lane-allow" d="M 722 222 C 750 190, 765 162, 784 138"/>
+
+          <!-- Cloud DC -->
+          <rect class="dg-node" x="784" y="316" width="160" height="60" rx="10"/>
+          <text class="dg-label" x="864" y="340" text-anchor="middle">Cloud DC — AWS</text>
+          <text class="dg-sub" x="864" y="358" text-anchor="middle">vSocket · eu-west-2</text>
+          <path class="lane lane-allow" d="M 723 266 C 752 296, 766 314, 784 338"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Encrypted DTLS tunnels — active/active traffic</span>
+          <span class="key"><span class="swatch block"></span> Single MPLS circuit — retired</span>
+        </div>
+        <div class="diagram-caption">Glasgow comes on-net over two commodity last miles; the backbone carries traffic privately to the London DC socket and the AWS vSocket — the single MPLS circuit it replaces is retired.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Bring off-net sites on-net</h4><p>Any site, any available last mile. The socket arrives pre-provisioned; plug it in and the site joins the WAN — ideal for M&amp;A and initial deployment.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Active/active last miles</h4><p>Broadband, fibre and LTE used simultaneously, with seamless failover between them — link brownouts and cuts stop being site outages.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎚️</div><div><h4>App- and identity-aware QoS</h4><p>Bandwidth priorities keyed to the application <em>and</em> the Entra ID user — voice and business-critical apps win over bulk traffic, per person, globally.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Predictable middle mile</h4><p>A global private backbone with Tier-1 carrier diversity and a 99.999&nbsp;% uptime SLA between PoPs — MPLS-class predictability without MPLS.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚀</div><div><h4>Built-in optimisation</h4><p>TCP acceleration and packet-loss mitigation run at every PoP, so long-haul transfers and real-time apps perform over commodity links.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛠️</div><div><h4>Deployment as code</h4><p>Sites defined once and rolled out via the GraphQL API or Terraform — tens or hundreds at a time, with zero-touch socket installation.</p></div></div>
+      </div>
+    </section>
+
+    <section id="backbone" class="reveal">
+      <div class="section-kicker">The middle mile</div>
+      <h2>A backbone you can put an SLA on</h2>
+      <p>
+        Sites and users always connect to the nearest PoP; every PoP runs the full Cato software
+        stack, and PoPs are interconnected across multiple Tier-1 carriers with the optimal route
+        chosen continuously. The result is a middle mile Cato owns end-to-end — which is why it
+        carries an SLA the public internet never can.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">99.999<span class="unit">%</span></div><div class="stat-label">Uptime SLA between PoPs on the global private backbone</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">2<span class="unit">+</span></div><div class="stat-label">Active/active last miles per site — broadband, fibre, LTE/5G</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">Tier-1<span class="unit"> carriers</span></div><div class="stat-label">Multiple providers per PoP pair — never dependent on one carrier</div></div>
+      </div>
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map with green ring markers showing Cato PoP locations across North America, South America, Europe, the Middle East, Africa, Asia and Australia">
+        <figcaption>The global private backbone: PoP locations across every populated region — each site connects to its nearest PoP automatically.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their timeline</div>
+        <p>Ask how long their last new site took, order-to-live. Every step below is then a direct
+        contrast: definition file to on-net site, in minutes, on links they can buy anywhere.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Create the site definition</h4>
+          <p>Build the site details as code — name, socket model, native range, location. One file
+          describes one site; a loop describes fifty. This is the artefact an M&amp;A team hands over.</p>
+<pre class="code"><span class="cmt"># site definition — Cato Terraform provider</span>
+<span class="kw">resource</span> "cato_socket_site" "glasgow" {
+  name            = "Glasgow"
+  site_type       = "BRANCH"
+  connection_type = "SOCKET_X1600"
+  native_range = {
+    native_network_range = "10.41.0.0/24"
+    local_ip             = "10.41.0.1"
+  }
+  site_location = {
+    country_code = "GB"
+    timezone     = "Europe/London"
+  }
+}</pre>
+        </li>
+        <li>
+          <h4>Deploy via API / Terraform</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show where the API key lives, then run <code>terraform apply</code> live. The same
+          GraphQL mutation works from catocli or any CI/CD pipeline — this is the "deploy x sites"
+          motion from the deck.</p>
+        </li>
+        <li>
+          <h4>Confirm site creation in CMA</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>The Glasgow site appears seconds after apply, ready for its socket. Explain zero-touch:
+          the X1600 ships to site, gets plugged into any live link, calls home and pulls its config —
+          no engineer on the ground.</p>
+        </li>
+        <li>
+          <h4>Show both last miles live</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Open the site on the topology map: two tunnels up — broadband and LTE — with per-link
+          health (loss, latency, jitter) and the connected PoP. Pull a cable in the lab and watch
+          traffic ride the second link without a dropped call.</p>
+        </li>
+        <li>
+          <h4>Walk the QoS policy</h4>
+          <p><span class="path">Network → Bandwidth Management</span></p>
+          <p>Show the bandwidth priorities: voice and UCaaS at the top, business apps next, bulk
+          transfers last — and rules that reference applications and Entra ID usernames, not ports
+          and subnets. One policy, enforced at every site including the one just deployed.</p>
+        </li>
+        <li>
+          <h4>Prove it with analytics</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Filter to the new site: top applications, top users, bandwidth over time — full app and
+          identity visibility minutes after coming on-net. Close on that: “this is day-one visibility
+          for a site you provisioned before lunch.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence</a></li>
+            <li><a href="network-agility-mna.html">Agility: M&amp;A Integration at Speed</a></li>
+            <li><a href="network-global-app-performance.html">Global Application &amp; UCaaS Performance</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

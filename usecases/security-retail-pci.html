@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retail Store Networks &amp; PCI DSS 4.0 — Cato Use Case Library</title>
+<meta name="description" content="Hundreds of stores, one platform — POS segmentation that shrinks PCI scope, zero-touch sockets with LTE failover, and audit evidence from a single console.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-retail-pci">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Retail &amp; PCI DSS 4.0</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Retail Store Networks &amp; PCI DSS 4.0</h1>
+    <p class="lede">
+      A retail estate is hundreds of near-identical store networks — tills, staff Wi-Fi, guest Wi-Fi,
+      cameras — too often sitting on one flat LAN behind one broadband circuit. Every device ends up
+      inside PCI DSS assessment scope, and every change or failure means an engineer in a van.
+      This use case shows how a Cato Socket per store with LTE/5G failover, LAN firewall
+      micro-segmentation and one global policy shrinks assessment scope and turns audit evidence
+      into a console export instead of a quarterly scramble.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Retail</span><span class="tag">PCI DSS</span>
+      <span class="tag">Segmentation</span><span class="tag">LTE Failover</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        In retail, the store network <em>is</em> the revenue path: if the till can't authorise a card,
+        the store stops selling. Yet the estate that carries cardholder data is usually the least
+        engineered part of the business — flat networks assembled store by store over years, a single
+        consumer-grade broadband line, and whatever kit the last refit left behind.
+      </p>
+      <p>
+        PCI DSS 4.0 raises the bar on demonstrating that controls actually operate — continuously,
+        not just in the weeks before the assessor arrives. Across hundreds of stores that is
+        unmanageable with per-site firewalls and manual evidence gathering. The objective:
+        <strong>make every store network segmented, resilient and centrally evidenced — without
+        sending an engineer to a single site.</strong>
+      </p>
+    </section>
+
+    <section id="store-problem" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>What a typical store estate looks like today</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">1</div><div class="stat-label">Broadband circuit standing between the store and every card payment</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">4<span class="unit">+</span></div><div class="stat-label">Device classes sharing one flat LAN — POS, staff, guest, cameras/IoT</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">100<span class="unit">%</span></div><div class="stat-label">Of a flat store network lands in PCI assessment scope — nothing is separated from the tills</div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Scope creeps across everything</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">On a flat network, the guest Wi-Fi, the CCTV
+          cameras and the digital signage sit beside the payment devices — so they are all assessed
+          alongside them. Segmentation is the recognised way to reduce scope, but nobody wants to
+          deploy and manage a firewall per store to get it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Fragile and expensive to run</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">One broadband line means an outage stops card
+          payments. Any change, failure or refresh means a truck roll — multiplied by hundreds of
+          stores, that is the single biggest line item in store IT operations.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Audit evidence is manual</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Firewall configs, change records and logs live
+          in different tools per region or per store generation. Assessment time means weeks of
+          screenshots and spreadsheets — and the answer is stale the day after it's collected.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“How many separate networks does a typical store run today — and are they <em>actually</em>
+        separate, or just different SSIDs on one LAN? Who owns segmentation between POS and
+        everything else — networking or security? And what did evidence collection look like at your
+        last assessment: how long, how many teams, how many spreadsheets?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One socket per store, one policy for the estate</h2>
+      <p>
+        Each store gets a Cato Socket with LTE/5G failover — shipped to site and plugged in by store
+        staff, with configuration pulled from the cloud (zero-touch, no engineer visit). The Socket's
+        <strong>LAN firewall</strong> enforces micro-segmentation between VLANs on site: POS and
+        cardholder data on one network, staff, guest and cameras/IoT on their own — with lateral
+        movement into the POS VLAN blocked at the store edge. Everything leaving the store is
+        inspected at the nearest Cato PoP, where protection is always current and the same policy
+        applies to every store. Cato operates a <strong>PCI DSS certified platform</strong>, and the
+        CMA keeps policy, events and change history in one place — the evidence pack, on demand.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Segmented retail store connected through a Cato PoP</title>
+          <desc id="dg1-desc">A store contains four VLANs — POS, guest Wi-Fi, staff Wi-Fi and cameras/IoT — behind a Cato Socket running a LAN firewall. Guest traffic towards the POS VLAN is blocked inside the store. The Socket connects to a Cato PoP over broadband with LTE failover on standby. From the PoP, the POS VLAN reaches the payment processor, guest and IoT traffic reaches the internet only, and the CMA holds one policy and the audit evidence for every store.</desc>
+
+          <!-- Store boundary -->
+          <rect x="24" y="34" width="366" height="404" rx="14" fill="none" stroke="var(--hairline)" stroke-width="2" stroke-dasharray="7 6"/>
+          <text class="dg-tiny" x="40" y="56" text-anchor="start">Store 0412 — one of hundreds</text>
+
+          <!-- VLAN nodes -->
+          <rect class="dg-node-green" x="44" y="70" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="124" y="92" text-anchor="middle">POS / CDE VLAN</text>
+          <text class="dg-sub" x="124" y="110" text-anchor="middle">Tills · payment devices</text>
+
+          <rect class="dg-node" x="44" y="164" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="124" y="186" text-anchor="middle">Guest Wi-Fi VLAN</text>
+          <text class="dg-sub" x="124" y="204" text-anchor="middle">Captive portal</text>
+
+          <rect class="dg-node" x="44" y="258" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="124" y="280" text-anchor="middle">Staff Wi-Fi VLAN</text>
+          <text class="dg-sub" x="124" y="298" text-anchor="middle">Corporate SSID</text>
+
+          <rect class="dg-node" x="44" y="352" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="124" y="374" text-anchor="middle">Cameras &amp; IoT</text>
+          <text class="dg-sub" x="124" y="392" text-anchor="middle">CCTV · signage · sensors</text>
+
+          <!-- Blocked lateral movement: guest -> POS -->
+          <path class="lane lane-block" d="M 124 164 C 124 152, 124 140, 124 128"/>
+          <g aria-label="lateral movement blocked">
+            <path class="lane-x" d="M 112 134 L 136 158"/><path class="lane-x" d="M 136 134 L 112 158"/>
+          </g>
+
+          <!-- Socket -->
+          <rect class="dg-node-dark" x="248" y="186" width="130" height="82" rx="10"/>
+          <text class="dg-label-inv" x="313" y="212" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub-inv" x="313" y="231" text-anchor="middle">LAN firewall rules</text>
+          <text class="dg-sub-inv" x="313" y="249" text-anchor="middle">zero-touch install</text>
+
+          <!-- VLANs to socket -->
+          <path class="lane lane-allow" d="M 204 97 C 230 110, 240 160, 252 186"/>
+          <path class="lane lane-limit" d="M 204 191 C 220 196, 234 202, 248 210"/>
+          <path class="lane lane-static" d="M 204 285 C 220 278, 234 266, 248 250"/>
+          <path class="lane lane-limit" d="M 204 379 C 236 366, 250 306, 300 268"/>
+
+          <!-- Uplinks to PoP -->
+          <path class="lane lane-allow" d="M 378 208 C 430 200, 470 202, 522 216"/>
+          <text class="dg-tiny" x="452" y="186" text-anchor="middle">Broadband — primary</text>
+          <path class="lane lane-limit" d="M 378 248 C 430 262, 472 258, 524 240"/>
+          <text class="dg-tiny" x="452" y="284" text-anchor="middle">LTE / 5G — failover</text>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="606" cy="228" rx="140" ry="46"/>
+          <circle cx="702" cy="205" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="676" cy="262" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="545" y="304" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="560" cy="228" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="560" cy="228" r="30"/>
+          <text class="dg-label" x="560" y="162" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="560" y="177" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">FWaaS · IPS · always current</text>
+
+          <!-- Destinations -->
+          <rect class="dg-node" x="756" y="64" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="841" y="86" text-anchor="middle">Payment processor</text>
+          <text class="dg-sub" x="841" y="104" text-anchor="middle">Acquirer / gateway</text>
+
+          <rect class="dg-node" x="756" y="182" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="841" y="222" text-anchor="middle">Guest breakout · updates</text>
+
+          <rect class="dg-node-dark" x="756" y="300" width="170" height="72" rx="10"/>
+          <text class="dg-label-inv" x="841" y="324" text-anchor="middle">Cato CMA</text>
+          <text class="dg-sub-inv" x="841" y="342" text-anchor="middle">One policy · every store</text>
+          <text class="dg-sub-inv" x="841" y="359" text-anchor="middle">Events · audit trail</text>
+
+          <path class="lane lane-allow" d="M 586 210 C 640 170, 690 120, 756 96"/>
+          <path class="lane lane-limit" d="M 590 230 C 640 226, 700 216, 756 209"/>
+          <path class="lane lane-static" d="M 584 248 C 636 288, 692 316, 756 330"/>
+
+          <text class="dg-tiny" x="207" y="428" text-anchor="middle">Same VLAN plan, same policy — repeated across the estate</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Cardholder data path — POS to processor</span>
+          <span class="key"><span class="swatch limit"></span> Restricted — internet only · LTE standby</span>
+          <span class="key"><span class="swatch block"></span> Blocked — lateral movement into POS VLAN</span>
+        </div>
+        <div class="diagram-caption">The Socket's LAN firewall separates POS from guest, staff and IoT inside every store. Only the POS VLAN reaches the payment path; guest and IoT get internet-only breakout — and the pattern repeats identically across hundreds of stores.</div>
+      </div>
+
+      <h3>What this changes for the estate</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Zero-touch store rollout</h4><p>The Socket ships to the store; staff plug it in; configuration and policy arrive from the cloud. New store, refit or swap-out — no engineer visit, no truck roll.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Segmentation that shrinks scope</h4><p>The LAN firewall isolates the POS/cardholder VLAN from guest, staff and IoT at the store edge. Properly implemented segmentation reduces the systems in PCI assessment scope — from "the whole store" to "the payment network".</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>Payments survive the broadband</h4><p>LTE/5G failover on the same Socket keeps the tills authorising through a broadband cut — the difference between an incident ticket and a closed store.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>One policy, every store</h4><p>Segmentation and firewall rules are defined once and applied estate-wide. No per-store firewall configs to drift apart; a change lands everywhere at once.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Always-current protection</h4><p>IPS, anti-malware and firewalling run in the Cato PoP and are updated by Cato — no store appliance to patch, no store-by-store signature rollouts. Cato operates a PCI DSS certified platform.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗂️</div><div><h4>Audit evidence on demand</h4><p>Policy, enforcement events and full change history (who changed what, when) live in one console. Evidence gathering becomes an export, not a project.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:28px">PCI DSS 4.0 themes, mapped</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">Keep the conversation at theme level — the QSA
+      decides scope and applicability, Cato provides the controls and the proof:</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Requirement theme</th><th>How the Cato platform helps</th></tr></thead>
+          <tbody>
+            <tr><td>Network security controls &amp; segmentation</td><td>LAN firewall isolates the cardholder VLAN in every store; FWaaS governs everything leaving the site — one rule set, estate-wide.</td></tr>
+            <tr><td>Reducing assessment scope</td><td>Segmentation keeps guest Wi-Fi, cameras and signage out of the cardholder environment, so the assessed footprint shrinks.</td></tr>
+            <tr><td>Protecting systems from malware &amp; attacks</td><td>IPS and anti-malware inspect store traffic at the PoP, kept current by Cato — no store-side patching.</td></tr>
+            <tr><td>Logging &amp; monitoring</td><td>Every allow and block across every store is an event in one place, retained centrally and searchable.</td></tr>
+            <tr><td>Evidence &amp; documentation</td><td>Policy state, event history and the Audit Trail of configuration changes are exportable from the CMA.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Mapping the demo tenant to a store estate</div>
+        <p>A demo tenant has no 400-branch retail estate — so narrate it as one.
+        <strong>Bracknell Lab</strong> stands in for a typical store (Socket, multiple VLANs, LAN
+        firewall); <strong>Mobile Office</strong> (Socket X1600 with LTE) is the failover story.
+        Every rule you show, add: “this is defined once and applies to every store.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame the estate</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Show the connected sites and their live link state. Narrate the retail pattern: “imagine
+          each of these is a store — same Socket, same VLAN plan, same policy. What follows is what
+          every one of them gets.”</p>
+        </li>
+        <li>
+          <h4>Show the store build — VLANs behind one Socket</h4>
+          <p><span class="path">Network → Sites → Bracknell Lab → Networks</span></p>
+          <p>Walk the site's network ranges: a POS/cardholder VLAN, guest, staff and a camera/IoT
+          VLAN. Make the zero-touch point here — the Socket shipped to site and was plugged in by
+          non-technical staff; everything you're looking at was configured centrally.</p>
+        </li>
+        <li>
+          <h4>Isolate the POS VLAN with the LAN firewall</h4>
+          <p><span class="path">Network → Sites → Bracknell Lab → LAN Firewall</span></p>
+          <p>Show (or build live) the rule set: block guest and IoT VLANs from reaching the POS VLAN,
+          allow POS devices to their payment destinations only. Point at the hit counters — the
+          segmentation isn't a diagram claim, it's enforced and counted at the store edge.</p>
+        </li>
+        <li>
+          <h4>Prove the tills keep trading — LTE failover</h4>
+          <p><span class="path">Network → Sites → Mobile Office</span></p>
+          <p>Open Mobile Office (X1600 with LTE) and show its WAN links. Describe the failure drill:
+          pull the primary connection and the Socket fails over to LTE — the card payments keep
+          flowing, and Topology shows the link-state change in seconds. In a store estate this is the
+          difference between a quiet alert and a store that can't sell.</p>
+        </li>
+        <li>
+          <h4>One internet policy for store devices</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show rules scoped to the store VLANs: POS devices restricted to their update and payment
+          services, guest Wi-Fi on a tolerable-use policy, cameras pinned to their vendor cloud only.
+          Change a rule and make the point: it just changed for every store at once.</p>
+        </li>
+        <li>
+          <h4>Close on evidence — the assessor pack</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show the change history: who changed which rule, when, from where. Then flip to
+          <span class="path">Monitor → Events</span> filtered to LAN firewall blocks. Policy, its
+          enforcement, and its change record — “that's the evidence you spent weeks assembling last
+          time, from one console.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Security, compliance &amp; privacy — Cato's certifications</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall / FWaaS — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application (CMA) — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

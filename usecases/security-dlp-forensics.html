@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Breach Investigation with DLP Forensics — Cato Use Case Library</title>
+<meta name="description" content="Investigate DLP incidents with encrypted, customer-owned forensic evidence — real leak or false positive, answered directly from the CMA.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-dlp-forensics">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / DLP Forensics</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Data Breach Investigation with DLP Forensics</h1>
+    <p class="lede">
+      A DLP event has fired — is it a genuine data leak or a false positive? Event metadata alone
+      can't answer that; the actual matched data can. This use case shows DLP Forensics: encrypted
+      evidence written to storage the customer owns, retrievable directly from the CMA, governed by
+      RBAC and fully audited from configuration change to evidence view.
+    </p>
+    <div class="meta-row">
+      <span class="tag">DLP</span><span class="tag">Forensics</span><span class="tag">RBAC</span>
+      <span class="tag">Audit</span><span class="tag">S3</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/Data%20Breach%20Investigation%20Use%20case.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Security teams need to determine whether a DLP event is a real data leak or a false
+        positive — and when an incident is real, they need forensic evidence to determine its
+        impact: what data left, how much, and who was involved.
+      </p>
+      <p>
+        The objective: <strong>seamless DLP incident investigation directly from the CMA</strong>,
+        backed by evidence the organisation owns and controls — not a black-box verdict, and not a
+        second copy of sensitive data sitting in someone else's storage.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The investigation gap</div>
+      <h2>Real leak or false positive?</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Metadata alone can't answer it</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">
+            A typical DLP event tells you which rule matched, which user, which application. It does
+            not show you the data that matched. Analysts are left guessing — so real leaks get
+            dismissed as noise, and false positives trigger full incident-response fire drills.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Forensics without governance is a new risk</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">
+            The evidence <em>is</em> the sensitive data. If matched content is captured into
+            vendor-owned storage, readable by anyone with console access and with no audit of who
+            viewed it, your DLP tool has just created a second copy of the leak.
+          </p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When your DLP flags an upload as a credit-card leak, can your analysts see exactly what
+        matched — and can you prove afterwards who looked at that evidence?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Customer-owned, encrypted, governed forensics</h2>
+      <p>
+        When a DLP rule fires, Cato writes an encrypted forensic snippet — up to and including the
+        full file — into an <strong>S3 bucket in the customer's own AWS account</strong>. Evidence
+        is encrypted with a <strong>per-account unique key</strong>, retrieval is governed by
+        <strong>RBAC</strong>, and every related action — configuration change, evidence view,
+        download — is <strong>fully audited</strong>. The analyst never leaves the CMA: the event,
+        the incident detail and the evidence are one click apart.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">20<span class="unit">MB</span></div><div class="stat-label">Full file storage supported per forensic evidence file</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Unique encryption key per account — your evidence, your key</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">100<span class="unit">%</span></div><div class="stat-label">Of forensic actions audited — config changes, views, downloads</div></div>
+      </div>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">DLP forensics flow — blocked upload, encrypted evidence, governed retrieval</title>
+          <desc id="dg1-desc">A user uploads a file containing PII. The Cato PoP's DLP engine blocks the upload before it reaches Microsoft Copilot and raises a DLP event to the CMA. An encrypted forensic snippet is written to the customer's own S3 bucket. A SOC analyst opens the incident in the CMA and retrieves the evidence, governed by RBAC with every view audited.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="450" cy="115" rx="140" ry="48"/>
+          <text class="dg-tiny" x="338" y="184" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="450" cy="115" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="450" cy="115" r="30"/>
+          <text class="dg-label" x="450" y="48" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="450" y="63" text-anchor="middle">DLP engine · inline TLS inspection</text>
+
+          <!-- Uploading user (left top) -->
+          <g>
+            <circle cx="100" cy="110" r="23" fill="var(--lane-limit)"/>
+            <circle cx="100" cy="103" r="6.5" fill="#fff"/>
+            <path d="M 87 123 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="152" text-anchor="middle">Priya</text>
+            <text class="dg-sub" x="100" y="168" text-anchor="middle">Uploads a document with PII</text>
+          </g>
+
+          <!-- Copilot (right top) -->
+          <rect class="dg-node" x="780" y="84" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="108" text-anchor="middle">Microsoft Copilot</text>
+          <text class="dg-sub" x="855" y="126" text-anchor="middle">GenAI SaaS app</text>
+
+          <!-- Blocked upload lanes -->
+          <path class="lane lane-block" d="M 125 110 C 220 108, 320 110, 416 113"/>
+          <text class="dg-tiny" x="228" y="88" text-anchor="middle">Upload: file with credit-card PII</text>
+          <path class="lane lane-block" d="M 482 112 C 560 108, 630 108, 698 110"/>
+          <g aria-label="blocked before the app">
+            <path class="lane-x" d="M 704 98 L 728 122"/><path class="lane-x" d="M 728 98 L 704 122"/>
+          </g>
+          <text class="dg-tiny" x="655" y="88" text-anchor="middle">Blocked by DLP rule</text>
+
+          <!-- Event lane: PoP → CMA -->
+          <path class="lane-static" d="M 450 149 C 448 205, 447 260, 449 318"/>
+          <text class="dg-tiny" x="462" y="245">DLP event + metadata</text>
+
+          <!-- Evidence lane: PoP → S3 -->
+          <path class="lane lane-allow" d="M 474 136 C 580 185, 670 255, 766 314"/>
+          <text class="dg-tiny" x="722" y="206" text-anchor="middle">Encrypted forensic snippet</text>
+
+          <!-- Customer S3 bucket (right bottom) -->
+          <g aria-label="padlock">
+            <path d="M 843 281 v -6 a 7 7 0 0 1 14 0 v 6" fill="none" stroke="var(--green-700)" stroke-width="2.4"/>
+            <rect x="840" y="281" width="20" height="14" rx="3" fill="var(--green-700)"/>
+          </g>
+          <rect class="dg-node-green" x="770" y="300" width="160" height="76" rx="10"/>
+          <text class="dg-label" x="850" y="328" text-anchor="middle">Customer S3 bucket</text>
+          <text class="dg-sub" x="850" y="346" text-anchor="middle">Your AWS account</text>
+          <text class="dg-tiny" x="850" y="363" text-anchor="middle">Per-account encryption key</text>
+
+          <!-- CMA (centre bottom) -->
+          <rect class="dg-node-dark" x="350" y="320" width="210" height="70" rx="10"/>
+          <text class="dg-label-inv" x="455" y="349" text-anchor="middle">Cato Management App</text>
+          <text class="dg-sub-inv" x="455" y="368" text-anchor="middle">Data Incident → View Evidence</text>
+
+          <!-- Analyst (left bottom) -->
+          <g>
+            <circle cx="100" cy="350" r="23" fill="var(--status-good)"/>
+            <circle cx="100" cy="343" r="6.5" fill="#fff"/>
+            <path d="M 87 363 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="392" text-anchor="middle">Marcus</text>
+            <text class="dg-sub" x="100" y="408" text-anchor="middle">SOC analyst · DLP investigator</text>
+          </g>
+          <path class="lane-static" d="M 125 350 C 200 350, 270 351, 348 352"/>
+          <text class="dg-tiny" x="236" y="336" text-anchor="middle">Investigates from the CMA</text>
+
+          <!-- Retrieval lane: CMA → S3 -->
+          <path class="lane lane-limit" d="M 562 352 C 630 352, 700 358, 766 361"/>
+          <text class="dg-tiny" x="662" y="386" text-anchor="middle">View evidence · RBAC + audit</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch block"></span> Sensitive upload blocked at the PoP</span>
+          <span class="key"><span class="swatch allow"></span> Encrypted evidence to customer-owned storage</span>
+          <span class="key"><span class="swatch limit"></span> Evidence retrieval — RBAC-governed, fully audited</span>
+        </div>
+        <div class="diagram-caption">The blocked upload never reaches the GenAI app. The encrypted snippet lands in the customer's own S3 bucket; the analyst retrieves it through the CMA under RBAC, and every view is written to the audit trail.</div>
+      </div>
+
+      <h3>The four guarantees</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Forensics encryption</h4><p>All forensic evidence is encrypted and stored using a per-account unique encryption key — evidence in your bucket is unreadable without your account's key.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>RBAC-governed access</h4><p>All forensics are governed by role-based access control. Only administrators with the right role can open the evidence — seeing the event doesn't mean seeing the data.</p></div></div>
+        <div class="benefit"><div class="b-icon">📋</div><div><h4>Audit &amp; activity logging</h4><p>Every action related to DLP Forensics is fully audited — configuration changes, evidence views, downloads. You can prove exactly who saw what, and when.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗄️</div><div><h4>Customer-owned full-file storage</h4><p>Evidence is written to an S3 bucket in your own AWS account, with full file storage supported for files up to 20&nbsp;MB — you keep custody of the data.</p></div></div>
+      </div>
+    </section>
+
+    <section id="evidence" class="reveal">
+      <div class="section-kicker">In the CMA</div>
+      <h2>Anatomy of a data incident</h2>
+      <p>
+        This is what the analyst sees. A user attempted to upload
+        <em>“Document with CC Information.doc”</em> to Microsoft Copilot; the rule
+        <strong>“Copilot restrict PII”</strong> matched the <strong>CC-UK</strong> DLP profile
+        (credit-card numbers) and blocked the upload. The incident pane carries the full context —
+        user, application, activity type, file, matched data types — and below it, the
+        <strong>Forensics</strong> panel holds the secured evidence behind a single
+        <strong>View Evidence</strong> button.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/dlp-incident-cma.png" alt="CMA Data Incident pane: a blocked upload of 'Document with CC Information.doc' to Microsoft Copilot, matching rule 'Copilot restrict PII' and DLP profile CC-UK (credit-card numbers), with a locked 'Evidence is Secured' forensics panel and a green View Evidence button.">
+        <figcaption>The Data Incident drill-down: blocked credit-card upload to Microsoft Copilot, with the “Evidence is Secured” forensics panel. One click — governed by RBAC and audited — reveals the matched data.</figcaption>
+      </figure>
+      <div class="callout">
+        <div class="co-title">Why “Evidence is Secured” matters in the room</div>
+        <p>Point at the locked panel: the evidence exists, but even in a live demo it isn't casually
+        exposed. Viewing it is a deliberate, role-gated, logged action — exactly the governance a
+        DPO or compliance officer will ask about.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <ol class="steps">
+        <li>
+          <h4>Configure the AWS S3 bucket, IAM policy and role</h4>
+          <p>One-time setup in the customer's (or demo tenant's) AWS account: create the S3 bucket
+          and the IAM policy and role that let Cato write forensic evidence into it. Follow the
+          “Configuring the Forensic Storage Connector” KB — linked under Resources below.</p>
+        </li>
+        <li>
+          <h4>Enable the DLP forensics integration</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Switch on the forensics integration and add the IAM role and permissions from step 1.
+          Note for the audience: this configuration change is itself written to the audit trail.</p>
+        </li>
+        <li>
+          <h4>Trigger the incident: upload a PII file to Copilot</h4>
+          <p>As the demo user, upload a file containing sensitive PII — credit-card data works well —
+          to Microsoft Copilot. The DLP rule blocks the upload inline; the user sees the block, and
+          the forensic snippet is captured to the S3 bucket at the same moment.</p>
+        </li>
+        <li>
+          <h4>Find the event and open its forensics</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Locate the block event you just generated and click <strong>“View Forensics”</strong> in
+          the evidence field. This pivots straight from the dashboard into the data incident — no
+          exporting, no second console.</p>
+        </li>
+        <li>
+          <h4>Open the incident and view the evidence</h4>
+          <p>On the Data Incident page, walk the details (user, app, rule, matched data types), then
+          click <strong>“View Evidence”</strong> to view and download the data snippet — the exact
+          content that matched. Close by showing the view being recorded in
+          <span class="path">Administration → Audit Trail</span>: leak confirmed, impact known,
+          access proven.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32769630749085-Amazon-S3-Configuring-the-Forensic-Storage-Connector" target="_blank" rel="noopener">Amazon S3 — Configuring the Forensic Storage Connector (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32572506261789-Investigating-DLP-Violations-with-Forensic-Evidence" target="_blank" rel="noopener">Investigating DLP Violations with Forensic Evidence (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">Data Loss Prevention (DLP) — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

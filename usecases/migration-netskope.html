@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netskope to Cato — Cato Use Case Library</title>
+<meta name="description" content="Move SWG, CASB and ZTNA from Netskope's SSE overlay to the converged Cato platform — steering-client replacement, policy mapping and DLP profile migration.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-netskope">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Netskope to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Netskope to Cato</h1>
+    <p class="lede">
+      Netskope One is a strong SSE — market-leading CASB/DLP depth on a well-engineered private
+      cloud — but it remains an overlay: SD-WAN arrived by acquisition on SASE Gateway appliances,
+      and every user population needs its own steering mechanism (Client, PAC/explicit proxy,
+      tunnels, proxy chaining) with its own exception lists. This page maps each Netskope component
+      to its Cato equivalent and walks a five-phase, cohort-based migration: swap the client —
+      never dual-tunnel — keep co-existence at the network and API layers, and retire
+      API Data Protection last.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Netskope</span><span class="tag">SWG</span><span class="tag">CASB</span>
+      <span class="tag">DLP</span><span class="tag">NPA</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based page — not a delivery-verified runbook</div>
+        <p>This plan is authored from Netskope and Cato documentation plus the Cato PS migration
+        methodology — not from a completed, referenceable Netskope migration. Validate it with
+        Cato Professional Services before using it with a customer, especially the DLP/EDM rebuild
+        scope and the current SaaS Security API connector list.</p>
+      </div>
+
+      <p>
+        The migration case against Netskope is <strong>architectural, not feature-led</strong>.
+        Netskope built an excellent SSE and bolted SD-WAN on via the Infiot acquisition (2022):
+        full SASE means SASE Gateway appliances at sites feeding the NewEdge security cloud — two
+        dataplanes stitched together. Cato runs SD-WAN, SWG, CASB, DLP, ZTNA and FWaaS as
+        <strong>one converged single-pass cloud engine</strong> with thin Socket edges, one policy
+        model and no steering layer to design.
+      </p>
+      <p>
+        The second lever is <strong>steering complexity</strong>. A mature Netskope estate steers
+        traffic five different ways, each with its own configuration, exception lists and failure
+        modes. On Cato there are two: Socket for sites, Client for users. No PAC files, no explicit
+        proxy, no proxy chaining, no steering configuration to maintain.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">5</div><div class="stat-label">Netskope steering mechanisms to inventory — Client, IPsec/GRE, PAC/explicit proxy, proxy chaining, on-prem appliance</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2</div><div class="stat-label">Dataplanes for full Netskope SASE — SASE Gateway appliances + the NewEdge cloud</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Converged Cato dataplane — Socket or Client to the nearest PoP, no PAC layer</div></div>
+      </div>
+
+      <p>
+        Be honest in the room: Netskope's data-protection stack is its crown jewel, and NewEdge
+        performance is good — customers rarely leave over PoP latency. Reviewer-sourced friction is
+        about <strong>cost and deployment complexity</strong> (PeerSpot reviewers cite complex
+        setup and pricing "high compared to competitors"; third-party reviews note DLP/CASB/ZTNA
+        tuning can take months). Win on convergence, WAN transformation, operational simplicity and
+        total cost — neutralise on data-protection features, don't try to out-feature them
+        (see <a href="#gotchas">gotchas</a>).
+      </p>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which steering mechanisms are actually live in your Netskope tenant today — Client,
+        PAC/explicit proxy, IPsec/GRE tunnels, proxy chaining — and who owns the exception lists?”
+        Each mechanism is a separate cutover cohort with its own rollback lever, and years of
+        steering exceptions encode operational knowledge you want to inherit, not rediscover.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Every inline Netskope function has a Cato home in the single-pass engine — the differences
+        that matter are in the notes column. Three carry real migration work: <strong>DLP profiles
+        are rebuilt, not imported</strong> (EDM datasets from source data); <strong>API-CASB
+        coverage must be verified app-by-app</strong>; and NPA's Publisher model is replaced by
+        routed reachability, which changes the private-access design rather than translating it.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Netskope component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>NG-SWG (real-time protection policies for web)</td><td>Internet Firewall + Threat Prevention</td><td>Categories and app awareness in one rulebase; actions Allow / Block / Prompt</td></tr>
+            <tr><td>CASB inline (app / activity / instance policies)</td><td>CASB — Application Control policy</td><td>Granular app/activity rules with tenant awareness; requires TLS inspection</td></tr>
+            <tr><td>App-instance / tenant steering</td><td>Tenant Restrictions policy</td><td>HTTP header injection; M365, Google Workspace, Slack, Dropbox documented</td></tr>
+            <tr><td>API Data Protection (API-CASB)</td><td>Cato SaaS Security API</td><td>Documented connectors centre on M365 (SharePoint, OneDrive, Exchange). Netskope's app coverage is broader — verify the customer's app list before cutover; retain Netskope API-CASB in the interim if there's a gap</td></tr>
+            <tr><td>DLP profiles (EDM, fingerprinting, OCR, ML classifiers)</td><td>DLP — Data Control policy</td><td>350+ data types plus custom regex/keyword/label types, EDM, IDM, OCR. Profiles are <strong>rebuilt, not imported</strong>; EDM datasets must be regenerated from source systems; OCR does not apply to EDM profiles</td></tr>
+            <tr><td>NPA (Publishers + private app definitions)</td><td>ZTNA/SDP: Cato Client → PoP → WAN Firewall</td><td>No per-enclave connectors — apps are reachable via the site Socket/vSocket; Browser Access portal covers clientless/unmanaged access</td></tr>
+            <tr><td>Netskope Client + steering configuration</td><td>Cato Client</td><td>One agent, one tunnel, no steering-config/PAC layer; rebuild only proven cert-pinned exceptions</td></tr>
+            <tr><td>Cloud Explicit Proxy / PAC / proxy chaining</td><td>Not required</td><td>Socket (sites) or Client (users) steering; plan proxy-setting cleanup via GPO/MDM at cutover</td></tr>
+            <tr><td>Cloud Firewall (FWaaS)</td><td>Internet Firewall — all ports/protocols</td><td>Same rulebase as the web policy, not a separate product</td></tr>
+            <tr><td>RBI (risky / uncategorised sites)</td><td>Cato RBI (Authentic8-powered)</td><td>Distinct licence line item — confirm it's on the bill of materials</td></tr>
+            <tr><td>Cloud Confidence Index (0–100, 85k+ apps)</td><td>App Catalog risk score (0–10, ACE)</td><td>Rules migrate cleanly by category/risk band; audit any policy pinned to specific CCI scores</td></tr>
+            <tr><td>Coaching / notification templates</td><td>Prompt action (Internet Firewall)</td><td>Warn-and-continue only — no written-justification capture; set expectations honestly</td></tr>
+            <tr><td>Borderless SD-WAN / SASE Gateway appliances</td><td>Cato Socket / vSocket</td><td>Zero-touch thin edges; policy lives in the cloud</td></tr>
+            <tr><td>IPsec/GRE tunnels into NewEdge</td><td>Socket site (preferred) or IPsec IKEv2 site (interim)</td><td>Legacy firewalls can tunnel to a Cato PoP as a stepping stone before Sockets ship</td></tr>
+            <tr><td>IdP / SCIM provisioning</td><td>Cato SCIM — Entra ID, Okta, OneLogin</td><td>Both platforms provision independently from one IdP — stand Cato up in parallel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">Recommended migration path</div>
+      <h2>Five phases, cohort by cohort</h2>
+      <p>
+        Anchored to the Cato PS methodology (Discover &amp; Design → Pilot, Build &amp; Initial
+        Rollout → Advanced Security &amp; Rollout → Tune &amp; Optimise) and the PS
+        competitor-migration policy pattern: <strong>Export → Review &amp; Map → Deploy →
+        Optimise</strong>. The unit of migration is the <em>cohort</em> — a steering population
+        (Client users, PAC users, a tunnelled site) that cuts over and rolls back as one.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Discover &amp; design — export the estate, map it, plan the cohorts</h4>
+          <p>Inventory the tenant via the console and REST API v2 — the API exposes some but not
+          all configuration, so expect manual export and screenshots for the rest: real-time
+          protection policies, DLP profiles (flag which use EDM/fingerprinting/OCR), steering
+          configurations and exception lists, PAC/explicit-proxy usage, IPsec/GRE tunnel inventory,
+          Cloud Firewall rules, NPA app definitions and Publisher placement, tenant restrictions,
+          notification templates, API Data Protection scope, SIEM feeds and the IdP/SCIM source.</p>
+          <p>Classify every user and site into a steering cohort, map policies to Cato constructs
+          (per the table above — refactor to Cato best practice, don't lift-and-shift), design TLS
+          inspection seeded from Netskope's SSL bypass list, and stand up Cato SCIM alongside
+          Netskope's from the same IdP. Begin rebuilding EDM datasets from the original source
+          systems — they cannot be exported from Netskope.</p>
+        </li>
+        <li>
+          <h4>Pilot — sockets and DC/vSockets first, then swap the client per cohort</h4>
+          <p><span class="path">Security → TLS Inspection</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Deploy Sockets at pilot sites <strong>and the datacentre/cloud vSockets early</strong>,
+          so private apps are on-net before any user migrates — this is what removes the need for
+          Publisher-style connectors. Start policy from the Default Recommended CASB/DLP policy and
+          layer the mapped rules on top, DLP in monitor mode.</p>
+          <p>For the pilot user cohort: uninstall the Netskope Client and install the Cato Client
+          in the same maintenance window via Intune/JAMF/SCCM, enforce Client Connectivity Policy
+          and posture checks, and validate internet egress, private-app access (replacing NPA
+          paths), tenant controls and SIEM flow. Stand up the Browser Access portal for today's
+          NPA browser-access and unmanaged-device population.</p>
+        </li>
+        <li>
+          <h4>Rollout — staged TLS inspection, wave cutover, NPA retirement per app group</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Enable TLS inspection in planned stages (PS runs TLSi as phases 1–4 across the
+          rollout) and move DLP from monitor to block per profile as false positives are tuned.
+          Cut user cohorts (SDP migration groups) over in scheduled waves with posture analysis
+          between them. Replace site IPsec/GRE-to-NewEdge with Sockets wave by wave — a site can
+          run the legacy tunnel for not-yet-migrated VLANs while the Socket takes the migrated
+          ones, or ride Cato as an IPsec IKEv2 site until its Socket ships.</p>
+          <p>Retire NPA <strong>per app group</strong>: once an app's site or VPC is behind a
+          Socket/vSocket and its WAN Firewall and posture rules pass acceptance, retire the
+          matching NPA app definition. Remove a Publisher only when every app it fronts has moved.</p>
+        </li>
+        <li>
+          <h4>Co-exist at the network and API layers only — never on the endpoint</h4>
+          <p>Sites can run Netskope tunnels and Cato Sockets side by side on separate VLANs and
+          cohorts indefinitely. <strong>Netskope API Data Protection keeps scanning SaaS data at
+          rest throughout the inline migration</strong> — it is out-of-band and conflict-free, so
+          keep it licensed until Cato SaaS Security API coverage is confirmed for the customer's
+          full app list. The endpoint is the exception: swap, don't overlap (see below).
+          PAC/explicit-proxy users are the lowest-risk cohort — their cutover is a proxy-setting
+          change — so stage them early as the pilot.</p>
+        </li>
+        <li>
+          <h4>Tune &amp; decommission in order — API-CASB last</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Event analysis, rule tightening, removal of temporary bypasses, bandwidth/QoS tuning.
+          Then wind Netskope down in dependency order: inline SWG/CASB cohorts → Cloud Firewall
+          tunnels → NPA and Publishers → <strong>API Data Protection last</strong> → steering
+          artefacts (PAC files, proxy GPOs, tunnel configs) → tenant and licence termination. Keep
+          the Netskope tenant licensed until the final wave signs off — negotiate that overlap
+          window commercially up front.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Swap the client, overlap the network</h2>
+      <p>
+        Both agents want to own the device's traffic. Netskope's own interoperability guidance
+        shows the failure mode when another full tunnel is present: the Netskope Client tunnels
+        <em>inside</em> the other VPN, the path degrades and inspection value drops. On the Cato
+        side, running the Cato Client in full-tunnel mode alongside a third-party VPN is not
+        recommended — and <strong>on macOS the Cato Client cannot run alongside another connected
+        VPN profile at all</strong>. So the endpoint move is <strong>replace, not coexist</strong>:
+        per cohort, uninstall one client and install the other in the same window. If a short
+        overlap is unavoidable, add Cato PoP/SSO destinations to the Netskope steering exceptions
+        and keep the Cato Client disconnected until its cutover moment.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cohort-based Netskope-to-Cato co-existence</title>
+          <desc id="dg1-desc">A wave 2 user cohort still on the Netskope Client and a site firewall IPsec/GRE tunnel steer to the Netskope NewEdge cloud, which reaches private apps through an NPA Publisher — all interim paths. A migrated wave 1 cohort on the Cato Client and the site's Cato Socket steer to a Cato PoP on the global private backbone, which reaches the London DC apps behind a Socket X1700 — the target paths.</desc>
+
+          <!-- Interim lanes (amber) -->
+          <path class="lane lane-limit" d="M 216 78 C 290 74, 330 72, 396 72"/>
+          <path class="lane lane-limit" d="M 216 222 C 300 196, 340 140, 398 100"/>
+          <path class="lane lane-limit" d="M 600 74 C 660 70, 700 72, 756 76"/>
+          <path class="lane lane-limit" d="M 850 114 C 854 180, 854 260, 850 326"/>
+
+          <!-- Target lanes (green) -->
+          <path class="lane lane-allow" d="M 216 398 C 300 396, 380 384, 464 372"/>
+          <path class="lane lane-allow" d="M 216 250 C 310 282, 390 318, 468 348"/>
+          <path class="lane lane-allow" d="M 532 352 C 610 336, 670 344, 756 356"/>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="500" cy="364" rx="150" ry="46"/>
+          <circle cx="362" cy="378" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="640" cy="384" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="500" y="430" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+          <circle class="pulse-ring" cx="500" cy="360" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="500" cy="360" r="30"/>
+          <text class="dg-label" x="500" y="300" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="500" y="316" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · CASB · DLP · ZTNA · FWaaS</text>
+
+          <!-- Left: cohorts and site -->
+          <rect class="dg-node" x="36" y="52" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="126" y="76" text-anchor="middle">Wave 2 user cohort</text>
+          <text class="dg-sub" x="126" y="94" text-anchor="middle">Netskope Client</text>
+
+          <rect class="dg-node" x="36" y="196" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="126" y="220" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="126" y="238" text-anchor="middle">FW IPsec/GRE — interim</text>
+          <text class="dg-tiny" x="126" y="256" text-anchor="middle">Socket X1500 — target</text>
+
+          <rect class="dg-node-green" x="36" y="368" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="126" y="392" text-anchor="middle">Wave 1 user cohort</text>
+          <text class="dg-sub" x="126" y="410" text-anchor="middle">Cato Client</text>
+
+          <!-- Top centre: NewEdge -->
+          <rect class="dg-node-dark" x="400" y="44" width="200" height="64" rx="10"/>
+          <text class="dg-label-inv" x="500" y="70" text-anchor="middle">Netskope NewEdge</text>
+          <text class="dg-sub-inv" x="500" y="90" text-anchor="middle">SWG · CASB · NPA</text>
+
+          <!-- Right: Publisher + DC -->
+          <rect class="dg-node" x="760" y="52" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="850" y="76" text-anchor="middle">NPA Publisher</text>
+          <text class="dg-sub" x="850" y="94" text-anchor="middle">dormant after cutover</text>
+
+          <rect class="dg-node-green" x="760" y="330" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="850" y="354" text-anchor="middle">London DC apps</text>
+          <text class="dg-sub" x="850" y="372" text-anchor="middle">Socket X1700</text>
+          <text class="dg-tiny" x="850" y="390" text-anchor="middle">private apps on-net</text>
+
+          <!-- Lane annotations -->
+          <text class="dg-tiny" x="838" y="224" text-anchor="end" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">NPA private access</text>
+          <text class="dg-tiny" x="650" y="326" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">WAN FW · ZTNA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Interim — steered via Netskope NewEdge</span>
+          <span class="key"><span class="swatch allow"></span> Target — steered via Cato PoP</span>
+        </div>
+        <div class="diagram-caption">
+          Cohort-based swap: each wave uninstalls the Netskope Client and installs the Cato Client
+          in one window — never both tunnels at once. The site runs parallel paths per VLAN; the
+          NPA Publisher stays dormant as the private-app rollback until every app it fronts is
+          accepted on Cato.
+        </div>
+      </div>
+
+      <h3>Rollback levers, per cohort</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>Client users — redeploy the Netskope Client</h4><p>Keep the MDM package (Intune/JAMF/SCCM) and the steering configuration live until the wave is signed off; rollback is a push, not a project.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Explicit-proxy users — revert the PAC</h4><p>Roll back the PAC file or proxy GPO. The easiest cohort in both directions — which is exactly why they pilot first.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>Sites — re-point the tunnel</h4><p>The firewall's IPsec/GRE tunnel to NewEdge stays configured (or the site rides a Cato IPsec IKEv2 interim); re-point the default route to fall back.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Private apps — dormant NPA Publishers</h4><p>Leave Publishers and app definitions in place, disabled or scoped down, until each app group passes acceptance on Cato. Identity rolls back for free — both SCIM apps provision independently from the IdP.</p></div></div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">Commercial lever</div>
+        <p>Keep the Netskope tenant licensed until the final wave completes — and negotiate that
+        overlap window up front, not mid-migration when the renewal date becomes leverage against you.</p>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objection handling</div>
+      <h2>Where to be careful — and honest</h2>
+      <p>
+        Netskope's data-protection stack is its crown jewel. Win on platform convergence and
+        operations; <strong>neutralise</strong> on features — the pilot's job is to prove
+        equivalence on the customer's own traffic, not on datasheet counts.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">DLP fidelity gap — real, but usually narrower than it looks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Netskope advertises 3,000+ identifiers, 26+ ML classifiers and EDM/fingerprinting/OCR across 2,100+ file types; Cato offers 350+ data types plus custom types, EDM, IDM and OCR — but OCR does not apply to EDM profiles. In discovery, list the DLP rules <em>actually firing</em> (most estates enforce a small subset of what's licensed), rebuild EDM datasets from source systems, and run monitor-mode side-by-side in the pilot to compare hit parity.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">API-CASB breadth</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Netskope API Data Protection covers a wide sanctioned-app set; Cato's documented SaaS Security API connectors centre on Microsoft 365 (SharePoint, OneDrive, Exchange). If the customer scans Google Workspace, Box or Salesforce at rest, check the current Cato connector list at proposal time — and if there's a gap, retain Netskope API-CASB for those apps in the interim (it coexists cleanly) or scope the requirement honestly.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">User coaching depth</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Netskope's notification templates support justification capture, false-positive reporting and rich branding. Cato's equivalent is the Prompt action — warn-and-continue, requiring the Cato certificate on endpoints. If written-justification workflows are a hard requirement, set expectations and explore compensating controls (event follow-up in the CMA/SIEM). Do not claim parity.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Instance &amp; activity granularity</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Netskope's inline CASB can key policies on app instance and fine-grained activities. Cato provides granular Application Control rules, tenant awareness and header-injection Tenant Restrictions — validate the customer's specific app/activity/instance matrix app-by-app during the pilot rather than asserting blanket equivalence.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Steering-exception archaeology</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Years of Netskope steering exceptions — cert-pinned apps, VPN gateways, problem SaaS — encode real operational knowledge. Mine that list to seed Cato's TLS-inspection bypasses and Client split-tunnel exclusions instead of rediscovering the failures in production. The SSL bypass list is the single best import.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NPA specifics</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Publisher DNS behaviour (private DNS resolved via Publishers) must be re-provided by site-level DNS design on Cato; NPA's L3 client-to-client and server-to-client modes need explicit design review. Cato's routed WAN generally makes these simpler, not harder — but map them, don't assume.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">App risk-rating depth</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CCI rates 85,000+ apps on 50+ attributes; Cato's App Catalog scores 0–10 via the Application Credibility Engine and is overridable per account. Rules migrate cleanly by category or risk band — but audit any policy pinned to specific CCI scores.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">RBI licensing</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Netskope bundles RBI for risky/uncategorised sites with certain NG-SWG tiers; Cato RBI is a distinct Authentic8-powered service. Check the bill of materials so isolation use-cases don't silently drop out of scope.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">Positioning discipline</div>
+        <p>Don't over-claim “single console” — Netskope One presents SSE and SD-WAN in one console
+        with one policy framework per its own materials. And don't attack NewEdge performance —
+        reviewers rarely leave over latency. The differential is the <strong>converged single-pass
+        dataplane and one policy model across WAN, internet, remote and cloud</strong> — plus
+        removing the appliance, Publisher and PAC scaffolding — not console counting.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/6266293423773-What-is-Cato-s-ZTNA-Solution" target="_blank" rel="noopener">What is Cato's ZTNA Solution (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32622848658461-How-Cato-Protects-Sensitive-Data-with-DLP" target="_blank" rel="noopener">How Cato Protects Sensitive Data with DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/sections/5352915014557-Cato-SaaS-Security-API" target="_blank" rel="noopener">Cato SaaS Security API — connector list (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/23739970551453-Using-the-TLS-Inspection-Configuration-Wizard" target="_blank" rel="noopener">TLS Inspection Configuration Wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4411554844817-Preparing-to-Install-the-Cato-Client" target="_blank" rel="noopener">Preparing to Install the Cato Client — VPN co-existence limits (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/glossary/how-to-implement-sase/" target="_blank" rel="noopener">How to Implement SASE — public checklist</a></li>
+            <li><a href="https://docs.netskope.com/en/traffic-steering" target="_blank" rel="noopener">Netskope traffic steering (vendor docs)</a></li>
+            <li><a href="https://docs.netskope.com/en/netskope-client-interoperability" target="_blank" rel="noopener">Netskope Client interoperability (vendor docs)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-netskope-policy.html">Netskope Policy Migration</a></li>
+            <li><a href="migration-zscaler.html">Zscaler (ZIA / ZPA) to Cato</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

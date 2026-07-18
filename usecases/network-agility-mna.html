@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agility: M&amp;A Integration at Speed — Cato Use Case Library</title>
+<meta name="description" content="Onboard acquired companies in days, not quarters — API-driven site deployment, Entra ID integration and identity-aware policy from day one.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-agility-mna">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / M&amp;A Integration at Speed</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Agility: M&amp;A Integration at Speed</h1>
+    <p class="lede">
+      The deal closes and the clock starts — the business expects two companies to operate as one
+      long before a traditional network integration plan can deliver. This use case shows how Cato
+      brings acquired sites on-net in days: sites deployed as code through the Cato API, Entra ID
+      integrated for user provisioning and identity awareness, and acquired usernames usable in
+      network policy from day one.
+    </p>
+    <div class="meta-row">
+      <span class="tag">M&amp;A</span><span class="tag">API</span><span class="tag">Terraform</span><span class="tag">Entra ID</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../3%20-%20Network%20use%20cases/Agility%20use%20case%20overiview.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        M&amp;A is where network agility gets tested in public. Every acquisition arrives with its own
+        estate — MPLS contracts, firewalls, VPN concentrators, a separate directory — and the value of
+        the deal depends on how quickly the two organisations can genuinely work together. Integration
+        measured in quarters is integration the business notices.
+      </p>
+      <p>
+        The objective: move from “MPLS-to-anything” legacy plumbing to an elegant, future-proof design —
+        <strong>a converged platform that unifies and simplifies the target operating model</strong>, so
+        each new acquisition is an onboarding exercise, not a network project. Bring off-net sites
+        on-net, deploy with ease and at scale, and decrease operational time-to-value.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Why M&amp;A network integration drags</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">Quarters</div><div class="stat-label">Typical legacy timeline — circuit orders, firewall meshes and appliance builds at every acquired site</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">Days</div><div class="stat-label">To bring acquired sites on-net with API-driven Socket deployment</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">Day 1</div><div class="stat-label">Acquired users named in network policy via Entra ID provisioning</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The legacy integration project</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>New circuits or MPLS contract novations before anything moves</li>
+            <li>Site-to-site VPN meshes bolted between two firewall estates</li>
+            <li>Hardware refresh and hands-on engineering at every acquired site</li>
+            <li>Two security stacks, two policy models, months of parallel run</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The identity gap</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Two directories with no common policy language between them</li>
+            <li>Acquired users waiting on directory trusts — or sharing VPN accounts</li>
+            <li>Network policy written in IP ranges, blind to who is connecting</li>
+            <li>No per-user visibility or audit trail across the combined estate</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When you last acquired a company, how long did it take before their users could reach your
+        applications under your security policy — and what did you compromise on to get there?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Acquired sites on-net in days, identities in policy on day one</h2>
+      <p>
+        Everything Cato needs to onboard a site is an API call. Define the acquired sites as code —
+        Terraform against the Cato GraphQL API — and the sites, their ranges and their locations exist
+        in the account in minutes. Ship a Socket to each site; it connects to the nearest PoP and the
+        acquired estate joins the same global network, under the same converged security policy, as
+        London DC and Bracknell Lab. In parallel, Entra ID integration provisions the acquired users
+        and groups, so policy can name them immediately — no directory trust project required.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">M&amp;A onboarding: acquired sites deployed through the Cato API onto the global backbone</title>
+          <desc id="dg1-desc">Three acquired-company sites and a Microsoft Entra ID tenant on the left. Terraform pushes site definitions through the Cato API into the Cato cloud, a PoP ring on the global private backbone. Animated green lanes show acquired-site traffic joining the fabric and reaching the existing corporate sites, London DC and Bracknell Lab, on the right. A dashed line shows Entra ID provisioning users and groups into Cato.</desc>
+
+          <!-- Acquired company group -->
+          <text class="dg-label" x="126" y="36" text-anchor="middle">Acquired company</text>
+          <rect x="28" y="48" width="196" height="250" rx="14" fill="none" stroke="var(--ink-3)" stroke-width="1.2" stroke-dasharray="6 6"/>
+
+          <rect class="dg-node" x="46" y="64" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="126" y="86" text-anchor="middle">Leeds Office</text>
+          <text class="dg-sub" x="126" y="104" text-anchor="middle">Socket X1500 — live</text>
+          <rect class="dg-node-green" x="158" y="56" width="52" height="18" rx="9"/>
+          <text class="dg-tiny" x="184" y="69" text-anchor="middle" font-weight="700">DAY 1</text>
+
+          <rect class="dg-node" x="46" y="136" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="126" y="158" text-anchor="middle">Sheffield Plant</text>
+          <text class="dg-sub" x="126" y="176" text-anchor="middle">Socket X1500 — shipped</text>
+
+          <rect class="dg-node" x="46" y="208" width="160" height="54" rx="10"/>
+          <text class="dg-label" x="126" y="230" text-anchor="middle">Aberdeen Depot</text>
+          <text class="dg-sub" x="126" y="248" text-anchor="middle">Socket X1500 — shipped</text>
+
+          <!-- Entra ID -->
+          <rect class="dg-node-dark" x="46" y="330" width="160" height="56" rx="10"/>
+          <text class="dg-label-inv" x="126" y="353" text-anchor="middle">Microsoft Entra ID</text>
+          <text class="dg-sub-inv" x="126" y="371" text-anchor="middle">Acquired-company tenant</text>
+
+          <!-- Terraform / API -->
+          <rect class="dg-node-dark" x="290" y="24" width="180" height="54" rx="10"/>
+          <text class="dg-label-inv" x="380" y="47" text-anchor="middle">Terraform · Cato API</text>
+          <text class="dg-sub-inv" x="380" y="65" text-anchor="middle">Site definitions as code</text>
+          <path class="lane-static" fill="none" style="stroke-dasharray:4 5" d="M 382 82 C 405 120, 445 152, 496 175"/>
+          <polygon points="504,179 491,178 495,170" fill="var(--ink-3)"/>
+          <text class="dg-tiny" x="436" y="106">Sites created via GraphQL API</text>
+
+          <!-- Cato cloud -->
+          <ellipse class="dg-backbone" cx="520" cy="200" rx="150" ry="52"/>
+          <circle cx="379" cy="218" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="661" cy="182" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="578" y="270" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="520" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="200" r="30"/>
+          <text class="dg-label" x="558" y="130" text-anchor="middle">Cato Cloud</text>
+          <text class="dg-tiny" x="558" y="146" text-anchor="middle">SPACE · FWaaS · routing · identity</text>
+
+          <!-- Acquired sites -> PoP (allow lanes) -->
+          <path class="lane lane-allow" d="M 230 91 C 320 100, 400 160, 494 186"/>
+          <path class="lane lane-allow" d="M 230 163 C 320 170, 400 190, 488 200"/>
+          <path class="lane lane-allow" d="M 230 235 C 320 240, 400 222, 494 214"/>
+
+          <!-- PoP -> existing corporate sites -->
+          <path class="lane lane-allow" d="M 548 188 C 640 168, 700 150, 764 138"/>
+          <path class="lane lane-allow" d="M 548 212 C 640 232, 700 262, 764 278"/>
+
+          <!-- Entra sync (control plane) -->
+          <path class="lane-static" fill="none" style="stroke-dasharray:4 5" d="M 208 358 C 340 352, 440 280, 502 230"/>
+          <text class="dg-tiny" x="378" y="372" text-anchor="middle">SCIM — users &amp; groups provisioned</text>
+
+          <!-- Existing estate -->
+          <text class="dg-tiny" x="850" y="94" text-anchor="middle">Existing Cato estate</text>
+          <rect class="dg-node" x="770" y="110" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="850" y="133" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="850" y="151" text-anchor="middle">Socket X1500 · core apps</text>
+
+          <rect class="dg-node" x="770" y="250" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="850" y="273" text-anchor="middle">Bracknell Lab</text>
+          <text class="dg-sub" x="850" y="291" text-anchor="middle">Socket X1500 · HQ</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Acquired-site traffic — on-net over the backbone</span>
+        </div>
+        <div class="diagram-caption">Terraform pushes site definitions through the Cato API; Sockets at the acquired sites connect to the nearest PoP and the two estates become one network. Dashed lines are control plane: API site creation and Entra ID user provisioning.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">⚙️</div><div><h4>Deploy with ease and at scale via the Cato API</h4><p>Define x sites as code and create them in one Terraform run. Sockets are zero-touch: ship, plug in, and each site joins the backbone — no engineer on a plane.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Entra ID for provisioning and identity awareness</h4><p>Connect the acquired company's Entra ID tenant and its users and groups are provisioned into Cato automatically — identity awareness across the combined estate.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>Usernames in network policy immediately</h4><p>WAN firewall rules reference acquired users and groups by name from day one — least-privileged access during integration, without waiting for directory trusts.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Decrease operational time-to-value</h4><p>No circuit orders, no firewall meshes, no appliance builds. One converged platform simplifies the target operating model — and the next acquisition is just as fast.</p></div></div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map showing Cato PoP locations as green ring markers across North America, South America, Europe, the Middle East, Africa, Asia and Australia" loading="lazy">
+        <figcaption>Wherever the acquisition lands, there is a Cato PoP nearby — the acquired sites connect locally and inherit the global estate.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor to their last deal</div>
+        <p>Ask about the most recent acquisition (or divestiture): how long did network integration take,
+        and what did it cost in people and circuits? Run the demo as a replay of that deal done the Cato way.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame the scenario</h4>
+          <p>The acquisition closed on Friday. The goal: acquired sites on-net and acquired users reaching
+          corporate apps — under your policy, visible by name — within days. Everything that follows is
+          driven from a couple of files and one directory integration.</p>
+        </li>
+        <li>
+          <h4>Create the site details file</h4>
+          <p>Show the site definitions — one block per acquired site (or a CSV fed into
+          <code>for_each</code> for larger deals). Name, connection type, network range, location: that is
+          all the Cato API needs.</p>
+<pre class="code"><span class="cmt"># sites.tf — one resource per acquired site</span>
+<span class="kw">resource</span> "cato_socket_site" "leeds" {
+  name            = "ACQ-Leeds Office"
+  site_type       = "BRANCH"
+  connection_type = "SOCKET_X1500"
+  native_range = {
+    native_network_range = "10.60.1.0/24"
+    local_ip             = "10.60.1.1"
+  }
+  site_location = {
+    country_code = "GB"
+    timezone     = "Europe/London"
+  }
+}</pre>
+        </li>
+        <li>
+          <h4>Run Terraform</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show where the API key lives, then run <code>terraform apply</code>. The plan lists every
+          acquired site; the GraphQL API creates them in seconds. Point out this is the same workflow
+          whether the deal brings three sites or three hundred.</p>
+        </li>
+        <li>
+          <h4>Confirm site creation in CMA</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The new sites appear in the topology alongside London DC and Bracknell Lab. Explain the
+          physical step: Sockets ship to site, anyone plugs them in, and zero-touch provisioning brings
+          each site up on the nearest PoP.</p>
+        </li>
+        <li>
+          <h4>Show Entra-provisioned users</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Show users and groups synced from the acquired company's Entra ID tenant — provisioned
+          automatically, no manual account creation. Pick a user (say “Priya” from the acquired side)
+          to carry through the next step.</p>
+        </li>
+        <li>
+          <h4>Use the acquired group in a WAN firewall rule</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Open (or build live) a rule with the Entra-provisioned acquired-company group as the source
+          and the London DC application ranges as the destination. The close: identity-aware,
+          least-privileged access for the acquired workforce, written by name, on day one — and every
+          allow and block attributed to a username in <span class="path">Monitor → Events</span>.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://github.com/catonetworks/cato-cli" target="_blank" rel="noopener">catocli on GitHub</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De-risking 3rd-Party & Supply Chain Access — Cato Use Case Library</title>
+<meta name="description" content="Replace legacy VPN access for contractors and suppliers with identity-driven, posture-aware ZTNA — least-privileged access without appliances.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-third-party">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / De-risking 3rd-Party Access</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>De-risking 3rd-Party &amp; Supply Chain Access</h1>
+    <p class="lede">
+      Contractors, suppliers and partners need access to a handful of internal applications —
+      legacy VPN gives them the whole network. This use case replaces implicit-trust remote access
+      with identity-driven, posture-aware ZTNA: least-privileged access, enforced in the cloud,
+      with no appliances to deploy.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ZTNA</span><span class="tag">Device Posture</span><span class="tag">FWaaS</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span><span class="tag">Client Connectivity Policy</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../1%20-%20Access%20use%20cases/De-risking%203rd%20Party%20Supply%20Chain%20Access/De-risking%203rd%20Party%20Access%20Use%20Case.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Third-party and supply-chain access is one of the most exploited paths into the enterprise.
+        The people who need access — IT providers, debt-collection agencies, logistics partners,
+        offshore developers — are exactly the users the business controls least: unmanaged devices,
+        unknown security posture, credentials that outlive the contract.
+      </p>
+      <p>
+        The objective is simple to state and hard to do with legacy tooling:
+        <strong>give every third party access to exactly what they need, nothing more, and prove it.</strong>
+      </p>
+    </section>
+
+    <section id="impact" class="reveal">
+      <div class="section-kicker">The risk, quantified</div>
+      <h2>Impact of 3rd-party supply-chain breaches</h2>
+      <p>High-profile organisations have been breached through supplier and third-party access — recent examples worth naming in the room:</p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">£2<span class="unit">B</span></div><div class="stat-label">Estimated cost to the UK economy — Jaguar Land Rover (2025)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">4.2<span class="unit">M</span></div><div class="stat-label">Customers' PII leaked — Truist Bank via 3rd-party agency (2024)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">£300<span class="unit">M</span></div><div class="stat-label">Losses from ~2 months of e-commerce downtime — M&amp;S (2025)</div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Jaguar Land Rover <span class="tag">2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Compromised credentials allowed access to an internal Jira server, which was exploited and PII leaked. Huge reputational damage and an estimated £2B cost to the UK economy.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Truist Bank <span class="tag">2024</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A third-party debt-collection agency was breached — and that agency had access to sensitive Truist data. PII of nearly 4.2 million people leaked; lawsuits, reputational damage, and an estimated $400–600M in damages.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Marks &amp; Spencer <span class="tag">2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Compromised credentials from a contractor IT provider. The online store was down for nearly two months — losses up to £300M and a £1B drop in market valuation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="legacy" class="reveal">
+      <div class="section-kicker">Cause of risk</div>
+      <h2>Why legacy 3rd-party access fails</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Legacy VPN</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Designed for connectivity, not security</li>
+            <li>Overly permissive — built on implicit trust</li>
+            <li>No segmentation → free lateral movement once inside</li>
+            <li>No visibility of what third parties actually do</li>
+            <li>Compromised credentials unlock the whole network</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">On-premise appliances</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Constant maintenance, patching and management</li>
+            <li>Extra appliances needed to bolt on security</li>
+            <li>Scalability challenges as third-party count grows</li>
+            <li>No consistent security across regions and entities</li>
+            <li>Increases both time and cost per onboarded supplier</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many third parties can reach more than the one application they were onboarded for —
+        and how would you know if one of their accounts was compromised today?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Removing risk through least-privileged access</h2>
+      <p>
+        Cato enforces a consistent, identity-driven policy on every user, everywhere. Access decisions
+        combine <strong>who the user is</strong> (IdP identity and group) with <strong>the state of their
+        device</strong> (posture profile: EPP/EDR running, disk encryption, OS version, client version…),
+        continuously verified throughout the session — not just at login.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">ZTNA access decisions by identity and device posture</title>
+          <desc id="dg1-desc">Three users attempt access through a Cato PoP. A compliant, authorised user reaches cloud, datacentre and SaaS resources. An authorised user on a non-compliant device reaches only the internet — access to cloud and datacentre is blocked. A non-authorised, non-compliant user is blocked before the PoP.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="165" ry="52"/>
+          <circle cx="318" cy="238" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="212" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="292" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+          <!-- Destinations (left) -->
+          <rect class="dg-node" x="34" y="44" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="68" text-anchor="middle">Cloud DC — Azure</text>
+          <text class="dg-sub" x="114" y="86" text-anchor="middle">Cato vSocket</text>
+
+          <rect class="dg-node" x="34" y="192" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="216" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="114" y="234" text-anchor="middle">Socket X1500 · internal apps</text>
+
+          <rect class="dg-node" x="34" y="340" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="364" text-anchor="middle">SaaS &amp; Internet</text>
+          <text class="dg-sub" x="114" y="382" text-anchor="middle">M365 · Salesforce · WWW</text>
+
+          <!-- Green: compliant + authorised -->
+          <path class="lane lane-allow" d="M 806 84 C 700 84, 610 150, 510 202"/>
+          <path class="lane lane-allow" d="M 452 204 C 360 160, 280 90, 196 74"/>
+          <path class="lane lane-allow" d="M 446 220 C 370 221, 280 221, 196 221"/>
+          <path class="lane lane-allow" d="M 452 238 C 360 280, 280 352, 196 368"/>
+
+          <!-- Orange: authorised, non-compliant device -->
+          <path class="lane lane-limit" d="M 806 226 C 720 228, 610 228, 514 224"/>
+          <path class="lane lane-limit" d="M 452 232 C 390 262, 330 330, 220 360"/>
+          <path class="lane lane-limit" d="M 452 210 C 400 185, 360 160, 316 136"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 302 118 L 326 142"/><path class="lane-x" d="M 326 118 L 302 142"/>
+          </g>
+          <path class="lane lane-limit" d="M 448 226 C 400 232, 350 240, 306 244"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 284 232 L 308 256"/><path class="lane-x" d="M 308 232 L 284 256"/>
+          </g>
+
+          <!-- Red: not authorised, non-compliant -->
+          <path class="lane lane-block" d="M 806 372 C 740 370, 690 348, 646 316"/>
+          <g aria-label="blocked before PoP">
+            <path class="lane-x" d="M 626 296 L 652 322"/><path class="lane-x" d="M 652 296 L 626 322"/>
+          </g>
+
+          <!-- Cato PoP labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SPACE · ZTNA · FWaaS · CASB · DLP</text>
+
+          <!-- Users (right) -->
+          <g>
+            <circle cx="836" cy="84" r="23" fill="var(--status-good)"/>
+            <circle cx="836" cy="77" r="6.5" fill="#fff"/>
+            <path d="M 823 97 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="126" text-anchor="middle">Authorised user</text>
+            <text class="dg-sub" x="836" y="142" text-anchor="middle">Compliant device</text>
+          </g>
+          <g>
+            <circle cx="836" cy="226" r="23" fill="var(--lane-limit)"/>
+            <circle cx="836" cy="219" r="6.5" fill="#fff"/>
+            <path d="M 823 239 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="268" text-anchor="middle">Authorised user</text>
+            <text class="dg-sub" x="836" y="284" text-anchor="middle">Non-compliant device</text>
+          </g>
+          <g>
+            <circle cx="836" cy="372" r="23" fill="var(--status-critical)"/>
+            <circle cx="836" cy="365" r="6.5" fill="#fff"/>
+            <path d="M 823 385 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="414" text-anchor="middle">Unauthorised user</text>
+            <text class="dg-sub" x="836" y="430" text-anchor="middle">Non-compliant device</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> WAN + internet — full access</span>
+          <span class="key"><span class="swatch limit"></span> Internet only — WAN blocked</span>
+          <span class="key"><span class="swatch block"></span> Blocked — geo/user/posture rules</span>
+        </div>
+        <div class="diagram-caption">Access decisions combine user authorisation with live device posture. The same user gets different access as their device state changes.</div>
+      </div>
+
+      <h3>Zero trust: trust but verify — continuously</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Consistent policy for users everywhere</h4><p>Identity-driven and globally enforced from every PoP — no backhauling to a single VPN appliance, no regional policy drift.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Access control with device posture</h4><p>Posture profiles (EPP/EDR present, encryption, OS patch level) gate access before and during every session.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Threat prevention on every flow</h4><p>FWaaS, SWG, IPS and anti-malware inspect third-party traffic the same as employee traffic — nothing rides in unexamined.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Sensitive data protection</h4><p>DLP and risk-based application controls (CASB) stop contractors exfiltrating data to personal cloud apps.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — dig into the “why”</div>
+        <p>Open with discovery: why are they looking at third-party access security now? Which suppliers,
+        which applications, what triggered it (audit, incident, renewal)? Anchor the demo to their answer.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Set the scene with the business impact</h4>
+          <p>Walk the breach examples above — pick the one closest to the prospect's industry.
+          Then contrast with how their third parties connect today (usually VPN + jump hosts).</p>
+        </li>
+        <li>
+          <h4>Show initial connectivity control</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Show geo-blocking rules, rules scoped to user groups, and internet-only rules — the first
+          gate that decides who can even establish a tunnel, from where, on what device.</p>
+        </li>
+        <li>
+          <h4>Show least-privileged WAN access</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Walk the rule set: contractor user groups allowed to reach only their named resources;
+          corporate users required to match a compliant device-posture profile for wider access.</p>
+        </li>
+        <li>
+          <h4>Show device posture profiles</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Open a posture profile and show the criteria available — running EPP/EDR, disk encryption,
+          OS version, domain membership, client version. Explain continuous (not login-only) evaluation.</p>
+        </li>
+        <li>
+          <h4>Live proof: the contractor experience</h4>
+          <p>Log in as a contractor user. Show them <strong>blocked</strong> from an internal resource but able
+          to reach their permitted portal. The two demo prop pages ship with this use case:</p>
+          <ul>
+            <li><a href="../1%20-%20Access%20use%20cases/De-risking%203rd%20Party%20Supply%20Chain%20Access/contractor%20portal.html" target="_blank" rel="noopener">Contractor portal</a> — the resource the contractor <em>can</em> reach</li>
+            <li><a href="../1%20-%20Access%20use%20cases/De-risking%203rd%20Party%20Supply%20Chain%20Access/internal%20portal.html" target="_blank" rel="noopener">Internal portal</a> — the resource that stays blocked</li>
+          </ul>
+        </li>
+        <li>
+          <h4>Close on visibility</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to the contractor's identity: every allow and block, fully attributed.
+          “This is the audit trail you don't have today.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="talk-track" class="reveal">
+      <div class="section-kicker">Talk track</div>
+      <h2>Narrative for the solution slide</h2>
+      <div class="card">
+        <p><strong>Hybrid workforce reality.</strong> Enterprises need to connect users securely wherever they are —
+        office, customer sites, travel, home. Third parties are part of that same workforce now.</p>
+        <p><strong>Consistent policy, delivered from the cloud.</strong> Cato enforces policy based on identity, distributed
+        globally and enforced consistently — no backhauling across the world to a single VPN appliance, no
+        global instance sprawl to achieve the same goal.</p>
+        <p><strong>True zero trust with continuous verification.</strong> Access control, threat prevention and data
+        protection are enforced on all traffic throughout the session — proven at scale when customers moved
+        their entire workforce remote during COVID without giving up security.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/sections/4413280525201" target="_blank" rel="noopener">Client Access &amp; Device Posture (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

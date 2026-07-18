@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Security with CASB &amp; DLP — Cato Use Case Library</title>
+<meta name="description" content="Discover shadow IT, control sanctioned SaaS, and stop sensitive data walking out — six field-proven CASB/DLP scenarios with the licence mapping.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-data-casb-dlp">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Data Security</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Data Security with CASB &amp; DLP</h1>
+    <p class="lede">
+      Every industry is pushing its core processes into SaaS and cloud-hosted applications — and the
+      data goes with them. This use case shows how Cato discovers every cloud and AI app in use,
+      governs access against compliance frameworks, and stops PII, PHI and payment-card data walking
+      out — six field-proven CASB/DLP scenarios, each mapped to the licence that unlocks it.
+    </p>
+    <div class="meta-row">
+      <span class="tag">CASB</span><span class="tag">DLP</span><span class="tag">Shadow IT</span>
+      <span class="tag">SaaS Governance</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/Data_Security-Use_Cases.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The business case for SaaS and cloud application access is being written by the business,
+        not by IT. Whichever industry your prospect is in, the processes that hold their most
+        sensitive data are moving into cloud apps — and often into apps security never sanctioned.
+      </p>
+      <p>
+        The objective: <strong>see every cloud and AI application in use, govern how it is used,
+        and make sure sensitive data only moves where policy says it can.</strong>
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Industry</th><th>What is driving data into SaaS &amp; cloud apps</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Insurance</strong></td><td>Policy admin systems · self-service portals · claims automation</td></tr>
+            <tr><td><strong>Manufacturing</strong></td><td>ERP · supply-chain integration · predictive maintenance</td></tr>
+            <tr><td><strong>Finance</strong></td><td>Digital banking · automated compliance monitoring &amp; detection · fraud detection</td></tr>
+            <tr><td><strong>Retail</strong></td><td>E-commerce storefronts · POS · inventory &amp; supply-chain management</td></tr>
+            <tr><td><strong>Legal</strong></td><td>Compliance &amp; risk management · case management · contract lifecycle management</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="challenges" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Sound familiar?</h2>
+      <p>A week in the life of the CISO whose users have discovered the cloud faster than security has:</p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">3</div><div class="stat-label">New shadow SaaS apps discovered — this week</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">300</div><div class="stat-label">Global administrators in Azure</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">40</div><div class="stat-label">Identities compromised by a fake DocuSign email</div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Ungoverned agentic AI</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Agentic AI identities operating with no governance — nobody can say what data they touch or which apps they reach.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Privilege sprawl</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Users granted local admin privilege, quietly installing whatever cloud client or browser extension gets the job done.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Third parties on VPN</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A compromised third party accessing the network over legacy VPN — with a clear route to the data-bearing applications.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many cloud applications are in use across your organisation right now — and if I asked
+        which of them hold customer PII, how long would that answer take?”</p>
+      </div>
+    </section>
+
+    <section id="pillars" class="reveal">
+      <div class="section-kicker">Three pillars</div>
+      <h2>The data security use-case family</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Cloud Discovery &amp; Control</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Discover and control access to every sanctioned and unsanctioned cloud and AI application — shadow IT <em>and</em> shadow AI.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Compliance &amp; Governance</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Assess each cloud application's security posture against compliance frameworks such as ISO 27001, SOX and PCI-DSS.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Data Loss Prevention</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Detect and prevent the sharing of sensitive data — PII, PHI and payment-card data — across web, SaaS and on-prem applications.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One inspection point for data everywhere</h2>
+      <p>
+        Because every user and site already sends its traffic through the Cato PoP, CASB and DLP are
+        not new deployments — they are policies switched on where the traffic already is. Inline,
+        Cato classifies the app, scores its risk and controls the activity (upload, download, share)
+        per user and group. Out-of-band, API integrations with sanctioned SaaS tenants extend the
+        same governance to data already at rest.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Inline CASB and DLP decisions at the Cato PoP, plus out-of-band SaaS API integration</title>
+          <desc id="dg1-desc">Traffic from an office and remote users reaches a Cato PoP running inline CASB and DLP. Sanctioned SaaS traffic is allowed and monitored. Access to an unsanctioned GenAI app is restricted with a warning. An attempt to exfiltrate credit-card data is blocked at the PoP. A separate out-of-band lane shows API integration scanning data at rest in the sanctioned SaaS tenant.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="440" cy="222" rx="160" ry="52"/>
+          <circle cx="283" cy="235" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="597" cy="209" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="440" y="292" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="440" cy="217" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="440" cy="217" r="30"/>
+          <text class="dg-label" x="400" y="140" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="400" y="155" text-anchor="middle">CASB inline · DLP · TLS inspection</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="118" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="142" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="118" y="160" text-anchor="middle">Socket X1500 — all traffic</text>
+
+          <rect class="dg-node" x="34" y="268" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="292" text-anchor="middle">Remote users</text>
+          <text class="dg-sub" x="118" y="310" text-anchor="middle">Cato Client — Priya, Marcus</text>
+
+          <path class="lane lane-static" d="M 202 147 C 280 160, 345 185, 411 204"/>
+          <path class="lane lane-static" d="M 202 297 C 280 286, 345 252, 411 230"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node-green" x="752" y="64" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="840" y="88" text-anchor="middle">Sanctioned SaaS</text>
+          <text class="dg-sub" x="840" y="106" text-anchor="middle">M365 · Salesforce · Box</text>
+
+          <rect class="dg-node" x="752" y="194" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="840" y="218" text-anchor="middle">Unsanctioned GenAI app</text>
+          <text class="dg-sub" x="840" y="236" text-anchor="middle">High risk — uploads limited</text>
+
+          <rect class="dg-node-dark" x="752" y="324" width="176" height="58" rx="10"/>
+          <text class="dg-label-inv" x="840" y="348" text-anchor="middle">Exfiltration attempt</text>
+          <text class="dg-sub-inv" x="840" y="366" text-anchor="middle">PII/card data → personal cloud</text>
+
+          <!-- Lanes from PoP -->
+          <path class="lane lane-allow" d="M 468 205 C 560 170, 650 122, 752 96"/>
+          <path class="lane lane-limit" d="M 470 217 C 560 217, 650 220, 752 223"/>
+          <path class="lane lane-block" d="M 468 230 C 540 262, 615 302, 682 330"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 690 322 L 714 346"/><path class="lane-x" d="M 714 322 L 690 346"/>
+          </g>
+
+          <!-- Out-of-band API integration -->
+          <path class="lane lane-static" d="M 556 182 C 620 90, 700 46, 812 60"/>
+          <text class="dg-tiny" x="668" y="38" text-anchor="middle">Out-of-band — API integration to the SaaS tenant</text>
+          <text class="dg-tiny" x="668" y="52" text-anchor="middle">(scans data already at rest)</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Sanctioned — allowed &amp; monitored</span>
+          <span class="key"><span class="swatch limit"></span> Unsanctioned / risky — controlled with warning</span>
+          <span class="key"><span class="swatch block"></span> Sensitive data out — blocked by DLP</span>
+        </div>
+        <div class="diagram-caption">Inline CASB + DLP decide per app and per activity; the grey arc is the out-of-band API integration governing data already stored in the sanctioned tenant.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Discovery without deployment</h4><p>Traffic already traverses the PoP — shadow IT and shadow AI discovery needs no agents, log uploads or extra proxies.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Inline + out-of-band, one policy</h4><p>Real-time control of live traffic plus API scanning of data at rest in sanctioned tenants — one console, one event stream.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎚️</div><div><h4>Granular activity control</h4><p>Not just allow or block: permit read-only use of a risky app while blocking uploads, shares or logins — per user group.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Same engine for SaaS and on-prem</h4><p>One DLP policy follows the data whether the application lives in M365 or in the London DC behind a Socket.</p></div></div>
+      </div>
+    </section>
+
+    <section id="scenarios" class="reveal">
+      <div class="section-kicker">Use-case mapping</div>
+      <h2>Six scenarios — and the licence that unlocks each</h2>
+      <p>The working table for scoping conversations: what the customer is trying to do, why it hurts today, and exactly which Cato capability (and licence) answers it.</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Use case</th><th>Challenge</th><th>Cato solution &amp; licence</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Discover every cloud app &amp; service in use</strong></td>
+              <td>Shadow IT introduces unknown, unmanaged risk into the environment.</td>
+              <td><strong>CASB licence.</strong> Application Control rulebase in Monitor mode — full visibility before any enforcement.</td>
+            </tr>
+            <tr>
+              <td><strong>Inline &amp; out-of-band SaaS application control</strong></td>
+              <td>Users need safe access to sanctioned and shadow apps under an enforced corporate policy.</td>
+              <td><strong>CASB licence.</strong> Sanctioned Apps category + Application Control policy; out-of-band via native SaaS API integrations.</td>
+            </tr>
+            <tr>
+              <td><strong>Assess cloud-app risk &amp; compliance posture</strong></td>
+              <td>Prove the app estate meets internal security policy and industry or compliance requirements.</td>
+              <td><strong>CASB licence.</strong> Cloud Apps Dashboard + Application Analytics — risk scores and compliance attributes per app.</td>
+            </tr>
+            <tr>
+              <td><strong>Stop data exfiltration from corporate apps</strong></td>
+              <td>Confidential corporate data is the crown jewels — it must not be exfiltrated or misused.</td>
+              <td><strong>CASB + DLP licences.</strong> Data Control rules configured within the Application Control policy.</td>
+            </tr>
+            <tr>
+              <td><strong>Visibility into corporate data stored in the cloud</strong></td>
+              <td>Understand where corporate data actually sits across the various cloud applications.</td>
+              <td><strong>CASB licence.</strong> Out-of-band SaaS API integrations, scoped by the Sanctioned Apps category and Application Control policy.</td>
+            </tr>
+            <tr>
+              <td><strong>Threat protection for cloud threats</strong></td>
+              <td>Malware and ransomware attacks target the data stored in cloud applications.</td>
+              <td><strong>IPS licence.</strong> IPS protection policies; custom category of high-risk apps enforced by the Internet Firewall.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their apps</div>
+        <p>Ask which SaaS apps they've sanctioned, and which they suspect are in use anyway. The demo
+        lands hardest when the discovery dashboard surfaces an app they didn't name.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open with discovery</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show the full cloud-app estate: how many distinct applications are in use, newly seen
+          apps, and the risky ones. Compare against the number they expected — the gap <em>is</em>
+          the shadow IT conversation.</p>
+        </li>
+        <li>
+          <h4>Drill into an app's risk score</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Pick an unsanctioned GenAI or file-sharing app the dashboard surfaced. Walk the risk
+          score and its inputs — compliance certifications held, security capabilities, popularity —
+          then show which users and sites are actually using it.</p>
+        </li>
+        <li>
+          <h4>Bring the app under control</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p>Create an application-control rule for that unsanctioned app: allow browsing but block
+          uploads, or block it outright for all but a pilot group. Point out this is granular
+          activity control, not a crude allow/deny.</p>
+        </li>
+        <li>
+          <h4>Protect the data itself</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show a Data Control rule that blocks uploads containing credit-card numbers to
+          non-sanctioned destinations. Highlight the pre-built data types (PCI, PII, PHI) and how
+          the same profile applies across web, SaaS and on-prem apps.</p>
+        </li>
+        <li>
+          <h4>Prove it with the event and evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Trigger (or pre-stage) a credit-card upload and open the resulting data incident: user,
+          application, matched data type, action taken — and the secured evidence file for the
+          investigation team.</p>
+          <figure class="shot">
+            <img src="../assets/img/dlp-incident-cma.png" alt="CMA data incident detail: a blocked upload of 'Document with CC Information.doc' to Microsoft Copilot, showing the matched data type Credit card numbers, the triggering rule 'Copilot restrict PII', and a secured Forensics evidence panel with a View Evidence button.">
+            <figcaption>The data incident in CMA: blocked credit-card upload with matched data types, the rule that fired, and secured forensic evidence.</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">Data Loss Prevention — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

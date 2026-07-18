@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migration Methodology &amp; Co-existence Patterns — Cato Use Case Library</title>
+<meta name="description" content="How Cato Professional Services de-risks any migration — big-bang vs phased, parallel connectivity, interconnect hubs, routed ranges vs BGP handoff, and multi-region co-existence without asymmetric routing.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-methodology">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Migration Methodology</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Migration Methodology &amp; Co-existence Patterns</h1>
+    <p class="lede">
+      Every SASE migration lives or dies on one question: how do the legacy network and Cato
+      co-exist while sites move? This page is the Professional Services playbook — structured
+      discovery, big-bang vs phased, parallel connectivity vs interconnect hubs, routed ranges vs
+      BGP handoff, and the six multi-region patterns that keep routing symmetric while both
+      networks run side by side.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Methodology</span><span class="tag">Co-existence</span><span class="tag">BGP</span>
+      <span class="tag">Routed Ranges</span><span class="tag">Multi-Region</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Prospects rarely doubt that Cato works — they doubt that they can <em>get there</em>
+        without an outage, a stalled project, or a weekend of heroics. Being able to walk a
+        customer through a proven migration methodology is often the difference between a
+        stalled evaluation and a signed order: it shows the path from the current estate to
+        Cato is engineered, reversible and boring — in the best possible way.
+      </p>
+      <p>
+        The method is always the same: <strong>discover the environment properly, choose the
+        migration approach deliberately, and design the co-existence pattern before the first
+        site moves.</strong> Everything below comes from the Cato Professional Services
+        common-migration-strategies playbook.
+      </p>
+      <div class="stat-row" style="margin:18px 0 0">
+        <div class="stat-tile"><div class="stat-value">~20<span class="unit">sites</span></div><div class="stat-label">Practical ceiling for running parallel connectivity at every site</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">~300<span class="unit">sites</span></div><div class="stat-label">Migrated by one global operator using routed-range pre-staging at a static hub</div></div>
+        <div class="stat-tile"><div class="stat-value">6<span class="unit">patterns</span></div><div class="stat-label">Multi-region co-existence options (A–F) — one fits every topology</div></div>
+      </div>
+    </section>
+
+    <section id="discovery" class="reveal">
+      <div class="section-kicker">Phase 1 — Discovery &amp; assessment</div>
+      <h2>No design before discovery</h2>
+      <p>
+        Professional Services opens every engagement with a project kickoff and a structured
+        network and security discovery. The interactive sessions and the questionnaire exist for
+        one reason: the right co-existence pattern is dictated by facts about the environment —
+        it cannot be chosen from a template.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Interactive sessions</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Kick-off sessions — stakeholders, timeline, success criteria</li>
+            <li>Design workshops — architecture and migration design</li>
+            <li>Account setup sessions — CMA build alongside the customer</li>
+            <li>Best-practice enablement — the team runs it after handover</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Structured discovery</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Business objectives &amp; requirements</li>
+            <li>Network &amp; security architecture</li>
+            <li>Traffic flows &amp; site interdependencies</li>
+            <li>Existing LAN architecture (L2 vs L3)</li>
+            <li>Routing strategy &amp; design</li>
+            <li>Key sites &amp; cloud infrastructure</li>
+            <li>DMZ, internet &amp; voice integration</li>
+            <li>Migration options &amp; strategy — co-existence and phased-adoption focus</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“While both networks are running, where does the routing decision between legacy and
+        Cato live — an L3 switch, the existing firewall, or the Cato socket? And if a migrated
+        subnet misbehaves at 2am, is rollback a route change or a site visit?”</p>
+      </div>
+    </section>
+
+    <section id="approach" class="reveal">
+      <div class="section-kicker">Phase 2 — Choose the approach</div>
+      <h2>Big Bang vs Phased Migration</h2>
+      <p>
+        There are two macro approaches to network migration: <strong>Big Bang</strong> — cut the
+        whole estate over to Cato in a single operation — or a more gradual
+        <strong>phased migration</strong> using interconnecting sites and parallel sockets.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Big Bang <span class="tag">LAN cutover</span></h3>
+          <p style="font-size:.9rem;color:var(--ink-2);margin:6px 0">Physical cable, VLAN or route cutover in one window. Suitable for fewer sites or simple connectivity; validation testing is still required.</p>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li><strong style="color:var(--green-700)">+</strong> Shorter project timeline</li>
+            <li><strong style="color:var(--green-700)">+</strong> Potential for reduced costs*</li>
+            <li><strong style="color:var(--status-critical)">−</strong> Higher exposure to risk</li>
+            <li><strong style="color:var(--status-critical)">−</strong> Resource-intensive during the cutover window</li>
+            <li><strong style="color:var(--status-critical)">−</strong> Complex rollback</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Phased Migration <span class="tag">Interconnect / parallel</span></h3>
+          <p style="font-size:.9rem;color:var(--ink-2);margin:6px 0">Interconnecting site or parallel sockets; both networks run side by side while sites move in waves.</p>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li><strong style="color:var(--green-700)">+</strong> More gradual, less risk exposure</li>
+            <li><strong style="color:var(--green-700)">+</strong> Parallel testing and validation is possible</li>
+            <li><strong style="color:var(--green-700)">+</strong> Issues are uncovered while isolated to migrated sites</li>
+            <li><strong style="color:var(--status-critical)">−</strong> Longer project timeline</li>
+            <li><strong style="color:var(--status-critical)">−</strong> Potential for increased costs from running both networks*</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:.84rem;color:var(--ink-3);margin-top:10px">* Depending on approach, legacy service agreements and MSA contracts.</p>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">Phase 3 — Technical co-existence</div>
+      <h2>Parallel side-by-side connectivity</h2>
+      <p>
+        Parallel side-by-side connectivity is the foundation for every migration strategy — big
+        bang, parallel connectivity across all sites, or a central hub-site interconnect. The
+        design question is always the same: <strong>which device makes the routing decision
+        between the legacy and Cato networks?</strong> Default-gateway placement, LAN
+        architecture (L2 vs L3), VLAN termination point, the Cato site type selected and plans
+        for the existing firewall drive the choice between three patterns:
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">L3 switch as DG</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Where a layer-3 switch terminates the VLANs, it makes the route decision. Configure a transit VLAN (optional), statically route migrated ranges towards Cato — or propagate them dynamically via BGP.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Legacy firewall as DG</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Where the existing firewall or router terminates the local VLANs, it controls Cato routing. Establish a transit VLAN between the socket LAN and the firewall; route migrated ranges statically or via BGP.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cato socket as DG</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Where the socket should be the default gateway from day one, use a BGP handoff on LAN or Alt-WAN — or the gradual deployment gateway policy — to selectively route traffic via the legacy network.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">BGP route isolation — ASN community 32768</div>
+        <p>When BGP is used, routes learned from the legacy network can be propagated to other
+        Cato sites — or kept isolated by tagging the prefixes with the Cato ASN and community
+        <strong>32768</strong>. The isolated-route option requires socket v15.</p>
+      </div>
+
+      <h3 style="margin-top:28px">The interconnecting hub site</h3>
+      <p>
+        For phased migrations at scale, an interconnecting site is fundamental: one site holds
+        both legacy CPE and a Cato socket, and carries traffic between the two networks while
+        sites migrate wave by wave. A layer-3 switch (or firewall) at the hub makes the routing
+        decision between networks.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Interconnecting hub site co-existence topology</title>
+          <desc id="dg1-desc">Leeds and Manchester branches remain on legacy MPLS. London DC acts as the interconnect hub, holding both legacy CPE and a Cato socket with an L3 switch making the routing decision. Bristol has migrated to a Cato socket and reaches Leeds through the Cato backbone and the hub. Glasgow is migrating next.</desc>
+
+          <!-- Legacy sites (left) -->
+          <rect class="dg-node" x="30" y="80" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="110" y="104" text-anchor="middle">Leeds branch</text>
+          <text class="dg-sub" x="110" y="122" text-anchor="middle">192.168.3.0/24 · MPLS</text>
+
+          <rect class="dg-node" x="30" y="300" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="110" y="324" text-anchor="middle">Manchester branch</text>
+          <text class="dg-sub" x="110" y="342" text-anchor="middle">192.168.4.0/24 · MPLS</text>
+
+          <!-- MPLS cloud -->
+          <ellipse class="dg-node" cx="272" cy="218" rx="72" ry="44"/>
+          <text class="dg-label" x="272" y="214" text-anchor="middle">MPLS</text>
+          <text class="dg-tiny" x="272" y="232" text-anchor="middle">Legacy WAN</text>
+
+          <!-- Interconnect hub -->
+          <text class="dg-label" x="500" y="80" text-anchor="middle">London DC — interconnect hub</text>
+          <rect class="dg-node" x="392" y="96" width="216" height="248" rx="14"/>
+
+          <rect class="dg-node" x="412" y="112" width="176" height="48" rx="10"/>
+          <text class="dg-label" x="500" y="132" text-anchor="middle">Legacy CPE / router</text>
+          <text class="dg-sub" x="500" y="148" text-anchor="middle">MPLS termination</text>
+
+          <rect class="dg-node-dark" x="412" y="192" width="176" height="48" rx="10"/>
+          <text class="dg-label-inv" x="500" y="212" text-anchor="middle">L3 switch</text>
+          <text class="dg-sub-inv" x="500" y="228" text-anchor="middle">Route decision (DG)</text>
+
+          <rect class="dg-node-green" x="412" y="272" width="176" height="48" rx="10"/>
+          <text class="dg-label" x="500" y="292" text-anchor="middle">Cato Socket X1700</text>
+          <text class="dg-sub" x="500" y="308" text-anchor="middle">Hub interconnect</text>
+
+          <!-- Cato backbone (right) -->
+          <ellipse class="dg-backbone" cx="760" cy="220" rx="118" ry="50"/>
+          <circle class="pulse-ring" cx="760" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="760" cy="220" r="30"/>
+          <text class="dg-label" x="760" y="178" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="740" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Global Backbone</text>
+
+          <!-- Migrated / migrating sites (far right) -->
+          <rect class="dg-node-green" x="784" y="42" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="864" y="66" text-anchor="middle">Bristol branch</text>
+          <text class="dg-sub" x="864" y="84" text-anchor="middle">Migrated · X1500</text>
+
+          <rect class="dg-node" x="784" y="346" width="160" height="56" rx="10"/>
+          <text class="dg-label" x="864" y="370" text-anchor="middle">Glasgow branch</text>
+          <text class="dg-sub" x="864" y="388" text-anchor="middle">Migrating next</text>
+
+          <!-- Static links -->
+          <path class="lane lane-static" d="M 190 328 C 215 316, 230 285, 248 252"/>
+          <path class="lane lane-static" d="M 783 243 C 810 278, 835 312, 856 346"/>
+
+          <!-- Inter-network flow: Bristol ↔ Leeds via hub -->
+          <path class="lane lane-allow" d="M 858 100 C 836 130, 810 164, 783 197"/>
+          <path class="lane lane-allow" d="M 728 236 C 690 260, 640 285, 588 296"/>
+          <path class="lane lane-allow" d="M 500 272 L 500 240"/>
+          <path class="lane lane-allow" d="M 500 192 L 500 160"/>
+          <path class="lane lane-allow" d="M 412 140 C 385 160, 370 190, 344 210"/>
+          <path class="lane lane-allow" d="M 248 184 C 230 150, 215 120, 190 108"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated ↔ legacy traffic via the hub</span>
+          <span class="key"><span class="swatch" style="border-color:var(--ink-3);border-top-style:solid"></span> Existing links</span>
+        </div>
+        <div class="diagram-caption">During phased migration the interconnect hub carries traffic between networks: Bristol (migrated) reaches Leeds (legacy MPLS) via the Cato backbone, the hub socket and the L3 switch that owns the routing decision.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Subnet-level transitions</h4><p>Move one VLAN or subnet at a time — dual network access continues throughout the migration window.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>Rollback is a route change</h4><p>Re-point a static or withdraw a BGP prefix and the site is back on legacy — no truck roll, no cutover weekend.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧪</div><div><h4>Parallel validation</h4><p>Test applications over Cato while production still runs on legacy; issues stay isolated to migrated sites.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Steady, predictable waves</h4><p>Migration order and grouping become a planning exercise, not an engineering gamble.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:28px">Parallel everywhere vs one interconnect hub</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Consideration</th><th>Parallel connectivity at all sites</th><th>Interconnecting hub site</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Scale</strong></td><td>Limited scalability — practical maximum around 20 socket sites</td><td>Scales to large estates; sites migrate through the hub wave by wave</td></tr>
+            <tr><td><strong>Risk &amp; rollback</strong></td><td>Very gradual with easy rollback; supports subnet-level transitions</td><td>Reduced risk and impact; simple, fast, steady transition</td></tr>
+            <tr><td><strong>Rework</strong></td><td>Requires rework, phased implementation and multiple site visits</td><td>Minimises rework — legacy sites are untouched until their wave</td></tr>
+            <tr><td><strong>Latency</strong></td><td>Minimal impact — traffic stays local to each site</td><td>Inter-network traffic hairpins via the hub during co-existence</td></tr>
+            <tr><td><strong>Dependencies</strong></td><td>Multiple site dependencies for spoke migrations</td><td>Hub bandwidth, hub redundancy, static vs dynamic routing choice</td></tr>
+            <tr><td><strong>Best for</strong></td><td>Complex overlays lacking full mesh; scales well for an SSE-phased approach</td><td>Phased estate migrations; add parallel connectivity for heavily utilised sites</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="multi-region" class="reveal">
+      <div class="section-kicker">Multi-regional hubs</div>
+      <h2>Multi-region co-existence without asymmetric routing</h2>
+      <p>
+        With regional hubs on both networks, co-existence gets harder. Traffic initiated from an
+        EMEA legacy site to an APAC Cato-connected site is forwarded via the APAC regional hub;
+        the return traffic from APAC performs its own route lookup and comes back via the EMEA
+        regional hub.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">⚠ The failure mode: asymmetric routing</div>
+        <p>Return traffic follows a different regional path than the original flow. Stateful
+        inspection on the hub firewalls sees only half the conversation — sessions fail and
+        traffic drops during co-existence. Every multi-region design below exists to prevent this.</p>
+      </div>
+
+      <div class="table-wrap" style="margin-top:18px">
+        <table class="data">
+          <thead>
+            <tr><th>Option</th><th>Approach</th><th>Strengths</th><th>Watch-outs</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A</strong></td>
+              <td><strong>Parallel connectivity, all sites.</strong> Deploy Cato in parallel across every site; temporary IPsec can precede sockets.</td>
+              <td>Avoids cross-region latency and asymmetry; low-risk site-by-site cutovers with isolation; symmetry maintained throughout.</td>
+              <td>Customer-side rework or site visits; may need additional PS hours. Preferred for fewer than 20 sites.</td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td><strong>Single hub + selective parallel.</strong> One primary hub is the temporary inter-network gateway; parallel connectivity only in selected smaller regions.</td>
+              <td>Less complex than full parallel rollout; limits cross-region hairpinning; balances risk, cost and effort; can expand parallel coverage later.</td>
+              <td>Hybrid option — suits estates where traffic patterns are uneven across regions.</td>
+            </tr>
+            <tr>
+              <td><strong>C</strong></td>
+              <td><strong>Phased regional rollout.</strong> Each region deploys independently; migrated sites temporarily hairpin via a single active hub, which shifts as regions complete.</td>
+              <td>Isolates change to one region at a time; validation and rollback at regional boundaries.</td>
+              <td>Deployment locked to regional phases; increased RTT through the intermediate transit region.</td>
+            </tr>
+            <tr>
+              <td><strong>D</strong></td>
+              <td><strong>NAT/PAT for symmetry.</strong> PAT preserves cross-regional routing symmetry between networks.</td>
+              <td>No routing redesign; best where cross-region traffic volumes are low.</td>
+              <td>Masks original source IPs — breaks protocols that embed them (e.g. LDAP, WMI); NAT config may be needed on customer infrastructure.</td>
+            </tr>
+            <tr>
+              <td><strong>E</strong></td>
+              <td><strong>Customer-managed PBR</strong> over GRE or IPsec tunnels.</td>
+              <td>Granular traffic steering; symmetry maintained through policy routing.</td>
+              <td>Highly complex; misconfiguration risks stability. Generally avoid unless strong in-house networking skills exist.</td>
+            </tr>
+            <tr>
+              <td><strong>F</strong></td>
+              <td><strong>VRF / eBGP interim connectivity.</strong> Separate legacy routing with VRFs, SD-WAN overlays or transit domains; regional eBGP between Cato and each hub.</td>
+              <td>Symmetric routing preserved — cross-region routes carry a longer AS-PATH, so best-path selection anchors traffic to its regional hub. Simplified phased migration and rollback.</td>
+              <td>Requires BGP-capable regional hubs and route-filtering discipline.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diagram-card" style="margin-top:22px">
+        <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg2-title dg2-desc">
+          <title id="dg2-title">Option F — regional eBGP hubs preserve routing symmetry</title>
+          <desc id="dg2-desc">Two regions, EMEA and APAC, each with a Cato hub site running an eBGP handoff to its legacy hub. Traffic from an EMEA legacy site to an APAC migrated site flows via the EMEA legacy hub, the EMEA Cato hub, the London PoP, the Cato backbone and the Singapore PoP. The return follows the same path because cross-region routes carry a longer AS-PATH; the asymmetric return via the APAC legacy hub is not selected.</desc>
+
+          <!-- Backbone + PoPs -->
+          <ellipse class="dg-backbone" cx="480" cy="95" rx="230" ry="52"/>
+          <text class="dg-tiny" x="480" y="99" text-anchor="middle">Cato Global Backbone</text>
+          <circle class="pulse-ring" cx="365" cy="95" r="30" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="365" cy="95" r="26"/>
+          <text class="dg-label" x="365" y="48" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">London PoP</text>
+          <circle class="pulse-ring" cx="595" cy="95" r="30" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="595" cy="95" r="26"/>
+          <text class="dg-label" x="595" y="48" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Singapore PoP</text>
+
+          <!-- EMEA -->
+          <rect class="dg-node-green" x="160" y="190" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="245" y="212" text-anchor="middle">EMEA Cato hub site</text>
+          <text class="dg-sub" x="245" y="230" text-anchor="middle">Socket · eBGP handoff</text>
+
+          <rect class="dg-node" x="160" y="300" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="245" y="322" text-anchor="middle">EMEA legacy hub</text>
+          <text class="dg-sub" x="245" y="340" text-anchor="middle">FortiGate SD-WAN</text>
+
+          <rect class="dg-node" x="15" y="300" width="115" height="54" rx="10"/>
+          <text class="dg-label" x="72" y="322" text-anchor="middle">Legacy site</text>
+          <text class="dg-sub" x="72" y="340" text-anchor="middle">EMEA · MPLS</text>
+
+          <!-- APAC -->
+          <rect class="dg-node-green" x="630" y="190" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="715" y="212" text-anchor="middle">APAC Cato hub site</text>
+          <text class="dg-sub" x="715" y="230" text-anchor="middle">Socket · eBGP handoff</text>
+
+          <rect class="dg-node" x="630" y="300" width="170" height="54" rx="10"/>
+          <text class="dg-label" x="715" y="322" text-anchor="middle">APAC legacy hub</text>
+          <text class="dg-sub" x="715" y="340" text-anchor="middle">FortiGate SD-WAN</text>
+
+          <rect class="dg-node-green" x="822" y="190" width="125" height="54" rx="10"/>
+          <text class="dg-label" x="884" y="212" text-anchor="middle">Migrated site</text>
+          <text class="dg-sub" x="884" y="230" text-anchor="middle">APAC · Socket</text>
+
+          <!-- Static links / peerings -->
+          <path class="lane lane-static" d="M 710 190 C 685 165, 650 140, 612 116"/>
+          <path class="lane lane-static" d="M 715 244 L 715 300"/>
+          <text class="dg-tiny" x="732" y="276" text-anchor="start">eBGP</text>
+          <path class="lane lane-static" d="M 330 327 L 630 327"/>
+          <text class="dg-tiny" x="480" y="318" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Legacy inter-region WAN</text>
+
+          <!-- Symmetric flow (green) -->
+          <path class="lane lane-allow" d="M 130 327 L 160 327"/>
+          <path class="lane lane-allow" d="M 245 300 L 245 244"/>
+          <text class="dg-tiny" x="228" y="276" text-anchor="end">eBGP</text>
+          <path class="lane lane-allow" d="M 250 190 C 275 160, 315 135, 348 118"/>
+          <path class="lane lane-allow" d="M 388 88 C 450 72, 520 72, 572 88"/>
+          <path class="lane lane-allow" d="M 618 112 C 690 140, 770 165, 838 194"/>
+
+          <!-- Asymmetric return (red, rejected) -->
+          <path class="lane lane-block" d="M 630 340 C 585 348, 545 348, 508 342"/>
+          <g aria-label="asymmetric return rejected">
+            <path class="lane-x" d="M 480 322 L 504 346"/><path class="lane-x" d="M 504 322 L 480 346"/>
+          </g>
+          <text class="dg-tiny" x="560" y="376" text-anchor="middle">Asymmetric return via APAC hub</text>
+          <text class="dg-tiny" x="560" y="392" text-anchor="middle">Longer AS-PATH — not selected</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Symmetric flow — anchored to its regional hub</span>
+          <span class="key"><span class="swatch block"></span> Cross-region return — rejected by best-path</span>
+          <span class="key"><span class="swatch" style="border-color:var(--ink-3);border-top-style:solid"></span> Links &amp; eBGP peerings</span>
+        </div>
+        <div class="diagram-caption">Option F: each region keeps its own eBGP handoff between the Cato hub site and the legacy hub. Cross-region routes carry a longer AS-PATH (an extra inter-hub hop), so BGP best-path selection anchors traffic — and its return — to the same regional hub.</div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3 style="margin-top:0">Field example — Cato hub integration with FortiGate SD-WAN</h3>
+        <p style="font-size:.94rem;color:var(--ink-2)">
+          Segmented legacy domains, interconnected with existing FortiGate regions via an eBGP
+          handoff to each FortiGate hub. Path symmetry is maintained through shortest AS-PATH
+          length, with routes dynamically propagated between the Cato and FortiGate networks.
+          Spoke migration becomes mechanical: <strong>1)</strong> disable the existing spoke,
+          <strong>2)</strong> turn up the new Cato spoke site, <strong>3)</strong> routes
+          propagate automatically, <strong>4)</strong> rollback stays simple.
+        </p>
+      </div>
+    </section>
+
+    <section id="interconnect" class="reveal">
+      <div class="section-kicker">Interconnect &amp; parallel-socket patterns</div>
+      <h2>Routed ranges or BGP — the handoff catalogue</h2>
+      <p>
+        Two routing options carry traffic between networks at an interconnect or parallel-socket
+        site: <strong>static routed ranges</strong> or <strong>dynamic propagation with BGP</strong>.
+        These are the field-proven variants and their trade-offs:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Pattern</th><th>How it works</th><th>Strengths</th><th>Trade-offs</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Static hub — routed ranges</strong></td>
+              <td>Preconfigure routed ranges at the hub; prebuild Cato sites with dummy ranges (e.g. carrier-grade NAT space) and use the dummy objects in groups, firewall and network rules. To migrate: delete the routed range from the interconnect site, then update the dummy subnets at the new Cato site — rules and groups follow automatically.</td>
+              <td>Simple to implement; predictable, lower risk; no reliance on BGP or customer filtering. Rollback = re-add the dummy range and the statics.</td>
+              <td>Manual configuration at the interconnect for each migration.</td>
+            </tr>
+            <tr>
+              <td><strong>BGP hub — L3 switch</strong></td>
+              <td>eBGP peer between Cato and the L3 device (works with firewalls or provider routers too); filter the default route and prefixes from sites with parallel connectivity. Migrate by disconnecting the legacy remote site's LAN — its subnets are withdrawn automatically and the new Cato site's prefixes propagate via BGP.</td>
+              <td>Automatic route propagation; supports overlapping subnets and aggregate summaries; minimal config dependency at the interconnect site.</td>
+              <td>Needs BGP capability and route-filtering discipline on the customer side.</td>
+            </tr>
+            <tr>
+              <td><strong>Parallel socket — BGP handoff (LAN transit)</strong></td>
+              <td>eBGP peering between the socket and the customer firewall over a LAN transit VLAN; the firewall remains the default gateway.</td>
+              <td>Phased subnet migration; dynamic route propagation; simplified rollback; Cato BGP routes can be propagated or isolated.</td>
+              <td>Firewall stays in the traffic path during co-existence.</td>
+            </tr>
+            <tr>
+              <td><strong>Parallel socket — L3 switch static</strong></td>
+              <td>The customer L3 switch makes the routing decision between legacy and migrated subnets; start with the SDP user range and system ranges via the socket, then move ranges as they migrate.</td>
+              <td>Simple to configure; control stays on the switch; useful for validation; simplified rollback; keeps firewall throughput minimal.</td>
+              <td>Route update required for every remote-site migration; increased rework; extended project timeline.</td>
+            </tr>
+            <tr>
+              <td><strong>Parallel socket — FW static (LAN/DMZ transit)</strong></td>
+              <td>No L3 switch at site: sockets reach the internet via a DMZ transit off the existing firewall (which NATs socket WAN traffic to the PoP); the firewall remains DG and specific routes point via the Cato socket floating IP.</td>
+              <td>Simplified route rollback; phased subnet migration.</td>
+              <td>Route update per remote-site migration; additional firewall load from WAN encrypted traffic; rework required for WAN.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Proof at scale — ~300 sites</div>
+        <p>The static-hub routed-ranges strategy with dummy-range pre-staging is exactly how
+        One global operator migrated nearly <strong>300 sites</strong>: dummy CGN addressing prevented
+        overlap with production subnets, and each migration was a delete-and-update of ranges
+        rather than a rebuild of policy.</p>
+      </div>
+    </section>
+
+    <section id="socket-dg" class="reveal">
+      <div class="section-kicker">Socket as default gateway</div>
+      <h2>When the socket owns the LAN from day one</h2>
+      <p>
+        Some designs put the Cato socket in as default gateway immediately — the legacy network
+        becomes the exception that traffic is selectively routed to. Three options, each with a
+        caveat worth knowing before the workshop:
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Cato DC — BGP LAN handoff</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li>Socket provides the default gateway; eBGP on a LAN handoff</li>
+            <li>HA failover fully supported</li>
+            <li>Dynamic route updates; routes propagated or isolated with the specific community</li>
+            <li>Allows use of the WAN firewall between local VLANs</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Alt-WAN — BGP handoff</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li>eBGP peer(s) via Alt-WAN steer legacy destinations over MPLS dynamically</li>
+            <li><strong>Caveat:</strong> local routing ANY-ANY is required — otherwise Alt-WAN traffic first routes to the PoP, risking asymmetry</li>
+            <li><strong>Caveat:</strong> Alt-WAN failure does not trigger socket HA failover — prefer the LAN BGP handoff where HA sockets are required</li>
+            <li>Routes propagated or isolated with community advertisement (v15)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Alt-WAN — gradual deployment GP</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li>Longer-prefix-match RFC1918 destinations without specific routes forward via the Alt-WAN gateway</li>
+            <li>Reduces route updates; useful where a BGP handoff is unavailable or undesired</li>
+            <li><strong>Caveat:</strong> only private (RFC1918) routes are supported — and they cannot be selectively enabled for specific private ranges</li>
+            <li>Same Alt-WAN HA limitation applies</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="choosing" class="reveal">
+      <div class="section-kicker">Decision aid</div>
+      <h2>Choosing your strategy</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>If the customer looks like…</th><th>Lead with</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Few sites, simple connectivity, tolerance for a cutover window</td><td>Big Bang (LAN cutover)</td><td>Shortest timeline and potential cost saving — but plan validation testing and accept complex rollback.</td></tr>
+            <tr><td>Under ~20 sites, low risk appetite, or an SSE-first phased adoption</td><td>Parallel connectivity at all sites</td><td>Subnet-level transitions, dual network access, minimal latency impact and easy rollback.</td></tr>
+            <tr><td>Larger estate, single region</td><td>Interconnecting hub site</td><td>Simple, fast, steady transition with minimal rework — size the hub bandwidth and redundancy first.</td></tr>
+            <tr><td>Large estate, no BGP available (or unwanted)</td><td>Static hub — routed ranges + dummy pre-staging</td><td>Predictable and low risk with no BGP dependency; proven at ~300 sites in a single estate.</td></tr>
+            <tr><td>Large estate with a BGP-capable core</td><td>BGP hub via L3 switch</td><td>Automatic route propagation and withdrawal; minimal per-migration configuration.</td></tr>
+            <tr><td>Multi-region with regional legacy hubs</td><td>Option F — VRF/eBGP regional handoff</td><td>AS-PATH anchoring keeps every flow symmetric; rollback stays simple at each phase.</td></tr>
+            <tr><td>Multi-region, low cross-region traffic, no BGP option</td><td>Option D — NAT/PAT symmetry</td><td>Quick to stand up — but verify protocols first: anything embedding IPs (LDAP, WMI) will break.</td></tr>
+            <tr><td>Socket must be default gateway from day one</td><td>BGP LAN handoff (HA-safe), Alt-WAN BGP, or gradual deployment GP</td><td>Pick by HA requirement and route type: LAN handoff supports HA; the GP is RFC1918-only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="playbooks" class="reveal">
+      <div class="section-kicker">Vendor playbooks</div>
+      <h2>Applying the method, vendor by vendor</h2>
+      <p>
+        Each incumbent estate gets its own playbook in this library — the same phased method, applied to
+        that vendor's steering model, policy constructs and co-existence options. Use this page for the
+        patterns; use the playbook for the specifics.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Playbook</th><th>Coming from</th><th>Interim co-existence pattern</th><th>Rollback lever</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="migration-zscaler.html">Zscaler</a> · <a href="migration-zscaler-policy.html">policy</a></td>
+              <td>ZIA / ZPA SSE with GRE/IPsec tunnels and ZCC agents</td>
+              <td>IPsec from Cato to ZIA as a temporary bridge; dual agents — ZCC tunnel inside the socket tunnel</td>
+              <td>Re-point the default route or split tunnel; ZCC stays installed until wrap-up</td>
+            </tr>
+            <tr>
+              <td><a href="migration-palo-alto.html">Palo Alto</a> · <a href="migration-palo-alto-policy.html">policy</a></td>
+              <td>PA-series NGFW + Panorama, Prisma Access, GlobalProtect</td>
+              <td>PA stays default gateway; parallel socket takes migrated subnets via static or eBGP handoff</td>
+              <td>Per-prefix route revert; GlobalProtect cohorts re-enabled per wave</td>
+            </tr>
+            <tr>
+              <td><a href="migration-netskope.html">Netskope</a> · <a href="migration-netskope-policy.html">policy</a></td>
+              <td>NG-SWG / CASB / NPA on NewEdge, client-steered</td>
+              <td>Cohort-by-cohort client swap (never dual-tunnel); API Data Protection stays on during transition</td>
+              <td>Redeploy Netskope Client per cohort; NPA Publishers kept dormant until sign-off</td>
+            </tr>
+            <tr>
+              <td><a href="migration-cisco.html">Cisco</a> · <a href="migration-cisco-policy.html">policy</a></td>
+              <td>Umbrella + AnyConnect + Catalyst (Viptela) or Meraki SD-WAN</td>
+              <td>Regional interconnect hubs with eBGP handoff and OMP↔BGP redistribution; AS-path anchors symmetry</td>
+              <td>Automatic BGP route withdrawal — re-enable the legacy spoke</td>
+            </tr>
+            <tr>
+              <td><a href="migration-fortinet.html">Fortinet</a> · <a href="migration-fortinet-policy.html">policy</a></td>
+              <td>FortiGate estate with Secure SD-WAN / ADVPN, FortiManager</td>
+              <td>Parallel socket at each FortiGate regional hub, eBGP handoff, AS-path symmetry (the pattern on this page)</td>
+              <td>Disable Cato spoke, re-enable FortiGate spoke — routes re-propagate</td>
+            </tr>
+            <tr>
+              <td><a href="migration-forcepoint.html">Forcepoint</a> · <a href="migration-forcepoint-policy.html">policy</a></td>
+              <td>Web security via PAC/explicit proxy, enterprise DLP, NGFW</td>
+              <td>Dual steering planes — PAC cohorts stay explicit to Forcepoint while Cato cohorts steer transparently</td>
+              <td>GPO/PAC revert; Forcepoint tenant kept licensed and policy-frozen</td>
+            </tr>
+            <tr>
+              <td><a href="migration-versa.html">Versa</a> · <a href="migration-versa-policy.html">policy</a></td>
+              <td>VOS estate with Director / Analytics head-end — often provider-managed</td>
+              <td>Parallel sockets at Versa hub sites, eBGP handoff; MP-BGP overlay left intact, AS-path symmetry</td>
+              <td>Re-enable the Versa spoke — routes reconverge; provider change tickets sequenced early</td>
+            </tr>
+            <tr>
+              <td><a href="migration-cloudflare.html">Cloudflare</a> · <a href="migration-cloudflare-policy.html">policy</a></td>
+              <td>Access · Gateway · WARP · cloudflared · Magic WAN (CDN/WAF stays)</td>
+              <td>Per-app parallel ZTNA; WARP→Cato Client per-device MDM swap; sockets beside Magic WAN tunnels</td>
+              <td>Re-enable the WARP profile or re-point to idle Magic WAN tunnels; tenant downgraded, never closed</td>
+            </tr>
+            <tr>
+              <td><a href="migration-iboss.html">iboss</a> · <a href="migration-iboss-policy.html">policy</a></td>
+              <td>Cloud proxy with PAC files, connector agents and site tunnels</td>
+              <td>Per-OU/site wave cutover; Cato egress IPs dual-listed in SaaS allowlists before each wave</td>
+              <td>Re-point the PAC or re-enable the iboss agent profile</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px">
+        Two focused product-level plays complement the vendor playbooks:
+        <a href="migration-anyconnect.html">AnyConnect to Cato Client</a> (remote access only) and the
+        <a href="network-ipsec-asa.html">Cisco ASA IPsec design</a> (IKEv1/IKEv2 interim connectivity).
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Design workshop</div>
+      <h2>Running the migration design workshop</h2>
+      <div class="callout">
+        <div class="co-title">This is a whiteboard session, not a CMA demo</div>
+        <p>The value here is showing the customer that Professional Services has a repeatable
+        method. Walk them through the same sequence PS uses on real engagements — their answers
+        drive the design.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Kick off with objectives</h4>
+          <p>Capture business objectives and requirements, stakeholders and the target timeline.
+          Ask what "done" looks like — decommissioned MPLS, retired firewalls, SSE-first?</p>
+        </li>
+        <li>
+          <h4>Run the structured discovery</h4>
+          <p>Work the questionnaire: network and security architecture, traffic flows and site
+          interdependencies, LAN architecture (L2 vs L3), routing strategy, key sites and cloud
+          infrastructure, DMZ / internet / voice integration.</p>
+        </li>
+        <li>
+          <h4>Agree the macro approach</h4>
+          <p>Walk the Big Bang vs Phased comparison against their site count, risk appetite and
+          legacy contract end dates. Most estates land on phased.</p>
+        </li>
+        <li>
+          <h4>Pin down the routing decision point</h4>
+          <p>Ask the default-gateway question per site archetype: L3 switch, legacy firewall, or
+          Cato socket? This single answer selects the co-existence pattern and the handoff design.</p>
+        </li>
+        <li>
+          <h4>Design the interconnect</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Choose routed ranges (with dummy-range pre-staging in groups and rules) or a BGP
+          handoff. Size hub bandwidth, agree hub redundancy, and set migration order and grouping —
+          adding parallel connectivity for heavily utilised sites.</p>
+        </li>
+        <li>
+          <h4>Stress-test the multi-region plan</h4>
+          <p>Trace one cross-region flow on the whiteboard, both directions. If the return path
+          differs, pick from Options A–F — defaulting to Option F where regional hubs speak BGP.</p>
+        </li>
+        <li>
+          <h4>Agree validation and rollback per wave</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Define parallel validation tests for the first migrated subnets, write the rollback
+          step for each pattern (re-add the dummy range / withdraw the prefix / re-point the
+          static), and schedule account setup and best-practice enablement sessions.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence</a></li>
+            <li><a href="migration-zscaler.html">Zscaler (ZIA / ZPA) to Cato</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

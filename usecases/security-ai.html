@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security: Users, Applications &amp; Agentic AI — Cato Use Case Library</title>
+<meta name="description" content="Shadow-AI discovery, prompt-level auditing and guardrails — governing GenAI use by employees, homegrown apps and autonomous agents.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-ai">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / AI Security</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-wip">In development</span>
+    </div>
+    <h1>AI Security: Users, Applications &amp; Agentic AI</h1>
+    <p class="lede">
+      Employees are pasting company data into public chatbots, developers are wiring LLMs and
+      coding agents into internal applications, and autonomous agents are beginning to act with
+      credentials of their own. This use case frames Cato's AI security story across those three
+      surfaces — from shadow-AI discovery and prompt-level auditing through to posture
+      management and runtime guardrails.
+    </p>
+    <div class="meta-row">
+      <span class="tag">GenAI</span><span class="tag">Shadow AI</span>
+      <span class="tag">Prompt Auditing</span><span class="tag">Agentic AI</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/AI_Security-Use_Cases.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <div class="callout warn">
+        <div class="co-title">Work in progress — read before you demo</div>
+        <p>The source deck (<em>AI_Security-Use_Cases.pptx</em>) is explicitly marked work-in-progress,
+        and the separate AI Security PoV deck is currently an uncustomised copy of the Visibility PoV.
+        This page consolidates what exists today; expect the story and runbook to firm up as the
+        material matures.</p>
+      </div>
+      <p>
+        GenAI adoption has outrun governance in almost every organisation. Security teams are being
+        asked three questions they usually cannot answer: <em>which AI tools are our people using,
+        and what are they putting into them? What have our developers built on top of LLMs? And what
+        are the agents we are starting to deploy actually doing with the access we gave them?</em>
+      </p>
+      <p>
+        The objective of this use case is to show that Cato answers all three with one platform:
+        <strong>see every AI touchpoint — user, application and agent — then audit and govern it with
+        the same policy engine that already secures the rest of the traffic.</strong>
+      </p>
+    </section>
+
+    <section id="focus-areas" class="reveal">
+      <div class="section-kicker">The three surfaces</div>
+      <h2>Focus areas for the demonstration</h2>
+      <p>
+        The deck structures the AI security conversation into three focus areas. Each has its own
+        scenarios, its own demo mechanics and its own measurable outcomes — pick the one that
+        matches where the prospect is on their AI journey, and use the other two to show breadth.
+      </p>
+      <div class="grid-3" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin-top:0">AI for Users</h3>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Scenarios</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Shadow-AI discovery</li>
+            <li>Prompt-level auditing</li>
+            <li>Protection policies</li>
+          </ul>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Demo focus</h4>
+          <p style="margin:4px 0 0;font-size:.9rem;color:var(--ink-2)">Visibility and protection via the browser plugin and the Cato Client.</p>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Outcomes</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Discovery of AI applications</li>
+            <li>Usage reporting</li>
+            <li>Risk &amp; compliance reporting</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">AI for Applications</h3>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Scenarios</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Homegrown app inventory</li>
+            <li>Coding-agent discovery</li>
+            <li>Protection policies</li>
+          </ul>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Demo focus</h4>
+          <p style="margin:4px 0 0;font-size:.9rem;color:var(--ink-2)">IDE integration plus hooks-based visibility and protection.</p>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Outcomes</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Discovery of homegrown applications</li>
+            <li>Tool discovery</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Agentic AI</h3>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Scenarios</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Agent discovery</li>
+            <li>Posture management</li>
+            <li>Guardrails</li>
+          </ul>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Demo focus</h4>
+          <p style="margin:4px 0 0;font-size:.9rem;color:var(--ink-2)">Visibility and protection via APIs.</p>
+          <h4 style="margin:.9em 0 0;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Outcomes</h4>
+          <ul style="margin:4px 0 0;padding-left:18px;font-size:.9rem;color:var(--ink-2)">
+            <li>Agent observability</li>
+            <li>Runtime controls</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which GenAI tools are your users signed into right now — and if someone pasted customer
+        PII into one of them yesterday, could you produce the prompt today?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>One platform, three AI surfaces</h2>
+      <p>
+        AI security is not a bolt-on product in the Cato architecture — it is another set of
+        policies evaluated by the <strong>Single Pass Cloud Engine (SPACE)</strong> at the core of the
+        SASE cloud. Because employee, application and agent traffic already traverses the platform,
+        Cato can discover AI usage, audit it at prompt level, and enforce protection policies
+        without new appliances or traffic re-plumbing.
+      </p>
+
+      <figure class="shot">
+        <div class="shot-frame">
+          <img src="../assets/img/sase-onion.png" alt="Cato platform onion diagram: an outer SASE ring containing an SSE 360 ring, with the Single Pass Cloud Engine (SPACE) at the dark core, connector lines radiating to users, offices and databases on the left and WWW, SaaS, IaaS and IoT clouds on the right.">
+        </div>
+        <figcaption>SPACE sits at the core of SASE / SSE 360 — every user, site, app and agent flow passes through the same engine, which is what makes single-policy AI governance possible.</figcaption>
+      </figure>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 450" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Governing AI traffic for users, homegrown applications and agents</title>
+          <desc id="dg1-desc">An employee's prompts pass through the Cato SASE cloud. Traffic to sanctioned public GenAI is allowed, with a prompt-auditing tap recording a prompt-level audit log. An upload of sensitive data to unsanctioned public GenAI is blocked with a red X. Separately, homegrown GenAI applications and autonomous agents sit inside a dashed guardrail ring and connect to the Cato cloud via APIs and IDE hooks.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="210" rx="150" ry="50"/>
+          <circle cx="345" cy="228" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="615" cy="192" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="277" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="210" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="210" r="30"/>
+          <text class="dg-label" x="480" y="141" text-anchor="middle">Cato SASE Cloud</text>
+          <text class="dg-tiny" x="480" y="156" text-anchor="middle">SPACE · CASB · DLP · TLS inspection</text>
+
+          <!-- Employee (left top) -->
+          <g>
+            <circle cx="100" cy="118" r="23" fill="var(--navy-800)"/>
+            <circle cx="100" cy="111" r="6.5" fill="#fff"/>
+            <path d="M 87 131 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="160" text-anchor="middle">Employee</text>
+            <text class="dg-sub" x="100" y="176" text-anchor="middle">Cato Client · browser plugin</text>
+          </g>
+          <path class="lane lane-allow" d="M 126 126 C 220 150, 330 180, 448 200"/>
+          <text class="dg-tiny" x="278" y="146" text-anchor="middle">prompts &amp; uploads</text>
+
+          <!-- Prompt auditing tap + log node -->
+          <rect class="dg-node-dark" x="560" y="20" width="176" height="46" rx="10"/>
+          <text class="dg-label-inv" x="648" y="40" text-anchor="middle">Prompt auditing</text>
+          <text class="dg-sub-inv" x="648" y="57" text-anchor="middle">prompt-level audit log</text>
+          <line x1="659" y1="124" x2="650" y2="70" stroke="var(--ink-3)" stroke-width="1.6" stroke-dasharray="4 4"/>
+
+          <!-- Allow lane to sanctioned GenAI -->
+          <path class="lane lane-allow" d="M 508 194 C 590 165, 680 120, 764 92"/>
+          <circle cx="661" cy="131" r="7" fill="var(--surface)" stroke="var(--green-600)" stroke-width="3"/>
+
+          <rect class="dg-node-green" x="768" y="56" width="176" height="62" rx="10"/>
+          <text class="dg-label" x="856" y="82" text-anchor="middle">Public GenAI</text>
+          <text class="dg-sub" x="856" y="100" text-anchor="middle">Sanctioned · approved AI apps</text>
+
+          <!-- Block lane to unsanctioned GenAI -->
+          <path class="lane lane-block" d="M 506 224 C 590 250, 660 275, 718 294"/>
+          <text class="dg-tiny" x="622" y="288" text-anchor="middle">sensitive-data upload</text>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 723 290 L 747 314"/><path class="lane-x" d="M 747 290 L 723 314"/>
+          </g>
+          <rect class="dg-node" x="768" y="286" width="176" height="62" rx="10"/>
+          <text class="dg-label" x="856" y="312" text-anchor="middle">Public GenAI</text>
+          <text class="dg-sub" x="856" y="330" text-anchor="middle">Unsanctioned · free-tier tools</text>
+
+          <!-- Guardrail ring: homegrown apps & agents -->
+          <text class="dg-label" x="150" y="242" text-anchor="middle">Guardrail ring</text>
+          <text class="dg-sub" x="150" y="258" text-anchor="middle">posture · runtime controls</text>
+          <ellipse cx="150" cy="345" rx="118" ry="78" fill="none" stroke="var(--green-600)" stroke-width="2" stroke-dasharray="7 6"/>
+          <rect class="dg-node" x="68" y="295" width="164" height="42" rx="10"/>
+          <text class="dg-label" x="150" y="321" text-anchor="middle">Homegrown GenAI app</text>
+          <rect class="dg-node" x="68" y="352" width="164" height="42" rx="10"/>
+          <text class="dg-label" x="150" y="378" text-anchor="middle">Autonomous agent</text>
+          <path class="lane lane-allow" d="M 264 318 C 330 298, 390 260, 452 226"/>
+          <text class="dg-tiny" x="284" y="344" text-anchor="start">APIs · IDE hooks</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Sanctioned &amp; governed — allowed with prompt-level auditing</span>
+          <span class="key"><span class="swatch block"></span> Unsanctioned sensitive-data upload — blocked</span>
+        </div>
+        <div class="diagram-caption">One policy engine governs all three surfaces: employee prompts are audited on the way to sanctioned GenAI, risky uploads are blocked at the PoP, and homegrown apps and agents run inside a guardrail ring with API- and hooks-based observability.</div>
+      </div>
+
+      <h3>What the platform delivers per surface</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔎</div><div><h4>Shadow-AI discovery</h4><p>The Cloud Apps Dashboard and CASB app catalogue surface every GenAI tool in use — attributed to users, scored for risk, with no agents to deploy beyond what is already there.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Prompt-level auditing</h4><p>Record what users actually asked and uploaded — via the browser plugin and Cato Client — turning “we think people use ChatGPT” into usage, risk and compliance reporting.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Protection policies</h4><p>CASB application control by AI category plus DLP on prompts and file uploads: allow sanctioned tools, restrict risky activities, block sensitive data leaving the organisation.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤖</div><div><h4>Agent observability &amp; runtime controls</h4><p>For homegrown apps and agentic AI: inventory via IDE integration and hooks, agent discovery and posture management via APIs, with guardrails enforced at runtime.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout warn">
+        <div class="co-title">Starter guidance — not yet a scripted PoV</div>
+        <p>These steps are assembled from platform capability, not from a finished demo script — the
+        AI Security PoV deck has not yet been customised from the Visibility PoV it was copied from.
+        Treat this as a starting point and tailor it to the audience.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Discover shadow AI</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Filter the dashboard to the Generative AI category. Show which AI apps are in use across
+          the tenant, who is using them and how much data is moving — this is the discovery moment:
+          most organisations find far more AI tools than they ever sanctioned.</p>
+        </li>
+        <li>
+          <h4>Drill into a risky app</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p>Open the catalogue entry for one of the discovered tools and walk its risk attributes —
+          data handling, compliance posture, risk score. This grounds the conversation about which
+          AI apps deserve “sanctioned” status and which do not.</p>
+        </li>
+        <li>
+          <h4>Build the protection policy</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p>Create an application-control rule scoped to the AI category: allow the sanctioned tool,
+          restrict or block the rest. Emphasise granular activity control — permit browsing and
+          prompting while blocking file upload — rather than a blunt category ban.</p>
+        </li>
+        <li>
+          <h4>Add DLP for prompts containing PII</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Create a DLP rule that inspects prompts and uploads to GenAI apps for PII and payment
+          data. The blocked credit-card upload to Microsoft Copilot shown on the
+          <a href="security-dlp-forensics.html">DLP forensics page</a> is exactly this control in
+          action — reuse it as your proof point.</p>
+        </li>
+        <li>
+          <h4>Close the loop with reporting</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Show usage reporting and risk &amp; compliance reporting: which AI apps, which users, which
+          policies fired. “Discovery of AI applications” becomes an ongoing governance report, not a
+          one-off audit.</p>
+        </li>
+        <li>
+          <h4>Position the road ahead: applications &amp; agents</h4>
+          <p>For homegrown apps and coding agents (IDE integration, hooks-based visibility) and for
+          agentic AI (API-based agent discovery, posture management, runtime guardrails), talk to the
+          focus-area cards above rather than demoing live — this is the evolving edge of the story.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato API documentation (agent &amp; app observability)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+            <li><a href="ai-genai-security.html">GenAI Security for End Users</a></li>
+            <li><a href="ai-agentic-security.html">Securing Agentic AI</a></li>
+            <li><a href="ai-homegrown-apps.html">Securing Homegrown AI Applications</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

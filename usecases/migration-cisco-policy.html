@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate Umbrella and ASA/FTD policy to Cato — destination lists and web policies, firewall ACLs, and Umbrella DLP mapped to CMA policy sets.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cisco-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Cisco Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cisco Policy Migration</h1>
+    <p class="lede">
+      Moving a Cisco estate onto Cato is a routing project until the policy work begins — then it
+      stalls, because ASA/FTD ACLs, Umbrella destination lists and web policies do not translate
+      line-for-line into CMA. This page works through the four policy domains — firewall, SWG, CASB
+      and DLP — with the export method for each, a construct-by-construct mapping, the semantic
+      traps, and the four-phase EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE process that turns a
+      decade of accumulated rules into one clean rule base.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+      <p>
+        The network side of a Cisco-to-Cato migration is a routing event — reversible, well
+        understood, covered on the <a href="migration-cisco.html">Cisco to Cato</a> page. The policy
+        side is where programmes lose weeks: rules are scattered across ASDM/FMC/CDO and the
+        Umbrella dashboard, the constructs carry different semantics, and nobody can say which of
+        the accumulated exceptions still matter. The temptation is to copy everything across
+        &ldquo;to be safe&rdquo; — which imports ten years of dead rules into a brand-new platform
+        and makes the Cato rule base unauditable on day one.
+      </p>
+      <p>
+        The Cato PS approach is a four-phase pipeline applied per policy domain:
+        <strong>EXPORT</strong> the vendor policy in a reviewable form → <strong>REVIEW &amp;
+        MAP</strong> — rationalise on hit counts and usage evidence first, then map only the
+        survivors to CMA constructs → <strong>DEPLOY</strong> everything monitor-first, so rules
+        log but do not block → <strong>OPTIMISE</strong> — tighten to enforcement using the events
+        and hit counts the monitor phase produced. Never lift-and-shift: rule bases shrink
+        substantially when separate DNS, web and firewall policies collapse into one inspection
+        engine at the PoP.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the mappings and the
+        monitor-to-enforce criteria with Cato Professional Services before committing them to a
+        customer plan.</p>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;What percentage of your ASA ACEs show a zero hit count today — and how many
+        Umbrella destination-list entries would anyone in the room still defend?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 · FW rules</div>
+      <h2>ASA/FTD access policy &amp; Umbrella cloud firewall</h2>
+      <p>
+        ASA and FTD policy lives in <strong>interface ACLs built from ACEs and object-groups</strong>
+        (network, service, protocol), managed through ASDM, FMC or CDO; FTD adds a Snort-based IPS
+        policy on top. Umbrella SIG contributes a second, easily forgotten firewall: the
+        <strong>cloud-delivered firewall</strong> (CDFW) with L3/L4 rules that apply only to traffic
+        tunnelled into Umbrella.
+      </p>
+      <p>
+        <strong>Export:</strong> on ASA, <code>show running-config</code> for the objects and
+        <code>show access-list</code> for the expanded ACEs — the latter includes a live
+        <code>hitcnt</code> per entry, which is the single most valuable artefact in the whole
+        exercise. FMC exports access policies and reports rule hit counts; CDO holds the same data
+        for cloud-managed devices. Capture the Umbrella CDFW rule set from the dashboard for review
+        alongside them.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Cisco construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Interface ACLs / ACEs (ASA, FTD access policy)</td><td>WAN firewall + Internet firewall ordered rules</td><td>Split by direction: site-to-site and east-west into the WAN firewall (allowlist), outbound exceptions into the Internet firewall (blocklist). One global base, not per-interface.</td></tr>
+            <tr><td>Network object-groups</td><td>Hosts, IP ranges and groups in CMA</td><td>Flatten nested groups; delete unreferenced objects during clean-up rather than importing them.</td></tr>
+            <tr><td>Service / protocol object-groups</td><td>Services and custom services (protocol/port)</td><td>Many collapse into Cato&rsquo;s built-in application and service catalogue.</td></tr>
+            <tr><td>Interfaces, zones, security levels</td><td>Site / network-range scoping on rules</td><td>Zones do not exist in Cato — scope rules by site, VLAN range or group instead.</td></tr>
+            <tr><td>Umbrella CDFW L3/L4 rules</td><td>Internet firewall rules</td><td>CDFW only ever saw tunnelled traffic; in Cato the same base applies to every site and user flow.</td></tr>
+            <tr><td>FTD Snort IPS policy</td><td>Cato IPS (managed)</td><td>No signature tuning carries over — Cato IPS is managed by Cato. Run it in monitor before prevent.</td></tr>
+            <tr><td>NAT and port-forward rules</td><td>PoP egress NAT · remote port forwarding on allocated IPs</td><td>Egress NAT policy largely disappears; inventory inbound port-forwards separately and rebuild deliberately.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Direction inversion.</strong> An interface ACL ends in an implicit deny; Cato splits postures — WAN firewall allowlist, Internet firewall blocklist. A raw copy puts outbound exceptions into the wrong base and inverts their meaning.</li>
+        <li><strong>Shadowing on merge.</strong> Both models are first-match, but consolidating several per-interface ACLs into one ordered base can make a rule that never matched on ASA shadow a rule that did. Re-order deliberately.</li>
+        <li><strong>Object sprawl.</strong> Nested object-groups hide dead entries; expand them (<code>show access-list</code> does this for you) before deciding what survives.</li>
+        <li><strong>NAT does not travel.</strong> Twice-NAT and object NAT have no Cato equivalent to translate into — the PoP handles egress NAT, and inbound publishing becomes remote port forwarding on allocated IPs.</li>
+      </ul>
+      <h3>Migration strategy</h3>
+      <p>
+        Export with hit counts → cull zero-hit ACEs (with change-control sign-off — some are annual
+        DR paths, most are dead) → flatten the object-groups → sort survivors into WAN firewall
+        (allowlist) versus Internet firewall (exceptions to the blocklist) → deploy with rules set to
+        allow-and-track or monitor first, and tighten to block from the event evidence.
+      </p>
+    </section>
+
+    <section id="swg-policy" class="reveal">
+      <div class="section-kicker">Domain 2 · SWG policy</div>
+      <h2>Umbrella web policies, destination lists &amp; decryption</h2>
+      <p>
+        Umbrella&rsquo;s secure web gateway policy spans <strong>DNS policies</strong> and (with SIG)
+        <strong>web policies</strong>, built from <strong>destination lists</strong> (allow/block),
+        <strong>content category</strong> settings and <strong>selective decryption</strong> lists —
+        all evaluated against an identity-precedence model (roaming client &gt; AD user/group &gt;
+        internal network &gt; network).
+      </p>
+      <p>
+        <strong>Export:</strong> destination lists download to <strong>CSV from the dashboard</strong>
+        or via the <strong>Destination Lists API</strong>; category settings and rule structure come
+        from a policy walk-through, and the reporting views show which categories and destinations
+        actually fire — the SWG equivalent of firewall hit counts.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Umbrella construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Destination lists (block)</td><td>Custom categories + Internet firewall block rules</td><td>Dedupe against Cato system categories first — many entries exist only because a category miss was patched by hand years ago.</td></tr>
+            <tr><td>Destination lists (allow)</td><td>Allow rules / category exceptions</td><td>Check each allow for a TLS-inspection bypass need at the same time.</td></tr>
+            <tr><td>Content category settings</td><td>Internet firewall category rules</td><td>Taxonomies differ — map by intent, never by name, and re-baseline in monitor mode.</td></tr>
+            <tr><td>DNS-layer enforcement</td><td>Cato DNS Security / DNS Protections (IPS)</td><td>Inline at the PoP for all DNS traffic, whatever resolver the client uses.</td></tr>
+            <tr><td>Selective decryption lists</td><td>TLS Inspection bypass rules</td><td>Rebuild deliberately rather than transcribing — the exemption logic is expressed differently.</td></tr>
+            <tr><td>Ruleset identities (precedence model)</td><td>Ordered rules with sites, users and groups as sources</td><td>Implicit precedence becomes explicit rule order — the biggest semantic shift on this page.</td></tr>
+            <tr><td>Block-page bypass codes</td><td>No direct equivalent</td><td>Agree an override workflow (e.g. time-boxed allow rules) during Review &amp; Map.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Per-site policy moves at swap time — not later</div>
+        <p>Umbrella <strong>network identities are keyed to the site&rsquo;s public egress IP</strong>.
+        The moment a Socket goes live, the site egresses from a shared Cato PoP address and stops
+        matching its Umbrella policy entirely. Migrate each site&rsquo;s Umbrella web/DNS policy to
+        Cato <strong>in the same change window as the socket swap</strong> — it is not a follow-up
+        task, it is part of the cutover.</p>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Category taxonomy mismatch.</strong> An Umbrella category can span two Cato categories, or the reverse. Run the mapped rules in monitor and compare what fires against Umbrella&rsquo;s reports before claiming parity.</li>
+        <li><strong>SSL decryption is a re-build, not a port.</strong> The Umbrella root CA on endpoints is replaced by the Cato certificate (push via MDM), and the decryption scope is re-expressed as TLS Inspection rules with bypasses for pinned apps. Do this early — it gates SWG, CASB and DLP fidelity alike.</li>
+        <li><strong>Precedence to order.</strong> An Umbrella rule that &ldquo;won&rdquo; through identity precedence may need to move up or down the Cato base to keep the same effective behaviour — walk the top-20 destinations per user population to confirm.</li>
+        <li><strong>Niche behaviours.</strong> Bypass codes, per-identity block pages and similar features have no 1:1 equivalent — verify each during Review &amp; Map instead of assuming.</li>
+      </ul>
+      <h3>Migration strategy</h3>
+      <p>
+        Export the destination lists → dedupe against Cato system categories and drop what a
+        category rule already covers → build custom categories for the remainder → recreate the
+        DNS-layer controls in DNS Protections → deploy the whole set in monitor → move each
+        site&rsquo;s policy at socket-swap time → confirm parity from events, then enforce.
+      </p>
+    </section>
+
+    <section id="casb-policy" class="reveal">
+      <div class="section-kicker">Domain 3 · CASB policy</div>
+      <h2>Umbrella app discovery &amp; blocking → App Control</h2>
+      <p>
+        Umbrella&rsquo;s CASB footprint is usually modest: <strong>App Discovery</strong> (cloud-app
+        usage inferred from DNS and proxy logs) plus <strong>application block settings</strong>
+        inside the web policy. There is rarely a deep rule base to convert — so this domain is a
+        <strong>mapping of intent, not of rules</strong>: which apps are blocked, tolerated or
+        sanctioned, and for whom. <strong>Export:</strong> the App Discovery report to CSV, and the
+        application settings from a policy walk-through.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Umbrella construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>App Discovery reports</td><td>Cloud Apps Dashboard / shadow-IT analytics</td><td>Run a Cato discovery baseline in parallel and compare the two before enforcing anything.</td></tr>
+            <tr><td>Application block settings</td><td>App Control (CASB) rules + Internet firewall app rules</td><td>Umbrella blocks whole apps at the domain level; Cato adds granular activities (upload, download, post).</td></tr>
+            <tr><td>App risk information</td><td>Cato app risk scores in App Analytics</td><td>Re-tag sanctioned vs unsanctioned in CMA — labels do not carry over.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Domain-level vs activity-level.</strong> &ldquo;Block Dropbox&rdquo; in Umbrella becomes a choice in Cato: block the app, or allow it read-only by blocking uploads. Decide per app rather than defaulting to the blunt option.</li>
+        <li><strong>App catalogues differ.</strong> Names and app groupings will not match one-for-one — map by function and verify with a test flow.</li>
+        <li><strong>Granular control needs TLS inspection.</strong> Activity-level CASB rules on HTTPS traffic require the inspection scope from the SWG domain to be in place first.</li>
+      </ul>
+      <h3>Migration strategy</h3>
+      <p>
+        Extract the intent (blocked / tolerated / sanctioned app lists per user population) →
+        re-express as App Control rules with activities where useful → run Cato&rsquo;s own discovery
+        for a baseline period and reconcile against Umbrella App Discovery → monitor, review the
+        deltas with the customer, then enforce.
+      </p>
+    </section>
+
+    <section id="dlp-policy" class="reveal">
+      <div class="section-kicker">Domain 4 · DLP policy</div>
+      <h2>Umbrella real-time DLP → Cato DLP profiles</h2>
+      <p>
+        Umbrella real-time DLP (SIG Advantage) inspects traffic inline against <strong>data
+        classifications</strong> — built-in identifiers plus custom regex patterns and dictionaries —
+        in rules scoped to identities and destinations. Most estates enforce only a handful of rules,
+        so treat this domain like CASB: small, but semantically fiddly. <strong>Export:</strong> the
+        classification inventory and rule set from a policy walk-through, plus incident reports for
+        tuning context — there is no one-click policy export.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Umbrella construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Built-in data classifications</td><td>Cato DLP content profiles — predefined data types</td><td>Coverage differs by type (PCI, PII, credentials…) — validate each classification you actually use.</td></tr>
+            <tr><td>Custom regex / dictionaries</td><td>Custom data types in DLP content profiles</td><td>Port the patterns, then re-test thresholds — match confidence is engine-specific.</td></tr>
+            <tr><td>Real-time DLP rules (identities × destinations)</td><td>DLP rules scoped by user/group, app or category</td><td>Requires TLS inspection on the traffic in scope — sequence after the SWG decryption re-build.</td></tr>
+            <tr><td>DLP incident reports</td><td>Events + Data Protection Dashboard</td><td>Use the last 90 days of Umbrella incidents as the tuning corpus for monitor mode.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Thresholds do not transfer.</strong> Match counts and confidence levels behave differently per engine — expect a tuning cycle in monitor mode, not a like-for-like flip.</li>
+        <li><strong>File-type coverage differs.</strong> Confirm the formats that matter to the customer (archives, images with OCR expectations, CAD) rather than assuming parity.</li>
+        <li><strong>Inline-first.</strong> Cato DLP enforcement is inline at the PoP; if the customer relied on out-of-band SaaS API scanning, verify that requirement&rsquo;s scope with Cato PS during Review &amp; Map.</li>
+      </ul>
+      <h3>Migration strategy</h3>
+      <p>
+        Rebuild only the rules Umbrella actually enforced → recreate the classifications as content
+        profiles (predefined types first, custom regex second) → run in monitor with events feeding
+        the Data Protection Dashboard → tune thresholds against the Umbrella incident corpus → then,
+        and only then, switch to block.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practice</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Cato&rsquo;s WAN firewall is an allowlist; the Internet firewall is a blocklist. Sort every legacy rule into the right base — copying an ACL wholesale inverts semantics.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>TLS inspection is the fidelity prerequisite</h4><p>Category matching, App Control activities and DLP are all blind on encrypted traffic without it. Push the Cato certificate early via MDM and stage inspection with bypasses for pinned apps.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟡</div><div><h4>Monitor, then block</h4><p>Every imported rule starts life logging, not blocking. Flip to enforce only on event evidence — per rule, not per big-bang.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity before policy</h4><p>Provision IdP SSO and SCIM groups before importing any rule that references users. Umbrella AD identities map onto those groups — and group-name drift breaks rules silently.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>Parity is proven, not asserted: compare Umbrella and FMC reports against CMA events and rule hits per wave before decommissioning anything.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>Web policy moves at swap time</h4><p>Umbrella network identities break the moment a site egresses via a Cato PoP — per-site policy migration is part of the socket cutover window, never a follow-up.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The pipeline, visualised</div>
+      <h2>Four domains, one process</h2>
+      <p>
+        Every domain on this page runs through the same pipeline. The clean-up filter is the step
+        teams skip under time pressure — and the step that determines whether the Cato rule base is
+        auditable or a museum of dead exceptions.
+      </p>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 480" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The four-phase policy migration pipeline from Cisco constructs to enforced Cato policy</title>
+          <desc id="dg1-desc">Four Cisco policy domains — ASA/FTD firewall, Umbrella web policy, Umbrella app control and Umbrella DLP — feed an export stage. Exported rules pass a rationalisation filter where dead rules are discarded, marked with a red X. Surviving rules are mapped to CMA policy constructs, deployed in monitor mode shown in amber, then enforced shown in green. Monitor and enforce stages send telemetry to an events and hit-counts node used as validation evidence.</desc>
+
+          <!-- Source domain boxes (left) -->
+          <rect class="dg-node" x="28" y="28" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="52" text-anchor="middle">ASA / FTD firewall</text>
+          <text class="dg-sub" x="118" y="70" text-anchor="middle">ACLs · object-groups</text>
+
+          <rect class="dg-node" x="28" y="100" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="124" text-anchor="middle">Umbrella web policy</text>
+          <text class="dg-sub" x="118" y="142" text-anchor="middle">dest lists · categories</text>
+
+          <rect class="dg-node" x="28" y="172" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="196" text-anchor="middle">Umbrella app control</text>
+          <text class="dg-sub" x="118" y="214" text-anchor="middle">discovery · app blocks</text>
+
+          <rect class="dg-node" x="28" y="244" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="268" text-anchor="middle">Umbrella DLP</text>
+          <text class="dg-sub" x="118" y="286" text-anchor="middle">real-time rules</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 208 57 C 240 60, 248 110, 262 148"/>
+          <path class="lane-static" fill="none" d="M 208 129 C 232 132, 244 145, 262 158"/>
+          <path class="lane-static" fill="none" d="M 208 201 C 232 198, 244 185, 262 172"/>
+          <path class="lane-static" fill="none" d="M 208 273 C 240 270, 248 220, 262 182"/>
+
+          <!-- EXPORT -->
+          <rect class="dg-node-dark" x="262" y="132" width="130" height="66" rx="10"/>
+          <text class="dg-label-inv" x="327" y="160" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="327" y="178" text-anchor="middle">CSV · API · CLI</text>
+
+          <path class="lane-static" d="M 392 165 L 448 165"/>
+
+          <!-- Rationalise (clean-up filter) -->
+          <rect class="dg-node" x="448" y="132" width="150" height="66" rx="10"/>
+          <text class="dg-label" x="523" y="160" text-anchor="middle">Rationalise</text>
+          <text class="dg-sub" x="523" y="178" text-anchor="middle">hit-count clean-up</text>
+
+          <!-- Discard branch -->
+          <path class="lane lane-block" d="M 523 198 C 523 216, 523 230, 523 246"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 511 246 L 535 270"/><path class="lane-x" d="M 535 246 L 511 270"/>
+          </g>
+          <text class="dg-tiny" x="523" y="294" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">dead rules discarded</text>
+
+          <path class="lane-static" d="M 598 165 L 648 165"/>
+
+          <!-- MAP -->
+          <rect class="dg-node-dark" x="648" y="132" width="150" height="66" rx="10"/>
+          <text class="dg-label-inv" x="723" y="160" text-anchor="middle">MAP to CMA</text>
+          <text class="dg-sub-inv" x="723" y="178" text-anchor="middle">policy constructs</text>
+
+          <!-- MAP → DEPLOY (monitor) -->
+          <path class="lane lane-limit" d="M 715 198 C 705 250, 680 292, 658 330"/>
+
+          <!-- DEPLOY (monitor, amber) -->
+          <rect x="560" y="330" width="184" height="66" rx="10" fill="#fdf6e3" stroke="var(--lane-limit)" stroke-width="1.5"/>
+          <text class="dg-label" x="652" y="358" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="652" y="376" text-anchor="middle">log-only · no blocking</text>
+
+          <!-- DEPLOY → ENFORCE -->
+          <path class="lane lane-allow" d="M 744 363 L 792 363"/>
+
+          <!-- ENFORCE (green) -->
+          <rect class="dg-node-green" x="792" y="330" width="142" height="66" rx="10"/>
+          <text class="dg-label" x="863" y="358" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="863" y="376" text-anchor="middle">tighten to block</text>
+
+          <!-- Events / evidence node -->
+          <rect class="dg-node" x="250" y="330" width="180" height="66" rx="10"/>
+          <text class="dg-label" x="340" y="358" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub" x="340" y="376" text-anchor="middle">validation evidence</text>
+
+          <!-- Telemetry -->
+          <path class="lane-static" d="M 560 363 L 430 363"/>
+          <text class="dg-tiny" x="495" y="352" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry</text>
+          <path class="lane-static" fill="none" d="M 863 396 C 830 448, 420 452, 344 398"/>
+          <text class="dg-tiny" x="628" y="456" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">block / allow evidence</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy in monitor — log only</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — blocking on</span>
+          <span class="key"><span class="swatch block"></span> Dead rules discarded at review</span>
+        </div>
+        <div class="diagram-caption">The four-phase pipeline applied to every Cisco policy domain: export each rule base, rationalise on hit counts (dead rules never reach Cato), map the survivors to CMA constructs, deploy in monitor mode, and enforce only once events and hit counts prove parity.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Bring their artefacts, not slides</div>
+        <p>Ask for the exports in advance — a destination-list CSV and a <code>show access-list</code>
+        capture are enough. A workshop run on the customer&rsquo;s own dead rules lands harder than
+        any generic walkthrough.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Whiteboard the estate</h4>
+          <p>Map the four domains and where each policy lives today — ASDM/FMC/CDO for the firewalls,
+          the Umbrella dashboard for web, app and DLP policy. Agree which domains are in scope and
+          who owns each rule base.</p>
+        </li>
+        <li>
+          <h4>Review the exports together</h4>
+          <p>Open the <code>show access-list</code> output and sort by <code>hitcnt</code>; do the
+          same mentally for the destination-list CSV against Umbrella&rsquo;s reports. Mark the
+          zero-hit entries — this is the moment the customer sees that lift-and-shift would import
+          a graveyard.</p>
+        </li>
+        <li>
+          <h4>Tour the target rule bases</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Show the two postures — WAN allowlist, Internet blocklist — and explain why legacy
+          rules are sorted between them rather than copied. Walk one ordered base replacing several
+          per-interface ACLs and separate DNS/web policies.</p>
+        </li>
+        <li>
+          <h4>Build one mapping live</h4>
+          <p>Take a sample of a destination list, create a custom category from it, and attach it to
+          an Internet firewall rule in monitor. One construct, exported to enforced-ready, in
+          minutes — that is the pipeline in miniature.</p>
+        </li>
+        <li>
+          <h4>Show TLS Inspection staging</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the inspection rules and bypass handling, and explain why decryption scope is the
+          prerequisite for SWG category fidelity, granular CASB and DLP alike.</p>
+        </li>
+        <li>
+          <h4>Show the CASB and DLP targets</h4>
+          <p><span class="path">Security → CASB</span> <span class="path">Security → DLP Configuration</span> <span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show App Control rules with activity-level granularity, a DLP content profile, and the
+          shadow-IT view that replaces Umbrella App Discovery — the baseline for the CASB
+          reconciliation step.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events by rule to show monitor-mode telemetry, then agree the parity checklist
+          and the monitor-to-enforce criteria per domain. That agreement is the workshop&rsquo;s
+          deliverable.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet and WAN firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13314286857501-Working-with-Categories" target="_blank" rel="noopener">Working with categories (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/6724699301661-Customizing-the-DNS-Protections-for-IPS" target="_blank" rel="noopener">Customising DNS Protections for IPS (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://developer.cisco.com/docs/cloud-security/get-destinations-and-export-to-csv-file/" target="_blank" rel="noopener">Umbrella Destination Lists API — export to CSV (Cisco DevNet)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato</a></li>
+            <li><a href="migration-anyconnect.html">AnyConnect to Cato Client</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

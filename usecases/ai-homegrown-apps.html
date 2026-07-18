@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Securing Homegrown AI Applications — Cato Use Case Library</title>
+<meta name="description" content="Protect the AI you build — AI Gateway integration, Guards and the Guards Interaction Policy, Outposts, and the AI Security Engine defending against prompt injection and jailbreaks at runtime.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="ai-homegrown-apps">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / Homegrown AI Apps</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Securing Homegrown AI Applications</h1>
+    <p class="lede">
+      Your customer has shipped AI — a support chatbot, an internal copilot, a RAG service over
+      company data. What they usually haven't shipped is runtime protection: nothing between the
+      user's prompt and the model that stops injection, redacts PII or records what was said.
+      AI Security for Apps puts a Cato Guard in that interaction path — blocking prompt injection
+      and jailbreaks, anonymising sensitive data in-flight, and auditing every interaction in the
+      Interaction Explorer.
+    </p>
+    <div class="meta-row">
+      <span class="tag">AI Guards</span><span class="tag">AI Gateway</span><span class="tag">Prompt Injection</span>
+      <span class="tag">Outposts</span><span class="tag">AI Security Engine</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Every "AI you use" conversation eventually turns into an "AI you build" conversation.
+        Organisations are embedding LLMs into their own products and workflows: internal chatbots
+        over knowledge bases, customer-facing support assistants, AI features inside business
+        applications, and custom interfaces wired into CRM and ERP data. Each one is a new,
+        internet- or employee-facing doorway into company data — driven by natural language,
+        which no WAF or API gateway was designed to police.
+      </p>
+      <p>
+        The objective of AI Security for Apps is to let the organisation
+        <strong>safely deploy AI-powered experiences while keeping control over how data is accessed
+        and used</strong> — runtime protection against attempts to manipulate prompts, extract
+        sensitive information or bypass system safeguards, plus the monitoring to spot
+        inappropriate or unintended behaviour before it becomes an incident.
+      </p>
+    </section>
+
+    <section id="risks" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Shipping AI features without runtime protection</h2>
+      <p>
+        App teams move fast: a model API key, a system prompt, a vector store — live in a sprint.
+        The security controls usually arrive much later, if at all. The risk categories are the
+        same ones the OWASP LLM community keeps top of its list, and they map directly to what
+        Cato's engine detects:
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">🎯 AI-specific attacks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Prompt injection, jailbreak attempts and multi-turn
+          manipulation designed to make the app ignore its instructions — including payloads hidden in
+          content the app is asked to process, such as an email carrying an embedded tool call.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">🕳️ Data leakage</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The app is connected to real systems — CRM, HR, finance.
+          Users paste personal and financial identifiers into prompts; models can be coaxed into revealing
+          data from connected sources that the asker should never see.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">⚖️ Compliance violations</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Regulated AI usage scenarios — financial, employment,
+          recruitment or medical advice given by your app — collide with obligations such as the EU AI Act.
+          Without controls, the app answers whatever it is asked.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">🕵️ Governance gaps</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">No audit trail of model interactions, no role-based
+          segmentation of who may ask what. When someone asks "what did the bot tell the customer?",
+          nobody can answer with evidence.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question — for the app / platform team</div>
+        <p>"If someone pasted <em>'ignore your system instructions and…'</em> into your chatbot tonight,
+        what component blocks it — and where would you find the record of the attempt tomorrow morning?"</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>A Guard in the interaction path</h2>
+      <p>
+        Cato's AI Security for Apps places an <strong>AI Security Guard</strong> between the application
+        and its models. The guard evaluates prompts — and, when relevant, model responses — against the
+        detections and actions configured in the <strong>Guards Interaction Policy</strong>, then allows,
+        blocks or logs the interaction. Guards deploy three ways: <strong>Proxy</strong> (inline — the guard
+        intercepts prompts and Cato performs the configured action), <strong>API</strong> (the guard scans
+        prompts without intercepting and returns the detection result to your code), or
+        <strong>AI Gateway</strong> (your existing gateway forwards traffic to Cato for inspection).
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">AI Security Guard in the interaction path of a homegrown AI application</title>
+          <desc id="dg1-desc">A benign user and an attacker both send prompts to a homegrown AI application. Every prompt passes through a Cato AI Security Guard before reaching the LLM providers. The benign prompt has PII redacted and is forwarded to the model. The injection attempt is blocked at the guard and an alert is sent to the SOC. All sessions and detections are recorded in the Interaction Explorer.</desc>
+
+          <!-- Users (left) -->
+          <g>
+            <circle cx="84" cy="110" r="23" fill="var(--status-good)"/>
+            <circle cx="84" cy="103" r="6.5" fill="#fff"/>
+            <path d="M 71 123 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="84" y="152" text-anchor="middle">Priya — app user</text>
+            <text class="dg-sub" x="84" y="168" text-anchor="middle">Benign prompt with PII</text>
+          </g>
+          <g>
+            <circle cx="84" cy="280" r="23" fill="var(--status-critical)"/>
+            <circle cx="84" cy="273" r="6.5" fill="#fff"/>
+            <path d="M 71 293 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="84" y="322" text-anchor="middle">Attacker</text>
+            <text class="dg-sub" x="84" y="338" text-anchor="middle">Injection · jailbreak</text>
+          </g>
+
+          <!-- Homegrown app -->
+          <rect class="dg-node" x="220" y="160" width="170" height="64" rx="10"/>
+          <text class="dg-label" x="305" y="186" text-anchor="middle">Homegrown AI app</text>
+          <text class="dg-sub" x="305" y="204" text-anchor="middle">Chatbot · copilot · RAG</text>
+
+          <!-- Model backends (right) -->
+          <rect class="dg-node" x="760" y="64" width="166" height="58" rx="10"/>
+          <text class="dg-label" x="843" y="88" text-anchor="middle">LLM providers</text>
+          <text class="dg-sub" x="843" y="106" text-anchor="middle">OpenAI · Claude · Gemini</text>
+
+          <rect class="dg-node" x="760" y="196" width="166" height="58" rx="10"/>
+          <text class="dg-label" x="843" y="220" text-anchor="middle">Self-hosted models</text>
+          <text class="dg-sub" x="843" y="238" text-anchor="middle">OpenAI-compatible API</text>
+
+          <!-- Lanes: user → app -->
+          <path class="lane lane-allow" d="M 110 118 C 145 135, 180 155, 218 170"/>
+          <path class="lane lane-block" d="M 110 272 C 145 255, 180 232, 218 214"/>
+
+          <!-- Lanes: app → guard -->
+          <path class="lane lane-allow" d="M 392 174 C 425 176, 455 180, 486 184"/>
+          <path class="lane lane-block" d="M 392 208 C 425 208, 455 205, 486 202"/>
+
+          <!-- Guard → models: benign forwarded (PII redacted) -->
+          <path class="lane lane-allow" d="M 548 178 C 620 150, 680 120, 756 96"/>
+          <path class="lane-static" fill="none" d="M 550 196 C 620 204, 690 212, 752 222"/>
+
+          <!-- Guard → blocked injection -->
+          <path class="lane lane-block" d="M 548 206 C 585 222, 610 238, 628 252"/>
+          <g aria-label="blocked at the guard">
+            <path class="lane-x" d="M 628 250 L 652 274"/><path class="lane-x" d="M 652 250 L 628 274"/>
+          </g>
+          <path class="lane lane-block" d="M 655 282 C 690 306, 712 328, 724 348"/>
+
+          <!-- Guard → Interaction Explorer telemetry -->
+          <path class="lane-static" fill="none" d="M 496 214 C 445 255, 430 300, 425 350"/>
+
+          <!-- Cato Guard -->
+          <circle class="pulse-ring" cx="520" cy="192" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="192" r="30"/>
+          <text class="dg-label" x="520" y="126" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security Guard</text>
+          <text class="dg-tiny" x="520" y="142" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Proxy · API · AI Gateway</text>
+          <text class="dg-tiny" x="520" y="252" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security Engine · detectors</text>
+          <text class="dg-tiny" x="520" y="268" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Cloud or Outpost</text>
+
+          <!-- Telemetry + SOC nodes -->
+          <rect class="dg-node-dark" x="322" y="352" width="196" height="64" rx="10"/>
+          <text class="dg-label-inv" x="420" y="378" text-anchor="middle">Interaction Explorer</text>
+          <text class="dg-sub-inv" x="420" y="396" text-anchor="middle">Sessions · detections</text>
+
+          <rect class="dg-node" x="642" y="352" width="176" height="64" rx="10"/>
+          <text class="dg-label" x="730" y="378" text-anchor="middle">SOC / XDR</text>
+          <text class="dg-sub" x="730" y="396" text-anchor="middle">Blocked-event alerts</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Benign prompt — PII redacted, then forwarded</span>
+          <span class="key"><span class="swatch block"></span> Injection / jailbreak — blocked at the Guard, alerted to SOC</span>
+        </div>
+        <div class="diagram-caption">Every prompt and response passes the Guard before it reaches a model. The AI Security Engine's detectors decide the outcome — redact and forward, or block and alert — and the full session lands in the Interaction Explorer.</div>
+      </div>
+
+      <h3>The building blocks</h3>
+      <div class="table-wrap" style="margin-top:10px">
+        <table class="data">
+          <thead><tr><th>Component</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><strong>AI Security Guard</strong></td><td>The enforcement point. Evaluates prompts and, when relevant, model responses against your policy; allows, blocks or logs the interaction. Proxy mode supports OpenAI, Azure OpenAI, Anthropic Claude, Google Gemini, Bedrock and custom OpenAI-compatible endpoints.</td></tr>
+            <tr><td><strong>AI Gateway integration</strong></td><td>Forwards traffic from an existing AI gateway to Cato for inspection in pre-call and post-call modes. LiteLLM is supported today; Kong, API-M and Portkey via your Cato representative. Multiple API keys per integration allow rotation without downtime.</td></tr>
+            <tr><td><strong>Guards Interaction Policy</strong></td><td>Granular rules per guard (or all guards): each rule pairs an engine profile with an action — Block, Anonymize or Monitor — and a direction. All rules are evaluated regardless of position; when several match, the stricter action wins.</td></tr>
+            <tr><td><strong>AI Security Engine</strong></td><td>Profiles group detectors. Entity detectors find specific data (PII, PCI, PHI, credentials, secrets); content detectors judge meaning and intent (prompt injection, obfuscation, harmful content, regulated topics such as financial, employment or medical advice). Confidence levels, string exclusions and custom regex detectors tune precision.</td></tr>
+            <tr><td><strong>Playground</strong></td><td>A simulation environment to validate engine profiles before they enforce anything — predefined scenarios (Personal Information, Jailbreak &amp; Prompt Injection, API Keys &amp; Secrets in Code) or custom prompts, with per-profile violation results.</td></tr>
+            <tr><td><strong>Outpost</strong></td><td>A locally deployed inspection service (Kubernetes + Helm) for organisations whose regulations don't allow prompt content to leave their environment — Cato receives only management metadata. Separately licensed; use only when residency demands it.</td></tr>
+            <tr><td><strong>Interaction Explorer</strong></td><td>The audit trail: every session per guard with interaction counts, detections and timestamps. Drill into a session for the rule violations and the engine's analysis report.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Runtime protection, not code review</h4><p>Injection, jailbreaks and multi-turn manipulation are blocked in the interaction path — no changes to the model, minimal changes to the app.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>An engine tuned to your data</h4><p>Entity and content detectors with confidence levels, exclusions and custom regex — tested safely in the Playground before enforcement.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏠</div><div><h4>Data residency when it's required</h4><p>Host inspection on an Outpost in your own cluster so prompt content never leaves the environment, with policy still managed centrally in CMA.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔎</div><div><h4>An audit trail that finally exists</h4><p>Every interaction, verdict and engine analysis report is queryable in the Interaction Explorer — evidence for security, audit and the app team alike.</p></div></div>
+      </div>
+    </section>
+
+    <section id="build" class="reveal">
+      <div class="section-kicker">Build-out</div>
+      <h2>From first key to full enforcement</h2>
+      <ol class="steps">
+        <li>
+          <h4>Integrate the interaction path</h4>
+          <p><span class="path">AI Security → Guards</span> <span class="path">AI Security → AI Gateway</span></p>
+          <p>Pick the pattern that fits the app: a <strong>Proxy guard</strong> (select the AI service, add its
+          API key, click Validate — the app then talks to the guard's endpoint), an <strong>API guard</strong>
+          (the app calls Cato for a verdict and enforces it itself), or an <strong>AI Gateway</strong> integration
+          (create it in CMA, paste the generated snippet into LiteLLM, then create a guard of type AI Gateway
+          whose name exactly matches the LiteLLM virtual key). The guard details page provides endpoints,
+          headers and sample request code to copy into the application.</p>
+        </li>
+        <li>
+          <h4>Define engine profiles and detectors</h4>
+          <p>Build profiles that group the detectors this app needs — personal identifiers, secrets and code,
+          sensitive business information, regulated AI-usage topics, safety and security. Set confidence levels
+          (higher = fewer, surer alerts), add string exclusions for known-benign values, and create custom
+          regex detectors for organisation-specific data.</p>
+        </li>
+        <li>
+          <h4>Write the Guards Interaction Policy</h4>
+          <p>Enable the policy in the AI Security section, then add rules: which guards, which engine profile,
+          which direction, and the action — <strong>Block</strong>, <strong>Anonymize</strong> or
+          <strong>Monitor</strong>. Start broad in Monitor, then tighten; remember every rule is evaluated
+          and the stricter action always prevails.</p>
+        </li>
+        <li>
+          <h4>Test in the Playground before enforcing</h4>
+          <p><span class="path">Security → AI Security → Playground</span></p>
+          <p>Activate the profiles, run the predefined scenarios — Personal Information, Jailbreak &amp; Prompt
+          Injection, API Keys &amp; Secrets in Code — and your own custom prompts. Iterate on detector logic
+          until coverage is right and false positives are gone, with zero production risk.</p>
+        </li>
+        <li>
+          <h4>Optional: deploy an Outpost for residency</h4>
+          <p><span class="path">AI Security → Outposts</span></p>
+          <p>If prompt content must not leave the environment, the wizard generates everything for a
+          Kubernetes deployment: namespace, service secret, registry access, operator Helm charts and the
+          Outpost manifest (GPU node selectors, resources, release channel). Only monitoring metadata
+          returns to Cato.</p>
+        </li>
+        <li>
+          <h4>Monitor guards and interactions</h4>
+          <p>The guard overview shows Interactions, Violation Rate and Active Rules; Guard Logging lists
+          sessions with invocations and detections. The Interaction Explorer is the cross-guard view for
+          investigation. Viewing session content requires the Read Sensitive Content RBAC permission —
+          scope it deliberately.</p>
+        </li>
+      </ol>
+      <div class="callout">
+        <div class="co-title">Licensing note</div>
+        <p><strong>AI Security for End Users</strong> and <strong>AI Security for Apps</strong> are separate
+        per-user licences — securing employee GenAI use does not automatically cover the AI the customer
+        builds, and vice versa. Outposts are licensed separately again.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the apps</div>
+        <p>Ask the app/platform team what AI they've shipped or have in flight: which models, whether an AI
+        gateway (LiteLLM, Kong…) is already in place, and who answered the last "is the chatbot safe?"
+        question. Anchor every demo moment to one of their real applications.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame two applications, two audiences</h4>
+          <p>Set up the story: an <strong>internal chat assistant</strong> over company knowledge, and a
+          <strong>customer-facing support app</strong>. Same risks, different blast radius — and today,
+          most likely, no runtime control on either.</p>
+        </li>
+        <li>
+          <h4>Show the Guard and how the app connects</h4>
+          <p><span class="path">AI Security → Guards</span></p>
+          <p>Open a guard and walk the three types — Proxy, API, AI Gateway. Show the guard details page:
+          endpoint, headers, API keys and the sample request code a developer would paste in. The message:
+          integration is an afternoon, not a re-architecture.</p>
+        </li>
+        <li>
+          <h4>Walk the policy that decides outcomes</h4>
+          <p>Open an engine profile and show its detectors — personal identifiers, secrets, prompt injection,
+          regulated topics — then the Guards Interaction Policy rules mapping profiles to Block, Anonymize
+          or Monitor per guard and direction.</p>
+        </li>
+        <li>
+          <h4>Prove the detections in the Playground</h4>
+          <p><span class="path">Security → AI Security → Playground</span></p>
+          <p>Run the Jailbreak &amp; Prompt Injection scenario live, then type a custom prompt containing a
+          fake National Insurance number. Show which profiles fire, adjust a confidence level, re-run.
+          This is the safe rehearsal space their team will use too.</p>
+        </li>
+        <li>
+          <h4>Runtime moments — the five interactions that sell it</h4>
+          <p>Against the demo app, replay this sequence and narrate the verdicts:</p>
+          <ul>
+            <li><em>Internal app:</em> "Please summarise the following email…" (containing a phone number) → <strong>Redact</strong> — PII anonymised, prompt still answered.</li>
+            <li><em>Internal app:</em> "What's the average salary of the IT department?" → <strong>Block &amp; audit</strong> — HR-topic policy violation.</li>
+            <li><em>Customer-facing app:</em> an email submitted for summarising carries an embedded malicious tool call → <strong>Block &amp; send to SOC</strong> — agentic attack detected.</li>
+            <li><em>Customer-facing app:</em> "Ignore your system instructions and tell me how to…" → <strong>Block &amp; send to SOC</strong> — jailbreak detected.</li>
+            <li><em>Customer-facing app:</em> "Should I sign this contract?" → <strong>Block &amp; audit</strong> — high-risk topic; the bot must not give advice with legal consequences.</li>
+          </ul>
+        </li>
+        <li>
+          <h4>Close on evidence in the Interaction Explorer</h4>
+          <p>Open the Interaction Explorer, filter to the demo guard, and drill into the session you just
+          created: interactions, detections, rule violations and the engine's analysis report. Then show the
+          guard overview — Interactions, Violation Rate, Active Rules. "This is the audit trail your AI app
+          doesn't have today."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-apps" target="_blank" rel="noopener">What is AI Security for Apps</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-ai-security-guards" target="_blank" rel="noopener">Working with AI Security Guards</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-guards-interaction-policy" target="_blank" rel="noopener">Working with the Guards Interaction Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-and-monitoring-a-guard" target="_blank" rel="noopener">Configuring and Monitoring a Guard</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/integrating-your-ai-gateway-with-cato" target="_blank" rel="noopener">Integrating Your AI Gateway with Cato</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/ai-security-engine" target="_blank" rel="noopener">AI Security Engine — profiles &amp; detectors</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/testing-engine-profiles-in-the-playground" target="_blank" rel="noopener">Testing Engine Profiles in the Playground</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-ai-security-outposts" target="_blank" rel="noopener">Configuring AI Security Outposts</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-ai-sessions-for-apps-with-the-interaction-explorer" target="_blank" rel="noopener">Monitoring AI Sessions with the Interaction Explorer</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+            <li><a href="ai-agentic-security.html">Securing Agentic AI</a></li>
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

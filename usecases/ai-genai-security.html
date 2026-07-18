@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI Security for End Users — Cato Use Case Library</title>
+<meta name="description" content="From shadow-AI discovery to prompt-level enforcement — the User Interaction Policy, browser plugin and DLP working together so employees can use GenAI without leaking data.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="ai-genai-security">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / GenAI Security for End Users</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>GenAI Security for End Users</h1>
+    <p class="lede">
+      GenAI is already inside the business — approved assistants, free chatbots and AI features
+      embedded in everyday SaaS. Blanket blocking fails and blanket trust leaks data. This use case
+      shows Cato's ongoing AI Security for End Users capability: discover every AI app in use,
+      understand who is using it and how, then govern each prompt — monitor, anonymise or block —
+      with the evidence to prove it.
+    </p>
+    <div class="meta-row">
+      <span class="tag">GenAI</span><span class="tag">Shadow AI</span><span class="tag">User Interaction Policy</span>
+      <span class="tag">Browser Plugin</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Employees adopted GenAI faster than any tool in enterprise history — and mostly without
+        asking. Source code goes into chatbots to be debugged, customer records go in to be
+        summarised, contracts go in to be redrafted. Every prompt is potentially an upload of
+        sensitive data to a third party the organisation has never assessed.
+      </p>
+      <p>
+        The objective is not to ban GenAI — the productivity upside is real and the business will
+        route around a ban. The objective is <strong>safe enablement: let people use AI, see exactly
+        how they use it, and control what leaves with each prompt.</strong> That takes an ongoing
+        capability, not a one-off audit: discover the AI estate, understand usage and risk, govern
+        interactions at prompt level, and keep the evidence.
+      </p>
+      <p>
+        Cato packages this as <strong>AI Security for End Users</strong> — a per-user licence,
+        separate from the <strong>AI Security for Apps</strong> licence that covers an
+        organisation's own AI applications and agents. This page covers the end-user side.
+      </p>
+      <div class="callout">
+        <div class="co-title">Starting from zero visibility?</div>
+        <p>Run the assessment first. The no-cost, four-week
+        <a href="security-ai-visibility.html">GenAI Visibility Assessment</a> produces the baseline
+        and the board-ready report — this use case is the ongoing capability the customer keeps
+        running afterwards.</p>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The governance gap</div>
+      <h2>Why URL-filter-era controls fail for GenAI</h2>
+      <p>
+        Most organisations' first response to GenAI risk was the tool they already had: the web
+        filter. Categorise the domain, block the category, declare the problem solved. It doesn't
+        survive contact with how GenAI is actually used.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The URL-filter playbook</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Classify the destination domain, then allow or block it outright</li>
+            <li>Risk judged once, per category — never per interaction</li>
+            <li>Sees a connection to an AI service, not what was pasted into it</li>
+            <li>New tools take time to classify — AI apps appear weekly</li>
+            <li>All-or-nothing: the only "safe" setting is a productivity-killing ban</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The GenAI reality</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>AI is embedded inside sanctioned SaaS you cannot block wholesale</li>
+            <li>The risk lives in the prompt — what goes in, not where it goes</li>
+            <li>Blocked users switch to personal accounts and devices — usage goes dark</li>
+            <li>The same app can be fine for one prompt and a data breach for the next</li>
+            <li>Auditors and AI governance frameworks now ask for proof of control</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Which GenAI tools were used in your organisation last week, by whom — and what was
+        pasted into them? If you can answer the first half but not the second, you have visibility
+        of domains, not of data.”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Discover → understand → govern → prove</h2>
+
+      <h3>1 · Discover — find every AI app in use</h3>
+      <p>
+        <strong>AI Usage Discovery</strong> builds the inventory through three complementary
+        methods, so coverage isn't gated on deployment work: analysis of <strong>Internet Firewall
+        events</strong> the Cato Cloud already processes (no additional setup), ingestion of
+        <strong>security product logs</strong> from third-party proxies and SASE platforms (extends
+        visibility without touching end-user devices), and the <strong>Cato AI Security Browser
+        Plugin</strong> for the deepest, browser-level view.
+      </p>
+      <p>
+        On top of that inventory, <strong>Shadow AI Discovery</strong> classifies traffic against AI
+        application signatures, domains and behavioural patterns — catching both standalone AI tools
+        and AI features embedded inside everyday SaaS, and evaluating the risk posture of what it
+        finds. It is deliberately passive: it does not block traffic by default and does not inspect
+        prompt content. The dedicated Shadow AI page in the Cato Management Application answers
+        three questions: which AI applications are in use, how widely each is used, and which
+        represent higher risk and need closer review.
+      </p>
+
+      <h3>2 · Understand — dashboards and the AI Users page</h3>
+      <p>
+        The <strong>AI Security Overview dashboard</strong> turns discovery into a management view:
+        total AI apps, AI users, AI interactions and adoption rate up top; an <strong>AI Violation
+        Rate</strong> widget as the quick risk-posture indicator; violation breakdown by policy
+        rule; latest applications discovered (the shadow-AI early-warning feed); topic popularity;
+        and top interaction flows from application to outcome. The <strong>AI Users page</strong>
+        makes it personal — sort by policy violations, compare departments, then drill into one
+        user to see their interactions and violations over the period, the split of safe prompts
+        versus violations, the applications they use and their adoption over time.
+      </p>
+
+      <h3>3 · Govern — the User Interaction Policy</h3>
+      <p>
+        The <strong>User Interaction Policy</strong> is the control point: it inspects AI chat
+        prompts in real time as they cross a Cato PoP and enforces a decision per interaction. A
+        rule combines a <em>source</em> (users, groups or any), the <em>AI applications</em> in
+        scope, an <em>engine profile</em> (the content profile that evaluates the prompt), an
+        <em>action</em>, and an optional <em>notification template</em> to tell the user what
+        happened and why. Four actions cover the whole spectrum: <strong>Monitor</strong> (prompt
+        proceeds, interaction logged), <strong>Anonymize and Monitor</strong> (sensitive values
+        masked, prompt proceeds), <strong>Anonymize and Block</strong> (anonymised where the
+        detector supports it, otherwise blocked) and <strong>Block</strong> (prompt rejected —
+        nothing reaches the AI vendor).
+      </p>
+      <p>
+        Where inline steering can't see — managed devices outside Cato coverage, such as a
+        contractor estate on another vendor's SASE — the <strong>AI Security Browser Plugin</strong>
+        (Chrome, Edge and other Chromium browsers, deployable via Intune) intercepts supported AI
+        apps in the browser itself and enforces the same outcomes: block, anonymise or engage the
+        user, modifying the prompt and masking content before it ever reaches the LLM. And beneath
+        the interaction policy sits the <strong>recommended DLP configuration for AI apps</strong>:
+        Cato-recommended content profiles for PII, financial data, access keys &amp; tokens and
+        legal data, applied in DLP rules against the <em>Generative AI Tools</em> application
+        category as the file-and-upload backstop.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Prompt-level GenAI governance through the Cato PoP</title>
+          <desc id="dg1-desc">Three employees interact with GenAI through a Cato PoP running the AI Security engine and User Interaction Policy. An office user's prompts to sanctioned GenAI and embedded SaaS AI are allowed with inspection and logging. A remote user's prompt containing sensitive data is anonymised before it proceeds. A contractor device's prompt to a shadow AI app is blocked. Every decision is logged to the AI Security dashboards and events.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="165" ry="52"/>
+          <circle cx="318" cy="238" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="212" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+
+          <!-- AI destinations (left) -->
+          <rect class="dg-node-green" x="34" y="44" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="68" text-anchor="middle">Sanctioned GenAI</text>
+          <text class="dg-sub" x="114" y="86" text-anchor="middle">Approved AI assistant</text>
+
+          <rect class="dg-node" x="34" y="192" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="216" text-anchor="middle">Embedded SaaS AI</text>
+          <text class="dg-sub" x="114" y="234" text-anchor="middle">Copilots inside SaaS</text>
+
+          <rect class="dg-node" x="34" y="340" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="364" text-anchor="middle">Shadow AI apps</text>
+          <text class="dg-sub" x="114" y="382" text-anchor="middle">Unsanctioned tools</text>
+
+          <!-- Green: allowed with protection -->
+          <path class="lane lane-allow" d="M 806 84 C 700 84, 610 150, 510 202"/>
+          <path class="lane lane-allow" d="M 452 204 C 360 160, 280 90, 196 74"/>
+          <path class="lane lane-allow" d="M 446 220 C 370 221, 280 221, 196 221"/>
+
+          <!-- Amber: anonymised, prompt proceeds -->
+          <path class="lane lane-limit" d="M 806 226 C 720 228, 610 228, 514 224"/>
+          <path class="lane lane-limit" d="M 450 232 C 380 246, 280 246, 196 238"/>
+
+          <!-- Red: blocked at the policy engine -->
+          <path class="lane lane-block" d="M 806 372 C 720 370, 640 330, 520 240"/>
+          <path class="lane lane-block" d="M 452 236 C 390 270, 330 330, 262 362"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 228 356 L 252 380"/><path class="lane-x" d="M 252 356 L 228 380"/>
+          </g>
+
+          <!-- Evidence -->
+          <path class="lane-static" d="M 500 246 C 560 292, 560 352, 510 400" fill="none"/>
+          <rect class="dg-node-dark" x="370" y="400" width="220" height="56" rx="10"/>
+          <text class="dg-label-inv" x="480" y="423" text-anchor="middle">Dashboards &amp; evidence</text>
+          <text class="dg-sub-inv" x="480" y="441" text-anchor="middle">Overview · AI Users · Events</text>
+
+          <!-- Cato PoP labels -->
+          <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security · User Interaction Policy · DLP</text>
+
+          <!-- Users (right) -->
+          <g>
+            <circle cx="836" cy="84" r="23" fill="var(--status-good)"/>
+            <circle cx="836" cy="77" r="6.5" fill="#fff"/>
+            <path d="M 823 97 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="126" text-anchor="middle">Priya — office</text>
+            <text class="dg-sub" x="836" y="142" text-anchor="middle">Site behind a Socket</text>
+          </g>
+          <g>
+            <circle cx="836" cy="226" r="23" fill="var(--lane-limit)"/>
+            <circle cx="836" cy="219" r="6.5" fill="#fff"/>
+            <path d="M 823 239 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="268" text-anchor="middle">Marcus — remote</text>
+            <text class="dg-sub" x="836" y="284" text-anchor="middle">Cato Client · pastes PII</text>
+          </g>
+          <g>
+            <circle cx="836" cy="372" r="23" fill="var(--status-critical)"/>
+            <circle cx="836" cy="365" r="6.5" fill="#fff"/>
+            <path d="M 823 385 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="414" text-anchor="middle">Omar — contractor</text>
+            <text class="dg-sub" x="836" y="430" text-anchor="middle">Browser plugin, off-net</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed — prompt inspected &amp; logged</span>
+          <span class="key"><span class="swatch limit"></span> Anonymised — sensitive values masked, prompt proceeds</span>
+          <span class="key"><span class="swatch block"></span> Blocked — nothing reaches the AI vendor</span>
+        </div>
+        <div class="diagram-caption">Every prompt is evaluated by the User Interaction Policy at the PoP — and, via the browser plugin, on managed devices Cato traffic never crosses. Each decision lands in the dashboards and events as evidence.</div>
+      </div>
+
+      <h3>4 · Prove — evidence, not assertions</h3>
+      <p>
+        Every monitored, anonymised and blocked interaction is logged and attributed — user,
+        application, rule, matched profile. The Overview dashboard shows violation rate and
+        breakdown by rule; the AI Users page shows who needs coaching; and the data can be exported
+        for compliance auditing. When the AI governance question arrives from the board or an
+        auditor, the answer is a report, not a shrug.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔭</div><div><h4>Discovery with zero deployment</h4><p>Internet Firewall events the Cato Cloud already processes reveal AI usage on day one — extend with third-party logs and the browser plugin only where more depth is needed.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Prompt-level decisions</h4><p>The User Interaction Policy inspects each AI chat prompt in real time and acts per interaction — not a domain-level yes/no set once per category.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎭</div><div><h4>Anonymise, don't just block</h4><p>Sensitive values are masked and the prompt still goes through — users keep the productivity, the data stays home, and nobody is pushed to a personal account.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Coverage beyond the network</h4><p>The Chrome/Edge browser plugin enforces the same block, anonymise and engage outcomes on managed devices outside Cato coverage — such as contractor estates.</p></div></div>
+      </div>
+    </section>
+
+    <section id="lifecycle" class="reveal">
+      <div class="section-kicker">Policy lifecycle</div>
+      <h2>From monitor to block — without breaking the business</h2>
+      <p>
+        The teams that succeed with GenAI governance don't start with block. They start with
+        monitor, let the data teach them what's real, and tighten action by action — so every
+        restriction lands on evidence rather than fear, and users learn the policy as it arrives.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Stage</th><th>Policy action</th><th>What the user experiences</th><th>Move on when…</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1 · Baseline</strong></td>
+              <td>Monitor — User Interaction Policy rules and the recommended DLP rules, all in monitor mode</td>
+              <td>Nothing changes; every AI interaction is logged</td>
+              <td>You know the real AI estate and the top data-risk patterns</td>
+            </tr>
+            <tr>
+              <td><strong>2 · Coach</strong></td>
+              <td>Monitor + notification templates; plugin engages users in the browser</td>
+              <td>In-the-moment notice explaining the policy as they work</td>
+              <td>Violation rate falls as behaviour visibly shifts</td>
+            </tr>
+            <tr>
+              <td><strong>3 · Redact</strong></td>
+              <td>Anonymize and Monitor on sensitive data classes</td>
+              <td>Sensitive values masked; the prompt is still answered</td>
+              <td>Redaction reliably covers the data types that matter</td>
+            </tr>
+            <tr>
+              <td><strong>4 · Enforce</strong></td>
+              <td>Anonymize and Block, or Block, on the highest-risk apps and data</td>
+              <td>Prompt rejected — nothing reaches the AI vendor — with a clear notification</td>
+              <td>Reserved for tools and data classes that fail review</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The DLP backstop follows the same arc. Cato's recommended configuration for AI apps defines
+        four content profiles — <strong>PII</strong> (person identifiers, credit card and licence
+        numbers), <strong>financial data</strong> (bank and card accounts, routing and SWIFT codes),
+        <strong>access keys &amp; tokens</strong> (AWS, GCP, GitHub and GitLab credentials) and
+        <strong>legal data</strong> (ML classifiers for agreements, patents and court documents) —
+        each applied in a rule against the <em>Generative AI Tools</em> application category, with
+        monitor or block set to match the stage you've reached. Accounts created after 25 March 2025
+        receive the pre-defined recommended rules automatically; earlier accounts add them manually.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Prerequisites worth stating up front</div>
+        <p>TLS Inspection must be enabled at the account level for the User Interaction Policy to
+        inspect AI traffic — and its rules take precedence over TLS inspection bypass rules.
+        API-based integrations support monitoring only.</p>
+      </div>
+      <figure class="shot">
+        <img src="../assets/img/dlp-incident-cma.png" alt="CMA Data Incident detail pane showing a blocked upload to Microsoft Copilot: action Block, rule 'Copilot restrict PII', DLP profile CC-UK, matched data type credit card numbers, with a secured forensics evidence panel below.">
+        <figcaption>Stage 4 as evidence: a blocked card-data upload to a GenAI assistant, attributed to user, rule, DLP profile and matched data types — with secured forensics for investigators.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — position the assessment</div>
+        <p>For a prospect with no current visibility, the
+        <a href="security-ai-visibility.html">GenAI Visibility Assessment</a> is the opener — a
+        no-cost, four-week engagement that builds their baseline. This demo shows the ongoing
+        capability that baseline grows into. Ask what their current AI policy actually is; most
+        answers are "we blocked ChatGPT" — which sets up the whole story.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Open on the numbers</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span></p>
+          <p>Walk the summary tiles — total AI apps, AI users, AI interactions, adoption rate.
+          The AI apps count is usually multiples of what the customer expects, and adoption rate
+          shows this is mainstream behaviour, not a fringe habit. Point at the <strong>AI Violation
+          Rate</strong> widget as the one-number risk posture.</p>
+        </li>
+        <li>
+          <h4>Walk the shadow AI inventory</h4>
+          <p>From the <strong>Latest Application Discovered</strong> widget, follow <em>View Shadow
+          AI Inventory</em> to the Shadow AI page: which AI applications are in use, how widely
+          (users and interactions), and which are higher-risk. Stress how it got there — network-level
+          discovery from traffic Cato already processes: nothing deployed, nothing blocked by
+          default, prompt content untouched.</p>
+        </li>
+        <li>
+          <h4>Follow one user</h4>
+          <p>On the AI Users page, sort by policy violations and compare departments. Drill into
+          one user — call her "Priya": her interactions and violations for the period, the safe-versus-violation
+          split, the applications she uses and her adoption over time. Pivot to AI Interactions
+          filtered to her for prompt-level context. "This is the conversation you can now have with
+          a department head — specific, evidenced, not hypothetical."</p>
+        </li>
+        <li>
+          <h4>Build a User Interaction Policy rule</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>Show the policy toggle, then walk a rule end to end: source users or groups, the AI
+          applications in scope, the engine profile that evaluates the prompt, and the action —
+          <strong>Monitor</strong>, <strong>Anonymize and Monitor</strong>, <strong>Anonymize and
+          Block</strong>, <strong>Block</strong> — plus a notification template so the user learns
+          the policy in the moment. Note the prerequisite: TLS Inspection enabled at account level.</p>
+        </li>
+        <li>
+          <h4>Show the DLP backstop</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show the Cato-recommended profiles — PII, financial data, access keys &amp; tokens,
+          legal — in rules against the <em>Generative AI Tools</em> application category. One
+          policy engine covers pastes, prompts and file uploads to AI apps alongside the rest of
+          the data protection estate.</p>
+        </li>
+        <li>
+          <h4>Cover the gap with the browser plugin</h4>
+          <p>For managed devices whose traffic never crosses a Cato PoP — a contractor estate on a
+          third-party SASE, for example — the AI Security Browser Plugin (Chrome, Edge and Chromium
+          browsers, deployable via Intune) enforces the same outcomes in the browser itself:
+          block, anonymise or engage the user, masking content before the prompt reaches the LLM.</p>
+        </li>
+        <li>
+          <h4>Close on evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to AI-related events: every monitored, anonymised and blocked interaction,
+          fully attributed and exportable for compliance auditing. "You started this meeting unable
+          to name the AI apps in use. You're ending it with a per-prompt audit trail."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-end-users" target="_blank" rel="noopener">What is AI Security for End Users</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-usage-discovery" target="_blank" rel="noopener">What is AI Usage Discovery</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-ai-security-browser-plugin" target="_blank" rel="noopener">What is the AI Security Browser Plugin</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/ai-security-for-end-users-overview-dashboard" target="_blank" rel="noopener">AI Security for End Users — Overview Dashboard</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-via-the-ai-users-page" target="_blank" rel="noopener">Monitoring via the AI Users Page</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iboss Proxy to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire the iboss cloud proxy — replace PAC-file and agent steering with Cato Client and socket-based breakout, keeping URL filtering, TLS inspection and CASB in one console.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-iboss">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / iboss to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>iboss Proxy to Cato</h1>
+    <p class="lede">
+      iboss estates are proxy-heritage: PAC files, per-platform connector agents, GRE/IPsec tunnels
+      and SaaS allowlists keyed to dedicated egress IPs — most common in education and government,
+      and usually running beside a separate network vendor because iboss was SSE-only until 2024.
+      This page maps every iboss component to its Cato equivalent and lays out a wave-based steering
+      cutover that keeps PAC as the rollback rail throughout.
+    </p>
+    <div class="meta-row">
+      <span class="tag">iboss</span><span class="tag">Proxy</span><span class="tag">PAC</span>
+      <span class="tag">SWG</span><span class="tag">TLS Inspection</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why estates move off iboss</h2>
+      <div class="callout warn">
+        <div class="co-title">Read this first — research, not a delivery-verified runbook</div>
+        <p>This page is authored from sourced vendor and Cato documentation research, not from a
+        completed customer migration. Validate the plan with Cato Professional Services before
+        using it in a customer engagement.</p>
+      </div>
+      <p>
+        iboss began life as an appliance web filter for education and grew into a cloud security
+        platform with a distinctive pitch: single-tenant, containerised gateways per customer, each
+        egressing from dedicated source IPs. It is strongest in US K-12, libraries and government,
+        where CIPA-compliance messaging and FedRAMP Moderate carry weight. Gartner's 2024 SSE Magic
+        Quadrant placed it as a Niche Player — crediting aggressive availability and latency SLAs
+        and low pricing, while flagging weak SaaS/API integrations, no SSPM and a customer base
+        concentrated in North America. Peer reviews are broadly positive (4.8/5 across 131 reviews
+        at research time) — treat individual complaints as anecdotes to probe, not blanket claims.
+      </p>
+      <p>
+        The structural driver is architectural: <strong>iboss was an SSE-only platform until it
+        announced Zero Trust SD-WAN in May 2024</strong>. Estates that also need WAN transformation —
+        MPLS replacement, site-to-site optimisation, a global backbone — have historically run iboss
+        alongside a separate network vendor: two policy planes, two support paths, two renewals.
+        Cato converges networking and security on one cloud-native platform in a single console, so
+        an SD-WAN or firewall refresh, an MPLS expiry or an education re-procurement cycle is the
+        moment a "filter renewal" becomes a platform consolidation conversation.
+      </p>
+      <p>
+        The second driver is operational: iboss steering leans on PAC files, explicit proxy
+        settings and per-platform connectors. Years of PAC exceptions and bypass lists encode
+        tribal knowledge that someone has to keep maintaining. Cato steers transparently — the
+        Cato Client for roaming devices, a Socket or IPsec tunnel for sites — with no proxy
+        configuration on the endpoint at all.
+      </p>
+    </section>
+
+    <section id="estate" class="reveal">
+      <div class="section-kicker">What you're migrating</div>
+      <h2>Four steering paths and one IP dependency</h2>
+      <p>
+        An iboss migration is first and foremost a <strong>steering migration</strong>. iboss
+        documents four ways traffic reaches its cloud, and a mature estate usually runs several at
+        once. Each one needs its own inventory, its own cutover mechanic and its own rollback lever.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Cloud connector agents <span class="tag">Most common</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Installed on managed devices: redirects traffic, authenticates
+          the user, maps group policy and installs the iboss root MITM certificate for TLS
+          inspection. Chromebooks are covered via a Chrome extension — which matters enormously in
+          education fleets.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">PAC files / explicit proxy <span class="tag">Browser-level</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Customer-hosted PAC scripts, distributed by GPO/MDM, proxy to
+          iboss off-network and route direct or via local gateways on-network. The PAC and its
+          exception list are both a migration liability and — kept alive — the cheapest rollback
+          lever in the project.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">GRE / IPsec tunnels <span class="tag">Sites</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">From sites or SD-WAN edges, terminating on the public IPs of the
+          customer's iboss gateway nodes — typically carrying guest, BYOD and IoT traffic that
+          can't run an agent.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">DNS redirection <span class="tag">Lightweight</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">DNS-based filtering for zones where nothing heavier is
+          deployed. Easy to forget in discovery, easy to leave orphaned after cutover — enumerate
+          the zones explicitly.</p>
+        </div>
+      </div>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">4</div><div class="stat-label">Documented steering paths into iboss — each needs its own cutover plan and rollback lever</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2</div><div class="stat-label">Policy planes and support paths while SSE-only iboss runs beside a separate network vendor</div></div>
+        <div class="stat-tile"><div class="stat-value">3<span class="unit">IPs</span></div><div class="stat-label">Allocated egress IPs in the default Cato licence — size the dedicated-IP replacement early</div></div>
+      </div>
+
+      <p>
+        Then there is the signature iboss feature: <strong>dedicated cloud source IPs</strong>.
+        Because gateways are single-tenant, every customer egresses from IPs unique to them — and
+        many have keyed SaaS tenant restrictions, exam/assessment platform allowlists and partner
+        firewall rules to those IPs. Every one of those references must be found and dual-listed
+        with Cato allocated IPs before any wave moves. Missing one is the classic
+        "the migration broke X" incident.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Which SaaS tenant restrictions, exam platforms and partner firewalls are keyed to your
+        iboss dedicated IPs today — and does anyone own that list?" If the answer is a shrug,
+        Phase 0 starts there.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Expect re-authoring, not import: category taxonomies, DLP engines and app catalogues all
+        differ. The mapping below is the starting grid for the policy-conversion workshop.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>iboss component</th><th>Cato equivalent</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>SWG / web filtering &amp; malware defence</td><td>Internet firewall — URL categories, anti-malware, IPS; TLS inspection policy</td><td>Category taxonomies differ — map categories and exceptions rule-by-rule, don't assume 1:1</td></tr>
+            <tr><td>SafeSearch / YouTube controls</td><td>Content Restrictions — SafeSearch plus YouTube Moderate/Strict</td><td>Cato documents a DoH caveat: browsers using DNS-over-HTTPS bypass Content Restrictions — control DoH via browser policy</td></tr>
+            <tr><td>Cloud connector agents (Windows/macOS/mobile)</td><td>Cato Client — Windows, macOS, Linux, iOS, Android via MSI + MDM/Intune</td><td>Transparent steering to the nearest PoP — no proxy config. ChromeOS is not in Cato's documented Client OS list (see callout)</td></tr>
+            <tr><td>PAC files / explicit proxy settings</td><td>Transparent steering via Cato Client (roaming) or Socket/IPsec site (on-network)</td><td>PAC/GPO cleanup is part of cutover — but keep the PAC hosted during co-existence as the rollback lever</td></tr>
+            <tr><td>GRE/IPsec tunnels from sites</td><td>Cato Socket (X1500/X1700) or IPsec to the nearest Cato PoP</td><td>Sockets add last-mile HA, QoS and full WAN capability — a functional upgrade, not a tunnel swap</td></tr>
+            <tr><td>ZTNA / VPN replacement</td><td>Cato SDP — Private Access Policy, App Connector, clientless browser access</td><td>Rides the same Client and backbone as internet security — one agent, one policy plane</td></tr>
+            <tr><td>CASB (inline)</td><td>Cato CASB / Application Control policy</td><td>Gartner flagged iboss SaaS/API depth as a caution — compare app catalogues in discovery</td></tr>
+            <tr><td>DLP</td><td>Cato DLP — Data Control policy, 350+ content-profile data types</td><td>Rebuild profiles rather than exporting — engines and match logic differ</td></tr>
+            <tr><td>Browser Isolation</td><td>Cato RBI (Authentic8 engine) — "Isolate" action in web policy</td><td>Same pattern as iboss: isolation wired into policy actions alongside Allow/Block/Prompt</td></tr>
+            <tr><td>Dedicated cloud source IPs</td><td>Cato allocated IPs + NAT egress rules</td><td>Critical dependency — 3 IPs in the default licence, more via sales; dual-list before each wave</td></tr>
+            <tr><td>Reporter / logging &amp; analytics</td><td>CMA events, analytics, user awareness; SIEM export</td><td>Education customers have statutory per-user reporting expectations — demo CMA user-level views early</td></tr>
+            <tr><td>Directory integration (Entra ID / Google / LDAP)</td><td>Cato SCIM provisioning (Entra ID, Okta, OneLogin) + Identity Agent</td><td>Google Workspace SCIM is not in Cato's documented list (see callout)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Qualify before you commit — two documented gaps</div>
+        <p><strong>Chromebook fleets:</strong> iboss covers Chromebooks via a Chrome extension, but
+        ChromeOS does not appear in Cato's documented Client OS list (Windows, macOS, Linux, iOS,
+        Android). For Chromebook-heavy schools this is the first technical qualification question —
+        agree the supported approach with Cato PS/product before committing a migration plan.</p>
+        <p><strong>Google Workspace identity:</strong> Cato documents SCIM provisioning for
+        Entra ID, Okta and OneLogin — Google Workspace is not on that list. Google-identity schools
+        need an agreed identity design (SSO and provisioning path) validated in discovery. Do not
+        hand-wave either of these.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Replace the steering, keep a way back</h2>
+      <p>
+        The pattern that de-risks the whole programme is <strong>wave-based steering cutover with
+        PAC as the fallback rail</strong>. Both root CAs are deployed side by side before anything
+        moves, so TLS inspection works in either direction. Then cohorts cut over per OU, year group
+        or school — each device wholly on one vendor at a time, with the agent swap done atomically
+        per device via MDM. The iboss PAC stays hosted and unchanged throughout: rollback for a
+        browser-steered cohort is a single GPO/MDM change re-pointing to the old PAC.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 450" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Wave-based steering cutover from iboss to Cato</title>
+          <desc id="dg1-desc">A migrated Wave 1 device cohort with the Cato Client and a school site with a Cato Socket steer to a Cato PoP on the global private backbone, which breaks out to SaaS and the internet via allocated egress IPs. Remaining waves keep PAC and connector steering into the iboss cloud, which egresses to the same SaaS destinations. A dashed rollback arrow shows any wave can be re-pointed to the hosted PAC.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="450" cy="215" rx="150" ry="50"/>
+          <circle cx="308" cy="228" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="592" cy="200" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="450" y="282" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="450" cy="210" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="450" cy="210" r="30"/>
+          <text class="dg-label" x="450" y="142" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="450" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · TLSi · CASB · DLP</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node-green" x="34" y="52" width="190" height="76" rx="10"/>
+          <text class="dg-label" x="129" y="76" text-anchor="middle">Wave 1 cohort</text>
+          <text class="dg-sub" x="129" y="94" text-anchor="middle">Cato Client via MDM</text>
+          <text class="dg-tiny" x="129" y="112" text-anchor="middle">atomic per-device swap</text>
+
+          <rect class="dg-node" x="34" y="182" width="190" height="76" rx="10"/>
+          <text class="dg-label" x="129" y="206" text-anchor="middle">School / branch site</text>
+          <text class="dg-sub" x="129" y="224" text-anchor="middle">Cato Socket X1500</text>
+          <text class="dg-tiny" x="129" y="242" text-anchor="middle">replaces GRE/IPsec tunnel</text>
+
+          <rect class="dg-node" x="34" y="322" width="190" height="76" rx="10"/>
+          <text class="dg-label" x="129" y="346" text-anchor="middle">Waves 2+ cohorts</text>
+          <text class="dg-sub" x="129" y="364" text-anchor="middle">iboss connector + PAC</text>
+          <text class="dg-tiny" x="129" y="382" text-anchor="middle">PAC stays hosted · frozen</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node-green" x="738" y="86" width="192" height="76" rx="10"/>
+          <text class="dg-label" x="834" y="112" text-anchor="middle">SaaS &amp; internet</text>
+          <text class="dg-sub" x="834" y="130" text-anchor="middle">M365 · Google · exam apps</text>
+          <text class="dg-tiny" x="834" y="148" text-anchor="middle">allowlists dual-list both IPs</text>
+
+          <rect class="dg-node-dark" x="738" y="322" width="192" height="76" rx="10"/>
+          <text class="dg-label-inv" x="834" y="352" text-anchor="middle">iboss cloud</text>
+          <text class="dg-sub-inv" x="834" y="372" text-anchor="middle">interim · being retired</text>
+
+          <!-- Migrated steering to Cato -->
+          <path class="lane lane-allow" d="M 224 92 C 320 110, 370 160, 426 194"/>
+          <path class="lane lane-allow" d="M 224 216 C 300 216, 350 213, 416 211"/>
+          <path class="lane lane-allow" d="M 456 194 C 560 160, 650 138, 738 126"/>
+          <text class="dg-tiny" x="600" y="140" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PoP breakout · allocated IPs</text>
+
+          <!-- Remaining waves to iboss -->
+          <path class="lane lane-limit" d="M 224 366 C 400 392, 580 392, 738 366"/>
+          <text class="dg-tiny" x="481" y="410" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">PAC / connector steering — unchanged during waves</text>
+          <path class="lane lane-limit" d="M 852 322 C 886 268, 886 216, 852 166"/>
+          <text class="dg-tiny" x="905" y="248" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">legacy</text>
+          <text class="dg-tiny" x="905" y="262" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">egress</text>
+
+          <!-- Rollback arrow: Wave 1 back to PAC steering -->
+          <path class="lane-static" d="M 34 104 C 6 180, 6 260, 30 348" stroke-dasharray="6 6" fill="none"/>
+          <path d="M 30 348 l -3 -13 l 12 5 z" fill="var(--ink-2)"/>
+          <text class="dg-tiny" x="140" y="432" text-anchor="middle">⟲ rollback: re-point wave to hosted PAC</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated waves — Client / Socket to Cato PoP</span>
+          <span class="key"><span class="swatch limit"></span> Remaining waves — PAC / connector to iboss (frozen)</span>
+          <span class="key">⟲ Dashed — rollback rail back to PAC</span>
+        </div>
+        <div class="diagram-caption">Wave-based steering cutover: migrated cohorts and sites steer transparently to the nearest Cato PoP while remaining waves stay on PAC/connector steering into iboss. SaaS allowlists carry both vendors' egress IPs during transition, and any wave can roll back with a single change re-pointing to the hosted PAC.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Transparent steering, no PAC sprawl</h4><p>The Cato Client and Sockets steer all traffic to the nearest PoP with no proxy configuration — the PAC exception list becomes history, not maintenance.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>One console, network + security</h4><p>SWG, TLS inspection, CASB, DLP, ZTNA and full SD-WAN in the CMA — the second policy plane and second support path go away.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Sockets are an upgrade, not a swap</h4><p>Replacing a GRE/IPsec-to-proxy tunnel with a Socket adds last-mile HA, QoS and WAN optimisation the proxy tunnel never had.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Egress identity preserved</h4><p>Cato allocated IPs plus NAT egress rules replace iboss dedicated cloud IPs — SaaS tenant restrictions keep working, dual-listed through the transition.</p></div></div>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">Migration path</div>
+      <h2>Five phases from PAC sprawl to PoP breakout</h2>
+      <p>
+        Anchored to Cato's published guidance — phased migration, pilot first, no big-bang cutover,
+        with Cato and partner Professional Services assisting policy conversion. Timings are
+        indicative for a mid-size estate; size Phase 3 to the number of schools/sites.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Phase 0 — Discover the steering estate <span class="tag">weeks 1–2</span></h4>
+          <p>Enumerate every path into iboss: PAC URLs and their GPO/MDM distribution scope,
+          connector fleet by OS (including the Chromebook extension count), GRE/IPsec tunnels per
+          site, DNS-redirection zones, and any proxy chaining from on-prem gateways. Export the
+          policy base — categories, allow/block lists, per-group overrides, SSL bypass lists,
+          CASB/DLP rules, ZTNA app definitions — and plan to re-author, not import. Build the
+          dependency register: every SaaS tenant restriction and third-party allowlist keyed to
+          iboss dedicated IPs, and anything pinned to the iboss root CA. Harvest the PAC and bypass
+          lists as the seed for Cato TLS-inspection bypasses — the cheapest policy-mining asset in
+          the project. Capture identity (Entra ID, Google Workspace, AD) and the per-OU policy
+          tiers, then fix the Cato design inputs: PoP selection, Socket vs IPsec per site,
+          allocated-IP count, TLS inspection scope.</p>
+        </li>
+        <li>
+          <h4>Phase 1 — Build co-existence before touching steering <span class="tag">weeks 2–4</span></h4>
+          <p>Stand up the Cato account: sites, SCIM/identity integration, baseline Internet
+          firewall and TLS inspection policy from Cato best practices, Content Restrictions for
+          education tenants, and the recommended CASB/DLP starter policy. The critical move:
+          <strong>push the Cato root certificate to all endpoints alongside the existing iboss
+          root CA before any steering change</strong> — Cato documents the certificate as mandatory
+          for TLS inspection, downloadable from the CMA and deployable via MDM. Removing the iboss
+          CA comes last in the project, not first. Define which cohorts and sites steer where, and
+          the rollback lever for each.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Pilot one site and one agent cohort <span class="tag">weeks 4–8</span></h4>
+          <p>Pick a pilot that exercises the risky bits: one school/site with a tunnel — replaced
+          by a Socket (preferred, adds HA/QoS) or IPsec to the nearest PoP — plus one roaming-agent
+          cohort, IT staff first. Swap agents <strong>atomically per device via MDM</strong>:
+          uninstall/disable the iboss connector and deploy the Cato Client in the same maintenance
+          window per device ring. Never run both agents steering simultaneously — two
+          TLS-intercepting redirection agents create hard-to-diagnose breakage. Validate category
+          parity on a test URL list, TLS inspection, SafeSearch/YouTube enforcement, ZTNA app
+          access, user-level reporting in the CMA, and SaaS logins from the new allocated
+          egress IPs.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Wave cutover per OU / school <span class="tag">weeks 8–16</span></h4>
+          <p>Cut over in waves aligned to the existing iboss group-policy tiers — per OU, year
+          group or school — so filtering levels move with the cohort and safeguarding staff can
+          verify each wave. Before each wave moves: add Cato allocated IPs to the wave's SaaS
+          tenant restrictions and allowlists (run both vendors' IPs in parallel through the
+          transition), re-point PAC-configured browsers to direct/Client steering, and retire the
+          wave's tunnels. Re-point SIEM export and safeguarding/monitoring integrations as each
+          wave completes.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Optimise, then decommission in order <span class="tag">weeks 16+</span></h4>
+          <p>Tune policy from live CMA analytics, tighten TLS-inspection bypasses, and switch on
+          the remaining services — RBI on uncategorised sites, DLP content profiles. Then
+          decommission in strict order: (1) disable iboss steering — PAC distribution, connectors,
+          tunnels; (2) remove iboss dedicated IPs from SaaS allowlists once logs show no residual
+          use; (3) remove the iboss root CA from endpoints via MDM; (4) revoke iboss directory and
+          SIEM integrations; (5) terminate the subscription <strong>only after archiving the full
+          reporting-retention window</strong> — safeguarding logs are statutory evidence in
+          education.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Every wave keeps a way back</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">PAC as the fallback rail</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Keep the iboss PAC hosted and unchanged for the whole project.
+          Rollback for any browser-steered cohort is then a single GPO/MDM change re-pointing to
+          the old PAC — no re-install, no re-configuration.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Agent cohorts</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rollback = re-enable the iboss connector profile and remove the
+          Cato Client via the same MDM ring used for deployment. Keep the iboss tenant licensed and
+          its policies change-frozen until each wave is signed off.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Sites</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Run the Cato Socket in-line while leaving the legacy
+          tunnel-to-iboss configured but down. Rollback is re-enabling the tunnel and re-pointing
+          the default route.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Certificates</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Both root CAs are deployed side by side from Phase 1, so TLS
+          inspection works in either direction during co-existence. CA removal is deferred to
+          decommission — rollback never breaks HTTPS.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Never split one device between both clouds</div>
+        <p>Per-user, per-OU waves keep each device wholly on one vendor at a time. Avoid any design
+        where iboss handles some categories and Cato others for the same endpoint — two
+        TLS-intercepting chains on one device is a support nightmare, not a migration strategy.</p>
+      </div>
+      <p>
+        <strong>Success gates per wave:</strong> helpdesk ticket rate against baseline,
+        category-parity spot checks, safeguarding-report continuity, and SaaS login success from
+        the new egress IPs. A wave isn't done until all four hold.
+      </p>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Objection handling</div>
+      <h2>Gotchas and objections</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">"iboss gives us CIPA-grade education filtering"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato documents Content Restrictions with SafeSearch and YouTube
+          Moderate/Strict enforcement — demo it, and be upfront about the documented caveat:
+          browsers using DNS-over-HTTPS bypass Content Restrictions, so DoH must be controlled via
+          browser policy. For fine-grained Google-service controls, run a feature-parity check
+          against the customer's actual iboss ruleset rather than asserting parity. UK schools: map
+          requirements to DfE filtering-and-monitoring standards, not US CIPA language.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Per-user reporting expectations</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Education and government customers use iboss reporting as
+          safeguarding and compliance evidence. Show CMA user-level analytics and SIEM export
+          during the pilot — and archive the iboss reporting history before terminating the
+          subscription. Reporting continuity is a success gate, not an afterthought.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SaaS allowlists keyed to dedicated egress IPs</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Every tenant restriction, partner firewall rule and
+          exam-platform allowlist keyed to iboss IPs must be found and dual-listed with Cato
+          allocated IPs before cutover. The default Cato licence includes 3 allocated IPs — size
+          this early if the customer needs regional egress or more IPs.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"iboss is single-vendor SASE now too"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Its SD-WAN launched in May 2024, versus Cato's converged
+          SD-WAN-plus-security platform operating since the mid-2010s and validated across the
+          single-vendor SASE market. Probe the maturity of the SD-WAN estate: routing features,
+          edge hardware ecosystem, global private backbone, last-mile HA.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"Per-tenant containers are more secure"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Acknowledge the architecture, then reframe on outcomes: what
+          matters is inspection quality, policy convergence and operations. Gartner's caution that
+          iboss depth in SaaS/API security lags is the counterweight to the container story.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Latency and SLA comparison</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">iboss publishes seven-nines availability and a 100 ms latency
+          SLA. Do not counter with invented numbers — position Cato's PoP proximity, private
+          backbone and published uptime commitments, and prove latency empirically in the pilot.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32115505825821-Getting-Started-with-Cato-Certificates" target="_blank" rel="noopener">Getting Started with Cato Certificates (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best Practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273491089-Restricting-Content-for-Internet-Traffic" target="_blank" rel="noopener">Content Restrictions — SafeSearch &amp; YouTube (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/31661535809821-Installing-the-Cato-Client" target="_blank" rel="noopener">Installing the Cato Client — OS support (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273467153-Allocating-IP-Addresses-for-the-Account" target="_blank" rel="noopener">Allocating IP Addresses for the Account (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning Users with SCIM (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/glossary/how-to-implement-sase/" target="_blank" rel="noopener">How to Implement SASE — migration checklist</a></li>
+            <li><a href="https://www.iboss.com/platform/dedicated-cloud-ips/" target="_blank" rel="noopener">iboss — Dedicated Cloud IPs (the egress-IP dependency)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-iboss-policy.html">iboss Policy Migration</a></li>
+            <li><a href="migration-forcepoint.html">Forcepoint (Web Security &amp; NGFW) to Cato</a></li>
+            <li><a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

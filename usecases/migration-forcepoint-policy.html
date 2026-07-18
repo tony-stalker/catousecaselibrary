@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forcepoint Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate Forcepoint policy to Cato — web security categories, NGFW access rules, and the DLP estate (classifiers rationalised before mapping, hybrid where depth demands).">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-forcepoint-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Forcepoint Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Forcepoint Policy Migration</h1>
+    <p class="lede">
+      A Forcepoint estate carries four policy heritages — Stonesoft firewall rules in SMC,
+      Websense category filters in Web Security, ex-Bitglass CASB policy in Forcepoint ONE, and a
+      genuinely deep TRITON-heritage DLP suite. This page works through the translation of each
+      domain into the Cato Management Application using the Professional Services pattern —
+      export, review &amp; map, deploy monitor-first, optimise — with the DLP estate rationalised
+      classifier by classifier and an honest hybrid where Forcepoint's endpoint depth should stay.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+      <div class="callout warn">
+        <div class="co-title">Research-authored page — validate before customer use</div>
+        <p>This page is authored from public research, not a delivery-verified runbook. Review the
+        mapping and sequencing with Cato Professional Services before using it to plan a customer
+        engagement — and verify every Forcepoint-side export path against the customer's actual
+        product versions.</p>
+      </div>
+      <p>
+        Connectivity moves fast; policy is the long tail. Sockets tunnel up in days — what stalls
+        a Forcepoint displacement is translating years of accumulated rules across four consoles
+        into one coherent CMA rulebase without losing the controls that matter or importing the
+        clutter that doesn't. The Cato PS pattern for this is a four-phase pipeline:
+        <strong>EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</strong>.
+      </p>
+      <p>
+        The cardinal rule: <strong>never lift-and-shift</strong>. Every mature estate is mostly
+        dead weight — rules for decommissioned servers, exceptions for proxies that no longer
+        exist, DLP policies that have never raised a triaged incident. Pull hit counts first
+        (SMC rule counters, Web Security reports, the DLP incident manager) and rationalise
+        against them before mapping a single rule. The clean-up is a benefit of the migration —
+        sell it as one.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">4 → 1</div><div class="stat-label">Policy heritages (Stonesoft, Websense, Bitglass, TRITON DLP) converging into one CMA rulebase</div></div>
+        <div class="stat-tile"><div class="stat-value">350<span class="unit">+</span></div><div class="stat-label">Cato predefined DLP data types available to receive Forcepoint classifier mappings</div></div>
+        <div class="stat-tile"><div class="stat-value">90<span class="unit">days</span></div><div class="stat-label">Of hit-count and incident history to rationalise against before any rule is mapped (recommended practice)</div></div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"How many of your SMC access rules, web category exceptions and DLP policies have
+        actually fired in the last 90 days — and can you show me the counts?" If they can't
+        answer, the export phase starts with turning counters on.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>NGFW (SMC) access rules → Cato WAN &amp; Internet Firewall</h2>
+      <p>
+        The Stonesoft-heritage NGFW is managed from the <strong>Security Management Center
+        (SMC)</strong>: hierarchical policy templates with sub-policies, access rules evaluated
+        top-down with inheritance, per-engine <em>aliases</em> that resolve to different values on
+        each firewall, and NAT and VPN topology configuration alongside. Export the rulebase from
+        the SMC Management Client (or via the SMC API) together with <strong>rule counters</strong> —
+        SMC's hit-count analysis is precisely the evidence the rationalisation step needs.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>SMC construct</th><th>Cato construct</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Access rules — WAN / site-to-site scope</td><td>WAN Firewall rules</td><td>Ordered allowlist, default-deny. Carry only rules with hits; name rules traceably to their SMC originals.</td></tr>
+            <tr><td>Access rules — internet-bound</td><td>Internet Firewall rules</td><td>Blocklist posture: carry the blocks and the genuine exceptions; most legacy internet "allow" rules are redundant on Cato.</td></tr>
+            <tr><td>Policy templates, sub-policies, Continue rules</td><td>Flattened ordered rulebase</td><td>Inheritance disappears. Resolve inherited logging/inspection options into explicit rules before mapping.</td></tr>
+            <tr><td>Aliases (per-engine $ values)</td><td>Per-site objects</td><td>Resolve each alias per engine at export — one SMC rule can become several site-scoped Cato rules.</td></tr>
+            <tr><td>Network &amp; service elements, groups</td><td>CMA hosts, IP ranges, custom services, groups</td><td>Rebuild in CMA; custom port/protocol services map to custom services in rules.</td></tr>
+            <tr><td>User-based access rules</td><td>Users &amp; groups via IdP/SCIM</td><td>Identity no longer comes from proxy or agent authentication — provision SCIM groups before importing rules.</td></tr>
+            <tr><td>NAT policy &amp; VPN topologies</td><td>Largely absorbed by the platform</td><td>Source NAT happens at the PoP; per-app egress pins to allocated IPs; policy-based VPN topologies are replaced by Socket tunnels. Published-server NAT needs a per-case design — flag it in review.</td></tr>
+            <tr><td>Engine IPS / inspection policies</td><td>Cato IPS &amp; Anti-Malware</td><td>Cato-managed protections at the PoP — per-rule Stonesoft inspection tuning does not migrate 1:1.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Semantic gotcha — two default postures, not one</div>
+        <p>SMC is deny-by-default for everything, so the export is full of allow rules. Cato
+        splits the estate: the <strong>WAN Firewall is an allowlist</strong> (implicit final
+        block) where SMC's site-to-site allows map naturally, but the <strong>Internet Firewall
+        is a blocklist</strong> (implicit final allow, hardened with Cato's recommended block
+        baseline). Importing SMC's internet-bound allow rules wholesale recreates the clutter you
+        are migrating away from — carry the blocks and the deltas, not the whole rulebase.</p>
+      </div>
+      <p>
+        <strong>Strategy:</strong> export with counters → delete zero-hit rules → split the
+        remainder by destination (WAN vs internet) → rebuild objects and SCIM groups → deploy the
+        WAN allowlist with a temporary broad allow-and-log final rule that is tightened as hit
+        data accumulates, and the Internet Firewall from the Cato recommended baseline plus the
+        customer's genuine deltas. VPN topology rules need no translation at all — the Socket
+        replaces them.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Web Security category policy → Internet Firewall</h2>
+      <p>
+        Forcepoint Web Security (on-prem or cloud) enforces <strong>category filters</strong> —
+        Websense-heritage URL categories with actions <em>Permit / Block / Confirm / Quota</em> —
+        combined into policies assigned to directory users, groups and IPs, plus custom and
+        recategorised URLs, exception lists and an SSL-decryption category list. Extract the
+        active policies and their category actions from the Forcepoint Security Manager or the
+        cloud portal, and pull per-category usage from its reporting so the mapping is grounded
+        in what users actually hit.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Web Security construct</th><th>Cato construct</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Category filter — Block</td><td>Internet Firewall Block on URL categories</td><td>Taxonomies differ — map via a category workbook and sample-URL testing, not name-matching.</td></tr>
+            <tr><td>Category filter — Confirm</td><td>Prompt action</td><td>Warn-and-continue covers the intent directly.</td></tr>
+            <tr><td>Category filter — Quota (time-based)</td><td>No direct equivalent</td><td>Prompt is the nearest action; validate policy-by-policy rather than promising parity.</td></tr>
+            <tr><td>Custom / recategorised URLs</td><td>Cato custom categories</td><td>Rebuild; order allow exceptions above the block rules they carve out of.</td></tr>
+            <tr><td>Unfiltered URLs / exceptions</td><td>Allow rules on FQDN or custom category</td><td>Keep the list short — many exceptions existed to work around proxy quirks that no longer apply.</td></tr>
+            <tr><td>Policy-specific PAC URLs (policy selection)</td><td>Identity-driven rules (users/groups)</td><td>Policy is no longer selected by which PAC a browser loads — it follows the user via IdP/SCIM.</td></tr>
+            <tr><td>SSL decryption category list</td><td>TLS Inspection policy</td><td>Staged rollout by category; block QUIC via the Internet Firewall so traffic stays inspectable.</td></tr>
+            <tr><td>File-type / keyword / bandwidth actions</td><td>Partial — CASB granular controls &amp; DLP profiles for files</td><td>No keyword or bandwidth-based web actions on Cato — flag these honestly in the workshop.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Semantic gotcha — category fidelity depends on TLS staging</div>
+        <p>Until TLS Inspection covers a cohort, Cato classifies HTTPS by domain/SNI — coarse
+        category enforcement works, but content-level controls do not. Treat the staged TLSi
+        rollout (CA certificate fleet-wide first, QUIC blocked, test group, then expand by URL
+        category) as a <strong>prerequisite for claiming SWG policy parity</strong>, and keep
+        exactly one TLS inspection owner per cohort while Forcepoint's proxy is still decrypting
+        for un-migrated users.</p>
+      </div>
+      <p>
+        <strong>Strategy:</strong> start from Cato's recommended block and prompt baselines, then
+        layer the customer's genuine deltas — custom categories, exceptions, Confirm→Prompt
+        conversions — on top. Run the result in monitor alongside Forcepoint's reports and compare
+        category hit volumes before enforcing; the deltas between the two taxonomies show up as
+        event noise long before a user complains.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>Forcepoint ONE → Cato CASB &amp; App Control</h2>
+      <p>
+        The ONE (ex-Bitglass) estate is usually the smallest policy domain: API policies for a
+        handful of sanctioned apps, reverse-proxy agentless access for unmanaged devices, a
+        forward-proxy SWG tier and shadow-IT risk reporting from its cloud app directory. There is
+        no clean bulk export — capture the <strong>policy intent</strong> from the console:
+        the sanctioned-app list, allowed activities per app, managed/unmanaged device
+        distinctions, and which policies pair with DLP.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Forcepoint ONE construct</th><th>Cato construct</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Sanctioned-app granular policies (upload / download / share)</td><td>CASB app-control rules — granular activities</td><td>Map intent, not syntax — the activity model differs per app.</td></tr>
+            <tr><td>Cloud app directory / shadow-IT risk scores</td><td>Cloud Apps Dashboard, App Analytics, app risk scores</td><td>Turn discovery on from day one in monitor — it validates the sanctioned-app list.</td></tr>
+            <tr><td>Reverse-proxy agentless access (unmanaged devices)</td><td>Clientless browser access + device posture</td><td>URL-rewriting has no analogue — this is an access-model redesign, not a rule mapping.</td></tr>
+            <tr><td>Forward-proxy SWG policies</td><td>Internet Firewall / SWG</td><td>Merges into the web policy domain above — one engine, not a separate tier.</td></tr>
+            <tr><td>GenAI app controls</td><td>Cato CASB GenAI app catalogue</td><td>Map allowed tools and permitted activities explicitly.</td></tr>
+            <tr><td>DLP-paired CASB policies</td><td>DLP rules in the same CMA rulebase</td><td>Single engine and console — no cross-module pairing to maintain.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Gotchas and strategy:</strong> API-mode coverage differs per SaaS app on both
+        platforms — validate app by app rather than assuming parity. SaaS tenant restrictions and
+        conditional-access rules keyed to Forcepoint's egress IPs must be repointed to Cato
+        allocated egress IPs before the owning cohort cuts over. Because the domain is small, the
+        right move is to map it late and enforce it after TLS Inspection coverage is in place —
+        inline CASB granularity depends on it.
+      </p>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy (the deep one)</div>
+      <h2>Forcepoint DLP → Cato DLP, classifier by classifier</h2>
+      <p>
+        This is the domain that decides the deal. Forcepoint DLP is genuine enterprise depth —
+        predefined and regex classifiers, dictionaries, structured and unstructured
+        fingerprinting, trainable machine-learning classifiers, an OCR server with language
+        packs, endpoint channels and data-at-rest discovery, all wrapped in an incident-manager
+        workflow that compliance teams build processes around. Respect it, and
+        <strong>rationalise before you map</strong>: pull the policy list and 90 days of incident
+        history from the incident manager, age out every policy that has never raised a triaged
+        incident, and only then classify what remains.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Forcepoint classifier / channel</th><th>Cato construct</th><th>Migration strategy</th></tr></thead>
+          <tbody>
+            <tr><td>Predefined content classifiers (PII / PCI / PHI patterns)</td><td>Predefined data types (350+)</td><td>Direct mapping — verify regional variants against real samples in the pilot.</td></tr>
+            <tr><td>Regex patterns</td><td>Custom data types — regex</td><td>Port the expressions; test against known-positive and known-negative samples.</td></tr>
+            <tr><td>Dictionaries / key phrases</td><td>Custom data types — keywords</td><td>Thresholds and weighting differ — re-tune in monitor, not on paper.</td></tr>
+            <tr><td>Structured fingerprinting (database records)</td><td>Exact Data Matching (EDM)</td><td>Rebuild from the source table — fingerprint hashes are not portable between vendors.</td></tr>
+            <tr><td>Unstructured document fingerprinting (N-gram)</td><td><strong>No direct equivalent</strong></td><td>Redesign around data types, EDM or MIP labels — or explicitly retain Forcepoint for those policies.</td></tr>
+            <tr><td>Machine-learning classifiers (trained sets)</td><td><strong>No direct equivalent</strong></td><td>Same decision, made per policy and recorded: redesign or retain.</td></tr>
+            <tr><td>MIP / sensitivity labels</td><td>MIP sensitivity-label matching</td><td>Often the cleanest replacement for document fingerprinting where a labelling programme exists.</td></tr>
+            <tr><td>OCR server (language packs)</td><td>OCR on images — PNG/JPEG/TIFF/BMP/PNM/WEBP, 10&nbsp;KB–50&nbsp;MB</td><td>Not supported with EDM profiles. Test limits against real policies in the pilot — never assert them.</td></tr>
+            <tr><td>Endpoint channels (USB, print, clipboard)</td><td><strong>No Cato equivalent</strong> — endpoint-enforced</td><td>Retain the Forcepoint endpoint agent; use Cato device posture to require it running before access.</td></tr>
+            <tr><td>Discover / data-at-rest (DSPM)</td><td>Out of SASE scope</td><td>Pair Cato (data in motion) with a data-at-rest tool — position, don't pretend.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">The honest hybrid — recommend it, don't concede it</div>
+        <p>Where USB, print and clipboard mandates exceed what network DLP can see — common in
+        financial services, health and legal — the recommended design is a <strong>hybrid</strong>:
+        Cato DLP enforces everything in motion across all ports and protocols at the PoP, while
+        the Forcepoint endpoint agent stays for its exclusive channels, with a Cato posture check
+        confirming the agent is running before access is granted. That is an architecture
+        decision made deliberately in the review phase — not a gap discovered at cutover. If
+        endpoint mandates persist long-term, keep a deliberately scoped endpoint-DLP licence and
+        re-evaluate at each renewal.</p>
+      </div>
+      <p>
+        <strong>Strategy:</strong> classify every surviving policy into one of three buckets —
+        <em>direct map</em> (predefined, regex, dictionary → Cato data types),
+        <em>rebuild</em> (structured fingerprints → EDM, regenerated from source data), and
+        <em>redesign-or-retain</em> (unstructured fingerprints, ML classifiers) — and record the
+        decision per policy. Deploy all mapped content profiles in <strong>monitor mode</strong>
+        and reconcile Cato DLP events against the Forcepoint incident manager over a full
+        business cycle; run both incident streams into the SIEM in parallel so auditors watch
+        continuity, not a cliff-edge. Only then convert to block, in stages, highest-confidence
+        policies first.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Two default postures — learn them first</h4><p>Cato's WAN Firewall is an allowlist (implicit block); the Internet Firewall is a blocklist (implicit allow, hardened by the recommended baseline). Every mapping decision flows from which side of that line a rule lands on.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Staged TLS inspection is the fidelity prerequisite</h4><p>SWG granularity, inline CASB and DLP all depend on decrypted traffic. Certificate fleet-wide first, QUIC blocked, test group, expand by category — and one TLSi owner per cohort during co-existence.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Monitor-then-block, everywhere</h4><p>Every migrated rule ships watching before it ships blocking: allow-and-log final rules for the WAN Firewall, monitor mode for Internet Firewall deltas, CASB and DLP. Enforcement is earned with telemetry.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity groups before rules</h4><p>SMC user rules, Web Security per-group policies and proxy-auth identity all become IdP/SCIM group references. Provision the groups first — and redesign anything downstream that consumed proxy-auth headers.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>The acceptance test is quantitative: compare SMC rule counters and Forcepoint reports pre-migration with Cato event and rule-hit data post-deploy. Parity in the numbers, not in the rule count.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗑️</div><div><h4>Rationalisation is the deliverable</h4><p>The point of export → review is a smaller, explainable rulebase. If the Cato policy set is nearly as large as the Forcepoint one, the review phase didn't happen.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The pipeline, visualised</div>
+      <h2>Four domains through one process</h2>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Forcepoint policy migration pipeline into the Cato Management Application</title>
+          <desc id="dg1-desc">Four Forcepoint policy domains — NGFW SMC access rules, Web Security category policy, Forcepoint ONE CASB policy and DLP classifiers — feed an export stage, then a rationalisation stage where dead rules are discarded, then mapping to CMA constructs. Mapped policy deploys in monitor mode and is promoted to enforcement, with telemetry flowing to an events and hit-counts node.</desc>
+
+          <!-- Vendor policy domains -->
+          <text class="dg-tiny" x="113" y="20" text-anchor="middle">Forcepoint estate</text>
+          <rect class="dg-node" x="28" y="34" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="113" y="57" text-anchor="middle">NGFW / SMC</text>
+          <text class="dg-sub" x="113" y="75" text-anchor="middle">access rules · NAT</text>
+
+          <rect class="dg-node" x="28" y="112" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="113" y="135" text-anchor="middle">Web Security</text>
+          <text class="dg-sub" x="113" y="153" text-anchor="middle">category policy</text>
+
+          <rect class="dg-node" x="28" y="190" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="113" y="213" text-anchor="middle">Forcepoint ONE</text>
+          <text class="dg-sub" x="113" y="231" text-anchor="middle">CASB / app policy</text>
+
+          <rect class="dg-node" x="28" y="268" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="113" y="291" text-anchor="middle">DLP policies</text>
+          <text class="dg-sub" x="113" y="309" text-anchor="middle">classifiers · incidents</text>
+
+          <!-- Export -->
+          <path class="lane lane-static" d="M 198 62 C 226 62, 236 130, 252 158"/>
+          <path class="lane lane-static" d="M 198 140 C 222 140, 232 164, 252 170"/>
+          <path class="lane lane-static" d="M 198 218 C 226 218, 236 196, 252 186"/>
+          <path class="lane lane-static" d="M 198 296 C 228 296, 238 224, 252 198"/>
+          <rect class="dg-node-dark" x="252" y="146" width="124" height="64" rx="10"/>
+          <text class="dg-label-inv" x="314" y="173" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="314" y="192" text-anchor="middle">CSV · XML · reports</text>
+
+          <!-- Rationalise -->
+          <path class="lane-static" d="M 376 178 L 420 178"/>
+          <rect class="dg-node" x="420" y="146" width="150" height="64" rx="10"/>
+          <text class="dg-label" x="495" y="173" text-anchor="middle">RATIONALISE</text>
+          <text class="dg-sub" x="495" y="192" text-anchor="middle">zero-hit rules out</text>
+
+          <!-- Discarded dead rules -->
+          <path class="lane lane-block" d="M 495 210 L 495 260"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 483 264 L 507 288"/><path class="lane-x" d="M 507 264 L 483 288"/>
+          </g>
+          <text class="dg-tiny" x="495" y="310" text-anchor="middle">dead rules discarded</text>
+
+          <!-- Map -->
+          <path class="lane-static" d="M 570 178 L 620 178"/>
+          <rect class="dg-node-dark" x="620" y="146" width="150" height="64" rx="10"/>
+          <text class="dg-label-inv" x="695" y="173" text-anchor="middle">MAP</text>
+          <text class="dg-sub-inv" x="695" y="192" text-anchor="middle">to CMA rulebases</text>
+
+          <!-- Deploy (monitor) -->
+          <path class="lane lane-limit" d="M 695 210 L 695 330"/>
+          <text class="dg-tiny" x="707" y="274" text-anchor="start">monitor-first</text>
+          <rect class="dg-node" x="620" y="330" width="150" height="64" rx="10" style="stroke: var(--lane-limit); stroke-width: 2"/>
+          <text class="dg-label" x="695" y="357" text-anchor="middle">DEPLOY</text>
+          <text class="dg-sub" x="695" y="376" text-anchor="middle">monitor mode</text>
+
+          <!-- Enforce -->
+          <path class="lane lane-allow" d="M 620 362 L 530 362"/>
+          <text class="dg-tiny" x="575" y="350" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">promote</text>
+          <rect class="dg-node-green" x="380" y="330" width="150" height="64" rx="10"/>
+          <text class="dg-label" x="455" y="357" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="455" y="376" text-anchor="middle">block at parity</text>
+
+          <!-- Events / evidence -->
+          <path class="lane lane-static" d="M 380 362 L 250 362"/>
+          <path class="lane lane-static" d="M 695 394 C 660 432, 400 436, 252 378"/>
+          <text class="dg-tiny" x="470" y="446" text-anchor="middle">telemetry</text>
+          <rect class="dg-node" x="60" y="334" width="190" height="60" rx="10"/>
+          <text class="dg-label" x="155" y="359" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub" x="155" y="377" text-anchor="middle">Monitor → Events</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy in monitor — log only</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — block at telemetry parity</span>
+          <span class="key"><span class="swatch block"></span> Dead rules discarded on hit counts</span>
+        </div>
+        <div class="diagram-caption">All four Forcepoint policy domains move through the same pipeline: export with hit data, discard the dead weight, map the survivors to CMA constructs, deploy watching, and enforce only when the event telemetry matches expectations.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Frame it as a workshop, not a demo</div>
+        <p>Ask the customer to bring their own exports — an SMC rulebase with counters, a web
+        policy summary, the DLP policy list with incident history. Walking <em>their</em> policy
+        through the pipeline lands harder than any canned walkthrough.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Whiteboard the pipeline first</h4>
+          <p>Before opening the console, draw EXPORT → REVIEW &amp; MAP → DEPLOY (monitor) →
+          OPTIMISE and agree the rationalisation rule up front — for example, any rule or policy
+          with zero hits in 90 days is out unless someone owns a reason to keep it.</p>
+        </li>
+        <li>
+          <h4>Show where category policy lands</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Walk the ordered rulebase: URL categories, custom categories, Allow/Block/Prompt
+          actions. Map one of their Confirm rules to Prompt live, and show the recommended block
+          baseline they inherit on day one.</p>
+        </li>
+        <li>
+          <h4>Show where SMC access rules land</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Contrast the two default postures — WAN allowlist, Internet blocklist — and show how
+          a site-to-site SMC rule becomes a WAN Firewall rule referencing sites, users and
+          services.</p>
+        </li>
+        <li>
+          <h4>Show the TLS staging that fidelity depends on</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged rollout: certificate deployment, QUIC blocking, a test group, then
+          expansion by category — and explain one-inspection-owner-per-cohort during
+          co-existence.</p>
+        </li>
+        <li>
+          <h4>Show CASB app control and discovery</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show shadow-IT discovery and app risk scores, then a granular app-control rule
+          (upload/download distinctions) — where the Forcepoint ONE intent lands, in the same
+          rulebase as everything else.</p>
+        </li>
+        <li>
+          <h4>Show the DLP mapping targets</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Open the predefined data types library, a custom data type, and an EDM profile. Map
+          one of their real classifiers live into a content profile, and set the rule to monitor —
+          not block.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events by rule and show hit counts accumulating — this is the telemetry that
+          retires dead rules, proves parity and earns the promotion from monitor to block.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Cato documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273487633-Managing-the-Internet-Firewall-Policy" target="_blank" rel="noopener">Managing the Internet Firewall policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Recommended Internet &amp; WAN Firewall baselines (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/32901519994781-Working-with-Predefined-Data-Types-for-DLP" target="_blank" rel="noopener">Predefined data types for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/6223075015197-Working-with-Custom-Data-Types-for-DLP" target="_blank" rel="noopener">Custom data types for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16676236807453-Working-with-Exact-Data-Matching-EDM-for-DLP" target="_blank" rel="noopener">Exact Data Matching (EDM) for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5352915107869-Creating-DLP-Content-Profiles" target="_blank" rel="noopener">Creating DLP content profiles — incl. OCR limits (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4405498289053-What-is-the-Unified-CASB-Solution" target="_blank" rel="noopener">The unified CASB solution (KB)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Forcepoint-side references</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://help.forcepoint.com/dlp/90/dlphelp/E38AA3ED-E6F8-4008-82B8-8400230E8B9D.html" target="_blank" rel="noopener">DLP data classification — incl. fingerprinting</a></li>
+            <li><a href="https://help.forcepoint.com/dlp/10/machine_learning/2D367CFD-A22E-4083-BB52-7E2A416EC10F.html" target="_blank" rel="noopener">DLP machine-learning classifiers</a></li>
+            <li><a href="https://help.forcepoint.com/websec/en-us/on-prem/85/pac_file_best_practices/wsop_85x_pacfbp_en-us.pdf" target="_blank" rel="noopener">Web Security PAC file best practices (PDF)</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services — runs this methodology</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-forcepoint.html">Forcepoint (Web Security &amp; NGFW) to Cato — the full migration</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

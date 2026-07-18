@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offshore Development Centres &amp; BPO Access — Cato Use Case Library</title>
+<meta name="description" content="Secure thousands of offshore developers and BPO agents — ZTNA, RBI and DLP keep code and customer data in-country while the backbone keeps VDI usable.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-offshore-bpo">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / Offshore Dev &amp; BPO</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Offshore Development Centres &amp; BPO Access</h1>
+    <p class="lede">
+      An offshore development centre or BPO floor puts thousands of developers and agents — many on
+      outsourcer-owned or unmanaged devices, with constant joiner/leaver churn — inside your code
+      repositories, CRM and VDI. At the same time, regulators and end customers demand the data stays
+      in-country and off the endpoint. This use case shows how Cato combines Client and Clientless ZTNA,
+      RBI and CASB/DLP with a private backbone that keeps VDI usable from the other side of the world.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ZTNA</span><span class="tag">RBI</span><span class="tag">DLP</span>
+      <span class="tag">VDI</span><span class="tag">Offshore</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Offshore delivery is now core to how software gets built and customers get served: development
+        centres and contact-centre floors run by outsourcing partners, staffed at scale, often a
+        continent away from the systems they work in. Those teams need deep access — Git repositories
+        and CI pipelines for developers, CRM and VDI for agents — yet they are the population the
+        business controls least: devices owned by the outsourcer or the individual, security posture
+        unknown, and turnover so high that this quarter's access list is already out of date.
+      </p>
+      <p>
+        Meanwhile the pressure runs the other way. Data-protection regulators and the enterprise's own
+        customers write it into contracts: <strong>customer records and source code must stay in-country,
+        inside approved applications, and never persist on the endpoint.</strong> The objective is to give
+        every offshore developer and agent fast access to exactly the applications their role requires —
+        while being able to prove that nothing sensitive ever left them.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Scale, churn and sovereignty — on someone else's devices</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The offshore reality</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Thousands of developers and agents across multiple delivery partners</li>
+            <li>Devices owned by the outsourcer or the individual — not by you</li>
+            <li>High staff turnover: joiners and leavers every week, per site</li>
+            <li>Deep access required: repos, CI/CD, CRM, VDI, ticketing</li>
+            <li>Contracts and regulators demand in-country, off-endpoint data handling</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The legacy answer — and why it creaks</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>VPN concentrators grant network-level access to unmanaged devices</li>
+            <li>VDI farms bolted on as the data-control workaround — for every task</li>
+            <li>Long-haul public internet between the floor and the VDI farm: lag, jitter, drops</li>
+            <li>Screen latency makes agents slower and developers miserable</li>
+            <li>Onboarding and offboarding run on tickets — leavers linger for weeks</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">What the customer's auditors actually ask for</h3>
+      <div class="table-wrap" style="margin-top:10px">
+        <table class="data">
+          <thead>
+            <tr><th>Requirement</th><th>Legacy answer</th><th>With Cato</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Data stays in-country</td>
+              <td>Hairpin everything through a distant VPN concentrator</td>
+              <td>Onramp at the nearest PoP; apps stay hosted in-region and traffic egresses there</td>
+            </tr>
+            <tr>
+              <td>Nothing persists on the endpoint</td>
+              <td>Full VDI for every user and every task</td>
+              <td>VDI where it earns its keep; RBI renders risky sessions as pixels; DLP polices uploads and downloads</td>
+            </tr>
+            <tr>
+              <td>Prove who accessed what</td>
+              <td>Logs scattered across concentrators, VDI brokers and firewalls</td>
+              <td>One event store — every flow attributed to a named user and device</td>
+            </tr>
+            <tr>
+              <td>Leavers lose access same day</td>
+              <td>Ticket queues and orphaned accounts</td>
+              <td>Group-based policy from the IdP — one directory change revokes client and portal access</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout risk" style="margin-top:22px">
+        <div class="co-title">Discovery question</div>
+        <p>“Who owns the laptops your offshore teams work on — you, the outsourcer, or the individual?
+        And when an agent leaves on a Friday, how long before every credential, tunnel and portal
+        session they had is actually gone?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>ZTNA, RBI and DLP — delivered from the nearest PoP</h2>
+      <p>
+        Cato treats the offshore estate as two device classes under one policy engine. Managed
+        contractor laptops run the <strong>Cato Client</strong> and must pass a device-posture check before
+        — and throughout — every session. Outsourcer-owned and personal devices get a
+        <strong>clientless browser portal</strong> publishing only the applications that group is entitled to,
+        with <strong>RBI</strong> rendering risky or unmanaged sessions remotely so the endpoint receives pixels,
+        not data. <strong>CASB and DLP</strong> then keep source code and customer PII inside approved
+        applications, blocking uploads to personal storage inline.
+      </p>
+      <p>
+        Crucially, all of it runs at the <strong>nearest PoP</strong> — Johannesburg for a South African
+        delivery centre, Sydney for an Australian one — with the global private backbone carrying VDI,
+        CRM and repository traffic to the region where the apps are hosted. That removes the long-haul
+        public-internet leg that made legacy VDI painful at distance.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Offshore developers and BPO agents accessing apps via the nearest Cato PoP</title>
+          <desc id="dg1-desc">Offshore developers on managed devices with the Cato Client, and BPO agents on unmanaged devices via the clientless portal, connect to the nearest Cato PoP. The developer's traffic rides the private backbone to code repositories in the London DC. The agent's session reaches VDI and CRM through remote browser isolation. An attempted upload to personal cloud storage is blocked by DLP at the PoP.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="545" cy="220" rx="160" ry="50"/>
+          <circle cx="406" cy="245" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="658" cy="185" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="545" y="292" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="350" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="350" cy="220" r="30"/>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="30" y="84" width="180" height="64" rx="10"/>
+          <text class="dg-label" x="120" y="111" text-anchor="middle">Offshore developers</text>
+          <text class="dg-sub" x="120" y="130" text-anchor="middle">Cato Client · posture</text>
+
+          <rect class="dg-node" x="30" y="292" width="180" height="64" rx="10"/>
+          <text class="dg-label" x="120" y="319" text-anchor="middle">BPO contact centre</text>
+          <text class="dg-sub" x="120" y="338" text-anchor="middle">Unmanaged · browser only</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="756" y="44" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="68" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="841" y="86" text-anchor="middle">Git repos · Socket X1500</text>
+
+          <rect class="dg-node" x="756" y="190" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="214" text-anchor="middle">VDI &amp; CRM</text>
+          <text class="dg-sub" x="841" y="232" text-anchor="middle">Hosted on Azure vSocket</text>
+
+          <rect class="dg-node" x="756" y="336" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="360" text-anchor="middle">Personal storage</text>
+          <text class="dg-sub" x="841" y="378" text-anchor="middle">Consumer file sharing</text>
+
+          <!-- Green: managed developer, Client ZTNA -->
+          <path class="lane lane-allow" d="M 210 116 C 265 140, 295 175, 328 200"/>
+          <path class="lane lane-allow" d="M 376 204 C 480 150, 630 95, 752 73"/>
+
+          <!-- Amber: unmanaged agent, clientless + RBI -->
+          <path class="lane lane-limit" d="M 210 324 C 265 300, 295 262, 328 240"/>
+          <path class="lane lane-limit" d="M 380 222 C 500 221, 630 220, 752 219"/>
+
+          <!-- Red: DLP blocks code exfiltration to personal storage -->
+          <path class="lane lane-block" d="M 374 238 C 460 300, 580 340, 690 356"/>
+          <g aria-label="blocked by DLP">
+            <path class="lane-x" d="M 696 342 L 720 366"/><path class="lane-x" d="M 720 342 L 696 366"/>
+          </g>
+          <text class="dg-tiny" x="540" y="392" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">DLP: source-code upload blocked</text>
+
+          <!-- PoP labels (painted above lanes, with halo) -->
+          <text class="dg-label" x="350" y="152" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Nearest Cato PoP</text>
+          <text class="dg-tiny" x="350" y="168" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Johannesburg · Sydney</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Client ZTNA — posture-gated app access</span>
+          <span class="key"><span class="swatch limit"></span> Clientless + RBI — pixels only, data off endpoint</span>
+          <span class="key"><span class="swatch block"></span> CASB/DLP — code &amp; PII exfiltration blocked</span>
+        </div>
+        <div class="diagram-caption">Developers and agents onramp at the nearest PoP; the backbone carries repo, VDI and CRM traffic to in-region hosting, while DLP stops source code leaving approved apps.</div>
+      </div>
+
+      <h3>What each capability contributes</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>ZTNA for both device classes</h4><p>Cato Client with continuous device-posture checks for managed contractor laptops; a clientless portal publishing only entitled apps for outsourcer-owned and personal devices. One policy engine for both.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>RBI keeps sessions on-screen only</h4><p>Risky or unmanaged sessions render in an isolated remote browser — the endpoint receives pixels, not data, and copy, paste, upload and download can be restricted per application.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>CASB &amp; DLP around code and PII</h4><p>Source code, secrets and customer records stay confined to approved applications; uploads to personal cloud storage and webmail are blocked inline, with the evidence logged.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Nearest PoP + private backbone</h4><p>Agents onramp at Johannesburg or Sydney and ride the backbone to wherever VDI and CRM are hosted — predictable performance instead of long-haul public internet.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚡</div><div><h4>Churn absorbed by the directory</h4><p>Group-based policy from the IdP: joiners inherit access on day one through group membership; leavers lose client and portal access with a single directory change.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Evidence for customers and regulators</h4><p>Every session and every block attributed to a named user in one event store — the audit trail to hand over when the end customer's due-diligence team comes asking.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — map the estate</div>
+        <p>Ask which outsourcers they use, where the floors are, which applications each role touches,
+        and who owns the devices. Pick one real delivery location and one real application pair
+        (repos + VDI, or CRM + VDI) and run the whole demo against that story.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Onboard a contractor group</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Show a rule scoped to an "Offshore-Developers" user group synchronised from the IdP:
+          connection allowed only from the delivery countries, only with a compliant posture profile.
+          Point out that joiners inherit all of this by group membership — no per-user tickets.</p>
+        </li>
+        <li>
+          <h4>Show the posture gate</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Open the posture profile: EPP/EDR running, disk encryption, OS patch level, client version.
+          The outsourcer's managed build passes; a personal laptop fails — and that failure is what
+          routes the user to the clientless path instead of full access.</p>
+        </li>
+        <li>
+          <h4>Clientless portal on an unmanaged device</h4>
+          <p>From a plain browser with no client installed, sign in to the application portal as a BPO
+          agent (MFA via the IdP). Only the published apps — CRM and VDI — appear. Explain that RBI can
+          render the risky session remotely: the device shows pixels, while copy, paste and download
+          stay under policy.</p>
+        </li>
+        <li>
+          <h4>Block code exfiltration to personal storage</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show a DLP rule matching source-code data types uploaded to personal cloud-storage apps,
+          action <strong>Block</strong>. Attempt an upload as the developer, then open
+          <span class="path">Monitor → Data Protection Dashboard</span> to walk the incident —
+          user, app, file, rule, verdict.</p>
+        </li>
+        <li>
+          <h4>Prove the distance win</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Filter to the offshore group: traffic lands on the Johannesburg or Sydney PoP and rides the
+          backbone to the hosting region. Contrast that path with the long-haul public-internet route
+          the VDI session would otherwise take — this is why the screen stops lagging.</p>
+        </li>
+        <li>
+          <h4>Run a leaver</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Remove a user from the contractor group (or disable them) and show client and portal access
+          gone immediately. Finish in <span class="path">Monitor → Events</span>: the leaver's full,
+          attributed history is the audit trail their customers keep asking for.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

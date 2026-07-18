@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Consolidation &amp; Network TCO — Cato Use Case Library</title>
+<meta name="description" content="Retire the appliance estate — MPLS, edge firewalls, VPN concentrators, SWG and CASB point products collapse into one platform with one policy and one bill.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-vendor-consolidation">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / Vendor Consolidation</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Vendor Consolidation &amp; Network TCO</h1>
+    <p class="lede">
+      A typical estate is MPLS plus edge routers, branch firewalls, VPN concentrators, a web
+      gateway, CASB/DLP bolt-ons and an SD-WAN overlay — each with its own licence cycle,
+      hardware refresh, console and skills gap. The real cost hides in integration, patching and
+      cross-vendor outage triage. This use case shows how the stack collapses into one platform:
+      fewer boxes, fewer renewals, fewer consoles — and one place to run it all.
+    </p>
+    <div class="meta-row">
+      <span class="tag">TCO</span><span class="tag">Consolidation</span>
+      <span class="tag">Platform</span><span class="tag">OpEx</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Nobody signs one contract for "the network". They sign an MPLS carriage contract, a router
+        refresh, a firewall renewal, a VPN concentrator support agreement, an SWG licence, a CASB
+        subscription, a DLP add-on and an SD-WAN overlay — each from a different vendor, on a
+        different anniversary, managed in a different console by whoever holds that vendor's
+        certification. Every one of those lines looks defensible on its own. Together they are the
+        most expensive way to run a WAN.
+      </p>
+      <p>
+        The TCO argument here is deliberately <strong>structural, not numeric</strong>: you don't
+        need a spreadsheet of assumed percentages to see that fewer boxes mean fewer refreshes,
+        fewer renewals mean fewer negotiations, and fewer consoles mean fewer specialists, fewer
+        integration points and faster triage. The objective is simple:
+        <strong>collapse the estate into one platform, one policy model, one console — and make
+        the operational maths self-evident.</strong>
+      </p>
+    </section>
+
+    <section id="estate" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>The estate you're actually paying for</h2>
+      <p>
+        Ask a prospect to sketch their WAN and security stack and the whiteboard fills up fast:
+        MPLS circuits, edge routers, branch firewalls, VPN concentrators for remote access, a
+        secure web gateway, CASB and DLP point products layered over the top, and an SD-WAN
+        overlay bought to soften the MPLS bill. The invoices are only half the story.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The costs you can see</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>MPLS carriage and per-site circuit contracts</li>
+            <li>Hardware refresh cycles — routers, firewalls, concentrators</li>
+            <li>Licence renewals and support contracts, one per vendor</li>
+            <li>An SD-WAN overlay subscription bought on top of it all</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The costs that hide</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Integration engineering to make the vendors coexist</li>
+            <li>Patch windows multiplied across every appliance family</li>
+            <li>Outage triage across vendors — everyone's dashboard is green</li>
+            <li>A skills gap (and training budget) per console</li>
+            <li>Audit evidence stitched together from different log formats</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Discovery question</div>
+        <p>"How many renewal dates does your network and security estate have in the next 24 months —
+        and how many consoles does one investigation touch, end to end?" Almost nobody knows the
+        first number without going away to count. That <em>is</em> the finding: the estate has grown
+        past the point where anyone can see its whole cost.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Collapse the stack into one platform</h2>
+      <p>
+        Cato converges SD-WAN and the security service edge into a single cloud service: every flow
+        is inspected once, in a single pass, at the nearest PoP. At the branch, a Socket replaces
+        the router-plus-firewall pair. The global private backbone replaces MPLS. The Cato Client
+        replaces the VPN concentrator. SWG, CASB, DLP and IPS stop being products you deploy and
+        become policy you enable. And all of it — network and security — is configured, monitored
+        and audited in one console, the Cato Management Application (CMA).
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> platform</span></div><div class="stat-label">SD-WAN and security service edge in a single pass</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> policy model</span></div><div class="stat-label">Network and security rules share the same objects and identities</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> console</span></div><div class="stat-label">CMA — configuration, analytics and audit in one place</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> upgrade cadence</span></div><div class="stat-label">Capabilities update PoP-side; no appliance EOL treadmill</div></div>
+      </div>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The appliance estate collapses into the Cato platform</title>
+          <desc id="dg1-desc">Seven legacy components — MPLS circuits, edge routers, branch firewalls, VPN concentrators, SWG proxy, CASB and DLP add-ons, and an SD-WAN overlay — converge into a single Cato PoP on the global private backbone. What remains on the right: a Cato Socket at the branch, the Cato Client on user devices, and CMA as the one console.</desc>
+
+          <!-- Column headings -->
+          <text class="dg-label" x="124" y="24" text-anchor="middle">What you retire</text>
+          <text class="dg-label" x="841" y="40" text-anchor="middle">What you run instead</text>
+
+          <!-- Legacy stack (left) -->
+          <rect class="dg-node" x="34" y="42" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="60" text-anchor="middle">MPLS circuits</text>
+          <text class="dg-sub" x="124" y="77" text-anchor="middle">per-site carriage</text>
+
+          <rect class="dg-node" x="34" y="96" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="114" text-anchor="middle">Edge routers</text>
+          <text class="dg-sub" x="124" y="131" text-anchor="middle">refresh &amp; config drift</text>
+
+          <rect class="dg-node" x="34" y="150" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="168" text-anchor="middle">Branch firewalls</text>
+          <text class="dg-sub" x="124" y="185" text-anchor="middle">patch &amp; EOL treadmill</text>
+
+          <rect class="dg-node" x="34" y="204" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="222" text-anchor="middle">VPN concentrators</text>
+          <text class="dg-sub" x="124" y="239" text-anchor="middle">remote-access head-end</text>
+
+          <rect class="dg-node" x="34" y="258" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="276" text-anchor="middle">SWG / web proxy</text>
+          <text class="dg-sub" x="124" y="293" text-anchor="middle">own licence &amp; console</text>
+
+          <rect class="dg-node" x="34" y="312" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="330" text-anchor="middle">CASB / DLP add-ons</text>
+          <text class="dg-sub" x="124" y="347" text-anchor="middle">point-product bolt-ons</text>
+
+          <rect class="dg-node" x="34" y="366" width="180" height="44" rx="10"/>
+          <text class="dg-label" x="124" y="384" text-anchor="middle">SD-WAN overlay</text>
+          <text class="dg-sub" x="124" y="401" text-anchor="middle">another vendor &amp; console</text>
+
+          <!-- Functions absorbed into the PoP (neutral links) -->
+          <path class="lane lane-static" d="M 222 64 C 310 78, 390 150, 460 194"/>
+          <path class="lane lane-static" d="M 222 118 C 310 128, 390 170, 452 202"/>
+          <path class="lane lane-static" d="M 222 172 C 300 178, 380 200, 444 212"/>
+          <path class="lane lane-static" d="M 222 226 C 300 226, 380 224, 442 221"/>
+          <path class="lane lane-static" d="M 222 280 C 300 274, 380 248, 444 230"/>
+          <path class="lane lane-static" d="M 222 334 C 300 326, 390 272, 452 240"/>
+          <path class="lane lane-static" d="M 222 388 C 310 374, 390 292, 460 248"/>
+
+          <!-- Backbone + Cato PoP -->
+          <ellipse class="dg-backbone" cx="480" cy="224" rx="150" ry="46"/>
+          <circle cx="345" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="615" cy="208" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+          <text class="dg-label" x="480" y="148" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="164" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SD-WAN + security — one pass</text>
+          <text class="dg-tiny" x="480" y="298" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Live traffic and policy (green marching lanes) -->
+          <path class="lane lane-allow" d="M 746 88 C 660 110, 580 168, 512 200"/>
+          <path class="lane lane-allow" d="M 746 220 C 675 221, 590 221, 518 220"/>
+          <path class="lane lane-allow" d="M 746 352 C 660 332, 580 268, 512 238"/>
+
+          <!-- What remains (right) -->
+          <rect class="dg-node-green" x="746" y="62" width="190" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="86" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub" x="841" y="104" text-anchor="middle">replaces router + firewall</text>
+
+          <rect class="dg-node-green" x="746" y="191" width="190" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="215" text-anchor="middle">CMA — one console</text>
+          <text class="dg-sub" x="841" y="233" text-anchor="middle">all policy, one audit trail</text>
+
+          <rect class="dg-node-green" x="746" y="320" width="190" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="344" text-anchor="middle">Cato Client</text>
+          <text class="dg-sub" x="841" y="362" text-anchor="middle">replaces VPN concentrator</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Live traffic &amp; policy — one single pass through the Cato PoP</span>
+        </div>
+        <div class="diagram-caption">Seven product families collapse into the PoP. What's left to own and operate: a Socket at the branch, a Client on the device, and one console.</div>
+      </div>
+
+      <h3>What you retire → what replaces it</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>What you retire</th><th>What replaces it</th><th>What changes operationally</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MPLS circuits</td>
+              <td>Cato Global Private Backbone</td>
+              <td>Carriage becomes commodity internet uplinks; site-to-site transport rides the SLA-backed backbone — see <a href="network-mpls-migration.html">MPLS to SASE Migration</a>.</td>
+            </tr>
+            <tr>
+              <td>Edge routers</td>
+              <td>Cato Socket</td>
+              <td>Zero-touch edge device; routing and path policy live in CMA, not in per-box config.</td>
+            </tr>
+            <tr>
+              <td>Branch firewalls</td>
+              <td>FWaaS in the PoP</td>
+              <td>No sizing, no patch windows, no end-of-life — see <a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a>.</td>
+            </tr>
+            <tr>
+              <td>VPN concentrators</td>
+              <td>Cato Client + ZTNA at every PoP</td>
+              <td>No head-end to scale or patch; remote users get the same policy and inspection as sites.</td>
+            </tr>
+            <tr>
+              <td>SWG / web proxy</td>
+              <td>SWG in the same single pass</td>
+              <td>No PAC files or proxy chains; web policy is just more rules in the same rule base.</td>
+            </tr>
+            <tr>
+              <td>CASB / DLP point products</td>
+              <td>Native CASB &amp; DLP, inline</td>
+              <td>Enabling data protection is a policy toggle, not a procurement; incidents land in the same event store.</td>
+            </tr>
+            <tr>
+              <td>SD-WAN overlay</td>
+              <td>SD-WAN native to Socket + PoP</td>
+              <td>Path selection, QoS and experience analytics in the same console as security policy.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/platform-capabilities.png" alt="Grid of Cato platform capabilities shown as circular buttons — SD-WAN, Accelerate, MPLS, Optimize, Monitor and AIOps alongside NGFW, IPS, EDR/EPP, DLP, SWG, RBI, AI Security, XDR, ZTNA and CASB — one converged platform.">
+        <figcaption>Networking and security capabilities converged in one platform — each of these was once a separate box, licence, console and renewal date.</figcaption>
+      </figure>
+
+      <h3>The operational wins</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Fewer renewals, one agreement</h4><p>The renewal calendar collapses into a single conversation. Architecture decisions stop being driven by whichever contract expires next.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>One audit trail</h4><p>Every network and security change — who, what, when — is logged in CMA's Audit Trail. Audit evidence comes from one system, in one format.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>One upgrade cadence, PoP-side</h4><p>New capabilities and fixes land in the PoPs, maintained by Cato. Sockets stay thin and cloud-managed — the appliance EOL treadmill simply ends.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎚️</div><div><h4>Capability by policy, not hardware</h4><p>Adding IPS, CASB or DLP is a toggle in the console on traffic already flowing through the PoP — no new box, console or skills hire.</p></div></div>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">The refresh moment is the opening</div>
+        <p>Consolidation conversations rarely start abstract — they start when a firewall estate goes
+        end-of-life or the MPLS contract comes up. Anchor to that event, then widen the lens: replace
+        the one renewal in front of them, and every adjacent renewal becomes optional.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <p>
+        The demo is deliberately boring in the best way: no attack simulations, just showing that
+        everything they currently run as separate products is one coherent system in one console.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Whiteboard their estate first</h4>
+          <p>Before touching CMA, draw their stack from discovery: every box, its vendor, its console,
+          its next renewal. Leave it visible — the rest of the demo is a running comparison against
+          that drawing.</p>
+        </li>
+        <li>
+          <h4>One console: network and security policy side by side</h4>
+          <p><span class="path">Network → Network Rules</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Walk from bandwidth and path-selection rules straight into firewall policy without
+          changing tools. Point out that both rule bases share the same sites, users and groups —
+          one policy model, not an integration between two products.</p>
+        </li>
+        <li>
+          <h4>Topology: the whole estate on one map</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Show sites on Sockets (London DC on an X1500, Reading Office, Dubai Office), cloud
+          presence ("AWS Site eu-west-2" vSocket HA pair, the Azure vSocket hub) and remote users on
+          the Client — all live, in one view. Contrast with the per-vendor dashboards on the whiteboard.</p>
+        </li>
+        <li>
+          <h4>Add a security capability without deploying anything</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>Show IPS (or CASB / DLP) enabled by policy on traffic already flowing through the PoP.
+          The line that lands: "in your current estate, this capability is a purchase order, a box,
+          a console and a renewal — here it's a toggle."</p>
+        </li>
+        <li>
+          <h4>One audit trail across everything</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Filter recent changes — a network rule edited by Marcus, a firewall rule added by Priya —
+          all attributed in one place. This is the single audit story their current estate can't tell
+          without stitching logs from every vendor.</p>
+        </li>
+        <li>
+          <h4>Close on lifecycle: the treadmill ends</h4>
+          <p>Explain the upgrade model: security capabilities update PoP-side, maintained by Cato;
+          Socket firmware is pushed from the cloud on the customer's schedule. No sizing exercise,
+          no forklift refresh, no end-of-life notice — then hand over the
+          <a href="security-firewall-refresh.html">firewall refresh</a> page as the follow-up.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application (CMA) — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall as a service</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+            <li><a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palo Alto Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate PAN-OS security policy to Cato — App-ID rulebases, URL Filtering, SaaS security and Enterprise DLP mapped to the single-pass policy model, clean-up first.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-palo-alto-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Palo Alto Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Palo Alto Policy Migration</h1>
+    <p class="lede">
+      Exporting a PAN-OS estate is the easy part — translating fifteen years of App-ID rulebase,
+      URL Filtering profiles, SaaS Security controls and Enterprise DLP patterns into Cato's
+      single-pass policy model is where migrations stall. This page walks the four policy domains
+      one by one: what to export, what maps to what, where the semantics silently differ, and the
+      monitor-first discipline that keeps enforcement honest.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+      <p>
+        Sites cut over in an evening; policy is what takes the months. A mature Palo Alto estate
+        carries a zone-based App-ID rulebase layered across Panorama device groups, URL Filtering
+        profiles bolted to those rules, some amount of SaaS Security configuration and — where the
+        add-on was bought — Enterprise DLP data profiles. None of that is a file-format conversion
+        into Cato: it is a functional translation between two different policy models. And there is
+        no tool to hide behind — Expedition, PAN's own config-migration tool, reached end-of-life on
+        31 December 2024 with no successor, so conversion is an engineering-led workstream that Cato
+        Professional Services schedules explicitly as "Security Policy Conversion".
+      </p>
+      <p>
+        The process that works runs each policy domain through the same four phases:
+        <strong>EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</strong>. The one rule
+        that matters most sits at the front: <strong>never lift-and-shift</strong>. Panorama's rule
+        usage data tells you which rules actually fire — rationalise on hit counts first, because
+        translating a fifteen-year-old rulebase verbatim into CMA simply imports the mess.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based content — review before customer use</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not</strong> a delivery-verified runbook. Validate mappings, sequencing and scope
+        with Cato Professional Services before committing a conversion plan to a customer.</p>
+      </div>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">EOL</div><div class="stat-label">Expedition retired 31 Dec 2024 — conversion is engineering-led, not a tool run</div></div>
+        <div class="stat-tile"><div class="stat-value">4<span class="unit">phases</span></div><div class="stat-label">EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">0</div><div class="stat-label">Rules lifted-and-shifted — every rule earns its place on hit counts</div></div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many rules are in the rulebase today — and how many have a non-zero hit count in
+        the last 90 days?” The gap between those two numbers is the clean-up dividend, and it sets
+        the real size of the conversion effort.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 · FW rules</div>
+      <h2>PAN-OS security rulebase → Cato firewalls</h2>
+      <h3>The construct, and how to export it</h3>
+      <p>
+        PAN-OS rules match on source/destination <strong>zone</strong>, address, User-ID user or
+        group, App-ID application and service — with <em>application-default</em> quietly binding
+        each app to its standard ports. Security profiles (IPS, AV, URL, DLP) attach per rule, and
+        Panorama layers pre-/post-rules and shared objects across device groups. NAT is a
+        <strong>separate rulebase</strong> entirely. Export the lot: CSV/PDF from the Policies tab
+        (PAN-OS 8.1+), full XML via <em>Save and Export Panorama and Firewall Configurations</em>,
+        the XML API with XPath per device group, or <code>set</code>-format CLI output for scripted
+        parsing — and pull rule-usage (hit count / last-hit) data alongside, because it drives the
+        clean-up.
+      </p>
+
+      <h3>Mapping to Cato constructs</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>PAN-OS construct</th><th>Cato construct</th><th>Translation notes</th></tr></thead>
+          <tbody>
+            <tr><td>Zone pair: trust → untrust (internet-bound)</td><td>Internet Firewall rules</td><td>Internet FW default-<strong>allows</strong> — add explicit blocks to preserve PA's interzone-deny intent</td></tr>
+            <tr><td>Zone pair: site ↔ site / DC (east-west WAN)</td><td>WAN Firewall rules (site / VLAN / user / group scope)</td><td>WAN FW default-<strong>blocks</strong> — an allowlist; rebuild only rules that actually hit</td></tr>
+            <tr><td>Intra-site zone rules on one PA</td><td>Socket LAN Firewall</td><td>Local L3/L4/L7 flows filtered at the Socket, not the PoP</td></tr>
+            <tr><td>App-ID application match</td><td>Cato app catalogue app / custom app</td><td>Custom App-IDs re-created as custom apps or FQDN/IP objects — signatures do not transfer</td></tr>
+            <tr><td>Service: application-default</td><td>Explicit service/port in the Cato rule</td><td>Re-pin standard ports explicitly, or the translated rule is broader than the original</td></tr>
+            <tr><td>Address / service objects &amp; groups</td><td>Cato IP ranges, FQDN objects, custom services</td><td>Flatten Panorama shared vs device-group scoping into one namespace; de-duplicate first</td></tr>
+            <tr><td>User-ID users &amp; groups</td><td>User Awareness — SCIM / LDAP-provisioned groups</td><td>Groups must exist in CMA <em>before</em> user-scoped rules deploy</td></tr>
+            <tr><td>Per-rule security profile groups</td><td>Account-level IPS / NGAM / DNS protection</td><td>Protections are platform capabilities, not per-rule attachments — see gotchas</td></tr>
+            <tr><td>NAT rulebase (separate)</td><td>Site NAT (outgoing) + Remote / Local Port Forwarding</td><td>Audit line-by-line; most branch NAT disappears (the PoP handles internet SNAT)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Semantic gotchas</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">application-default broadens silently</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A PA rule allowing an app on
+          <em>application-default</em> is port-bound. Translate it without re-pinning the ports and
+          the Cato rule is broader than the original — an invisible policy loosening. Make the port
+          explicit in every translated rule.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Zones don't exist — postures flip</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato has no zone construct. The world splits
+          into WAN FW (implicit block) and Internet FW (implicit allow) — the opposite default
+          postures to a PA admin's interzone-deny mindset. Decide per rule which surface it lands on;
+          zones with no equivalent (multi-vsys separations) go to the design workshop.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Rules that only varied profiles collapse</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PA lets identical match criteria exist twice
+          just to attach different security profiles. On Cato, IPS/NGAM/DNS protection are
+          account-level — those duplicate rules simply collapse away. Expect the translated rulebase
+          to be materially shorter, by design.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Shadowed &amp; NAT-coupled rules</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Pre-/post-rule layering plus device-group
+          inheritance breeds shadowed rules — hit counts expose them. And because NAT is a separate
+          rulebase, DNAT-published services must be consciously re-homed to Remote/Local Port
+          Forwarding with external DNS updated, or they go dark at cutover.</p>
+        </div>
+      </div>
+
+      <h3>Migration strategy</h3>
+      <p>
+        Export with usage data → cull disabled, zero-hit and shadowed rules and collapse
+        device-group duplication → classify each survivor to Internet FW, WAN FW or Socket LAN FW →
+        rebuild in CMA's ordered, first-match rulebase with ports re-pinned and objects flattened →
+        deploy with event tracking on, and tighten to block once events confirm the scope matches
+        the original intent.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 · SWG policy</div>
+      <h2>URL Filtering → Cato Internet Firewall categories</h2>
+      <h3>The construct, and how to export it</h3>
+      <p>
+        URL Filtering (and Advanced URL Filtering) lives in <strong>profiles</strong> attached to
+        security rules: a per-category action matrix — allow, alert, continue, override, block —
+        plus custom URL categories and lists, scoped per device group. The profiles come out in the
+        same Panorama XML/CSV export as the rulebase; capture the custom category lists and the
+        per-category actions, because the actions are the policy.
+      </p>
+
+      <h3>Mapping to Cato constructs</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>PAN-OS construct</th><th>Cato construct</th><th>Translation notes</th></tr></thead>
+          <tbody>
+            <tr><td>URL Filtering profile on a rule</td><td>Ordered Internet Firewall rules on URL categories</td><td>Profile-per-rule becomes ordered category rules — one policy surface, first match wins</td></tr>
+            <tr><td>Predefined PAN-DB categories</td><td>Cato URL categories</td><td>Taxonomies differ — map by risk intent, never name-for-name</td></tr>
+            <tr><td>Custom URL categories / lists</td><td>Cato custom categories, FQDN / domain objects</td><td>Rebuild the lists; verify wildcard semantics behave the same</td></tr>
+            <tr><td>block action</td><td>Block</td><td>Direct translation</td></tr>
+            <tr><td>continue / override actions</td><td>User-proceed (prompt) behaviour</td><td>Map click-through intent where the customer still wants it; many estates drop it at migration</td></tr>
+            <tr><td>alert action</td><td>Allow with event tracking</td><td>Preserves the audit intent and feeds the validation loop</td></tr>
+            <tr><td>Credential theft / safe search controls</td><td>Map intent — design review</td><td>Feature-level parity is not the goal; agree the outcome each control served</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Semantic gotchas</h3>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Category taxonomy mismatch.</strong> PAN-DB and Cato categorise differently; a
+        name-for-name mapping silently changes what is blocked. Build an explicit category matrix —
+        PA action per category → Cato action — and review it with the customer.</li>
+        <li><strong>TLS inspection gates fidelity.</strong> Without TLSi, matching is domain/SNI
+        level only — full-path URL matching and inline content decisions need decryption. Follow
+        Cato's phased TLSi enablement (block QUIC, deploy the root certificate, start with
+        high-risk/low-impact categories) as a prerequisite workstream, and note TLSi is not
+        supported for Android devices — check the mobile estate early.</li>
+        <li><strong>Alert-heavy profiles.</strong> Estates that ran most categories on
+        <em>alert</em> were doing visibility, not enforcement — translate those to allow+track, not
+        to blocks the business never actually enforced.</li>
+      </ul>
+
+      <h3>Migration strategy</h3>
+      <p>
+        Build the category-action matrix from the export, rebuild custom categories, and stage
+        enforcement: categories PA blocked stay blocked from day one; everything else deploys as
+        allow-with-tracking while TLSi phases roll out, then tightens in OPTIMISE once events show
+        the true traffic profile.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 · CASB policy</div>
+      <h2>SaaS Security → Cato CASB</h2>
+      <h3>The construct, and how to export it</h3>
+      <p>
+        SaaS Security comes in two halves: <strong>inline</strong> (App-ID-based SaaS visibility and
+        controls — sanctioned/unsanctioned tagging, risk attributes, upload/download restrictions)
+        and <strong>API</strong> (out-of-band scanning of data at rest in sanctioned apps). In most
+        estates the deployment is modest — often little more than app tags and a handful of inline
+        rules. The inline configuration exports with the rulebase; API-side policy lives in its own
+        console and is captured as a policy inventory. Either way, this domain migrates by
+        <strong>intent, not rule-for-rule</strong>.
+      </p>
+
+      <h3>Mapping to Cato constructs</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>PAN-OS construct</th><th>Cato construct</th><th>Translation notes</th></tr></thead>
+          <tbody>
+            <tr><td>App-ID SaaS visibility &amp; risk attributes</td><td>Cato app catalogue risk scores + Cloud Apps Dashboard</td><td>Shadow-IT discovery is native — no profile to configure before data appears</td></tr>
+            <tr><td>Sanctioned / unsanctioned app tags</td><td>App-level allow / block rules (Internet FW + CASB)</td><td>Re-express the sanctioned list as policy; validate it against discovered usage first</td></tr>
+            <tr><td>Inline controls (e.g. block upload to unsanctioned apps)</td><td>CASB granular activity controls</td><td>Activity-level rules (browse vs upload vs download) need TLS inspection to see the activity</td></tr>
+            <tr><td>SaaS Security API (data at rest)</td><td>Scope separately with Cato PS</td><td>Inline CASB migrates now; data-at-rest scanning is its own design conversation, not a blocker</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Semantic gotchas &amp; migration strategy</h3>
+      <p>
+        Don't promise control-for-control parity — the two products slice SaaS activity differently,
+        and a barely-configured SaaS Security estate is an opportunity, not a template. Run
+        discovery first: let the Cloud Apps Dashboard accumulate a few weeks of real usage, compare
+        it with the PA sanctioned-app list, and rebuild only the controls the business still wants.
+        Then apply the standard discipline — activity controls in monitor first, block once events
+        confirm who and what they touch. TLS inspection is the fidelity prerequisite throughout.
+      </p>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 · DLP policy</div>
+      <h2>Enterprise DLP → Cato DLP profiles</h2>
+      <h3>The construct, and how to export it</h3>
+      <p>
+        Enterprise DLP is a cloud-delivered add-on licensed per firewall: <strong>data
+        profiles</strong> combine predefined patterns (PCI, PII, source code and similar) with
+        custom regex/keyword patterns and — in mature deployments — EDM datasets, attached to
+        security rules through profiles. The profile <em>definitions</em> can be captured from the
+        management UI and config export; EDM datasets cannot be meaningfully exported and must be
+        rebuilt from the authoritative source data.
+      </p>
+
+      <h3>Mapping to Cato constructs</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>PAN-OS construct</th><th>Cato construct</th><th>Translation notes</th></tr></thead>
+          <tbody>
+            <tr><td>Data profiles</td><td>Cato DLP profiles</td><td>Rebuild from data-type intent — the profile is the unit of translation</td></tr>
+            <tr><td>Predefined data patterns (PCI, PII…)</td><td>Cato predefined data types</td><td>Map by regulated-data intent; verify coverage with test files, not datasheets</td></tr>
+            <tr><td>Custom regex / keyword patterns</td><td>Cato custom data types</td><td>Port the expressions, then re-tune — matching engines differ</td></tr>
+            <tr><td>EDM datasets</td><td>Rebuild from source data</td><td>Never attempt to port the dataset; regenerate from the system of record</td></tr>
+            <tr><td>Per-rule DLP profile attachment</td><td>Cato DLP rules scoped by user / app / direction</td><td>Scope by SCIM group and app — dependencies on identity provisioning apply</td></tr>
+            <tr><td>Alert / block response actions</td><td>Monitor (allow + event) first, then block</td><td>Enforce only after the false-positive rate is known on Cato's engine</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Semantic gotchas</h3>
+      <ul style="font-size:.94rem;color:var(--ink-2)">
+        <li><strong>Detection engines differ.</strong> Confidence thresholds, match counts and
+        proximity logic do not transfer between engines — a profile that was quiet on PA can be
+        noisy on Cato (or vice versa). The false-positive tuning effort restarts; budget for it.</li>
+        <li><strong>TLS inspection is the gate.</strong> DLP inspects content; without TLSi there is
+        very little content to inspect. Sequence the TLSi phases ahead of DLP enforcement.</li>
+        <li><strong>Scope creep at translation.</strong> Be explicit about direction (upload vs
+        download), app scope and exclusions when rebuilding rules — the defaults on the two
+        platforms are not the same.</li>
+      </ul>
+
+      <h3>Migration strategy</h3>
+      <p>
+        Rebuild profiles from data-type intent, run everything in monitor for a few weeks, review
+        matches in the Data Protection Dashboard and events, tune data types and thresholds, then
+        enforce block on the highest-confidence rules first — exactly the monitor-then-block
+        progression Cato recommends for its threat-prevention stack.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>The disciplines that hold all four domains together</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Design for the opposite defaults</h4><p>WAN Firewall is an allowlist (implicit block); Internet Firewall is a blocklist (implicit allow). Every translated rule must land consciously on one surface — settle this in the design workshop, never at cutover.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection early</h4><p>TLSi is the fidelity prerequisite for SWG path matching, CASB activity controls and DLP content inspection. Run Cato's phased enablement — QUIC blocked, root certificate deployed, categories widened gradually — as its own workstream.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Monitor, then block</h4><p>Every domain follows the same progression: deploy translated rules with tracking, watch events, then tighten to block. Enforcement earned on evidence never triggers the day-one helpdesk storm.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity before user-scoped rules</h4><p>Rules referencing AD groups need those groups in CMA first — plan SCIM/Entra ID (or LDAP sync) provisioning ahead of policy deployment, and confirm User-ID → User Awareness parity before user-scoped rules enforce.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔎</div><div><h4>Validate with events &amp; hit counts</h4><p>Panorama hit counts sized the clean-up; CMA events prove the translation. Filter events per translated rule and compare against the original's traffic profile before and after enforcement.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Sequence the domains</h4><p>Baseline firewall first, TLSi phases next, then SWG tightening, CASB controls and DLP enforcement — each domain's fidelity depends on the one before it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>One pipeline, four domains</h2>
+      <p>
+        Every domain — firewall rules, URL filtering, SaaS controls, DLP profiles — moves through
+        the same pipeline. The clean-up filter in the middle is where the effort pays back: dead
+        rules are discarded on hit-count evidence and never reach CMA.
+      </p>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Palo Alto to Cato policy conversion pipeline</title>
+          <desc id="dg1-desc">Four PAN-OS policy domains — security rulebase, URL Filtering, SaaS Security and Enterprise DLP — feed an export stage using Panorama CSV, XML API or set-format output. A rationalisation filter discards zero-hit, shadowed and disabled rules, marked with a red X. Surviving policy maps to CMA constructs — WAN and Internet Firewall, CASB, DLP and TLS inspection — then deploys in monitor mode (amber) before enforcement (green). Telemetry from deploy and enforce flows to an events and evidence node used for validation.</desc>
+
+          <!-- Vendor policy domains -->
+          <text class="dg-tiny" x="107" y="38" text-anchor="middle">PAN-OS policy domains</text>
+          <rect class="dg-node" x="28" y="52" width="158" height="50" rx="10"/>
+          <text class="dg-label" x="107" y="73" text-anchor="middle">FW rulebase</text>
+          <text class="dg-sub" x="107" y="90" text-anchor="middle">App-ID · zones</text>
+
+          <rect class="dg-node" x="28" y="116" width="158" height="50" rx="10"/>
+          <text class="dg-label" x="107" y="137" text-anchor="middle">URL Filtering</text>
+          <text class="dg-sub" x="107" y="154" text-anchor="middle">category profiles</text>
+
+          <rect class="dg-node" x="28" y="180" width="158" height="50" rx="10"/>
+          <text class="dg-label" x="107" y="201" text-anchor="middle">SaaS Security</text>
+          <text class="dg-sub" x="107" y="218" text-anchor="middle">inline · API</text>
+
+          <rect class="dg-node" x="28" y="244" width="158" height="50" rx="10"/>
+          <text class="dg-label" x="107" y="265" text-anchor="middle">Enterprise DLP</text>
+          <text class="dg-sub" x="107" y="282" text-anchor="middle">data profiles</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" d="M 186 77 C 216 77, 220 138, 248 146" fill="none"/>
+          <path class="lane-static" d="M 186 141 C 210 141, 224 154, 248 158" fill="none"/>
+          <path class="lane-static" d="M 186 205 C 210 205, 224 178, 248 172" fill="none"/>
+          <path class="lane-static" d="M 186 269 C 216 269, 220 194, 248 186" fill="none"/>
+
+          <!-- EXPORT -->
+          <rect class="dg-node-dark" x="248" y="126" width="152" height="78" rx="10"/>
+          <text class="dg-label-inv" x="324" y="152" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="324" y="171" text-anchor="middle">Panorama CSV · XML</text>
+          <text class="dg-sub-inv" x="324" y="188" text-anchor="middle">set-format CLI</text>
+
+          <path class="lane-static" d="M 400 165 L 444 165" fill="none"/>
+
+          <!-- RATIONALISE -->
+          <rect class="dg-node" x="444" y="126" width="168" height="78" rx="10"/>
+          <text class="dg-label" x="528" y="152" text-anchor="middle">RATIONALISE</text>
+          <text class="dg-sub" x="528" y="171" text-anchor="middle">cull on hit counts</text>
+          <text class="dg-sub" x="528" y="188" text-anchor="middle">collapse duplicates</text>
+
+          <!-- Discarded dead rules -->
+          <path class="lane lane-block" d="M 490 204 C 472 232, 448 256, 424 276"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 400 276 L 424 300"/><path class="lane-x" d="M 424 276 L 400 300"/>
+          </g>
+          <text class="dg-tiny" x="412" y="322" text-anchor="middle">dead rules discarded</text>
+          <text class="dg-tiny" x="412" y="336" text-anchor="middle">zero-hit · shadowed · disabled</text>
+
+          <path class="lane-static" d="M 612 165 L 656 165" fill="none"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="656" y="126" width="176" height="78" rx="10"/>
+          <text class="dg-label" x="744" y="152" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="744" y="171" text-anchor="middle">WAN FW · Internet FW</text>
+          <text class="dg-sub" x="744" y="188" text-anchor="middle">CASB · DLP · TLSi</text>
+
+          <!-- MAP → DEPLOY (monitor) -->
+          <path class="lane lane-limit" d="M 744 204 C 744 258, 700 315, 648 346"/>
+
+          <!-- DEPLOY (monitor, amber) -->
+          <rect x="560" y="346" width="160" height="70" rx="10" fill="#fdf6e3" stroke="var(--lane-limit)" stroke-width="1.5"/>
+          <text class="dg-label" x="640" y="374" text-anchor="middle">DEPLOY</text>
+          <text class="dg-sub" x="640" y="393" text-anchor="middle">monitor mode first</text>
+
+          <!-- DEPLOY → ENFORCE -->
+          <path class="lane lane-allow" d="M 720 381 L 772 381"/>
+
+          <!-- ENFORCE (green) -->
+          <rect class="dg-node-green" x="772" y="346" width="160" height="70" rx="10"/>
+          <text class="dg-label" x="852" y="374" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="852" y="393" text-anchor="middle">block after tuning</text>
+
+          <!-- Telemetry to events -->
+          <rect class="dg-node-dark" x="120" y="346" width="200" height="70" rx="10"/>
+          <text class="dg-label-inv" x="220" y="374" text-anchor="middle">Events &amp; evidence</text>
+          <text class="dg-sub-inv" x="220" y="393" text-anchor="middle">hit counts · event logs</text>
+
+          <path class="lane-static" d="M 560 381 L 320 381" fill="none"/>
+          <text class="dg-tiny" x="440" y="371" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry validates every rule</text>
+          <path class="lane-static" d="M 852 416 C 820 454, 490 458, 330 402" fill="none"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Enforced — after events prove the rule</span>
+          <span class="key"><span class="swatch limit"></span> Monitor-first deployment</span>
+          <span class="key"><span class="swatch block"></span> Dead rules — discarded at rationalisation</span>
+        </div>
+        <div class="diagram-caption">All four PAN-OS policy domains run the same pipeline. In four-phase terms: EXPORT → REVIEW &amp; MAP (rationalise + map) → DEPLOY (monitor-first) → OPTIMISE (enforce and tune) — with events and hit counts as the evidence loop throughout.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Framing — this is a workshop, not a feature demo</div>
+        <p>The session works best walked from the customer's own artefacts. Ask for a sanitised
+        Panorama rulebase export with rule-usage columns before the meeting, and anchor every CMA
+        screen to a rule they recognise.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Start from their export</h4>
+          <p>Open the rulebase CSV and sort by hit count. Agree the cull candidates live in the
+          room — disabled, zero-hit, shadowed — and size the real conversion scope together. This
+          reframes the migration from "port 1,000 rules" to "translate the ones that matter".</p>
+        </li>
+        <li>
+          <h4>Show where internet-bound rules land</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Walk the ordered, first-match rulebase: URL categories, app objects, actions and event
+          tracking. Call out the default-allow posture and show the explicit blocks that recreate
+          their interzone-deny intent.</p>
+        </li>
+        <li>
+          <h4>Show the WAN allowlist</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>The opposite posture: implicit block, with rules scoped by site, VLAN, user and group.
+          Map one of their zone-pair rules onto a WAN FW rule live.</p>
+        </li>
+        <li>
+          <h4>Position TLS inspection as the gate</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show the wizard and the phased approach — and explain why TLSi fidelity gates SWG path
+          matching, CASB activity controls and DLP content inspection. This is where "decryption is
+          rebuilt, not ported" lands.</p>
+        </li>
+        <li>
+          <h4>Let discovery challenge the sanctioned list</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show discovered SaaS usage and risk scores, then open <span class="path">Security →
+          CASB</span> for a granular control (allow browse, block upload). Compare with their PA
+          sanctioned-app tags — the gaps make the case for intent-based rebuild.</p>
+        </li>
+        <li>
+          <h4>Build a DLP profile live — in monitor</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Assemble a profile from predefined data types (PCI, PII), scope it to a user group and
+          direction, and leave it in monitor. Explain the tune-then-enforce timeline honestly.</p>
+        </li>
+        <li>
+          <h4>Close on the validation loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a rule you created during the session: every match, fully attributed.
+          Events are the new hit counts — the same evidence that sized the clean-up now proves the
+          translation.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://docs.paloaltonetworks.com/panorama/10-2/panorama-admin/administer-panorama/manage-panorama-and-firewall-configuration-backups/save-and-export-panorama-and-firewall-configurations" target="_blank" rel="noopener">Save &amp; export Panorama configurations (PAN docs)</a></li>
+            <li><a href="https://pan.dev/panos/docs/tutorials/rulebase-to-csv/" target="_blank" rel="noopener">Exporting rulebases to CSV via the XML API (pan.dev)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet &amp; WAN Firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360011316297-Best-Practices-for-Implementing-Cato-Threat-Prevention" target="_blank" rel="noopener">Monitor-then-block threat prevention best practices (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a> · <a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-palo-alto.html">Palo Alto (NGFW &amp; Prisma Access) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zscaler Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate ZIA and ZPA policy to Cato — firewall, URL filtering, Cloud App Control, and DLP moved through the four-phase export → map → deploy → optimise process.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-zscaler-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Zscaler Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Zscaler Policy Migration</h1>
+    <p class="lede">
+      Getting sites and agents onto Cato is the easy half of a Zscaler replacement — the half that
+      stalls programmes is translating years of ZIA policy into Cato constructs without breaking
+      users or quietly weakening security. This page works domain by domain — firewall, SWG, CASB,
+      DLP — through the Cato PS four-phase process: what to export from ZIA, how each construct
+      maps, where the semantics diverge, and how to deploy in monitor before you enforce.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+      <p>
+        A ZIA estate that has run for five years typically carries hundreds of rules across half a
+        dozen policy engines — URL filtering, cloud firewall, Cloud App Control, DLP, SSL
+        inspection — plus the settings pages around them. Copying all of it into Cato verbatim is
+        the single most reliable way to wreck a migration: dead rules come across, contradictions
+        survive, and every Zscaler quirk gets faithfully re-implemented on a platform that does
+        not share it.
+      </p>
+      <p>
+        Cato Professional Services runs policy conversion as a four-phase process instead —
+        <strong>EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</strong>. The export
+        scope for ZIA is broad and deliberate: policies, URL filtering, firewall, web security,
+        DLP, Cloud App policies, Advanced Threat Protection, SSL inspection, bandwidth control,
+        and user/group settings. Those map to the Cato Internet firewall, App Control (tenant
+        restrictions, CASB, DLP), Threat Prevention, SCIM groups and TLS Inspection. The review
+        phase is where the value is created: rules are rationalised on hit counts first, so the
+        policy that lands in Cato is the policy the business actually uses — never a
+        lift-and-shift.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">4</div><div class="stat-label">Phases in the PS conversion process — export, review &amp; map, deploy, optimise</div></div>
+        <div class="stat-tile"><div class="stat-value">10</div><div class="stat-label">ZIA policy areas in the export scope, from URL filtering to bandwidth control</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">60<span class="unit">days</span></div><div class="stat-label">Cato's Autonomous Firewall Insights flag allow rules with no events in this window — the same hit-count logic you apply at review</div></div>
+      </div>
+
+      <p>
+        This page covers the <strong>ZIA</strong> policy domains. ZPA — segment groups, access
+        policies, Browser Access, posture profiles mapping to the Cato WAN firewall and access
+        control — is covered on the main
+        <a href="migration-zscaler.html">Zscaler to Cato playbook</a>, alongside the interim
+        architectures and dual-agent cutover.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Review with Cato PS before customer use</div>
+        <p>This page was authored from research — vendor documentation and the Cato PS migration
+        deck — not from a verified delivery. Validate the mappings and gotchas against a current
+        Cato PS engagement before presenting them as a committed conversion plan.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 · FW rules</div>
+      <h2>ZIA Firewall policies → Cato Internet firewall</h2>
+      <p>
+        ZIA's cloud firewall is an ordered <strong>Firewall Filtering</strong> rulebase — rules
+        match on users, groups, departments, locations, network services and network applications,
+        with NAT Control and DNS Control as sibling policies and a <em>Default Firewall Filtering
+        Rule</em> at the bottom. Export the rulebase and its referenced objects (service groups,
+        application groups, source IP groups, locations) as JSON via the ZIA API, and capture the
+        settings-style pages that have no rulebase as configuration screenshots.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>ZIA construct</th><th>Cato construct</th></tr></thead>
+          <tbody>
+            <tr><td>Firewall Filtering rulebase (ordered, identity-aware)</td><td>Internet firewall — ordered rulebase with User Awareness</td></tr>
+            <tr><td>Default Firewall Filtering Rule (final catch-all)</td><td>Implicit any-any <em>allow</em> at the bottom of the Internet firewall</td></tr>
+            <tr><td>Network services &amp; service groups</td><td>Services — predefined and custom</td></tr>
+            <tr><td>Network application groups</td><td>Applications &amp; application categories</td></tr>
+            <tr><td>Locations / sub-locations · source IP groups</td><td>Sites, network ranges &amp; IP range objects</td></tr>
+            <tr><td>Departments &amp; groups (hosted DB or synced)</td><td>SCIM-provisioned user groups</td></tr>
+            <tr><td>Bandwidth Control classes per location</td><td>Bandwidth Management priorities on network rules</td></tr>
+            <tr><td>NAT Control (source NAT per location)</td><td>Different model — allocated egress IPs; scope with PS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Semantic gotchas</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>ZIA only ever saw traffic <em>forwarded</em> to it (GRE/IPsec tunnels, ZCC). Cato sockets see every flow — expect hit patterns to shift and rules that never matched in ZIA to light up.</li>
+            <li>Both firewalls end in an implicit allow — but Cato's <strong>WAN firewall is the opposite</strong> (implicit deny). Never translate ZIA rules into the WAN firewall; that is ZPA's destination.</li>
+            <li>ZIA rule order interacts with Admin Rank — flatten to the effective order before mapping, or rules will land in the wrong sequence.</li>
+            <li>Sub-locations carry their own NAT/gateway behaviours; recreate them as explicit network ranges, not one flat site object.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Migration strategy</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Export via API, flatten effective order, then cull on hit counts from ZIA reporting — dead and shadowed rules are discarded, not mapped.</li>
+            <li>Build objects first (services, categories, SCIM groups), rules second — every unmapped object is a silent scope change.</li>
+            <li>Recreate surviving block rules with event tracking on every rule; soak against live traffic before arming anything that could cut off a business flow.</li>
+            <li>Let Autonomous Firewall Insights re-run the clean-up continuously after go-live — expired, testing and unused rules are flagged automatically.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="swg-policy" class="reveal">
+      <div class="section-kicker">Domain 2 · SWG policy</div>
+      <h2>URL filtering, web security &amp; SSL inspection → Internet firewall + TLS Inspection</h2>
+      <p>
+        ZIA's SWG surface is three things: the <strong>URL Filtering</strong> rulebase
+        (Allow / Caution / Block against predefined and custom URL categories, scoped by user,
+        group, location and time), the <strong>Advanced Threat Protection</strong> and web
+        security settings pages, and the <strong>SSL Inspection</strong> policy with its
+        exemption list. The rulebases export via the API; ATP and SSL settings are configuration
+        pages — capture and review them, there is nothing rule-shaped to convert.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>ZIA construct</th><th>Cato construct</th></tr></thead>
+          <tbody>
+            <tr><td>URL Filtering rules — Allow / Caution / Block</td><td>Internet firewall rules — Allow / Prompt / Block</td></tr>
+            <tr><td>Predefined URL categories (super-categories)</td><td>Cato URL categories — remap by intent, not by name</td></tr>
+            <tr><td>Custom URL categories</td><td>Cato custom categories (domains, IPs)</td></tr>
+            <tr><td>Advanced Threat Protection settings</td><td>Threat Prevention — IPS &amp; Anti-Malware profiles</td></tr>
+            <tr><td>File Type Control rules</td><td>App Control granular rules / DLP file attributes</td></tr>
+            <tr><td>SSL Inspection policy &amp; exemptions</td><td>TLS Inspection policy — inspect &amp; bypass rules</td></tr>
+            <tr><td>End User Notification pages</td><td>Cato block / prompt messages</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Semantic gotchas</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Category taxonomies do not line up one-to-one — the same site can classify differently on each platform. Map by policy <em>intent</em> and test the contested categories with real URLs.</li>
+            <li>Caution maps to Prompt, but the user experience differs — demo it to the security team before committing acceptance criteria.</li>
+            <li>ZIA's SSL exemption list is not Cato's TLS bypass list. Rebuild bypasses deliberately (pinned apps, client-cert services) rather than porting the old list wholesale.</li>
+            <li>ATP toggles are not one-to-one with IPS/Anti-Malware options — treat this as a protection-coverage review, not a checkbox copy.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Migration strategy</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Sequence TLS first: deploy the Cato root certificate to endpoints, then stage TLS Inspection with a conservative bypass list — SWG fidelity depends on it.</li>
+            <li>Land compliance-driven block categories first (the ones with legal cover), in monitor, and review events before arming.</li>
+            <li>Convert Caution rules to Prompt only where the business still wants the friction — review usually kills half of them.</li>
+            <li>Enable IPS and Anti-Malware in monitor alongside the converted rules; promote once event review is clean.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="casb-policy" class="reveal">
+      <div class="section-kicker">Domain 3 · CASB policy</div>
+      <h2>Cloud App Control &amp; tenant restrictions → Cato App Control (CASB)</h2>
+      <p>
+        ZIA splits SaaS control across <strong>Cloud App Control</strong> — a rule type per
+        application category (Webmail, File Sharing, Social Networking…), each with granular
+        per-app actions — plus <strong>tenant profiles</strong> restricting corporate SaaS to
+        corporate tenants, and Shadow IT reporting on discovered apps. Cloud App Control rules
+        export per rule type via the API. On the Cato side this all lands in one place: the App
+        Control (CASB) granular rulebase, the Tenant Restrictions policy, and the App Analytics /
+        Cloud Apps dashboards.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>ZIA construct</th><th>Cato construct</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud App Control — one rule type per app category</td><td>App Control (CASB) — single granular rulebase</td></tr>
+            <tr><td>Granular per-app actions (e.g. block upload, allow view)</td><td>Granular activities — Upload / Download / Share / Log in</td></tr>
+            <tr><td>Tenant profiles (Microsoft 365 / Google restrictions)</td><td>Tenant Restrictions policy — HTTP header injection</td></tr>
+            <tr><td>Cloud app risk attributes · Shadow IT report</td><td>App Catalog risk scores · App Analytics &amp; Cloud Apps dashboards</td></tr>
+            <tr><td>Cloud app categories</td><td>Cato app categories on App Control rules</td></tr>
+            <tr><td>Out-of-band SaaS scanning (API-based)</td><td>Inline CASB is the like-for-like — scope out-of-band needs with PS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Semantic gotchas</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>ZIA's rule-type-per-category model flattens into one ordered rulebase — a consolidation win, but rule order now matters <em>across</em> categories where it never did before.</li>
+            <li>Tenant Restrictions require TLS Inspection on the matching traffic and a CASB licence — and coverage is per supported app, so verify the tenants in scope.</li>
+            <li>Without TLS inspection, app and activity identification degrades — CASB conversion is sequenced after certificate rollout, not alongside it.</li>
+            <li>Risk scoring scales differ between the two App catalogues; re-anchor any "block risk above N" rules against Cato's scores rather than copying the number.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Migration strategy</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Start from Cato's default recommended CASB/DLP policy — tenant-restriction and monitor rules are pre-built; substitute the customer tenant and layer converted ZIA rules on top.</li>
+            <li>Baseline with App Analytics for a soak period before enforcing new blocks — discovery on Cato will surface apps ZIA never saw.</li>
+            <li>Convert category-level blocks first, then the granular per-activity rules; keep both in monitor until event review confirms scope.</li>
+            <li>Rebuild tenant profiles as Tenant Restrictions rules per user group, so restrictions can roll out gradually.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="dlp-policy" class="reveal">
+      <div class="section-kicker">Domain 4 · DLP policy</div>
+      <h2>ZIA DLP → Cato DLP profiles &amp; Data Control rules</h2>
+      <p>
+        ZIA DLP is built from <strong>dictionaries</strong> (predefined and custom patterns and
+        phrases) combined by boolean logic into <strong>engines</strong>, which Web DLP rules then
+        apply to users, URL categories and cloud apps — with EDM and IDM indexes generated by an
+        on-premises index tool, and violations shipped to notification templates or ICAP incident
+        receivers. Dictionaries, engines and rules export via the API; <strong>EDM and IDM
+        indexes do not</strong> — they are hashed on Zscaler infrastructure and must be rebuilt
+        from the source data, never imported.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>ZIA construct</th><th>Cato construct</th></tr></thead>
+          <tbody>
+            <tr><td>DLP dictionaries — predefined &amp; custom (patterns, phrases)</td><td>DLP data types — predefined (ML-assisted) &amp; custom regex</td></tr>
+            <tr><td>DLP engines — boolean dictionary logic</td><td>Content Profiles — data types with occurrence thresholds</td></tr>
+            <tr><td>EDM index (on-prem index tool, hashed)</td><td>EDM profiles — rebuilt from source CSV, hashed in-browser</td></tr>
+            <tr><td>IDM document templates (fingerprints)</td><td>No import path — MIP sensitivity labels / custom types; PS review</td></tr>
+            <tr><td>Microsoft MIP label integration</td><td>MIP sensitivity labels in the Cato DLP policy</td></tr>
+            <tr><td>Web DLP rules (users, URL categories, cloud apps)</td><td>Data Control rules — inline DLP with app &amp; identity scope</td></tr>
+            <tr><td>Notification templates &amp; ICAP incident receivers</td><td>DLP events &amp; forensic evidence — Monitor → Events</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Semantic gotchas</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Engine boolean logic (AND/OR/NOT across dictionaries) does not translate directly to content profiles — complex engines decompose into multiple profiles and rules, and the match semantics need re-testing.</li>
+            <li>EDM rebuilds have their own constraints in Cato — up to two columns per profile, and a column whose values repeat more than three times cannot be the primary — so the source dataset may need reshaping.</li>
+            <li>DLP inspects only what TLS Inspection decrypts: the TLSi policy quietly defines the DLP policy's real scope on both platforms.</li>
+            <li>Match-count thresholds are calibrated differently — copying ZIA's numbers verbatim produces false-positive storms or silent misses; tune against live traffic.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Migration strategy</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Map dictionaries to predefined Cato data types first — most customs exist as predefined types; only genuine one-offs justify custom regex.</li>
+            <li>Rebuild EDM from the authoritative source data (CSV/TSV) in CMA — data is hashed in the browser before upload, so nothing leaves in clear text.</li>
+            <li>Run every converted Data Control rule in monitor with forensic evidence enabled; review real violations with the data owner before any block.</li>
+            <li>Log the IDM gap explicitly in the conversion workbook — agree the replacement approach (MIP labels, custom types, or acceptance) with the customer and Cato PS.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain</div>
+      <h2>Best practices that span all four domains</h2>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect Cato's default postures</h4><p>The Internet firewall is a blocklist ending in an implicit allow — the natural home for ZIA policy. The WAN firewall is an allowlist with an implicit deny — that is where ZPA access policy lands. Confusing the two is the classic conversion error.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection first</h4><p>TLS Inspection is the fidelity prerequisite for SWG categories, CASB activity detection, tenant restrictions and DLP alike. Certificates deployed → inspection staged with bypasses → then the dependent policy domains, in that order.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Monitor, then block</h4><p>Every converted rule lands with tracking or a monitor action first. The soak period turns "we think this maps" into "the events prove it maps" — and it is what makes the cutover reversible.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity before policy</h4><p>Every identity-scoped rule depends on SCIM-provisioned groups existing first. Provision from the IdP, verify group membership matches what ZIA's departments and groups actually resolved to, then import rules.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events &amp; hit counts</h4><p>Monitor → Events is the acceptance test: filter to converted rules, confirm the traffic you expected, investigate what you did not. Post go-live, Autonomous Firewall Insights keeps flagging unused, expired and contradicting rules.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>Never lift-and-shift</h4><p>Rationalise on hit counts at review — dead, shadowed and testing rules are discarded before mapping starts. The estate that arrives in Cato should be smaller and more explicable than the one it replaces.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The process, end to end</div>
+      <h2>The policy pipeline</h2>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Zscaler-to-Cato policy conversion pipeline</title>
+          <desc id="dg1-desc">Four ZIA policy domains — firewall, URL filtering and SSL, Cloud App Control, and DLP — feed an export stage. A clean-up stage discards dead and shadowed rules, marked with a red X. Surviving rules are mapped to Cato Management Application constructs, deployed monitor-first, then promoted to enforce. Telemetry from deploy and enforce flows to an events and hit-counts node that drives the optimise loop.</desc>
+
+          <!-- ZIA policy domains (left) -->
+          <rect class="dg-node" x="28" y="36" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="59" text-anchor="middle">ZIA Firewall</text>
+          <text class="dg-sub" x="118" y="77" text-anchor="middle">FW Control rules</text>
+
+          <rect class="dg-node" x="28" y="112" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="135" text-anchor="middle">URL Filtering &amp; SSL</text>
+          <text class="dg-sub" x="118" y="153" text-anchor="middle">web security · ATP</text>
+
+          <rect class="dg-node" x="28" y="188" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="211" text-anchor="middle">Cloud App Control</text>
+          <text class="dg-sub" x="118" y="229" text-anchor="middle">CASB · tenant profiles</text>
+
+          <rect class="dg-node" x="28" y="264" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="287" text-anchor="middle">ZIA DLP</text>
+          <text class="dg-sub" x="118" y="305" text-anchor="middle">engines · dictionaries</text>
+
+          <!-- Export feeds -->
+          <path class="lane lane-static" d="M 208 64 C 240 64, 250 140, 280 160"/>
+          <path class="lane lane-static" d="M 208 140 C 236 140, 250 160, 280 170"/>
+          <path class="lane lane-static" d="M 208 216 C 236 216, 250 196, 280 186"/>
+          <path class="lane lane-static" d="M 208 292 C 240 292, 250 216, 280 196"/>
+
+          <!-- 1 EXPORT -->
+          <rect class="dg-node-dark" x="280" y="146" width="130" height="64" rx="10"/>
+          <text class="dg-label-inv" x="345" y="173" text-anchor="middle">1 · EXPORT</text>
+          <text class="dg-sub-inv" x="345" y="191" text-anchor="middle">API + portal</text>
+
+          <!-- 2 CLEAN-UP -->
+          <path class="lane lane-allow" d="M 410 178 C 434 178, 454 178, 478 178"/>
+          <rect class="dg-node" x="478" y="146" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="558" y="173" text-anchor="middle">2 · CLEAN-UP</text>
+          <text class="dg-sub" x="558" y="191" text-anchor="middle">cull on hit counts</text>
+
+          <!-- Discarded rules -->
+          <path class="lane lane-block" d="M 558 146 C 558 128, 558 112, 558 98"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 546 66 L 570 90"/><path class="lane-x" d="M 570 66 L 546 90"/>
+          </g>
+          <text class="dg-tiny" x="558" y="30" text-anchor="middle">dead &amp; shadowed rules</text>
+          <text class="dg-tiny" x="558" y="46" text-anchor="middle">discarded</text>
+
+          <!-- 2 MAP -->
+          <path class="lane lane-allow" d="M 638 178 C 662 178, 682 178, 706 178"/>
+          <rect class="dg-node" x="706" y="146" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="786" y="173" text-anchor="middle">2 · MAP</text>
+          <text class="dg-sub" x="786" y="191" text-anchor="middle">to CMA constructs</text>
+
+          <!-- 3 DEPLOY (monitor-first) -->
+          <path class="lane lane-limit" d="M 786 210 C 786 244, 786 268, 786 300"/>
+          <rect class="dg-node" x="706" y="300" width="160" height="64" rx="10" style="stroke:var(--lane-limit);stroke-width:2.5"/>
+          <text class="dg-label" x="786" y="327" text-anchor="middle">3 · DEPLOY</text>
+          <text class="dg-sub" x="786" y="345" text-anchor="middle">monitor-first</text>
+
+          <!-- 4 ENFORCE -->
+          <path class="lane lane-allow" d="M 706 332 C 682 332, 662 332, 638 332"/>
+          <rect class="dg-node-green" x="478" y="300" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="558" y="327" text-anchor="middle">4 · ENFORCE</text>
+          <text class="dg-sub" x="558" y="345" text-anchor="middle">optimise loop</text>
+
+          <!-- Events / evidence -->
+          <path class="lane lane-static" d="M 478 332 C 462 332, 446 332, 430 332"/>
+          <path class="lane lane-static" d="M 786 364 C 720 428, 470 428, 408 362"/>
+          <rect class="dg-node-dark" x="250" y="300" width="180" height="64" rx="10"/>
+          <text class="dg-label-inv" x="340" y="327" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="340" y="345" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-tiny" x="597" y="437" text-anchor="middle">telemetry — evidence for promotion &amp; tuning</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Surviving rules — mapped &amp; promoted</span>
+          <span class="key"><span class="swatch limit"></span> Monitor-first deployment</span>
+          <span class="key"><span class="swatch block"></span> Discarded at clean-up</span>
+        </div>
+        <div class="diagram-caption">All four ZIA policy domains move through the same pipeline: export everything, discard what hit counts cannot justify, map the survivors to CMA constructs, deploy in monitor, and promote to enforce only on event evidence.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This works best as a working session with the customer's firewall and security-policy
+        owners, not a slideshow. Bring a ZIA policy export (or a sanitised sample) and translate a
+        handful of their real rules live in CMA.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the four phases</h4>
+          <p>Open on EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE and the ZIA export scope. Make
+          the anti-goal explicit: no rule crosses without a reason to exist. Point at the ZPA/WAN
+          track on the main playbook so nobody expects access policy in this session.</p>
+        </li>
+        <li>
+          <h4>Rationalise on hit counts</h4>
+          <p>Work through the exported rulebase with the customer's own reporting: which rules
+          have not matched in months, which are shadowed, which say "test" or "temp" in the name.
+          Agree the cull list in the room — this is the moment the customer buys the methodology.</p>
+        </li>
+        <li>
+          <h4>Translate a firewall rule live</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show the ordered rulebase and the blocklist posture, then rebuild one of their real
+          ZIA rules: SCIM group as source, Cato app or category as destination, Allow / Block /
+          Prompt as action, tracking on. Show Autonomous Firewall Insights flagging unused rules.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the inspect/bypass rulebase and explain the sequencing: certificate rollout,
+          conservative bypasses, then inspection — and why CASB, DLP and tenant restrictions all
+          queue behind this step.</p>
+        </li>
+        <li>
+          <h4>Show CASB and DLP in monitor</h4>
+          <p><span class="path">Security → CASB</span> · <span class="path">Security → DLP Configuration</span></p>
+          <p>Open the default recommended CASB/DLP policy, swap in an example tenant restriction,
+          and show a Data Control rule in monitor with a content profile. Contrast with rebuilding
+          engines and EDM: source data in, hashed in the browser, nothing imported blind.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span> · <span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Filter events to the rules created in the session — every match attributed to user,
+          app and rule. Agree promotion criteria: what a clean soak looks like, and who signs off
+          each monitor-to-block flip.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-internet-firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall?</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recommendations-for-internet-and-wan-firewall-policies" target="_blank" rel="noopener">Recommendations for Internet &amp; WAN firewall policies</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">Best practices for TLS Inspection</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-default-recommended-casb-dlp-policy" target="_blank" rel="noopener">Default recommended CASB/DLP policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-tenant-restrictions-for-saas-apps-tenant-restrictions-policy" target="_blank" rel="noopener">Tenant Restrictions policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-exact-data-matching-edm-for-dlp" target="_blank" rel="noopener">Exact Data Matching (EDM) for DLP</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/provisioning-users-with-scim" target="_blank" rel="noopener">Provisioning users with SCIM</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services (runs the conversion)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-zscaler.html">Zscaler (ZIA / ZPA) to Cato — the main playbook</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

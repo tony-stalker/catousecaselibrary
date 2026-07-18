@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ransomware &amp; Advanced Threat Prevention — Cato Use Case Library</title>
+<meta name="description" content="Break the ransomware kill chain in the cloud — IPS, NGAM, sandboxing and DNS security inspecting every flow, with XDR correlating what remains.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-ransomware">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Ransomware Prevention</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Ransomware &amp; Advanced Threat Prevention</h1>
+    <p class="lede">
+      Ransomware is not one event — it is a chain: initial access, payload delivery, command
+      and control, lateral movement, exfiltration, encryption. Every link in that chain has to
+      cross the network, and on Cato every flow — WAN, internet, cloud and remote user — crosses
+      the SPACE engine. This use case shows how Cato breaks the chain at every network-visible
+      stage, and how XDR turns the surviving weak signals into one correlated story.
+    </p>
+    <div class="meta-row">
+      <span class="tag">IPS</span><span class="tag">Anti-Malware</span>
+      <span class="tag">XDR</span><span class="tag">DNS Security</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Ransomware remains the board-level cyber risk: it stops production lines, closes tills
+        and takes patient systems offline — and the extortion now runs twice, once for the
+        decryption keys and once for the stolen data. Yet the attack itself is rarely exotic.
+        It is a sequence of ordinary-looking network events: a phishing link clicked, a file
+        downloaded, a beacon out to a server nobody has heard of, SMB sessions fanning out to
+        the file servers and backups.
+      </p>
+      <p>
+        The objective: <strong>make every stage of that chain cross an inspection point, so a
+        single missed control never becomes an encrypted estate</strong> — and see the whole
+        attack as one story, not fifty unrelated alerts.
+      </p>
+    </section>
+
+    <section id="kill-chain" class="reveal">
+      <div class="section-kicker">The attack, stage by stage</div>
+      <h2>Every link in the chain touches the network</h2>
+      <p>
+        Defenders only need to break one link; the attacker needs all six. The table below is a
+        useful whiteboard in discovery — for each stage, ask which control in the current estate
+        would actually see it.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Stage</th><th>What the attacker does</th><th>What it needs from the network</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Delivery</strong></td><td>Phishing link, malvertising, drive-by download, trojanised installer</td><td>An outbound web or DNS request to attacker infrastructure</td></tr>
+            <tr><td><strong>Exploit</strong></td><td>Exploits an unpatched CVE on an exposed service or application</td><td>A connection — inbound or outbound — carrying the exploit</td></tr>
+            <tr><td><strong>Payload</strong></td><td>Downloads and executes the ransomware binary or loader</td><td>A file transfer that has to cross the wire</td></tr>
+            <tr><td><strong>C2</strong></td><td>Beacons to command and control for keys and instructions</td><td>Outbound sessions to attacker-controlled domains and IPs</td></tr>
+            <tr><td><strong>Lateral movement</strong></td><td>Spreads to servers, backups, OT and other sites</td><td>East-west traffic across the LAN and WAN</td></tr>
+            <tr><td><strong>Exfiltration</strong></td><td>Stages and steals data for double extortion</td><td>Bulk outbound transfer to attacker storage</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <h3 style="margin-top:0">The chain only needs one gap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">
+            Appliance-based inspection covers the traffic that happens to pass the appliance.
+            Remote users split-tunnel around it, branch internet breakout skips it, and OT/IoT
+            devices cannot run the EDR agent that is supposed to compensate. One uninspected
+            path is all the chain requires.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Signals nobody joins up</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">
+            Each stage looks minor on its own: one odd DNS lookup, one blocked download, one IPS
+            hit. The tools that saw them don't talk to each other, and the SIEM project that was
+            meant to correlate them is measured in quarters, not minutes.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“If ransomware detonated on a laptop in one of your branches tonight, what stops it
+        reaching your backup servers — and would anyone see the C2 traffic before the encryption
+        starts?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Break the chain at every stage</h2>
+      <p>
+        On Cato there is no unexamined path. Every flow from every site, remote user and cloud
+        instance traverses a Cato PoP, where the Single Pass Cloud Engine (SPACE) inspects it
+        once against every engine — SWG, DNS security, IPS, next-generation anti-malware (NGAM),
+        cloud sandboxing, firewall and DLP — with TLS inspection at cloud scale and no appliance
+        capacity to ration. The same chain that needs six steps to succeed meets six independent
+        controls:
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 398" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cato controls breaking the ransomware kill chain at every stage</title>
+          <desc id="dg1-desc">A horizontal ransomware kill chain of six stages — delivery, exploit, payload, C2, lateral movement, exfiltration. A red attack path attempts to traverse the chain and is blocked with an X at every stage by a green Cato control beneath it: SWG and DNS security, IPS virtual patching, NGAM with sandboxing, IPS and DNS for C2, segmentation, and DLP. Above the chain, a green lane shows legitimate traffic flowing unaffected.</desc>
+
+          <!-- Legitimate traffic lane -->
+          <text class="dg-sub" x="480" y="24" text-anchor="middle">Legitimate traffic — inspected in a single pass, delivered without detour</text>
+          <path class="lane lane-allow" d="M 30 46 C 260 40, 700 40, 930 46"/>
+
+          <!-- Attacker -->
+          <g>
+            <text class="dg-label" x="58" y="100" text-anchor="middle">Attacker</text>
+            <text class="dg-sub" x="58" y="116" text-anchor="middle">Ransomware gang</text>
+            <circle cx="58" cy="150" r="22" fill="var(--status-critical)"/>
+            <circle cx="58" cy="143" r="6.5" fill="#fff"/>
+            <path d="M 46 162 a 12 9.5 0 0 1 24 0 z" fill="#fff"/>
+          </g>
+
+          <!-- Kill chain kicker -->
+          <text class="dg-tiny" x="126" y="106">THE RANSOMWARE KILL CHAIN →</text>
+
+          <!-- Stage nodes -->
+          <rect class="dg-node-dark" x="126" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="188" y="143" text-anchor="middle">Delivery</text>
+          <text class="dg-sub-inv" x="188" y="161" text-anchor="middle">Phishing · drive-by</text>
+
+          <rect class="dg-node-dark" x="262" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="324" y="143" text-anchor="middle">Exploit</text>
+          <text class="dg-sub-inv" x="324" y="161" text-anchor="middle">Unpatched CVE</text>
+
+          <rect class="dg-node-dark" x="398" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="460" y="143" text-anchor="middle">Payload</text>
+          <text class="dg-sub-inv" x="460" y="161" text-anchor="middle">Malware executes</text>
+
+          <rect class="dg-node-dark" x="534" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="596" y="143" text-anchor="middle">C2</text>
+          <text class="dg-sub-inv" x="596" y="161" text-anchor="middle">Beacon to operator</text>
+
+          <rect class="dg-node-dark" x="670" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="732" y="138" text-anchor="middle">Lateral</text>
+          <text class="dg-label-inv" x="732" y="153" text-anchor="middle">movement</text>
+          <text class="dg-sub-inv" x="732" y="168" text-anchor="middle">Spreads over WAN</text>
+
+          <rect class="dg-node-dark" x="806" y="118" width="124" height="58" rx="10"/>
+          <text class="dg-label-inv" x="868" y="143" text-anchor="middle">Exfiltration</text>
+          <text class="dg-sub-inv" x="868" y="161" text-anchor="middle">Data staged out</text>
+
+          <!-- Chain connectors -->
+          <path class="lane-static" d="M 250 147 L 262 147"/>
+          <path class="lane-static" d="M 386 147 L 398 147"/>
+          <path class="lane-static" d="M 522 147 L 534 147"/>
+          <path class="lane-static" d="M 658 147 L 670 147"/>
+          <path class="lane-static" d="M 794 147 L 806 147"/>
+
+          <!-- Attack path, blocked at every stage -->
+          <path class="lane lane-block" d="M 58 176 C 58 210, 104 240, 166 240"/>
+          <path class="lane lane-block" d="M 208 240 L 302 240"/>
+          <path class="lane lane-block" d="M 344 240 L 438 240"/>
+          <path class="lane lane-block" d="M 480 240 L 574 240"/>
+          <path class="lane lane-block" d="M 616 240 L 710 240"/>
+          <path class="lane lane-block" d="M 752 240 L 846 240"/>
+
+          <g aria-label="delivery blocked">
+            <path class="lane-x" d="M 176 228 L 200 252"/><path class="lane-x" d="M 200 228 L 176 252"/>
+          </g>
+          <g aria-label="exploit blocked">
+            <path class="lane-x" d="M 312 228 L 336 252"/><path class="lane-x" d="M 336 228 L 312 252"/>
+          </g>
+          <g aria-label="payload blocked">
+            <path class="lane-x" d="M 448 228 L 472 252"/><path class="lane-x" d="M 472 228 L 448 252"/>
+          </g>
+          <g aria-label="C2 blocked">
+            <path class="lane-x" d="M 584 228 L 608 252"/><path class="lane-x" d="M 608 228 L 584 252"/>
+          </g>
+          <g aria-label="lateral movement blocked">
+            <path class="lane-x" d="M 720 228 L 744 252"/><path class="lane-x" d="M 744 228 L 720 252"/>
+          </g>
+          <g aria-label="exfiltration blocked">
+            <path class="lane-x" d="M 856 228 L 880 252"/><path class="lane-x" d="M 880 228 L 856 252"/>
+          </g>
+
+          <!-- Control connectors -->
+          <line x1="188" y1="256" x2="188" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+          <line x1="324" y1="256" x2="324" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+          <line x1="460" y1="256" x2="460" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+          <line x1="596" y1="256" x2="596" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+          <line x1="732" y1="256" x2="732" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+          <line x1="868" y1="256" x2="868" y2="298" stroke="var(--green-600)" stroke-width="2.5"/>
+
+          <!-- Cato controls -->
+          <rect class="dg-node-green" x="126" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="188" y="321" text-anchor="middle">SWG + DNS</text>
+          <text class="dg-sub" x="188" y="339" text-anchor="middle">Delivery blocked</text>
+
+          <rect class="dg-node-green" x="262" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="324" y="321" text-anchor="middle">IPS</text>
+          <text class="dg-sub" x="324" y="339" text-anchor="middle">Virtual patching</text>
+
+          <rect class="dg-node-green" x="398" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="460" y="321" text-anchor="middle">NGAM + Sandbox</text>
+          <text class="dg-sub" x="460" y="339" text-anchor="middle">Known &amp; zero-day</text>
+
+          <rect class="dg-node-green" x="534" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="596" y="321" text-anchor="middle">IPS + DNS</text>
+          <text class="dg-sub" x="596" y="339" text-anchor="middle">C2 cut off</text>
+
+          <rect class="dg-node-green" x="670" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="732" y="321" text-anchor="middle">Segmentation</text>
+          <text class="dg-sub" x="732" y="339" text-anchor="middle">Spread contained</text>
+
+          <rect class="dg-node-green" x="806" y="298" width="124" height="54" rx="10"/>
+          <text class="dg-label" x="868" y="321" text-anchor="middle">DLP</text>
+          <text class="dg-sub" x="868" y="339" text-anchor="middle">Exfil stopped</text>
+
+          <text class="dg-tiny" x="480" y="384" text-anchor="middle">All six controls run in the Cato PoP — one engine (SPACE), one policy, every flow: WAN, internet, cloud and remote user</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Legitimate traffic — unaffected</span>
+          <span class="key"><span class="swatch block"></span> Ransomware kill chain — blocked at every stage</span>
+        </div>
+        <div class="diagram-caption">Six stages, six independent controls — and XDR correlates every blocked attempt into a single incident story.</div>
+      </div>
+
+      <h3>From fifty alerts to one story</h3>
+      <p>
+        Even a partially successful attack leaves weak signals: a DNS lookup here, a blocked
+        download there, an unusual SMB fan-out at 02:00. Cato XDR correlates them automatically —
+        the events already share one data lake, one identity model and one timeline — and
+        presents a single story mapped to MITRE ATT&amp;CK tactics and techniques. No collector
+        deployment, no SIEM integration project. And for organisations without a 24×7 SOC, the
+        optional Cato MDR service has Cato analysts triaging and responding to those stories
+        around the clock.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>No unexamined path</h4><p>All ports, all protocols, TLS inspected at cloud scale — site, cloud and remote-user traffic all pass the same engines. The chain never finds the uninspected route it depends on.</p></div></div>
+        <div class="benefit"><div class="b-icon">🩹</div><div><h4>Virtual patching buys you time</h4><p>Cato Research pushes IPS protections for newly exploited CVEs to every PoP — inbound and outbound — shielding systems while your patch window catches up.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Correlation without a SIEM project</h4><p>XDR stories with MITRE ATT&amp;CK mapping are native to the platform — the signals are correlated the moment they are generated, not after a six-month integration.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏭</div><div><h4>Consistent for laptops and PLCs alike</h4><p>Remote users, branch sites and agentless OT/IoT devices get identical protection — the policy follows the traffic, not the device's ability to run an agent.</p></div></div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/rapid-cve-mitigation.png" alt="Rapid CVE Mitigation by Cato Security Research: virtual patching via the IPS layer of SPACE, with a table of selected critical CVEs mitigated — including CVE-2026-24061 (severity 9.8) and CVE-2025-55182 (severity 10) protected globally within two days, and CVE-2025-64496 protected the same day.">
+        <figcaption>Virtual patching in practice: Cato Security Research deploys IPS protections for critical CVEs globally within days — sometimes the same day — with no customer involvement.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Safe to run live</div>
+        <p>The malware step uses EICAR — the industry-standard harmless test file. Nothing
+        malicious touches the tenant, but the block behaviour and events are exactly what a real
+        payload would trigger.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open on the threat landscape</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span></p>
+          <p>Show the tenant-wide picture: threat types, top attacked hosts, trends across sites
+          and remote users. Frame it — every event on this screen was caught because the traffic
+          had to pass a PoP. There is no “behind the firewall” here.</p>
+        </li>
+        <li>
+          <h4>Block a live “malware” download</h4>
+          <p><span class="path">Security → Anti-Malware</span></p>
+          <p>Show the NGAM and sandboxing policy, then — as a user (say, Priya on a remote
+          client) — download the EICAR test file in a browser. The download is blocked inline;
+          show the block page and the resulting anti-malware event. Note that novel variants
+          follow the same path into the cloud sandbox.</p>
+        </li>
+        <li>
+          <h4>Show an exploit attempt stopped by IPS</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to IPS events and open one from a vulnerability scanner or CVE exploit
+          attempt — internet-facing services collect these constantly. Point out the CVE
+          reference in the event and explain virtual patching: the protection was live in every
+          PoP long before anyone scheduled a patch window.</p>
+        </li>
+        <li>
+          <h4>Open the XDR story</h4>
+          <p>In the XDR Stories Workbench, open a story that correlates related signals — the
+          anti-malware block, IPS hits, suspicious DNS — into one incident with a timeline,
+          affected users and devices, and MITRE ATT&amp;CK mapping. This is the “fifty alerts
+          become one story” moment; let it land.</p>
+        </li>
+        <li>
+          <h4>Show the containment layer</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Walk a segmentation rule that would stop the spread — for example, Bracknell Lab
+          user subnets denied to the London DC backup VLAN except named services. East-west
+          traffic between sites and VLANs is firewalled in the PoP; hit counts prove it is
+          enforced, not aspirational.</p>
+        </li>
+        <li>
+          <h4>Close on operations: who watches at 03:00?</h4>
+          <p>Everything shown is prevention and detection on one platform. For customers without
+          a 24×7 SOC, close on the Cato MDR service — Cato analysts monitoring the same XDR
+          stories, triaging and responding around the clock, on the platform they already run.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/extended-detection-and-response-xdr/" target="_blank" rel="noopener">Cato XDR — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-Generation Firewall — solutions page</a></li>
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE Mitigation by Cato Security Research</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato services — including MDR</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-inbound-ips.html">Cloud-Delivered Inbound Protection</a></li>
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

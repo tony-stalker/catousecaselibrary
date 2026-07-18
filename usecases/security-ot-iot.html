@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufacturing OT/IoT Device Security — Cato Use Case Library</title>
+<meta name="description" content="Discover, classify and segment OT/IoT devices — Purdue-model segmentation and device-attribute policies down to a single Siemens PLC.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-ot-iot">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / OT/IoT Device Security</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Manufacturing OT/IoT Device Security</h1>
+    <p class="lede">
+      Plant floors are full of devices that can never run an endpoint agent — PLCs, HMIs, sensors,
+      cameras, smart plugs. This use case shows how Cato discovers and classifies every OT/IoT device,
+      then enforces contextual policy on its attributes — category, type, model, OS and manufacturer —
+      with LAN firewall segmentation aligned to the Purdue model and IEC&nbsp;62443.
+    </p>
+    <div class="meta-row">
+      <span class="tag">OT/IoT</span><span class="tag">LAN Firewall</span>
+      <span class="tag">Segmentation</span><span class="tag">Purdue Model</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/Manufacturing%20Device%20Security%20Use%20case%20overiview.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Manufacturing security starts with a question most organisations can't answer:
+        <strong>what is actually connected to the plant network?</strong> OT and IoT devices arrive
+        with the machinery, get plugged in by integrators, and stay for decades. They can't be
+        patched on demand, can't run agents, and were never designed to defend themselves.
+      </p>
+      <p>
+        The objective is threefold: <strong>visibility</strong> of every OT/IoT device type on the
+        network, <strong>contextual policies</strong> applied to those devices based on what they
+        are, and <strong>one consistent security policy</strong> for every device and user —
+        configured once, applied everywhere.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Why OT/IoT devices are hard to secure</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">No agents, no patching</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PLCs, HMIs and sensors run embedded firmware.
+          There is nothing to install an EDR agent on, and patch windows are measured in months —
+          production uptime always wins.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Flat OT networks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Plant networks were built for availability,
+          not security. Once a single device — a camera, a smart plug — is compromised, nothing
+          stops lateral movement towards the SCADA layer.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">IT/OT convergence</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Historians and MES need to exchange data
+          with enterprise ERP. Every new IT-to-OT connection widens the attack surface across the
+          boundary the Purdue model says to defend.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Can you list every device on your plant floor right now — and if one camera or PLC were
+        compromised today, what stops it moving laterally to your SCADA servers, or calling out to
+        the internet?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Configured once, applied everywhere, contextually aware</h2>
+      <p>
+        Cato passively discovers and classifies every device behind the Socket — no agents, no
+        scanners, no disruption to production traffic. Each device is identified by
+        <strong>category, type, model, OS and manufacturer</strong>, and those attributes become
+        policy objects. A rule can target “every PLC”, “every Siemens S7-300”, or “every IP camera
+        on old firmware” — and it applies automatically as matching devices join the network.
+      </p>
+      <p>
+        Segmentation follows the frameworks OT teams already use. The Socket's <strong>LAN
+        firewall</strong> enforces micro-segmentation between Purdue levels and IEC&nbsp;62443
+        zones on the plant floor itself, while WAN and internet policy is enforced at the Cato PoP —
+        one policy model spanning LAN, WAN and cloud.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 600" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Purdue-model segmentation enforced by the Cato Socket LAN firewall</title>
+          <desc id="dg1-desc">Four horizontal Purdue bands — Level 4/5 Enterprise, Level 3 Operations, Level 2 Control and Level 0/1 Process — with an IT/OT boundary between Enterprise and Operations. A Cato Socket running the LAN firewall spans all bands on the right, connected to a Cato PoP. Traffic within a level is allowed; HMI to PLC is allowed through the Socket; a maintenance vendor is limited to the jump server only and blocked from the control layer; a PLC attempting to reach the internet is blocked with a red X.</desc>
+
+          <!-- Top strip: vendor + Cato PoP -->
+          <text class="dg-label" x="528" y="58" text-anchor="end">Maintenance vendor</text>
+          <text class="dg-sub" x="528" y="74" text-anchor="end">Remote user · ZTNA</text>
+          <g>
+            <circle cx="560" cy="62" r="20" fill="var(--lane-limit)"/>
+            <circle cx="560" cy="56" r="5.5" fill="#fff"/>
+            <path d="M 549 73 a 11 8.5 0 0 1 22 0 z" fill="#fff"/>
+          </g>
+
+          <text class="dg-label" x="833" y="18" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="833" y="32" text-anchor="middle">Internet · WAN · FWaaS · IPS</text>
+          <circle class="pulse-ring" cx="833" cy="62" r="26" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="833" cy="62" r="22"/>
+          <path class="lane-static" d="M 833 86 L 833 120"/>
+
+          <!-- Purdue bands -->
+          <rect x="20" y="120" width="700" height="92" rx="10" fill="var(--page)" stroke="var(--hairline)"/>
+          <rect x="20" y="252" width="700" height="92" rx="10" fill="var(--page)" stroke="var(--hairline)"/>
+          <rect x="20" y="364" width="700" height="92" rx="10" fill="var(--page)" stroke="var(--hairline)"/>
+          <rect x="20" y="476" width="700" height="100" rx="10" fill="var(--page)" stroke="var(--hairline)"/>
+
+          <text class="dg-label" x="34" y="158">Level 4/5</text>
+          <text class="dg-sub" x="34" y="176">Enterprise · IT</text>
+          <text class="dg-label" x="34" y="290">Level 3</text>
+          <text class="dg-sub" x="34" y="308">Operations</text>
+          <text class="dg-label" x="34" y="402">Level 2</text>
+          <text class="dg-sub" x="34" y="420">Control</text>
+          <text class="dg-label" x="34" y="518">Level 0/1</text>
+          <text class="dg-sub" x="34" y="536">Process</text>
+
+          <!-- IT/OT boundary -->
+          <path d="M 20 232 L 750 232" fill="none" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="7 6"/>
+          <text class="dg-tiny" x="24" y="226">IT / OT BOUNDARY — segmentation enforced by Cato</text>
+
+          <!-- Level 4/5 nodes -->
+          <rect class="dg-node" x="200" y="142" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="285" y="162" text-anchor="middle">Enterprise apps</text>
+          <text class="dg-sub" x="285" y="178" text-anchor="middle">ERP · email · SaaS</text>
+          <rect class="dg-node" x="440" y="142" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="525" y="162" text-anchor="middle">IT users</text>
+          <text class="dg-sub" x="525" y="178" text-anchor="middle">Corporate LAN</text>
+
+          <!-- Level 3 nodes -->
+          <rect class="dg-node" x="200" y="274" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="285" y="294" text-anchor="middle">Historian</text>
+          <text class="dg-sub" x="285" y="310" text-anchor="middle">Process data store</text>
+          <rect class="dg-node" x="440" y="274" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="525" y="294" text-anchor="middle">Jump server</text>
+          <text class="dg-sub" x="525" y="310" text-anchor="middle">Vendor access only</text>
+
+          <!-- Level 2 nodes -->
+          <rect class="dg-node" x="200" y="386" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="285" y="406" text-anchor="middle">SCADA servers</text>
+          <text class="dg-sub" x="285" y="422" text-anchor="middle">Supervisory control</text>
+          <rect class="dg-node" x="440" y="386" width="170" height="48" rx="10"/>
+          <text class="dg-label" x="525" y="406" text-anchor="middle">HMI</text>
+          <text class="dg-sub" x="525" y="422" text-anchor="middle">Operator stations</text>
+
+          <!-- Level 0/1 nodes -->
+          <rect class="dg-node" x="200" y="496" width="170" height="52" rx="10"/>
+          <text class="dg-label" x="285" y="517" text-anchor="middle">Sensors · field devices</text>
+          <text class="dg-sub" x="285" y="533" text-anchor="middle">Level 0 instrumentation</text>
+          <rect class="dg-node-green" x="440" y="496" width="170" height="52" rx="10"/>
+          <text class="dg-label" x="525" y="517" text-anchor="middle">PLC</text>
+          <text class="dg-sub" x="525" y="533" text-anchor="middle">Siemens S7-300</text>
+
+          <!-- Cato Socket / LAN firewall -->
+          <rect class="dg-node-dark" x="766" y="120" width="140" height="456" rx="12"/>
+          <text class="dg-label-inv" x="836" y="152" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub-inv" x="836" y="170" text-anchor="middle">LAN Firewall</text>
+          <text class="dg-sub-inv" x="836" y="186" text-anchor="middle">Micro-segmentation</text>
+          <text class="dg-sub-inv" x="836" y="556" text-anchor="middle">Device-attribute rules</text>
+
+          <!-- Green: allowed flows -->
+          <path class="lane lane-allow" d="M 374 410 L 436 410"/>
+          <path class="lane lane-allow" d="M 374 516 L 436 516"/>
+          <path class="lane lane-allow" d="M 612 432 C 664 440, 716 446, 762 452"/>
+          <path class="lane lane-allow" d="M 762 508 C 716 508, 672 508, 618 508"/>
+          <text class="dg-tiny" x="688" y="494" text-anchor="middle">HMI → PLC · allowed</text>
+          <text class="dg-tiny" x="405" y="562" text-anchor="middle">Allowed within level</text>
+
+          <!-- Amber: vendor limited to jump server -->
+          <path class="lane lane-limit" d="M 584 62 C 680 54, 744 54, 808 58"/>
+          <path class="lane lane-limit" d="M 762 298 C 716 298, 668 298, 618 298"/>
+          <text class="dg-tiny" x="690" y="284" text-anchor="middle">Vendor → jump server only</text>
+          <path class="lane lane-limit" d="M 762 410 C 736 410, 712 410, 692 410"/>
+          <g aria-label="vendor blocked from control layer">
+            <path class="lane-x" d="M 660 398 L 684 422"/><path class="lane-x" d="M 684 398 L 660 422"/>
+          </g>
+
+          <!-- Red: PLC blocked from internet -->
+          <path class="lane lane-block" d="M 614 532 C 655 534, 690 536, 726 536"/>
+          <g aria-label="PLC blocked from internet">
+            <path class="lane-x" d="M 732 524 L 756 548"/><path class="lane-x" d="M 756 524 L 732 548"/>
+          </g>
+          <text class="dg-tiny" x="670" y="562" text-anchor="middle">PLC → internet · blocked</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed — within level, or explicit policy</span>
+          <span class="key"><span class="swatch limit"></span> Restricted — vendor reaches jump server only</span>
+          <span class="key"><span class="swatch block"></span> Blocked — no PLC internet egress, no vendor → control</span>
+        </div>
+        <div class="diagram-caption">Purdue-model segmentation enforced by the Cato Socket's LAN firewall: traffic flows freely within a level, cross-level traffic must match a device-attribute rule, and everything else — including a PLC dialling out to the internet — is dropped.</div>
+      </div>
+
+      <h3>Key benefits</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Reduced operational complexity</h4><p>Global policies built on device type and function — configured once in the CMA, applied at every site, no per-plant firewall estate to maintain.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Context- and identity-aware membership</h4><p>Devices join policies by what they are — category, type, model, OS, manufacturer — not by fragile IP ranges that drift out of date.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Smaller threat landscape via ZTNA principles</h4><p>Every device gets only the access its function requires; advanced threat protection (IPS, anti-malware) inspects the traffic it is allowed to send.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Reduced risk of lateral movement</h4><p>LAN firewall micro-segmentation between Purdue levels means a compromised camera or smart plug cannot pivot to the SCADA layer.</p></div></div>
+      </div>
+    </section>
+
+    <section id="policy" class="reveal">
+      <div class="section-kicker">In the CMA</div>
+      <h2>Policies built from device attributes</h2>
+      <p>
+        Device-attribute rules are ordinary firewall rules — same rulebase, same actions, same event
+        tracking — with the source defined by what the device <em>is</em> rather than where it sits
+        on the network.
+      </p>
+
+      <figure class="shot">
+        <img src="../assets/img/iot-rule-new-cma.png" alt="CMA New Rule dialog for an IoT/OT firewall policy, with the Device Attributes Type dropdown open showing Category, Type, Model, OS and Manufacturer options, and a Platforms section beneath">
+        <figcaption>The New Rule dialog: under Device Attributes, rules can match on Category, Type, Model, OS or Manufacturer — the building blocks of contextual OT/IoT policy.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="../assets/img/iot-rule-criteria-siemens.png" alt="CMA rule Criteria panel with Device Attributes Type set to Manufacturer and value Siemens, above a criteria table listing category OT, type PLC, model S7-300 and manufacturer Siemens">
+        <figcaption>Stacking criteria to target one device precisely: category = OT, type = PLC, model = S7-300, manufacturer = Siemens. The rule follows the device, not its IP address.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="../assets/img/iot-rulebase-cma.png" alt="CMA firewall rulebase with an expanded IoT Device Attribute Rules group: allow rules for an IP camera, smart plug and mobile phones, an IoT discovery rule, and a block rule stopping TP-Link networking devices reaching the internet, each with live hit counts">
+        <figcaption>A live device-attribute rulebase: allow-with-logging rules for cameras, smart plugs and mobiles, an IoT discovery rule, and a block rule stopping TP-Link devices reaching the internet — 193.7K hits and counting.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their plant</div>
+        <p>Ask which frameworks they align to (Purdue, IEC 62443), which OT vendors dominate their
+        floor, and whether they have ever had a full device inventory. Use their answers to pick the
+        device you build a rule for.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Start with discovery</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Show the devices Cato has discovered and classified passively from traffic — no agents,
+          no scanners. Walk the attribute columns: category, type, model, OS, manufacturer. This is
+          the visibility they don't have today.</p>
+        </li>
+        <li>
+          <h4>Frame it against the Purdue model</h4>
+          <p>Map what the inventory shows to Purdue levels and IEC 62443 zones using the diagram
+          above: field devices and PLCs at Level 0/1, HMI and SCADA at Level 2, historian and jump
+          server at Level 3, enterprise IT at Level 4/5.</p>
+        </li>
+        <li>
+          <h4>Build a device-attribute rule</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Create a new rule with Device Attributes as the source: Manufacturer = Siemens,
+          Type = PLC (add Model = S7-300 for precision). Set the action to Block internet egress and
+          Track = Event. Any matching PLC — at any site, now or in future — inherits this rule
+          automatically.</p>
+        </li>
+        <li>
+          <h4>Show segmentation between levels</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Walk the segmentation rules: HMI allowed to reach PLCs on control protocols, historian
+          allowed northbound to enterprise apps, everything else cross-level denied by default. The
+          same micro-segmentation logic is enforced on-LAN by the Socket's LAN firewall — a
+          compromised device cannot pivot between Purdue levels inside the site.</p>
+        </li>
+        <li>
+          <h4>Restrict the maintenance vendor</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show the vendor's access scoped to the jump server only — identity-driven ZTNA for the
+          user, device-attribute segmentation for the equipment they maintain. No route to the SCADA
+          or control layer.</p>
+        </li>
+        <li>
+          <h4>Prove it with events and hit counts</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to the block rules and show live hits — the rulebase screenshot above
+          shows a TP-Link internet block at 193.7K hits. Every allow and block is logged and
+          attributable to a device, not just an IP.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-Generation Firewall — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="security-ransomware.html">Ransomware &amp; Advanced Threat Prevention</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortinet Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate FortiOS policy to Cato — firewall policies and UTM profiles, web filtering, inline CASB and DLP profiles, rationalised on hit counts before mapping.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-fortinet-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Fortinet Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Fortinet Policy Migration</h1>
+    <p class="lede">
+      The network cutover from FortiGate to Cato is a solved routing problem — the policy estate is
+      where migrations stall. This page works domain by domain through the FortiOS policy stack —
+      firewall policies with their UTM profile pairs, webfilter profiles, inline CASB and DLP —
+      showing what each construct becomes in the Cato Management Application, the semantic traps in
+      between, and the four-phase process that rationalises the rulebase on hit counts before a
+      single rule is translated.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why policy translation is the long pole</h2>
+      <p>
+        Sockets ship, BGP converges, sites cut over — and then the project meets a decade of
+        accumulated FortiOS policy: per-VDOM policy tables, near-identical UTM profile variants,
+        thousands of address and service objects, and rules nobody will own or delete. Translating
+        that estate badly does more damage than translating it slowly: lift-and-shift faithfully
+        reproduces every dead rule, every any-any exception and every profile carve-out in a brand
+        new platform, and the customer inherits their old technical debt with a new logo on it.
+      </p>
+      <p>
+        The Cato Professional Services approach is a four-phase pipeline, applied per policy domain:
+        <strong>EXPORT</strong> the configuration and its usage evidence →
+        <strong>REVIEW &amp; MAP</strong> — rationalise on hit counts, discard dead weight, then map
+        surviving intent to Cato constructs → <strong>DEPLOY</strong> monitor-first, so every
+        translated rule earns evidence before it can hurt anyone → <strong>OPTIMISE</strong> against
+        events and hit counts until the policy is demonstrably right. Never lift-and-shift: the
+        clean-up is not a nice-to-have, it is what makes the mapping tractable.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many of your FortiOS rules have zero hits in the last 90 days — and who in your
+        organisation is empowered to decide those rules don't migrate?”</p>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the mapping and sequencing with
+        Cato Professional Services before using it with a customer.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>FortiOS firewall policies &amp; UTM profile pairs</h2>
+      <p>
+        <strong>The construct.</strong> FortiOS firewall policies are ordered, interface-pair rules
+        in per-VDOM policy tables: source/destination interfaces (zones), address objects
+        (<code>firewall address</code> / <code>addrgrp</code>), services, schedules and NAT settings
+        — with UTM delivered as <strong>profile pairs attached per policy</strong>: webfilter,
+        application control, IPS, anti-virus, DNS filter and an SSL/SSH inspection profile.
+        Inspection happens only where a profile is attached. Central estates manage all of this as
+        FortiManager policy packages per ADOM.
+      </p>
+      <p>
+        <strong>Export.</strong> Every FortiGate produces a flat-text CLI configuration — easy to
+        parse, and therefore easy to script against:
+      </p>
+      <pre class="code"><span class="cmt"># Per device — full plain-text CLI configuration</span>
+<span class="kw">execute backup full-config</span> tftp &lt;filename&gt; &lt;server&gt;
+
+<span class="cmt"># Central estates: export device configs and policy packages per ADOM from FortiManager.</span>
+<span class="cmt"># Usage evidence: policy hit-count / last-used columns, plus FortiAnalyzer / FortiView logs.</span></pre>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>FortiOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Internet-egress policies (LAN → WAN)</td>
+              <td>Internet Firewall rules</td>
+              <td>Default-allow blocklist — the opposite posture to FortiOS implicit deny; see cross-domain practices</td>
+            </tr>
+            <tr>
+              <td>Site-to-site / overlay-zone policies</td>
+              <td>WAN Firewall rules</td>
+              <td>Default-block allowlist — matches the FortiOS implicit-deny model</td>
+            </tr>
+            <tr>
+              <td>Inter-VLAN / local east-west policies</td>
+              <td>Socket LAN Firewall policy</td>
+              <td>Enforced locally on the socket; or retain the FortiGate as an interim LAN firewall</td>
+            </tr>
+            <tr>
+              <td><code>firewall address</code> / <code>addrgrp</code></td>
+              <td>Hosts, IP ranges, subnets and groups</td>
+              <td>Global objects — dedupe before import; creation is scriptable via the GraphQL API or Terraform provider</td>
+            </tr>
+            <tr>
+              <td><code>service custom</code> / service groups</td>
+              <td>Custom services</td>
+              <td>Protocol/port definitions translate almost mechanically</td>
+            </tr>
+            <tr>
+              <td>ISDB internet-service objects</td>
+              <td>Applications and app categories</td>
+              <td>Re-select by application intent — the catalogues do not share identifiers</td>
+            </tr>
+            <tr>
+              <td>Application control sensors</td>
+              <td>App-aware Internet / WAN Firewall rules</td>
+              <td>Application awareness is native to the rule, not a bolt-on profile</td>
+            </tr>
+            <tr>
+              <td>IPS sensor + AV profile pairs</td>
+              <td>Cato IPS and Next-Gen Anti-Malware</td>
+              <td>Account-level layers of the single-pass engine — per-policy carve-outs become explicit exceptions</td>
+            </tr>
+            <tr>
+              <td>Schedules</td>
+              <td>Rule time constraints</td>
+              <td>Re-model recurring windows per rule</td>
+            </tr>
+            <tr>
+              <td>Per-policy NAT / central NAT, VIPs</td>
+              <td>PoP egress NAT; remote port forwarding / static IP for inbound</td>
+              <td>Inbound published services move on their own change windows</td>
+            </tr>
+            <tr>
+              <td>VDOM scoping</td>
+              <td>Policy sections and site/segment-scoped rules in one rulebase</td>
+              <td>Separate Cato accounts only where hard tenancy is required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> One FortiOS policy table becomes <em>layers</em>: a single
+        policy with its UTM profile pairs decomposes into a firewall rule, account-level IPS/NGAM
+        settings and a TLS inspection rule — agree the layer mapping before translating rule one.
+        Interface-pair semantics have no equivalent; recover the intent (which segment reaches what)
+        rather than transliterating <code>srcintf</code>/<code>dstintf</code>. And traffic that
+        escaped inspection on FortiOS because no profile was attached <em>will</em> be inspected by
+        Cato's single-pass engine — expect new detections in the monitor phase and triage them before
+        enabling block. Flow-mode versus proxy-mode inspection differences belong on the discovery
+        list, validated in the PoV rather than assumed.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Parse the flat-text config; retire zero-hit rules and collapse
+        duplicate objects against the hit-count evidence; push the cleaned object model through the
+        API or Terraform first, then build the rule layers on top of it; deploy new WAN Firewall and
+        Internet Firewall rules monitor-first and let events prove them before enforcement.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Webfilter profiles &amp; FortiGuard categories</h2>
+      <p>
+        <strong>The construct.</strong> Web filtering lives in webfilter profiles attached per
+        policy: FortiGuard category actions (allow, monitor, warn, authenticate, block), static URL
+        filter lists (wildcard and regex), rating overrides and options such as safe search and
+        browsing quotas — usually accumulated as several near-identical profile variants, one per
+        user population. A DNS filter profile often sits alongside, enforcing similar categories at
+        the resolver.
+      </p>
+      <p>
+        <strong>Export.</strong> The <code>webfilter profile</code>, <code>webfilter urlfilter</code>
+        and DNS-filter sections of the config backup, plus the FortiManager object database; pull
+        web-usage reporting from FortiAnalyzer as the evidence base for what each category action
+        actually affects.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>FortiOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FortiGuard web categories</td>
+              <td>Cato URL categories in Internet Firewall rules</td>
+              <td>Taxonomies differ in names and granularity — map by intent, review every blocked category individually</td>
+            </tr>
+            <tr>
+              <td>Category action: block</td>
+              <td>Block (with block page)</td>
+              <td>Deploy contentious categories as monitor first</td>
+            </tr>
+            <tr>
+              <td>Category action: warn / continue</td>
+              <td>Prompt action</td>
+              <td>User coaching — proceed after acknowledging the warning</td>
+            </tr>
+            <tr>
+              <td>Category action: authenticate</td>
+              <td>Identity-scoped rules</td>
+              <td>No direct equivalent needed — every Cato rule is identity-aware natively</td>
+            </tr>
+            <tr>
+              <td>Static URL filters &amp; rating overrides</td>
+              <td>Custom categories</td>
+              <td>Consolidate allow/block lists and re-categorisations into custom categories referenced by rules</td>
+            </tr>
+            <tr>
+              <td>Per-population profile variants</td>
+              <td>User/group-scoped Internet Firewall rules</td>
+              <td>Depends on IdP/SCIM group provisioning — sequence it first</td>
+            </tr>
+            <tr>
+              <td>Browsing quotas</td>
+              <td>Re-model as Prompt or time constraints</td>
+              <td>No per-user browsing-quota construct — decide the intent with the customer</td>
+            </tr>
+            <tr>
+              <td>DNS filter profile</td>
+              <td>Inline category enforcement at the PoP</td>
+              <td>One policy governs the flow — no separate resolver-layer policy to keep in sync</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> The taxonomy mismatch is the headline risk: a FortiGuard
+        category and a similarly-named Cato category are not guaranteed to cover the same sites, so
+        a mechanical name-for-name mapping silently changes what is blocked. Fidelity is the second:
+        without TLS inspection both platforms act on domain/SNI only, but full-path URL matching and
+        content-level decisions need decryption — stage TLS inspection before judging SWG parity.
+        Finally, profile sprawl should die here: collapse the near-identical variants into a small
+        number of group-scoped rule tiers instead of recreating each one.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Build a category translation sheet mapping each FortiGuard
+        category-action to a Cato category and action by intent; consolidate static lists into custom
+        categories; deploy the blocked set in monitor mode and compare events against FortiAnalyzer
+        web reports; flip to block per category once the evidence matches expectations, using Prompt
+        where the customer used warn pages.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>Inline CASB profiles</h2>
+      <p>
+        <strong>The construct.</strong> Recent FortiOS releases add inline CASB profiles — SaaS
+        application access and tenant controls driven by FortiGuard SaaS signatures, attached per
+        policy like every other UTM profile. In most estates the capability arrived inside a
+        FortiGuard bundle and was never operationalised: expect a handful of configured controls at
+        most. This is an <strong>intent-mapping</strong> exercise, not an object migration.
+      </p>
+      <p>
+        <strong>Export.</strong> The CASB and SaaS-application sections of the config backup — often
+        near-empty — plus FortiView SaaS usage reporting, which is the more valuable artefact: it
+        shows what the organisation actually uses, sanctioned or not.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>FortiOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Inline CASB profile app controls</td>
+              <td>Cato CASB application rules</td>
+              <td>Granular activity control — upload, download, share, log-in — per app and user group</td>
+            </tr>
+            <tr>
+              <td>Tenant restriction</td>
+              <td>Cato tenant control rules</td>
+              <td>Corporate-tenant-only access to sanctioned suites</td>
+            </tr>
+            <tr>
+              <td>FortiGuard SaaS signatures</td>
+              <td>Cato application catalogue with risk attributes</td>
+              <td>Different catalogues — re-select applications by name and intent</td>
+            </tr>
+            <tr>
+              <td>FortiView SaaS usage reporting</td>
+              <td>Cloud Apps Dashboard / App Analytics</td>
+              <td>Shadow-IT discovery with app risk scoring, on by default</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> Activity-level control on either platform requires TLS
+        inspection — a CASB "migration" judged before decryption is staged will look falsely thin.
+        And because the FortiOS side is usually barely configured, the real risk is anchoring scope
+        to the old config rather than to discovered usage: migrate what the organisation
+        <em>needs</em>, not the two profiles it happened to have.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Discovery first — let the Cloud Apps Dashboard build the real
+        SaaS usage picture during the monitor phase, agree the sanctioned-app list with the
+        customer, rebuild the few genuine inline controls as Cato CASB rules, then tighten from
+        monitor to enforcement. API-based SaaS scanning (FortiCASB-style) is a separate design
+        conversation to scope with Cato Professional Services.
+      </p>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy</div>
+      <h2>DLP profiles &amp; sensors</h2>
+      <p>
+        <strong>The construct.</strong> FortiOS data-loss prevention is built from DLP profiles and
+        sensors: file-type and file-size filters, dictionaries and regex data patterns, optional
+        document fingerprints, with log-only or block actions — attached per policy like the other
+        UTM profiles. Deeper content inspection has historically required proxy-mode processing with
+        its performance cost, so many estates run DLP log-only on a few policies, or not at all.
+      </p>
+      <p>
+        <strong>Export.</strong> The <code>dlp profile</code> / <code>dlp sensor</code> and
+        dictionary sections of the config backup. The custom regex patterns and keyword dictionaries
+        are the only assets worth carrying forward — capture them verbatim.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>FortiOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DLP sensors / data patterns</td>
+              <td>Cato DLP profiles</td>
+              <td>Prefer Cato's predefined data types (PCI, PII, credentials, source code) over ported regexes</td>
+            </tr>
+            <tr>
+              <td>Custom dictionaries &amp; regexes</td>
+              <td>Custom data types</td>
+              <td>Regex dialects differ — re-test every pattern against sample data</td>
+            </tr>
+            <tr>
+              <td>File-type / file-size filters</td>
+              <td>File attribute conditions in DLP rules</td>
+              <td>Combine with data types for precision</td>
+            </tr>
+            <tr>
+              <td>Per-policy profile attachment</td>
+              <td>Global DLP policy scoped by user, app and direction</td>
+              <td>Upload/download rules per application and group, enforced in the cloud</td>
+            </tr>
+            <tr>
+              <td>Document fingerprinting</td>
+              <td>Validate the requirement with Cato PS</td>
+              <td>Map the intent in discovery rather than assuming parity</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> This is a rebuild, not a conversion — there is no
+        importer, and that is the right outcome: the per-policy, proxy-mode-constrained FortiOS
+        model does not map onto a cloud DLP engine that inspects everything the TLS policy
+        decrypts. TLS inspection is the hard prerequisite; regex behaviour differs between engines;
+        and because install-base usage is typically thin, this migration is in practice an
+        <em>upgrade</em> — from log-only sensors to an actual data-protection programme.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Inventory the sensors actually referenced by policies; recreate
+        custom patterns as custom data types and swap standard patterns for Cato's predefined
+        types; run the whole policy in monitor with the Data Protection Dashboard as the evidence
+        loop; tune false positives with the data owners; then enforce rule by rule.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Cato's WAN Firewall is an allowlist (implicit block); the Internet Firewall is a blocklist (implicit allow). FortiOS is implicit-deny everywhere — so egress posture is a decision, not a translation. If the customer wants allowlist egress, add an explicit final block rule; don't discover the difference in production.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection early</h4><p>Without decryption, SWG acts on domain/SNI only and CASB activity control and DLP content inspection cannot see payloads. Phased TLS inspection — by category and pilot group, certificates deployed in advance — is the fidelity prerequisite for three of the four domains.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every translated rule, IPS/NGAM protection, CASB control and DLP rule starts in monitor. Enforcement is earned with event evidence, per rule — the pipeline's amber-to-green transition, never a big-bang flip.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Sequence identity first</h4><p>Group-scoped rules are only as good as the groups. Provision IdP/SCIM sync before policy deployment, and map FSSO/LDAP group references in FortiOS policies to the synced directory groups — name drift here breaks rules silently.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Objects before rules</h4><p>Translate and dedupe the address/service object model first — scriptable from the flat-text config via the GraphQL API or Terraform provider — then build rules on the clean object base. Rules referencing ad-hoc objects recreate the sprawl you just removed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events &amp; hit counts</h4><p>The evidence loop closes in Monitor → Events: compare each translated rule's hits against its FortiOS ancestor, investigate the deltas, and treat zero-hit rules after a full business cycle as candidates to delete — on the new platform as ruthlessly as on the old.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE</h2>
+      <p>
+        The same pipeline runs for each domain, offset in time — firewall first, SWG behind it,
+        CASB and DLP once TLS inspection and discovery data are in place. Dead rules leave the
+        pipeline at review and are never translated; everything that survives deploys in monitor
+        and is promoted to enforcement on evidence.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 496" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">FortiOS to Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four FortiOS policy domains — firewall policies with UTM profiles, webfilter profiles, inline CASB and DLP profiles — feed an export stage, then a review and clean stage where dead rules are discarded, marked with a red X. Surviving intent is mapped to Cato Management Application constructs, deployed in monitor mode (amber) and finally enforced (green). Telemetry from deploy and enforce flows to an events and hit-counts node that validates every stage.</desc>
+
+          <!-- FortiOS source domains -->
+          <text class="dg-tiny" x="115" y="24" text-anchor="middle">FortiOS policy domains</text>
+          <rect class="dg-node" x="30" y="36" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="57" text-anchor="middle">FW policies</text>
+          <text class="dg-sub" x="115" y="74" text-anchor="middle">+ UTM profile pairs</text>
+
+          <rect class="dg-node" x="30" y="100" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="121" text-anchor="middle">Webfilter profiles</text>
+          <text class="dg-sub" x="115" y="138" text-anchor="middle">FortiGuard categories</text>
+
+          <rect class="dg-node" x="30" y="164" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="185" text-anchor="middle">Inline CASB</text>
+          <text class="dg-sub" x="115" y="202" text-anchor="middle">SaaS app controls</text>
+
+          <rect class="dg-node" x="30" y="228" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="249" text-anchor="middle">DLP profiles</text>
+          <text class="dg-sub" x="115" y="266" text-anchor="middle">sensors · dictionaries</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 200 61 C 250 61, 255 148, 300 150"/>
+          <path class="lane-static" fill="none" d="M 200 125 C 245 125, 255 156, 300 158"/>
+          <path class="lane-static" fill="none" d="M 200 189 C 245 189, 255 172, 300 170"/>
+          <path class="lane-static" fill="none" d="M 200 253 C 250 253, 255 182, 300 178"/>
+
+          <!-- EXPORT -->
+          <rect class="dg-node-dark" x="300" y="132" width="160" height="64" rx="10"/>
+          <text class="dg-label-inv" x="380" y="158" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="380" y="176" text-anchor="middle">full-config · FMG</text>
+
+          <path class="lane-static" d="M 460 164 L 560 164"/>
+
+          <!-- REVIEW & CLEAN -->
+          <rect class="dg-node" x="560" y="132" width="200" height="64" rx="10"/>
+          <text class="dg-label" x="660" y="158" text-anchor="middle">REVIEW &amp; CLEAN</text>
+          <text class="dg-sub" x="660" y="176" text-anchor="middle">rationalise on hit counts</text>
+
+          <!-- Discarded dead rules -->
+          <path class="lane lane-block" d="M 690 198 C 730 218, 758 232, 782 246"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 790 245 L 814 269"/><path class="lane-x" d="M 814 245 L 790 269"/>
+          </g>
+          <text class="dg-tiny" x="802" y="292" text-anchor="middle">dead rules · any-any debt</text>
+
+          <!-- Survivors flow to MAP -->
+          <path class="lane-static" fill="none" d="M 610 198 C 540 265, 330 240, 215 294"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="90" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="185" y="322" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="185" y="340" text-anchor="middle">FW · SWG · CASB · DLP</text>
+          <text class="dg-tiny" x="185" y="378" text-anchor="middle">hosts · services · categories</text>
+
+          <path class="lane lane-limit" d="M 280 328 L 400 328"/>
+
+          <!-- DEPLOY (monitor) -->
+          <rect class="dg-node" x="400" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="495" y="322" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="495" y="340" text-anchor="middle">log-only · no user impact</text>
+
+          <path class="lane lane-allow" d="M 590 328 L 690 328"/>
+
+          <!-- ENFORCE -->
+          <rect class="dg-node-green" x="690" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="785" y="322" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="785" y="340" text-anchor="middle">flip to block per rule</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 490 362 C 488 386, 490 400, 498 414"/>
+          <path class="lane-static" fill="none" d="M 780 362 C 762 398, 690 410, 622 426"/>
+
+          <rect class="dg-node-dark" x="400" y="416" width="220" height="56" rx="10"/>
+          <text class="dg-label-inv" x="510" y="440" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="510" y="458" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-tiny" x="510" y="490" text-anchor="middle">telemetry validates every stage</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Monitor first — log, don't block</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead rules never migrate</span>
+        </div>
+        <div class="diagram-caption">
+          The four FortiOS policy domains are exported once, rationalised against hit-count evidence —
+          dead rules and any-any debt exit the pipeline here — and only the surviving intent is mapped
+          to CMA constructs. Every mapped rule deploys in monitor (amber) and is promoted to
+          enforcement (green) when events and hit counts prove it behaves as intended.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This runs best as a working session, not a show-and-tell: ask the customer to bring an
+        exported FortiOS config (or a FortiManager policy package) and translate a few real rules
+        live. Nothing sells the model like watching their own policy land in it.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE diagram. Agree scope: which
+          VDOMs and policy packages, which of the four domains are actually in use, and who owns
+          the decision to retire a dead rule.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>One global rulebase, no interface pairs, no policy packages. Point out the opposite
+          defaults — WAN allowlist, Internet blocklist — and translate one of their egress rules
+          live, discussing which posture they want.</p>
+        </li>
+        <li>
+          <h4>Walk the object model and automation path</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show hosts, groups and custom services, then the API keys page — the FortiOS config is
+          flat text, so object translation is scriptable end-to-end via the GraphQL API or the
+          Terraform provider rather than re-keyed by hand.</p>
+        </li>
+        <li>
+          <h4>Translate a webfilter profile</h4>
+          <p>Open an Internet Firewall rule and walk the category picker against one of their
+          FortiGuard profiles: map two or three categories by intent, show the Prompt action for
+          their warn pages, and a custom category absorbing their static URL lists.</p>
+        </li>
+        <li>
+          <h4>Show CASB and DLP as the destination state</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Show shadow-IT discovery running with zero configuration, a tenant-control rule, and a
+          DLP rule combining a predefined data type with a file-type condition — the rebuilt,
+          upgraded version of their log-only sensors.</p>
+        </li>
+        <li>
+          <h4>Show the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged TLS inspection policy — by category and pilot group — and be explicit
+          that SWG parity, CASB activity control and DLP content inspection all hang off this
+          switch.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a single monitor-mode rule and show the hit evidence that would
+          justify flipping it to block — the OPTIMISE phase they will live in for the first months,
+          and the audit trail for every promotion decision.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/25207403405853-What-is-the-Cato-Firewall" target="_blank" rel="noopener">What is the Cato Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273487633-Managing-the-Internet-Firewall-Policy" target="_blank" rel="noopener">Managing the Internet Firewall policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/27286761010205-Using-the-Internet-Firewall-Configuration-Wizard" target="_blank" rel="noopener">Internet Firewall configuration wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/10642755314205-Configuring-the-Socket-LAN-Firewall-Policy" target="_blank" rel="noopener">Configuring the Socket LAN Firewall policy (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://docs.fortinet.com/document/fortigate/8.0.0/administration-guide/702257/configuration-backups-and-reset" target="_blank" rel="noopener">Fortinet: configuration backups (CLI)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-fortinet.html">Fortinet (FortiGate &amp; FortiSASE) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

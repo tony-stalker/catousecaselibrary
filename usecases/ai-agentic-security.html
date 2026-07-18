@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Securing Agentic AI — Cato Use Case Library</title>
+<meta name="description" content="AI agents act on their own — inventory managed, local and custom agents, watch their sessions, and govern what they can touch with Scouts and agent controls.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="ai-agentic-security">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / Securing Agentic AI</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Securing Agentic AI</h1>
+    <p class="lede">
+      AI agents don't just answer questions — they browse, call tools and act on systems, at machine
+      speed, with the identity and permissions someone delegated to them. Most organisations can't
+      list the agents they're running, let alone say what each one did yesterday. This use case shows
+      how Cato AI Security for Agents inventories managed, local and custom agents, inspects prompts,
+      outputs, tool calls and tool messages at runtime, and records every session for audit.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Agentic AI</span><span class="tag">AI Agents</span><span class="tag">Scouts</span>
+      <span class="tag">MCP</span><span class="tag">Session Monitoring</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The GenAI conversation has moved on from chatbots. Coding agents commit code, SaaS copilot
+        agents answer customers from CRM data, and customer-built agents chain tool calls against
+        internal APIs — all autonomously, all with delegated credentials. A single request can trigger
+        a sequence of actions no human reviews in the moment. Adoption is happening whether it is
+        governed or not: developers install coding agents themselves, business teams build agents on
+        low-code platforms, and engineering wires agent frameworks straight into production systems.
+      </p>
+      <p>
+        Cato classifies AI agents into three types, and the distinction drives how each is secured:
+        <strong>local agents</strong> (typically third-party tools running on user endpoints, such as
+        coding agents), <strong>managed agents</strong> (generally low-code or no-code agents built on
+        cloud and SaaS platforms such as AWS Bedrock, Azure AI Foundry and Microsoft Copilot Studio)
+        and <strong>custom agents</strong> (fully coded agents your teams build and run on endpoints
+        or in cloud environments).
+      </p>
+      <p>
+        The objective: <strong>know every agent you run, see everything each one does, and govern
+        what it is allowed to touch — without slowing the teams adopting it.</strong>
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Agent sprawl, delegated permissions, machine-speed mistakes</h2>
+      <p>
+        Three problems compound each other. <strong>Sprawl</strong> — nobody has an inventory of the
+        agents in use, their configurations or the MCP servers they connect to. <strong>Delegated
+        identity</strong> — an agent acts with the permissions of the person who launched it: repo
+        access, file systems, internal APIs, CRM data. <strong>Injection</strong> — an attacker who
+        can influence what an agent reads can steer what it does next; with agents, the payload can
+        arrive through a tool response, not just a prompt (published attacks such as
+        <em>EchoLeak</em> and <em>CurXecute</em> targeted exactly this path against local and coding
+        agents).
+      </p>
+
+      <div class="grid-3" style="margin:18px 0">
+        <div class="card">
+          <h3 style="margin-top:0">AI-specific attacks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Prompt injection, jailbreak attempts and multi-turn attacks that manipulate agent behaviour — including indirect prompt injection, where a malicious payload in a tool's output hijacks the agent's actions.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Data exfiltration</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Agents with access to code repositories, internal APIs, CRM systems or file systems can leak source code, credentials, personal identifiers or financial data through tool calls or model outputs.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Shadow agents</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Unmanaged agents installed without IT approval — including personal instances of coding assistants running without enterprise licences or security controls — create blind spots in security posture.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">MCP server risks</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Malicious or misconfigured MCP servers can expose sensitive data, execute unauthorised commands, or introduce vulnerabilities into the agent's workflow.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Compliance violations</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Failure to meet regulatory requirements for AI systems, such as the EU AI Act, or internal policies governing code generation, data handling and automated decision-making.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Governance gaps</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">No visibility into which agents are deployed, what tools they connect to and what data they can access — making consistent security policy across the organisation impossible.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many AI agents are running in your environment right now — on developer laptops, in
+        Copilot Studio, in your own code — and could you show me the last thing each one did with the
+        permissions it was given?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Discover, observe, govern — every agent type</h2>
+      <p>
+        AI Security for Agents gives one workflow across all three agent types: build the inventory,
+        trace what each agent actually does, and enforce policy at the moment of action. Every
+        interaction is evaluated at <strong>four inspection points — user prompts, model outputs,
+        tool calls and tool messages</strong> — so an injected instruction hiding in a tool response
+        is caught just like a malicious prompt. Detections cover prompt injection, jailbreak
+        attempts, sensitive data exposure and policy violations, and the same Guards and policy
+        engine protect local, managed and custom agents alike.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 428" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cato AI Security for Agents — three agent types, one control point</title>
+          <desc id="dg1-desc">Local agents on endpoints, managed agents on cloud platforms and custom coded agents all feed into Cato AI Security, which inspects prompts, outputs, tool calls and tool messages. Governed actions flow on to sanctioned systems; a risky injected action is blocked; session telemetry streams to the Agent Sessions audit view.</desc>
+
+          <!-- Cato cloud -->
+          <ellipse class="dg-backbone" cx="480" cy="218" rx="160" ry="50"/>
+
+          <!-- Agent types (left) -->
+          <rect class="dg-node" x="28" y="40" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="64" text-anchor="middle">Local agents</text>
+          <text class="dg-sub" x="118" y="82" text-anchor="middle">Coding agents · laptops</text>
+
+          <rect class="dg-node" x="28" y="186" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="210" text-anchor="middle">Managed agents</text>
+          <text class="dg-sub" x="118" y="228" text-anchor="middle">Bedrock · Copilot Studio</text>
+
+          <rect class="dg-node" x="28" y="332" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="356" text-anchor="middle">Custom agents</text>
+          <text class="dg-sub" x="118" y="374" text-anchor="middle">LangChain · Agents SDK</text>
+
+          <!-- Inbound lanes -->
+          <path class="lane lane-allow" d="M 208 78 C 300 100, 380 160, 452 197"/>
+          <path class="lane lane-allow" d="M 208 215 C 290 215, 360 215, 444 217"/>
+          <path class="lane lane-allow" d="M 208 361 C 300 340, 380 278, 454 237"/>
+
+          <!-- Interception mechanism labels -->
+          <text class="dg-tiny" x="118" y="116" text-anchor="middle">via Scout + Agent Controls</text>
+          <text class="dg-tiny" x="118" y="262" text-anchor="middle">via platform APIs</text>
+          <text class="dg-tiny" x="118" y="408" text-anchor="middle">via AI-FW proxy endpoint</text>
+
+          <!-- Cato AI Security control point -->
+          <circle class="pulse-ring" cx="480" cy="217" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="217" r="30"/>
+
+          <!-- Outcomes (right) -->
+          <path class="lane lane-allow" d="M 506 198 C 580 160, 660 100, 752 78"/>
+          <rect class="dg-node-green" x="752" y="40" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="842" y="64" text-anchor="middle">Sanctioned systems</text>
+          <text class="dg-sub" x="842" y="82" text-anchor="middle">Repos · APIs · MCP tools</text>
+
+          <path class="lane lane-block" d="M 514 217 C 570 216, 630 215, 682 215"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 688 203 L 712 227"/><path class="lane-x" d="M 712 203 L 688 227"/>
+          </g>
+          <rect class="dg-node" x="752" y="186" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="842" y="210" text-anchor="middle">Risky action</text>
+          <text class="dg-sub" x="842" y="228" text-anchor="middle">Injected exfil attempt</text>
+
+          <path class="lane lane-static" d="M 506 236 C 580 280, 660 340, 752 361"/>
+          <text class="dg-tiny" x="690" y="312" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Session telemetry</text>
+          <rect class="dg-node-dark" x="752" y="332" width="180" height="58" rx="10"/>
+          <text class="dg-label-inv" x="842" y="356" text-anchor="middle">Agent Sessions</text>
+          <text class="dg-sub-inv" x="842" y="374" text-anchor="middle">Audit · violations</text>
+
+          <!-- Control-point labels (painted above the lanes, with halo) -->
+          <text class="dg-label" x="480" y="152" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato AI Security</text>
+          <text class="dg-tiny" x="480" y="168" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Agent Policy · AI-FW Guards</text>
+          <text class="dg-tiny" x="480" y="296" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Inspects prompts · outputs · tool calls · tool messages</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Governed action — allowed</span>
+          <span class="key"><span class="swatch block"></span> Policy violation — blocked</span>
+        </div>
+        <div class="diagram-caption">All three agent types feed one control point: Agent Policy and AI-FW Guards evaluate every interaction, pass governed actions through, block violations, and record the full session for audit.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔎</div><div><h4>Complete agent inventory</h4><p>Scout scans endpoints for installed agents, configurations, licence types and connected MCP servers; managed platforms are discovered via API; custom agents become visible the moment they connect through the AI-FW.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>Four-point runtime inspection</h4><p>Prompts, outputs, tool calls and tool messages are all inspected — catching indirect prompt injection arriving through tool responses, which chat-only controls never see.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Policy at the moment of action</h4><p>Agent Policy governs what users may send to coding agents, which tools and MCPs agents may use, and what happens on a match — block or redact sensitive data and credentials in real time.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Session-level audit evidence</h4><p>Every prompt, response and tool call is recorded as a session with violations tagged inline — step-by-step evidence for incident investigation, blast-radius analysis and compliance.</p></div></div>
+      </div>
+    </section>
+
+    <section id="capabilities" class="reveal">
+      <div class="section-kicker">Capability walkthrough</div>
+      <h2>How each agent type is secured</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Local agents <span class="tag">endpoint</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li><strong>Scout</strong> scans developer workstations (macOS, Windows, Linux) for installed AI coding tools — no TLS inspection, proxy or browser extension required; deployed as a script via MDM (Intune, Jamf, Kandji), run on a schedule.</li>
+            <li><strong>Agent Controls</strong> surface agent events — user messages, tool calls, tool responses, MCP interactions — for evaluation by Agent Policy.</li>
+            <li>Discovery covers Claude Code, Cursor, Codex, Copilot, VS Code, JetBrains IDEs, Windsurf and more; agent controls today for Claude Code, Cursor and Codex.</li>
+            <li>Runtime protection blocks or redacts sensitive tool calls and stops indirect prompt injection in tool responses before it reaches the agent.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Managed agents <span class="tag">platform</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li>Cato connects <strong>via API</strong> to platforms such as AWS Bedrock, Azure AI Foundry and Microsoft Copilot Studio and auto-discovers every deployed agent.</li>
+            <li>Inventory captures each agent's name, purpose and instructions, connected tools and connectors, knowledge bases and data sources, and assigned permissions.</li>
+            <li>Platform <strong>tracing data</strong> — prompts, responses, tool invocations and results — streams into the Agentic AI dashboard in real time.</li>
+            <li>Traced invocations feed the <strong>AI Firewall</strong> for the same four-point inspection; threats can be alerted, logged or blocked depending on integration and enforcement mode.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Custom agents <span class="tag">coded</span></h3>
+          <ul style="margin:0;padding-left:20px;font-size:.92rem;color:var(--ink-2)">
+            <li>Agents built with LangChain, the OpenAI Agents SDK or direct LLM API calls connect to the <strong>AI-FW at SDK level</strong>: redirect the LLM base URL to the AI-FW proxy endpoint and add an authentication header.</li>
+            <li>The AI-FW sits transparently in the request path, proxying to the original provider — no changes to the agent's core logic.</li>
+            <li>Every invocation is traced as a session: full conversation history, tool calls with parameters, tool responses and final output.</li>
+            <li>Guards enforce protection against injection, jailbreaks and sensitive-data leakage; policies are configured centrally and applied to all connected custom agents.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Two monitoring lenses</h3>
+      <p>
+        Monitoring splits into two complementary views: <strong>Local Agents</strong> for inventory
+        and posture (what exists, who runs it, what it can reach) and <strong>Agent Sessions</strong>
+        for runtime behaviour (what it actually did, and whether policy intervened). A typical
+        investigation starts in Local Agents — an agent with a suspicious MCP server configuration —
+        then pivots to Agent Sessions to review its runtime activity.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Question you're answering</th><th>Use this view</th></tr></thead>
+          <tbody>
+            <tr><td>What agents are installed across my endpoints?</td><td>Local Agents</td></tr>
+            <tr><td>Which MCP servers are connected to my agents?</td><td>Local Agents</td></tr>
+            <tr><td>Which users are running unapproved agents?</td><td>Local Agents</td></tr>
+            <tr><td>What did this agent do during a session?</td><td>Agent Sessions</td></tr>
+            <tr><td>Did any agent trigger a violation?</td><td>Agent Sessions</td></tr>
+            <tr><td>Was sensitive data exposed through a tool call?</td><td>Agent Sessions</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — dig into the “why”</div>
+        <p>Ask what triggered the conversation: a developer-tools audit, a Copilot Studio rollout, an
+        AI governance mandate, an incident? Then ask who owns agent risk today — security, platform
+        engineering, or nobody. Anchor the demo to that answer.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open with the inventory question</h4>
+          <p>Whiteboard the three agent types — local, managed, custom — and ask which of the three
+          they could inventory today. Most can answer for none. That gap is the demo's storyline:
+          discover, observe, govern.</p>
+        </li>
+        <li>
+          <h4>Show endpoint discovery with Scout</h4>
+          <p><span class="path">AI Security → Scout</span></p>
+          <p>Walk the Scout page: activity and identified-user widgets, OS distribution, and the
+          installations table (Scout ID, user, hostname, inline Hooks status, first/last seen). Open
+          <strong>Install</strong> to show the deployment story — a script pushed by MDM (Intune,
+          Jamf, Kandji), scheduled to re-run periodically, with no TLS inspection, proxy or browser
+          extension required.</p>
+        </li>
+        <li>
+          <h4>Review the discovered agent estate</h4>
+          <p><span class="path">AI Security → Local Agents</span></p>
+          <p>The Agents view lists every discovered instance: application, user, tools, hostname,
+          interceptor and last seen — including shadow instances identified from detected personal
+          email addresses. Drill into one instance ("Priya's" laptop works well): its MCP servers,
+          the directories it can access, and its tool list. Mark a dubious MCP tool
+          <strong>unsanctioned</strong> — that classification feeds straight into agent policies.</p>
+        </li>
+        <li>
+          <h4>Enable Agent Controls enforcement</h4>
+          <p><span class="path">AI Security → Scout → Settings</span></p>
+          <p>Toggle <strong>Enforcement</strong> on so Scout enforces Agent Controls on detected
+          coding tools, and scope the enforcement policy to specific users or groups — start with the
+          engineering pilot group; an empty policy applies to everyone.</p>
+        </li>
+        <li>
+          <h4>Govern a coding agent centrally — Claude Code worked example</h4>
+          <p>Show how a local agent's own behaviour is governed at source. For Claude Code, a
+          <code>managed-settings.json</code> policy file is uploaded in the Claude Admin Console under
+          <strong>Advanced Configuration → Claude Custom Configuration</strong>. It takes highest
+          precedence — users and projects cannot override it:</p>
+<pre class="code"><span class="cmt">// managed-settings.json (excerpt)</span>
+{
+  <span class="kw">"availableModels"</span>: ["claude-sonnet-4-6"],
+  <span class="kw">"permissions"</span>: {
+    <span class="kw">"allow"</span>: ["Bash(ls:*)", "Read(/Users/*/projects/**)"],
+    <span class="kw">"ask"</span>:   ["Bash(npm install:*)"],
+    <span class="kw">"deny"</span>:  ["Bash(rm:*)", "Bash(curl:*)", "Write(/etc/**)"],
+    <span class="kw">"disableBypassPermissionsMode"</span>: true
+  },
+  <span class="kw">"sandbox"</span>: {
+    <span class="kw">"enabled"</span>: true,
+    <span class="kw">"allowedDomains"</span>: ["registry.npmjs.org", "api.github.com"],
+    <span class="kw">"allowWrite"</span>: ["/Users/*/projects/**"]
+  }
+}</pre>
+          <p>Talk through the controls: model allow-list, shell commands split into allow / ask /
+          deny, blocked bypass mode, and OS-level sandboxing that restricts write paths and the
+          network domains sandboxed commands may reach. Validate on a test endpoint with
+          <code>claude doctor</code> before rolling out.</p>
+        </li>
+        <li>
+          <h4>Investigate a live agent session</h4>
+          <p><span class="path">AI Security → Agent Sessions</span></p>
+          <p>Show the interactions-by-application and interactions-over-time widgets, then open a
+          session with a violation tag. The Session Audit header gives the triage picture — user,
+          hostname, model, tools used, violations. The <strong>Events</strong> timeline steps through
+          user prompts, agent responses, tool calls and tool messages (MCP events badged), with the
+          blocked event highlighted — perfect for narrating an indirect-injection catch: "the payload
+          arrived in a tool message, not a prompt, and policy intervened here". Flip to
+          <strong>Schema</strong> for the visual call graph with the blocked tool marked in red —
+          this is the view "Marcus" in the SOC starts from.</p>
+        </li>
+        <li>
+          <h4>Extend to managed and custom agents</h4>
+          <p><span class="path">AI Security → Integrations</span></p>
+          <p>Close the loop on the other two types: managed platforms (AWS Bedrock, Azure AI Foundry,
+          Microsoft Copilot Studio) connect via API for discovery, tracing and AI-FW inspection;
+          custom agents connect by redirecting their LLM base URL to the AI-FW proxy. Same Guards,
+          same policies, same session audit — one governance model for every agent the organisation
+          runs.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-agents" target="_blank" rel="noopener">What is AI Security for Agents</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/understanding-scouts-and-agent-controls" target="_blank" rel="noopener">Understanding Scouts and Agent Controls</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-local-agents" target="_blank" rel="noopener">Monitoring Local Agents</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-agent-sessions" target="_blank" rel="noopener">Monitoring Agent Sessions</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/advanced-configuration-for-claude-code" target="_blank" rel="noopener">Advanced Configuration for Claude Code</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-cato-remote-mcp-server" target="_blank" rel="noopener">Working with the Cato Remote MCP Server</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+            <li><a href="ai-homegrown-apps.html">Securing Homegrown AI Applications</a></li>
+            <li><a href="management-soc-xdr.html">SOC Modernisation with XDR &amp; MDR</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

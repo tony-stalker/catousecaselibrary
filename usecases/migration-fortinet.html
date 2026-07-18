@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortinet (FortiGate &amp; FortiSASE) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Replace the FortiGate estate and FortiSASE — policy translation from FortiOS, SD-WAN co-existence via eBGP hub handoff, and staged branch cutover with simple rollback.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-fortinet">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Fortinet to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Fortinet (FortiGate &amp; FortiSASE) to Cato</h1>
+    <p class="lede">
+      Fortinet estates are usually all-in: the same FortiGate at every site is the firewall, the UTM
+      stack and the SD-WAN edge, held together by FortiManager, FortiAnalyzer and FortiClient EMS.
+      This page maps that estate to the Cato SASE Cloud and lays out a staged migration built on a
+      proven co-existence pattern — a parallel socket at each FortiGate regional hub with an eBGP
+      handoff — so every cutover step has a rollback that is just BGP reconverging.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Fortinet</span><span class="tag">FortiGate</span><span class="tag">FortiSASE</span>
+      <span class="tag">SD-WAN</span><span class="tag">eBGP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <p>
+        Nobody replaces a working FortiGate estate on a whim. What puts this migration on the table
+        is the convergence of three calendars the customer does not control: the
+        <strong>patch treadmill</strong> (FortiOS is the most-listed product in CISA's Known Exploited
+        Vulnerabilities catalogue, and emergency SSL-VPN patches keep landing at awkward times), the
+        <strong>hardware refresh cycle</strong> (End of Support typically falls 60 months after End of
+        Order, and support cannot be renewed past it — so every refresh re-opens the box-versus-cloud
+        decision), and now a <strong>forced remote-access re-engineering</strong>: from FortiOS 7.6.3,
+        SSL-VPN tunnel mode is removed from GUI and CLI, and existing SSL-VPN configuration is not
+        upgraded.
+      </p>
+      <p>
+        That last one is the natural decision point. If the customer must re-engineer remote access
+        anyway, the honest question is whether to rebuild it on the same appliance stack — with the
+        same patching burden and refresh cycle — or move it, and eventually the sites behind it, to a
+        cloud-delivered platform that Cato patches and scales for them. The objective:
+        <strong>retire the appliance estate on the customer's timetable, co-existing cleanly with
+        FortiGate SD-WAN throughout, with rollback designed into every step.</strong>
+      </p>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The forcing functions</div>
+      <h2>The record, not the FUD</h2>
+      <p>
+        These numbers are on the public record and most Fortinet customers know them better than we
+        do. Use them to frame <em>timing</em> — the cost of staying on the treadmill for another
+        refresh cycle — not to score points.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">26</div><div class="stat-label">Fortinet CVEs in the CISA Known Exploited Vulnerabilities catalogue (third-party tracker, July 2026)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">13</div><div class="stat-label">Of those KEV entries used in ransomware campaigns</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">50<span class="unit">+</span></div><div class="stat-label">Compromised FortiManager appliances in Mandiant's FortiJump investigation (2024)</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The management plane was the breach <span class="tag">FortiJump</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CVE-2024-47575 (CVSS 9.8) — missing authentication in FortiManager's FGFM daemon — was exploited in the wild from June 2024. Mandiant investigated 50+ compromised appliances from which attackers exfiltrated the configurations and hashed credentials of every managed FortiGate. The single pane of glass became a single point of compromise.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Patching doesn't always end it <span class="tag">CISA, Apr 2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CISA relayed a Fortinet advisory on a post-exploitation technique: attackers left symbolic links on FortiGates that preserved read-only access <em>after</em> the original vulnerability was patched. The remediation is full device re-validation, not just an upgrade — a material operational cost per incident. CISA alerted again in January 2026 on active exploitation of the FortiOS authentication bypass CVE-2026-24858.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SSL-VPN removal forces rework <span class="tag">FortiOS 7.6.3</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">SSL-VPN tunnel mode is removed from GUI and CLI and replaced with IPsec; existing SSL-VPN tunnel configuration and its firewall policies are not upgraded. Remote access must be re-engineered either way — the migration effort is being spent whether or not Cato is in the picture.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Refresh and licence stacking <span class="tag">Lifecycle</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Hardware EOS typically lands 60 months after End of Order, with the last service extension 12 months before it. Security value is licensed per appliance — FortiCare plus a FortiGuard bundle (ATP / UTP / Enterprise Protection), stacked on FortiManager, FortiAnalyzer, EMS and, separately, FortiSASE. Every refresh means re-sizing boxes <em>and</em> licences.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Which FortiGates are inside 18 months of End of Support? What did the last emergency
+        FortiOS patch cycle cost you in change windows and re-validation? And if you use SSL-VPN
+        today — what's the plan for 7.6.3?”</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        The estate collapses into one cloud platform and one rulebase. The table below is the
+        translation sheet — including the pieces that need explicit design decisions (VDOMs,
+        ZTNA tags, FortiLink).
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Fortinet component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FortiGate firewall policies + UTM profiles (IPS, AV, web filter, app control, DNS filter)</td>
+              <td>WAN Firewall + Internet Firewall with IPS, Next-Gen Anti-Malware and SWG applied in a single pass (SPACE)</td>
+              <td>One cloud-global rulebase replaces per-box / per-VDOM policy packages; the profile-per-policy UTM model becomes converged inspection — no service chaining</td>
+            </tr>
+            <tr>
+              <td>Fortinet Secure SD-WAN (zones, SD-WAN rules, performance SLAs)</td>
+              <td>Cato Socket + global private backbone; network rules with bandwidth profiles and QoS priorities</td>
+              <td>Recover the <em>intent</em> (which apps need which path and quality) and re-express it; validate with the QoS Priority Analyzer</td>
+            </tr>
+            <tr>
+              <td>ADVPN (dynamic spoke-to-spoke shortcuts)</td>
+              <td>Backbone routing via the nearest PoP</td>
+              <td>Any-to-any is a property of the backbone, not per-tunnel state — but ADVPN flows rarely appear in design docs, so capture the real traffic matrix in discovery</td>
+            </tr>
+            <tr>
+              <td>FortiManager (ADOMs, policy packages, CLI/Jinja templates)</td>
+              <td>Cato Management Application (CMA)</td>
+              <td>No firmware fleets or policy-push jobs — Cato maintains sockets and PoPs; automation moves to the GraphQL API and Terraform provider</td>
+            </tr>
+            <tr>
+              <td>FortiAnalyzer</td>
+              <td>CMA events and analytics, XDR storyboards, SIEM integrations</td>
+              <td>Events are generated once in the cloud — no collector sizing or per-appliance log-rate licensing</td>
+            </tr>
+            <tr>
+              <td>FortiClient (SSL-VPN / IPsec / ZTNA) + EMS</td>
+              <td>Cato Client (SDP) with Device Posture, Always-On and Client Connectivity Policy</td>
+              <td>FortiOS 7.6.3 removes SSL-VPN tunnel mode regardless — this effort is being spent either way</td>
+            </tr>
+            <tr>
+              <td>EMS ZTNA tagging rules → dynamic address objects</td>
+              <td>Device posture profiles referenced in access policy</td>
+              <td>No automated converter — inventory the tags actually used in policy and re-model them (see gotchas)</td>
+            </tr>
+            <tr>
+              <td>VDOMs (multi-VDOM)</td>
+              <td>Policy scoping by site/segment in one account; separate accounts for hard tenancy</td>
+              <td>Flag early — it shapes the rulebase design. Split-task VDOM mode was itself removed in FortiOS 7.2</td>
+            </tr>
+            <tr>
+              <td>FortiGate HA (FGCP clusters)</td>
+              <td>Socket HA (primary/secondary) plus PoP- and backbone-level resilience</td>
+              <td>The site survives socket, link and PoP failures independently</td>
+            </tr>
+            <tr>
+              <td>FortiSwitch / FortiAP via FortiLink</td>
+              <td>Out of scope — retain standalone or cloud management for switching and Wi-Fi</td>
+              <td>Must be re-homed <em>before</em> the controlling FortiGate is decommissioned</td>
+            </tr>
+            <tr>
+              <td>East-west / inter-VLAN policy</td>
+              <td>Socket LAN Firewall policy</td>
+              <td>Enforced locally on the socket; or retain the FortiGate as an interim LAN firewall and decommission it last</td>
+            </tr>
+            <tr>
+              <td>FortiSASE (SIA / SPA, Universal ZTNA)</td>
+              <td>Cato SASE Cloud — the same PoP-delivered stack that serves the sites</td>
+              <td>FortiSASE private access via ZTNA still relies on FortiGate hubs as application gateways; Cato needs no on-prem gateway</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Recommended migration path</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and the Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the plan with Cato Professional
+        Services before using it with a customer.</p>
+      </div>
+
+      <p>
+        The plan is anchored to the Cato PS methodology (typical reference plan: four months). Its
+        heart is the <strong>regional-hub co-existence pattern</strong>, demonstrated by Cato PS
+        against a live FortiGate Secure SD-WAN estate: a parallel socket at each FortiGate regional
+        hub, an eBGP handoff between the two domains, and AS-path length anchoring traffic to its
+        local hub so paths stay symmetric — no broken stateful inspection on the FortiGates, no
+        per-site route engineering during the window.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 500" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">eBGP regional-hub co-existence between Cato and a FortiGate SD-WAN estate</title>
+          <desc id="dg1-desc">A Cato PoP on the global private backbone connects to a parallel Cato Socket deployed at the FortiGate regional hub site. The socket exchanges routes with the FortiGate hub over an eBGP handoff. Branch B remains a legacy FortiGate ADVPN spoke behind the hub. Branch A has migrated to a Cato socket and connects via the PoP; a dashed rollback arrow shows it can revert by re-enabling its FortiGate spoke, with BGP reconverging.</desc>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="300" cy="145" rx="155" ry="50"/>
+          <circle cx="160" cy="166" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="440" cy="124" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="300" y="214" text-anchor="middle">Global private backbone</text>
+
+          <circle class="pulse-ring" cx="300" cy="145" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="145" r="30"/>
+          <text class="dg-label" x="300" y="84" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="300" y="99" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SPACE · one global rulebase</text>
+
+          <!-- Regional hub site container -->
+          <rect x="425" y="270" width="470" height="112" rx="12" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text class="dg-tiny" x="660" y="260" text-anchor="middle">Regional hub site — parallel deployment</text>
+
+          <!-- Parallel socket at the hub -->
+          <rect class="dg-node-green" x="445" y="296" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="530" y="320" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub" x="530" y="338" text-anchor="middle">parallel at the hub</text>
+
+          <!-- FortiGate hub -->
+          <rect class="dg-node-dark" x="705" y="296" width="170" height="58" rx="10"/>
+          <text class="dg-label-inv" x="790" y="320" text-anchor="middle">FortiGate hub</text>
+          <text class="dg-sub-inv" x="790" y="338" text-anchor="middle">SD-WAN / ADVPN core</text>
+
+          <!-- eBGP handoff -->
+          <path class="lane-static" d="M 615 325 L 705 325"/>
+          <text class="dg-label" x="660" y="314" text-anchor="middle">eBGP</text>
+          <text class="dg-tiny" x="660" y="373" text-anchor="middle">AS-path anchors symmetry</text>
+
+          <!-- Migrated spoke -->
+          <rect class="dg-node-green" x="60" y="380" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="145" y="404" text-anchor="middle">Branch A — migrated</text>
+          <text class="dg-sub" x="145" y="422" text-anchor="middle">Cato Socket X1500</text>
+
+          <!-- Legacy spoke -->
+          <rect class="dg-node" x="705" y="414" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="790" y="438" text-anchor="middle">Branch B — legacy</text>
+          <text class="dg-sub" x="790" y="456" text-anchor="middle">FortiGate ADVPN spoke</text>
+
+          <!-- Flows -->
+          <path class="lane lane-allow" d="M 145 378 C 150 300, 210 215, 276 172"/>
+          <path class="lane lane-allow" d="M 512 294 C 470 245, 395 195, 333 165"/>
+          <path class="lane lane-limit" d="M 790 412 C 790 392, 790 374, 790 356"/>
+          <text class="dg-tiny" x="804" y="392" text-anchor="start">ADVPN overlay</text>
+
+          <!-- Rollback -->
+          <path d="M 232 432 C 380 478, 560 478, 698 446" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 6"/>
+          <path d="M 698 446 L 684 444 M 698 446 L 688 456" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+          <text class="dg-tiny" x="455" y="494" text-anchor="middle">Rollback — re-enable the FortiGate spoke · BGP reconverges</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Cato socket via nearest PoP</span>
+          <span class="key"><span class="swatch limit"></span> Legacy — FortiGate ADVPN overlay</span>
+        </div>
+        <div class="diagram-caption">
+          Interim co-existence: the parallel socket at each FortiGate regional hub exchanges routes over eBGP.
+          Routes crossing regions carry an extra AS hop, so best-path selection anchors traffic to its local hub
+          and paths stay symmetric. Spoke cutover: disable the FortiGate spoke → bring up the Cato site → routes
+          propagate to both domains. Rollback is the mirror image.
+        </div>
+      </div>
+
+      <p>
+        Guard-rails from the PS design: filter the default route and the prefixes of any site with
+        parallel connectivity at each handoff, so a half-migrated site is never reachable via two
+        paths at once; use BGP summaries and Cato's BGP filtering to keep the exchange tidy. The Cato
+        side is eBGP-only (default Cato ASN 64515). Where no socket can be placed at a hub, Cato
+        publishes a FortiGate HA IPsec tunnel design as the handoff instead.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Discover &amp; design (weeks 1–4)</h4>
+          <p>Export every FortiGate config (<code>execute backup full-config</code>) or pull configs and
+          policy packages from FortiManager; mine FortiAnalyzer / FortiView for the <strong>real traffic
+          matrix</strong> — ADVPN shortcuts mean spoke-to-spoke flows rarely appear in any design document.
+          Clean the rulebase before translating it: use hit counts to retire dead rules, collapse duplicate
+          objects, flag any-any debt. Classify the estate — regional hubs, DCs, branch classes, VDOM
+          tenants, inbound NAT/VIP services, and everything hanging off FortiLink. Agree the co-existence
+          design: AS numbering, route filtering and summarisation, and the cutover template per site class.
+          Stand up the foundation: CMA baseline, IdP/SCIM, client and TLS-inspection certificate readiness,
+          socket logistics.</p>
+        </li>
+        <li>
+          <h4>Build the parallel hubs (month 2)</h4>
+          <p>Deploy sockets (or vSockets in AWS/Azure) at the data centres and at <strong>each FortiGate
+          regional hub, alongside the existing kit</strong>. Establish the eBGP handoffs, then validate
+          routing symmetry and failover with test prefixes <em>before any production site moves</em>.
+          Nothing about the legacy estate changes in this phase — that is the point.</p>
+        </li>
+        <li>
+          <h4>Convert policy &amp; run the pilot</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Translate the cleaned rulebase: WAN Firewall for site-to-site and east-west intent, the
+          wizard-assisted Internet Firewall for the initial egress policy, IPS and Anti-Malware in
+          monitor-then-block. Recreate SD-WAN steering intent (voice, business-critical, bulk) as network
+          rules with bandwidth profiles. Cut over one representative branch using the spoke methodology
+          below, and put a pilot user cohort on the Cato Client with Client Connectivity Policy in monitor
+          mode. The pilot's rollback is the standard spoke rollback — designed in, not bolted on.</p>
+        </li>
+        <li>
+          <h4>Migrate in waves (month 3)</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Branches move region by region behind their hub handoff, each following the same four moves:
+          <strong>disable the FortiGate spoke</strong> (its prefixes are withdrawn from the overlay and the
+          eBGP exchange) → <strong>bring up the Cato socket site</strong> → <strong>routes propagate</strong>
+          to both domains automatically → <strong>rollback, if needed, is re-enabling the spoke</strong>.
+          Keep waves small early, then batch: simple single-WAN branches → HA branches → sites with local
+          inbound services → hubs last. In parallel, migrate FortiClient to the Cato Client in cohorts —
+          disable FortiClient VPN/ZTNA via EMS per wave, enable the Cato Client, re-point posture
+          enforcement — and phase TLS inspection in by URL category and pilot group, then CASB and DLP
+          monitor-mode → enforcement.</p>
+        </li>
+        <li>
+          <h4>Tune, optimise &amp; decommission (month 4)</h4>
+          <p>Final site and user migrations; QoS and policy tuning from CMA analytics; security-control
+          validation. Remove each region's eBGP handoff once it is fully migrated, retire the FortiGate
+          hubs, and harvest FortiCare / FortiGuard renewals against the EOS calendar. Decommission
+          FortiManager, FortiAnalyzer and EMS only once log-retention obligations are met. Handover,
+          admin training, SIEM integration live.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Symmetry by design</h4><p>AS-path anchoring keeps traffic entering and leaving through the same regional hub — stateful inspection on the FortiGates never sees half a flow.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Rollback is reconvergence</h4><p>Every spoke cutover reverses by re-enabling configuration that still exists. No rebuild, no route engineering — BGP does the work.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>No more fleets</h4><p>Policy packages, firmware trains and push jobs disappear with the boxes. Sockets and PoPs are maintained by Cato; what remains automatable maps to the GraphQL API and Terraform.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>A proven pattern</h4><p>The PS co-existence designs behind this plan include a static routed-range variant proven at roughly 300 sites — this is the firm's standard playbook, not an experiment.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Branch patterns and the transition estate</h2>
+      <p>
+        Not every site fits one mould. The PS deck's branch-level variants below are chosen per site
+        class in Phase 1 — start conservative (FortiGate keeps the default gateway) and reserve
+        socket-as-gateway for DC-class sites that need full HA. Where BGP is unavailable, the static
+        alternative is an interconnect site with routed ranges: pre-stage real subnets on the
+        interconnect and dummy ranges on the future Cato sites, then swap at cutover — rollback is
+        re-adding the statics.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Pattern</th><th>Default gateway</th><th>Mechanics</th><th>Rollback</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FortiGate stays DG, static routes</td>
+              <td>FortiGate</td>
+              <td>Socket on a LAN/DMZ transit; FortiGate adds specific routes to the socket per migrated subnet</td>
+              <td>Remove the statics — traffic reverts to the SD-WAN overlay instantly</td>
+            </tr>
+            <tr>
+              <td>FortiGate stays DG, eBGP over LAN transit</td>
+              <td>FortiGate</td>
+              <td>eBGP peering socket ↔ FortiGate; phased subnet migration with dynamic propagation</td>
+              <td>Withdraw advertisements or drop the peering</td>
+            </tr>
+            <tr>
+              <td>L3 switch decides</td>
+              <td>L3 switch</td>
+              <td>Static or BGP routing between legacy and migrated subnets on the core switch; keeps interim throughput off the firewall</td>
+              <td>Flip routes on the switch</td>
+            </tr>
+            <tr>
+              <td>Socket as DG, eBGP LAN handoff</td>
+              <td>Cato Socket</td>
+              <td>Socket is the gateway with full HA support; eBGP handoff for legacy prefixes — suits DC-class sites</td>
+              <td>Re-point the default gateway to the FortiGate</td>
+            </tr>
+            <tr>
+              <td>Socket as DG, Alt-WAN BGP / Gradual Deployment</td>
+              <td>Cato Socket</td>
+              <td>Legacy overlay reached via Alt-WAN with eBGP, or Gradual Deployment routing unknown RFC1918 via Alt-WAN</td>
+              <td>Routes revert via BGP — see caveats below</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Alt-WAN caveats (from the PS deck)</div>
+        <p>Configure local routing for all traffic so Alt-WAN-destined flows are not first carried to
+        the PoP (avoiding asymmetry), and note that Alt-WAN failure does not trigger socket HA
+        failover — prefer BGP on a LAN handoff where HA matters. Gradual Deployment covers private
+        (RFC1918) destinations only.</p>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">FortiClient → Cato Client, in waves</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The PS reference plan uses four SDP migration waves. Per cohort: disable FortiClient VPN/ZTNA via EMS, enable the Cato Client, re-point posture enforcement. Keep exactly one VPN/ZTNA data path active per endpoint; retain FortiClient's EPP function temporarily if it is also the endpoint AV.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Phased TLS inspection</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Enable TLS inspection by URL category and/or pilot group — the PS reference is four phases over four weeks — then layer CASB discovery, tenant controls and DLP in monitor mode before enforcement. Certificate deployment happens in Phase 1, not at enablement time.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Re-home FortiLink first</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Where FortiSwitches and FortiAPs are FortiLink-managed, the branch FortiGate is also the LAN and Wi-Fi controller. Move switching and Wi-Fi to standalone or cloud management <em>before</em> the gate is decommissioned — build it into the site survey.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Inbound services deliberately</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Published services (FortiGate VIPs) move on their own change windows: re-publish via Cato (remote port forwarding / static-IP egress) or leave them on a retained FortiGate leg until their window. East-west enforcement can stay on a retained FortiGate as an interim LAN firewall, or move to the Socket LAN Firewall policy.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What will come up in the room</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“FortiGate gives us hardware-accelerated line rate”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The datasheet headline is ASIC-accelerated <em>firewall</em> throughput; Fortinet's own product matrix shows threat protection and SSL inspection at a fraction of that figure — and the fleet must be sized to the inspected number, per box, at every refresh. Cato decrypts and inspects once, in parallel engines at the PoP, and capacity is the platform's problem. WAN and internet traffic is bounded by the access link, not the socket; for genuine local line-rate needs, keep east-west enforcement on the LAN.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We've invested years in FortiManager automation”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Acknowledge it — Jinja templates, scripts and policy packages are real sunk effort. But most of that automation exists to keep hundreds of boxes consistent, a problem class that disappears with a single cloud rulebase. What remains (site onboarding, policy-as-code) maps to the GraphQL API and Terraform provider. The sharper point, made factually: FortiJump showed the management plane itself can be the breach vector, exposing every managed device's config and credentials.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“ZTNA tags handle posture-based access today”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">EMS tagging rules sync to FortiGates as dynamic address objects, and there is no automated converter. Inventory the tagging rules, keep only those actually referenced in policy, and re-model them as Cato device posture profiles plus Client Connectivity and access policy. Fortinet's own SSL-VPN-to-ZTNA path already forces this rework on 7.6.3+ — the effort is spent either way.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We'll just add FortiSASE instead”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">FortiSASE covers remote users and secure internet access, but private access (SPA) using ZTNA is delivered through FortiGate hubs acting as application gateways — the appliance estate, its refresh cycle and its patching burden stay in the critical path, and branches still need FortiGate hardware. It is an addition to the stack, with its own subscription, not a consolidation of it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SD-WAN rules are deeply tied to FortiOS</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True — SD-WAN rules reference performance SLAs, zones and ISDB objects, and ADVPN behaviour is emergent rather than documented. Treat translation as design work, not lift-and-shift: recover intent and express it as network rules plus bandwidth profiles. Budget discovery time for the ADVPN traffic matrix.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">VDOM tenancy needs a target model</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Multi-VDOM estates (shared services, M&amp;A tenants, MSSP-style separation) need an explicit decision: policy sections and site scoping within one account, or separate Cato accounts for hard separation. Flag it in week one — it shapes the whole rulebase design.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Feature-parity edge cases</div>
+        <p>Niche FortiOS behaviours — proxy-mode inspection specifics, video filtering, bespoke NAT
+        constructs, local-in policies — should be listed in discovery and validated in the PoV rather
+        than assumed. Standard PoV hygiene.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273474065-Configuring-BGP-Neighbors-for-a-Cato-Socket" target="_blank" rel="noopener">Configuring BGP neighbours for a Cato Socket (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9830079245981-Cato-Cloud-to-FortiGate-via-HA-IPSec-Tunnels" target="_blank" rel="noopener">Cato Cloud to FortiGate via HA IPsec tunnels (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/10642755314205-Configuring-the-Socket-LAN-Firewall-Policy" target="_blank" rel="noopener">Configuring the Socket LAN Firewall policy (KB)</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA Known Exploited Vulnerabilities catalogue</a></li>
+            <li><a href="https://www.cisa.gov/news-events/alerts/2025/04/11/fortinet-releases-advisory-new-post-exploitation-technique-known-vulnerabilities" target="_blank" rel="noopener">CISA alert (Apr 2025): FortiOS post-exploitation persistence</a></li>
+            <li><a href="https://docs.fortinet.com/document/fortigate/7.6.6/administration-guide/155142/ssl-vpn-tunnel-mode-to-ipsec-vpn-migration" target="_blank" rel="noopener">Fortinet: SSL-VPN tunnel mode to IPsec migration guide</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-fortinet-policy.html">Fortinet Policy Migration</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

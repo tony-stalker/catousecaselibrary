@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Versa Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate VOS security policy to Cato — firewall and UTM profiles, URL filtering, and a greenfield best-practice build for CASB and DLP where Versa had none.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-versa-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Versa Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Versa Policy Migration</h1>
+    <p class="lede">
+      The network cutover gets the attention, but policy translation is where Versa migrations
+      stall: VOS policy is generated from Director template stacks, its UTM lives in per-rule
+      profiles, and in carrier-managed estates even the export is a change ticket. This page works
+      the estate domain by domain — firewall rules and attached UTM, URL filtering, then CASB and
+      DLP as greenfield best-practice builds — through one pipeline: export, rationalise on hit
+      counts, map to CMA constructs, deploy in monitor mode, enforce on evidence.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+      <p>
+        Sockets ship, tunnels come up, BGP converges — and then the project sits for weeks while
+        somebody untangles a decade of firewall rules. Policy is the long pole in almost every
+        SD-WAN and security migration, and a Versa estate adds two twists of its own: the
+        effective policy of any branch is the <em>product</em> of Director template layers
+        (workflows, staging and post-staging templates, device templates, per-device bind data),
+        and in carrier-managed estates the enterprise cannot simply export it — config, templates
+        and Analytics data all arrive via provider change tickets, with lead time.
+      </p>
+      <p>
+        The Cato PS approach is a four-phase pipeline applied to every policy domain:
+        <strong>EXPORT → REVIEW &amp; MAP → DEPLOY (monitor-first) → OPTIMISE</strong>. The
+        cardinal rule is <strong>never lift-and-shift</strong>: a rulebase that grew organically
+        across template revisions is full of dead rules, duplicate objects and any-any debt.
+        Rationalise on Versa Analytics hit counts first, translate only the rules that still earn
+        their place, and let CMA events prove each rule before it blocks anything.
+      </p>
+      <p>
+        This page covers the policy workstream only. The network side — eBGP hub co-existence,
+        branch cutover waves, per-spoke rollback and the carrier-contract sequencing — is the
+        companion page, <a href="migration-versa.html">Versa Networks (SD-WAN &amp; SASE) to
+        Cato</a>.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the mappings, the TLS-inspection
+        staging and anything contract-dependent with Cato Professional Services before committing
+        it to a customer plan.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — firewall rules</div>
+      <h2>VOS security policy &amp; attached UTM</h2>
+      <p>
+        <strong>The vendor construct.</strong> VOS enforces zone-based access policies on the
+        branch appliance: rules match zone pairs, address and service objects, applications and
+        users, and each rule can carry attached UTM profiles — vulnerability (IPS), anti-virus
+        and URL-filtering — so threat prevention is a per-rule property of the box. On shared
+        appliances, per-tenant organisations partition the config; across the estate, the policy
+        a branch actually runs is generated from Director's template stack plus that device's
+        bind data.
+      </p>
+      <p>
+        <strong>The export.</strong> Per-appliance configuration exports from Director
+        (Appliances → Export Configuration) or from the VOS CLI
+        (<code>show configuration | display set</code>); the staging/post-staging and device
+        templates export as <code>.cfg</code>. <strong>In carrier-managed estates, raise the
+        export request in week one</strong> — it is a provider change ticket, not a console
+        click, and everything downstream waits on it. Export the templates <em>and</em> the
+        per-appliance effective configs: the templates give you the common intent, the effective
+        configs tell you what actually varies per site.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>VOS construct</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Access-policy rule, LAN → WAN zones (internet egress)</td><td>Internet Firewall rule</td><td>Default-allow blocklist — carry over only the rules that change the default.</td></tr>
+            <tr><td>Access-policy rule across the overlay (site-to-site)</td><td>WAN Firewall rule</td><td>Default-deny allowlist — every needed flow must be stated; a good forcing function for segmentation intent.</td></tr>
+            <tr><td>Intra-site zone pairs on the box</td><td>Socket LAN Firewall policy</td><td>Local east-west stays local — enforced on the Socket, managed from CMA.</td></tr>
+            <tr><td>Address objects &amp; groups</td><td>Hosts, network ranges, groups</td><td>Scriptable from the <code>display set</code> export; push via the GraphQL API or Terraform provider.</td></tr>
+            <tr><td>Predefined / custom services</td><td>Cato services + custom services</td><td>Collapse duplicates first — template drift breeds near-identical objects.</td></tr>
+            <tr><td>Application match (Versa app IDs)</td><td>Cato application catalogue + custom apps</td><td>Map by intent; define custom apps only for genuinely in-house systems.</td></tr>
+            <tr><td>Vulnerability (IPS) profile per rule</td><td>Cato IPS — one managed, global policy</td><td>No per-rule signature sets; per-rule variance becomes allowlist exceptions.</td></tr>
+            <tr><td>Anti-virus profile per rule</td><td>Anti-Malware / NGAM — global</td><td>Same model: one policy, monitor-then-block, exceptions by allowlist.</td></tr>
+            <tr><td>URL-filtering profile per rule</td><td>Internet Firewall categories</td><td>Handled as the SWG domain below.</td></tr>
+            <tr><td>Per-tenant / per-template scoping</td><td>CMA policy sections + rule ordering</td><td>Sections mirror template scoping in one rulebase; separate CMA accounts only for hard tenancy.</td></tr>
+            <tr><td>Per-device bind-data variables</td><td>Site-specific objects and rules</td><td>Keep only what is genuinely site-specific — most bind data exists to keep boxes consistent, a problem CMA removes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>One rulebase becomes two policies with opposite defaults.</strong> A VOS zone-based rulebase mixes east-west and egress in one table. Classify every rule by destination first: WAN-bound rules land in an allowlist (default deny), internet-bound rules in a blocklist (default allow). A rule copied into the wrong policy either opens nothing or opens everything.</li>
+        <li><strong>Per-rule UTM becomes global layers.</strong> In VOS, two rules can carry different IPS or AV profiles; in Cato, IPS and NGAM are single cloud policies with monitor/block modes and allowlists. Translate profile <em>variants</em> into scoped exceptions — never try to rebuild per-rule signature tuning.</li>
+        <li><strong>The template stack hides divergence.</strong> Translating a device template alone misses what bind data changed per site. Regenerate the effective config per appliance and diff against the template baseline — the diffs are your genuine site exceptions; everything else is common intent, expressed once.</li>
+        <li><strong>Rule order and shadowing.</strong> Both models are first-match. Shadowed VOS rules (never matched because an earlier rule wins) show zero hits in Analytics — drop them at the clean-up stage rather than importing dead weight.</li>
+      </ul>
+
+      <p>
+        <strong>Strategy.</strong> Export early (tickets first in managed estates) → rebuild
+        effective per-site policy → rationalise on Analytics hit counts and retire dead rules →
+        split by destination into WAN/Internet/LAN policies → push objects via API or Terraform →
+        deploy with IPS and NGAM in monitor mode → promote to block on CMA event evidence.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;Could you produce the effective firewall policy for any single branch today —
+        template stack plus bind data — and say which of its rules actually matched traffic last
+        quarter? If that answer involves a provider ticket, how long does it take?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>URL-filtering profiles → Internet Firewall categories</h2>
+      <p>
+        <strong>The vendor construct.</strong> VOS web filtering lives in URL-filtering profiles:
+        category-based actions, reputation-based filtering, and custom blocklist/allowlist URL
+        patterns, with block or inform pages for the user. Profiles attach per access-policy
+        rule, so different user populations get different web postures by carrying different
+        profiles. The profiles export inside the same template/appliance config export as the
+        firewall rules — there is no separate SWG export step.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>VOS URL-filtering element</th><th>Cato construct</th><th>Migration note</th></tr></thead>
+          <tbody>
+            <tr><td>Category action: block</td><td>Internet Firewall block rule on a Cato URL category</td><td>Start from Cato's default category baseline (the Internet Firewall wizard helps); add only deliberate deltas.</td></tr>
+            <tr><td>Category action: alert / inform</td><td>Allow rule with event tracking</td><td>Cato separates action from tracking — alert-only intent becomes allow + track, visible in Events.</td></tr>
+            <tr><td>Custom blocklist URL patterns</td><td>Custom categories (blocked)</td><td>Carry only lists that encode real policy; retire entries that duplicate a Cato category.</td></tr>
+            <tr><td>Allowlist / override patterns</td><td>Narrow allow rules ordered above the block</td><td>Scope by user group and app, not bare wildcards — overrides are where debt accumulates.</td></tr>
+            <tr><td>Reputation-based filtering</td><td>Cato security categories + IPS / Anti-Malware layers</td><td>Malicious-site blocking is a platform layer, not a profile — do not re-model it as URL rules.</td></tr>
+            <tr><td>Per-rule profile variants (per population)</td><td>Identity-scoped Internet Firewall rules</td><td>Each profile variant becomes a block of rules scoped to a SCIM-provisioned group.</td></tr>
+            <tr><td>Block / inform pages</td><td>Cato block page and prompt behaviour</td><td>Communicate the change: users see a new page, and helpdesk should expect the first-week questions.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Semantic gotchas</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>Category taxonomies never line up 1:1.</strong> Map by intent, not by name: build a worksheet of each blocked Versa category → the Cato category (or categories) that covers the same intent, and get the business owner to sign it — this is a policy decision, not a technical one.</li>
+        <li><strong>Profile-per-rule becomes order-per-identity.</strong> Where VOS attached stricter profiles to specific rules, Cato expresses the same thing as identity-scoped rules in order. The SCIM groups must exist <em>before</em> those rules can be written.</li>
+        <li><strong>Fidelity depends on TLS inspection.</strong> Without TLS inspection Cato classifies on domain/SNI; full-path URL matching and precise app identification need TLSi. Stage it (by category, then pilot groups) before judging category-match parity against the Versa estate.</li>
+        <li><strong>Retire the compensations.</strong> Long custom URL lists often exist to patch gaps in the old engine's categorisation. Test each list against Cato's categories in monitor mode before carrying it over.</li>
+      </ul>
+      <p>
+        <strong>Strategy.</strong> Adopt the Cato default category baseline, layer the signed-off
+        deltas from the worksheet, recreate population variants as group-scoped rules, and run the
+        whole policy with tracking before enforcing — a week of events answers every &ldquo;will
+        this break the business&rdquo; question with data.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy · greenfield</div>
+      <h2>CASB: not a translation — an upgrade</h2>
+      <p>
+        <strong>There is usually nothing to export.</strong> Typical Versa estates were bought as
+        SD-WAN with on-box UTM; an inline CASB was rarely deployed, and SaaS control — where it
+        exists at all — is a few URL-filtering categories doing a job they were never designed
+        for. Frame this section honestly in the room: <strong>this is not a migration gap, it is
+        the upgrade the customer is buying</strong>. The CASB policy is built greenfield from
+        Cato best practice, not translated from a rulebase that does not exist.
+      </p>
+      <p>
+        <strong>What the estate does contribute:</strong> Versa Analytics application reports
+        seed the sanctioned-app conversation — which SaaS the business already lives in — and the
+        URL-filtering worksheet from the SWG domain flags any informal SaaS blocks worth
+        preserving as proper CASB rules.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>In the Versa estate</th><th>Cato construct</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td>Analytics application reports</td><td>App Analytics + Cloud Apps Dashboard</td><td>Continuous shadow-IT discovery with risk scores, not periodic reports from a cluster you host.</td></tr>
+            <tr><td>URL categories doubling as SaaS control</td><td>CASB application rules with granular activity controls</td><td>Allow the app but govern the activity — upload, download, share — instead of a binary domain block.</td></tr>
+            <tr><td>Nothing — no app risk model</td><td>Application catalogue with risk scoring</td><td>Sanctioned / tolerated / unsanctioned decisions made on evidence, per app.</td></tr>
+            <tr><td>Nothing — no tenant awareness</td><td>Tenant restrictions on sanctioned apps</td><td>Corporate tenant allowed, personal instances of the same app controlled.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Build sequence (best practice).</strong> Stage TLS inspection first — CASB
+        activity-level control depends on it. Run shadow-IT discovery over a representative
+        business cycle in App Analytics and the Cloud Apps Dashboard; classify the estate into
+        sanctioned / tolerated / unsanctioned with the risk scores as evidence; write CASB rules
+        in <strong>monitor mode</strong>; review the hits with the business owners; then enforce,
+        strictest-risk apps first.
+      </p>
+      <div class="callout">
+        <div class="co-title">Position it as the upgrade it is</div>
+        <p>&ldquo;Day one on Cato you will see every SaaS app in use, scored for risk — visibility
+        the current estate has never had. We turn that into control at your pace: monitor first,
+        then enforce.&rdquo; That is a selling point, not a migration risk.</p>
+      </div>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy · greenfield</div>
+      <h2>DLP: build from the data, not from a rulebase</h2>
+      <p>
+        <strong>Again, nothing to export.</strong> VOS estates almost never carry data-loss
+        prevention; the nearest construct is file-type handling inside anti-virus profiles, which
+        is malware hygiene, not data protection. Like CASB, this is a greenfield build — and the
+        input is not a config file but a conversation: a short data-protection workshop with the
+        compliance or security owner on what data matters (cardholder data, PII, credentials,
+        source code), where it lives, and who legitimately moves it.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>In the Versa estate</th><th>Cato construct</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td>File-type blocking in AV profiles</td><td>DLP file-type controls inside content-aware rules</td><td>File type becomes one condition among many, not the whole policy.</td></tr>
+            <tr><td>Nothing — no content awareness</td><td>DLP content profiles with predefined data types (PCI, PII, credentials, source code)</td><td>Start from the predefined types — do not hand-build patterns on day one.</td></tr>
+            <tr><td>Nothing — no SaaS-aware data policy</td><td>DLP rules scoped by app, category, user and direction</td><td>&ldquo;Finance may upload PCI to the sanctioned tenant; nobody uploads it anywhere else.&rdquo;</td></tr>
+            <tr><td>Nothing — no evidence trail</td><td>Data Protection Dashboard + DLP events</td><td>Every match attributed to user, app and data type — the audit trail the estate never had.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Build sequence (best practice).</strong> TLS inspection staged first — DLP cannot
+        inspect what it cannot see. Enable the predefined data types that match the workshop
+        outcomes in <strong>monitor mode</strong>; review matches on the Data Protection Dashboard
+        and tune false positives with the data owners; enforce on the highest-confidence rules
+        first (cardholder data before &ldquo;possible PII&rdquo;), and widen coverage iteratively.
+        Day-one blocking is how DLP projects die — monitor-mode evidence is how they succeed.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>The rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Work with the default postures</h4><p>Cato's WAN Firewall is an allowlist (default deny); the Internet Firewall is a blocklist (default allow). Classify every legacy rule by destination first and let each policy's default do the heavy lifting — do not recreate any-any scaffolding.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Stage TLS inspection early</h4><p>TLSi is the fidelity prerequisite for the SWG, CASB and DLP domains alike — URL paths, app activities and content are invisible without it. Phase it by URL category and pilot group (the PS reference is four phases over four weeks) before judging policy parity.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Monitor, then block</h4><p>Every domain deploys watching first: firewall rules tracked, IPS and NGAM in monitor, CASB and DLP in monitor mode. Promotion to block is an evidence decision made from events, never an assumption.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity is a dependency, not a detail</h4><p>Group-scoped rules across all four domains depend on IdP integration and SCIM-provisioned groups. Stand identity up in the foundation phase — before mapping begins — or the mapped policy has nothing to bind to.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>Rationalise the old estate on Versa Analytics hit data; validate the new one on CMA events and rule hits. The same discipline retires dead rules on the way out and proves live rules on the way in.</p></div></div>
+        <div class="benefit"><div class="b-icon">✂️</div><div><h4>Never lift-and-shift</h4><p>Every rule imported unexamined is debt transferred at par. The clean-up stage — dead rules out, duplicates collapsed, any-any debt flagged — is the highest-value hour of the whole policy workstream.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>Four domains, one pipeline</h2>
+      <p>
+        Every domain rides the same pipeline. The two rulebase domains (firewall, SWG) enter with
+        an export; the two greenfield domains (CASB, DLP) enter with discovery inputs — Analytics
+        app data and the data-protection workshop — and skip straight past translation to a
+        best-practice build. Nothing reaches enforcement without surviving the clean-up filter
+        and a monitor-mode soak.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Versa-to-Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four Versa policy-domain boxes — VOS security policy, URL-filter profiles, and greenfield CASB and DLP inputs — feed an export stage, then a clean-up filter where dead rules are discarded at a red X, then mapping to CMA constructs, then deployment in monitor mode (amber) and finally enforcement (green). Both deploy and enforce send telemetry to an events and hit-counts node that provides promotion evidence.</desc>
+
+          <!-- Vendor policy-domain boxes -->
+          <rect class="dg-node" x="28" y="36" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="60" text-anchor="middle">VOS security policy</text>
+          <text class="dg-sub" x="118" y="78" text-anchor="middle">FW rules + UTM profiles</text>
+
+          <rect class="dg-node" x="28" y="108" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="132" text-anchor="middle">URL-filter profiles</text>
+          <text class="dg-sub" x="118" y="150" text-anchor="middle">SWG intent</text>
+
+          <rect class="dg-node" x="28" y="180" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="204" text-anchor="middle">CASB — none today</text>
+          <text class="dg-sub" x="118" y="222" text-anchor="middle">Analytics app data</text>
+
+          <rect class="dg-node" x="28" y="252" width="180" height="56" rx="10"/>
+          <text class="dg-label" x="118" y="276" text-anchor="middle">DLP — none today</text>
+          <text class="dg-sub" x="118" y="294" text-anchor="middle">workshop-led build</text>
+
+          <!-- Convergence into EXPORT -->
+          <path class="lane-static" fill="none" d="M 208 64 C 235 64, 242 150, 258 172"/>
+          <path class="lane-static" fill="none" d="M 208 136 C 230 136, 240 165, 258 180"/>
+          <path class="lane-static" fill="none" d="M 208 208 C 230 208, 240 200, 258 192"/>
+          <path class="lane-static" fill="none" d="M 208 280 C 235 280, 242 215, 258 200"/>
+
+          <!-- EXPORT -->
+          <text class="dg-tiny" x="314" y="148" text-anchor="middle">via provider tickets</text>
+          <rect class="dg-node-dark" x="258" y="160" width="112" height="64" rx="10"/>
+          <text class="dg-label-inv" x="314" y="187" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="314" y="205" text-anchor="middle">Director · CLI</text>
+
+          <path class="lane-static" fill="none" d="M 370 192 L 414 192"/>
+
+          <!-- CLEAN-UP -->
+          <rect class="dg-node" x="414" y="160" width="132" height="64" rx="10"/>
+          <text class="dg-label" x="480" y="187" text-anchor="middle">CLEAN-UP</text>
+          <text class="dg-sub" x="480" y="205" text-anchor="middle">rationalise on hits</text>
+
+          <!-- Discard branch -->
+          <path class="lane lane-block" d="M 480 224 C 480 254, 480 274, 480 296"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 468 296 L 492 320"/><path class="lane-x" d="M 492 296 L 468 320"/>
+          </g>
+          <text class="dg-tiny" x="480" y="346" text-anchor="middle">dead rules discarded</text>
+
+          <path class="lane-static" fill="none" d="M 546 192 L 590 192"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="590" y="160" width="132" height="64" rx="10"/>
+          <text class="dg-label" x="656" y="187" text-anchor="middle">MAP</text>
+          <text class="dg-sub" x="656" y="205" text-anchor="middle">to CMA constructs</text>
+
+          <!-- MAP to DEPLOY (monitor = amber) -->
+          <path class="lane lane-limit" d="M 722 176 C 748 152, 758 122, 772 102"/>
+
+          <!-- DEPLOY -->
+          <rect class="dg-node" x="772" y="64" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="852" y="91" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="852" y="109" text-anchor="middle">watch, don't block</text>
+
+          <!-- DEPLOY to ENFORCE (green) -->
+          <path class="lane lane-allow" d="M 852 128 L 852 220"/>
+
+          <!-- ENFORCE -->
+          <rect class="dg-node-green" x="772" y="220" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="852" y="247" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="852" y="265" text-anchor="middle">block on evidence</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 812 128 C 780 220, 745 292, 712 344"/>
+          <path class="lane-static" fill="none" d="M 832 284 C 802 314, 776 330, 752 346"/>
+          <text class="dg-tiny" x="762" y="318" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry</text>
+
+          <!-- Events node -->
+          <rect class="dg-node-dark" x="600" y="344" width="190" height="60" rx="10"/>
+          <text class="dg-label-inv" x="695" y="370" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="695" y="388" text-anchor="middle">promotion evidence</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy — monitor mode first</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead rules never migrate</span>
+        </div>
+        <div class="diagram-caption">The four policy domains ride one pipeline: export (a provider change ticket in carrier-managed estates), clean-up on hit counts, mapping to CMA constructs, deployment in monitor mode, and promotion to enforcement on event evidence. The greenfield domains carry discovery inputs rather than rulebases — they skip translation, not the monitor-first discipline.</div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their estate</div>
+        <p>Ask what they can export today, who owns Director access (them or the carrier), and
+        which of the four domains they actually run. The CASB/DLP answer is almost always
+        &ldquo;nothing&rdquo; — that sets up the upgrade story before you open the console.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the diagram above: export, clean-up, map, monitor, enforce. Land the two rules
+          that shape everything — never lift-and-shift, and nothing blocks until events prove it.
+          In carrier-managed estates, point at the EXPORT stage and ask who raises that ticket.</p>
+        </li>
+        <li>
+          <h4>WAN Firewall — the allowlist posture</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show the default-deny model and policy sections organising rules the way Versa
+          templates used to scope them — common intent once, site and group exceptions where they
+          genuinely differ.</p>
+        </li>
+        <li>
+          <h4>Internet Firewall — categories replace URL-filter profiles</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show the blocklist posture, category-based rules and a custom category. Point out
+          action versus tracking on a rule — how alert-only Versa categories carry over as allow +
+          track, and how a monitor rule becomes a block rule when the evidence is in.</p>
+        </li>
+        <li>
+          <h4>TLS inspection — the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show staged TLSi rules (by category, then pilot groups) and explain why the SWG,
+          CASB and DLP domains all depend on this being enabled early.</p>
+        </li>
+        <li>
+          <h4>CASB — the greenfield upgrade</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show shadow-IT discovery and app risk scores — visibility the Versa estate never
+          had. Then open <span class="path">Security → CASB</span> and show a monitor-mode rule
+          with activity-level control on a sanctioned app.</p>
+        </li>
+        <li>
+          <h4>DLP — from workshop to policy</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show a content profile built on predefined data types (PCI, PII, source code) and a
+          monitor-mode rule scoped by app and user group. Review matches on
+          <span class="path">Monitor → Data Protection Dashboard</span>.</p>
+        </li>
+        <li>
+          <h4>Close on evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to firewall and DLP events: every allow, block and monitor hit, attributed to
+          user, rule and data type. &ldquo;This is how a monitor rule earns promotion to block —
+          and the audit trail your current estate cannot produce.&rdquo;</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/27286761010205-Using-the-Internet-Firewall-Configuration-Wizard" target="_blank" rel="noopener">Internet Firewall configuration wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/10642755314205-Configuring-the-Socket-LAN-Firewall-Policy" target="_blank" rel="noopener">Configuring the Socket LAN Firewall policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/12545093882909-Understanding-Packet-Flow-with-Cato-SPACE-Architecture" target="_blank" rel="noopener">Packet flow with Cato SPACE (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/20564679978397-What-is-the-Cato-API" target="_blank" rel="noopener">What is the Cato API (KB)</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://support.versa-networks.com/support/solutions/articles/23000027499-export-appliance-configuration" target="_blank" rel="noopener">Versa — export appliance configuration</a></li>
+            <li><a href="https://docs.versa-networks.com/Secure_SD-WAN/01_Configuration_from_Director/SD-WAN_Configuration/Basic_SD-WAN_Configuration/01_Overview_of_Configuration_Templates" target="_blank" rel="noopener">Versa — overview of configuration templates</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-versa.html">Versa Networks (SD-WAN &amp; SASE) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

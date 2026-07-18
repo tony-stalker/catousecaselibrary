@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare (Zero Trust &amp; Magic WAN) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Replace Cloudflare Access, Gateway, WARP and Magic WAN with the converged Cato platform — client swap by cohort, tunnel re-pointing and ZTNA policy mapping without the DIY glue.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cloudflare">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Cloudflare to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cloudflare (Zero Trust &amp; Magic WAN) to Cato</h1>
+    <p class="lede">
+      Cloudflare One estates are rarely designed — they accrete. The CDN lands first; then one team
+      puts a wiki behind Access, another spins up a cloudflared tunnel, DNS filtering switches on for
+      roaming laptops, and one day the customer has an accidental SASE with thin branch networking
+      underneath it. This page maps Access, Gateway, WARP, cloudflared and Magic WAN to their Cato
+      equivalents and walks a five-phase migration — cohort-based client swap, site re-termination
+      onto Sockets, connector retirement app-by-app — while the CDN, WAF, authoritative DNS and
+      Magic Transit stay exactly where they are: on Cloudflare.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Cloudflare</span><span class="tag">WARP</span><span class="tag">Access</span>
+      <span class="tag">Magic WAN</span><span class="tag">ZTNA</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based page — not a delivery-verified runbook</div>
+        <p>This plan is authored from Cloudflare and Cato documentation plus the Cato PS migration
+        methodology — not from a completed, referenceable Cloudflare migration. Review it with Cato
+        Professional Services before using it with a customer, especially the Access policy mapping
+        scope, the service-token inventory and the egress-IP re-keying plan.</p>
+      </div>
+
+      <p>
+        Cloudflare almost always lands in an account through the <strong>CDN / WAF / DNS side</strong> —
+        the website, the API, the DDoS story — and Zero Trust is adopted afterwards, app-by-app. The
+        commercial model encourages exactly this: a genuinely free Zero Trust plan for up to 50 users,
+        then self-serve pay-as-you-go, then a negotiated Enterprise contract. What discovery finds is
+        rarely a designed SASE estate — it is an <strong>accretion of per-feature configuration</strong>
+        across Access, Gateway, Tunnels and Magic WAN, sometimes split across teams and even across
+        Cloudflare accounts.
+      </p>
+      <p>
+        The "free / cheap" perception is set by the entry tiers, but the capabilities an enterprise
+        actually needs sit in add-ons and contracts: <strong>Browser Isolation is a paid add-on</strong>
+        (pay-as-you-go and Enterprise plans); <strong>dedicated egress IPs are an Enterprise
+        add-on</strong>; custom DLP, long log retention and SIEM integrations sit in the Enterprise
+        contract; Magic WAN is a separately purchased network service. Get the customer's real invoice
+        on the table before any price debate.
+      </p>
+      <p>
+        Branch networking is the thin end of the estate. Magic WAN connects sites via anycast GRE or
+        IPsec tunnels from the customer's <em>existing</em> routers and firewalls; Cloudflare does now
+        ship a lightweight box — the Magic WAN Connector, renamed the <strong>Cloudflare One
+        Appliance</strong> — so "no appliance at all" is not a fair line. Be accurate about what its own
+        reference documentation shows instead: <strong>ICMP is routed to the internet and bypasses
+        Gateway inspection</strong>, there is <strong>no fail-open mode</strong>, HA failover can take
+        <strong>up to 30 seconds</strong>, and the reference documents <strong>no QoS or
+        bandwidth-management capability</strong> — priority steering, not shaping. There is no
+        published last-mile management service either; the ISP relationship stays the customer's
+        problem.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">30<span class="unit">s</span></div><div class="stat-label">Documented failover window for the Cloudflare One Appliance — with no fail-open mode</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">0</div><div class="stat-label">QoS / bandwidth-management capability in the Connector reference — steering, not shaping</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2</div><div class="stat-label">Enterprise-relevant capabilities sold as paid add-ons — Browser Isolation and dedicated egress IPs</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Converged Cato dataplane — Socket for sites, Client for users, one policy engine for WAN + internet</div></div>
+      </div>
+
+      <p>
+        On analyst positioning: in the <strong>2025 Gartner Magic Quadrant for SASE Platforms, Cato
+        is a Leader</strong> (repeat placement) and <strong>Cloudflare is a Visionary</strong> — with
+        approximately 400 active enterprise SASE customers per Gartner's estimate (attribute that
+        figure to Gartner; it is not a Cloudflare statement). Honest framing for the room:
+        Cloudflare's network and web-facing ZTNA are genuinely strong. The gap is SASE platform
+        maturity on the WAN/branch side and enterprise operational depth. Sell the platform
+        difference, not FUD about their network.
+      </p>
+
+      <div class="callout">
+        <div class="co-title">Scope: downgrade the tenant — don't close it</div>
+        <p>This migration covers <strong>Zero Trust and WAN only</strong>: Access, Gateway, WARP,
+        cloudflared and Magic WAN. Cato does not replace Cloudflare's CDN, WAF, authoritative DNS,
+        Workers or Magic Transit — and should not try. Write a <strong>stays-on-Cloudflare
+        register</strong> in phase 1 (CDN/WAF zones, DNS, Workers, Magic Transit prefixes, email
+        security) and agree it with the customer: it defuses the "you're asking us to leave
+        Cloudflare" objection early. The end-state is a live Cloudflare tenant serving the web
+        estate with its Zero Trust seats reduced — the subscription is downgraded, never the
+        account deleted.</p>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Could you produce, today, a complete list of your Access applications, service tokens,
+        cloudflared tunnels and dedicated egress IPs — and say which Cloudflare account and plan
+        tier each one lives in?" Fragmented, multi-account Zero Trust estates are the norm, not the
+        exception — and the service tokens and egress-IP allowlists are the items that break
+        silently mid-migration if they are not found here.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Every Zero Trust and WAN function has a Cato home — and two rows deliberately say
+        <strong>"stays on Cloudflare"</strong>. Two mappings change shape rather than name:
+        Access policies become <strong>firewall rules against app segments</strong> (rebuild the
+        intent, don't transliterate rule-for-rule), and cloudflared's per-app daemons are replaced
+        by <strong>site-level connectivity</strong> — one Socket typically replaces several
+        connectors at once.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloudflare component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Access applications + policies (self-hosted, private-network, SaaS; service tokens)</td><td>Cato ZTNA (SDP): WAN / Internet Firewall rules per user/group against app segments, + Client Connectivity Policy and device posture</td><td>Network-integrated ZTNA — app entitlements are firewall rules against application/segment objects. <strong>Service tokens have no like-for-like equivalent</strong>: map machine-to-machine flows to site-to-site paths or IP-scoped rules and validate each one</td></tr>
+            <tr><td>Access App Launcher / clientless web access</td><td>Cato Browser Access (Application Portal)</td><td>SSO-authenticated clientless HTTP/S publishing, per-app, with no direct user-to-network connectivity</td></tr>
+            <tr><td>Gateway DNS policies + DNS locations</td><td>Cato DNS Security + Internet Firewall categories</td><td>DNS inspected in-line at the PoP for traffic already on Cato — no separate "DNS location" construct to maintain. Re-point office DNS <em>last</em>, after the site's traffic has moved</td></tr>
+            <tr><td>Gateway HTTP + network policies, TLS inspection</td><td>Internet Firewall / SWG + TLS Inspection</td><td>Same category/app/action model (Allow / Block / Prompt); Cato adds RBI "Isolate" as a policy action. Rebuild Do-Not-Inspect lists as TLS-inspection exceptions</td></tr>
+            <tr><td>WARP / Cloudflare One Client + device posture</td><td>Cato Client + Device Posture profiles</td><td>Like-for-like swap per cohort — one agent for ZTNA, SWG and DEM on Cato too. Never run both agents on one device (see co-existence)</td></tr>
+            <tr><td>Cloudflare Tunnel (cloudflared) connectors</td><td>Socket / vSocket (AWS, Azure) / IPsec site + ZTNA or Browser Access publication</td><td>Cato connects <strong>networks, not per-app daemons</strong> — each connector's target network needs a Cato path before that connector retires</td></tr>
+            <tr><td>Magic WAN (anycast GRE/IPsec) + Magic WAN Connector / Cloudflare One Appliance</td><td>Cato Socket (or IPsec IKEv2 site) onto the Global Private Backbone</td><td>What Cato adds: a managed SD-WAN appliance with HA and link steering, QoS / bandwidth-management profiles, ILMM (NOC-monitored last mile with proactive ISP ticketing) and an SLA-backed backbone</td></tr>
+            <tr><td>Browser Isolation (paid add-on)</td><td>Cato RBI — "Isolate" policy action</td><td>Isolation is a policy action alongside Block/Prompt (Authentic8-powered), not a per-user add-on SKU decision</td></tr>
+            <tr><td>DEX (Digital Experience Monitoring)</td><td>Cato Digital Experience Monitoring</td><td>Draws on existing sensors — Client, Socket, PoPs, backbone — no extra agents; hop-by-hop Wi-Fi → edge → WAN visibility</td></tr>
+            <tr><td>CASB / DLP (tier-dependent)</td><td>Cato CASB + DLP (Data Control policy)</td><td>Inline + API CASB with App Catalog risk scores; map sanctioned-app and DLP profiles during the phase-3 rollout</td></tr>
+            <tr><td>Magic Transit</td><td><strong>No Cato equivalent — retain on Cloudflare</strong></td><td>Network-layer DDoS scrubbing for BGP-advertised public prefixes is out of SASE scope. Say so explicitly — it builds credibility</td></tr>
+            <tr><td>CDN / WAF / authoritative DNS / Workers</td><td><strong>Stays on Cloudflare</strong></td><td>Not a SASE workload. The tenant stays live for the web estate; only the Zero Trust subscription winds down</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">Recommended migration path</div>
+      <h2>Five phases, cohort by cohort</h2>
+      <p>
+        Anchored to the Cato PS methodology — Discover &amp; Design → Pilot, Build &amp; Initial
+        Rollout → Advanced Security &amp; Broader Rollout → Tune &amp; Optimise — with waved,
+        business-unit-based SDP migration groups and phased TLS inspection. The unit of migration
+        is the cohort: a user wave, a site, or an application, each with its own rollback lever.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Discover &amp; design — export the estate, write the stays-on-Cloudflare register</h4>
+          <p>Inventory precisely; the estate is usually more fragmented than the customer believes.
+          <strong>Access:</strong> every application and its include/require/exclude policies, IdP
+          integrations (often several), service tokens (find the machine consumers — they break
+          silently), posture rules tied to WARP. <strong>Gateway:</strong> DNS policies and DNS
+          locations, HTTP/network policies, TLS-inspection state and the root-certificate deployment
+          mechanism, Do-Not-Inspect lists. <strong>Connectivity:</strong> every cloudflared connector
+          (host, replicas, which apps/networks ride it), every Magic WAN tunnel and any Cloudflare
+          One Appliance, the WARP split-tunnel configuration. <strong>Egress:</strong> third-party
+          SaaS allowlists keyed to dedicated egress IPs.</p>
+          <p>If the customer manages Cloudflare as code, the Terraform repo <em>is</em> the
+          inventory; if not, use Cloudflare's <a href="https://github.com/cloudflare/cf-terraforming"
+          target="_blank" rel="noopener">cf-terraforming</a> tool to export existing resources to HCL
+          — it doubles as a point-in-time configuration snapshot for the runbook. Write and agree
+          the <strong>stays-on-Cloudflare register</strong> (CDN/WAF, authoritative DNS, Workers,
+          Magic Transit, email security). Stand up the Cato foundation in parallel: IdP/SSO + SCIM,
+          PoP/region plan, Socket logistics, TLS-inspection certificate readiness. Design decisions:
+          Socket vs IPsec per site; Client-based ZTNA vs Browser Access per app; TLS-inspection wave
+          plan by category; Cato allocated egress IPs per region.</p>
+        </li>
+        <li>
+          <h4>Pilot — parallel Socket site, then the WARP → Cato Client cohort swap</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Deploy a Socket at one representative branch (or IPsec from the existing router if
+          hardware hasn't shipped) and validate internet and WAN paths <strong>in parallel with
+          Magic WAN, which stays up untouched</strong>. Convert the SWG baseline from Cato's
+          recommended policies, then the customer's Gateway intent; convert Access apps to ZTNA
+          rules for the pilot's applications.</p>
+          <p>For pilot users, treat WARP and the Cato Client as mutually exclusive on a device —
+          <strong>never dual-agent</strong>. Cloudflare's own guidance describes its client and any
+          other VPN agent as competing for routing, DNS and firewall control; Cato documents client
+          coexistence limits too. The clean pattern: per cohort, <strong>disable/remove the WARP
+          profile via MDM, then deploy the Cato Client</strong> — same maintenance window,
+          per-device, reversible. Use pilot user groups in the Client Upgrade Policy to control
+          version rollout, and capture a DEM baseline plus per-app access parity before widening.</p>
+        </li>
+        <li>
+          <h4>Roll out — BU waves, Magic WAN re-termination, connector retirement, DNS last</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → TLS Inspection</span></p>
+          <p><strong>Users:</strong> waved, business-unit-based SDP migration groups with posture
+          analysis and Client Connectivity Policy tuning per wave. <strong>Sites:</strong>
+          re-terminate Magic WAN sites one at a time — a Socket per site as the end-state, or an
+          interim IPsec IKEv2 tunnel from the existing edge (primary + secondary tunnels to
+          different Cato PoP IPs, per Cato's HA best practice). <strong>Private apps:</strong> as
+          each app's ZTNA rules or Browser Access publication is validated, retire its cloudflared
+          connector — one Socket typically covers several connectors, but sequence retirement
+          app-by-app so rollback stays granular. <strong>DNS:</strong> roaming users move
+          automatically with the client swap; re-point office DNS locations only after the site's
+          traffic is on Cato — never leave a site's DNS on Cloudflare once its traffic path has
+          moved, or policy and logging split across two vendors. Phase TLS inspection by URL
+          category; run CASB and DLP in monitor mode before enforcing; replicate Browser Isolation
+          intent as RBI "Isolate" actions on risky/uncategorised categories.</p>
+        </li>
+        <li>
+          <h4>Co-exist deliberately — per-app parallel ZTNA, per-layer rollback</h4>
+          <p>An Access application and its Cato ZTNA rules can be live simultaneously — pilot users
+          reach the app via Cato while everyone else still comes through Access, and the cloudflared
+          connector keeps serving Access until the last cohort moves. Cutover is per-app and
+          per-cohort, never big-bang. Keep the WARP MDM profile and Zero Trust enrolment intact
+          (not deleted), Magic WAN tunnel configurations idle but in place, and old egress IPs
+          allowed in third-party SaaS allowlists until each wave completes. Details and levers in
+          the next section.</p>
+        </li>
+        <li>
+          <h4>Optimise, then retire in order — and downgrade the tenant</h4>
+          <p><span class="path">Network → Bandwidth Management</span> <span class="path">Monitor → Events</span></p>
+          <p>QoS and bandwidth-management profiles per site, policy fine-tuning from analytics,
+          documentation, admin training, operational handover. Then decommission in dependency
+          order: <strong>cloudflared connectors → Magic WAN tunnels/appliances → Gateway policies
+          and DNS locations → Access applications → WARP/MDM artefacts → reduce Zero Trust
+          seats</strong>. Do not delete the Cloudflare account: CDN, WAF, authoritative DNS — and
+          Magic Transit, if present — remain live. The Zero Trust subscription is downgraded, not
+          the tenant closed.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>One of the safer co-existence stories</h2>
+      <p>
+        Cloudflare-to-Cato co-existence is comparatively low-drama because the two control planes
+        barely touch: the retained Cloudflare services (CDN, WAF, DNS, Magic Transit) sit in front
+        of <em>public</em> traffic, while Cato takes over the users and sites <em>behind</em> them.
+        The one hard rule is the endpoint: <strong>swap the agent, never overlap it</strong> — both
+        vendors document the routing/DNS/firewall contention when two full-tunnel clients share a
+        device.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 532" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane</title>
+          <desc id="dg1-desc">Top lane, retained: public website traffic continues to the Cloudflare CDN and WAF, which stay on Cloudflare. Below, the migration scope: a wave 2 user cohort on WARP and the Reading Office's interim Magic WAN IPsec tunnel steer to the Cloudflare Zero Trust edge, which reaches private applications through a retiring cloudflared connector — all interim amber paths. A migrated wave 1 cohort on the Cato Client and the Reading Office Socket steer green paths to a Cato PoP on the Global Private Backbone, reaching the London DC applications behind a Socket X1700 via SDP rules.</desc>
+
+          <!-- Retained lane (top) -->
+          <text class="dg-tiny" x="36" y="20" text-anchor="start">Retained — not part of this migration</text>
+          <rect class="dg-node" x="36" y="30" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="126" y="54" text-anchor="middle">Public website</text>
+          <text class="dg-sub" x="126" y="72" text-anchor="middle">customer web traffic</text>
+
+          <path class="lane-static" d="M 216 60 L 396 60"/>
+          <text class="dg-tiny" x="306" y="50" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">stays on Cloudflare</text>
+
+          <rect class="dg-node-dark" x="400" y="28" width="200" height="64" rx="10"/>
+          <text class="dg-label-inv" x="500" y="54" text-anchor="middle">Cloudflare CDN / WAF</text>
+          <text class="dg-sub-inv" x="500" y="74" text-anchor="middle">auth. DNS · Magic Transit</text>
+
+          <line x1="36" y1="116" x2="924" y2="116" stroke="var(--hairline)" stroke-dasharray="4 6"/>
+          <text class="dg-tiny" x="36" y="138" text-anchor="start">Migration scope — Zero Trust + WAN</text>
+
+          <!-- Interim lanes (amber) -->
+          <path class="lane lane-limit" d="M 216 178 C 280 176, 330 178, 396 180"/>
+          <path class="lane lane-limit" d="M 216 308 C 300 288, 360 250, 424 218"/>
+          <path class="lane lane-limit" d="M 600 178 C 660 174, 700 176, 756 180"/>
+          <path class="lane lane-limit" d="M 850 212 C 856 270, 856 340, 850 402"/>
+
+          <!-- Target lanes (green) -->
+          <path class="lane lane-allow" d="M 216 468 C 300 466, 380 460, 462 452"/>
+          <path class="lane lane-allow" d="M 216 344 C 310 374, 390 406, 464 428"/>
+          <path class="lane lane-allow" d="M 536 436 C 620 424, 680 428, 756 436"/>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="500" cy="448" rx="150" ry="46"/>
+          <circle cx="362" cy="466" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="638" cy="430" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="500" y="514" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+          <circle class="pulse-ring" cx="500" cy="444" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="500" cy="444" r="30"/>
+          <text class="dg-label" x="500" y="390" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="500" y="406" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SWG · DNS · ZTNA · FWaaS</text>
+
+          <!-- Left: cohorts and site -->
+          <rect class="dg-node" x="36" y="150" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="126" y="174" text-anchor="middle">Wave 2 user cohort</text>
+          <text class="dg-sub" x="126" y="192" text-anchor="middle">WARP (Cloudflare One)</text>
+
+          <rect class="dg-node" x="36" y="296" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="126" y="320" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="126" y="338" text-anchor="middle">Magic WAN IPsec — interim</text>
+          <text class="dg-tiny" x="126" y="356" text-anchor="middle">Socket X1500 — target</text>
+
+          <rect class="dg-node-green" x="36" y="440" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="126" y="464" text-anchor="middle">Wave 1 user cohort</text>
+          <text class="dg-sub" x="126" y="482" text-anchor="middle">Cato Client</text>
+
+          <!-- Centre: Cloudflare Zero Trust edge -->
+          <rect class="dg-node-dark" x="400" y="150" width="200" height="64" rx="10"/>
+          <text class="dg-label-inv" x="500" y="176" text-anchor="middle">Cloudflare Zero Trust</text>
+          <text class="dg-sub-inv" x="500" y="196" text-anchor="middle">Access · Gateway · Magic WAN</text>
+
+          <!-- Right: cloudflared + DC apps -->
+          <rect class="dg-node" x="760" y="150" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="850" y="174" text-anchor="middle">cloudflared connector</text>
+          <text class="dg-sub" x="850" y="192" text-anchor="middle">retires app-by-app</text>
+
+          <rect class="dg-node-green" x="760" y="406" width="180" height="74" rx="10"/>
+          <text class="dg-label" x="850" y="430" text-anchor="middle">London DC apps</text>
+          <text class="dg-sub" x="850" y="448" text-anchor="middle">Socket X1700</text>
+          <text class="dg-tiny" x="850" y="466" text-anchor="middle">SDP app segments</text>
+
+          <!-- Lane annotations -->
+          <text class="dg-tiny" x="838" y="300" text-anchor="end" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">private access — retiring</text>
+          <text class="dg-tiny" x="650" y="416" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">WAN FW · SDP rules</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Interim — via Cloudflare Zero Trust (retiring)</span>
+          <span class="key"><span class="swatch allow"></span> Target — via Cato PoP and backbone</span>
+          <span class="key"><span class="swatch" style="border-color: var(--ink-3); border-top-style: solid"></span> Retained — CDN / WAF / DNS / Magic Transit stay</span>
+        </div>
+        <div class="diagram-caption">
+          Scoped migration: user cohorts swap agents one wave at a time, the site runs Magic WAN and
+          Socket paths in parallel, and private apps move from cloudflared to SDP app-by-app — while
+          the public web estate never leaves Cloudflare.
+        </div>
+      </div>
+
+      <h3>Rollback levers, per layer</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>Users — one device operation</h4><p>Re-enable the WARP (Cloudflare One Client) profile via MDM and remove the Cato Client; the user is back on Cloudflare in one push. Keep the WARP MDM profile and Zero Trust enrolment intact for the whole migration window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>Sites — re-point the routing</h4><p>Magic WAN tunnel configurations (and any Cloudflare One Appliance) stay in place but idle until phase 5; re-pointing routing back to the existing GRE/IPsec tunnels restores the old path without re-provisioning.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Private apps — parallel ZTNA</h4><p>The Access app and its cloudflared connector keep serving non-migrated cohorts while Cato serves the pilot. Retiring connectors app-by-app keeps the rollback unit small even when one Socket replaced several.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>DNS — re-point per site</h4><p>Office DNS rolls back by re-pointing to Cloudflare resolver/DoH endpoints; roaming users roll back automatically with the agent swap, which carries DNS protection with it in both directions.</p></div></div>
+      </div>
+
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">What never moves</div>
+        <p>The Cloudflare tenant stays for CDN, WAF, authoritative DNS, Workers and Magic Transit.
+        Public-facing services keep their Cloudflare proxy and WAF in front; Cato secures the users
+        and sites <em>behind</em> them. Position this as an architectural division of labour — not a
+        partial failure of the migration.</p>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objection handling</div>
+      <h2>Where to be careful — and honest</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">"Cloudflare is basically free"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True at the entry tiers (free ≤50 users, self-serve pay-as-you-go) — and that anchor must be defused. The enterprise comparison includes the add-ons (Browser Isolation, dedicated egress IPs), Enterprise contract features (custom DLP, retention, SIEM), Magic WAN, the appliance hardware and the operational cost of the DIY glue at branches. Compare invoices and run the TCO on the converged estate, never on list per-seat price.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Dual agents — never "test alongside"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Do not let anyone trial Cato beside WARP on the same laptop. Cloudflare's own docs describe its client and any other VPN agent as competing for routing, DNS and firewall control with responsibilities split per product; Cato documents client coexistence limits in "Preparing to Install the Cato Client". Cohort swap via MDM, one agent at a time — same window, reversible.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Config-as-code parity</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cloudflare's developer-first customers often manage everything in Terraform and will ask if they lose that. They don't: Cato has a public Terraform provider (<code>catonetworks/cato</code> — Socket sites, IPsec sites, WAN firewall rules, routing, identity) plus a GraphQL API and certified modules for bulk sites and vSockets. Be honest about the caveat: the API executes sequentially, so Cato recommends running Terraform with <code>parallelism=1</code>. Use cf-terraforming on the Cloudflare side as the export.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Egress-IP allowlists</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Enterprise customers on dedicated egress IPs (including BYOIP egress) typically have third-party SaaS allowlists keyed to those IPs. Every one must be re-keyed to the customer's Cato allocated IPs — per app, during that app's cutover window, with the old Cloudflare IPs left allowed until the wave completes. Find them in phase 1; they are the most common cause of "it worked yesterday" tickets.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">No appliance to swap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Many Cloudflare Zero Trust sites never had an edge device — a cloudflared daemon on a VM and WARP on laptops was the whole footprint. A Socket is therefore an <em>addition</em> to the site, not a swap. Where no hardware is wanted, use a vSocket (cloud) or IPsec from existing kit, or serve small sites Client-only. Frame the Socket as what makes the site a first-class WAN citizen — QoS, HA, last-mile visibility, ILMM eligibility — not an imposed box.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">"Cloudflare has the bigger network"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Concede PoP count gracefully — Gartner's 2025 MQ summaries credit Cloudflare's network coverage and innovation. Pivot to what the SASE decision turns on: a Leader-placed platform, an SD-WAN edge with QoS and a managed last mile, and one policy engine for WAN + security — the areas where the same report places Cloudflare as a Visionary with a much smaller SASE base (per Gartner's ~400-customer estimate, attributed).</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Naming churn in discovery</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cloudflare renamed components across 2024–2026 and customers mix the names freely: WARP is the "Cloudflare One Client", Magic WAN docs sit under "Cloudflare WAN", the Magic WAN Connector became the "Cloudflare One Appliance", and the suite has been Teams → Zero Trust → Cloudflare One. Inventory by capability, not by the brand name the customer remembers.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Access service tokens</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Machine-to-machine flows authenticated by Access service tokens do not map one-to-one onto user-centric ZTNA. Identify every consumer in phase 1 and design each flow explicitly — a site-to-site path or an IP-scoped firewall rule — before its Access application is retired. These are the flows that break silently.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">Positioning discipline</div>
+        <p>Use the documented gaps accurately and stop there: ICMP bypassing Gateway from the
+        Cloudflare One Appliance, no fail-open, up-to-30-second failover, no QoS in the Connector
+        reference, and the add-on SKUs — all sourced from Cloudflare's own docs. Do not extrapolate
+        beyond them, and do not attack the Cloudflare network itself: their global edge and
+        web-facing ZTNA are genuinely strong. The differential is platform convergence, the SD-WAN
+        edge and enterprise operational depth.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/6266293423773-What-is-Cato-s-ZTNA-Solution" target="_blank" rel="noopener">What is Cato's ZTNA Solution (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4411554844817-Preparing-to-Install-the-Cato-Client" target="_blank" rel="noopener">Preparing to Install the Cato Client — co-existence limits (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360000489917-Cato-Socket-vs-IPsec-Sites-and-Tunnels" target="_blank" rel="noopener">Cato Socket vs IPsec Sites and Tunnels (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/11570704126237-Managing-the-Rollout-of-Client-Versions-Client-Upgrade-Policy" target="_blank" rel="noopener">Client Upgrade Policy — pilot user rollout (KB)</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider (registry)</a></li>
+            <li><a href="https://github.com/cloudflare/cf-terraforming" target="_blank" rel="noopener">cf-terraforming — Cloudflare config export (vendor tool)</a></li>
+            <li><a href="https://developers.cloudflare.com/magic-wan/configuration/connector/reference/" target="_blank" rel="noopener">Cloudflare One Appliance / Connector reference (vendor docs)</a></li>
+            <li><a href="https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/deployment/vpn/" target="_blank" rel="noopener">Cloudflare One Client with legacy VPNs (vendor docs)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-cloudflare-policy.html">Cloudflare Policy Migration</a></li>
+            <li><a href="migration-zscaler.html">Zscaler (ZIA / ZPA) to Cato</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

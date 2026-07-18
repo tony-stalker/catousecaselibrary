@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import pptx; print\\('python-pptx OK', pptx.__version__\\)\")",
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL OK'\\)\")",
+      "Bash(python3 extract_pptx.py)",
+      "Bash(python3 *)",
+      "mcp__cato__sites_by_location",
+      "Skill(dataviz)",
+      "Bash(node scripts/validate_palette.js \"#0e8a6d,#2a78d6,#eda100,#4a3aa7,#e34948,#e87ba4,#eb6834,#008300\" --mode light --surface \"#fbfdfc\")",
+      "mcp__cato__site_types",
+      "Bash(npm ls *)",
+      "Bash(pip3 install *)"
+    ]
+  }
+}

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPLS to SASE Migration &amp; Co-existence — Cato Use Case Library</title>
+<meta name="description" content="Migrate site-by-site from MPLS with full co-existence — new and legacy sites keep talking throughout, with no big-bang cutover.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-mpls-migration">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / MPLS Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>MPLS to SASE Migration &amp; Co-existence</h1>
+    <p class="lede">
+      Nobody migrates a WAN in one weekend. This use case shows how Cato lets migrated and
+      not-yet-migrated sites keep talking to each other throughout a site-by-site MPLS exit —
+      the Cato cloud and the legacy MPLS network co-exist behind a datacentre socket until the
+      last circuit is switched off. No big-bang cutover, no service disruption, and every
+      migrated site lands on the network design you actually want.
+    </p>
+    <div class="meta-row">
+      <span class="tag">MPLS</span><span class="tag">Migration</span>
+      <span class="tag">Co-existence</span><span class="tag">Routing</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../3%20-%20Network%20use%20cases/Migration%20use%20case%20overiview.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Most organisations that buy Cato are not building a WAN from scratch — they are leaving one.
+        MPLS contracts stagger across regions, some sites have circuits with years left to run, and
+        the applications in the datacentre must stay reachable from every site on every day of the
+        migration. The deck behind this page states the objectives plainly:
+      </p>
+      <ul>
+        <li><strong>Co-existence during migration</strong> — Cato and MPLS run side by side, for as long as needed.</li>
+        <li><strong>From MPLS to an elegant future network design</strong> — migrate to the target architecture, not a copy of the old one.</li>
+        <li><strong>Seamless integration</strong> — the datacentre bridges both worlds with no application changes.</li>
+        <li><strong>Minimise service disruption</strong> — each site cuts over on its own schedule, with dual last miles from day one.</li>
+        <li><strong>New sites talk to current sites</strong> — full any-to-any reachability between migrated and legacy sites, throughout.</li>
+      </ul>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Why WAN migrations stall</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">The big-bang trap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Flag-day cutovers concentrate all the risk in one change window. One misrouted prefix and every site loses the datacentre — so the migration gets postponed, again.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Contract overlap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">MPLS terms rarely end on the same date. Sites need to leave as their circuits expire — which means the interim network must work for months, not days.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The in-between network</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The hard part isn't either end state — it's the middle: who routes between the new WAN and the old one, and who can prove it's working at any point in time?</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When your MPLS renewal lands, which sites could you move tomorrow — and which are stuck
+        because other sites still need to reach them? Who owns the routing design for the in-between
+        state, and how long do you have to run it?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Co-existence by design</h2>
+      <p>
+        The pattern is simple and repeatable. The datacentre gets a socket first — it becomes the
+        bridge between both networks. Its socket advertises not only the local DC prefix but also the
+        prefixes of every site still on MPLS, reached via the DC LAN and the existing MPLS CE router.
+        Each branch then migrates on its own schedule: drop in a socket with broadband and 4G last
+        miles, and it is instantly on-net to the DC <em>and</em> — transiting the DC — to every site
+        still on MPLS. Nothing about the legacy network changes until its circuit is switched off.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">MPLS co-existence during migration: Bristol on Cato, Leeds on MPLS, London DC bridging both</title>
+          <desc id="dg1-desc">Bristol, already migrated to a Cato Socket X1500 with broadband and 4G uplinks, connects through the Cato cloud to the London DC's Socket X1500. London DC also hosts a local firewall and an MPLS CE router. Leeds is still on MPLS and connects to London over the legacy MPLS cloud. Bristol reaches Leeds by transiting the London DC: Cato cloud to the DC socket, down through the local firewall to the MPLS CE router, across the MPLS cloud, and up to Leeds.</desc>
+
+          <!-- Bristol (migrated) -->
+          <rect class="dg-node-green" x="24" y="182" width="175" height="84" rx="10"/>
+          <text class="dg-label" x="111" y="210" text-anchor="middle">Bristol — migrated</text>
+          <text class="dg-sub" x="111" y="228" text-anchor="middle">Socket X1500 · 192.168.1.0/24</text>
+          <text class="dg-tiny" x="111" y="246" text-anchor="middle">Broadband + 4G last miles</text>
+          <text class="dg-tiny" x="111" y="284" text-anchor="middle">Internet egress: via Cato PoP</text>
+
+          <!-- Cato cloud -->
+          <ellipse class="dg-backbone" cx="330" cy="224" rx="100" ry="46"/>
+          <circle cx="248" cy="248" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="414" cy="200" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle class="pulse-ring" cx="330" cy="224" r="32" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="330" cy="224" r="28"/>
+          <text class="dg-label" x="330" y="150" text-anchor="middle">Cato Cloud</text>
+          <text class="dg-tiny" x="330" y="165" text-anchor="middle">Global private backbone · nearest PoP</text>
+          <text class="dg-tiny" x="330" y="292" text-anchor="middle">One routing table for all sites</text>
+
+          <!-- London DC container -->
+          <rect x="505" y="64" width="225" height="310" rx="14" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <text class="dg-label" x="617" y="90" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="617" y="106" text-anchor="middle">192.168.2.0/24</text>
+
+          <rect class="dg-node-green" x="525" y="118" width="185" height="52" rx="10"/>
+          <text class="dg-label" x="617" y="140" text-anchor="middle">Socket X1500</text>
+          <text class="dg-sub" x="617" y="157" text-anchor="middle">advertises Leeds' prefix too</text>
+
+          <rect class="dg-node" x="525" y="196" width="185" height="52" rx="10"/>
+          <text class="dg-label" x="617" y="218" text-anchor="middle">Local firewall</text>
+          <text class="dg-sub" x="617" y="235" text-anchor="middle">internet egress (today)</text>
+
+          <rect class="dg-node" x="525" y="274" width="185" height="52" rx="10"/>
+          <text class="dg-label" x="617" y="296" text-anchor="middle">MPLS CE router</text>
+          <text class="dg-sub" x="617" y="313" text-anchor="middle">routes 192.168.3.0/24</text>
+
+          <!-- DC LAN links -->
+          <path class="lane-static" d="M 617 170 L 617 196"/>
+          <path class="lane-static" d="M 617 248 L 617 274"/>
+
+          <!-- MPLS cloud + Leeds (not yet migrated) -->
+          <ellipse cx="802" cy="300" rx="48" ry="28" fill="var(--navy-800)"/>
+          <text class="dg-label-inv" x="802" y="305" text-anchor="middle">MPLS</text>
+
+          <rect class="dg-node" x="772" y="128" width="168" height="84" rx="10"/>
+          <text class="dg-label" x="856" y="156" text-anchor="middle">Leeds — on MPLS</text>
+          <text class="dg-sub" x="856" y="174" text-anchor="middle">192.168.3.0/24 · CE router</text>
+          <text class="dg-tiny" x="856" y="192" text-anchor="middle">migrates at contract end</text>
+
+          <!-- Legacy MPLS path (static) -->
+          <path class="lane-static" d="M 710 300 L 754 300"/>
+          <path class="lane-static" d="M 814 273 C 828 252, 840 232, 850 212"/>
+
+          <!-- Bristol ↔ London via Cato (allow) -->
+          <path class="lane lane-allow" d="M 199 214 C 235 210, 265 214, 300 220"/>
+          <path class="lane lane-allow" d="M 356 214 C 410 190, 460 162, 522 146"/>
+
+          <!-- Bristol ↔ Leeds transiting London DC (limit):
+               follows the Cato path to the DC socket, then firewall → MPLS CE → MPLS cloud → Leeds -->
+          <path class="lane lane-limit" d="M 199 238 C 240 246, 268 244, 301 236"/>
+          <path class="lane lane-limit" d="M 356 224 C 410 202, 460 174, 522 158"/>
+          <path class="lane lane-limit" d="M 600 170 L 600 196"/>
+          <path class="lane lane-limit" d="M 600 248 L 600 274"/>
+          <path class="lane lane-limit" d="M 710 292 L 754 292"/>
+          <path class="lane lane-limit" d="M 806 272 C 818 250, 828 232, 838 212"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Bristol ↔ London DC — on-net via Cato</span>
+          <span class="key"><span class="swatch limit"></span> Bristol ↔ Leeds — transits London DC during co-existence</span>
+          <span class="key"><span class="swatch" style="border-top-style:solid;border-color:var(--ink-3)"></span> Legacy MPLS — unchanged until Leeds migrates</span>
+        </div>
+        <div class="diagram-caption">The London DC socket advertises Leeds' prefix into the Cato cloud, so migrated sites reach un-migrated sites via the DC LAN and the existing MPLS router — no changes to the legacy network, no big-bang.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Co-existence by design</h4><p>Any prefix behind any socket is routable — including MPLS-site prefixes reached via a static route at the DC socket. New and current sites talk throughout.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Site-by-site cutover</h4><p>Sockets are zero-touch: ship, plug in broadband and 4G, and the site is on-net. Each site moves as its MPLS term expires — no synchronised change windows.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>An elegant end state</h4><p>You migrate to the target design — full-mesh any-to-any over the global backbone with optimisation built in — not a re-implementation of hub-and-spoke MPLS.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Minimal disruption</h4><p>Dual last miles from day one, and internet egress can stay on the DC firewall until you're ready to move it — users notice nothing during the transition.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">The topology in detail</div>
+      <h2>Who routes what during the transition</h2>
+      <p>
+        The original deck diagram below shows the full picture: Bristol already migrated (X1500,
+        broadband + 4G, internet breakout at the Cato PoP), London DC bridging both networks
+        (a socket — or IPsec from Cato to the local firewall — plus the firewall and MPLS
+        router), and Leeds still on MPLS. The deck illustrates the DC socket as an X1700; in
+        the demo tenant, London DC runs an X1500.
+      </p>
+
+      <figure class="shot">
+        <img src="../assets/img/mpls-migration-coexistence.png" alt="MPLS-to-Cato co-existence topology: Bristol (192.168.1.0/24) with an X1500 socket and broadband plus 4G uplinks into the Cato Global WAN; London DC (192.168.2.0/24) with an X1700 socket, local firewall and MPLS router; Leeds (192.168.3.0/24) reached over the MPLS cloud. Routing tables show the Cato cloud sending Leeds' prefix to the London socket, and London sending internet to the local firewall.">
+        <figcaption>Deck original: co-existence during migration — Bristol on Cato, Leeds on MPLS, London DC bridging both, with the routing tables that make it work.</figcaption>
+      </figure>
+
+      <p>The two routing tables in that diagram are the whole trick — worth walking line by line in the room:</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Destination</th><th>Site</th><th>Cato routing table</th><th>London DC local routing</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>192.168.1.0/24</td><td>Bristol (migrated)</td><td>→ Bristol socket</td><td>→ Cato socket</td></tr>
+            <tr><td>192.168.2.0/24</td><td>London DC</td><td>→ London socket</td><td>local LAN</td></tr>
+            <tr><td>192.168.3.0/24</td><td>Leeds (still on MPLS)</td><td>→ London socket</td><td>→ MPLS CE router</td></tr>
+            <tr><td>Internet</td><td>—</td><td>Bristol: breakout at Cato PoP</td><td>→ local firewall</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        As each MPLS site migrates, its prefix simply moves from “→ London socket” to its own socket
+        in the Cato routing table, and the corresponding static route is deleted at the DC. When the
+        last site moves, the MPLS router and the contract behind it are decommissioned.
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout warn">
+        <div class="co-title">Note — authored runbook</div>
+        <p>The “How to” slide in the original deck was blank, so this runbook was authored for the
+        library from the co-existence topology above and the standard demo tenant. Review it against
+        your tenant before first customer use.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Walk the co-existence topology</h4>
+          <p>Open on the diagram above. Three sites, three states: Bristol already migrated, Leeds
+          untouched on MPLS, London DC bridging both. Ask which of their sites map to each role —
+          most prospects can name their “London DC” immediately.</p>
+        </li>
+        <li>
+          <h4>Show how the DC socket advertises MPLS-site routes</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Open London DC and show its networks and static routes: the local DC range, plus the
+          Leeds prefix (192.168.3.0/24) with a next hop of the MPLS CE router on the DC LAN. This is
+          the entire integration — no BGP redesign, no changes on the MPLS side.</p>
+        </li>
+        <li>
+          <h4>Show the routing table both networks share</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Show every site, its tunnels and its ranges in one view — migrated prefixes behind their
+          own sockets, the Leeds prefix behind London DC. If you have Socket WebUI access, the
+          socket's routing table tells the same story from the site's point of view.</p>
+        </li>
+        <li>
+          <h4>Simulate the cutover of one site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create a new socket site to play the part of Leeds on cutover day (use a spare lab
+          socket, e.g. the Bracknell Lab X1500, or just walk the site-creation flow): assign the
+          192.168.3.0/24 range to the new site, delete the static route at London DC, and the Cato
+          routing table updates. That is the whole change window.</p>
+        </li>
+        <li>
+          <h4>Prove new and current sites keep talking</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Generate traffic between a migrated site and the DC (file share, RDP, ping) and show the
+          live tunnels and throughput. Then <span class="path">Monitor → App Analytics</span> for the
+          same flows attributed to sites and applications — the visibility they never had on MPLS.</p>
+        </li>
+        <li>
+          <h4>Discuss internet egress during the transition</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Two valid interim patterns, per site: keep breaking out via the DC firewall (nothing
+          changes for compliance or SIEM feeds), or break out directly at the Cato PoP with the full
+          security stack — as Bristol does in the diagram. Show that this is a per-site policy choice,
+          not an architectural fork.</p>
+        </li>
+        <li>
+          <h4>Close on the end state</h4>
+          <p>When the last site migrates: delete the static route, decommission the MPLS router,
+          terminate the contract. What remains is the elegant target design — every site any-to-any
+          on the global backbone, one policy, one console.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE Cloud architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application (CMA)</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base — sockets, sites &amp; routing</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

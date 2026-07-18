@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Interconnect: Dedicated Circuits to Cloud &amp; DC — Cato Use Case Library</title>
+<meta name="description" content="Bring public cloud and private datacentres onto the WAN over dedicated layer-2 circuits into the Cato PoP — exchange-fabric or physical cross-connect for deterministic latency and high throughput, no tunnels required.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-cloud-interconnect">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / Cloud Interconnect</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cloud Interconnect: Dedicated Circuits to Cloud &amp; DC</h1>
+    <p class="lede">
+      vSockets and IPsec tunnels bring most clouds onto the WAN in minutes — but some flows deserve
+      a wire, not a tunnel. Cloud Interconnect sites land public clouds and private datacentres on
+      the Cato backbone over a dedicated layer-2 circuit into the PoP: delivered through an exchange
+      fabric such as Equinix Fabric or Megaport, or a physical cross-connect from a colo cage.
+      Lower latency and higher bandwidth than the public internet — and the result is still just a
+      site, with the same policy, visibility and backbone routing as every other site.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Cloud Interconnect</span><span class="tag">Cross-Connect</span>
+      <span class="tag">Equinix</span><span class="tag">Megaport</span><span class="tag">Private DC</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>When a tunnel isn't enough</h2>
+      <p>
+        For most cloud estates, a vSocket or an IPsec tunnel is exactly right: fast to deploy,
+        encrypted end to end, and good for the vast majority of application traffic. But every
+        tunnel-based on-ramp shares two properties that matter for datacentre-class flows: the
+        last mile rides the public internet, and the traffic pays a tunnel tax — per-tunnel
+        bandwidth ceilings and encryption overhead on every packet.
+      </p>
+      <p>
+        For storage replication, backup and restore, bulk data movement between DC and cloud, or
+        latency-sensitive traffic between environments, the business wants what a leased line
+        used to give it: <strong>deterministic latency, sustained high throughput, and a path
+        nobody else's traffic can congest.</strong> Cloud Interconnect is how Cato delivers that —
+        a dedicated private connection between two peers, giving lower latency and higher
+        bandwidth than the public internet.
+      </p>
+      <p>
+        This use case <strong>complements</strong> the vSocket and IPsec story in
+        <a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a> — it does not
+        replace it. Most estates mix on-ramps: tunnels for agility, interconnect circuits where
+        the flows justify a wire.
+      </p>
+    </section>
+
+    <section id="onramps" class="reveal">
+      <div class="section-kicker">Positioning</div>
+      <h2>When to choose which on-ramp</h2>
+      <p>
+        Three ways onto the WAN, all available side by side in one account. The right answer is usually
+        a mix — pick per region and per workload, not once for the whole estate.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>On-ramp</th><th>Footprint</th><th>Throughput character</th><th>Typical use</th><th>In this tenant</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>vSocket</strong></td>
+              <td>Cato virtual appliance inside the VNet/VPC, deployable as an HA pair; encrypted tunnels to the nearest PoP</td>
+              <td>Strong for general application traffic; tunnel-based, so encryption overhead applies on every flow</td>
+              <td>The full site experience in the cloud — WAN optimisation, QoS, deep analytics</td>
+              <td>“AWS Site eu-west-2” (HA pair, London PoP, connected)</td>
+            </tr>
+            <tr>
+              <td><strong>IPsec</strong></td>
+              <td>No footprint at all — IKEv2 from the cloud provider's native gateway to the Cato PoP</td>
+              <td>Bound by the provider gateway's per-tunnel limits; internet last mile</td>
+              <td>Fast onboarding of a region, or estates already standardised on cloud VPN hubs</td>
+              <td>“Azure-VWAN-Hub-Site” (Azure vWAN, London PoP)</td>
+            </tr>
+            <tr>
+              <td><strong>Cloud Interconnect</strong></td>
+              <td>No appliance and no tunnel — a dedicated layer-2 circuit into the Cato PoP via an exchange fabric or physical cross-connect</td>
+              <td>Deterministic latency and high sustained throughput; no per-tunnel ceilings or encryption overhead in the circuit</td>
+              <td>DC-class flows: replication, bulk data movement, latency-sensitive DC-to-cloud traffic</td>
+              <td>“AWS Cross-Connect” (cloud interconnect, Manchester PoP)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Discovery question</div>
+        <p>“Which of your cloud flows run over ExpressRoute or Direct Connect today — and once that
+        circuit lands, which console owns the policy between it and the rest of your WAN? What
+        would it cost to give your private datacentre the same treatment?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">How it works</div>
+      <h2>One layer-2 front door into the backbone</h2>
+      <p>
+        Cloud Interconnect connects one network directly to another through a datacentre cloud
+        exchange, delivered with a service-provider partner — Equinix (Cloud Exchange) Fabric or
+        Megaport SDCI. A single VLAN ID is coordinated across all parties: the cloud provider,
+        the colocation/exchange operator, and the Cato PoP. Two patterns use the same front door:
+      </p>
+      <ul>
+        <li><strong>Public cloud</strong> — the provider's private-link service (the ExpressRoute /
+        Direct Connect / Partner Interconnect / FastConnect class of service) lands on the exchange
+        fabric, which cross-connects into the Cato PoP. Per-cloud Learning Center guides cover
+        Azure, GCP and Oracle, and AWS is equally supported — this tenant's interconnect site is
+        an AWS one.</li>
+        <li><strong>Private datacentre</strong> — a customer DC or colo cage connects via physical
+        cross-connect or the exchange fabric into the nearest Cato PoP. No socket appliance, no
+        IPsec tunnel anywhere in the path.</li>
+      </ul>
+      <p>
+        Either way, what lands in the CMA is simply a site of type “Cloud Interconnect” — a
+        first-class citizen of the WAN with the same policy, the same visibility and the same
+        backbone routing as every socket, vSocket and IPsec site.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cloud Interconnect: public clouds and a private datacentre reach the Cato PoP over one layer-2 circuit</title>
+          <desc id="dg1-desc">On the left, public clouds (AWS, Azure, GCP, OCI) via their private-link services and a private datacentre converge on an exchange fabric node (Equinix Fabric or Megaport). A single VLAN-coordinated layer-2 cross-connect carries them into the Cato PoP, which sits on the global private backbone reaching a branch site and remote users. An amber lane above shows the traditional IPsec-over-internet path this replaces.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="700" cy="230" rx="135" ry="52"/>
+          <circle cx="775" cy="205" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="690" cy="272" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="664" y="302" text-anchor="middle">Cato Global Private Backbone</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="30" y="52" width="180" height="76" rx="10"/>
+          <text class="dg-label" x="120" y="78" text-anchor="middle">Public clouds</text>
+          <text class="dg-sub" x="120" y="96" text-anchor="middle">AWS · Azure · GCP · OCI</text>
+          <text class="dg-tiny" x="120" y="113" text-anchor="middle">private-link services</text>
+
+          <rect class="dg-node" x="30" y="310" width="180" height="76" rx="10"/>
+          <text class="dg-label" x="120" y="336" text-anchor="middle">Private datacentre</text>
+          <text class="dg-sub" x="120" y="354" text-anchor="middle">Customer DC · colo cage</text>
+          <text class="dg-tiny" x="120" y="371" text-anchor="middle">physical cross-connect</text>
+
+          <!-- Exchange fabric (centre) -->
+          <rect class="dg-node-dark" x="300" y="186" width="190" height="88" rx="10"/>
+          <text class="dg-label-inv" x="395" y="218" text-anchor="middle">Exchange fabric</text>
+          <text class="dg-sub-inv" x="395" y="237" text-anchor="middle">Equinix Fabric · Megaport</text>
+          <text class="dg-sub-inv" x="395" y="255" text-anchor="middle">one VLAN, all parties</text>
+
+          <!-- Legacy internet path (contrast) -->
+          <rect class="dg-node" x="330" y="24" width="170" height="56" rx="10"/>
+          <text class="dg-label" x="415" y="46" text-anchor="middle">Public internet</text>
+          <text class="dg-sub" x="415" y="64" text-anchor="middle">best-effort · variable</text>
+
+          <path class="lane lane-limit" d="M 152 52 C 190 32, 260 30, 326 44"/>
+          <path class="lane lane-limit" d="M 500 60 C 542 80, 562 140, 585 200"/>
+
+          <!-- Dedicated layer-2 path -->
+          <path class="lane lane-allow" d="M 210 100 C 260 122, 292 160, 326 190"/>
+          <path class="lane lane-allow" d="M 210 340 C 260 320, 292 292, 326 268"/>
+          <path class="lane lane-allow" d="M 490 230 L 566 230"/>
+
+          <!-- Backbone to WAN destinations -->
+          <path class="lane lane-allow" d="M 736 188 C 758 165, 768 148, 778 128"/>
+          <path class="lane lane-allow" d="M 736 272 C 758 295, 768 312, 778 332"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="600" cy="230" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="600" cy="230" r="30"/>
+          <text class="dg-label" x="600" y="168" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="600" y="183" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">VLAN handoff · FWaaS · IPS</text>
+
+          <!-- WAN destinations (right) -->
+          <rect class="dg-node" x="780" y="66" width="166" height="64" rx="10"/>
+          <text class="dg-label" x="863" y="92" text-anchor="middle">Branch site</text>
+          <text class="dg-sub" x="863" y="110" text-anchor="middle">Reading Office · Socket</text>
+
+          <rect class="dg-node" x="780" y="330" width="166" height="64" rx="10"/>
+          <text class="dg-label" x="863" y="356" text-anchor="middle">Remote users</text>
+          <text class="dg-sub" x="863" y="374" text-anchor="middle">SDP Client · ZTNA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Dedicated layer-2 interconnect — private, deterministic</span>
+          <span class="key"><span class="swatch limit"></span> Traditional IPsec over the internet — the path this replaces</span>
+        </div>
+        <div class="diagram-caption">Public clouds land their private-link services on the exchange fabric; private DCs cross-connect directly. One VLAN-coordinated layer-2 circuit carries both into the Cato PoP and onto the backbone — no socket appliance, no IPsec tunnel in the path.</div>
+      </div>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">0</div><div class="stat-label">Appliances or tunnels in the interconnect data path</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">4</div><div class="stat-label">Public clouds on one pattern — Azure · GCP · OCI · AWS</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">2</div><div class="stat-label">Connection patterns — exchange fabric or physical cross-connect</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Policy set governing every on-ramp, interconnect included</div></div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">⚡</div><div><h4>Deterministic performance</h4><p>A private connection between two peers — lower latency and higher bandwidth than the public internet, with no per-tunnel ceilings or encryption overhead in the circuit.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Nothing to deploy in the path</h4><p>No socket appliance, no vSocket VM, no IPsec gateway to size and patch. The circuit terminates at the Cato PoP; the security stack is already there.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>A first-class site on the WAN</h4><p>Same policy, same visibility, same backbone routing as every socket and vSocket site — one topology view, one WAN firewall, one audit trail.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>One pattern, every peer</h4><p>Azure, GCP, Oracle and AWS use the same exchange-fabric front door — and a private datacentre or colo cage walks through it the same way.</p></div></div>
+      </div>
+    </section>
+
+    <section id="deployment" class="reveal">
+      <div class="section-kicker">Deployment path</div>
+      <h2>From availability check to routed site</h2>
+      <ol class="steps">
+        <li>
+          <h4>Check PoP availability</h4>
+          <p>Cato publishes the list of Cloud Interconnect PoP locations and providers with
+          provisioning lead times. Locations marked immediately available can be provisioned on
+          demand from the CMA; the rest are coordinated with your Cato representative.</p>
+        </li>
+        <li>
+          <h4>Order the circuit</h4>
+          <p>For public cloud, order the provider's private-link service (the ExpressRoute /
+          Direct Connect / Partner Interconnect / FastConnect class) landing on the exchange
+          fabric — Equinix Fabric or Megaport. For a private DC, order the fabric port or a
+          physical cross-connect from your cage.</p>
+        </li>
+        <li>
+          <h4>Coordinate the VLAN</h4>
+          <p>A VLAN ID is agreed across all parties — the cloud provider, the colocation/exchange
+          operator and the Cato PoP — so the layer-2 handoff lines up end to end.</p>
+        </li>
+        <li>
+          <h4>Create the site in the CMA</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create a new site and choose site type <strong>Cloud Interconnect</strong> — it sits
+          alongside socket, vSocket and IPsec in the same site-creation flow.</p>
+        </li>
+        <li>
+          <h4>Route and secure like any site</h4>
+          <p>Declare the site's ranges, and the WAN firewall, network rules and analytics apply
+          exactly as they do to every other site. No parallel policy domain for the circuit.</p>
+        </li>
+      </ol>
+      <div class="callout">
+        <div class="co-title">Set expectations on lead time</div>
+        <p>Provisioning lead times vary by location and provider — check the availability list
+        early and put the circuit order at the front of the project plan, not the end.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Demo honestly</div>
+        <p>The tenant's “AWS Cross-Connect” site exists as a configuration example and is not
+        currently passing traffic. Walk the site configuration and the positioning — don't promise
+        live traffic graphs from it. For live charts, pivot to the vSocket site in step 5.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the choice</h4>
+          <p>Open on the on-ramp table above: three ways onto the WAN, and this tenant runs all of
+          them side by side — 23 sites, 8 of them cloud-DC type. Clouds here are first-class
+          sites, however they connect.</p>
+        </li>
+        <li>
+          <h4>Open the interconnect site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Filter to <strong>AWS Cross-Connect</strong>: site type Cloud Datacenter, connection
+          type Cross-Connect, description “AWS Cloud Interconnect Site”, homed to the Manchester
+          PoP. That one line is the whole deployment story.</p>
+        </li>
+        <li>
+          <h4>Walk the configuration</h4>
+          <p>Step through the site settings and point out what is <em>absent</em>: no socket
+          serial, no tunnel parameters, no appliance to manage. The circuit terminates at the PoP;
+          the CMA only needs to know the site and its ranges.</p>
+        </li>
+        <li>
+          <h4>Show clouds as first-class WAN nodes</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The interconnect site sits in the same topology as London DC, Manchester DC and the
+          branches — one map, one WAN, regardless of on-ramp.</p>
+        </li>
+        <li>
+          <h4>Contrast with a live cloud site</h4>
+          <p>Open <strong>AWS Site eu-west-2</strong> — the vSocket HA pair homed to the London
+          PoP, connected and passing traffic. Show its real-time analytics and make the point:
+          the moment an interconnect circuit goes live, it gets exactly this same visibility.</p>
+        </li>
+        <li>
+          <h4>Close on one policy set</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>One rulebase governs branch, DC, vSocket, IPsec and interconnect traffic alike —
+          no separate firewall estate bolted onto the circuit, unlike a traditional premium
+          interconnect build.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9364959816093-Getting-Started-with-Cloud-Interconnect-Sites" target="_blank" rel="noopener">Getting Started with Cloud Interconnect Sites</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9364960065181-Cato-Cross-Connect-Availability" target="_blank" rel="noopener">Cato Cross-Connect Availability (locations &amp; lead times)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9364935602461-Cloud-Interconnect-for-Azure-Public-Cloud" target="_blank" rel="noopener">Cloud Interconnect for Azure Public Cloud</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9476420754461-Cloud-Interconnect-for-GCP-Public-Cloud" target="_blank" rel="noopener">Cloud Interconnect for GCP Public Cloud</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9476405133213-Cloud-Interconnect-for-Oracle-Public-Cloud" target="_blank" rel="noopener">Cloud Interconnect for Oracle Public Cloud</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="network-global-app-performance.html">Global Application &amp; UCaaS Performance</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

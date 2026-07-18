@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Services Resilience (DORA) — Cato Use Case Library</title>
+<meta name="description" content="Meet DORA's ICT risk, resilience and reporting demands — a self-healing global backbone, unified telemetry for incident reporting, and managed detection depth.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-finance-dora">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Financial Resilience (DORA)</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Financial Services Resilience (DORA)</h1>
+    <p class="lede">
+      DORA makes digital operational resilience a regulated outcome for EU financial entities —
+      and every point vendor in the network and security stack becomes another ICT third party to
+      assess, register and evidence. This use case shows how one converged platform supports a DORA
+      programme: a self-healing global backbone, unified telemetry that turns incidents into
+      reportable evidence, and a dramatically shorter third-party landscape.
+    </p>
+    <div class="meta-row">
+      <span class="tag">DORA</span><span class="tag">Financial Services</span>
+      <span class="tag">Resilience</span><span class="tag">Reporting</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The Digital Operational Resilience Act (DORA) is an EU regulation that applies from
+        <strong>17 January 2025</strong>. It covers financial entities — banks, insurers, investment
+        firms, payment institutions and more — and extends to critical ICT third-party providers.
+        The intent is blunt: a financial firm must keep operating through ICT disruption, detect and
+        report incidents quickly, and stay in control of the third parties its digital operations
+        depend on.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">17 Jan 2025</div><div class="stat-label">DORA applies across EU financial entities and critical ICT third-party providers</div></div>
+        <div class="stat-tile"><div class="stat-value">5<span class="unit"> pillars</span></div><div class="stat-label">ICT risk management · incident reporting · resilience testing · third-party risk · information sharing</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> provider</span></div><div class="stat-label">One assessed SASE provider can replace a stack of point network and security vendors</div></div>
+      </div>
+      <p>
+        The objective for the CISO, COO and risk function is not just to <em>be</em> resilient —
+        it is to <strong>evidence</strong> resilience: documented ICT risk management, demonstrable
+        failover under stress, incident timelines assembled fast enough to meet reporting deadlines,
+        and a managed register of ICT providers.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>The stack itself becomes the resilience problem</h2>
+      <p>
+        Most financial entities run their WAN and security estate across a patchwork of vendors —
+        MPLS and SD-WAN providers, firewall clusters, VPN concentrators, SWG, CASB, monitoring tools.
+        Under DORA, that architecture works against you four times over:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Every vendor is a registered third party</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Each point product is another ICT provider to
+          assess, contract, monitor and carry in the register of information — with its own certifications
+          to chase, its own exit plan to write, its own concentration-risk questions to answer.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Resilience is a chain of single points of failure</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Appliance HA pairs, regional VPN headends and
+          single-carrier circuits each fail in their own way. Demonstrating that a critical function
+          survives stress means testing every link of the chain — and its interactions.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Evidence lives in a dozen consoles</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Incident reporting timelines are unforgiving,
+          but the timeline itself is scattered: firewall logs here, proxy logs there, VPN logs somewhere
+          else — different formats, clocks and retention. Assembly takes days, not hours.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Policy drift undermines risk management</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A documented ICT risk framework assumes the
+          controls are actually consistent. With per-site appliances and per-region policies, proving
+          the same control applies to every user, branch and cloud workload is guesswork.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>
+          “Who owns your DORA programme — risk, compliance or IT — and what is still open on their gap
+          analysis?” · “How many of the entries in your register of information for ICT providers are
+          network and security vendors?” · “When something breaks today, how long does it take to
+          assemble a timeline solid enough for an incident report?”
+        </p>
+      </div>
+    </section>
+
+    <section id="pillars" class="reveal">
+      <div class="section-kicker">Pillar by pillar</div>
+      <h2>DORA's five pillars, mapped to the platform</h2>
+      <p>
+        Cato does not make anyone “DORA compliant” — compliance is the entity's own programme.
+        What the platform does is shrink the problem and supply the controls and evidence each
+        pillar asks for:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>DORA pillar</th><th>What it demands</th><th>How Cato helps</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ICT risk management</strong></td>
+              <td>A governed framework of identified assets and consistent, documented controls across the estate.</td>
+              <td>One converged platform, one policy set: FWaaS, IPS, ZTNA and data protection configured once and enforced identically for every site, user and cloud — far fewer moving parts to document and govern.</td>
+            </tr>
+            <tr>
+              <td><strong>Incident reporting</strong></td>
+              <td>Rapid detection, classification and reporting of major ICT incidents within tight timelines.</td>
+              <td>Full-traffic telemetry in one data store; XDR incident stories correlate raw events into a prioritised timeline of what happened, to whom, when; the Audit Trail records every configuration change — the raw material of a report, on hand.</td>
+            </tr>
+            <tr>
+              <td><strong>Resilience testing</strong></td>
+              <td>Regular testing that critical functions survive stress, failure and degradation.</td>
+              <td>Failover is demonstrable, not theoretical: pull a link or steer away from a PoP and watch traffic re-route across the backbone; Experience Monitoring evidences what users actually experienced during the test window.</td>
+            </tr>
+            <tr>
+              <td><strong>ICT third-party risk</strong></td>
+              <td>Assess, contract, register and monitor ICT providers; manage concentration and exit risk.</td>
+              <td>One assessed provider replaces many point vendors — one due-diligence exercise against Cato's published certifications, one register entry where there were many, one relationship to monitor.</td>
+            </tr>
+            <tr>
+              <td><strong>Information sharing</strong></td>
+              <td>Arrangements to exchange cyber threat information and intelligence between entities.</td>
+              <td>Structured XDR incident stories give your team shareable, well-formed incident data; protections developed by Cato's security research are applied in the cloud for every customer, so shared intelligence turns into applied defence.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Resilience by design, evidence by default</h2>
+      <p>
+        Cato's global private backbone is built from PoPs interconnected across
+        <strong>multiple Tier-1 carriers</strong>. Sockets and clients connect to the nearest PoP and
+        automatically fail over to the next-best PoP when a carrier path or PoP degrades — the
+        self-healing behaviour DORA's resilience testing is meant to prove. Because every flow crosses
+        a PoP running the full security stack, the same architecture that delivers resilience also
+        delivers the telemetry: one event stream feeding XDR stories, the Audit Trail and Experience
+        Monitoring.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Self-healing backbone with a single evidence plane</title>
+          <desc id="dg1-desc">A financial entity's London datacentre, Reading branch and hybrid workforce connect to the Cato global private backbone. The path to the London PoP has failed and is marked with a red cross; traffic automatically re-routes to the Manchester PoP and continues to core banking applications. All traffic telemetry flows from the PoP to the Cato Management Application, which holds XDR incident stories, the Audit Trail and Experience Monitoring evidence.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="150" ry="125"/>
+          <circle cx="350" cy="163" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="610" cy="287" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="198" text-anchor="middle">Global Private Backbone</text>
+          <text class="dg-tiny" x="480" y="215" text-anchor="middle">multiple Tier-1 carriers · full mesh</text>
+
+          <!-- Sites (left) -->
+          <rect class="dg-node" x="34" y="54" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="78" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="119" y="96" text-anchor="middle">Socket X1500 · core apps</text>
+
+          <rect class="dg-node" x="34" y="196" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="220" text-anchor="middle">Reading Office</text>
+          <text class="dg-sub" x="119" y="238" text-anchor="middle">Socket X1600 branch</text>
+
+          <rect class="dg-node" x="34" y="338" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="362" text-anchor="middle">Hybrid workforce</text>
+          <text class="dg-sub" x="119" y="380" text-anchor="middle">Cato Client · ZTNA</text>
+
+          <!-- Failed London PoP -->
+          <circle cx="480" cy="150" r="26" fill="none" stroke="var(--ink-3)" stroke-width="8" opacity=".5"/>
+          <text class="dg-label" x="480" y="105" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">London PoP</text>
+          <text class="dg-tiny" x="480" y="120" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">carrier fault — out of path</text>
+          <path class="lane-static" fill="none" d="M 204 70 C 270 74, 320 92, 372 118" opacity=".6"/>
+          <g aria-label="failed path">
+            <path class="lane-x" d="M 366 112 L 390 136"/><path class="lane-x" d="M 390 112 L 366 136"/>
+          </g>
+
+          <!-- Active Manchester PoP -->
+          <circle class="pulse-ring" cx="480" cy="300" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="300" r="30"/>
+          <text class="dg-label" x="480" y="356" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Manchester PoP</text>
+          <text class="dg-tiny" x="480" y="372" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">SPACE · full stack on-path</text>
+
+          <!-- Re-routed traffic (green) -->
+          <path class="lane lane-allow" d="M 204 95 C 300 140, 390 240, 455 282"/>
+          <path class="lane lane-allow" d="M 204 225 C 300 240, 380 275, 447 296"/>
+          <path class="lane lane-allow" d="M 204 367 C 300 355, 380 332, 455 318"/>
+          <path class="lane lane-allow" d="M 505 282 C 620 240, 680 150, 752 99"/>
+
+          <!-- Telemetry to CMA (neutral) -->
+          <path class="lane-static" fill="none" d="M 505 318 C 620 340, 680 358, 752 375"/>
+
+          <!-- Destinations & evidence (right) -->
+          <rect class="dg-node" x="756" y="64" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="88" text-anchor="middle">Core banking apps</text>
+          <text class="dg-sub" x="841" y="106" text-anchor="middle">Cloud DC · SaaS · WWW</text>
+
+          <rect class="dg-node-dark" x="756" y="336" width="170" height="76" rx="10"/>
+          <text class="dg-label-inv" x="841" y="360" text-anchor="middle">CMA — evidence</text>
+          <text class="dg-sub-inv" x="841" y="378" text-anchor="middle">XDR incident stories</text>
+          <text class="dg-sub-inv" x="841" y="395" text-anchor="middle">Audit Trail · DEM scores</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Live traffic — auto-steered to the next PoP</span>
+          <span class="key"><span class="swatch block"></span> Failed element — link / PoP out of path</span>
+        </div>
+        <div class="diagram-caption">When a carrier path or PoP degrades, sockets and clients automatically reconnect to the next-best PoP. Every flow still crosses the full security stack — and feeds one telemetry plane (grey) for XDR, Audit Trail and Experience Monitoring evidence.</div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map showing Cato PoP locations marked as green rings across North America, Europe, Asia, the Middle East, Africa, South America and Australia">
+        <figcaption>The global private backbone: Cato PoPs across every major region. Sites and users connect to the nearest PoP and fail over automatically to the next.</figcaption>
+      </figure>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔄</div><div><h4>Self-healing backbone</h4><p>Multiple Tier-1 carriers between PoPs and automatic PoP failover for sockets and clients — resilience is the architecture's default behaviour, not a bolt-on DR plan.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>Evidence on demand</h4><p>Full-traffic telemetry, XDR incident stories and an exportable Audit Trail give incident-report authors a correlated timeline instead of a log-collection project.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤝</div><div><h4>A shorter third-party register</h4><p>One assessed provider with published certifications replaces a stack of point vendors — one due-diligence pack, one contract, one entry to monitor.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Consistent risk posture</h4><p>One global policy enforced identically everywhere makes the documented control framework match reality — and keeps it matching as the estate changes.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Position with care</div>
+        <p>Say “Cato <strong>supports</strong> your DORA programme” — never “Cato makes you DORA
+        compliant”. Compliance belongs to the entity: its governance, its testing programme, its
+        register. Cato reduces the surface area and supplies controls plus evidence for each pillar.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the pressure point</div>
+        <p>Ask where their DORA gap analysis hurts most: resilience testing evidence, incident-report
+        assembly, or the sheer size of the third-party register. Lead the demo with that pillar and
+        let the table above carry the rest.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame with the pillar map</h4>
+          <p>Walk the five-pillar table and agree which pillars are owned by the people in the room.
+          Anchor: “the fewer ICT providers and consoles in scope, the smaller every one of these
+          workstreams gets.”</p>
+        </li>
+        <li>
+          <h4>Show the resilient fabric</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Open the live topology: London DC and Manchester DC sockets, dual uplinks, HA state, and
+          each site's connected PoP. Explain the failover behaviour — if a link, carrier path or PoP
+          degrades, the socket reconnects to the next-best PoP automatically, with no operator action.</p>
+        </li>
+        <li>
+          <h4>Evidence for resilience testing</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Show experience scores per site and user. Position it as the test-evidence tool: run a
+          controlled failover window, then show what users actually experienced before, during and
+          after — a screenshotable artefact for the testing file.</p>
+        </li>
+        <li>
+          <h4>An XDR incident story as a report skeleton</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span></p>
+          <p>Open a detection and pivot into its XDR incident story: correlated events, affected users
+          and sites, a timeline, and a plain-language summary. Anchor: “this is the skeleton of a
+          regulator-facing incident report — assembled for you, not by you.”</p>
+        </li>
+        <li>
+          <h4>Drill to the raw evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter the unified event stream to the story's time window: every flow, verdict and user
+          attribution in one place with one clock. Contrast with collecting logs from firewall, proxy
+          and VPN estates separately.</p>
+        </li>
+        <li>
+          <h4>Governance evidence: the Audit Trail</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show who changed which policy, when, from where — and export it. This answers the
+          “demonstrate control over configuration changes” conversation in one screen.</p>
+        </li>
+        <li>
+          <h4>Close on third-party risk</h4>
+          <p>Count the vendors the platform displaces, then point at Cato's published security and
+          compliance certifications as the due-diligence pack. One provider assessed once — instead
+          of a register full of point products.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy — published certifications</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Platform architecture — the global private backbone</a></li>
+            <li><a href="https://www.catonetworks.com/platform/extended-detection-and-response-xdr/" target="_blank" rel="noopener">XDR — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato services — including managed detection &amp; response</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+            <li><a href="management-soc-xdr.html">SOC Modernisation with XDR &amp; MDR</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

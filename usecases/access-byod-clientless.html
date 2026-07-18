@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BYOD &amp; Unmanaged Device Access — Cato Use Case Library</title>
+<meta name="description" content="Give unmanaged devices, BYOD users and third parties browser-based application access — with RBI and CASB keeping data off the endpoint.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-byod-clientless">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / BYOD &amp; Unmanaged Devices</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>BYOD &amp; Unmanaged Device Access</h1>
+    <p class="lede">
+      Contractors, partners and BYOD users need application access from devices IT doesn't manage
+      and can't install a client on. This use case demonstrates Cato's clientless (browser-based)
+      ZTNA: users authenticate to an access portal through the IdP with MFA and reach published
+      private applications from any browser — application-level access only, never a network-level
+      foothold — with RBI and CASB/DLP keeping data off the endpoint. Alongside the portal sit two
+      newer browser on-ramps — the <strong>Cato Browser Extension</strong> and the
+      <strong>Cato Enterprise Browser</strong> — covered below.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Clientless ZTNA</span><span class="tag">Enterprise Browser</span>
+      <span class="tag">Browser Extension</span><span class="tag">RBI</span><span class="tag">CASB</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Every organisation has a population it cannot manage: contractors on their own laptops,
+        partner staff governed by someone else's IT department, auditors on-site for a fortnight,
+        and employees reaching for a personal tablet out of hours. They all need the same thing —
+        a handful of internal applications — and none of them can be enrolled in MDM or asked to
+        install corporate software.
+      </p>
+      <p>
+        The objective: <strong>deliver application access to devices you don't own, without putting
+        those devices on your network and without letting your data settle on them.</strong>
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Unmanaged devices break the usual playbook</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The old answers are slow and expensive</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Ship a managed laptop — hardware cost, licences, courier lead time, and a recovery chase when the contract ends</li>
+            <li>Stand up VDI — infrastructure to run, images to patch, and a user experience nobody thanks you for</li>
+            <li>Say no — and watch data walk out through personal email and file-sharing workarounds instead</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">And the client route is closed</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>You can't install software on a device you don't own — and many partner organisations contractually forbid it</li>
+            <li>A client grants network-level reach that an unknown, unmanaged device can never justify</li>
+            <li>Personal devices span every OS and patch level — posture is unknowable and unenforceable</li>
+            <li>VPN from a home laptop means corporate data cached on a machine you will never see again</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“When a contractor starts on Monday, how do they actually get application access —
+        and what has landed on their personal device by Friday?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Clientless ZTNA: the browser is the endpoint</h2>
+      <p>
+        Cato publishes individual private applications to a <strong>clientless access portal</strong>
+        delivered from the nearest Cato PoP. The user opens a URL in any modern browser, authenticates
+        against the corporate IdP with MFA, and sees only the applications their IdP group entitles
+        them to. Each application is streamed into the browser session — the device never receives a
+        network address, a route, or any ability to scan or move laterally. Access is
+        <strong>application-level, not network-level</strong>.
+      </p>
+      <p>
+        Because every session terminates in the Cato cloud, the rest of the platform applies in the
+        same pass: <strong>CASB and DLP</strong> policies stop files being downloaded to the unmanaged
+        endpoint, and <strong>Remote Browser Isolation (RBI)</strong> renders risky web content as a
+        pixel stream so active code never executes on a device you can't inspect.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 425" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Three browser on-ramps for unmanaged devices</title>
+          <desc id="dg1-desc">Three on-ramps from unmanaged contractor and BYOD devices converge on a Cato PoP: the clientless access portal from any browser, the Cato Browser Extension in Chrome for SaaS access, and the Cato Enterprise Browser reaching SaaS and private applications. Users authenticate via the identity provider with MFA. Green lanes stream a published application and inspected SaaS sessions to the browser. A red lane toward the rest of the WAN is blocked — there is no network-level path. A file download attempt back to the device is blocked by DLP. Risky web content is routed through Remote Browser Isolation and returned as pixels only.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="470" cy="222" rx="150" ry="48"/>
+          <circle cx="322" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="618" cy="206" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="308" y="282" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="470" cy="222" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="470" cy="222" r="30"/>
+          <text class="dg-label" x="470" y="136" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="470" y="152" text-anchor="middle">Portal · Extension · Enterprise Browser</text>
+          <text class="dg-tiny" x="470" y="166" text-anchor="middle">ZTNA · CASB · DLP · RBI</text>
+
+          <!-- Unmanaged devices container with three on-ramps -->
+          <rect fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 5" x="28" y="64" width="196" height="272" rx="12"/>
+          <text class="dg-sub" x="126" y="86" text-anchor="middle">Unmanaged devices</text>
+          <text class="dg-tiny" x="126" y="101" text-anchor="middle">contractor · BYOD · partner</text>
+
+          <rect class="dg-node" x="40" y="112" width="172" height="52" rx="10"/>
+          <text class="dg-label" x="126" y="134" text-anchor="middle">Access portal</text>
+          <text class="dg-sub" x="126" y="151" text-anchor="middle">any browser · no install</text>
+
+          <rect class="dg-node" x="40" y="174" width="172" height="52" rx="10"/>
+          <text class="dg-label" x="126" y="196" text-anchor="middle">Browser Extension</text>
+          <text class="dg-sub" x="126" y="213" text-anchor="middle">Chrome · SaaS access</text>
+
+          <rect class="dg-node" x="40" y="236" width="172" height="52" rx="10"/>
+          <text class="dg-label" x="126" y="258" text-anchor="middle">Enterprise Browser</text>
+          <text class="dg-sub" x="126" y="275" text-anchor="middle">SaaS + private apps</text>
+
+          <text class="dg-tiny" x="126" y="316" text-anchor="middle">no client · no enrolment</text>
+
+          <!-- On-ramp lanes to PoP -->
+          <path class="lane lane-allow" d="M 212 138 C 300 152, 370 182, 440 208"/>
+          <path class="lane lane-allow" d="M 212 200 C 300 206, 360 212, 438 218"/>
+          <path class="lane lane-allow" d="M 212 262 C 300 256, 370 242, 440 230"/>
+          <text class="dg-tiny" x="300" y="192" text-anchor="middle">HTTPS · TLS-inspected</text>
+
+          <!-- IdP node (bottom left) -->
+          <rect class="dg-node-dark" x="46" y="356" width="170" height="56" rx="10"/>
+          <text class="dg-label-inv" x="131" y="380" text-anchor="middle">Identity provider</text>
+          <text class="dg-sub-inv" x="131" y="398" text-anchor="middle">Entra ID · SAML + MFA</text>
+          <path class="lane-static" fill="none" d="M 455 248 C 380 300, 300 350, 220 378"/>
+          <text class="dg-tiny" x="336" y="390" text-anchor="middle">sign-in redirect · MFA</text>
+
+          <!-- Download attempt blocked by DLP -->
+          <path class="lane lane-block" d="M 452 198 C 400 160, 340 130, 288 118"/>
+          <g aria-label="download blocked by DLP">
+            <path class="lane-x" d="M 258 94 L 282 118"/><path class="lane-x" d="M 282 94 L 258 118"/>
+          </g>
+          <text class="dg-tiny" x="366" y="106" text-anchor="middle">file download · DLP block</text>
+
+          <!-- Published app (top right) -->
+          <rect class="dg-node-green" x="770" y="52" width="160" height="52" rx="10"/>
+          <text class="dg-label" x="850" y="74" text-anchor="middle">Published app</text>
+          <text class="dg-sub" x="850" y="91" text-anchor="middle">Internal HR portal</text>
+          <path class="lane lane-allow" d="M 496 204 C 590 164, 680 110, 768 82"/>
+          <text class="dg-tiny" x="676" y="92" text-anchor="middle">browser stream</text>
+
+          <!-- SaaS apps (right) -->
+          <rect class="dg-node-green" x="780" y="126" width="150" height="52" rx="10"/>
+          <text class="dg-label" x="855" y="148" text-anchor="middle">SaaS apps</text>
+          <text class="dg-sub" x="855" y="165" text-anchor="middle">M365 · GenAI tools</text>
+          <path class="lane lane-allow" d="M 500 210 C 600 190, 690 168, 778 152"/>
+
+          <!-- Rest of the WAN: blocked -->
+          <rect class="dg-node" x="780" y="204" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="855" y="228" text-anchor="middle">Rest of the WAN</text>
+          <text class="dg-sub" x="855" y="245" text-anchor="middle">unpublished · invisible</text>
+          <path class="lane lane-block" d="M 502 226 C 570 230, 640 231, 702 231"/>
+          <g aria-label="no network-level access">
+            <path class="lane-x" d="M 704 219 L 728 243"/><path class="lane-x" d="M 728 219 L 704 243"/>
+          </g>
+          <text class="dg-tiny" x="662" y="264" text-anchor="middle">no network path</text>
+
+          <!-- RBI + risky website (bottom right) -->
+          <rect class="dg-node-dark" x="612" y="306" width="118" height="52" rx="10"/>
+          <text class="dg-label-inv" x="671" y="328" text-anchor="middle">RBI</text>
+          <text class="dg-sub-inv" x="671" y="345" text-anchor="middle">isolated session</text>
+
+          <rect class="dg-node" x="780" y="340" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="855" y="364" text-anchor="middle">Risky website</text>
+          <text class="dg-sub" x="855" y="381" text-anchor="middle">newly registered domain</text>
+
+          <path class="lane lane-limit" d="M 490 242 C 530 268, 568 290, 610 310"/>
+          <text class="dg-tiny" x="600" y="276" text-anchor="middle">risky link</text>
+          <path class="lane lane-limit" d="M 730 330 C 748 334, 762 344, 778 356"/>
+          <path class="lane lane-limit" d="M 604 332 C 548 328, 505 292, 480 250"/>
+          <text class="dg-tiny" x="520" y="334" text-anchor="middle">pixels only</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed — published apps &amp; inspected SaaS sessions</span>
+          <span class="key"><span class="swatch limit"></span> RBI — risky web rendered as pixels only</span>
+          <span class="key"><span class="swatch block"></span> Blocked — unpublished resources · downloads</span>
+        </div>
+        <div class="diagram-caption">Three on-ramps, one enforcement point: portal, Browser Extension and Enterprise Browser all terminate at the Cato PoP. The unmanaged device never joins the network — and DLP keeps files from landing on it.</div>
+      </div>
+
+      <h3>What the business gets</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Zero endpoint footprint</h4><p>Nothing to install, licence, patch or recover. Any device with a modern browser works on day one — including devices owned by another organisation.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>App-level exposure, not network-level</h4><p>Users see only the applications published to them. There is no tunnel, no route and no address space — nothing to scan and no lateral movement to defend against.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Data stays off unmanaged devices</h4><p>CASB and DLP policies block downloads to unmanaged endpoints, and RBI returns risky web content as a pixel stream — no code, no files, no residue.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚡</div><div><h4>Onboard in minutes, offboard instantly</h4><p>Access follows IdP group membership. Add a contractor to a group and the portal populates; remove them and every application disappears with the next sign-in.</p></div></div>
+      </div>
+    </section>
+
+    <section id="onramps" class="reveal">
+      <div class="section-kicker">Connectivity methods</div>
+      <h2>Pick the on-ramp: portal, extension or enterprise browser</h2>
+      <p>
+        Clientless ZTNA is no longer a single method. Universal ZTNA now offers three browser-based
+        on-ramps for devices you don't manage, alongside the Cato Client for devices you do — all
+        enforcing the <strong>same policies, from the same engine, managed in the same CMA</strong>.
+        Choose by how much the device needs to reach and how long the relationship lasts:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>On-ramp</th><th>Footprint on the device</th><th>What it reaches</th><th>Best for</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Clientless access portal</strong></td>
+              <td>None — any modern browser</td>
+              <td>Individual published private web apps, streamed through the PoP</td>
+              <td>Short-lived third-party access; devices you will never touch</td>
+            </tr>
+            <tr>
+              <td><strong>Cato Browser Extension</strong></td>
+              <td>Native Chrome extension — installs in minutes, no client, no admin rights</td>
+              <td>SaaS applications with the full inspection stack (threat prevention, data protection, access control) — no direct access to internal resources</td>
+              <td>BYOD and contractor SaaS access at scale; the fastest rollout</td>
+            </tr>
+            <tr>
+              <td><strong>Cato Enterprise Browser</strong></td>
+              <td>A dedicated secure browser installed on the device</td>
+              <td>Web, SaaS <em>and</em> private applications — isolated, browser-native sessions with full inspection and data protection</td>
+              <td>Deeper contractor/BYOD access including private apps, without managing the device itself</td>
+            </tr>
+            <tr>
+              <td><strong>Cato Client</strong></td>
+              <td>Managed agent (all major OSes)</td>
+              <td>Network-level access governed by ZTNA policy and device posture</td>
+              <td>Corporate-managed devices — see <a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">One licence, one policy engine, no new console</div>
+        <p>Both the Browser Extension and the Enterprise Browser are included in the ZTNA user
+        licence — no additional SKU. They enforce the ZTNA policies you already run and are managed
+        and monitored from the CMA like every other on-ramp, so adding them creates no new rule set
+        and no operational silo.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout warn">
+        <div class="co-title">Prerequisites in the demo tenant</div>
+        <p>Before the meeting, confirm the clientless access portal is enabled, at least one internal
+        web application is published to a contractor IdP group, and a DLP rule blocking downloads to
+        unmanaged devices is in place. The whole demo runs from a browser — no Cato Client needed on
+        the demo machine.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open the user access portal in a private window</h4>
+          <p>Use a private/incognito window to make the point unmissable: this is a bare browser with
+          no client, no certificate and no enrolment — exactly what a contractor's laptop looks like.</p>
+        </li>
+        <li>
+          <h4>Authenticate through the IdP with MFA</h4>
+          <p>Sign in as a contractor user (e.g. “Priya”). The portal redirects to the corporate IdP;
+          complete MFA. Point out that identity and MFA policy stay in the customer's existing IdP —
+          Cato consumes it, it doesn't replace it.</p>
+        </li>
+        <li>
+          <h4>Launch a published internal web app</h4>
+          <p>Priya's portal shows only the applications her IdP group entitles her to. Open one — an
+          internal web app renders in a browser tab, streamed through the PoP. No IP address, no route,
+          no network membership.</p>
+        </li>
+        <li>
+          <h4>Try to reach anything that isn't published</h4>
+          <p>Attempt to browse to another internal resource by hostname or IP. It fails — and this is
+          the key line: it doesn't fail because a firewall said no, it fails because <strong>there is
+          nothing to reach</strong>. Unpublished resources simply don't exist from this session.</p>
+        </li>
+        <li>
+          <h4>Attempt a file download — DLP blocks it</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>From the published app, try to download a document. DLP blocks the transfer because the
+          session comes from an unmanaged device. Show the rule: same DLP engine, same policy language
+          as the rest of the platform, scoped by device state.</p>
+        </li>
+        <li>
+          <h4>Show the audit trail</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to Priya's identity: the portal sign-in, each application launch and the
+          blocked download — every clientless access event attributed to a named user. This is the
+          evidence an auditor asks for.</p>
+        </li>
+        <li>
+          <h4>Position the extension and the enterprise browser</h4>
+          <p>Where the customer needs more than published web apps, introduce the other two on-ramps:
+          the <strong>Browser Extension</strong> (Chrome extension, SaaS access with the full
+          inspection stack, deployed in minutes) and the <strong>Enterprise Browser</strong>
+          (browser-native access that extends to private applications). The talk-track line: same
+          identities, same policies, same events — the CMA doesn't care which on-ramp produced the
+          session. Demo them live if they're enabled in your tenant; otherwise walk the comparison
+          table above.</p>
+        </li>
+        <li>
+          <h4>Close on lifecycle</h4>
+          <p>Finish with offboarding: remove the user from the IdP group and the portal is empty at
+          next sign-in. No account teardown, no VPN certificate revocation, no laptop to chase.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/33250932669981-What-is-the-Cato-Browser-Extension" target="_blank" rel="noopener">What is the Cato Browser Extension — KB</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/33982612780829-What-is-the-Cato-Enterprise-Browser" target="_blank" rel="noopener">What is the Cato Enterprise Browser — KB</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

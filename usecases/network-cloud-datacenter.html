@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Datacentre Integration — Cato Use Case Library</title>
+<meta name="description" content="Make AWS, Azure and GCP first-class sites on the WAN — vSocket, IPsec or cross-connect, with the same policy and visibility as physical sites.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-cloud-datacenter">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / Cloud Datacentre Integration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cloud Datacentre Integration</h1>
+    <p class="lede">
+      Most organisations run production workloads in AWS and Azure — yet those VPCs and VNets sit
+      behind premium interconnect circuits and stacks of cloud virtual firewalls, islands with their
+      own policy and their own blind spots. This use case makes the cloud datacentre just another
+      site on the Cato WAN: three ways to connect (vSocket, IPsec, cross-connect), all live in the
+      demo tenant, all governed by the same policy and visibility as every physical site.
+    </p>
+    <div class="meta-row">
+      <span class="tag">vSocket</span><span class="tag">AWS</span><span class="tag">Azure</span><span class="tag">Cross-Connect</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The cloud is where the datacentre went. But while branches and physical DCs sit on the
+        corporate WAN, the average VPC or VNet connects through a different stack entirely:
+        a premium interconnect product back to a hub, virtual firewall appliances for security,
+        and cloud-native tooling for whatever visibility exists. Every cloud region added repeats
+        the pattern — more circuits, more appliances, more policy to keep in sync.
+      </p>
+      <p>
+        The objective: <strong>treat every VPC and VNet as just another site on the WAN — same
+        policy, same visibility, same optimisation as Glasgow or the London DC.</strong> Branch
+        users reach cloud workloads across the private backbone; the WAN firewall governs the path;
+        traffic egresses at the Cato PoP nearest the cloud region, not across the public internet.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The problem today</div>
+      <h2>Cloud DCs as islands</h2>
+      <p>Two spending patterns show up in almost every cloud estate — and neither actually delivers WAN-grade connectivity or consistent security:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Premium interconnects</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>ExpressRoute / Direct Connect circuits per region, per hub</li>
+            <li>Recurring circuit and port charges on top of cloud spend</li>
+            <li>Provisioning lead times, contracts, carrier coordination</li>
+            <li>Connectivity only — no inspection, no policy on the path</li>
+            <li>Branch traffic still hairpins through a physical DC to get there</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cloud virtual firewalls</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>NGFW instances deployed and licensed per VPC/VNet</li>
+            <li>A second (or third) policy stack to author and audit</li>
+            <li>You own sizing, HA design, upgrades and failover testing</li>
+            <li>Separate logging — cloud flows invisible to WAN tooling</li>
+            <li>Policy drift between cloud and on-prem is the norm</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“What do your interconnect circuits and cloud firewall licences cost per year — and after
+        all that spend, which single console shows the policy between a branch user and your
+        production VPC?”</p>
+      </div>
+    </section>
+
+    <section id="methods" class="reveal">
+      <div class="section-kicker">Connection options</div>
+      <h2>Three ways in — all live in this tenant</h2>
+      <p>
+        Cato gives you three ways to bring a cloud datacentre onto the WAN. They are not
+        alternatives to choose once — most estates mix them by region and requirement, and this
+        demo tenant runs all three side by side.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Method</th><th>How it connects</th><th>Choose it when</th><th>Live in this tenant</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>vSocket</strong></td>
+              <td>Cato Socket as a virtual appliance inside the VNet/VPC, encrypted tunnels to the nearest PoP; deployable as an HA pair</td>
+              <td>You want the full site experience — WAN optimisation, QoS, deep analytics — inside the cloud network</td>
+              <td>“Azure-UKS-Hub-vSocket” (Azure, HA pair) · “AWS Site eu-west-2” (HA pair) · “AWS Ireland”</td>
+            </tr>
+            <tr>
+              <td><strong>IPsec</strong></td>
+              <td>IKEv2 tunnels from the cloud provider’s native gateway straight to a Cato PoP — no VM footprint at all</td>
+              <td>You already run Azure Virtual WAN / cloud VPN gateways, or want a region connected in minutes</td>
+              <td>“Azure-VWAN-Hub-Site” (Azure VWAN hub) · “aws-ap-southeast-2-ipsec” (Sydney)</td>
+            </tr>
+            <tr>
+              <td><strong>Cross-Connect</strong></td>
+              <td>Private layer-2 link between the cloud provider edge and the Cato PoP in the same facility — no tunnel overhead</td>
+              <td>You need the highest throughput and deterministic latency into a major region</td>
+              <td>“AWS Cross-Connect” (cloud interconnect)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Why this beats the premium products</div>
+        <p>Whatever the method, the cloud site lands on the same backbone, in the same policy set,
+        with the same analytics as every physical site — and egress to the VPC happens at the PoP
+        nearest the cloud region. No ExpressRoute or Direct Connect subscription, no virtual
+        firewall fleet to size and patch.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Cloud DCs as first-class WAN sites</h2>
+      <p>
+        Once connected, a cloud datacentre behaves exactly like the London DC: it appears in the
+        topology, participates in WAN routing, is governed by the WAN firewall, and every flow to
+        and from it is visible in App Analytics. A user in Glasgow reaching an app in the AWS VPC
+        traverses the private backbone end to end — one policy decision, one audit trail, no
+        internet middle mile.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">~1<span class="unit">hr</span></div><div class="stat-label">From vSocket deployment to a cloud DC live on the WAN</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">3</div><div class="stat-label">Connection methods — vSocket, IPsec, cross-connect</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">6</div><div class="stat-label">Cloud sites featured in this demo across AWS &amp; Azure</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">0</div><div class="stat-label">Premium interconnect products or virtual firewalls required</div></div>
+      </div>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cloud datacentres connected to the Cato WAN by vSocket, IPsec and cross-connect</title>
+          <desc id="dg1-desc">The Glasgow branch and London DC connect to the Cato global private backbone. Across the backbone, four cloud destinations attach by different methods: an Azure VNet and an AWS VPC each via an HA pair of vSockets, Azure Virtual WAN via IPsec, and an AWS region via a layer-2 cross-connect at the Cato PoP. All flows follow the same green allowed lanes through the backbone.</desc>
+
+          <!-- Physical sites (left) -->
+          <rect class="dg-node" x="30" y="110" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="110" y="134" text-anchor="middle">Glasgow</text>
+          <text class="dg-sub" x="110" y="152" text-anchor="middle">Branch · Socket X1600</text>
+
+          <rect class="dg-node" x="30" y="290" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="110" y="314" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="110" y="332" text-anchor="middle">Socket X1500 · datacentre</text>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="430" cy="235" rx="150" ry="58"/>
+          <circle cx="292" cy="255" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="568" cy="215" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="430" y="310" text-anchor="middle">Cato Global Private Backbone</text>
+
+          <!-- PoPs -->
+          <circle class="pulse-ring" cx="330" cy="235" r="27" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="330" cy="235" r="24"/>
+          <text class="dg-label" x="330" y="172" text-anchor="middle">London PoP</text>
+
+          <circle class="pulse-ring" cx="530" cy="235" r="27" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="530" cy="235" r="24"/>
+          <text class="dg-label" x="530" y="172" text-anchor="middle">Cloud-adjacent PoP</text>
+
+          <!-- Lanes: sites to backbone -->
+          <path class="lane lane-allow" d="M 190 139 C 245 150, 283 186, 308 216"/>
+          <path class="lane lane-allow" d="M 190 318 C 245 308, 283 272, 308 253"/>
+          <path class="lane lane-allow" d="M 358 235 L 502 235"/>
+
+          <!-- Lanes: backbone to cloud destinations -->
+          <path class="lane lane-allow" d="M 550 216 C 625 160, 685 105, 752 82"/>
+          <text class="dg-tiny" x="648" y="118" text-anchor="middle">vSocket · DTLS</text>
+
+          <path class="lane lane-allow" d="M 556 227 C 630 205, 690 192, 752 186"/>
+          <text class="dg-tiny" x="648" y="220" text-anchor="middle">vSocket · DTLS</text>
+
+          <path class="lane lane-allow" d="M 556 243 C 630 265, 690 285, 752 293"/>
+          <text class="dg-tiny" x="648" y="262" text-anchor="middle">IPsec · IKEv2</text>
+
+          <path class="lane-static" fill="none" style="stroke-width:3.4" d="M 550 254 C 625 320, 690 372, 752 399"/>
+          <text class="dg-sub" transform="rotate(35 660 330)" x="660" y="330" text-anchor="middle">L2 cross-connect</text>
+
+          <!-- Cloud destinations (right) -->
+          <rect class="dg-node" x="756" y="44" width="174" height="70" rx="10"/>
+          <text class="dg-label" x="843" y="70" text-anchor="middle">Azure VNet · UK South</text>
+          <text class="dg-sub" x="843" y="87" text-anchor="middle">Azure-UKS-Hub-vSocket</text>
+          <text class="dg-tiny" x="843" y="102" text-anchor="middle">vSocket HA pair</text>
+          <rect class="dg-node-green" x="886" y="35" width="36" height="18" rx="9"/>
+          <text class="dg-tiny" x="904" y="48" text-anchor="middle">HA</text>
+
+          <rect class="dg-node" x="756" y="150" width="174" height="70" rx="10"/>
+          <text class="dg-label" x="843" y="176" text-anchor="middle">AWS VPC · eu-west-2</text>
+          <text class="dg-sub" x="843" y="193" text-anchor="middle">AWS Site eu-west-2</text>
+          <text class="dg-tiny" x="843" y="208" text-anchor="middle">vSocket HA pair</text>
+          <rect class="dg-node-green" x="886" y="141" width="36" height="18" rx="9"/>
+          <text class="dg-tiny" x="904" y="154" text-anchor="middle">HA</text>
+
+          <rect class="dg-node" x="756" y="256" width="174" height="70" rx="10"/>
+          <text class="dg-label" x="843" y="282" text-anchor="middle">Azure Virtual WAN</text>
+          <text class="dg-sub" x="843" y="299" text-anchor="middle">Azure-VWAN-Hub-Site</text>
+          <text class="dg-tiny" x="843" y="314" text-anchor="middle">IPsec from the VWAN hub</text>
+
+          <rect class="dg-node" x="756" y="362" width="174" height="70" rx="10"/>
+          <text class="dg-label" x="843" y="388" text-anchor="middle">AWS region</text>
+          <text class="dg-sub" x="843" y="405" text-anchor="middle">AWS Cross-Connect</text>
+          <text class="dg-tiny" x="843" y="420" text-anchor="middle">Cloud interconnect at the PoP</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> WAN flows — same policy as physical sites</span>
+          <span class="key"><span class="swatch" style="border-top:3px solid var(--ink-3)"></span> Layer-2 cross-connect at the PoP (no tunnel)</span>
+        </div>
+        <div class="diagram-caption">Glasgow reaches every cloud DC across the private backbone. Whether the last hop is a vSocket tunnel, an IPsec tunnel or a physical cross-connect, the policy and visibility are identical.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">⚡</div><div><h4>On the WAN in about an hour</h4><p>Deploy the vSocket from the cloud marketplace or as code, and the VPC/VNet is a routed, policy-governed WAN site — no circuits to order.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>HA pairs, managed for you</h4><p>vSockets deploy as primary/secondary pairs with automatic failover — “AWS Site eu-west-2” and the Azure hub both run HA in this tenant.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Consistent security everywhere</h4><p>The WAN firewall sits between the branch and the VPC — one rule base and one audit trail covering cloud and physical sites alike.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Full flow visibility</h4><p>Every flow to and from the cloud DC lands in App Analytics and Events — the visibility cloud virtual firewalls never gave the network team.</p></div></div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map with green ring markers showing Cato PoP locations, concentrated across North America, Europe and Asia, with further markers in South America, the Middle East, India, Africa and Australia.">
+        <figcaption>Cato PoPs sit alongside the major cloud regions — traffic to a VPC egresses at the PoP nearest the region, never across the public internet middle mile.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — map their cloud estate</div>
+        <p>Which clouds and regions run production workloads? How do branches reach them today —
+        via a hub DC, ExpressRoute/Direct Connect, cloud VPN? Who owns the firewalls in the cloud?
+        Anchor each step below to their answers.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Show cloud sites in the topology</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Point out the cloud sites connected alongside the physical estate:
+          <strong>Azure-UKS-Hub-vSocket</strong> (Azure), <strong>AWS Site eu-west-2</strong> and
+          <strong>AWS Ireland</strong> (vSockets), <strong>Azure-VWAN-Hub-Site</strong> and
+          <strong>aws-ap-southeast-2-ipsec</strong> (IPsec), and <strong>AWS Cross-Connect</strong>
+          (cloud interconnect). They render exactly like Glasgow or the London DC — that is the point.</p>
+        </li>
+        <li>
+          <h4>Open the HA pair</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Open <strong>AWS Site eu-west-2</strong> and show the high-availability status: primary
+          and secondary vSocket, both tunnelled to the PoP, with automatic failover. Contrast with
+          designing, licensing and failover-testing an HA firewall pair yourself.</p>
+        </li>
+        <li>
+          <h4>Show the branch-to-VPC firewall rule</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Walk a rule allowing a branch user group to a specific application hosted in the AWS
+          VPC. Same rule anatomy as branch-to-DC: source, destination site, app, action, track.
+          One policy governs cloud and physical alike.</p>
+        </li>
+        <li>
+          <h4>Prove the visibility</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Filter analytics to the VPC site: applications, users, flows and throughput to the
+          cloud DC, fully attributed. “This is the view your cloud virtual firewalls never gave
+          the network team.”</p>
+        </li>
+        <li>
+          <h4>Discuss method selection</h4>
+          <p>Use the comparison table above: vSocket for the full site experience inside the
+          VPC/VNet, IPsec from cloud-native gateways for speed and zero footprint, cross-connect
+          for maximum throughput into a major region. All three coexist in this one tenant.</p>
+        </li>
+        <li>
+          <h4>Close on the economics</h4>
+          <p>No ExpressRoute or Direct Connect subscription, no virtual firewall fleet, and the
+          next cloud region joins the WAN in about an hour — with policy and visibility already
+          in place.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base — vSocket &amp; IPsec site guides</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider — deploy vSockets as code</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-cloud-interconnect.html">Cloud Interconnect: Dedicated Circuits to Cloud &amp; DC</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence</a></li>
+            <li><a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

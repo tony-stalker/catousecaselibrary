@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palo Alto (NGFW &amp; Prisma Access) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire PA appliances, Panorama and Prisma Access — policy translation from App-ID to Cato app-aware rules, GlobalProtect to Cato Client, and a phased edge cutover.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-palo-alto">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Palo Alto to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Palo Alto (NGFW &amp; Prisma Access) to Cato</h1>
+    <p class="lede">
+      Every Palo Alto estate reaches the same fork: another hardware refresh with stacked per-box
+      subscriptions, or move the inspection into the cloud. This page maps App-ID, zones, Panorama,
+      GlobalProtect and Prisma Access to their Cato equivalents, then walks a phased, reversible
+      migration path — parallel sockets behind the PA, an eBGP or static handoff, and
+      cohort-by-cohort client cutover — with the honest caveats left in.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Palo Alto</span><span class="tag">NGFW</span><span class="tag">Prisma Access</span>
+      <span class="tag">GlobalProtect</span><span class="tag">Panorama</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why refresh time is the right time</h2>
+      <p>
+        Palo Alto customers rarely move on a whim — the trigger is the refresh quote. The PA-3200
+        and PA-5200 series hit end-of-sale on 31 August 2023, with support ending on
+        31 August 2028, so a large slice of the installed base has a forced decision point on the
+        calendar. Each refresh re-buys not just the appliances but the whole subscription stack —
+        Threat Prevention, Advanced URL Filtering, Advanced WildFire, DNS Security, GlobalProtect,
+        SD-WAN — each licensed per firewall, each sized per box.
+      </p>
+      <p>
+        Meanwhile the appliances themselves are an attack surface: CVE-2024-3400 (CVSS 10.0) was an
+        actively exploited zero-day command injection in the GlobalProtect portal/gateway that
+        forced emergency hotfix cycles across every exposed firewall. Panorama adds an operations
+        tax of its own — it is software the customer must size, run and upgrade, and its
+        compatibility matrix forces Panorama-first upgrade sequencing. And when the customer asks
+        how they would even migrate config, the answer is telling: Expedition, PAN's own migration
+        tool, reached end-of-life on 31 December 2024 with no successor product — there is no
+        vendor-supported self-service path even for PA-to-PA moves.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based content — review before customer use</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not</strong> a delivery-verified runbook. Validate scope, sequencing and dates with
+        Cato Professional Services before committing a plan to a customer.</p>
+      </div>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">2028</div><div class="stat-label">Support ends for PA-3200 &amp; PA-5200 (31 Aug) — end-of-sale was Aug 2023</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">10.0<span class="unit">CVSS</span></div><div class="stat-label">CVE-2024-3400 — actively exploited GlobalProtect zero-day, emergency hotfixes</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">EOL</div><div class="stat-label">Expedition retired 31 Dec 2024 — no self-service migration tool, even PA-to-PA</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The refresh treadmill</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>EOS/EOL cycles force re-purchase of hardware every few years</li>
+            <li>Security value sold as stacked per-device subscriptions</li>
+            <li>Bundles are commonly over- or mis-bought across an estate</li>
+            <li>Sizing guesswork repeats every cycle — and TLS decryption eats it fastest</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The operations tax</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Panorama is customer-run software: sizing, HA, log collectors, upgrades</li>
+            <li>Compatibility matrix forces Panorama-first upgrade projects</li>
+            <li>Emergency PAN-OS hotfix weekends (CVE-2024-3400 et al.)</li>
+            <li>On Cato, the inspection stack is a self-maintaining PoP capability — no customer-side patching</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“What does the next hardware refresh plus the subscription stack actually cost across
+        the estate — and how many change windows did the CVE-2024-3400 hotfixes take?” Anchor the
+        business case to their numbers, not ours.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        Nothing on this table is a file-format conversion — it is a functional translation, and the
+        third column is where migrations are won or lost. Walk it with the customer during
+        discovery so nobody discovers a gap at cutover.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Palo Alto component</th><th>Cato equivalent</th><th>Watch for</th></tr></thead>
+          <tbody>
+            <tr><td>PA-series NGFW / VM-Series</td><td>Cato Socket (X-series) / vSocket + single-pass inspection at the PoP</td><td>The Socket is a thin SD-WAN edge — all security runs in the PoP; the Socket LAN Firewall covers intra-site L3/L4/L7 flows</td></tr>
+            <tr><td>App-ID</td><td>Cato application awareness — app catalogue + custom apps</td><td>Custom App-IDs must be re-created as Cato custom apps or FQDN/IP objects; signatures do not transfer</td></tr>
+            <tr><td>Security zones + zone-based rulebase</td><td>WAN Firewall + Internet Firewall + Socket LAN Firewall</td><td>No zone construct. WAN FW default-<strong>blocks</strong>, Internet FW default-<strong>allows</strong> — opposite postures must be designed for</td></tr>
+            <tr><td>Content-ID stack (Threat Prevention, Adv URL Filtering, Adv WildFire, DNS Security)</td><td>Cato IPS, NG Anti-Malware, sandboxing, DNS protection, SWG categories</td><td>Platform capabilities at every PoP — nothing licensed or sized per box</td></tr>
+            <tr><td>Decryption policy</td><td>Cato TLS Inspection policy (account-level, wizard-assisted)</td><td>Rebuilt via Cato's phased best practice, <strong>not ported</strong>; carry the intent of exclusions, not the rules</td></tr>
+            <tr><td>User-ID</td><td>User Awareness — AD/LDAP sync, SCIM, Cato Identity Agent</td><td>SCIM via Entra ID / Okta; check identification licensing for non-SDP users during design</td></tr>
+            <tr><td>GlobalProtect (client, portal, gateway)</td><td>Cato Client (SDP/ZTNA) + Browser Access (clientless)</td><td>Always-On, pre-login and split-tunnel behaviour set in the Client Connectivity Policy — agree it per cohort</td></tr>
+            <tr><td>GlobalProtect HIP checks</td><td>Device Posture profiles &amp; checks</td><td>Usable in Client Connectivity and firewall rules, with continuous re-checks; map each HIP object in discovery</td></tr>
+            <tr><td>Panorama (device groups, templates, log collectors)</td><td>Cato Management Application (CMA)</td><td>SaaS — no appliance, no version ladder; plan SIEM export and log retention before decommissioning collectors</td></tr>
+            <tr><td>Prisma Access</td><td>Cato SASE Cloud — every PoP delivers full SSE</td><td>One engine and one policy set versus a multi-console, multi-engine assembly</td></tr>
+            <tr><td>Prisma SD-WAN (ION appliances)</td><td>Cato Socket SD-WAN — same platform</td><td>If present, it migrates in the same site cutover as the firewall</td></tr>
+            <tr><td>NAT policy</td><td>Site-level NAT (outgoing) + Remote / Local Port Forwarding (inbound)</td><td>Branch NAT mostly disappears (PoP handles SNAT); DNAT-published services must be consciously re-homed and DNS updated</td></tr>
+            <tr><td>Site-to-site IPsec on the PA</td><td>Cato IPsec sites (IKEv1/v2), BGP supported</td><td>Partner VPNs terminate at the PoP, not on site hardware</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">Recommended migration path</div>
+      <h2>Four phases, parallel from day one</h2>
+      <p>
+        Cato Professional Services runs delivery in four phases — <strong>Discover &amp; Design →
+        Pilot, Build &amp; Initial Rollout → Advanced Security &amp; Broader Rollout → Tune,
+        Optimise &amp; Handover</strong> — typically across a ~4-month example plan. The
+        architectural pattern underneath is co-existence, not big-bang: the socket installs in
+        parallel, the PA firewall stays the default gateway, and a routing handoff decides — per
+        prefix — which network carries each subnet.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Phased co-existence of a Palo Alto firewall and a Cato Socket during migration</title>
+          <desc id="dg1-desc">A branch or data-centre site runs a PA firewall as default gateway with a Cato Socket installed in parallel, joined by an eBGP or static handoff over a LAN transit VLAN. Migrated subnets flow from the socket to a Cato PoP on the global private backbone, reaching the internet and other Cato sites. Non-migrated traffic keeps its default route through the PA to the legacy WAN, which an interconnect hub bridges to the Cato side. Below, a GlobalProtect user cohort still connects via the PA while a Cato Client cohort connects to the PoP; users migrate in waves.</desc>
+
+          <!-- Site container -->
+          <rect x="30" y="64" width="240" height="252" rx="14" fill="none" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="7 6" opacity=".7"/>
+          <text class="dg-label" x="150" y="88" text-anchor="middle">Branch / DC site</text>
+
+          <!-- PA firewall node -->
+          <rect class="dg-node-dark" x="55" y="104" width="190" height="60" rx="10"/>
+          <text class="dg-label-inv" x="150" y="128" text-anchor="middle">PA firewall (HA)</text>
+          <text class="dg-sub-inv" x="150" y="146" text-anchor="middle">default gateway — today</text>
+
+          <!-- Socket node -->
+          <rect class="dg-node-green" x="55" y="240" width="190" height="60" rx="10"/>
+          <text class="dg-label" x="150" y="264" text-anchor="middle">Cato Socket X1500</text>
+          <text class="dg-sub" x="150" y="282" text-anchor="middle">installed in parallel</text>
+
+          <!-- Handoff link -->
+          <path class="lane-static" d="M 100 164 L 100 240" fill="none"/>
+          <text class="dg-tiny" x="180" y="196" text-anchor="middle">eBGP / static handoff</text>
+          <text class="dg-tiny" x="180" y="211" text-anchor="middle">over LAN transit VLAN</text>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="520" cy="220" rx="150" ry="48"/>
+          <circle cx="390" cy="196" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="660" cy="200" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="495" y="290" text-anchor="middle">Global Private Backbone</text>
+          <circle class="pulse-ring" cx="520" cy="215" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="215" r="30"/>
+          <text class="dg-label" x="520" y="152" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="520" y="168" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">FWaaS · IPS · TLSi · SWG</text>
+
+          <!-- Legacy WAN node -->
+          <rect class="dg-node-dark" x="420" y="30" width="190" height="60" rx="10"/>
+          <text class="dg-label-inv" x="515" y="54" text-anchor="middle">Legacy WAN</text>
+          <text class="dg-sub-inv" x="515" y="72" text-anchor="middle">MPLS · Internet · GP VPN</text>
+
+          <!-- Interconnect hub node -->
+          <rect class="dg-node" x="740" y="30" width="190" height="74" rx="10"/>
+          <text class="dg-label" x="835" y="56" text-anchor="middle">Interconnect hub</text>
+          <text class="dg-sub" x="835" y="74" text-anchor="middle">Socket + legacy CPE</text>
+          <text class="dg-tiny" x="835" y="92" text-anchor="middle">bridges Cato ↔ legacy</text>
+
+          <!-- Internet / Cato sites node -->
+          <rect class="dg-node-green" x="740" y="210" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="835" y="236" text-anchor="middle">Internet &amp; Cato sites</text>
+          <text class="dg-sub" x="835" y="254" text-anchor="middle">direct PoP breakout</text>
+
+          <!-- Lanes: legacy (amber, interim) -->
+          <path class="lane lane-limit" d="M 245 122 C 310 100, 360 78, 420 60"/>
+          <text class="dg-tiny" x="335" y="72" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">default route</text>
+
+          <!-- Lanes: Cato (green, migrated) -->
+          <path class="lane lane-allow" d="M 245 268 C 340 262, 420 240, 492 224"/>
+          <text class="dg-tiny" x="355" y="240" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">migrated subnets</text>
+          <path class="lane lane-allow" d="M 552 222 C 620 228, 680 235, 740 240"/>
+
+          <!-- Interconnect links -->
+          <path class="lane-static" d="M 610 62 L 740 64" fill="none"/>
+          <path class="lane lane-allow" d="M 806 104 C 770 155, 665 190, 556 202"/>
+
+          <!-- GlobalProtect cohort -->
+          <g>
+            <circle cx="330" cy="380" r="23" fill="var(--lane-limit)"/>
+            <circle cx="330" cy="373" r="6.5" fill="#fff"/>
+            <path d="M 317 393 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="330" y="424" text-anchor="middle">GlobalProtect cohort</text>
+            <text class="dg-sub" x="330" y="441" text-anchor="middle">being retired in waves</text>
+          </g>
+          <path class="lane lane-limit" d="M 313 362 C 280 345, 235 332, 188 318"/>
+          <text class="dg-tiny" x="300" y="332" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">GP VPN → PA gateway</text>
+
+          <!-- Cato Client cohort -->
+          <g>
+            <circle cx="620" cy="380" r="23" fill="var(--status-good)"/>
+            <circle cx="620" cy="373" r="6.5" fill="#fff"/>
+            <path d="M 607 393 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="620" y="424" text-anchor="middle">Cato Client cohort</text>
+            <text class="dg-sub" x="620" y="441" text-anchor="middle">SDP · target state</text>
+          </g>
+          <path class="lane lane-allow" d="M 612 356 C 595 320, 570 285, 538 242"/>
+
+          <!-- Cohort migration arrow -->
+          <path class="lane-static" d="M 362 380 L 588 380" fill="none"/>
+          <text class="dg-tiny" x="475" y="370" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">users migrate in waves →</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Cato path — migrated subnets &amp; users</span>
+          <span class="key"><span class="swatch limit"></span> Legacy path via the PA — interim, retired at cutover</span>
+        </div>
+        <div class="diagram-caption">Parallel-socket co-existence: the PA stays default gateway while migrated subnets hand off to the socket per prefix over eBGP or statics; an interconnect hub keeps the legacy and Cato islands talking; GlobalProtect cohorts move to the Cato Client wave by wave. Rollback at any point is a route withdrawal, not a project.</div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 1 — Discovery &amp; co-existence design</h4>
+          <p>Standard PS discovery — objectives, traffic flows, site interdependencies, routing
+          strategy, DMZ/voice/internet integration — then agree the migration options and
+          co-existence strategy. <strong>Export the PA estate from Panorama</strong>: CSV/PDF from
+          the Policies tab, full XML via <em>Save and Export Panorama and Firewall
+          Configurations</em> (or the XML API per device group), including pre-/post-rules, shared
+          objects, NAT, decryption and GlobalProtect config. Expedition is EOL, so treat
+          conversion as an engineering workstream — PS schedules “Security Policy Conversion”
+          explicitly. <strong>Clean before you translate</strong>: strip disabled, shadowed and
+          zero-hit rules (Panorama rule-usage data finds them), then map each zone to Cato
+          constructs — what lands in the WAN Firewall (allowlist), Internet Firewall (blocklist)
+          and Socket LAN Firewall. Distribute the Cato Client and TLS root certificate early, plan
+          SCIM/LDAP provisioning and SIEM integration, and ship sockets.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Pilot, build &amp; initial rollout</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Convert and implement policies, then stand up sockets at the data centres
+          <strong>alongside</strong> the PA estate — the PA remains L3 default gateway and a LAN
+          transit VLAN carries either static routes or an eBGP handoff between socket and PA;
+          migrated subnets route to Cato per prefix, everything else stays put (Cato-learned
+          routes can be tagged with the Cato ASN and community 32768 for clean isolation). Deploy
+          the Cato Client to pilot users, run Client Connectivity and Device Posture in monitor
+          mode for discovery, and validate inbound flows (Remote Port Forwarding) and return-path
+          routing before any site cutover.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Advanced security &amp; broader rollout</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Move GlobalProtect users to the Cato Client in cohorts (the PS plan runs SDP Migration
+          Groups 1–4 across months 2–4): enrol via SCIM, enable the Client, confirm app access,
+          then <strong>remove GlobalProtect from that cohort</strong> — do not leave both clients
+          active long-term. Rebuild TLS inspection with Cato's phased best practice — block QUIC,
+          deploy the root certificate, start with high-risk/low-impact categories and widen while
+          tuning bypasses for pinned apps. Enable IPS/NGAM in the monitor-then-block progression,
+          CASB discovery and DLP monitor mode, and migrate branches in waves — each site's default
+          route moves to the socket in its own cutover window.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Tune, optimise &amp; decommission</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Fine-tune policy, validate controls, review alerting and hand over to BAU. Then
+          decommission in order: GlobalProtect portals/gateways once the last cohort has moved →
+          branch PAs → the DC PA's edge role (the box may persist temporarily for east-west DC
+          filtering — see gotchas) → Panorama and log collectors <strong>last</strong>, after log
+          retention obligations are satisfied and archives exported → terminate subscriptions at
+          renewal.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Every phase is reversible</h4><p>Withdraw the static route or BGP prefix and traffic reverts to the PA instantly — rollback is a routing change, not a rebuild.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Routing decides, not rip-and-replace</h4><p>Three placement patterns — L3 switch as gateway, PA stays gateway with a handoff, or socket becomes gateway — chosen per site.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔗</div><div><h4>Interconnect hub for multi-site estates</h4><p>Legacy and Cato islands keep talking throughout. Parallel connectivity per site works below roughly 20 sites; hub or regional patterns above.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>No inspection gap</h4><p>The PA keeps protecting non-migrated traffic while the Cato PoP inspects migrated subnets from day one — nothing rides unexamined.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Run both cleanly — and know your way back</h2>
+      <p>
+        The parallel patterns above are proven, but DIY co-existence has four classic failure
+        modes. Design them out up front:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Asymmetric routing vs the stateful PA</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">If traffic egresses via Cato but returns via the PA (or
+          crosses regions through different hubs), the PA's stateful inspection drops the unseen
+          flow. Fixes: parallel connectivity per region, hub anchoring, or AS-path design that
+          keeps regional symmetry.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Double TLS inspection</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PA decryption left enabled on a path Cato also inspects means
+          certificate-on-certificate errors and pinned apps failing twice over. Disable PA
+          decryption for Cato-routed traffic, or scope Cato TLSi to bypass PA-inspected paths
+          until cutover. Remember: TLSi is <strong>rebuilt on Cato, not ported</strong>.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Dual VPN clients</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato documents that third-party VPN drivers on the same
+          machine can conflict with and override Cato Client settings, and full-tunnel alongside
+          another VPN is not recommended. Keep the GlobalProtect-to-Cato switch per cohort short
+          and scripted: install Cato Client → validate → uninstall GlobalProtect.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Opposite default postures</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PA admins think in zones with explicit interzone-deny. Cato's
+          WAN Firewall is an allowlist (implicit block) but the Internet Firewall is a blocklist
+          (implicit <strong>allow</strong>) — a surprise if discovered at cutover. Add explicit
+          blocks/allows to match risk appetite in the design workshop, not on the night.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Rollback levers, phase by phase</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Phase</th><th>Rollback lever</th></tr></thead>
+          <tbody>
+            <tr><td>Pilot site</td><td>Remove the static route / withdraw the BGP prefix at the L3 switch or PA — traffic reverts to the PA instantly</td></tr>
+            <tr><td>Subnet migration (routed-range pattern)</td><td>Re-add the dummy range on the Cato site and restore the statics at the interconnect — this is the designed rollback</td></tr>
+            <tr><td>BGP handoff</td><td>Disconnect/reconnect the site LAN — prefixes withdraw and propagate automatically</td></tr>
+            <tr><td>User cohorts</td><td>Re-enable GlobalProtect for the affected cohort — keep the GP portal/gateway warm until the final wave completes</td></tr>
+            <tr><td>TLS inspection</td><td>Roll back to an earlier enablement phase without disabling TLSi entirely</td></tr>
+            <tr><td>Full site</td><td>Physical LAN cutover reversal — big-bang LAN cutovers rate as “complex rollback”, which is exactly why the parallel patterns are preferred</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Objection handling</div>
+      <h2>Gotchas — and how to handle them honestly</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">“App-ID is more mature”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Both platforms do inline L7 app identification; the practical
+          gap is <strong>custom App-IDs</strong> and niche signatures. Inventory them in discovery,
+          re-create as Cato custom apps or FQDN/IP objects, validate each in the pilot. Sell
+          policy-outcome parity, never signature-for-signature parity.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The zone-model mindset</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato has no zone construct — the world splits into WAN FW
+          (implicit block) and Internet FW (implicit allow). Zones with no direct equivalent
+          (multi-vsys separations) go on the design-workshop agenda, and the Internet FW gets
+          explicit rules to match the customer's risk appetite.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NAT is narrower, on purpose</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">PA's freeform NAT (U-turn, bidirectional DNAT, NAT between
+          zones) is broader than Cato's site NAT plus RPF/LPF publishing. Most branch NAT simply
+          disappears — the PoP handles internet SNAT — but audit DC NAT rules line by line; a few
+          may need redesign.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Decryption does not port</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Set the expectation in discovery: TLSi is a re-implementation
+          with its own phased rollout. Pinned apps need bypass rules, and TLSi is not supported
+          for Android devices — check the estate's mobile posture early.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">East-west DC micro-segmentation</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A customer using PA for intra-DC micro-segmentation can
+          <strong>keep a DC firewall for deep east-west policy in the near term</strong> — a scoped
+          carve-out, not a blocker. The Socket LAN Firewall covers L3/L4/L7 segmentation of
+          socket-attached VLANs; position edge/WAN/SSE first, DC interior on its own timeline.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">HIP parity questions</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">HIP needs a GlobalProtect gateway licence per gateway; Cato
+          Device Posture checks (AV, firewall, disk encryption, patch level, device certificate)
+          are configured centrally and enforceable in Client Connectivity and firewall rules. Map
+          each HIP object to a posture profile in discovery — most translate directly.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Panorama gives us staged commits”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CMA is SaaS with centralised policy and a full audit trail.
+          The counter is what Panorama costs to keep: its own hardware/VM sizing, HA and the
+          PAN-OS version-compatibility ladder that forces Panorama-first upgrade sequencing —
+          versus zero customer-maintained management infrastructure.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We already own Prisma Access”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Prisma Access is PAN-OS assembled across public-cloud PoPs
+          with multiple management surfaces; comparisons consistently cite higher deployment
+          complexity and fragmented licensing versus Cato's single engine and console. Anchor on
+          operational effort and console/policy count, not feature checklists.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Log retention &amp; compliance</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Export or archive Panorama and log-collector data
+          <strong>before</strong> decommissioning to satisfy retention obligations, and plan the
+          Cato-side SIEM integration in Phase 1 so there is never a visibility gap.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services — runs the conversion &amp; rollout</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/11968052021277-Understanding-Rollout-to-the-Cato-Cloud" target="_blank" rel="noopener">Understanding Rollout to the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet &amp; WAN Firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360007713437-Best-Practices-for-TLS-Inspection" target="_blank" rel="noopener">Best practices for TLS Inspection (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles &amp; checks (KB)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-palo-alto-policy.html">Palo Alto Policy Migration</a></li>
+            <li><a href="migration-zscaler.html">Zscaler (ZIA / ZPA) to Cato</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-2);margin-top:16px">
+        <strong>Sources.</strong> Vendor-verifiable anchors on this page: PA-3200/5200 end-of-sale and
+        support dates from PAN's
+        <a href="https://www.paloaltonetworks.com/services/support/end-of-life-announcements/hardware-end-of-life-dates" target="_blank" rel="noopener">hardware end-of-life announcements</a>;
+        CVE-2024-3400 from the
+        <a href="https://security.paloaltonetworks.com/CVE-2024-3400" target="_blank" rel="noopener">PAN security advisory</a> and
+        <a href="https://nvd.nist.gov/vuln/detail/cve-2024-3400" target="_blank" rel="noopener">NVD</a>;
+        Expedition's retirement per
+        <a href="https://security.paloaltonetworks.com/PAN-SA-2025-0001" target="_blank" rel="noopener">PAN-SA-2025-0001</a>;
+        Panorama upgrade sequencing from the
+        <a href="https://docs.paloaltonetworks.com/compatibility-matrix/reference/panorama/panorama-management-compatibility" target="_blank" rel="noopener">Panorama compatibility matrix</a>;
+        per-firewall subscription stacking from
+        <a href="https://docs.paloaltonetworks.com/ngfw/administration/subscriptions/all-subscriptions" target="_blank" rel="noopener">PAN's subscription documentation</a>.
+        Cato behaviours cite the Learning Center articles linked above; phase structure and
+        co-existence patterns follow Cato PS methodology.
+      </p>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

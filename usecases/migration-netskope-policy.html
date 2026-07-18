@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netskope Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate Netskope Real-time Protection policy to Cato — SWG, inline and API CASB, and DLP profiles (EDM rebuilt from source) with monitor-then-block discipline.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-netskope-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Netskope Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Netskope Policy Migration</h1>
+    <p class="lede">
+      A mature Netskope tenant encodes years of policy decisions: Real-time Protection rules,
+      inline CASB activity and instance controls, DLP profiles, and a modest Cloud Firewall
+      rulebase. This page translates each domain into Cato constructs through the Cato PS
+      four-phase process — <strong>Export → Review &amp; Map → Deploy (monitor-first) →
+      Optimise</strong> — never lift-and-shift: rules are rationalised on usage evidence before
+      anything is mapped, and EDM datasets are rebuilt from the source system, never imported.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Policy translation is where migrations stall</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based page — not a delivery-verified runbook</div>
+        <p>This mapping is authored from Netskope and Cato documentation plus the Cato PS
+        competitor-migration methodology — not from a completed, referenceable policy conversion.
+        Review it with Cato Professional Services before using it with a customer, especially the
+        DLP/EDM rebuild scope, the current SaaS Security API connector list, and app-by-app CASB
+        activity coverage.</p>
+      </div>
+
+      <p>
+        Connectivity moves in weeks — Sockets ship, tunnels come up, users get a new client. What
+        stalls a Netskope migration is the <strong>policy estate</strong>: hundreds of Real-time
+        Protection rules, DLP profiles nobody fully remembers commissioning, instance-aware CASB
+        controls, and a steering-exception list that encodes years of operational archaeology.
+        Translate it badly and the cutover either breaks the business (over-blocking) or silently
+        drops controls (under-blocking).
+      </p>
+      <p>
+        Cato PS runs the policy workstream as a four-phase pipeline, applied per domain:
+        <strong>Export</strong> the vendor policy (console plus REST API v2 where endpoints
+        exist), <strong>Review &amp; Map</strong> — rationalise on hit counts and usage evidence,
+        discard dead, duplicate and shadowed rules, then map what survives to Cato constructs —
+        <strong>Deploy</strong> everything monitor-first with no user impact, and
+        <strong>Optimise</strong>: flip to enforcement rule by rule as events prove each control
+        clean. <strong>Never lift-and-shift.</strong> The migration is the one chance to shed a
+        decade of rule debt, and Cato's single-pass policy model rewards a smaller, cleaner
+        rulebase.
+      </p>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Of your Real-time Protection rules and DLP profiles, which actually fired in the last
+        90 days — and who owns the ones that didn't?” Most estates enforce a small subset of what
+        is configured. The firing subset is the migration scope; the rest is a rationalisation
+        log, not a mapping task.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>Cloud Firewall → Internet Firewall</h2>
+      <p>
+        Netskope Cloud Firewall is FWaaS for non-web egress: policies match users, groups and OUs
+        against firewall app definitions (destination ports, protocols, IPs/FQDNs) with allow or
+        block actions. In most estates this is the <strong>most modest domain</strong> — Netskope
+        was usually bought for web, CASB and DLP, and Cloud Firewall only ever judged the traffic
+        that steering delivered to NewEdge. <strong>Export:</strong> from the tenant console;
+        REST API v2 exposes some but not all configuration, so plan for manual export and
+        screenshots for the remainder.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Netskope construct</th><th>Cato construct</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cloud Firewall policy rule (user/group + FW app definition)</td><td>Internet Firewall rule</td><td>Same single-pass rulebase as the web policy — not a separate product</td></tr>
+            <tr><td>Firewall app definition (ports / protocols)</td><td>Custom service (port/protocol) in the rule</td><td>Consolidate near-duplicate definitions during review</td></tr>
+            <tr><td>Destination IP / FQDN objects</td><td>IP ranges / domains / custom apps</td><td>Prefer domain or app objects over raw IPs where the destination is SaaS</td></tr>
+            <tr><td>User / group / OU scoping</td><td>SCIM-provisioned users &amp; groups</td><td>Groups must exist in the CMA before the rules that reference them deploy</td></tr>
+            <tr><td>Steering scope (only steered traffic reaches Cloud FW)</td><td>All Socket + Client egress</td><td>Rules gain traffic they have never seen — validate in monitor first</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul>
+        <li><strong>Coverage changes at cutover.</strong> Cloud Firewall only judged steered
+        traffic; steering exceptions bypassed it entirely. Cato inspects all egress from Sockets
+        and Clients, so hit patterns shift and quiet rules wake up — that is a feature, but only
+        if you watch it in monitor before enforcing.</li>
+        <li><strong>Default posture.</strong> Cato's Internet Firewall is a
+        <strong>blocklist</strong> — an implicit final allow. If the customer ran default-deny for
+        non-web egress, recreate that deliberately with an explicit catch-all block beneath the
+        allows; never assume the posture travels with the rules.</li>
+        <li><strong>Port-80/443 rules are usually dead on arrival.</strong> Cloud Firewall rules
+        that duplicated web handling collapse into the web policy on Cato — the single engine owns
+        both. Mark them discarded, don't map them twice.</li>
+      </ul>
+      <p>
+        <strong>Strategy:</strong> export, discard zero-hit and duplicated rules, map the
+        survivors onto Internet Firewall rules with custom services, deploy with event tracking,
+        watch hit counts against the Netskope baseline, then tighten.
+      </p>
+    </section>
+
+    <section id="swg-policy" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Real-time Protection web policy → Internet Firewall + Threat Prevention</h2>
+      <p>
+        Real-time Protection (RTP) policies are the heart of a Netskope web estate: top-down rules
+        matching users/groups/OUs plus URL categories (predefined and custom), apps and Cloud
+        Confidence Index (CCI) risk levels, with actions Allow, Block, Alert (silent log) and User
+        Alert (a coaching page with justification capture) — alongside an SSL decryption policy
+        and its do-not-decrypt bypass list. <strong>Export:</strong> policy list and custom
+        categories from the console, partial coverage via REST API v2; notification templates
+        need manual capture.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Netskope construct</th><th>Cato construct</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>RTP web rule (URL category → action)</td><td>Internet Firewall rule on URL categories</td><td>Actions Allow / Block / Prompt in the same rulebase as FW rules</td></tr>
+            <tr><td>Custom URL categories &amp; lists</td><td>Custom categories in the CMA</td><td>Rebuild these first — translated rules depend on them</td></tr>
+            <tr><td>CCI risk-level condition (0–100)</td><td>App Catalog risk score (0–10, ACE)</td><td>Map band-to-band; audit any rule pinned to an exact CCI score</td></tr>
+            <tr><td>User Alert / coaching template</td><td>Prompt action</td><td>Warn-and-continue only — no written-justification capture; set expectations</td></tr>
+            <tr><td>Alert (silent) action</td><td>Allow + event tracking</td><td>Never translate Alert as Block — it changes user impact</td></tr>
+            <tr><td>Inline threat protection (AV / sandboxing)</td><td>Anti-Malware / NGAM + IPS</td><td>Enabled as Threat Prevention services, not per-rule profiles</td></tr>
+            <tr><td>SSL do-not-decrypt list</td><td>TLS inspection bypass rules</td><td>The single most valuable artefact in the export — seed Cato's bypasses from it</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul>
+        <li><strong>Category taxonomies differ.</strong> Netskope and Cato URL categories are not
+        1:1. Review the mapping category-by-category with the customer — especially anything
+        feeding an HR or regulatory control — rather than assuming name equivalence.</li>
+        <li><strong>Inspection depth gates fidelity.</strong> Until TLS inspection is staged on,
+        Cato matches at domain/SNI level — category blocks work, but URL-path distinctions and
+        file-type controls need decryption. Netskope estates typically decrypted by default, so
+        sequence TLS inspection early or accept a temporary fidelity gap.</li>
+        <li><strong>Coaching depth.</strong> Netskope's User Alert captures justification text;
+        Cato's Prompt is warn-and-continue. If written-justification workflows are a hard
+        requirement, agree compensating controls (event follow-up via CMA/SIEM) — do not claim
+        parity.</li>
+        <li><strong>Bypassed traffic appears.</strong> Web traffic that steering exceptions never
+        sent to RTP now hits Cato policy — expect novel events in monitor that are coverage
+        gains, not regressions.</li>
+      </ul>
+      <p>
+        <strong>Strategy:</strong> rationalise on hit counts from tenant analytics, rebuild custom
+        categories, deploy translated blocks as allow-plus-tracking, compare events against the
+        Netskope baseline, then flip to Block — with Prompt standing in for former coaching rules.
+      </p>
+    </section>
+
+    <section id="casb-policy" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>Inline CASB → App Control + Tenant Restrictions; API protection sequenced last</h2>
+      <p>
+        Netskope CASB is two halves. <strong>Inline</strong>: RTP rules keyed on app or app suite
+        plus activity (upload, download, share, post, login) with instance awareness — corporate
+        versus personal tenant. <strong>API Data Protection</strong>: out-of-band scanning of data
+        at rest in sanctioned SaaS. <strong>Export:</strong> policy list and app-instance
+        definitions from the console; REST API v2 covers part of it. The two halves migrate on
+        different clocks — inline converts with the web policy, while API Data Protection keeps
+        running untouched throughout the transition.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Netskope construct</th><th>Cato construct</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>App + activity rule (e.g. block upload to personal cloud storage)</td><td>CASB Application Control rule (app + granular activity)</td><td>Requires TLS inspection; validate activity coverage app-by-app</td></tr>
+            <tr><td>App instance / tenant condition</td><td>Tenant Restrictions policy (header injection) + tenant awareness in App Control</td><td>Documented for M365, Google Workspace, Slack, Dropbox — scope honestly beyond that list</td></tr>
+            <tr><td>App category / CCI condition</td><td>App Catalog category / risk score</td><td>Rules migrate cleanly by category or risk band</td></tr>
+            <tr><td>Coaching on risky app activity</td><td>Prompt action</td><td>Warn-and-continue; no justification capture</td></tr>
+            <tr><td>API Data Protection (data at rest)</td><td>Cato SaaS Security API</td><td>Documented connectors centre on M365 (SharePoint, OneDrive, Exchange) — keep Netskope API-CASB running during transition; retire it last</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul>
+        <li><strong>Map intent, not construct.</strong> An instance-aware rule like “allow
+        corporate OneDrive, block personal” is a tenant-control intent — it lands as a Tenant
+        Restrictions rule plus App Control, not as a construct-for-construct twin. Write the
+        mapping workbook in terms of what each rule is trying to stop.</li>
+        <li><strong>Granularity honesty.</strong> Netskope's activity matrix is finer for some
+        apps than Cato's App Control. Validate the customer's actual app/activity/instance matrix
+        app-by-app in the pilot, and record any rule whose intent cannot be fully expressed —
+        don't assert blanket equivalence.</li>
+        <li><strong>Sequencing is the safety net.</strong> API Data Protection is out-of-band and
+        conflict-free: it scans SaaS data at rest regardless of which vendor carries inline
+        traffic. It stays licensed and running through the whole inline migration, and is retired
+        <strong>last</strong> — only once Cato SaaS Security API coverage is confirmed for the
+        customer's app list.</li>
+        <li><strong>TLS inspection is a prerequisite.</strong> No decryption, no inline CASB —
+        activity-level control needs to see inside the session. Stage TLS inspection before
+        expecting App Control parity.</li>
+      </ul>
+      <p>
+        <strong>Strategy:</strong> list the inline CASB rules that actually fire, start from the
+        Default Recommended CASB/DLP policy in the CMA, layer the mapped rules in monitor, and
+        run a side-by-side comparison against Netskope events during the pilot before enforcing.
+      </p>
+    </section>
+
+    <section id="dlp-policy" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy</div>
+      <h2>DLP profiles → Data Control policy, EDM rebuilt from source</h2>
+      <p>
+        Netskope DLP profiles combine data identifiers (3,000+ advertised), ML classifiers, exact
+        data matching (EDM), document fingerprinting and OCR; rules apply those profiles inline
+        and via the API channel with severity and occurrence thresholds. <strong>Export:</strong>
+        profile and rule definitions from the console — but <strong>EDM datasets cannot be
+        exported</strong>: the uploaded records are hashed in a vendor-specific form. Every EDM
+        dataset is rebuilt from the original system of record, which makes it the long-lead item
+        of the whole policy workstream — start it in phase 1.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Netskope construct</th><th>Cato construct</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DLP profile</td><td>DLP content profile (Data Control policy)</td><td>350+ data types plus custom regex / keyword / file-label types</td></tr>
+            <tr><td>Predefined data identifiers</td><td>Cato data types by category (PCI, PII, PHI, credentials, source code…)</td><td>Map the firing subset, not the licensed library</td></tr>
+            <tr><td>EDM dataset</td><td>Cato EDM — rebuilt from the system of record</td><td>Never exported or imported from Netskope; regenerate from HR / CRM / finance source data and agree a refresh cadence</td></tr>
+            <tr><td>Document fingerprinting</td><td>IDM (indexed document matching)</td><td>Re-index the source documents on Cato</td></tr>
+            <tr><td>OCR-based detection</td><td>Cato OCR</td><td><strong>OCR does not apply to EDM profiles</strong> — image-borne exact-match use cases need redesign</td></tr>
+            <tr><td>Inline DLP rule (profile + action)</td><td>Data Control rule</td><td>Requires TLS inspection; deploy in monitor, flip per profile</td></tr>
+            <tr><td>API-channel DLP (data at rest)</td><td>SaaS Security API DLP</td><td>M365-centred connectors — same sequencing as API-CASB above</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Semantic gotchas</h3>
+      <ul>
+        <li><strong>EDM rebuild discipline.</strong> Engage the data owners (HR, finance, CRM)
+        early — extracting a clean source dataset, agreeing fields and refresh cadence, and
+        validating match behaviour takes longer than any rule mapping. This cannot be
+        short-cut by “importing” anything from Netskope.</li>
+        <li><strong>The OCR/EDM boundary.</strong> Netskope can exact-match inside images; on
+        Cato, OCR and EDM are both available but not together. Where the customer relies on
+        image-borne exact matches, redesign around OCR plus data-type profiles and record the
+        residual gap honestly.</li>
+        <li><strong>Compare hit parity, not datasheets.</strong> Netskope advertises a larger
+        identifier library; most estates enforce a small firing subset. Run Cato DLP in monitor
+        side-by-side during the pilot and compare hits on the customer's own traffic — that is
+        the equivalence test that matters.</li>
+        <li><strong>Expect a tuning cycle.</strong> Thresholds and severities translate
+        approximately; plan a false-positive tuning loop per profile before any profile flips
+        from monitor to block.</li>
+      </ul>
+      <p>
+        <strong>Strategy:</strong> rebuild profiles only for rules that fire, start from the
+        Default Recommended CASB/DLP policy, regenerate EDM/IDM content from source systems,
+        run monitor-mode parity during the pilot, then move to block profile by profile.
+      </p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>The rules that apply to every domain</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Know Cato's default postures</h4><p>The WAN Firewall is an <strong>allowlist</strong> (implicit final block); the Internet Firewall is a <strong>blocklist</strong> (implicit final allow). Every translated rule must land in the right posture — recreate default-deny egress deliberately, never by reflex.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection first</h4><p>Decryption is the fidelity prerequisite for SWG activity rules, inline CASB and DLP. Enable it in planned stages and seed the bypass list from Netskope's SSL do-not-decrypt list — years of cert-pinning archaeology you should inherit, not rediscover.</p></div></div>
+        <div class="benefit"><div class="b-icon">👁️</div><div><h4>Monitor, then block</h4><p>Every translated control starts logging-only — allow-plus-tracking in the firewalls, monitor mode in CASB and DLP. Flip to enforcement rule by rule and profile by profile as the events prove each one clean.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity before policy</h4><p>Almost every rule references a user group. Stand up Cato SCIM from the same IdP (Entra ID, Okta, OneLogin) alongside Netskope's — both provision independently — and confirm the groups exist in the CMA before the rules that need them deploy.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>Compare hit counts pre- and post-migration. A translated rule that never fires is a removal candidate; a sudden hit spike usually means a category-taxonomy mismatch — investigate before enforcing.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>Never lift-and-shift</h4><p>Rationalise on usage evidence first: dead, duplicate and shadowed rules are discarded before mapping. The migration is the one chance to shed rule debt — a smaller rulebase is easier to prove correct in monitor.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>One pipeline, four domains</h2>
+      <p>
+        Every domain — FW rules, SWG, CASB, DLP — moves through the same pipeline. The clean-up
+        filter is what makes the migration safe: only rationalised, evidence-backed rules are
+        mapped, everything deploys in monitor, and events close the loop before enforcement.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 500" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Netskope-to-Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four Netskope policy domains — Cloud Firewall, Real-time Protection, inline CASB and DLP profiles — are exported via console and API, pass through a rationalisation filter where dead and duplicate rules are discarded at a red X, are mapped to CMA constructs, deployed in monitor mode with no user impact, then enforced. Telemetry from deployment and enforcement feeds an events-and-evidence node that drives the optimise loop.</desc>
+
+          <!-- Vendor domain column -->
+          <text class="dg-tiny" x="119" y="22" text-anchor="middle">Netskope policy domains</text>
+          <rect class="dg-node" x="24" y="36" width="190" height="56" rx="10"/>
+          <text class="dg-label" x="119" y="59" text-anchor="middle">Cloud Firewall</text>
+          <text class="dg-sub" x="119" y="77" text-anchor="middle">egress port &amp; protocol</text>
+
+          <rect class="dg-node" x="24" y="112" width="190" height="56" rx="10"/>
+          <text class="dg-label" x="119" y="135" text-anchor="middle">Real-time Protection</text>
+          <text class="dg-sub" x="119" y="153" text-anchor="middle">web categories · threats</text>
+
+          <rect class="dg-node" x="24" y="188" width="190" height="56" rx="10"/>
+          <text class="dg-label" x="119" y="211" text-anchor="middle">Inline CASB</text>
+          <text class="dg-sub" x="119" y="229" text-anchor="middle">activities · instances</text>
+
+          <rect class="dg-node" x="24" y="264" width="190" height="56" rx="10"/>
+          <text class="dg-label" x="119" y="287" text-anchor="middle">DLP profiles</text>
+          <text class="dg-sub" x="119" y="305" text-anchor="middle">EDM · ML classifiers</text>
+
+          <!-- Domain exports converge -->
+          <path class="lane-static" d="M 214 64 C 244 66, 258 128, 280 156" fill="none"/>
+          <path class="lane-static" d="M 214 140 C 240 144, 258 158, 280 167" fill="none"/>
+          <path class="lane-static" d="M 214 216 C 240 212, 258 196, 280 182" fill="none"/>
+          <path class="lane-static" d="M 214 292 C 244 290, 258 224, 280 194" fill="none"/>
+
+          <!-- Pipeline row 1 -->
+          <rect class="dg-node" x="280" y="142" width="130" height="64" rx="10"/>
+          <text class="dg-label" x="345" y="168" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub" x="345" y="186" text-anchor="middle">console + API v2</text>
+
+          <path class="lane-static" d="M 410 174 L 452 174" fill="none"/>
+
+          <text class="dg-tiny" x="527" y="132" text-anchor="middle">clean-up filter</text>
+          <rect class="dg-node" x="452" y="142" width="150" height="64" rx="10"/>
+          <text class="dg-label" x="527" y="168" text-anchor="middle">RATIONALISE</text>
+          <text class="dg-sub" x="527" y="186" text-anchor="middle">dedupe · hit counts</text>
+
+          <path class="lane-static" d="M 602 174 L 660 174" fill="none"/>
+
+          <rect class="dg-node" x="660" y="142" width="160" height="64" rx="10"/>
+          <text class="dg-label" x="740" y="168" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="740" y="186" text-anchor="middle">IFW · CASB · DLP rules</text>
+
+          <!-- Discarded rules -->
+          <path class="lane lane-block" d="M 527 206 C 527 222, 527 236, 527 250"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 515 256 L 539 280"/><path class="lane-x" d="M 539 256 L 515 280"/>
+          </g>
+          <text class="dg-tiny" x="527" y="302" text-anchor="middle">dead · duplicate · shadowed</text>
+          <text class="dg-tiny" x="527" y="316" text-anchor="middle">rules discarded</text>
+
+          <!-- Map to deploy (monitor) -->
+          <path class="lane lane-limit" d="M 740 206 C 740 260, 740 316, 740 370"/>
+          <text class="dg-tiny" x="752" y="292" text-anchor="start">monitor first</text>
+
+          <!-- Pipeline row 2 -->
+          <rect x="655" y="370" width="170" height="64" rx="10" fill="#fdf6e3" stroke="var(--status-warn)" stroke-width="1.5"/>
+          <text class="dg-label" x="740" y="396" text-anchor="middle">DEPLOY — MONITOR</text>
+          <text class="dg-sub" x="740" y="414" text-anchor="middle">log only · no impact</text>
+
+          <path class="lane lane-allow" d="M 655 402 C 630 402, 600 402, 570 402"/>
+          <text class="dg-tiny" x="612" y="392" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">flip on proof</text>
+
+          <rect class="dg-node-green" x="420" y="370" width="150" height="64" rx="10"/>
+          <text class="dg-label" x="495" y="396" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="495" y="414" text-anchor="middle">block actions live</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" d="M 420 402 L 260 402" fill="none"/>
+          <text class="dg-tiny" x="340" y="392" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry</text>
+          <path class="lane-static" d="M 738 434 C 690 476, 340 480, 240 436" fill="none"/>
+
+          <text class="dg-tiny" x="160" y="360" text-anchor="middle">OPTIMISE loop</text>
+          <rect class="dg-node-dark" x="60" y="370" width="200" height="64" rx="10"/>
+          <text class="dg-label-inv" x="160" y="396" text-anchor="middle">Events &amp; evidence</text>
+          <text class="dg-sub-inv" x="160" y="414" text-anchor="middle">hit counts · hit parity</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy in monitor — log-only evidence</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — blocks go live</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead &amp; duplicate rules</span>
+        </div>
+        <div class="diagram-caption">
+          The four-phase PS pipeline applied to a Netskope estate: export each policy domain,
+          rationalise on usage evidence (the clean-up filter), map the survivors to CMA
+          constructs, deploy monitor-first, and let events and hit counts gate the flip to
+          enforcement — the Optimise loop.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running a policy-migration workshop</h2>
+      <div class="callout">
+        <div class="co-title">Bring the export pack</div>
+        <p>The workshop works best against the customer's own artefacts: console exports and REST
+        API v2 pulls of Real-time Protection policies, DLP profile definitions, the SSL
+        do-not-decrypt list, steering exceptions and Cloud Firewall rules — plus 90 days of usage
+        evidence from tenant analytics.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the four-phase process</h4>
+          <p>Walk the pipeline diagram: Export → Review &amp; Map → Deploy (monitor-first) →
+          Optimise. Agree up front that rationalisation precedes mapping — the firing subset is
+          the scope, and the discard log is a deliverable, not a loss.</p>
+        </li>
+        <li>
+          <h4>Show the converged rulebase</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Show where Cloud Firewall and RTP web rules both land: one ordered rulebase with
+          categories, custom services, apps and risk scores as conditions, and Allow / Block /
+          Prompt actions. Point out the blocklist posture and where an explicit catch-all block
+          would sit if the customer wants default-deny egress.</p>
+        </li>
+        <li>
+          <h4>Walk App Control and Tenant Restrictions</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p>Open an Application Control rule and show granular activities and tenant awareness;
+          then a Tenant Restrictions rule injecting headers for a corporate M365 tenant. Map one
+          of the customer's instance-aware Netskope rules live, by intent.</p>
+        </li>
+        <li>
+          <h4>Show content profiles and EDM</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Open a content profile, show the data-type library and custom types, then the EDM
+          workflow — and be explicit that EDM datasets are rebuilt from the customer's source
+          systems, never imported, and that OCR does not apply to EDM profiles.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Show the inspection policy and bypass rules, and how the Netskope SSL do-not-decrypt
+          list seeds them. Position staged TLS inspection as the fidelity prerequisite for the
+          CASB and DLP domains, not an afterthought.</p>
+        </li>
+        <li>
+          <h4>Close the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events by rule and show hit tracking — the mechanism that gates every flip
+          from monitor to block. Agree the acceptance criteria per domain: hit parity for DLP,
+          no-regression for web categories, app-by-app sign-off for CASB.</p>
+        </li>
+        <li>
+          <h4>Agree outputs and owners</h4>
+          <p>Leave with a mapping workbook (rule → Cato construct → intent note), a
+          rationalisation log, the EDM rebuild plan with data owners named, and the
+          monitor-to-block wave plan — reviewed with Cato Professional Services.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273487633-Managing-the-Internet-Firewall-Policy" target="_blank" rel="noopener">Managing the Internet Firewall Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13314302436253-Managing-the-Application-Control-Policy" target="_blank" rel="noopener">Managing the Application Control Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/24373653275165-Managing-Tenant-Restrictions-for-SaaS-Apps-Tenant-Restrictions-Policy" target="_blank" rel="noopener">Tenant Restrictions policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/5606480974237-Creating-the-Data-Control-Policy" target="_blank" rel="noopener">Creating the Data Control Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/16676236807453-Working-with-Exact-Data-Matching-EDM-for-DLP" target="_blank" rel="noopener">Working with EDM for DLP (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/24373653130781-Using-the-Default-Recommended-CASB-DLP-Policy" target="_blank" rel="noopener">Default Recommended CASB/DLP Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/23739970551453-Using-the-TLS-Inspection-Configuration-Wizard" target="_blank" rel="noopener">TLS Inspection Configuration Wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/sections/5352915014557-Cato-SaaS-Security-API" target="_blank" rel="noopener">Cato SaaS Security API — connector list (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7603867737885-Using-the-App-Catalog" target="_blank" rel="noopener">Using the App Catalog (KB)</a></li>
+            <li><a href="https://docs.netskope.com/en/configuring-real-time-protection-policies" target="_blank" rel="noopener">Netskope Real-time Protection policies (vendor docs)</a></li>
+            <li><a href="https://docs.netskope.com/en/rest-api-v2-overview-312207" target="_blank" rel="noopener">Netskope REST API v2 overview (vendor docs)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-netskope.html">Netskope to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

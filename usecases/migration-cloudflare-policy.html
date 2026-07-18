@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate Cloudflare Gateway and Access policy to Cato — HTTP/DNS/network policies, API CASB findings and DLP profiles mapped to the converged CMA policy model.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cloudflare-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Cloudflare Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cloudflare Policy Migration</h1>
+    <p class="lede">
+      Policy translation is where Cloudflare migrations stall — not the tunnels, not the agents.
+      Gateway splits its intent across DNS, network and HTTP policy types, Magic Firewall filters
+      packets in a separate engine, CASB produces API posture findings rather than inline rules,
+      and DLP depends on which tier the customer actually bought. This page translates each of the
+      four policy domains — FW rules, SWG, CASB and DLP — into the converged CMA policy model
+      using the Cato PS pipeline: export, rationalise on hit counts, map, deploy in monitor,
+      enforce on evidence.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why policy translation decides the migration</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Research-based page — not a delivery-verified runbook</div>
+        <p>This mapping is authored from Cloudflare and Cato documentation plus the Cato PS
+        migration methodology — not from a completed, referenceable Cloudflare policy migration.
+        Review it with Cato Professional Services before using it with a customer, especially the
+        category-taxonomy mapping, the CASB model translation and the DLP detection-parity plan.</p>
+      </div>
+
+      <p>
+        Sites and clients cut over in an afternoon; a mistranslated rulebase generates helpdesk
+        tickets for a quarter. The Cato PS approach treats policy as its own workstream with a
+        four-phase pipeline: <strong>EXPORT</strong> the vendor estate with hit counts →
+        <strong>REVIEW &amp; MAP</strong> the survivors to CMA constructs → <strong>DEPLOY</strong>
+        monitor-first, with no user impact → <strong>OPTIMISE</strong>, flipping monitor to enforce
+        on event evidence. The one rule that never bends: <strong>never lift-and-shift</strong>.
+        Every mature rulebase carries dead weight — zero-hit rules, shadowed rules, exceptions for
+        systems that no longer exist — and Cloudflare estates accrete policy app-by-app and team-by-team,
+        so rationalise on hit counts before a single rule is rebuilt.
+      </p>
+      <p>
+        Cloudflare adds three twists of its own. First, <strong>structure</strong>: Gateway policy
+        is split across three types — DNS, network and HTTP — evaluated as separate rule sets, with
+        Magic Firewall filtering site traffic in a fourth, packet-level engine. Second,
+        <strong>tier fragmentation</strong>: DLP and Browser Isolation are paid add-ons and
+        dedicated egress IPs are an Enterprise add-on, so what the policy export contains depends
+        on the invoice — confirm what was actually licensed and used before scoping parity. Third,
+        <strong>export</strong>: config-as-code estates already hold the inventory in a Terraform
+        repo; for everyone else, Cloudflare's own <strong>cf-terraforming</strong> tool exports the
+        live configuration to HCL — a machine-readable, point-in-time snapshot that doubles as the
+        migration workbook.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">3</div><div class="stat-label">Gateway policy types to inventory — DNS, network and HTTP — plus Magic Firewall as a separate engine</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2</div><div class="stat-label">Policy-relevant capabilities sold as paid add-ons — DLP and Browser Isolation — scope depends on the invoice</div></div>
+        <div class="stat-tile"><div class="stat-value">0</div><div class="stat-label">WAF custom rules or CDN page rules in scope — application-delivery policy stays on Cloudflare</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Converged CMA policy model — one rulebase family for FW, SWG, CASB and DLP</div></div>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Scope — what does not migrate</div>
+        <p><strong>WAF custom rules, CDN page/cache rules, redirect rules, authoritative DNS
+        records and Workers logic are out of scope and stay on Cloudflare.</strong> They are
+        application-delivery policy, not SASE policy, and Cato does not replace them. Put them in
+        the stays-on-Cloudflare register from the companion
+        <a href="migration-cloudflare.html">Cloudflare to Cato</a> page and agree it with the
+        customer early — only Zero Trust policy (Gateway, Magic Firewall, CASB, DLP) translates.</p>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Of your Gateway rules, how many fired in the last 90 days — and can you show me the
+        analytics? Which of DLP, Browser Isolation and dedicated egress IPs are actually on your
+        contract?" The answers size the real migration: it is almost always smaller than the
+        exported rulebase suggests, and sometimes smaller than the customer believes they bought.</p>
+      </div>
+
+      <p style="font-size:.92rem;color:var(--ink-2)">
+        This page covers the four security-policy domains. Access (ZTNA) application policy,
+        agents, tunnels and Magic WAN re-termination are on the companion
+        <a href="migration-cloudflare.html">Cloudflare to Cato</a> architecture page.
+      </p>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>Gateway network policies &amp; Magic Firewall → Cato firewalls</h2>
+      <p>
+        Cloudflare runs two firewall engines with different scopes. <strong>Gateway network
+        policies</strong> are identity-aware L4 rules (destination IP, port, SNI, with user, group
+        and device-posture selectors) applied to traffic proxied through WARP or a Magic WAN path.
+        <strong>Magic Firewall</strong> is different in kind: a network-level packet filter for
+        Magic WAN / Magic Transit traffic at the Cloudflare edge, matching on packet fields —
+        source/destination IP, port, protocol — <strong>with no user identity at all</strong>.
+        Export both: cf-terraforming renders Gateway policies and Magic Firewall rules to HCL;
+        pull hit counts from the Cloudflare analytics before rationalising.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloudflare construct</th><th>Cato construct</th><th>Translation note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gateway network policy — internet-bound L4 (IP / port / SNI, identity + posture selectors)</td><td>Internet Firewall rule — service/port/app objects scoped to users and groups</td><td>Keep the identity scoping; posture selectors become Cato Device Posture profiles referenced in the rule</td></tr>
+            <tr><td>Gateway network policy — private-network ranges reached over WARP</td><td>WAN Firewall rule against application / network-segment objects</td><td>The WAN Firewall is an <strong>allowlist</strong> — every private flow needs an explicit allow or it stops at cutover. Enumerate these rules first</td></tr>
+            <tr><td>Magic Firewall rule — packet-level filter on site traffic</td><td>WAN Firewall or Internet Firewall rule scoped to sites / subnets</td><td>No identity exists in the source rule — rebuild as site/subnet-scoped rules, then tighten to identity where the flow is genuinely user-driven</td></tr>
+            <tr><td>Posture-gated network access (WARP device checks in the rule)</td><td>Device Posture profile + firewall rule reference</td><td>Posture criteria (EPP/EDR, encryption, OS version) are defined once as profiles and reused across rules</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Semantic gotchas.</strong> Two engines collapse into two Cato rulebases with
+      <em>opposite default postures</em>: the WAN Firewall ends in an implicit block-all, the
+      Internet Firewall in an implicit allow — so a Magic Firewall "allow" that was really relying
+      on a permissive default must become an explicit WAN Firewall rule, while most Gateway
+      "allow" network rules to the internet become unnecessary. Gateway evaluates DNS → network →
+      HTTP as a sequence; that cross-type ordering dissolves into separate, independently ordered
+      Cato policies — verify no rule depended on being "rescued" by a later policy type. And any
+      rule scoped to an IdP group needs that group provisioned in Cato (SCIM) before the rule can
+      land.</p>
+      <p><strong>Migration strategy.</strong> Export to HCL, attach hit counts, discard zero-hit
+      and shadowed rules, then rebuild in two passes: WAN Firewall allows for every surviving
+      private flow <em>before</em> the first site cuts over; Internet Firewall rules for the
+      surviving L4 blocks. Watch the events stream for unexpected WAN blocks during the pilot —
+      that is the allowlist telling you a flow was missed, cheaply.</p>
+    </section>
+
+    <section id="swg-policy" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Gateway HTTP &amp; DNS policies → Internet Firewall + DNS Security</h2>
+      <p>
+        The SWG estate lives in <strong>Gateway HTTP policies</strong> (content categories,
+        per-application controls, Allow / Block / Isolate actions, Do-Not-Inspect lists) and
+        <strong>Gateway DNS policies</strong> anchored to <strong>DNS locations</strong> — office
+        networks pointing at Cloudflare resolver IPs or DoH endpoints. On Cato the same intent
+        lands in the <strong>Internet Firewall / SWG</strong> (the same category / app / action
+        model — Allow, Block, Prompt — plus RBI "Isolate") and <strong>DNS Security</strong>,
+        inspected in-line at the PoP for any traffic already steered via Client or Socket, with no
+        separate DNS-location construct to maintain.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloudflare construct</th><th>Cato construct</th><th>Translation note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>HTTP policy — content-category Block</td><td>Internet Firewall category rule (Block / Prompt)</td><td>Category taxonomies differ — map by intent, never by name, and spot-check the top categories by traffic volume</td></tr>
+            <tr><td>HTTP policy — per-application control</td><td>Internet Firewall app / app-category objects from the App Catalog</td><td>Granular in-app actions belong to CASB App Control (domain 3) — split the intent accordingly</td></tr>
+            <tr><td>HTTP "Isolate" action (Browser Isolation add-on)</td><td>RBI "Isolate" policy action</td><td>Isolation is a policy action beside Block/Prompt, not a per-user add-on SKU — replicate the intent on risky / uncategorised sites</td></tr>
+            <tr><td>Do-Not-Inspect lists + Cloudflare root certificate</td><td>TLS Inspection exceptions + Cato CA certificate to devices</td><td>Rebuild the exception list <em>before</em> enabling inspection — pinned apps break identically on both platforms</td></tr>
+            <tr><td>Gateway DNS policies</td><td>Cato DNS Security + Internet Firewall categories</td><td>In-line at the PoP; DNS sinkholing helps identify infected hosts during co-existence</td></tr>
+            <tr><td>DNS locations (office egress to Cloudflare resolvers)</td><td>Retired per site — no equivalent needed</td><td>Re-point office DNS only <strong>after</strong> that site's traffic is on Cato — see handover order below</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Semantic gotchas.</strong> Two fidelity traps. <em>Taxonomy drift</em>: a
+      Cloudflare category and a similarly named Cato category do not contain the same sites — take
+      the customer's top blocked and top allowed categories from Gateway analytics and validate
+      the mapped behaviour against real destinations. <em>Inspection dependency</em>: any HTTP
+      rule that matched on content inside TLS only works once Cato TLS inspection covers that
+      category — until the relevant TLS-inspection wave lands, the rule silently degrades to
+      SNI/domain-level matching. Sequence the waves before promising parity.</p>
+      <p><strong>Migration strategy.</strong> Start from Cato's recommended SWG baseline, layer
+      the customer's surviving Gateway intent on top, and phase TLS inspection by URL category.
+      <strong>DNS handover order is per site</strong>: roaming users carry DNS protection with the
+      Client swap automatically; office DNS locations are re-pointed only after the site's traffic
+      path has moved to Cato — never leave a site's DNS on Cloudflare once its traffic has moved,
+      or policy and logging split across two vendors.</p>
+    </section>
+
+    <section id="casb-policy" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy</div>
+      <h2>API posture findings → inline App Control + API SaaS security</h2>
+      <p>
+        Be honest here: <strong>this is a model translation, not a rule translation.</strong>
+        Cloudflare's CASB is <strong>API-driven posture scanning</strong> — integrations into SaaS
+        tenants (Microsoft 365, Google Workspace and similar) that produce <em>findings</em>:
+        misconfigurations, publicly shared files, risky third-party app grants. It is not an
+        inline enforcement point; inline app behaviour lives in Gateway HTTP policies and Shadow
+        IT discovery in Gateway analytics. Cato's CASB is <strong>inline-first</strong> — App
+        Catalog risk scores and granular Application Control in the traffic path — complemented by
+        API-based SaaS security and Tenant Restrictions. You migrate the <em>intent</em> (which
+        apps are sanctioned, what posture the tenant must hold), not the findings.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloudflare construct</th><th>Cato construct</th><th>Translation note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CASB API integrations + posture findings</td><td>Cato API-based SaaS security, where documented for the app</td><td>Findings do not migrate — integrations are re-created on Cato and the tenant re-scanned; export the open-findings backlog first so remediation state isn't lost</td></tr>
+            <tr><td>Shadow IT discovery (Gateway analytics)</td><td>App Catalog risk scores + Cloud Apps dashboards</td><td>Cato builds the sanctioned/unsanctioned picture from inline traffic — richer once TLS inspection covers the app categories</td></tr>
+            <tr><td>Sanctioned / unsanctioned app decisions (HTTP policies)</td><td>Application Control policy — inline, per-app granular actions</td><td>Enforcement moves into the traffic path: block uploads to unsanctioned apps rather than reporting them after the fact</td></tr>
+            <tr><td>Tenant-control headers injected by Gateway HTTP policies</td><td>Cato Tenant Restrictions</td><td>Corporate-tenant-only access to M365/Google enforced at the PoP — verify per-app coverage during the pilot</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Semantic gotchas.</strong> Some Cloudflare posture checks may have no
+      documented Cato equivalent — keep an honest gap register and review it with Cato PS rather
+      than glossing it; the customer's security team will find the gap if you don't. Inline
+      visibility and control depend on TLS inspection of the relevant app categories — the CASB
+      wave belongs <em>after</em> the corresponding TLS-inspection wave. And the sanctioned-app
+      register is a business decision, not an export artefact: confirm it with the customer, don't
+      infer it from old findings.</p>
+      <p><strong>Migration strategy.</strong> Record the sanctioned-app register and the open
+      findings backlog in discovery. Re-create the API integrations on Cato where documented, run
+      inline CASB in monitor to rebuild the shadow-IT picture from live traffic, then enforce
+      granular App Control and Tenant Restrictions once the dashboards confirm the app population
+      matches expectations.</p>
+    </section>
+
+    <section id="dlp-policy" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy</div>
+      <h2>Gateway DLP profiles → Cato DLP profiles &amp; Data Control</h2>
+      <p>
+        Cloudflare DLP is <strong>tier-dependent</strong>: DLP is a paid capability and custom
+        DLP sits in Enterprise contracts, so start by confirming what was licensed and what
+        actually fired. Structurally, <strong>DLP profiles</strong> (predefined entries for
+        financial data, PII and credentials; custom regex entries; Exact Data Match datasets on
+        higher tiers) are detection definitions used as <em>selectors inside Gateway HTTP
+        policies</em>, which carry the action. On Cato, DLP profiles plug into the
+        <strong>Data Control policy</strong> — the rule binds profile, application scope,
+        direction and action in one place — with EDM, OCR and Microsoft sensitivity (MIP) labels
+        available as detection inputs.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloudflare construct</th><th>Cato construct</th><th>Translation note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DLP profile — predefined entries (financial, PII, credentials)</td><td>Cato DLP profile — predefined data types</td><td>Detection libraries differ — validate parity on a test corpus of the customer's real document types before enforcing</td></tr>
+            <tr><td>DLP profile — custom regex entries (Enterprise)</td><td>Cato custom data types</td><td>Port the expressions and match thresholds; regex dialect differences surface in testing, not review</td></tr>
+            <tr><td>Exact Data Match datasets</td><td>Cato EDM</td><td>Re-index the source data on the Cato side — the dataset itself is not portable</td></tr>
+            <tr><td>Gateway HTTP policy carrying the DLP action (block upload / download)</td><td>Data Control rule — profile + app scope + direction + action</td><td>The profile/policy split collapses into one rule object; map each HTTP-policy-plus-profile pair to one Data Control rule</td></tr>
+            <tr><td>— (no equivalent exported)</td><td>OCR and MIP sensitivity labels as detection inputs</td><td>Cato-side additions worth designing in rather than porting around — especially where the customer already labels with Purview/MIP</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Semantic gotchas.</strong> DLP is the domain most likely to be
+      <em>smaller than believed</em>: if the add-on was never licensed or the profiles never
+      matched, the export shows configuration without behaviour — check hit counts before
+      rebuilding anything. Detection fidelity requires TLS inspection of the target applications;
+      a DLP rule on an uninspected category inspects nothing. And blocking on day one trains users
+      to route around the control — monitor first, always.</p>
+      <p><strong>Migration strategy.</strong> Rebuild only the profiles with real matches, run
+      every Data Control rule in monitor, and review matches on the Data Protection dashboard with
+      the data owner — tune thresholds and scope, then flip to block per rule once false-positive
+      rates are agreed. Keep the test corpus; it becomes the regression suite for every later
+      profile change.</p>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain best practices</div>
+      <h2>The rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Translate the default posture, not just the rules</h4><p>Cato's WAN Firewall is an allowlist (implicit block-all); the Internet Firewall is a blocklist (implicit allow). Every vendor rule that leaned on a permissive default must become explicit east-west; most explicit internet allows become redundant.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Staged TLS inspection is the fidelity prerequisite</h4><p>SWG content rules, inline CASB visibility and DLP detection all degrade without inspection. Phase TLS inspection by URL category first, rebuild Do-Not-Inspect lists as exceptions, and schedule each domain's enforcement wave behind its inspection wave.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every migrated rule lands in monitor first — zero user impact, full event telemetry. Flip to enforce per rule when the events prove the rule matches what it should and nothing it shouldn't.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity and SCIM groups come first</h4><p>Gateway and Access policy is scoped to IdP groups. Provision the same groups into Cato via SCIM before any identity-scoped rule is built — a rule can't reference a group that doesn't exist yet, and hand-built groups drift.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events and hit counts</h4><p>The exit criterion for every wave is evidence: Cato rule hit counts tracking the vendor-side baseline, and an events stream free of unexplained blocks. If a rule never fires on either platform, it should not have been migrated.</p></div></div>
+        <div class="benefit"><div class="b-icon">✂️</div><div><h4>Never lift-and-shift</h4><p>Rationalise on hit counts before rebuilding: zero-hit rules, shadowed rules and dead exceptions are discarded at review, not ported. A migration is the one chance to shrink the rulebase with confidence — take it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>Four domains, one pipeline</h2>
+      <p>
+        The same pipeline runs for every domain: export with hit counts, discard the dead weight,
+        map the survivors to CMA constructs, deploy in monitor, and let the event telemetry earn
+        the flip to enforce. REVIEW &amp; MAP is deliberately two boxes — rationalisation is a
+        distinct step with its own output, the discard list — and OPTIMISE is the monitor-to-enforce
+        flip, driven by evidence rather than a date.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cloudflare-to-Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four Cloudflare policy domains — firewall rules, SWG policy, CASB posture and DLP profiles — feed an export stage using cf-terraforming. Exported rules pass a rationalise stage where dead rules are discarded, marked with a red cross, then map to Cato CMA constructs. Mapped policy deploys in monitor mode, shown amber, and is enforced, shown green, only after telemetry into an events and evidence node proves the rules behave.</desc>
+
+          <text class="dg-tiny" x="36" y="20" text-anchor="start">Cloudflare policy estate — four domains</text>
+
+          <!-- Row 1: vendor policy domains -->
+          <rect class="dg-node" x="36" y="34" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="131" y="57" text-anchor="middle">FW rules</text>
+          <text class="dg-sub" x="131" y="75" text-anchor="middle">Gateway net · Magic FW</text>
+
+          <rect class="dg-node" x="272" y="34" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="367" y="57" text-anchor="middle">SWG policy</text>
+          <text class="dg-sub" x="367" y="75" text-anchor="middle">Gateway HTTP · DNS</text>
+
+          <rect class="dg-node" x="508" y="34" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="603" y="57" text-anchor="middle">CASB posture</text>
+          <text class="dg-sub" x="603" y="75" text-anchor="middle">API findings · Shadow IT</text>
+
+          <rect class="dg-node" x="744" y="34" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="839" y="57" text-anchor="middle">DLP profiles</text>
+          <text class="dg-sub" x="839" y="75" text-anchor="middle">Gateway DLP (tier-gated)</text>
+
+          <!-- Funnel: domains into export -->
+          <path class="lane-static" fill="none" d="M 131 88 C 131 120, 140 142, 145 168"/>
+          <path class="lane-static" fill="none" d="M 367 88 C 367 125, 245 148, 178 170"/>
+          <path class="lane-static" fill="none" d="M 603 88 C 603 130, 380 145, 208 166"/>
+          <path class="lane-static" fill="none" d="M 839 88 C 839 135, 480 140, 228 164"/>
+
+          <!-- Row 2: export → rationalise → map -->
+          <rect class="dg-node" x="56" y="170" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="146" y="194" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub" x="146" y="212" text-anchor="middle">cf-terraforming → HCL</text>
+
+          <path class="lane-static" fill="none" d="M 236 199 L 390 199"/>
+          <text class="dg-tiny" x="313" y="190" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">with hit counts</text>
+
+          <rect class="dg-node" x="390" y="170" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="480" y="194" text-anchor="middle">RATIONALISE</text>
+          <text class="dg-sub" x="480" y="212" text-anchor="middle">0-hit &amp; shadowed out</text>
+
+          <path class="lane-static" fill="none" d="M 570 199 L 710 199"/>
+
+          <rect class="dg-node" x="710" y="170" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="810" y="194" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="810" y="212" text-anchor="middle">WAN FW · SWG · CASB · DLP</text>
+
+          <!-- Dead rules discarded -->
+          <path class="lane lane-block" d="M 480 228 C 480 244, 480 254, 480 266"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 468 270 L 492 294"/><path class="lane-x" d="M 492 270 L 468 294"/>
+          </g>
+          <text class="dg-tiny" x="480" y="316" text-anchor="middle">dead rules discarded</text>
+
+          <!-- Map → deploy (monitor, amber) -->
+          <path class="lane lane-limit" d="M 810 228 C 810 280, 770 322, 736 354"/>
+          <text class="dg-tiny" x="924" y="340" text-anchor="end">Cato CMA — one policy model</text>
+
+          <!-- Row 3: deploy → enforce → events -->
+          <rect class="dg-node" x="640" y="356" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="730" y="380" text-anchor="middle">DEPLOY</text>
+          <text class="dg-sub" x="730" y="398" text-anchor="middle">monitor mode first</text>
+
+          <path class="lane lane-allow" d="M 640 385 L 510 385"/>
+
+          <rect class="dg-node-green" x="330" y="356" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="420" y="380" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="420" y="398" text-anchor="middle">block on evidence</text>
+
+          <path class="lane-static" fill="none" d="M 330 392 L 240 392"/>
+          <text class="dg-tiny" x="285" y="383" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry</text>
+
+          <rect class="dg-node-dark" x="40" y="348" width="200" height="74" rx="10"/>
+          <text class="dg-label-inv" x="140" y="378" text-anchor="middle">Events &amp; evidence</text>
+          <text class="dg-sub-inv" x="140" y="396" text-anchor="middle">hit counts · DLP events</text>
+
+          <path class="lane-static" fill="none" d="M 700 414 C 640 448, 460 452, 250 410"/>
+          <text class="dg-tiny" x="470" y="458" text-anchor="middle">monitor telemetry → evidence to enforce</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Deploy in monitor — no user impact</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — flipped on event evidence</span>
+          <span class="key"><span class="swatch block"></span> Dead rules — discarded at rationalise</span>
+        </div>
+        <div class="diagram-caption">
+          The policy pipeline: each Cloudflare domain is exported with hit counts, stripped of dead
+          rules, mapped to CMA constructs, deployed in monitor and enforced only when the events
+          and hit counts prove the translation.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — get the export on the table</div>
+        <p>This session works best as a working workshop, not a show-and-tell. Ask the customer to
+        bring their Gateway policy export (Terraform repo or a cf-terraforming run) and 90 days of
+        policy analytics — the conversation changes when the real rulebase is in the room.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the diagram above: export with hit counts, rationalise, map, monitor, enforce.
+          Make the anti-pattern explicit — nobody lifts-and-shifts a rulebase into Cato, and the
+          discard list is a deliverable, not a by-product.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Contrast the WAN Firewall allowlist with the Internet Firewall blocklist, and show how
+          a rule combines users, groups, sites, app objects and device posture in one grammar —
+          where Gateway network policies and Magic Firewall rules both land.</p>
+        </li>
+        <li>
+          <h4>Walk the SWG rulebase</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Open a category rule and step through the action set — Allow, Block, Prompt and RBI
+          Isolate as a policy action rather than an add-on SKU. Map two or three of the customer's
+          own Gateway categories live to show taxonomy mapping by intent.</p>
+        </li>
+        <li>
+          <h4>Show staged TLS inspection</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Demonstrate the account-level policy and category-based staging, and rebuild one of
+          their Do-Not-Inspect entries as an exception. Land the dependency: SWG content rules,
+          CASB visibility and DLP detection all ride on this.</p>
+        </li>
+        <li>
+          <h4>Translate the CASB model</h4>
+          <p><span class="path">Security → CASB</span> <span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>Show the App Catalog risk scores and a granular App Control rule, then the Cloud Apps
+          dashboard building the shadow-IT picture from live traffic. Name the model change
+          honestly: their API posture findings become inline enforcement plus API scanning —
+          intent migrates, findings are regenerated.</p>
+        </li>
+        <li>
+          <h4>Build a DLP rule in monitor</h4>
+          <p><span class="path">Security → DLP Configuration</span> <span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Create a Data Control rule from a predefined profile in monitor mode, then show where
+          matches surface for review with the data owner. Explain the flip-to-block criterion:
+          agreed false-positive rate, not a calendar date.</p>
+        </li>
+        <li>
+          <h4>Close on validation</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a migrated rule and show hit counts accumulating — the evidence that
+          moves each rule from monitor to enforce, and the audit trail that proves parity wave by
+          wave.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/23739970551453-Using-the-TLS-Inspection-Configuration-Wizard" target="_blank" rel="noopener">TLS Inspection configuration wizard (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/22410218141213-What-is-Cato-DNS" target="_blank" rel="noopener">What is Cato DNS (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/9797943724061-Configuring-the-RBI-Service-for-Secure-Web-Browsing" target="_blank" rel="noopener">Configuring the RBI service (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">Cato CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">Cato DLP — platform page</a></li>
+            <li><a href="https://github.com/cloudflare/cf-terraforming" target="_blank" rel="noopener">cf-terraforming — Cloudflare config export (vendor tool)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-cloudflare.html">Cloudflare (Zero Trust &amp; Magic WAN) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Protection with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

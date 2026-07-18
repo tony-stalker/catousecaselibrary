@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consistent Security Everywhere — Cato Use Case Library</title>
+<meta name="description" content="One global policy, enforced identically for every user, device and site — configured once, applied everywhere via the single-pass cloud engine.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-consistent">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Consistent Security</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-ready">Field-ready</span>
+    </div>
+    <h1>Consistent Security Everywhere</h1>
+    <p class="lede">
+      Most estates don't have one security policy — they have dozens: one per firewall, one per
+      VPN concentrator, one per cloud region, each drifting apart with every change window.
+      This use case shows the alternative: a single global policy set, defined once in the Cato
+      Management Application and enforced identically by every PoP for every user, site, device
+      and cloud instance — with membership driven by the IdP, not by device config.
+    </p>
+    <div class="meta-row">
+      <span class="tag">FWaaS</span><span class="tag">ZTNA</span><span class="tag">IdP Policy</span>
+      <span class="tag">Threat Prevention</span><span class="tag">Device Posture</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="../4%20-%20Security%20use%20cases/Consistent%20Security%20Use%20case%20overiview.pptx" download>⬇ Original deck (PPTX)</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Security teams are asked to guarantee two things at once: <strong>visibility</strong> of
+        everything happening on the network, and a <strong>central, policy-driven</strong> security
+        posture that applies to any and every device and user. With an appliance estate that goal is
+        structurally out of reach — policy lives in the boxes, and every box is a separate source of truth.
+      </p>
+      <p>
+        The objective of this use case is to demonstrate the converged alternative:
+        <strong>consistent security — configured once, applied everywhere.</strong> One rulebase, built on
+        user groups from the IdP and device-posture profiles, enforced in the cloud by every Cato PoP —
+        so a user gets exactly the same protection at their desk in Glasgow, on hotel Wi-Fi in Dubai,
+        or on their sofa at home.
+      </p>
+    </section>
+
+    <section id="drift" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Why security becomes inconsistent</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The appliance-era estate</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Every site firewall carries its own rulebase and its own change history</li>
+            <li>Remote users terminate on a separate VPN stack — with different rules</li>
+            <li>Cloud workloads get yet another control set (NSGs, security groups)</li>
+            <li>Software versions and threat signatures drift box by box</li>
+            <li>Point solutions (SWG, IPS, CASB, DLP) each add their own policy plane</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What that inconsistency costs</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Attackers only need to find the <em>weakest</em> enforcement point</li>
+            <li>Every policy change multiplies by the number of devices that must receive it</li>
+            <li>New sites and acquisitions go live with day-one exceptions "to be tidied later"</li>
+            <li>Audits demand evidence per device instead of one answer for the estate</li>
+            <li>Nobody can say with confidence what is actually enforced where</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Pick one rule — say, blocking uploads to personal cloud storage. Is it enforced identically
+        for a user in your Glasgow office, the same user at home, and a colleague in Dubai?
+        How long would it take you to prove that?"</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Configured once, applied everywhere</h2>
+      <p>
+        In Cato's architecture, policy is a <strong>cloud object, not a device configuration</strong>.
+        The WAN Firewall, Internet Firewall, IPS, Anti-Malware, CASB and DLP policies are defined once
+        in the Cato Management Application and enforced by the Single Pass Cloud Engine running in
+        every PoP. Whichever PoP a site's socket or a user's client connects to, the full security stack
+        and the identical rule set are already there — nothing is deployed, synced or patched at the edge.
+      </p>
+      <p>
+        Rules are written against <strong>IdP-driven user groups</strong> and
+        <strong>device-posture profiles</strong>, not IP addresses. When HR moves someone between
+        departments, the directory change alone changes their access — and applying ZTNA principles
+        (least privilege, continuous verification) shrinks the threat landscape for every identity at once.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">One global policy set enforced identically at every Cato PoP</title>
+          <desc id="dg1-desc">A single policy card sits inside the Cato cloud, distributed to four PoPs on the backbone ring. London DC, a Glasgow branch, an Azure vSocket, a Dubai office and a remote home worker all connect with identical allowed flows. One threat flow is blocked with a red X at the PoP.</desc>
+
+          <!-- Cato cloud / backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="238" rx="195" ry="92"/>
+
+          <!-- Policy distribution (static) -->
+          <path class="lane lane-static" d="M 368 238 L 300 238"/>
+          <path class="lane lane-static" d="M 592 238 L 660 238"/>
+          <path class="lane lane-static" d="M 480 196 L 480 161"/>
+          <path class="lane lane-static" d="M 480 280 L 480 315"/>
+
+          <!-- One policy set card -->
+          <rect class="dg-node-dark" x="368" y="196" width="224" height="84" rx="10"/>
+          <text class="dg-label-inv" x="480" y="223" text-anchor="middle">One policy set</text>
+          <text class="dg-sub-inv" x="480" y="243" text-anchor="middle">WAN FW · Internet FW · IPS</text>
+          <text class="dg-sub-inv" x="480" y="260" text-anchor="middle">AM · CASB · DLP</text>
+
+          <!-- PoPs on the ring -->
+          <circle class="pulse-ring" cx="285" cy="238" r="14" fill="none" stroke="var(--green-300)" stroke-width="2.5"/>
+          <circle cx="285" cy="238" r="9" fill="none" stroke="var(--green-600)" stroke-width="5"/>
+          <circle class="pulse-ring" cx="675" cy="238" r="14" fill="none" stroke="var(--green-300)" stroke-width="2.5"/>
+          <circle cx="675" cy="238" r="9" fill="none" stroke="var(--green-600)" stroke-width="5"/>
+          <circle class="pulse-ring" cx="480" cy="146" r="14" fill="none" stroke="var(--green-300)" stroke-width="2.5"/>
+          <circle cx="480" cy="146" r="9" fill="none" stroke="var(--green-600)" stroke-width="5"/>
+          <circle class="pulse-ring" cx="480" cy="330" r="14" fill="none" stroke="var(--green-300)" stroke-width="2.5"/>
+          <circle cx="480" cy="330" r="9" fill="none" stroke="var(--green-600)" stroke-width="5"/>
+          <text class="dg-tiny" x="302" y="266" text-anchor="start">London PoP</text>
+          <text class="dg-tiny" x="650" y="268" text-anchor="end">Dubai PoP</text>
+          <text class="dg-tiny" x="500" y="142" text-anchor="start">Manchester PoP</text>
+          <text class="dg-tiny" x="500" y="336" text-anchor="start">Frankfurt PoP</text>
+          <text class="dg-tiny" x="480" y="364" text-anchor="middle">Global Private Backbone — every PoP runs the identical policy set</text>
+
+          <!-- Edge sites -->
+          <rect class="dg-node" x="36" y="54" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="120" y="78" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="120" y="96" text-anchor="middle">Socket X1500 · datacentre</text>
+
+          <rect class="dg-node" x="36" y="356" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="120" y="380" text-anchor="middle">Glasgow</text>
+          <text class="dg-sub" x="120" y="398" text-anchor="middle">Socket X1600 · branch</text>
+
+          <rect class="dg-node" x="396" y="24" width="168" height="52" rx="10"/>
+          <text class="dg-label" x="480" y="45" text-anchor="middle">Azure vSocket</text>
+          <text class="dg-sub" x="480" y="63" text-anchor="middle">Azure hub · HA pair</text>
+
+          <rect class="dg-node" x="760" y="356" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="844" y="380" text-anchor="middle">Dubai Office</text>
+          <text class="dg-sub" x="844" y="398" text-anchor="middle">Socket X1500 · branch</text>
+
+          <!-- Remote user -->
+          <g>
+            <circle cx="852" cy="92" r="22" fill="var(--status-good)"/>
+            <circle cx="852" cy="85" r="6.5" fill="#fff"/>
+            <path d="M 839 105 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="852" y="132" text-anchor="middle">Priya — at home</text>
+            <text class="dg-sub" x="852" y="148" text-anchor="middle">Cato Client · Windows</text>
+          </g>
+
+          <!-- Threat source -->
+          <g>
+            <circle cx="852" cy="238" r="20" fill="var(--status-critical)"/>
+            <circle cx="852" cy="231" r="6" fill="#fff"/>
+            <path d="M 840 250 a 12 9 0 0 1 24 0 z" fill="#fff"/>
+            <text class="dg-label" x="852" y="278" text-anchor="middle">Threat traffic</text>
+            <text class="dg-sub" x="852" y="294" text-anchor="middle">Blocked by IPS · Anti-Malware</text>
+          </g>
+
+          <!-- Identical allowed flows -->
+          <path class="lane lane-allow" d="M 204 96 C 250 130, 236 196, 272 228"/>
+          <path class="lane lane-allow" d="M 204 380 C 250 350, 236 282, 272 248"/>
+          <path class="lane lane-allow" d="M 480 76 L 480 130"/>
+          <path class="lane lane-allow" d="M 828 104 C 770 140, 730 190, 677 220"/>
+          <path class="lane lane-allow" d="M 760 380 C 710 350, 726 282, 677 256"/>
+
+          <!-- Threat: blocked at the PoP -->
+          <path class="lane lane-block" d="M 826 238 L 724 238"/>
+          <g aria-label="blocked at the PoP">
+            <path class="lane-x" d="M 696 226 L 720 250"/>
+            <path class="lane-x" d="M 720 226 L 696 250"/>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Identical policy — traffic allowed</span>
+          <span class="key"><span class="swatch block"></span> Threat — blocked at the PoP</span>
+        </div>
+        <div class="diagram-caption">One policy set, defined once in the CMA and distributed to every PoP (thin grey lines). London DC, Glasgow, the Azure vSocket, the Dubai office and a remote user all traverse the same enforcement stack — and a threat is stopped by the same rules wherever it appears.</div>
+      </div>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-good"><div class="stat-value">1</div><div class="stat-label">Policy set across sites, remote users and cloud</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">0</div><div class="stat-label">Security appliances to patch, upgrade or sync</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">8</div><div class="stat-label">PoPs in this walkthrough — London to Sydney — all enforcing the same rules</div></div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/pop-map.png" alt="World map with green ring markers showing Cato PoP locations across North America, Europe, Asia, South America, the Middle East, Africa and Australia.">
+        <figcaption>Wherever a user or site connects, the nearest PoP already runs the full security stack — geography stops being a policy boundary.</figcaption>
+      </figure>
+
+      <h3>Key benefits</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Reduce operational complexity</h4><p>One rulebase in one console replaces per-device configs, change windows and version drift. A change is made once and it is simply <em>the</em> policy — everywhere.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>IdP-driven policy membership</h4><p>Rules target user groups synced from your identity provider. Joiners, movers and leavers are handled in the directory — access follows the identity automatically.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>ZTNA principles shrink the threat landscape</h4><p>Least-privileged access based on identity and device posture, verified continuously — the same zero-trust decision at a site, in the cloud, or from a home broadband line.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Consolidate SD-WAN and security point solutions</h4><p>SD-WAN, NGFW, SWG, IPS, anti-malware, CASB and DLP converge in one cloud service — fewer vendors, fewer consoles, one place where policy lives.</p></div></div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/platform-capabilities.png" alt="Grid of sixteen capability buttons converged in the Cato platform: SD-WAN, Accelerate, MPLS, Optimize, Monitor, AIOps, NGFW, IPS, EDR/EPP, DLP, SWG, RBI, AI Security, XDR, ZTNA and CASB.">
+        <figcaption>The consolidation story in one graphic — networking and security capabilities that were separate point products all draw from the same single-pass engine and the same policy set.</figcaption>
+      </figure>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor to their estate</div>
+        <p>Ask how many devices a single policy change touches today, and how remote-user policy relates
+        to site policy. The demo's punchline — one change, everyone covered — lands hardest when you can
+        contrast it with their own numbers.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Show the global policy — and what's absent</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Walk the rulebase. Point out that rules are scoped to <strong>user groups and device-posture
+          profiles</strong>, not devices or subnets — and that there is no per-site, per-appliance or
+          per-region policy anywhere in the product. This <em>is</em> the policy, for everyone.</p>
+        </li>
+        <li>
+          <h4>Show where membership comes from</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Open a user such as Priya and show group memberships synced from the IdP. Move-the-user
+          thought experiment: change her department in the directory and every rule referencing that
+          group updates her access — no firewall change request raised.</p>
+        </li>
+        <li>
+          <h4>Show the posture dimension</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Open a posture profile — EPP/EDR running, disk encryption, OS version — and show how the
+          same profile is referenced by WAN and Internet rules. Identity says <em>who</em>; posture says
+          <em>from what</em>; both are evaluated continuously.</p>
+        </li>
+        <li>
+          <h4>Make one rule change, live</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Add or toggle a visible rule — for example, block a risky application category for a chosen
+          user group — and save. That single change is now the enforced policy at every PoP. No push
+          jobs, no device list, no maintenance window.</p>
+        </li>
+        <li>
+          <h4>Prove it on a site AND a remote user</h4>
+          <p>From a machine behind the Glasgow socket, hit the newly blocked resource — blocked. Then
+          repeat as Priya on the Cato Client at home — blocked by the <strong>same rule</strong>, with
+          zero per-device configuration on either path. This is the "configured once, applied
+          everywhere" moment.</p>
+        </li>
+        <li>
+          <h4>Demonstrate advanced threat protection — both paths</h4>
+          <p>Trigger a harmless threat sample (e.g. an EICAR download) from the site and again from the
+          remote user. Anti-Malware and IPS stop it at the PoP in both cases — same engines, same
+          verdict, regardless of where the user sits.</p>
+        </li>
+        <li>
+          <h4>Close on identity-attributed visibility</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events by the user's identity. Both blocks — office and home — appear side by side,
+          attributed to the same rule and the same person. One policy, one audit trail, one answer for
+          the auditor.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall (FWaaS) — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="security-ransomware.html">Ransomware &amp; Advanced Threat Prevention</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

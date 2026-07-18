@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC Modernisation with XDR &amp; MDR — Cato Use Case Library</title>
+<meta name="description" content="From alert fatigue across a dozen consoles to correlated incident stories — native XDR on full network telemetry, with 24×7 MDR when the SOC needs depth.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-soc-xdr">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / SOC Modernisation</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>SOC Modernisation with XDR &amp; MDR</h1>
+    <p class="lede">
+      SOC teams juggle a dozen consoles, none of which sees the whole picture — alerts arrive stripped
+      of network context, correlation is a manual swivel-chair job, and 24×7 coverage is unrealistic with
+      the people available. This use case shows Cato XDR turning the telemetry the platform already
+      inspects into correlated, criticality-ranked incident stories — with the investigation and the
+      policy fix in the same console, and Cato MDR on tap when the SOC needs depth.
+    </p>
+    <div class="meta-row">
+      <span class="tag">XDR</span><span class="tag">MDR</span><span class="tag">SOC</span>
+      <span class="tag">MITRE ATT&amp;CK</span><span class="tag">Incident Response</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Every security purchase of the last decade came with its own console, its own alert format and
+        its own blind spots. The SOC inherited all of them. Analysts now spend their day translating
+        between tools rather than investigating threats: an endpoint alert here, a firewall log there,
+        an identity event somewhere else — and the job of deciding whether they are the <em>same</em>
+        attack falls to a human with a dozen browser tabs open.
+      </p>
+      <p>
+        Meanwhile detection engineering — writing and re-tuning SIEM correlation rules — consumes the
+        most experienced people on the team, and the skills shortage makes a credible 24×7 rota
+        unrealistic for most organisations.
+      </p>
+      <p>
+        The objective: <strong>one queue of correlated, ranked incidents, with the evidence and the
+        fix in the same place — and expert eyes on it around the clock.</strong>
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Why the traditional SOC model is breaking</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The tooling reality</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>A console per product — endpoint, firewall, SWG, email, identity, cloud…</li>
+            <li>Alerts arrive stripped of the network context that gives them meaning</li>
+            <li>Cross-tool correlation is a manual, swivel-chair exercise</li>
+            <li>SIEM value depends on correlation rules the team must write, test and endlessly re-tune</li>
+            <li>Every new source means another collector, another parser, another licence</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The people reality</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>Detection engineering competes with triage for the same scarce hours</li>
+            <li>24×7 coverage needs a rota most teams simply cannot staff</li>
+            <li>Skilled analysts burn out on log plumbing instead of investigation</li>
+            <li>Alert fatigue means the queue gets skimmed, not worked</li>
+            <li>Institutional knowledge lives in a handful of heads — and leaves with them</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“What's your mean time from an alert firing to an analyst knowing whether it matters — and how
+        many consoles do they touch on the way? If we walked the SOC floor now, how many screens would a
+        tier-1 analyst have open? Who covers the queue at 3 a.m. on a Sunday?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>XDR that starts with the answer already collected</h2>
+      <p>
+        Most XDR projects begin with a data-collection programme: agents to roll out, log pipelines to
+        build, formats to normalise. Cato XDR skips that entirely. Every flow from every site, user and
+        cloud instance already traverses a Cato PoP, where the single-pass engine inspects it once —
+        so the platform starts with <strong>complete, consistent network telemetry on day one</strong>.
+        No agents to deploy, no logs to ship, no parsers to maintain.
+      </p>
+      <p>
+        On top of that telemetry, Cato XDR correlates related signals into incident
+        <strong>stories</strong>: one story per suspected incident, ranked by an ML-driven criticality
+        score and mapped to MITRE ATT&amp;CK tactics and techniques. Analysts open the story, see the
+        correlated event timeline, pivot to the underlying raw events, then to the user or site involved
+        — and apply the policy fix in the same console. Detection to response, without changing tabs.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 460" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cato XDR: from full network telemetry to a ranked incident story</title>
+          <desc id="dg1-desc">Telemetry from sites, remote users and cloud flows converges on a Cato PoP, where the single-pass engine inspects every flow. Cato XDR correlates the signals into incident stories with an ML criticality score and MITRE ATT&amp;CK mapping. Stories land in one ranked queue for the SOC analyst, backed by the 24×7 Cato MDR service; the analyst applies the policy fix back at the PoP from the same console. An attack flow from below is blocked at the PoP and its evidence recorded.</desc>
+
+          <!-- Telemetry sources (left) -->
+          <rect class="dg-node" x="34" y="44" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="68" text-anchor="middle">Sites &amp; DCs</text>
+          <text class="dg-sub" x="122" y="86" text-anchor="middle">Socket flows — all ports</text>
+
+          <rect class="dg-node" x="34" y="186" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="210" text-anchor="middle">Remote users</text>
+          <text class="dg-sub" x="122" y="228" text-anchor="middle">Cato Client · ZTNA</text>
+
+          <rect class="dg-node" x="34" y="328" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="122" y="352" text-anchor="middle">Cloud &amp; SaaS</text>
+          <text class="dg-sub" x="122" y="370" text-anchor="middle">vSocket · IPsec · CASB</text>
+
+          <!-- Telemetry lanes into the PoP -->
+          <path class="lane lane-allow" d="M 210 76 C 262 96, 292 152, 314 190"/>
+          <path class="lane lane-allow" d="M 210 215 L 294 215"/>
+          <path class="lane lane-allow" d="M 210 354 C 262 334, 292 278, 314 240"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="330" cy="215" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="330" cy="215" r="30"/>
+          <text class="dg-label" x="330" y="150" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="330" y="166" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Single-pass engine · full telemetry</text>
+
+          <!-- PoP to XDR -->
+          <path class="lane lane-allow" d="M 366 215 L 428 215"/>
+
+          <!-- Cato XDR engine -->
+          <rect class="dg-node-dark" x="430" y="170" width="200" height="90" rx="10"/>
+          <text class="dg-label-inv" x="530" y="200" text-anchor="middle">Cato XDR</text>
+          <text class="dg-sub-inv" x="530" y="221" text-anchor="middle">Correlated stories</text>
+          <text class="dg-sub-inv" x="530" y="240" text-anchor="middle">ML score · MITRE ATT&amp;CK</text>
+
+          <!-- XDR to incident story -->
+          <path class="lane lane-allow" d="M 616 170 C 650 150, 660 122, 698 102"/>
+
+          <!-- Incident story (green) -->
+          <rect class="dg-node-green" x="700" y="64" width="220" height="64" rx="10"/>
+          <text class="dg-label" x="810" y="90" text-anchor="middle">Incident story</text>
+          <text class="dg-sub" x="810" y="110" text-anchor="middle">One queue · ranked by criticality</text>
+
+          <!-- Story to analyst -->
+          <path class="lane lane-allow" d="M 810 132 L 810 216"/>
+
+          <!-- SOC analyst -->
+          <g>
+            <circle cx="810" cy="245" r="23" fill="var(--status-good)"/>
+            <circle cx="810" cy="238" r="6.5" fill="#fff"/>
+            <path d="M 797 258 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="810" y="288" text-anchor="middle">SOC analyst</text>
+            <text class="dg-sub" x="810" y="304" text-anchor="middle">Story → events → fix</text>
+          </g>
+
+          <!-- MDR backing -->
+          <path class="lane-static" d="M 810 312 L 810 338" fill="none"/>
+          <rect class="dg-node" x="700" y="340" width="220" height="58" rx="10"/>
+          <text class="dg-label" x="810" y="364" text-anchor="middle">Cato MDR — 24×7</text>
+          <text class="dg-sub" x="810" y="382" text-anchor="middle">Expert monitoring service</text>
+
+          <!-- Remediation loop back to policy at the PoP -->
+          <path class="lane lane-allow" d="M 780 262 C 640 330, 480 310, 374 240"/>
+          <text class="dg-tiny" x="575" y="320" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Policy fix — same console</text>
+
+          <!-- Attack flow blocked at the PoP -->
+          <g>
+            <circle cx="447" cy="412" r="23" fill="var(--status-critical)"/>
+            <circle cx="447" cy="405" r="6.5" fill="#fff"/>
+            <path d="M 434 425 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="482" y="408">Attack traffic</text>
+            <text class="dg-sub" x="482" y="426">Blocked at PoP · recorded</text>
+          </g>
+          <path class="lane lane-block" d="M 440 388 C 424 348, 398 310, 374 280"/>
+          <g aria-label="blocked at the PoP">
+            <path class="lane-x" d="M 356 254 L 380 278"/><path class="lane-x" d="M 380 254 L 356 278"/>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Telemetry → story → fix (flows the PoP already inspects)</span>
+          <span class="key"><span class="swatch block"></span> Attack traffic — blocked, evidence recorded</span>
+        </div>
+        <div class="diagram-caption">Every flow already traverses the PoP, so XDR starts with full network telemetry — no agents to roll out, no logs to ship. Signals become one ranked story queue; the fix goes back into policy from the same console.</div>
+      </div>
+
+      <h3>What changes for the SOC</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧠</div><div><h4>Correlation done for you</h4><p>Related signals are grouped into a single incident story by the platform — no SIEM rule-writing, no swivel-chair joins across consoles.</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>Ranked by ML criticality</h4><p>Stories carry an ML-driven criticality score, so the shift works the queue top-down instead of skimming a flood of raw alerts.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗺️</div><div><h4>MITRE ATT&amp;CK built in</h4><p>Each story is mapped to ATT&amp;CK tactics and techniques — a shared language for reporting, threat hunting and board updates.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛠️</div><div><h4>Detect and respond in one console</h4><p>Pivot from the story to the underlying events, to the user or site involved, and straight to the firewall or access policy that fixes it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="mdr" class="reveal">
+      <div class="section-kicker">Managed service</div>
+      <h2>Cato MDR: 24×7 depth when the in-house SOC needs it</h2>
+      <p>
+        Modernising the tooling doesn't conjure up a night shift. For organisations that can't — or don't
+        want to — staff around the clock, the <strong>Cato MDR service</strong> puts Cato's own security
+        analysts on the same story queue, 24×7.
+      </p>
+      <div class="card">
+        <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+          <li><strong>Same platform, same data.</strong> MDR analysts work the identical XDR stories your team sees — no separate collector, no onboarding project before coverage starts.</li>
+          <li><strong>Triage and verification.</strong> Cato's experts investigate stories, confirm genuine incidents and cut through the noise before it reaches your team.</li>
+          <li><strong>Guided containment.</strong> Verified incidents come with recommended (or, where agreed, applied) policy actions — network-level containment through the same console.</li>
+          <li><strong>Augment, don't replace.</strong> In-house analysts keep full visibility and control; MDR covers the hours and the depth the team can't staff.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Anchor on their numbers</div>
+        <p>In discovery, get their console count and their honest mean-time-to-triage from the team's own
+        experience. Then run the demo as a direct answer: one queue, one console, context already attached.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Start with the threat picture</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span></p>
+          <p>Show the network-wide threat view built from traffic the platform is already inspecting —
+          across sites, remote users and cloud. Point out that nothing was deployed or shipped to produce it.</p>
+        </li>
+        <li>
+          <h4>Open an XDR incident story</h4>
+          <p>Drill from the dashboard into a story. One record per suspected incident — not a page of raw
+          alerts. Walk the header: criticality score, indication, status, the source and targets involved.</p>
+        </li>
+        <li>
+          <h4>Show the correlated timeline and ATT&amp;CK mapping</h4>
+          <p>Inside the story, walk the correlated events timeline — the sequence the platform assembled
+          automatically — and the MITRE ATT&amp;CK tactics and techniques it maps to. This is the manual
+          correlation work their analysts do today, done before anyone opened the ticket.</p>
+        </li>
+        <li>
+          <h4>Pivot to the user and site</h4>
+          <p>From the story, pivot to the underlying events and the entity involved — which user, which
+          device, which site, what else they've been doing. Full attribution without leaving the console.</p>
+        </li>
+        <li>
+          <h4>Remediate via policy — same console</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Close the loop: add or adjust the rule that contains the incident (block the destination,
+          restrict the app, tighten the user's access). Detection to enforcement with no hand-off to
+          another team or tool.</p>
+        </li>
+        <li>
+          <h4>Finish on the ranked queue</h4>
+          <p><span class="path">Monitor → Stories Dashboard</span></p>
+          <p>Show the Stories Dashboard filtered by criticality: this is how a shift starts the day —
+          highest-scored stories first, one queue for the whole estate. If 24×7 came up in discovery,
+          land Cato MDR here: Cato's analysts working this exact queue overnight.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/extended-detection-and-response-xdr/" target="_blank" rel="noopener">Cato XDR — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato services (incl. MDR) — overview</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ransomware.html">Ransomware &amp; Advanced Threat Prevention</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
