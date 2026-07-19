@@ -1,45 +1,63 @@
-# Cato Networks — SASE Use Case Library
+# Cato SASE Use Case Library
 
-A self-contained, static HTML library of Cato Networks use cases for SE / partner enablement.
-It replaces the PowerPoint decks in the numbered folders (which are kept as downloadable
-sources and linked from each page).
+A self-contained, offline-first HTML library of **63 Cato Networks use cases** for
+sales engineers and partners — business objective, how the platform solves it, a
+custom diagram, and a step-by-step demo runbook for every scenario. No build step,
+no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
 
-## Using it
+> **Internal SE / partner enablement. This repository must remain PRIVATE** — the
+> source PPTX decks in its history contain customer references. Share externally
+> only via the sanitised zip from `_extract/package.sh`.
 
-Open `index.html` in any browser — no server, build step or internet connection required
-(external links to docs obviously need connectivity). Search and category filters are on the
-home page. Each use-case page follows the same flow:
+## Contents (6 categories)
 
-**Business objective → The challenge/risk → How Cato solves it (diagram) → Demo runbook → Talk track → Resources**
+| Category | Pages | Highlights |
+|---|---|---|
+| Access | 5 | ZTNA, BYOD on-ramps (portal / Browser Extension / Enterprise Browser), identity design |
+| Management | 6 | Visibility, DEM (with live CMA captures), API/Terraform, PoV framework, TCO |
+| Network | 9 | SD-WAN, MPLS migration, cloud DC + Cloud Interconnect, ASA IPsec design, resilient sites |
+| Security | 12 | FWaaS refresh, TLS inspection playbook, OT/IoT, compliance (ISO/NIS2, DORA, PCI, UK CE/CAF) |
+| AI Security | 5 | GenAI visibility assessment, end-user GenAI, agentic AI, homegrown AI apps |
+| Migration | 26 | PS methodology + 12-vendor playbooks + per-vendor policy deep-dives (FW/SWG/CASB/DLP) with real before→after examples |
 
-Every page has a Print/PDF button (print styles produce a clean handout) and, where one
-exists, a download link to the original deck.
+Start at `index.html` → the **Start here** journeys, search box, or clickable tags.
+`whatsnew.html` lists every change.
 
-## Structure
+## Maintaining it
+
+```bash
+bash _extract/verify.sh              # 6-check health pass (links, catalogue, SVG, console, mobile)
+bash _extract/verify.sh --external   # + probe all external URLs (curl-based; see note)
+git add -A && git commit             # after a clean verify
+python3 _extract/whatsnew.py         # regenerate whatsnew.html, commit it
+git push                             # master tracks origin/main
+bash _extract/package.sh             # shareable zip in dist/ (clean decks only)
+```
+
+Conventions and gotchas:
+
+- **`_extract/BUILD-GUIDE.md`** is the authoring standard for new pages (structure,
+  CSS classes, SVG diagram rules, allowed URLs). `assets/js/catalog.js` is the single
+  source of truth driving the index, filters and pagers.
+- **`_extract/STALENESS.md`** — register of dated facts (EOL dates, licensing, KB-dependent
+  claims) with recheck triggers. Update it when adding dated claims; review quarterly.
+- **Generic-library rules**: no customer names, no account IDs, no tenant-specific stats,
+  fictional users only. Case studies are anonymised.
+- `measure_svg.py` must run **silent**; any output is a diagram regression.
+- External link checks use **curl, not python** — machines behind Cato TLS inspection
+  lack the Cato root CA in python's trust store.
+- Screenshots come from a demo tenant with fictional identities; `.heic` originals are
+  archived in `_extract/media/`.
+
+## Layout
 
 ```
-index.html              Library home — search + category filtering
-usecases/*.html         One page per use case (19)
-assets/css/style.css    Design system (brand tokens, components, diagram animations)
-assets/js/catalog.js    Use-case metadata — ADD NEW USE CASES HERE first
-assets/js/app.js        Search/filter, TOC/scroll-spy, lightbox, pager
-assets/img/             Screenshots & diagrams extracted from the original decks
-1..4 - * use cases/     Original PowerPoint decks (sources, linked for download)
-_extract/               Build tooling: deck text digests, image catalog, page-builder
-                        guide (BUILD-GUIDE.md), screenshot + link-check scripts
+index.html            landing page (journeys, search, category grid)
+whatsnew.html         change log (generated from git history)
+usecases/*.html       the 63 use-case pages
+assets/               shared CSS/JS, images (CMA screenshots, diagrams)
+_extract/             tooling, source-deck digests, research briefs, verification scripts
+"1 - … " … "5 - …"    original PowerPoint decks (do not share raw — see privacy note)
 ```
 
-## Adding a use case
-
-1. Add an entry to `assets/js/catalog.js` (id, file, category, title, summary, tags, status, deck).
-2. Copy an existing page in `usecases/` as a template — or follow `_extract/BUILD-GUIDE.md`,
-   which documents the full page anatomy, design rules and SVG diagram conventions.
-3. Set `<body data-uc="…">` to the catalog id — the TOC, pager and index card wire up automatically.
-4. Check it: `python3 _extract/checklinks.py usecases/your-page.html` and
-   `python3 _extract/shoot.py usecases/your-page.html /tmp/shot.png`.
-
-## Status badges
-
-- **Field-ready** — converted from a complete deck; demo flow verified against the source.
-- **In development** — source deck was WIP; gaps are flagged on the page itself.
-- **New** — created for this library (no source deck); review before first customer use.
+Built July 2026 with Claude Code; maintained by Tony Stalker (tstalker95@gmail.com).
