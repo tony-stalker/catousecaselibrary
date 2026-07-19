@@ -243,6 +243,76 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical retail policies — a starter rulebase</h2>
+      <p>
+        Segmentation only shrinks scope if the rules behind it are right. The rulebase below is a
+        sensible retail default: lock the POS/cardholder VLAN to the payment path, give guest and
+        IoT the narrowest breakout they need, keep store staff on sanctioned apps, and sweep the
+        estate for the traffic classes that have no business on a store network. It maps back to the
+        <a href="#solution">PCI DSS 4.0 themes above</a> — that table is the <em>why</em>, this is the
+        <em>how</em>. The rows mix engines: rules 1–2 are the site <strong>LAN firewall</strong>,
+        rules 3–7 the <strong>Internet firewall</strong> (FWaaS), and row 8 is a
+        <strong>network / bandwidth rule</strong> — all defined once and inherited by every store.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Illustrative starter blueprint — not a drop-in</div>
+        <p>Treat this as a starting point, not a finished policy. Deploy every rule
+        <strong>monitor-first</strong> so you can see what each store actually does before you
+        enforce, then tune destinations, categories and scoping to the real estate in a
+        <strong>policy workshop</strong>. Payment allowlists, sanctioned-app lists and IoT vendor
+        clouds differ store to store — validate them, don't assume them.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source</th><th>App/Category / Service</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>POS / CDE — payment path only</td><td>POS / CDE VLAN</td><td>Payment processor allowlist — acquirer / gateway FQDNs, HTTPS only</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>2</td><td>POS / CDE — deny all other egress</td><td>POS / CDE VLAN</td><td>Any other destination — internet, other VLANs, wider LAN</td><td>Block</td><td>Event</td></tr>
+            <tr><td>3</td><td>Cameras &amp; IoT — vendor &amp; firmware only</td><td>Cameras &amp; IoT VLAN</td><td>Vendor cloud &amp; firmware-update destinations only</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>4</td><td>Cameras &amp; IoT — deny general internet</td><td>Cameras &amp; IoT VLAN</td><td>Internet (Any) outside the allowlist above</td><td>Block</td><td>Event</td></tr>
+            <tr><td>5</td><td>Guest Wi-Fi — internet breakout only</td><td>Guest Wi-Fi VLAN</td><td>Internet (Any) — internal / RFC1918 ranges denied, bandwidth-capped</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>6</td><td>Store staff — sanctioned SaaS</td><td>Store staff VLAN</td><td>Sanctioned app categories (Business, Collaboration); risky URL categories blocked</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>7</td><td>Estate-wide — block P2P &amp; anonymisers</td><td>Any</td><td>App categories: P2P / file-sharing, anonymisers &amp; proxies</td><td>Block</td><td>Event</td></tr>
+            <tr><td>8</td><td>Payments failover priority <span style="color:var(--ink-2)">(network rule)</span></td><td>POS / CDE VLAN</td><td>Payment processor service — active/standby WAN, LTE holds priority for the CDE</td><td>Prioritise</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:28px">Retail scenarios</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Seasonal pop-up store</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Ship a spare Socket to the unit; staff plug
+          it into whatever broadband is available and it pulls the estate policy on day one —
+          segmented POS, guest and cameras from the first hour of trading, zero-touch, no engineer
+          on site.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Store refit or relocation</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The policy follows the Socket, not the
+          postcode. Move the unit, plug it in at the new address, and the same VLAN plan and rulebase
+          reappear — nothing to rebuild by hand, nothing to re-scope.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Franchisee segregation</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Scope rules per group so each franchisee's
+          stores see only their own policy and traffic, while head office keeps the estate-wide
+          guardrails — the CDE egress deny and the P2P / anonymiser block — sitting above them.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Assessor visit</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Hand the assessor an evidence pack straight
+          from the console — the live rulebase, firewall block events per store and the Audit Trail
+          of who changed what — instead of a fortnight of screenshots, all tied to the
+          <a href="#solution">themes mapped above</a>.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>

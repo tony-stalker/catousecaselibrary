@@ -232,6 +232,104 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical offshore/BPO policies — a starter rulebase</h2>
+      <p>
+        Most offshore and BPO engagements converge on the same handful of controls: developers reach
+        code through published app segments and nothing else, agents live inside one CRM on isolated
+        sessions, source code and customer PII never leave approved apps, and group membership from the
+        IdP does the joining and the leaving. The starter set below turns that shape into a small,
+        readable rulebase you can adapt on the whiteboard with a prospect.
+      </p>
+
+      <div class="callout">
+        <div class="co-title">An illustrative starter blueprint — not a console export</div>
+        <p>These rows were composed for this page to show the pattern; object and group names are
+        generic placeholders, not screenshots of any tenant. Build it <strong>monitor-first</strong> —
+        deploy the DLP and download rules in a logging/alert mode, watch the events for a few days, then
+        switch to Block — and tune every rule to the specific <strong>engagement contract</strong> and
+        the <strong>data-residency requirements</strong> the end customer has written down.</p>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source (group)</th><th>App/Category / Data</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td><td>Devs-Repos-Allow</td><td>Offshore-Developers</td>
+              <td>ZTNA app segments: Git repos &amp; CI/CD only</td><td>Allow</td><td>Event</td>
+            </tr>
+            <tr>
+              <td>2</td><td>Block-SourceCode-Egress</td><td>Offshore-Developers</td>
+              <td>Data type: source code → personal cloud storage / webmail</td><td>Block</td><td>Alert</td>
+            </tr>
+            <tr>
+              <td>3</td><td>Block-PII-Egress</td><td>All-Offshore</td>
+              <td>Data type: customer PII → personal storage / webmail</td><td>Block</td><td>Alert</td>
+            </tr>
+            <tr>
+              <td>4</td><td>Agents-CRM-Only</td><td>BPO-Agents</td>
+              <td>Published app: CRM (clientless portal · RBI for unmanaged seats)</td><td>Allow · isolate</td><td>Event</td>
+            </tr>
+            <tr>
+              <td>5</td><td>No-Download-Unmanaged</td><td>BPO-Agents · unmanaged posture</td>
+              <td>File download from CRM / VDI to the endpoint</td><td>Block</td><td>Alert</td>
+            </tr>
+            <tr>
+              <td>6</td><td>VDI-Priority</td><td>All-Offshore</td>
+              <td>App: VDI (PCoIP / Blast) — bandwidth priority</td><td>Allow · QoS priority</td><td>Event</td>
+            </tr>
+            <tr>
+              <td>7</td><td>Shift-Window <em>(operational)</em></td><td>BPO-Agents</td>
+              <td>Access enabled during contracted shift hours <em>(see note)</em></td><td>Allow</td><td>Event</td>
+            </tr>
+            <tr>
+              <td>8</td><td>Delivery-Country-Only</td><td>All-Offshore</td>
+              <td>Client Connectivity: connect only from approved delivery countries</td><td>Allow</td><td>Event</td>
+            </tr>
+            <tr>
+              <td>9</td><td>Leaver-Revoke <em>(SCIM)</em></td><td>Removed from group</td>
+              <td>Deprovision → all app segments &amp; clientless portal</td><td>Deny</td><td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-size:.86rem;color:var(--ink-2);margin-top:10px">
+        <strong>Two honesty notes on rows 7–8.</strong> Rather than assume a native time-of-day
+        scheduler, treat the <em>shift window</em> (row 7) as an operational practice — enable or
+        disable the group's access around the contracted hours, scripted through the API if you want it
+        automated — and confirm the exact mechanism with Cato PS for the tenant in question. The
+        <em>delivery-country</em> control (row 8) is source-country awareness in the Client
+        Connectivity Policy, restricting where users may connect from; it is geographic gating of the
+        connection, not a legal guarantee of the user's location.
+      </p>
+
+      <h3 style="margin-top:26px">BPO scenarios</h3>
+      <div class="card">
+        <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+          <li><strong>New engagement ramp-up.</strong> A partner needs hundreds of agents live within a
+          week. Provision the <em>BPO-Agents</em> group in the IdP, sync it via SCIM, and every joiner
+          inherits rows 4–8 on first login — no per-user tickets, no re-touching the rulebase as the
+          headcount climbs.</li>
+          <li><strong>Client audit of the offshore floor.</strong> The end customer's due-diligence team
+          asks who touched their data. One event store answers it: every CRM session, every blocked
+          upload and download, attributed to a named user and device — the evidence handed over without
+          stitching logs from concentrators, VDI brokers and firewalls.</li>
+          <li><strong>Contract end.</strong> When an engagement closes, disabling or emptying the group
+          revokes rows 1–8 for the whole cohort in one move, and the retained event history is the
+          bulk-revocation evidence — proof the access is gone and a record of what it ever reached.</li>
+          <li><strong>Seat-vendor change.</strong> A partner swaps unmanaged seats for a managed build.
+          The same users move from the clientless/RBI path (rows 4–5) to Cato Client with a passing
+          posture profile, unlocking fuller access — a group and posture change, not a rebuild of the
+          policy.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>

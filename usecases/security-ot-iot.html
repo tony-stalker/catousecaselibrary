@@ -262,6 +262,129 @@
       </figure>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical manufacturing policies — a starter rulebase</h2>
+      <p>
+        The device-attribute screenshots above show the shape of a live rulebase; this section turns
+        that shape into a <strong>deployable starting point for a plant</strong>. It maps the Purdue
+        levels in the diagram to a concrete set of rules an SE can stand up on day one and then
+        tighten — the OT equivalent of the camera, smart-plug and TP-Link rules already running in
+        the rulebase screenshot, extended down to the control layer.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">Monitor first — doubly true in OT</div>
+        <p>Every rule below is <strong>illustrative</strong> and is meant to go live on
+        <strong>Allow · Event</strong> first. Discovery before enforcement is the rule everywhere in
+        Cato; on a production line it is non-negotiable. You never block first on a live plant —
+        watch the events, confirm nothing legitimate is being caught, and only then flip a rule to
+        Block. A false positive here stops a machine, not a web page.</p>
+      </div>
+
+      <h3>Starter rulebase (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source / device criteria</th><th>App / Category / Destination</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>OT/IoT discovery — baseline visibility</td>
+              <td>Category = OT · IoT (any type)</td>
+              <td>Any — monitor phase</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>HMI → PLC — in-cell control</td>
+              <td>Type = HMI</td>
+              <td>PLCs in same cell · control protocols (S7 · Modbus · EtherNet/IP)</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Engineering workstations — vendor updates</td>
+              <td>Engineering-Workstations group</td>
+              <td>Vendor update FQDN allowlist (e.g. Siemens · Rockwell)</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Vendor remote access — scoped ZTNA</td>
+              <td>Vendor IdP group · ZTNA app segment · time-bounded window</td>
+              <td>Jump server / one cell app only · session recorded</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Cameras · scales · label printers</td>
+              <td>Type = IP camera · weigh scale · label printer</td>
+              <td>NVR / MES function servers only — no internet</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>PLCs / controllers — no internet egress</td>
+              <td>Category = OT · Type = PLC / controller</td>
+              <td>Internet (any)</td>
+              <td>Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>IT ↔ OT boundary — default-deny</td>
+              <td>IT / corporate subnets</td>
+              <td>OT zones (Purdue ≤ L3) — except the explicit rules above</td>
+              <td>Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>Corporate IT — standard policy, LAN-separated</td>
+              <td>Corporate LAN users (same site / same Socket)</td>
+              <td>Internet · SaaS — normal internet policy</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.9rem;color:var(--ink-2)">
+        Rules 2–8 are read top-down, first-match; the discovery baseline (rule 1) is the
+        monitor-phase catch that logs everything while you learn the floor, then narrows as the
+        specific allows and blocks are trusted. Corporate IT and the OT devices can share the same
+        site and Socket — the LAN firewall keeps them apart, so rule 8 leaves office users on their
+        normal internet policy while the plant stays segmented. Vendor remote access (rule 4) is the
+        rulebase face of <a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain
+        Access</a> — identity-driven, least-privileged, time-bounded and recorded.
+      </p>
+
+      <h3>Manufacturing scenarios</h3>
+      <p><strong>Line-down triage.</strong> A cell stops and the integrator blames “the new
+      firewall”. Filter <span class="path">Monitor → Events</span> to that cell: the events prove
+      whether a Cato rule dropped anything or the traffic never arrived — turning a finger-pointing
+      call into a five-minute answer that clears the network and the policy.</p>
+      <p><strong>OEM engineer site visit.</strong> A machine builder needs to touch one line for two
+      days. Enable the scoped ZTNA rule (rule 4) for their IdP identity with a time-bounded window
+      to a single cell — recorded, least-privileged, and it expires on its own. No jump-box
+      credentials shared, no standing route to the control layer.</p>
+      <p><strong>New cell commissioning.</strong> A new production cell arrives full of unknown
+      devices. Run a <strong>discovery-mode week</strong>: everything on Allow · Event, watch the
+      inventory populate and the flows settle, then lift the real traffic pattern straight into
+      allow rules before flipping the boundary to default-deny.</p>
+      <p><strong>Insurance / audit questionnaire.</strong> The cyber-insurer or an IEC 62443
+      assessor asks “how is OT segmented from IT and the internet?” The rulebase above plus the live
+      event hit-counts are the evidence — a screenshot of the boundary default-deny and the PLC
+      internet-block, with counts, answers the question directly instead of with a promise.</p>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>

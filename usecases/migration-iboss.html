@@ -438,6 +438,79 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical education policies — a starter rulebase</h2>
+      <p>
+        The mapping and phased path above get you to a translated policy; this is what a good
+        one looks like once it lands. The worked before&rarr;after translation of a single
+        Students/Staff tier lives on the
+        <a href="migration-iboss-policy.html">iboss Policy Migration</a> page — this section is
+        the fuller <strong>destination blueprint</strong>: a starter Cato rulebase for a school
+        or multi-academy trust, the shape most education estates converge on once the per-OU
+        tiers are rationalised.
+      </p>
+      <p>
+        It is a starting grid, not a drop-in. Cohorts — year groups, phases, staff tiers, the
+        sixth form — become SCIM groups; the rules sit in one ordered Internet firewall policy,
+        most-specific cohort first; and every rule below lands in <strong>monitor for its OU
+        wave</strong> before any block or prompt goes live, the same monitor-first discipline as
+        the steering cutover.
+      </p>
+      <div class="callout">
+        <div class="co-title">Illustrative starter blueprint — shape it to the safeguarding policy</div>
+        <p>The rulebase below is illustrative, not a compliance template. Deploy it monitor-first,
+        one OU wave at a time, and align every decision to the institution's own safeguarding and
+        acceptable-use policy and to the filtering-and-monitoring expectations UK schools work to
+        — KCSIE-style safeguarding duties and the DfE filtering-and-monitoring standards — as
+        design intent, not a statutory checklist. The safeguarding lead signs off the category and
+        prompt/block choices, not just IT.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Name</th><th>Source (group)</th><th>App/Category / Content Restrictions</th><th>Action</th><th>Track</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Safeguarding-risk block — all pupils</td><td>Students + Sixth-form (SCIM groups)</td><td>URL categories: adult/pornography, weapons, self-harm &amp; pro-suicide content — map to the nearest Cato categories in the parity workshop, don't assume 1:1</td><td>Block</td><td>Event</td></tr>
+            <tr><td class="num">2</td><td>Students — SafeSearch + YouTube restricted</td><td>Students (SCIM group)</td><td>Content Restrictions — SafeSearch enforced; YouTube Moderate (Strict for lower phases)*</td><td>Enforce</td><td>Event</td></tr>
+            <tr><td class="num">3</td><td>Sixth-form — differentiated relaxation</td><td>Sixth-form (SCIM group)</td><td>Social Networking &amp; Streaming allowed; sits above the student social-media rule so the group matches first</td><td>Allow</td><td>Event</td></tr>
+            <tr><td class="num">4</td><td>Students — social media, teach-not-just-block</td><td>Students (SCIM group)</td><td>URL category: Social Networking — Prompt with an acceptable-use notice for KS3&ndash;KS4; Block for lower phases by cohort</td><td>Prompt</td><td>Event</td></tr>
+            <tr><td class="num">5</td><td>Staff — broad allow, DLP guardrail</td><td>Staff (SCIM group)</td><td>Broad web allow; Data Control — student-PII / safeguarding-record content profile on uploads to personal cloud storage (personal Google Drive, OneDrive, Dropbox)</td><td>Allow · Block upload</td><td>Event</td></tr>
+            <tr><td class="num">6</td><td>Exam cohort — allowlist-only (exam window)</td><td>Exam-cohort (SCIM group)</td><td>Allowlist-only posture: exam/assessment-platform domains permitted, all else blocked — operational practice, enabled for the exam window and reverted after</td><td>Allowlist-only</td><td>Event</td></tr>
+            <tr><td class="num">7</td><td>BYOD / guest — isolated segment</td><td>Guest &amp; BYOD network</td><td>Internet-only with student-grade content filtering; no route to internal apps or staff resources — segment isolated from the managed estate</td><td>Allow (filtered)</td><td>Event</td></tr>
+            <tr><td class="num">8</td><td>IT admins — ZTNA-scoped access</td><td>IT-Admins (SCIM group)</td><td>Private Access policy — scoped admin apps only, no broad network reach; broad web allow for the group's own browsing</td><td>Allow (ZTNA-scoped)</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.84rem;color:var(--ink-3);margin-top:8px">* Content Restrictions are
+      bypassed by browsers using DNS-over-HTTPS — ship the DoH control (browser management policy
+      plus the DNS-over-HTTPS block in the Internet firewall) in the same change, per
+      <a href="#gotchas">the DoH caveat in Gotchas</a>. Every rule tracks Event: user-attributed
+      logging is the safeguarding evidence that has to survive the migration.</p>
+
+      <h3>Education scenarios</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>Safeguarding incident review.</strong> When a concern is raised, the
+        designated safeguarding lead needs a per-user trail fast — Monitor &rarr; Events filtered
+        to one pupil across web, search and blocked-category hits, exportable and retained. The
+        Event tracking on every rule above is what makes that trail exist; it is reporting
+        continuity carried across from iboss, not a nice-to-have.</li>
+        <li><strong>Exam-season lockdown.</strong> For the exam window the exam-cohort group flips
+        to the allowlist-only rule — assessment platforms permitted, everything else blocked —
+        then reverts afterwards. One scoped rule change per window, with the block already proven
+        in monitor so no candidate meets a surprise deny mid-exam.</li>
+        <li><strong>New academy joining a trust.</strong> Onboarding a school into a multi-academy
+        trust is policy inheritance, not a rebuild: add the site/Socket, map the new OUs onto the
+        trust's existing SCIM groups, and this ordered rulebase applies on day one, with local
+        exceptions layered as scoped rules above it. One policy plane across every academy instead
+        of a filter tenant per school.</li>
+        <li><strong>Filtering-review evidence.</strong> An Ofsted-style filtering-and-monitoring
+        review — or a governor/DSL audit — asks the school to show what is filtered, for whom, and
+        how incidents are recorded. The CMA answers it live: the ordered rulebase is the "what and
+        for whom", user-attributed events are the "how recorded" — evidence on screen rather than
+        a vendor report request.</li>
+      </ul>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

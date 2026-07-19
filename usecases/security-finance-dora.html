@@ -265,6 +265,127 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical financial-services policies — a starter rulebase</h2>
+      <p>
+        DORA does not prescribe firewall rules, but a financial entity's control framework has to
+        <em>look like</em> one on the wire. The blueprint below is the shape a converged policy tends
+        to take for a bank, insurer or investment firm: latency-sensitive trading traffic protected,
+        payment and settlement systems tightly scoped, finance data kept out of unsanctioned places,
+        information barriers enforced by group, and third-party access reduced to named app segments.
+      </p>
+      <div class="callout">
+        <div class="co-title">Read this as a starting point, not a template to paste</div>
+        <p>These rules are illustrative — a starter blueprint to adapt to your own estate, app
+        inventory and risk appetite. Roll them out <strong>monitor-first</strong>: run each rule in
+        event/monitor mode, review what it would have caught on real traffic, then tune the scope and
+        switch to enforce. Nothing here is regulatory advice — the control decisions, and whether the
+        result satisfies your DORA programme, belong to your risk and compliance functions.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th class="num">#</th><th>Name</th><th>Source</th><th>App / Category / Data</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td><td>Market-Data-Priority</td><td>Trading-Desk</td>
+              <td>Market-data feeds · trading platforms</td>
+              <td>Allow · QoS priority · documented TLSi bypass</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">2</td><td>Settlement-Allowlist</td><td>Payments-Ops</td>
+              <td>Named payment &amp; settlement systems</td>
+              <td>Allow</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">3</td><td>Settlement-Block-Remainder</td><td>Payments-Ops</td>
+              <td>Any other destination</td>
+              <td>Block</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">4</td><td>Finance-Data-Exfil-Block</td><td>Any</td>
+              <td>Data: account-number &amp; card/PAN profiles → unsanctioned cloud storage</td>
+              <td>Block</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">5</td><td>Deal-Team-Barrier</td><td>Deal-Team (IdP group)</td>
+              <td>Restricted deal-room app segment <em>(others: implicit deny)</em></td>
+              <td>Allow</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">6</td><td>Outsourcer-ZTNA-Only</td><td>Outsourcer (ZTNA)</td>
+              <td>Named application segments only</td>
+              <td>Allow (ZTNA)</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">7</td><td>Block-Anonymisers-Mining</td><td>Any</td>
+              <td>Category: Anonymisers · Crypto-mining</td>
+              <td>Block</td><td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">8</td><td>GenAI-Monitored-Redact</td><td>Any</td>
+              <td>GenAI apps (User Interaction Policy)</td>
+              <td>Monitor · redact finance data</td><td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>The market-data bypass is a named exception, not a hole (rule 1).</strong>
+        Trading and market-data feeds are latency-sensitive, so where inline TLS inspection would add
+        unacceptable delay to a specific feed, that app is handled by a documented, risk-accepted
+        TLS-inspection bypass — recorded in the Audit Trail and reviewed on a schedule, scoped to the
+        named apps only. Inspection stays on for everything else, and the bypass itself is evidence
+        the exception was a decision, not a gap.</li>
+        <li><strong>Rule 5 is an information barrier expressed as a rule (M&amp;A / insider teams).</strong>
+        A group-scoped allow over an implicit deny keeps a deal team inside its own segment and everyone
+        else out — the same ethical-walls pattern used for legal matters, applied to insider-sensitive
+        transactions. See <a href="security-legal-confidentiality.html">Confidentiality &amp; Ethical Walls</a>
+        for the rule-pair design and its limits.</li>
+        <li><strong>Rule 8 keeps GenAI usable without leaking finance data.</strong>
+        The User Interaction Policy monitors prompts to sanctioned assistants and redacts account
+        numbers and card data before they leave, rather than blocking GenAI outright — see
+        <a href="ai-genai-security.html">GenAI Security for End Users</a>.</li>
+      </ul>
+
+      <h3>Finance scenarios</h3>
+      <p>Where this blueprint earns its keep — the moments a financial entity is asked to prove it,
+      not just describe it:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">DORA incident-evidence drill</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Pick a window and export the events timeline
+          for it: every flow, verdict and user attribution on one clock, alongside the correlated XDR
+          story. Practise turning that into the skeleton of a major-incident report before a real
+          incident forces you to.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Regulator or audit visit</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Show the exportable rulebase, the events of
+          those controls firing on live traffic, and an attributable Audit Trail of every configuration
+          change. Most questionnaire sections about network and access controls are answered from a
+          single console.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Onboarding an appointed representative or branch</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A new AR or branch inherits the same policy
+          set on day one — the same information barriers, DLP and third-party controls — with access
+          driven by IdP group membership rather than a bespoke per-site rulebase to build and later
+          reconcile.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Resilience test day</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Pull a last-mile link or steer traffic away
+          from a PoP with Experience Monitoring watching, then capture what users experienced before,
+          during and after as test-file evidence. See
+          <a href="network-resilient-site-design.html">Resilient Site Design</a> for the failover
+          building blocks.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>

@@ -348,6 +348,139 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical public-sector policies — a starter rulebase</h2>
+      <p>
+        The mapping tables above stay at outcome level; this is the layer beneath them — an
+        illustrative starter rule base a council or public body could stand up, then shape to its
+        own estate. It is organised the way an assessor reasons about a network: sanctioned work
+        allowed explicitly, privileged access segmented and posture-checked, the risky edges of the
+        internet closed at the boundary, and the parts of the estate that carry their own duties —
+        schools, citizen Wi-Fi, building systems — kept apart from the corporate network. None of it
+        certifies anything on its own; it gives the Cyber Essentials and CAF conversation something
+        concrete to walk.
+      </p>
+      <div class="callout">
+        <div class="co-title">A starting point, not a finished policy</div>
+        <p>These rules are illustrative — a monitor-first blueprint, not an exported console. Stand
+        each block rule up in monitor mode, confirm it against real traffic, and only then flip it
+        live. And scope the final policy to the body's <strong>own</strong> Cyber Essentials
+        boundary and its CAF profile: what is in scope, which groups exist via SCIM, and which duties
+        (safeguarding, OT safety, records retention) shape the rules are the customer's to decide.
+        Cato <strong>supports</strong> that work — it does not settle it, and it does not make anyone
+        compliant.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Staff — sanctioned collaboration allow</td>
+              <td>Staff (SCIM group)</td>
+              <td>Sanctioned apps — Microsoft 365, Teams, SharePoint</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Privileged admins — management systems via ZTNA</td>
+              <td>IT-Admins (SCIM group) — device posture required</td>
+              <td>ZTNA segments — management consoles, RDP/SSH jump hosts, least-privilege per system</td>
+              <td>Allow (segment)</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>Schools sub-estate — content restrictions</td>
+              <td>Schools / pupil groups (SCIM)</td>
+              <td>Content Restrictions — SafeSearch + YouTube Moderate and education category tiers; see the <a href="migration-iboss-policy.html#swg-policy">education web controls</a></td>
+              <td>Enforce</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Block high-risk web categories</td>
+              <td>Any (corporate)</td>
+              <td>URL categories — malware/phishing, botnets/C2, newly-registered and unclassified domains</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Block anonymisers &amp; unsanctioned remote access</td>
+              <td>Any (corporate)</td>
+              <td>Categories/apps — anonymisers, TOR, consumer VPNs; unauthorised remote-access / RMM tools</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Legacy line-of-business — virtual patching</td>
+              <td>Legacy app servers (host group)</td>
+              <td>IPS — CVE signatures shielding the exposed service while patching runs; see <a href="security-firewall-refresh.html">firewall refresh</a></td>
+              <td>Monitor → Protect</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">7</td>
+              <td>Citizen / guest Wi-Fi — internet-only</td>
+              <td>Guest network (segment / VLAN)</td>
+              <td>Internet-only egress, adult/illegal categories filtered; no route to corporate resources</td>
+              <td>Allow (filtered) · Block corp</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">8</td>
+              <td>CCTV &amp; building IoT — egress lock</td>
+              <td>OT/IoT segment (CCTV, BMS, door controllers)</td>
+              <td>Only named vendor update/telemetry destinations; deny all other egress and east-west</td>
+              <td>Allow listed · default Block</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.92rem;color:var(--ink-2)">
+        Read down the Action column and the Cyber Essentials themes fall out of it: rules 1–2 are
+        <strong>user access control</strong> — sanctioned work allowed explicitly, admins separated
+        into a posture-checked ZTNA segment at least privilege; rules 4–5 are the
+        <strong>malware-protection</strong> and firewalls/<strong>boundary</strong> themes, enforced
+        once at the PoP rather than per box; rule 6 shields an exposed legacy service while the
+        14-day update clock still runs on the customer's own patching. Rules 3, 7 and 8 keep the
+        parts of the estate with their own duties apart. The whole set spans the Internet firewall,
+        ZTNA and IPS but lives in one rule base — and every row is tracked as an event, which is CAF
+        Objective B enforced and Objective C evidenced in the same place.
+      </p>
+
+      <h3 style="margin-top:24px">Public-sector scenarios</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>Cyber Essentials Plus assessment week.</strong> When the assessor is booked,
+        walk this rule base as the evidence: the ordered policy is the boundary control, Device
+        Posture shows user access control operating, the event stream shows the category and IPS
+        rules firing on real traffic, and the Audit Trail shows who changed what and when. One
+        console answers the verification questions instead of a screenshot hunt across a rack of
+        appliances.</li>
+        <li><strong>Shared-services or multi-academy trust onboarding.</strong> Bringing a new
+        partner council, arm's-length body or school onto a shared platform means adding its SCIM
+        groups and a scoped rule block — the schools sub-estate gets its own content-restriction
+        tier (rule 3) without standing up a separate stack. The blueprint is the template each new
+        member starts from, so the boundary is consistent from day one.</li>
+        <li><strong>Elections or a major-event surge posture.</strong> For an election count, a
+        public inquiry or a major incident, tighten temporarily: raise the category blocks, restrict
+        the guest network further, add time-boxed rules for surge or agency staff — all as
+        attributable changes in the Audit Trail that you can roll back cleanly and evidence
+        afterwards.</li>
+        <li><strong>FOI or internal-audit response.</strong> A Freedom of Information request or an
+        internal audit that asks "who could reach this system, and what was blocked" is answered from
+        the Audit Trail and the unified event store — the same record the Cyber Essentials and CAF
+        work already relies on, exported without standing up a separate logging project.</li>
+      </ul>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>

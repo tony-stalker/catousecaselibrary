@@ -307,6 +307,84 @@
       </div>
     </section>
 
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical law-firm policies — a starter rulebase</h2>
+      <p>
+        Every firm's policy is its own, but the shapes recur. Below is an illustrative starter
+        rulebase — the handful of rules a UK firm tends to stand up first, expressed roughly the way
+        they land in the CMA. Read it as a conversation-opener and a worked example of the patterns
+        in the sections above, not a template to paste in: the matter names, groups and segments are
+        placeholders, and the firm's real rulebase is drawn from its own conflicts register and its
+        clients' outside-counsel guidelines.
+      </p>
+      <div class="callout">
+        <div class="co-title">A blueprint — deploy it monitor-first, and let the wall lead</div>
+        <p>These rules are illustrative. Stand them up in <strong>monitor / event-only</strong>
+        first, watch the hit counts against real traffic, and only then flip the blocks to enforce —
+        exactly as the demo runbook does. And note the direction of authority: the wall rows must
+        <strong>mirror the firm's conflicts register</strong>, one symmetric rule pair per declared
+        wall. Policy <em>follows</em> the ethical wall — the conflicts team and COLP decide who is
+        walled from what; Cato enforces and evidences that decision on the network. It does not
+        define the wall.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source (group)</th><th>App / Category &middot; Data</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>WALL-A &rarr; own matter</td><td>Matter-A team (WALL-A)</td><td>Matter-A DMS workspace segment</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>2</td><td>WALL-A &rarr; opposing matter</td><td>Matter-A team (WALL-A)</td><td>Matter-B DMS workspace segment</td><td><strong>Block</strong></td><td>Event</td></tr>
+            <tr><td>3</td><td>WALL-B &rarr; own matter <em>(mirror)</em></td><td>Matter-B team (WALL-B)</td><td>Matter-B DMS workspace segment</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>4</td><td>WALL-B &rarr; opposing matter <em>(mirror)</em></td><td>Matter-B team (WALL-B)</td><td>Matter-A DMS workspace segment</td><td><strong>Block</strong></td><td>Event</td></tr>
+            <tr><td>5</td><td>Fee-earners &rarr; firm systems</td><td>All fee-earners</td><td>DMS + Practice Management (ZTNA app segments) &mdash; device-posture gated at office, court and home</td><td>Allow</td><td>Event</td></tr>
+            <tr><td>6</td><td>DLP &mdash; privileged &amp; client data out</td><td>All fee-earners</td><td>Legal ML classifier + client-identifier profiles &rarr; personal cloud storage &middot; webmail</td><td><strong>Block</strong></td><td>Event</td></tr>
+            <tr><td>7</td><td>GenAI &mdash; sanctioned vs. restricted</td><td>All fee-earners &middot; Deal-team (restricted)</td><td>Sanctioned assistant &rarr; allow with redaction; all other GenAI &rarr; block for the restricted team</td><td>Allow (redact) &middot; <strong>Block</strong></td><td>Event</td></tr>
+            <tr><td>8</td><td>Lateral hire &mdash; day one</td><td>Joiners-staged group</td><td>Limited segments until conflicts clearance completes</td><td>Allow (staged)</td><td>Event</td></tr>
+            <tr><td>9</td><td>Guest &amp; opposing-counsel Wi-Fi</td><td>Guest SSID</td><td>Internet-only &mdash; isolated from every firm segment</td><td><strong>Block</strong> (segments)</td><td>Event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.9rem;color:var(--ink-3)">
+        Rows 1&ndash;4 are the ethical wall itself: a symmetric rule pair per wall over the WAN
+        Firewall's implicit deny, so each team reaches only its own matter workspace and the
+        cross-wall attempt falls to a logged block. Row 6's <em>Legal ML classifier</em> is Cato's
+        built-in profile for agreements, patents, court documents and powers of attorney &mdash; the
+        same profile used on <a href="ai-legal-genai.html">Law Firms: GenAI with Privilege Intact</a>,
+        where row 7's per-matter GenAI stance (prompt-level redaction and per-client AI clauses) is
+        set out in full. Scoping is group- and data-type-based, not per-matter-aware &mdash; as the
+        obligation map above says honestly.
+      </p>
+
+      <h3>Law-firm scenarios</h3>
+      <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+        <li><strong>A new conflict wall, stood up the same day.</strong> A fresh instruction throws
+        up a conflict the moment it lands. Once the conflicts team declares the wall, you add a
+        single rule pair scoped to the two matter IdP groups (rows 1&ndash;2 and their mirror),
+        deployed monitor-first then enforced &mdash; the barrier exists at the network layer within
+        the hour, a second independent layer beneath the DMS's own wall, not a change ticket waiting
+        in a queue.</li>
+        <li><strong>A client's OCG security questionnaire arrives.</strong> Rather than a firm-wide
+        scavenger hunt, the evidence pack comes from one console: the rulebase as configured (walls,
+        DLP, access), events showing those controls firing on real traffic, and the Audit Trail of
+        every change &mdash; the raw material for most questionnaire sections, assembled in an
+        afternoon instead of costing partners fee-earning days.</li>
+        <li><strong>A lateral partner exits to opposing counsel.</strong> Remove them from the matter
+        groups in the IdP and SCIM collapses their wall and ZTNA scope the same day &mdash; rows
+        1&ndash;5 simply stop matching. The Audit Trail and events then give the timestamped who and
+        when of the revocation, and the history of what that identity could reach: evidence of a
+        clean exit, not an assertion of one.</li>
+        <li><strong>A deal-room period on a live transaction.</strong> While the deal is open,
+        tighten the controls for the deal-team group &mdash; move row 6's DLP Legal profile from
+        monitor to block on that group's traffic and keep row 7's GenAI block in force &mdash; then
+        relax back to baseline at completion. Because scoping is by group, the heightened posture
+        lands on the deal team without disturbing the rest of the firm, and the change window is
+        recorded in the Audit Trail.</li>
+      </ul>
+    </section>
+
     <section id="demo" class="reveal">
       <div class="section-kicker">Demo runbook</div>
       <h2>How to run the demo</h2>
