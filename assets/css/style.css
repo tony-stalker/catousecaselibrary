@@ -297,6 +297,8 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-legend .swatch.allow { border-color: var(--lane-allow); }
 .dg-legend .swatch.limit { border-color: var(--lane-limit); }
 .dg-legend .swatch.block { border-color: var(--lane-block); }
+.dg-legend .swatch.standby { border-color: var(--ink-3); border-top-style: dotted; }
+.lane-standby { fill: none; stroke: var(--ink-3); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }
 
 /* ---------- Code blocks ---------- */
 pre.code {

@@ -174,8 +174,8 @@
           <!-- Uplinks to PoP -->
           <path class="lane lane-allow" d="M 378 208 C 430 200, 470 202, 522 216"/>
           <text class="dg-tiny" x="452" y="186" text-anchor="middle">Broadband — primary</text>
-          <path class="lane lane-limit" d="M 378 248 C 430 262, 472 258, 524 240"/>
-          <text class="dg-tiny" x="452" y="284" text-anchor="middle">LTE / 5G — failover</text>
+          <path class="lane-standby" d="M 378 248 C 430 262, 472 258, 524 240"/>
+          <text class="dg-tiny" x="452" y="284" text-anchor="middle">LTE / 5G — standby failover</text>
 
           <!-- Backbone + PoP -->
           <ellipse class="dg-backbone" cx="606" cy="228" rx="140" ry="46"/>
@@ -210,7 +210,8 @@
         </svg>
         <div class="dg-legend">
           <span class="key"><span class="swatch allow"></span> Cardholder data path — POS to processor</span>
-          <span class="key"><span class="swatch limit"></span> Restricted — internet only · LTE standby</span>
+          <span class="key"><span class="swatch limit"></span> Restricted — internet only</span>
+          <span class="key"><span class="swatch standby"></span> LTE / 5G — standby until broadband fails</span>
           <span class="key"><span class="swatch block"></span> Blocked — lateral movement into POS VLAN</span>
         </div>
         <div class="diagram-caption">The Socket's LAN firewall separates POS from guest, staff and IoT inside every store. Only the POS VLAN reaches the payment path; guest and IoT get internet-only breakout — and the pattern repeats identically across hundreds of stores.</div>
