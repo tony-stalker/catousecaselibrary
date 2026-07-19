@@ -27,6 +27,6 @@ build time (July 2026) from the sources cited on each page.
 | Cloud Interconnect provider list & PoP availability/lead times | network-cloud-interconnect | Semi-annually vs KB |
 | Cato Terraform provider parallelism=1 caveat | migration-cloudflare | Semi-annually |
 
-Known-accepted rendering notes (not staleness): measure_svg.py reports trivial ≤5px
-label bleeds on a few pre-July-2026 diagrams and false positives on security-ot-iot's
-row-band rects — both visually verified acceptable.
+Rendering note: as of 19 Jul 2026 measure_svg.py runs completely silent — all label
+bleeds fixed, and the script now ignores rects wider than 250 user-units (band/container
+rects are not node boxes). A non-silent run means a real regression.

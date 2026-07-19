@@ -41,7 +41,7 @@ else
   echo "OK — file:// safe"
 fi
 
-echo "== 4/6 SVG text measurement (known-trivial bleeds listed in _extract/STALENESS.md notes)"
+echo "== 4/6 SVG text measurement (must be silent — any output is a regression)"
 python3 _extract/measure_svg.py || FAIL=1
 
 echo "== 5/6 render + console errors (index)"
@@ -67,6 +67,11 @@ if bad:
     print("overflow:", bad); sys.exit(1)
 print("OK — all pages fit")
 EOF
+
+if [ "${1:-}" = "--external" ]; then
+  echo "== 7/7 external links (optional, network-dependent)"
+  python3 _extract/checkexternal.py || FAIL=1
+fi
 
 echo
 if [ "$FAIL" -eq 0 ]; then echo "VERIFY: ALL CHECKS PASSED"; else echo "VERIFY: FAILURES FOUND (see above)"; exit 1; fi

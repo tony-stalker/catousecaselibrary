@@ -32,8 +32,8 @@
     <p class="lede">
       “The app is slow” tickets die in the gap between the network team, the security team and the
       app team. Cato Digital Experience Monitoring shows the experience each user actually gets,
-      per app and hop by hop — device, Wi-Fi, last mile, PoP, backbone, application — so IT sees
-      the failing segment in seconds instead of convening a war room.
+      per app and node by node — device, Wi-Fi, LAN gateway, last mile, PoP, application — so IT
+      sees the failing segment in seconds instead of convening a war room.
     </p>
     <div class="meta-row">
       <span class="tag">DEM</span><span class="tag">Experience Monitoring</span>
@@ -123,16 +123,28 @@
       <p>
         Cato is in a unique position to answer the question: the Cato Client on the device, the
         Socket at the site, the PoP and the global private backbone are all <strong>one
-        platform</strong> — so Cato observes every hop the traffic actually takes. Digital
-        Experience Monitoring turns that into an experience score per user and per application,
-        decomposed segment by segment: device health → Wi-Fi/LAN → last mile → PoP → backbone →
-        application. The failing segment is measured, not inferred.
+        platform</strong> — so Cato observes every hop the traffic actually takes. Experience
+        Monitoring turns that into an experience score — <strong>Good, Fair or Poor</strong> —
+        for every site, user, host and application, decomposed node by node in the Connection
+        Details view: device hardware → Wi-Fi → LAN gateway → last mile → PoP → application
+        (plus first mile and destination Socket when the app sits behind another site). Each node
+        is scored independently and coloured green, yellow or red; hover shows its averages, and
+        clicking expands the underlying graphs. The failing segment is measured, not inferred.
       </p>
+
+      <!-- TODO (Tony): insert real CMA captures here when available — the KB shows these views well:
+           1. Experience Monitoring landing page (Home → Experience Monitoring): summary bar,
+              Account Experience score graph, entity tabs (Sites / Remote Users / Office Users /
+              Site Hosts / Applications).
+           2. A user drill-down with the Connection Details nodes coloured green/yellow/red
+              (device hardware, Wi-Fi, LAN gateway, last mile, PoP, application).
+           3. The Path Analysis widget — Traceroute tab (hop diagram) or Command Line tab.
+           Use figure.shot > img + figcaption per BUILD-GUIDE. Do not fabricate screenshots. -->
 
       <div class="diagram-card">
         <svg viewBox="0 0 960 248" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">Hop-by-hop digital experience monitoring from laptop to SaaS app</title>
-          <desc id="dg1-desc">A horizontal chain of hops: laptop, home router, ISP last mile, Cato PoP, global private backbone, second Cato PoP, SaaS application. A single allowed traffic lane traverses the chain. Each hop has a health indicator: all are green except the ISP last mile, which is amber and labelled loss 4.2 percent — isolating the fault to the last-mile segment.</desc>
+          <desc id="dg1-desc">A horizontal chain of hops: laptop, home router, ISP last mile, Cato PoP, global private backbone, second Cato PoP, SaaS application. A single allowed traffic lane traverses the chain. Health indicators under the monitored nodes are green except the ISP last mile, which is amber and labelled loss 4.2 percent — isolating the fault to the last-mile segment.</desc>
 
           <!-- Backbone ellipse behind the two PoPs -->
           <ellipse class="dg-backbone" cx="568" cy="130" rx="137" ry="44"/>
@@ -148,11 +160,11 @@
           <!-- Hop nodes -->
           <rect class="dg-node" x="20" y="98" width="110" height="64" rx="10"/>
           <text class="dg-label" x="75" y="124" text-anchor="middle">Laptop</text>
-          <text class="dg-sub" x="75" y="142" text-anchor="middle">CPU · Wi-Fi</text>
+          <text class="dg-sub" x="75" y="142" text-anchor="middle">CPU · memory</text>
 
           <rect class="dg-node" x="156" y="98" width="110" height="64" rx="10"/>
           <text class="dg-label" x="211" y="124" text-anchor="middle">Home router</text>
-          <text class="dg-sub" x="211" y="142" text-anchor="middle">Wi-Fi / LAN</text>
+          <text class="dg-sub" x="211" y="142" text-anchor="middle">Wi-Fi · LAN gw</text>
 
           <rect class="dg-node" x="292" y="98" width="110" height="64" rx="10"/>
           <text class="dg-label" x="347" y="124" text-anchor="middle">ISP last mile</text>
@@ -188,10 +200,6 @@
             <circle cx="470" cy="196" r="6.5" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
             <text class="dg-tiny" x="470" y="216" text-anchor="middle">ingress healthy</text>
           </g>
-          <g aria-label="segment health: backbone healthy">
-            <circle cx="568" cy="196" r="6.5" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
-            <text class="dg-tiny" x="568" y="216" text-anchor="middle">backbone healthy</text>
-          </g>
           <g aria-label="segment health: egress PoP healthy">
             <circle cx="665" cy="196" r="6.5" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
             <text class="dg-tiny" x="665" y="216" text-anchor="middle">egress healthy</text>
@@ -204,15 +212,126 @@
         <div class="dg-legend">
           <span class="key"><span class="swatch allow"></span> User → app traffic, measured at every hop</span>
         </div>
-        <div class="diagram-caption">One degraded segment, six healthy ones: the failing segment is visible, not inferred. Here the fault is the ISP last mile — not the laptop, not Cato, not the app.</div>
+        <div class="diagram-caption">One degraded node, the rest green: the failing segment is visible, not inferred. Here the fault is the ISP last mile — 4.2% loss scores Fair (amber) against the documented 1–5% band — not the laptop, not Cato, not the app.</div>
+      </div>
+
+      <h3>What Experience Monitoring measures</h3>
+      <p>
+        The application experience score is not a generic SLA gauge. Cato builds an
+        <strong>AI baseline per application</strong> from real traffic generated by all Cato
+        users, then scores each user, site and host <em>relative to that expectation</em> on five
+        metrics: <strong>Time to First Byte</strong>, <strong>TCP Connect</strong>,
+        <strong>TLS Connect</strong>, <strong>HTTP latency</strong> and <strong>HTTP/S error
+        rate</strong>. Good means better than expected, Fair in the expected range, Poor worse.
+        Because every app is scored separately, a Europe-hosted app accessed from Sydney is judged
+        against what that path should deliver — not against a one-size-fits-all threshold. Two
+        honest caveats from the documentation: application metrics are calculated for outbound TCP
+        traffic, and scores are based on successful flows — blocked traffic doesn’t count.
+      </p>
+      <p>
+        Alongside the passive app scoring, the last mile is measured by two kinds of probes:
+        <strong>overlay</strong> probes inside the DTLS tunnel (loss up/down, latency, jitter,
+        throughput, tunnel age) and <strong>underlay</strong> probes sent outside the tunnel,
+        Socket-to-PoP per WAN interface or Client-to-PoP for remote users. When overlay and
+        underlay both show loss, the ISP circuit is the problem — not the tunnel.
+      </p>
+
+      <h3>How each node is scored</h3>
+      <p>
+        Node colours in Connection Details aren’t vibes — the thresholds are published. Each node
+        is scored independently on its own metrics:
+      </p>
+      <div class="table-wrap" style="margin:18px 0">
+        <table class="data">
+          <thead>
+            <tr><th>Node</th><th>Metric</th><th class="num">Good</th><th class="num">Fair</th><th class="num">Poor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="2">Device hardware</td><td>CPU load</td><td class="num">&lt; 70%</td><td class="num">70–90%</td><td class="num">&gt; 90%</td></tr>
+            <tr><td>Memory load</td><td class="num">&lt; 60%</td><td class="num">60–80%</td><td class="num">&gt; 80%</td></tr>
+            <tr><td>Wi-Fi</td><td>Signal strength</td><td class="num">≥ −67 dBm</td><td class="num">−67 to −80 dBm</td><td class="num">≤ −80 dBm</td></tr>
+            <tr><td rowspan="2">LAN gateway</td><td>Packet loss</td><td class="num">&lt; 1%</td><td class="num">1–5%</td><td class="num">&gt; 5%</td></tr>
+            <tr><td>Round-trip latency</td><td class="num">&lt; 10 ms</td><td class="num">10–50 ms</td><td class="num">&gt; 50 ms</td></tr>
+            <tr><td rowspan="2">Last mile (tunnel)</td><td>Packet loss (up / down)</td><td class="num">&lt; 1%</td><td class="num">1–5%</td><td class="num">&gt; 5%</td></tr>
+            <tr><td>Tunnel distance</td><td class="num">&lt; 20 ms</td><td class="num">20–100 ms</td><td class="num">&gt; 100 ms</td></tr>
+            <tr><td>Socket</td><td>CPU load, worst core of primary Socket</td><td class="num">&lt; 70%</td><td class="num">70–90%</td><td class="num">&gt; 90%</td></tr>
+            <tr><td>Application</td><td>TTFB, TCP/TLS Connect, HTTP latency &amp; errors</td><td colspan="3">Scored against the app’s AI baseline</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Licensing and prerequisites</div>
+        <p>Experience Monitoring needs no extra agents — the Cato Client and Socket already supply
+        the telemetry — but the DEM pages and features require a separate <strong>DEM
+        licence</strong>. Device, Wi-Fi and LAN gateway nodes need the Client on the endpoint
+        (Windows v5.12.10 / macOS v5.7 or higher); underlay probes need Socket v21.1.18975+, or
+        Client Windows 5.17 / macOS 5.10+ for remote users.</p>
       </div>
 
       <h3>What this changes for IT operations</h3>
       <div class="grid-2" style="margin-top:14px">
-        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Fault domain in one view</h4><p>Device, Wi-Fi, last mile, PoP, backbone and app health side by side — the conversation starts at the failing segment, not at “whose fault is it?”.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Fault domain in one view</h4><p>Device, Wi-Fi, LAN gateway, last mile, PoP and app health side by side — the conversation starts at the failing node, not at “whose fault is it?”.</p></div></div>
         <div class="benefit"><div class="b-icon">📉</div><div><h4>Fewer helpdesk escalations</h4><p>First-line support reads the experience score and segment breakdown directly, so tickets stop bouncing between network, security and app teams.</p></div></div>
-        <div class="benefit"><div class="b-icon">📄</div><div><h4>Evidence for ISP disputes</h4><p>Per-segment last-mile metrics — loss, latency, jitter over time — turn “no fault found” into a documented circuit case the ISP has to answer.</p></div></div>
-        <div class="benefit"><div class="b-icon">📈</div><div><h4>Baseline and trend, per site and user</h4><p>Experience is tracked continuously, so you see degradation forming — and can act — before users call it in.</p></div></div>
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>Evidence for ISP disputes</h4><p>Last-mile loss, latency and jitter over time — plus hop-by-hop traceroute history with per-hop loss — turn “no fault found” into a documented circuit case the ISP has to answer.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Baseline and trend, per site and user</h4><p>Experience is tracked continuously (up to three months back), and the XOps anomaly engine checks every site-and-app pair against its own baseline daily — degradation surfaces before users call it in.</p></div></div>
+      </div>
+    </section>
+
+    <section id="probes" class="reveal">
+      <div class="section-kicker">Beyond passive scoring</div>
+      <h2>Probes, path analysis and proactive detection</h2>
+      <p>
+        Out of the box, Experience Monitoring passively scores every sanctioned application that
+        traverses the Cato Cloud. Three capabilities take it from “dashboard you check” to
+        “system that tells you”:
+      </p>
+
+      <h3>Synthetic probes on your terms</h3>
+      <p>
+        Under <strong>Home → Experience Monitoring Probes</strong>, define
+        <strong>ICMP, TCP, HTTP/S and DNS</strong> probes (traceroute probes are early
+        availability, from Socket v25) to any Internet or WAN destination — your ERP, your DNS
+        server, a partner portal — and map each probe to the application whose pages should show
+        its metrics. Every probe measures latency and packet loss at a configurable interval, per
+        Socket and per user. An ordered, rule-based policy controls who sends what: rules target
+        sites, countries, user groups, platforms and device-posture profiles, with up to 20 probes
+        per rule, and a <strong>Use Probes in Office Mode</strong> toggle extends user probing
+        behind Sockets. Typical play: probe a business-critical app for one pilot group first, read
+        the data, then roll the rule out estate-wide.
+      </p>
+
+      <h3>Hop-by-hop traceroute path analysis</h3>
+      <p>
+        The <strong>Path Analysis</strong> widget on the site, office-user and host drill-down
+        pages visualises continuous traceroute data in two sections: <strong>Last Mile
+        Routes</strong> (Socket → PoP, from the predefined Underlay Path Trace probe) and
+        <strong>Application Routes</strong> (PoP → app, from a custom traceroute probe). The
+        Command Line tab renders it like a CLI tool — per hop: IP, geolocation, loss %, average /
+        best / worst latency and standard deviation — with historical time ranges for intermittent
+        faults and a copy-out of the full traceroute data. If loss starts before the PoP, it’s the
+        local network or the ISP; if it starts on the application route, the problem is beyond
+        Cato. That print-out is the ISP escalation artefact.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Anomaly stories, before the tickets</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The XOps <strong>Experience Anomaly</strong>
+          engine baselines Time to First Byte for each site-and-application pair over 14 days, then
+          evaluates every day’s traffic against that evolving baseline. Deviations raise stories —
+          “Application Response Time Anomaly in Site” or “Potential Application Outage Due to
+          Widespread HTTP Errors” — in the Experience Monitoring feed and the Stories Workbench,
+          each with a criticality rating and a step-by-step playbook workflow.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Scheduled experience reports</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Predefined <strong>Site Experience</strong>
+          and <strong>Site and User Experience</strong> report templates generate one-time or
+          recurring PDFs — daily, weekly or monthly — emailed to a mailing list from
+          <strong>Home → Reports</strong>. Top users by CPU, memory, Wi-Fi signal, LAN
+          gateway RTT and tunnel RTT, per site: the monthly service review writes itself.</p>
+        </div>
       </div>
     </section>
 
@@ -223,53 +342,77 @@
         <div class="co-title">Before you demo — dig into the “why”</div>
         <p>Ask how a “Teams is slow” ticket flows through their organisation today: who touches it,
         how long it stays open, how often it closes as “no fault found”. Anchor every step of the
-        demo back to that answer.</p>
+        demo back to that answer. Practically: confirm the demo tenant has a DEM licence, and if
+        you want per-meeting Teams metrics, that the Teams UCaaS connector is configured.</p>
       </div>
 
       <ol class="steps">
         <li>
           <h4>Open Experience Monitoring and rank by experience</h4>
-          <p><span class="path">Monitor → Experience Monitoring</span></p>
-          <p>Sort users by experience score, worst first. Point out that this is the helpdesk queue
-          <em>before it happens</em> — the users at the top are the ones about to call.</p>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Start at the summary bar and the <strong>Account Experience</strong> score — Good
+          means no global problem, so anything degraded is local and findable. Switch between the
+          <strong>Sites</strong>, <strong>Remote Users</strong>, <strong>Office Users</strong>,
+          <strong>Site Hosts</strong> and <strong>Applications</strong> tabs and sort by
+          experience, worst first. This is the helpdesk queue <em>before it happens</em> — the
+          entries at the top are the users about to call.</p>
         </li>
         <li>
-          <h4>Drill into a poor Teams call</h4>
-          <p>Pick a low-scoring user — say <strong>Marcus</strong>, connected via the
-          <strong>Mobile Office</strong> LTE site — and open a degraded Microsoft Teams session.
-          The ticket would have said “Teams is broken”; the console shows exactly what his call
-          experienced.</p>
+          <h4>Drill into a struggling user</h4>
+          <p>Pick a low-scoring user — say <strong>Marcus</strong>, an office user behind the
+          <strong>Mobile Office</strong> LTE site — to open his drill-down page. In the
+          <strong>Select Application</strong> widget, filter to Microsoft Teams and show his score
+          graph against the all-apps line. With the Teams connector configured, the meetings widget
+          shows each call’s audio, video and screen-sharing experience — MOS-based, from loss,
+          jitter and latency — with disconnections marked. The ticket would have said “Teams is
+          broken”; the console shows exactly what his calls experienced.</p>
         </li>
         <li>
-          <h4>Isolate the failing segment</h4>
-          <p>Walk the per-segment breakdown for the session: device health fine, LAN fine — the
-          loss and jitter sit on the last-mile segment between the site and the PoP. One screen,
-          no traceroutes, no war room.</p>
+          <h4>Isolate the failing node in Connection Details</h4>
+          <p>Walk the <strong>Connection Details</strong> nodes: device hardware green, Wi-Fi
+          green, LAN gateway green — the yellow sits on the <strong>Last Mile</strong>. Hover for
+          the averages, then expand the node: overlay graphs show the loss and jitter inside the
+          tunnel, and the underlay probe graphs show the same loss outside it — so it’s the
+          circuit, not the tunnel. One screen, no war room.</p>
         </li>
         <li>
           <h4>Contrast a healthy user</h4>
           <p>Open a well-scoring user — say <strong>Priya</strong>, connecting through the
           <strong>London PoP</strong> — on the same application. Same app, same Cato policy, green
-          on every segment: the difference is the access circuit, and the data proves it.</p>
+          on every node: the difference is the access circuit, and the data proves it.</p>
         </li>
         <li>
           <h4>Show the trend, not just the moment</h4>
-          <p>Switch to the site-level view for Mobile Office and show experience over time — when
-          the degradation started, whether it correlates with hours or load, and what the baseline
-          looked like before.</p>
+          <p>Open the Mobile Office site drill-down from the <strong>Sites</strong> tab. The
+          <strong>Site Application Experience Score</strong> graph shows when the degradation
+          started and what baseline looked like before — the time range reaches back up to three
+          months. Flip the Performance View between <strong>Last Mile Underlay</strong> and
+          <strong>Last Mile Overlay</strong> to make the ISP-versus-tunnel case in table form.</p>
         </li>
         <li>
-          <h4>Set the follow-up</h4>
-          <p>Close the loop: export the per-segment evidence and raise the ISP ticket with loss and
-          latency history attached. “No fault found” doesn’t survive contact with this data — and
-          no user had to report anything for IT to get here.</p>
+          <h4>Escalate with evidence</h4>
+          <p>In the site drill-down, open <strong>Path Analysis</strong>: the Last Mile Routes show
+          every hop from Socket to PoP with per-hop loss and latency, historically. Loss starting
+          before the PoP puts the fault in the ISP’s network — copy the full traceroute data into
+          the circuit ticket. For the ongoing record, schedule a recurring
+          <strong>Site Experience</strong> report from <span class="path">Home → Reports</span>.</p>
+        </li>
+        <li>
+          <h4>Close the proactive loop</h4>
+          <p><span class="path">Home → Stories Workbench</span></p>
+          <p>Filter Producer to <strong>Experience Anomaly</strong>: the engine baselines TTFB per
+          site and app for 14 days, then flags deviations daily — each story with a criticality
+          rating and playbook. The same stories surface in the Experience Monitoring feed. No user
+          had to report anything for IT to get here.</p>
         </li>
       </ol>
 
       <div class="callout warn">
-        <div class="co-title">Status: new content</div>
-        <p>This page was authored directly for the library — there is no source deck. Validate the
-        runbook against the demo tenant’s current Experience Monitoring views before customer use.</p>
+        <div class="co-title">Status: verified against documentation</div>
+        <p>There is no source deck for this page — it was authored directly for the library. Its
+        claims, CMA paths and scoring thresholds were verified against the Cato Learning Center
+        documentation (knowledge.catonetworks.com) in July 2026. Still sanity-check the demo
+        tenant’s Experience Monitoring views (and DEM licence) before customer use.</p>
       </div>
     </section>
 
@@ -280,9 +423,13 @@
         <div class="card">
           <h3 style="margin-top:0">Documentation</h3>
           <ul style="margin:0;padding-left:20px;font-size:.94rem">
-            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
-            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE architecture — platform page</a></li>
-            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-cato-experience-monitoring" target="_blank" rel="noopener">What is Cato Experience Monitoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring page</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/experience-monitoring-connection-details" target="_blank" rel="noopener">Connection Details and node scoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/experience-monitoring-configuring-the-experience-monitoring-probes-and-policy" target="_blank" rel="noopener">Configuring the Experience Monitoring probes and policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-traceroute-for-path-analysis-in-experience-monitoring" target="_blank" rel="noopener">Traceroute path analysis in Experience Monitoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/analyzing-experience-monitoring-anomalies" target="_blank" rel="noopener">Analysing Experience Monitoring anomalies (XOps)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/generating-dem-site-experience-reports" target="_blank" rel="noopener">Generating DEM Site Experience reports</a></li>
           </ul>
         </div>
         <div class="card">

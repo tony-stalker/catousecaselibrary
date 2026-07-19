@@ -25,6 +25,7 @@ JS = """
       const ax = t.x.baseVal.length ? t.x.baseVal.getItem(0).value : b.x;
       const cy = b.y + b.height / 2;
       for (const r of rects) {
+        if (r.w > 250) continue; // band/container rects are not node boxes
         if (ax >= r.x && ax <= r.x + r.w && cy >= r.y && cy <= r.y + r.h) {
           const over = Math.max(r.x - b.x, (b.x + b.width) - (r.x + r.w));
           if (over > 1) out.push(`BOX+${over.toFixed(0)}px rect@${r.x.toFixed(0)},${r.y.toFixed(0)} "${s}"`);
