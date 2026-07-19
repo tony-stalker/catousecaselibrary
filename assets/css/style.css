@@ -135,6 +135,9 @@ h3 { font-size: 1.12rem; margin: 1.2em 0 .4em; }
 .chip-cat-ai-security { background: #f9e0ee; color: #8a2360; }
 .uc-card .tag { cursor: pointer; }
 .uc-card .tag:hover { background: var(--green-050); color: var(--green-700); }
+.tag-vert { background: var(--navy-800); color: #cfe6de; }
+.uc-card .tag-vert:hover { background: var(--navy-700); color: #fff; }
+.vert-label { font-size: .84rem; color: var(--ink-3); margin-right: 2px; }
 .hero .chip { filter: none; }
 
 .badge {

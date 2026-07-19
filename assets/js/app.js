@@ -26,13 +26,14 @@
     if (!grid) return;
 
     var searchBox = $("#uc-search");
-    var state = { q: "", cat: "All" };
+    var state = { q: "", cat: "All", vert: "All" };
     var CATS = ["Access", "Management", "Network", "Security", "AI Security", "Migration"];
 
     function matches(uc) {
       if (state.cat !== "All" && uc.category !== state.cat) return false;
+      if (state.vert !== "All" && uc.vertical !== state.vert) return false;
       if (!state.q) return true;
-      var hay = (uc.title + " " + uc.summary + " " + uc.tags.join(" ") + " " + uc.category).toLowerCase();
+      var hay = (uc.title + " " + uc.summary + " " + uc.tags.join(" ") + " " + uc.category + " " + (uc.vertical || "")).toLowerCase();
       return state.q.toLowerCase().split(/\s+/).every(function (t) { return hay.indexOf(t) !== -1; });
     }
 
@@ -43,7 +44,8 @@
         '<span class="badge ' + st.cls + '">' + st.label + "</span></div>" +
         "<h3>" + esc(uc.title) + "</h3>" +
         "<p>" + esc(uc.summary) + "</p>" +
-        '<div class="uc-tags">' + uc.tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</div>" +
+        '<div class="uc-tags">' + (uc.vertical ? '<span class="tag tag-vert">' + esc(uc.vertical) + "</span>" : "") +
+        uc.tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</div>" +
         '<span class="uc-cta">Open use case →</span></a>';
     }
 
@@ -79,14 +81,33 @@
       render();
       if (searchBox) searchBox.focus();
     });
-    $$(".filter-btn").forEach(function (btn) {
+    $$(".filter-btn[data-cat]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        $$(".filter-btn").forEach(function (b) { b.classList.remove("active"); });
+        $$(".filter-btn[data-cat]").forEach(function (b) { b.classList.remove("active"); });
         btn.classList.add("active");
         state.cat = btn.getAttribute("data-cat");
         render();
       });
     });
+    // vertical filter row, built from catalog entries that declare a vertical
+    var vbar = $("#vertical-bar");
+    if (vbar) {
+      var verts = [];
+      CAT.forEach(function (u) { if (u.vertical && verts.indexOf(u.vertical) === -1) verts.push(u.vertical); });
+      verts.sort();
+      vbar.innerHTML = '<span class="vert-label">Vertical:</span>' +
+        ['All'].concat(verts).map(function (v) {
+          return '<button class="filter-btn' + (v === 'All' ? ' active' : '') + '" data-vert="' + esc(v) + '">' + esc(v) + '</button>';
+        }).join("");
+      $$(".filter-btn[data-vert]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          $$(".filter-btn[data-vert]").forEach(function (b) { b.classList.remove("active"); });
+          btn.classList.add("active");
+          state.vert = btn.getAttribute("data-vert");
+          render();
+        });
+      });
+    }
     render();
   }
 

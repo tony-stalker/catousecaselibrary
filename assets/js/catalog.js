@@ -25,6 +25,7 @@ window.UC_CATALOG = [
   },
   {
     id: "access-offshore-bpo",
+    vertical: "BPO",
     file: "usecases/access-offshore-bpo.html",
     category: "Access",
     title: "Offshore Development Centres & BPO Access",
@@ -216,6 +217,7 @@ window.UC_CATALOG = [
   /* ---------------- 4 · Security ---------------- */
   {
     id: "security-retail-pci",
+    vertical: "Retail",
     file: "usecases/security-retail-pci.html",
     category: "Security",
     title: "Retail Store Networks & PCI DSS 4.0",
@@ -236,6 +238,7 @@ window.UC_CATALOG = [
   },
   {
     id: "security-finance-dora",
+    vertical: "Finance",
     file: "usecases/security-finance-dora.html",
     category: "Security",
     title: "Financial Services Resilience (DORA)",
@@ -256,6 +259,7 @@ window.UC_CATALOG = [
   },
   {
     id: "security-ot-iot",
+    vertical: "Manufacturing",
     file: "usecases/security-ot-iot.html",
     category: "Security",
     title: "Manufacturing OT/IoT Device Security",
@@ -327,11 +331,23 @@ window.UC_CATALOG = [
   },
   {
     id: "security-uk-public-sector",
+    vertical: "Public Sector",
     file: "usecases/security-uk-public-sector.html",
     category: "Security",
     title: "UK Public Sector: Cyber Essentials & NCSC CAF",
     summary: "Map Cato capabilities to Cyber Essentials Plus controls and the NCSC Cyber Assessment Framework — evidence-led conversations for councils, health, education and central government.",
     tags: ["Cyber Essentials", "NCSC CAF", "Public Sector", "UK", "Compliance"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "security-legal-confidentiality",
+    vertical: "Legal",
+    file: "usecases/security-legal-confidentiality.html",
+    category: "Security",
+    title: "Law Firms: Client Confidentiality & Ethical Walls",
+    summary: "Meet outside-counsel guidelines and prove it — identity-based ethical walls, DLP over privileged material, and audit evidence for client security reviews, from one platform.",
+    tags: ["Legal", "Ethical Walls", "OCG", "DLP", "Client Audits"],
     status: "new",
     deck: null
   },
@@ -384,6 +400,18 @@ window.UC_CATALOG = [
     title: "Securing Homegrown AI Applications",
     summary: "Protect the AI you build — AI Gateway integration, Guards and the Guards Interaction Policy, Outposts, and the AI Security Engine defending against prompt injection and jailbreaks at runtime.",
     tags: ["AI Guards", "AI Gateway", "Prompt Injection", "Outposts", "AI Security Engine"],
+    status: "new",
+    deck: null
+  },
+
+  {
+    id: "ai-legal-genai",
+    vertical: "Legal",
+    file: "usecases/ai-legal-genai.html",
+    category: "AI Security",
+    title: "Law Firms: GenAI with Privilege Intact",
+    summary: "Let fee-earners use GenAI without waiving privilege — shadow-AI discovery, prompt-level redaction of client identifiers, and defensible audit trails for regulators and clients.",
+    tags: ["Legal", "GenAI", "Privilege", "Shadow AI", "Interaction Policy"],
     status: "new",
     deck: null
   },
@@ -491,6 +519,7 @@ window.UC_CATALOG = [
   },
   {
     id: "migration-iboss",
+    vertical: "Education",
     file: "usecases/migration-iboss.html",
     category: "Migration",
     title: "iboss Proxy to Cato",
@@ -592,6 +621,7 @@ window.UC_CATALOG = [
   },
   {
     id: "migration-iboss-policy",
+    vertical: "Education",
     file: "usecases/migration-iboss-policy.html",
     category: "Migration",
     title: "iboss Policy Migration",

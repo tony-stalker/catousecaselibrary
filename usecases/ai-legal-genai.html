@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Firms: GenAI with Privilege Intact — Cato Use Case Library</title>
+<meta name="description" content="Let fee-earners use GenAI without waiving privilege — shadow-AI discovery, prompt-level redaction of client identifiers, and defensible audit trails for regulators and clients.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="ai-legal-genai">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / GenAI with Privilege</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Law Firms: GenAI with Privilege Intact</h1>
+    <p class="lede">
+      Fee-earners already paste client facts into ChatGPT and Copilot to draft and research — a
+      prompt naming a client or a matter is a transfer of confidential information to a third-party
+      model the firm has never assessed, risking confidentiality and, at the extreme, privilege.
+      Ban GenAI outright and you lose talent and productivity to shadow use. This use case is the
+      Legal-vertical application of Cato's AI Security for End Users: discover the shadow-AI estate,
+      redact client identifiers at prompt level per matter, and prove the governance to clients and
+      regulators.
+    </p>
+    <div class="meta-row">
+      <span class="tag tag-vert">Legal</span>
+      <span class="tag">GenAI</span><span class="tag">Privilege</span><span class="tag">Shadow AI</span>
+      <span class="tag">User Interaction Policy</span><span class="tag">OCG</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Enable GenAI without waiving privilege</h2>
+      <p>
+        Client confidentiality and legal professional privilege are the profession's foundations.
+        A prompt that carries client-identifying facts to a public model puts both at risk: at
+        minimum it is a disclosure of confidential information to a third party the firm has not
+        assessed or contracted with; at the extreme, feeding privileged material into an open tool
+        can undermine the confidentiality that privilege depends on. The regulator has said so
+        plainly — the SRA's <em>Risk Outlook</em> on AI in the legal market singles out staff
+        entering client details into public tools such as ChatGPT, and confidential data being
+        exposed when it is passed to an AI provider, and stresses that the firm remains responsible
+        for the outcome whoever (or whatever) produced it.
+      </p>
+      <p>
+        The instinctive response — ban GenAI — fails twice over. It does not stop use; it pushes it
+        onto personal accounts and devices where the firm has no visibility at all. And it hands a
+        recruitment and productivity edge to the firms that found a safer answer. The objective is
+        the harder middle path: <strong>let fee-earners use AI, see exactly how they use it on which
+        matters, redact what must not leave, and keep the evidence</strong> — scoped per client,
+        because no two clients' terms are the same.
+      </p>
+      <div class="callout">
+        <div class="co-title">This is the Legal application of two capability pages</div>
+        <p>The underlying platform capability is documented in
+        <a href="ai-genai-security.html">GenAI Security for End Users</a>, and the no-cost discovery
+        engagement that seeds it in the <a href="security-ai-visibility.html">GenAI Visibility
+        Assessment</a>. This page does not repeat them — it covers what privilege and outside-counsel
+        guidelines demand of that capability, and how the controls map to a firm's ethical walls.</p>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The privilege problem</div>
+      <h2>Why a firm-wide AI policy isn't enough</h2>
+      <p>
+        The difficulty for a law firm is not simply "is GenAI risky" — it is that the risk lives in
+        the content of individual prompts, and the rules differ client by client. Four pressures
+        collide:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Shadow AI in drafting &amp; research</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Fee-earners reach for GenAI to produce a
+          first draft, summarise a bundle, or research a point of law — quietly, whether or not a
+          policy exists. The productivity pull is real, so the behaviour persists; the firm's only
+          question is whether it can see it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The prompt as disclosure</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A prompt that names a client, a
+          counterparty or the facts of a matter transfers confidential information to a model
+          outside the firm's control. Confidentiality is breached the moment it is sent; where the
+          material is privileged, its protection can be jeopardised too.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Per-client AI clauses</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Outside-counsel guidelines increasingly
+          set AI terms — some clients permit tools with safeguards, some require notice, some forbid
+          AI on their matters entirely. A single firm-wide switch cannot honour conflicting terms;
+          policy has to be scoped to the group or matter, not the firm.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Evidencing governance to clients</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Client security reviews and the regulator
+          expect the firm to show which AI is used and how it is controlled. "We asked people not
+          to" is not evidence. Without an audit trail, an AI clause in an engagement letter is a
+          promise the firm cannot substantiate.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>Which AI tools are in use across the firm this week, and by whom? Do any of your clients'
+        outside-counsel guidelines restrict AI on their matters — and would you know if a fee-earner
+        breached one? If a client asked for an AI-usage report on their matter tomorrow, who in the
+        firm could produce it?</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Redact at the prompt, scope by the matter</h2>
+      <p>
+        Because fee-earners' traffic already crosses a Cato PoP, the firm does not deploy anything on
+        the endpoint to gain control. The <strong>User Interaction Policy</strong> inspects each AI
+        chat prompt in real time as it leaves the firm and enforces a decision <em>per interaction</em>:
+        <strong>Monitor</strong> (proceed and log), <strong>Anonymize and Monitor</strong> (mask
+        sensitive values, then let the prompt through), <strong>Anonymize and Block</strong>, or
+        <strong>Block</strong> (nothing reaches the model). Each rule is scoped by a
+        <em>source</em> — users or IdP groups — an <em>AI application</em> set, an <em>engine
+        profile</em> that decides what counts as sensitive, and an optional notification that tells
+        the fee-earner why. Because the source is an IdP group, a client's restricted matter team
+        can carry its own rule: <strong>per-client scoping via IdP groups mirrors the firm's ethical
+        walls</strong>, so one client's "no AI" clause and another's "AI with redaction" can both be
+        true at the same time.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Per-matter GenAI governance for a law firm through the Cato PoP</title>
+          <desc id="dg1-desc">Three fee-earners reach GenAI through a Cato PoP running the AI Security engine and User Interaction Policy. An associate's prompts to the sanctioned firm assistant are allowed with client identifiers redacted before they leave. A partner's personal-tier chatbot use is anonymised and monitored. A member of a restricted, ethical-walled client team is blocked from GenAI entirely. Every decision is logged to the AI dashboards and events as evidence.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="165" ry="52"/>
+          <circle cx="318" cy="238" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="212" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+
+          <!-- AI destinations (left) -->
+          <rect class="dg-node-green" x="34" y="44" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="68" text-anchor="middle">Sanctioned firm AI</text>
+          <text class="dg-sub" x="114" y="86" text-anchor="middle">Client IDs redacted</text>
+
+          <rect class="dg-node" x="34" y="192" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="216" text-anchor="middle">Public GenAI</text>
+          <text class="dg-sub" x="114" y="234" text-anchor="middle">Personal-tier tools</text>
+
+          <rect class="dg-node" x="34" y="340" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="364" text-anchor="middle">Any GenAI app</text>
+          <text class="dg-sub" x="114" y="382" text-anchor="middle">Off-limits for team</text>
+
+          <!-- Green: allowed with redaction -->
+          <path class="lane lane-allow" d="M 806 84 C 700 84, 610 150, 510 202"/>
+          <path class="lane lane-allow" d="M 452 204 C 360 160, 280 90, 196 74"/>
+          <text class="dg-tiny" x="694" y="66" text-anchor="middle">Client IDs redacted</text>
+
+          <!-- Amber: anonymised, prompt proceeds -->
+          <path class="lane lane-limit" d="M 806 226 C 720 228, 610 228, 514 224"/>
+          <path class="lane lane-limit" d="M 450 232 C 380 246, 280 246, 196 238"/>
+
+          <!-- Red: blocked at the policy engine -->
+          <path class="lane lane-block" d="M 806 372 C 720 370, 640 330, 520 240"/>
+          <path class="lane lane-block" d="M 452 236 C 390 270, 330 330, 262 362"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 228 356 L 252 380"/><path class="lane-x" d="M 252 356 L 228 380"/>
+          </g>
+
+          <!-- Evidence -->
+          <path class="lane-static" d="M 500 246 C 560 292, 560 352, 510 400" fill="none"/>
+          <rect class="dg-node-dark" x="370" y="400" width="220" height="56" rx="10"/>
+          <text class="dg-label-inv" x="480" y="423" text-anchor="middle">AI dashboards &amp; evidence</text>
+          <text class="dg-sub-inv" x="480" y="441" text-anchor="middle">Report · AI Users · Events</text>
+
+          <!-- Cato PoP labels -->
+          <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security · User Interaction Policy</text>
+
+          <!-- Users (right) -->
+          <g>
+            <circle cx="836" cy="84" r="23" fill="var(--status-good)"/>
+            <circle cx="836" cy="77" r="6.5" fill="#fff"/>
+            <path d="M 823 97 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="126" text-anchor="middle">Rachel — associate</text>
+            <text class="dg-sub" x="836" y="142" text-anchor="middle">On-net · redacted</text>
+          </g>
+          <g>
+            <circle cx="836" cy="226" r="23" fill="var(--lane-limit)"/>
+            <circle cx="836" cy="219" r="6.5" fill="#fff"/>
+            <path d="M 823 239 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="268" text-anchor="middle">Marcus — partner</text>
+            <text class="dg-sub" x="836" y="284" text-anchor="middle">Personal-tier tool</text>
+          </g>
+          <g>
+            <circle cx="836" cy="372" r="23" fill="var(--status-critical)"/>
+            <circle cx="836" cy="365" r="6.5" fill="#fff"/>
+            <path d="M 823 385 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="836" y="414" text-anchor="middle">Restricted team</text>
+            <text class="dg-sub" x="836" y="430" text-anchor="middle">Ethical-walled matter</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed — client identifiers redacted</span>
+          <span class="key"><span class="swatch limit"></span> Anonymised — personal-tier use, monitored</span>
+          <span class="key"><span class="swatch block"></span> Blocked — restricted client team / OCG</span>
+        </div>
+        <div class="diagram-caption">Every prompt crosses the PoP, where the User Interaction Policy redacts client identifiers for the sanctioned assistant, anonymises personal-tier use, or blocks GenAI for an ethical-walled team — each decision logged as client-facing evidence.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🕵️</div><div><h4>See the shadow estate first</h4><p>Shadow AI Discovery classifies the AI tools fee-earners already use — passively, without reading prompt content — so the conversation starts from fact, not assumption.</p></div></div>
+        <div class="benefit"><div class="b-icon">✂️</div><div><h4>Redact, don't just refuse</h4><p>Client identifiers are masked and the prompt still gets an answer — fee-earners keep the productivity, the confidential facts never leave the firm, and no one is pushed to a personal account.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Ethical walls, applied to AI</h4><p>Rules scoped to IdP groups let a restricted client team carry its own AI stance — block, redact or monitor — so conflicting outside-counsel terms coexist under one policy.</p></div></div>
+        <div class="benefit"><div class="b-icon">📑</div><div><h4>Evidence for the client review</h4><p>Every monitored, redacted and blocked interaction is attributed and exportable — the audit trail that turns an AI clause in an engagement letter into something the firm can prove.</p></div></div>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">The staged path</div>
+      <h2>Discover → understand → govern → prove</h2>
+      <p>
+        The capability is one platform, but for a law firm it lands in four stages — each mapping to
+        an existing library page you can pick up next. Start with visibility; never lead with a
+        block.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Stage</th><th>What it delivers for the firm</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1 · Discover</strong></td>
+              <td>Which AI tools fee-earners already use — shadow-AI discovery classifies apps and
+              risk posture passively, without inspecting prompt content. Run this before proposing
+              any control.</td>
+              <td>Start with the no-cost <a href="security-ai-visibility.html">GenAI Visibility
+              Assessment</a></td>
+            </tr>
+            <tr>
+              <td><strong>2 · Understand</strong></td>
+              <td>Per-user and per-department AI usage on the AI Security dashboards and AI Users
+              page — who uses which tools, how heavily, and where the risk concentrates.</td>
+              <td>AI Security Overview &amp; AI Users — see
+              <a href="ai-genai-security.html">GenAI Security for End Users</a></td>
+            </tr>
+            <tr>
+              <td><strong>3 · Govern</strong></td>
+              <td>The User Interaction Policy redacts client identifiers, monitors or blocks —
+              scoped per IdP group so per-client rules mirror the firm's ethical walls. DLP's
+              recommended <em>Legal</em> profile backs it for uploads.</td>
+              <td>Ethical-wall design in
+              <a href="security-legal-confidentiality.html">Client Confidentiality &amp; Ethical
+              Walls</a></td>
+            </tr>
+            <tr>
+              <td><strong>4 · Prove</strong></td>
+              <td>The GenAI report and AI events become the client-facing AI-governance evidence —
+              per-group usage you can hand to an outside-counsel security review or a regulator.</td>
+              <td>GenAI Report &amp; Events export</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Prerequisites worth stating up front</div>
+        <p>TLS Inspection must be enabled at account level for the User Interaction Policy to inspect
+        AI prompts, and its rules take precedence over TLS bypass rules. The DLP backstop uses Cato's
+        recommended profiles for the <em>Generative AI Tools</em> application category — including a
+        <strong>Legal</strong> profile whose ML classifiers detect agreements, patents, court
+        documents and powers of attorney — set to monitor or block per the stage you have reached.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the current policy</div>
+        <p>Open with discovery: what is the firm's AI policy today? The common answer is "we told
+        everyone not to use ChatGPT" — which is a firm-wide ban with no visibility, and sets up the
+        whole story. Ask whether any client's outside-counsel guidelines already mention AI; there
+        is usually at least one, and it makes the per-matter point for you.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Open on the shadow-AI inventory</h4>
+          <p><span class="path">AI Security → Discovery</span></p>
+          <p>Walk the discovered AI applications — which tools are in use, how widely, and which are
+          higher-risk. Stress how it got there: network-level discovery from traffic Cato already
+          processes, nothing deployed on fee-earner laptops, prompt content untouched. The app count
+          is usually well beyond what the managing partner expects.</p>
+        </li>
+        <li>
+          <h4>Follow one fee-earner</h4>
+          <p><span class="path">AI Security → AI Users</span></p>
+          <p>Sort by policy violations and drill into one user — call her "Rachel", an associate:
+          her interactions over the period, the split of safe prompts versus violations, the apps
+          she uses. "This is the conversation you can now have with a practice-group head —
+          specific and evidenced, not hypothetical."</p>
+        </li>
+        <li>
+          <h4>Build a redaction rule for client identifiers</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>Create a rule: source a practice-group IdP group, the sanctioned assistant in scope,
+          an engine profile that catches client identifiers, action <strong>Anonymize and
+          Monitor</strong>. Run a prompt that names a client — show the identifier masked before the
+          prompt reaches the model, and the answer still returned. Note the prerequisite: TLS
+          Inspection enabled at account level.</p>
+        </li>
+        <li>
+          <h4>Show a restricted-team block</h4>
+          <p>Add a second rule scoped to a restricted client team's IdP group — call it the
+          "Project Meridian team" — with action <strong>Block</strong> across GenAI apps and a
+          notification template. This is the ethical wall applied to AI: a matter whose
+          outside-counsel guidelines forbid AI simply cannot use it, and the fee-earner is told why
+          in the moment.</p>
+        </li>
+        <li>
+          <h4>Show the DLP backstop for legal data</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show the recommended profiles against the <em>Generative AI Tools</em> category — PII,
+          financial data, access keys, and the <strong>Legal</strong> profile whose ML classifiers
+          flag agreements, patents and court documents. One policy engine covers pastes, prompts and
+          file uploads to AI alongside the rest of the firm's data protection.</p>
+        </li>
+        <li>
+          <h4>Close on the report as OCG evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to AI events: every monitored, redacted and blocked interaction, attributed and
+          exportable, and the GenAI report as the packaged version. "You started this meeting unable
+          to name the AI tools in use. You're ending it able to hand a client's security review a
+          per-matter AI-usage report."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-ai-security-browser-plugin" target="_blank" rel="noopener">What is the AI Security Browser Plugin</a></li>
+            <li><a href="https://www.sra.org.uk/sra/research-publications/artificial-intelligence-legal-market/" target="_blank" rel="noopener">SRA — Risk Outlook: The use of AI in the legal market</a></li>
+            <li><a href="https://www.sra.org.uk/solicitors/resources/innovate/compliance-tips-for-solicitors/" target="_blank" rel="noopener">SRA — Compliance tips on the use of AI and technology</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="ai-genai-security.html">GenAI Security for End Users</a></li>
+            <li><a href="security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+            <li><a href="security-legal-confidentiality.html">Law Firms: Client Confidentiality &amp; Ethical Walls</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

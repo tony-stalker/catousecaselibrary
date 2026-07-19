@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Firms: Client Confidentiality &amp; Ethical Walls — Cato Use Case Library</title>
+<meta name="description" content="Meet outside-counsel guidelines and prove it — identity-based ethical walls, DLP over privileged material, and audit evidence for client security reviews, from one platform.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-legal-confidentiality">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / Law Firm Confidentiality</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Law Firms: Client Confidentiality &amp; Ethical Walls</h1>
+    <p class="lede">
+      For a law firm, confidentiality is not a compliance line item — it is the product. Clients
+      impose Outside Counsel Guidelines with security requirements and audit rights, conflicts
+      demand ethical walls that actually hold, and lateral hires arrive and leave with matter
+      access that must change the same day. This use case shows how one converged platform turns
+      those obligations into enforceable, evidenced network policy: identity-based walls, DLP over
+      privileged material, and an audit trail ready for the next client security questionnaire.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Legal</span><span class="tag">Ethical Walls</span>
+      <span class="tag">OCG</span><span class="tag">DLP</span><span class="tag">Client Audits</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        A law firm sells two things: judgment and discretion. Privilege and confidentiality are
+        existential — a single failure can lose a client, an injunction, or the firm's standing to
+        act. In England and Wales the obligation is regulatory as well as commercial: the
+        <strong>SRA Codes of Conduct (paragraph 6.3)</strong> require solicitors and firms to keep
+        the affairs of current <em>and former</em> clients confidential, and
+        <strong>paragraph 6.5</strong> bars acting where a client's interest is adverse to another
+        current or former client for whom the firm holds material confidential information — unless
+        effective measures protect that information or informed consent is obtained. The courts set
+        the bar for "effective" high: since <em>Bolkiah v KPMG</em>, an information barrier must
+        leave <strong>no real risk of disclosure</strong>, and a real risk need not be substantial.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">6.3 / 6.5</div><div class="stat-label">SRA Code of Conduct — confidentiality duty for current and former clients, and the adverse-interest bar unless an effective information barrier exists</div></div>
+        <div class="stat-tile"><div class="stat-value">"No real risk"</div><div class="stat-label">The effectiveness test for information barriers set by the courts in Bolkiah v KPMG — and a real risk need not be substantial</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1<span class="unit"> policy</span></div><div class="stat-label">One identity-based policy set enforcing walls, data protection and access — with the evidence in one console</div></div>
+      </div>
+      <p>
+        Commercial pressure now arrives faster than regulation. Sophisticated clients — banks,
+        insurers, private equity — attach <strong>Outside Counsel Guidelines (OCGs)</strong> to
+        their instructions: encryption standards, access-control expectations, breach-notification
+        windows, restrictions on where matter data may live, and <strong>audit rights</strong> over
+        the firm's security. Every panel review and new instruction brings another security
+        questionnaire. The objective for the firm's COLP, IT director and general counsel is the
+        same one, stated three ways: enforce confidentiality technically, not just contractually —
+        and be able to <strong>prove it</strong> on demand.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Policy on paper, flat network in practice</h2>
+      <p>
+        Consider a fictional 400-lawyer, UK-headquartered firm with offices in London, Manchester
+        and Dubai. Its confidentiality obligations are impeccably documented — and its estate
+        undermines them four ways:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">OCG sprawl and questionnaire fatigue</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Dozens of clients, dozens of OCG variants,
+          each with its own security schedule and audit rights. Every panel renewal means another
+          questionnaire — and the answers live across firewall configs, VPN concentrators, DMS
+          permissions and spreadsheets. Assembling evidence is a project each time, and partners
+          feel it as lost fee-earning days.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Ethical walls that stop at the DMS</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Walls are declared in the conflicts system
+          and enforced in the document management system (iManage- or NetDocuments-class platforms).
+          But the network underneath is flat: both matter teams sit on the same LAN and VPN, and
+          nothing at the network layer distinguishes them. "Effective measures" with no real risk of
+          disclosure is a hard claim when segregation exists in one application only.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Lateral churn on a same-day clock</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Lateral hires arrive mid-matter and need
+          access granted precisely — often behind a wall from day one because of prior-firm
+          conflicts. Departures are worse: a leaver heading to opposing counsel must lose matter
+          access the same day, and the firm must be able to show <em>when</em> it was revoked, not
+          assert that it was.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Fee-earners work from everywhere</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Courts, client sites, chambers, home,
+          trains. Privileged material moves with them — on laptops, over hotel Wi-Fi, into personal
+          cloud drives when deadlines bite. A VPN that drops users onto the flat network extends
+          every weakness above to every location a fee-earner opens a lid.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>
+          "How is an ethical wall enforced today below the DMS — what stops a fee-earner on Matter A
+          reaching Matter B's workspace over the network?" · "How long does a client security
+          questionnaire take to answer, and how many systems hold the evidence?" · "When a lateral
+          leaves for opposing counsel, who proves — with timestamps — that access was revoked?"
+        </p>
+      </div>
+    </section>
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Ethical walls as network policy — enforced and evidenced</h2>
+      <p>
+        Cato makes the ethical wall a property of the network itself. Matter teams are represented
+        as IdP groups, and a pair of WAN Firewall rules per wall — allow each team to its own
+        matter's application segment, everything else falling to the implicit deny — enforces the
+        barrier on every flow, wherever it originates. A fee-earner in the office, at court or at
+        home crosses the same PoP-enforced policy, because the Cato Client applies identical rules
+        to remote users. DLP inspects what leaves — blocking privileged material bound for personal
+        cloud storage — and every decision, allow or block, lands in the Cato Management Application
+        as the evidence a client auditor asks for.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 480" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Identity-based ethical wall between two matter teams, with DLP and an evidence lane</title>
+          <desc id="dg1-desc">Two matter teams sit in one office on the same LAN. Traffic from both teams and from a remote fee-earner crosses a Cato PoP where an identity-based ethical wall is enforced. The Matter A team reaches its own DMS workspace; its attempt to reach Matter B's workspace is blocked with a red cross, while the Matter B team reaches its own workspace. A DLP lane blocks a privileged document upload to personal cloud storage. A grey evidence lane carries events and audit data into the Cato Management Application.</desc>
+
+          <!-- Office label -->
+          <text class="dg-label" x="124" y="42" text-anchor="middle">One office</text>
+          <text class="dg-tiny" x="124" y="58" text-anchor="middle">same floor · same LAN</text>
+
+          <!-- Wall / policy label -->
+          <text class="dg-label" x="470" y="86" text-anchor="middle">Identity-based ethical wall</text>
+          <text class="dg-tiny" x="470" y="103" text-anchor="middle">WAN FW · DMS app segments</text>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="470" cy="235" rx="150" ry="110"/>
+          <circle cx="350" cy="169" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="590" cy="301" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="470" y="152" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="470" cy="235" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="470" cy="235" r="30"/>
+          <text class="dg-label" x="470" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="470" y="308" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">WAN FW · ZTNA · DLP</text>
+
+          <!-- Teams (left) -->
+          <rect class="dg-node" x="34" y="70" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="124" y="94" text-anchor="middle">Matter A team</text>
+          <text class="dg-sub" x="124" y="112" text-anchor="middle">IdP group · WALL-A</text>
+
+          <rect class="dg-node" x="34" y="156" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="124" y="180" text-anchor="middle">Matter B team</text>
+          <text class="dg-sub" x="124" y="198" text-anchor="middle">IdP group · WALL-B</text>
+
+          <rect class="dg-node" x="34" y="336" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="124" y="360" text-anchor="middle">Remote fee-earner</text>
+          <text class="dg-sub" x="124" y="378" text-anchor="middle">Cato Client · anywhere</text>
+
+          <!-- Team traffic into the PoP (green) -->
+          <path class="lane lane-allow" d="M 214 99 C 300 120, 370 180, 445 218"/>
+          <path class="lane lane-allow" d="M 214 185 C 300 200, 370 220, 441 231"/>
+          <path class="lane lane-allow" d="M 214 365 C 300 350, 380 290, 447 254"/>
+
+          <!-- PoP to Matter A workspace (green) -->
+          <path class="lane lane-allow" d="M 497 218 C 580 180, 650 120, 746 86"/>
+          <!-- PoP to Matter B workspace for Team B (green, lower approach) -->
+          <path class="lane lane-allow" d="M 498 248 C 590 268, 680 252, 746 224"/>
+
+          <!-- Cross-wall attempt (red, blocked) -->
+          <path class="lane lane-block" d="M 499 228 C 550 224, 590 218, 624 211"/>
+          <g aria-label="cross-wall access blocked">
+            <path class="lane-x" d="M 630 197 L 654 221"/><path class="lane-x" d="M 654 197 L 630 221"/>
+          </g>
+          <text class="dg-tiny" x="642" y="186" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">cross-wall attempt</text>
+
+          <!-- DLP block to personal storage (red) -->
+          <path class="lane lane-block" d="M 492 260 C 550 292, 610 302, 664 300"/>
+          <g aria-label="privileged upload blocked by DLP">
+            <path class="lane-x" d="M 676 286 L 700 310"/><path class="lane-x" d="M 700 286 L 676 310"/>
+          </g>
+          <text class="dg-tiny" x="640" y="332" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">DLP — privileged upload</text>
+
+          <!-- Evidence lane to CMA (grey) -->
+          <path class="lane-static" fill="none" d="M 482 264 C 540 340, 640 392, 746 424"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="746" y="54" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="836" y="78" text-anchor="middle">Matter A — DMS</text>
+          <text class="dg-sub" x="836" y="96" text-anchor="middle">privileged workspace</text>
+
+          <rect class="dg-node" x="746" y="170" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="836" y="194" text-anchor="middle">Matter B — DMS</text>
+          <text class="dg-sub" x="836" y="212" text-anchor="middle">opposing matter</text>
+
+          <rect class="dg-node" x="746" y="286" width="180" height="58" rx="10"/>
+          <text class="dg-label" x="836" y="310" text-anchor="middle">Personal storage</text>
+          <text class="dg-sub" x="836" y="328" text-anchor="middle">consumer cloud drive</text>
+
+          <rect class="dg-node-dark" x="746" y="392" width="180" height="72" rx="10"/>
+          <text class="dg-label-inv" x="836" y="416" text-anchor="middle">CMA — evidence</text>
+          <text class="dg-sub-inv" x="836" y="434" text-anchor="middle">events · Audit Trail</text>
+          <text class="dg-sub-inv" x="836" y="451" text-anchor="middle">questionnaire pack</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Inside the wall — each team to its own matter workspace</span>
+          <span class="key"><span class="swatch block"></span> Blocked at the PoP — cross-wall access · privileged-doc exfil</span>
+        </div>
+        <div class="diagram-caption">Both matter teams share one office and one LAN — the wall is identity, not geography. The same rules follow the remote fee-earner through the Cato Client. The grey lane is the evidence path: every allow and block lands in the CMA.</div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase showing an ordered allowlist of rules scoped to sites, user groups and named hosts, with direction, service and port columns and live hit counts over an implicit deny">
+        <figcaption>The WAN Firewall is an allowlist over an implicit deny — exactly the shape an ethical wall needs. Rules scoped to users, groups, sites and named hosts, with hit counts showing each rule doing real work.</figcaption>
+      </figure>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Walls below the DMS</h4><p>Identity-scoped WAN Firewall rules segregate matter workspaces at the network layer — a second, independent barrier under the DMS's own controls, enforced on every flow.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Same-day lateral lifecycle</h4><p>Access follows IdP group membership, provisioned via SCIM — a joiner is inside the wall the moment the group updates, and a leaver's access collapses the moment it is removed, with timestamps.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Privileged material stays put</h4><p>DLP inspects uploads in line — matching legal and contract document classifiers and firm-defined data types — and blocks privileged content bound for personal cloud storage.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>The questionnaire answers itself</h4><p>One policy set, one event stream, one Audit Trail. OCG evidence and client security questionnaires draw from a single console instead of a firm-wide scavenger hunt.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Position with care</div>
+        <p>Cato enforces the wall at the network layer — it <strong>complements</strong> the DMS's
+        own ethical-wall and matter-security features (in iManage- or NetDocuments-class systems),
+        it does not replace them, and no product integration is implied. Whether the combined
+        measures meet the SRA's "effective measures" bar is a judgment for the firm and its COLP.
+        Position Cato as making that claim materially easier to defend: segregation enforced in two
+        independent layers, with evidence.</p>
+      </div>
+    </section>
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Capability mapping</div>
+      <h2>Firm obligation → platform capability</h2>
+      <p>
+        Walk this table honestly — the third column is what keeps the conversation credible with a
+        firm's risk team. Cato shrinks and evidences the network side of each obligation; the
+        conflicts decisions, DMS permissions and endpoint estate remain the firm's programme.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Obligation</th><th>How Cato helps</th><th>What stays with the firm</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ethical walls / information barriers</strong><br><span style="font-size:.85rem;color:var(--ink-3)">SRA Code 6.5 · Bolkiah test</span></td>
+              <td>Identity- and group-based WAN Firewall rules plus per-matter application segments: each wall is a rule pair scoped to IdP groups over an implicit deny, enforced on every flow from every location — a network-layer barrier independent of the DMS.</td>
+              <td>Conflicts checks and wall declarations, DMS-level workspace security, physical and people measures (seating, undertakings, training) — and the legal judgment that the combined barrier is effective.</td>
+            </tr>
+            <tr>
+              <td><strong>Privileged &amp; confidential material</strong><br><span style="font-size:.85rem;color:var(--ink-3)">SRA Code 6.3 · client OCGs</span></td>
+              <td>DLP inspects content in line using predefined legal and contract document classifiers, regional PII data types and firm-defined types — scoped by user group and data type. Be honest: scoping is group- and data-type-based, not per-matter-aware; it catches privileged-class material leaving, not one matter's file specifically.</td>
+              <td>Document classification discipline, sensitivity labelling at source, and endpoint controls on devices Cato does not manage.</td>
+            </tr>
+            <tr>
+              <td><strong>OCG security schedules &amp; client audit rights</strong></td>
+              <td>The evidence pack in one console: the policy itself (exportable rulebase), events showing controls firing on real traffic, and an attributable Audit Trail of every configuration change — the raw material of most questionnaire sections.</td>
+              <td>Answering the questionnaire, contractual commitments in each OCG, and evidence for systems outside the network layer.</td>
+            </tr>
+            <tr>
+              <td><strong>Lateral joiner / mover / leaver</strong></td>
+              <td>SCIM provisioning from the firm's IdP: access is group membership. A lateral joins inside the wall on day one; a mover's access changes when the group does; a leaver removed from groups loses matter access at once — with timestamped records of the change.</td>
+              <td>HR and conflicts processes that decide who joins which group and when — and deprovisioning in systems beyond the IdP's reach.</td>
+            </tr>
+            <tr>
+              <td><strong>Fee-earners working from anywhere</strong></td>
+              <td>Universal ZTNA through the Cato Client: the same wall, DLP and inspection at court, client site or home as in chambers, with device posture (encryption, EPP/EDR, OS version) gating access continuously — no flat-network VPN.</td>
+              <td>Managed-device build and patching, and policy for genuinely unmanaged scenarios (e.g. personal devices, if permitted at all).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the live wound</div>
+        <p>Ask which is currently hurting: a wall the firm cannot prove, a questionnaire eating
+        partner time, or a lateral departure that got uncomfortable. Lead with that scene; the
+        rest of the runbook supports it.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame with the obligation map</h4>
+          <p>Walk the table above, including the "what stays with the firm" column. Agreeing what
+          Cato does <em>not</em> do — conflicts decisions, DMS permissions — buys the credibility
+          for everything that follows.</p>
+        </li>
+        <li>
+          <h4>Build a wall as a rule pair</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Create (or walk) two rules scoped to IdP groups: <em>WALL-A → Matter A workspace
+          segment, allow</em> and <em>WALL-B → Matter B workspace segment, allow</em> — everything
+          else falls to the implicit deny. Point at the source column: the wall is identity, so it
+          holds in every office and for every remote user, automatically.</p>
+        </li>
+        <li>
+          <h4>Attempt cross-wall access — show the block</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>As a WALL-A user (say, Priya), attempt to reach the Matter B workspace — then filter
+          events to her identity and show the block: rule name, user, time, source. Anchor: "this
+          event is what 'effective measures' looks like as evidence, not assertion."</p>
+        </li>
+        <li>
+          <h4>Block a privileged upload with DLP</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Show a DLP rule scoped to fee-earner groups matching legal/contract document
+          classifiers and firm-defined data types, blocking uploads to personal cloud storage.
+          Trigger it with a sample privileged-style document and show the block event. Describe the
+          scoping honestly — group- and data-type-based, not matter-aware.</p>
+        </li>
+        <li>
+          <h4>Revoke a leaver — same day, with proof</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Remove a departing lateral (say, Marcus) from the matter groups in the IdP and show
+          the change flow through via SCIM: his wall rules no longer match, his ZTNA scope
+          collapses. The timestamped record answers "who proves access revocation" directly.</p>
+        </li>
+        <li>
+          <h4>Close on the questionnaire pack</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show who changed which rule, when, from where — and export it. Pair with the rulebase
+          and the event stream: policy, enforcement and change history from one console. "This is
+          the client security questionnaire answering itself."</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.sra.org.uk/solicitors/guidance/confidentiality-client-information/" target="_blank" rel="noopener">SRA guidance — confidentiality of client information (paras 6.3–6.5, information barriers)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">FWaaS / NGFW — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy — published certifications</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="ai-legal-genai.html">Law Firms: GenAI with Privilege Intact</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
