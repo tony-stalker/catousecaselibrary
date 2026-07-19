@@ -243,6 +243,11 @@
           changes are evidenced from the Audit Trail. A bypass without an owner is a finding, not a rule.</p>
         </li>
       </ol>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato Management Application TLS Inspection policy from a demo tenant: ordered bypass rules for sensitive categories, embedded operating systems, devices and source networks, followed by phased Inspect rules scoped to test networks and finance users and broad inspect rules for popular cloud apps and business categories" loading="lazy">
+        <figcaption>The staged pattern live in a demo tenant&rsquo;s TLS Inspection policy: sensitive-category, platform, device and source bypasses ordered first, then &ldquo;Inspection Phase 1&rdquo; and &ldquo;Phase 2&rdquo; rules scoped to TLSi Test Networks and Finance Users, then broad Inspect rules for Popular Cloud Apps and Business Information. Note each Inspect rule also carries its untrusted-server-certificate decision — Allow, tightened later, per the maturity advice above.</figcaption>
+      </figure>
     </section>
 
     <section id="triage" class="reveal">

@@ -276,7 +276,8 @@
       <div class="callout">
         <div class="co-title">Illustrative tables — not console screenshots</div>
         <p>The tables below are composed to show the translation pattern, not exported from
-        either console. Names are generic, and the actions shown are the <em>end state</em> —
+        either console — though the screenshots beneath the after-table are the real CMA
+        console, captured from a live demo tenant. Names are generic, and the actions shown are the <em>end state</em> —
         in a real migration every mapped rule ships in monitor first and earns its Block with
         telemetry. Validate the pattern against the customer's real policies.</p>
       </div>
@@ -304,6 +305,17 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-dlp-ml-classifiers.png" alt="Cato Management Application Data Types and Profiles screen showing the Predefined ML Classifiers list: seventeen document families including Contracts, Finance, HR, Legal, Medical and Personal" loading="lazy">
+        <figcaption>The redesign menu is real: CMA&rsquo;s predefined ML document classifiers, live in a demo tenant — seventeen families from Finance and HR to Legal and Medical. A custom-trained model cannot be ported, but this is the concrete palette behind rule 3&rsquo;s recorded decision: redesign against these, custom data types or EDM, or retain the classifier on the endpoint.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-dlp-data-catalogue.png" alt="Cato Management Application DLP Data Catalog listing predefined regional postal-address data types for Australia, Canada, Germany, Spain, France and Hong Kong, each categorised as Personally Identifiable Information with a match threshold" loading="lazy">
+        <figcaption>And the data catalogue behind rules 1 and 2, in the same tenant: predefined regional PII data types with per-type match thresholds — the threshold column is exactly what gets re-proven in monitor rather than copied from Forcepoint&rsquo;s severity settings.</figcaption>
+      </figure>
+
       <h3>What changed in translation</h3>
       <ul>
         <li><strong>Described content mapped directly.</strong> The regex-plus-validator PCI

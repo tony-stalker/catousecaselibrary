@@ -287,7 +287,8 @@
       <div class="callout">
         <div class="co-title">Illustrative, not exported</div>
         <p>These tables are <strong>composed to show the translation pattern</strong> — they are
-        not console screenshots or a real customer export. Rule names, objects and categories are
+        not console screenshots or a real customer export, though the screenshot beneath the
+        after-table is the real CMA console from a live demo tenant. Rule names, objects and categories are
         generic; in a live engagement the &ldquo;before&rdquo; table is the customer's own
         Director export, rebuilt per site from the template stack and bind data.</p>
       </div>
@@ -317,6 +318,11 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>Live from a demo tenant: the CMA Internet Firewall the translated rules land in — with no UTM-profile column, because IPS and NGAM run as global layers exactly as described above. The hit-count bars are the rationalisation evidence: 132.2K hits on one QUIC block, zeroes marking the next Legacy-FTP-Allow.</figcaption>
+      </figure>
 
       <h3 style="margin-top:22px">What changed in translation</h3>
       <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">

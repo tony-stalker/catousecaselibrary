@@ -447,7 +447,8 @@
         <div class="co-title">Illustrative tables — not console exports</div>
         <p>The two tables below were composed for this page to show the translation pattern. They
         are not screenshots of either console, and the column layouts only approximate what
-        SmartConsole and the CMA actually display. Object names are generic placeholders.</p>
+        SmartConsole and the CMA actually display. Object names are generic placeholders — though
+        the screenshot beneath the after-table is the real CMA console from a live demo tenant.</p>
       </div>
 
       <p>
@@ -487,6 +488,12 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase from a demo tenant: twelve ordered allow rules with site, user and host scopes, direction arrows, destinations, explicit services and hit-count bars" loading="lazy">
+        <figcaption>A live CMA WAN Firewall from a demo tenant: one flat, first-match allowlist where every rule carries its full scope — source, direction, destination, service — explicitly, with nothing inherited from a parent layer. The only cleanup rule is the implicit deny beneath rule 12, and nobody had to write it.</figcaption>
+      </figure>
+
       <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
         <li><strong>Rule 2 is the rule that never existed</strong> — the inline layer's implicit
         cleanup (5.2) was configuration nobody wrote, but on Cato's default-allow Internet

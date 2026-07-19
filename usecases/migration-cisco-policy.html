@@ -271,7 +271,8 @@
       <div class="callout">
         <div class="co-title">Illustrative, not screenshots</div>
         <p>The tables below are <strong>composed to show the translation pattern</strong> — generic
-        names, documentation-range IPs and invented hit counts, not console exports. The real
+        names, documentation-range IPs and invented hit counts, not console exports — though the
+        screenshot after the CMA table is the real console from a live demo tenant. The real
         exercise runs on the customer&rsquo;s own artefacts.</p>
       </div>
       <h3>Before — Umbrella web policy</h3>
@@ -306,6 +307,12 @@ access-list INSIDE-OUT line 14 extended deny ip any 198.51.100.0 255.255.255.0 (
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>Not illustrative — a live CMA Internet Firewall rulebase from a demo tenant. The hit-count bars are the same usage evidence as ASA&rsquo;s <code>hitcnt</code>: zero-hit rows sit exposed for the next rationalisation pass, while the category Block/Prompt pair and user-scoped rules show real identity replacing egress-IP network identities.</figcaption>
+      </figure>
+
       <h3>What changed in translation</h3>
       <ul style="padding-left:20px;font-size:.94rem;color:var(--ink-2)">
         <li><strong>Identity is real, not inferred.</strong> Umbrella rows 2–3 matched network identities keyed to the sites&rsquo; public egress IPs — meaningless the moment those sites egress from a Cato PoP. The Cato rules match SCIM-provisioned user groups and site objects directly.</li>

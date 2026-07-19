@@ -406,9 +406,10 @@
       <div class="callout">
         <div class="co-title">Illustrative only</div>
         <p>The tables below are composed to show the translation pattern — they are not console
-        screenshots, and a real rulebase runs to hundreds of rows. Every surviving row still
-        travels the full pipeline: rationalise on hit counts, map, deploy monitor-first, then
-        enforce on evidence.</p>
+        screenshots, and a real rulebase runs to hundreds of rows — though the page now also
+        shows the real console: the screenshot after the CMA table is a live demo tenant. Every
+        surviving row still travels the full pipeline: rationalise on hit counts, map, deploy
+        monitor-first, then enforce on evidence.</p>
       </div>
 
       <h3>Before — FortiOS policy table (illustrative)</h3>
@@ -499,6 +500,12 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The same surface live in a demo tenant — and note the column that is not there: no security-profile attachments, because IPS and anti-malware run as account-level layers. The hit-count bars (132.2K on one QUIC block, zeroes on stale rows) are the evidence the rationalise stage runs on.</figcaption>
+      </figure>
+
       <p style="margin-top:14px">
         Several Before rows have no After row — deliberately. The <code>corp-ips</code> and
         <code>av-default</code> profiles on policy 12 are no longer per-rule attachments: they

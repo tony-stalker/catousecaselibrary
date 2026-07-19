@@ -293,7 +293,8 @@
         <p>The CPL below and the CMA table that follows were composed for this page to show the
         translation pattern. They are not screenshots of either console, and the CPL is a
         simplified sketch of what a real Local policy file looks like. All names are generic
-        placeholders.</p>
+        placeholders — though the screenshot beneath the after-table is the real CMA console,
+        captured from a live demo tenant.</p>
       </div>
 
       <p>
@@ -333,6 +334,12 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>What CPL intent lands in, live from a demo tenant: an ordered CMA Internet Firewall rulebase where each row carries its user, category and action together — no layer evaluation to reason about. The hit-count bars play Reporter&rsquo;s role at review: 227K-hit category rules earn their keep while zero-hit rows queue for the discard pile.</figcaption>
+      </figure>
+
       <p>
         Notice what has no row at all: the <code>authenticate(no)</code> exemption mechanics, the
         IWA realm behind <code>group=</code>, and any proxy-chaining or virtual-URL redirects

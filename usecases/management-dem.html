@@ -132,14 +132,15 @@
         clicking expands the underlying graphs. The failing segment is measured, not inferred.
       </p>
 
-      <!-- TODO (Tony): insert real CMA captures here when available — the KB shows these views well:
-           1. Experience Monitoring landing page (Home → Experience Monitoring): summary bar,
-              Account Experience score graph, entity tabs (Sites / Remote Users / Office Users /
-              Site Hosts / Applications).
-           2. A user drill-down with the Connection Details nodes coloured green/yellow/red
-              (device hardware, Wi-Fi, LAN gateway, last mile, PoP, application).
-           3. The Path Analysis widget — Traceroute tab (hop diagram) or Command Line tab.
-           Use figure.shot > img + figcaption per BUILD-GUIDE. Do not fabricate screenshots. -->
+      <figure class="shot">
+        <img src="../assets/img/em-connection-details.png" alt="CMA user drill-down: a User Application Experience Score timeline with connect and disconnect events, above the Path Analysis Connection Details tab showing the node chain device, Wi-Fi, LAN gateway, last mile, London PoP, application. Each node has its own scored row: device hardware Good at 19.81 percent average CPU, Wi-Fi Fair at minus 67.43 dBm average signal strength shown amber, LAN gateway Good with zero packet loss and 3 milliseconds distance, last mile Good with zero probe loss and 15 milliseconds round trip, and the application Good.">
+        <figcaption><strong>Connection Details</strong> — fault domain isolation in one glance. Point at the
+        node chain: every segment scored independently, and the one amber node is <strong>Wi-Fi at
+        −67.43 dBm</strong> — just past the −67 dBm Good threshold, so it scores Fair — while device
+        hardware (19.81% CPU), LAN gateway (0% loss, 3 ms), last mile (0% loss, 15 ms) and the
+        application all stay green. The fault is this user's Wi-Fi: not the laptop, not the circuit,
+        not Cato, not the app — measured, not inferred.</figcaption>
+      </figure>
 
       <div class="diagram-card">
         <svg viewBox="0 0 960 248" role="img" aria-labelledby="dg1-title dg1-desc">
@@ -314,6 +315,15 @@
         Cato. That print-out is the ISP escalation artefact.
       </p>
 
+      <figure class="shot">
+        <img src="../assets/img/em-traceroute.png" alt="CMA Path Analysis Traceroute tab over a historical window, device to London PoP: a Last Mile Routes diagram from office user through the Socket across a chain of hop nodes, most ringed green with one red ring and one amber collapsed group of four hops, ending at a green Cato PoP node. Above it, the experience score timeline lists BGP routing and Site Socket Bypass events.">
+        <figcaption><strong>Path Analysis → Traceroute</strong> — the last-mile route from Socket to the
+        London PoP, replayed over a historical window (here Jul 12, 23:18–01:00 — intermittent faults
+        can’t hide). Point at where the colour starts: green hops, then one red hop and an amber
+        collapsed group <em>before</em> a clean Cato PoP — the drop happens inside the ISP’s network,
+        and the history proves when.</figcaption>
+      </figure>
+
       <div class="grid-2">
         <div class="card">
           <h3 style="margin-top:0">Anomaly stories, before the tickets</h3>
@@ -356,6 +366,15 @@
           <strong>Site Hosts</strong> and <strong>Applications</strong> tabs and sort by
           experience, worst first. This is the helpdesk queue <em>before it happens</em> — the
           entries at the top are the users about to call.</p>
+          <figure class="shot">
+            <img src="../assets/img/em-home-sites.png" alt="CMA Experience Monitoring landing page over the last two days: a summary bar with 24 sites (17 connected, 2 degraded, 5 disconnected), WAN and internet application experience counts, and app integration status; an account experience score graph beside a feed of link-quality SLA and connector-down stories; and the Sites tab table where Schiphol Data Center is scored Poor with 601 milliseconds average time to first byte, WestUS-HQ is Good, and two sites show no score.">
+            <figcaption><strong>Home → Experience Monitoring</strong> — the triage screen. Top strip: estate
+            status at a glance (24 sites — 2 degraded, 5 down; 182 internet apps scoring Poor). Point at
+            the feed — <em>Link quality SLA exceeded</em> stories raised by the platform, not by users —
+            then at the Sites tab, where <strong>Schiphol Data Center sits at Poor</strong> (601 ms avg
+            TTFB across 455 apps) while WestUS-HQ scores Good: the worst-first sort has already found
+            tomorrow’s tickets.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Drill into a struggling user</h4>
@@ -373,7 +392,9 @@
           green, LAN gateway green — the yellow sits on the <strong>Last Mile</strong>. Hover for
           the averages, then expand the node: overlay graphs show the loss and jitter inside the
           tunnel, and the underlay probe graphs show the same loss outside it — so it’s the
-          circuit, not the tunnel. One screen, no war room.</p>
+          circuit, not the tunnel. One screen, no war room. (The capture in the solution section
+          shows the same logic landing on a different node — Wi-Fi at −67.43 dBm scoring Fair while
+          everything else stays green.)</p>
         </li>
         <li>
           <h4>Contrast a healthy user</h4>
@@ -396,6 +417,14 @@
           before the PoP puts the fault in the ISP’s network — copy the full traceroute data into
           the circuit ticket. For the ongoing record, schedule a recurring
           <strong>Site Experience</strong> report from <span class="path">Home → Reports</span>.</p>
+          <figure class="shot">
+            <img src="../assets/img/em-command-line.png" alt="CMA Path Analysis Command Line tab: a last-mile hops table in traceroute style with nine hops from the local gateway to the Cato PoP in London, showing per-hop IP, location, loss percentage, packets sent and received, and average, best and worst latency. Hop 2 in Preston shows 24.3 percent loss and 269 milliseconds average over 1010 probes, two Telia hops in London show around 3 percent loss, and the final Cato PoP hop shows zero loss at 6 milliseconds average.">
+            <figcaption><strong>Path Analysis → Command Line</strong> — the circuit ticket, pre-written.
+            Point at hop 2: <strong>24.3% loss at 84.65.0.1 (Preston — the first hop inside the
+            ISP)</strong>, avg 269 ms, over 1,010 probes — while hop 1 (the local gateway) and the
+            Cato PoP at hop 9 (0% loss, 6 ms) are clean. Loss that starts before the PoP and is
+            measured a thousand times over is not “no fault found”.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Close the proactive loop</h4>
@@ -411,8 +440,9 @@
         <div class="co-title">Status: verified against documentation</div>
         <p>There is no source deck for this page — it was authored directly for the library. Its
         claims, CMA paths and scoring thresholds were verified against the Cato Learning Center
-        documentation (knowledge.catonetworks.com) in July 2026. Still sanity-check the demo
-        tenant’s Experience Monitoring views (and DEM licence) before customer use.</p>
+        documentation (knowledge.catonetworks.com) in July 2026, and the screenshots were captured
+        from a demo tenant the same month (user identities shown are fictional demo users). Still
+        confirm your demo tenant’s DEM licence before customer use.</p>
       </div>
     </section>
 

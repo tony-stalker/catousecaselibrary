@@ -299,7 +299,8 @@
         <p>Both tables below are <strong>composed to show the translation pattern</strong>, not
         exported from a real tenant or captured from either console. Names, groups, categories and
         CIDRs are generic; expressions follow Gateway's selector style without claiming to be
-        syntactically exact. Use the shape, not the values.</p>
+        syntactically exact. Use the shape, not the values — and see the screenshot below the
+        after-table for the real CMA console, captured from a live demo tenant.</p>
       </div>
 
       <p>
@@ -339,6 +340,11 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The converged rulebase for real, in a live demo tenant: Allow, Block, Prompt and RBI actions ordered top-down in one Internet Firewall policy — rule 9 is the RBI isolation pattern policy 3 translates to. Rules 7 and 8 are a live allow-above-block pair, the same ordering that replaces Gateway&rsquo;s boolean negations.</figcaption>
+      </figure>
 
       <h3 style="margin-top:26px">What changed in translation</h3>
       <ul style="font-size:.94rem;color:var(--ink-2)">

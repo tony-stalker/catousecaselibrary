@@ -316,8 +316,9 @@
       <div class="callout">
         <div class="co-title">Illustrative tables — not console exports</div>
         <p>These tables are composed to show the translation pattern; they are not screenshots of
-        either console. Rule and object names are generic — in the workshop, run the same exercise
-        on the customer's own rulebase export.</p>
+        either console — though the screenshot beneath the after-table is the real CMA console,
+        captured from a live demo tenant. Rule and object names are generic — in the workshop,
+        run the same exercise on the customer's own rulebase export.</p>
       </div>
 
       <h3>Before — PAN-OS security policy (illustrative)</h3>
@@ -355,6 +356,11 @@
           </tbody>
         </table>
       </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase from a demo tenant: twelve ordered allow rules with site, user and host scopes, direction arrows, destinations, explicit services such as SMBv2, TCP/7443 and RDP, and hit-count bars" loading="lazy">
+        <figcaption>The other surface of the split, live from a demo tenant: the CMA WAN Firewall as a pure allowlist — twelve Allow rules scoped by site, group and host, with explicit services (TCP/7443, RDP, SMBv2/v3) where PAN-OS would have said <em>application-default</em>, and no Deny-All row because the implicit block is the cleanup rule. Zone pairs are gone; every rule states its source, direction and destination out loud.</figcaption>
+      </figure>
 
       <h3>What changed in translation</h3>
       <ul style="font-size:.94rem;color:var(--ink-2)">

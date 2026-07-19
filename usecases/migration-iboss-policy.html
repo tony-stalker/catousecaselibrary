@@ -303,7 +303,8 @@
       <div class="callout">
         <div class="co-title">Illustrative, not exported</div>
         <p>The tables below are composed to show the translation pattern — typical of an iboss
-        education deployment, but not screenshots of any console. Use them to walk a customer
+        education deployment, but not screenshots of any console — though the screenshot after
+        the CMA table is the real console from a live demo tenant. Use them to walk a customer
         through what their own exported policy will look like on the other side of the MAP
         phase; the real rule names, categories and counts come from their export.</p>
       </div>
@@ -334,6 +335,12 @@
       <p style="font-size:.84rem;color:var(--ink-3);margin-top:8px">* Content Restrictions are
       bypassed by browsers using DNS-over-HTTPS — ship the DoH controls in the same change, per
       <a href="#swg-policy">the DoH caveat in the SWG section</a>.</p>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with user and group sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>A live CMA Internet Firewall from a demo tenant: user- and group-scoped rules in one ordered policy — the flat ladder the per-OU stack translates into. The category Block and Prompt rules and the RBI default rule near the bottom mirror the graduated web controls in this example.</figcaption>
+      </figure>
+
       <h3>What changed in translation</h3>
       <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
         <li><strong>OU scoping → SCIM group scoping.</strong> The per-OU policy objects become
