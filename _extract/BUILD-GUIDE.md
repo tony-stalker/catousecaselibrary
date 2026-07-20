@@ -14,8 +14,10 @@ opened from `file://` — no CDNs, no webfonts, no fetch(). All shared CSS/JS al
 4. `_extract/image-catalog.md` — descriptions of available screenshots/diagrams in `assets/img/`.
 
 ## Page anatomy (same order as exemplar)
-- `<head>`: title "«Title» — Cato Use Case Library", description = catalog summary, stylesheet
-  `../assets/css/style.css`, the same inline SVG favicon.
+- `<head>`: title "«Title» — Cato Use Case Library", description = catalog summary, then the
+  dark-mode boot snippet on ONE line immediately before the stylesheet link (copy verbatim):
+  `<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>`,
+  stylesheet `../assets/css/style.css`, the same inline SVG favicon.
 - `.topnav` with breadcrumb: `/ <a href="../index.html#cat-«category»">«Category»</a> / «Short name»`.
 - `.hero`: category chip (`chip-cat-access|management|network|security|ai-security|migration` —
   the class and `#cat-…` anchor use the category lowercased with spaces → dashes), status badge

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sophos Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate Sophos Firewall policy to Cato — firewall and NAT rules, web policy, application control and SSL/TLS inspection re-expressed in the CMA model, with greenfield CASB and DLP.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-sophos-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Sophos Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Sophos Policy Migration</h1>
+    <p class="lede">
+      Swapping an XGS for a Socket is a routing exercise — the SFOS policy estate is where the
+      project earns its keep. This page works domain by domain through the Sophos Firewall policy
+      stack: firewall rules with their attached web, application-control, IPS and anti-virus
+      policies, the decoupled NAT rule table, and the SSL/TLS inspection rules — showing what each
+      construct becomes in the Cato Management Application, the semantic traps in between, and the
+      four-phase pipeline that rationalises the rulebase on usage evidence before anything is
+      translated. CASB and DLP have no real SFOS ancestor, so they are built greenfield from Cato
+      best practice — the upgrade, not the gap.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">SWG</span>
+      <span class="tag">CASB</span><span class="tag">DLP</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why policy translation is the long pole</h2>
+      <p>
+        Sockets ship, subnets move, sites cut over — and then the project meets years of
+        accumulated SFOS policy: per-appliance rule tables, near-identical web-policy variants per
+        user population, a NAT table full of forgotten DNATs, and rules conditioned on things that
+        will not exist after the firewall goes. Translating that estate badly does more damage
+        than translating it slowly: lift-and-shift faithfully reproduces every dead rule, every
+        any-any exception and every policy carve-out on a brand-new platform, and the customer
+        inherits their old technical debt with a new logo on it.
+      </p>
+      <p>
+        The Cato Professional Services approach is a four-phase pipeline, applied per policy
+        domain: <strong>EXPORT</strong> the configuration and its usage evidence →
+        <strong>REVIEW &amp; MAP</strong> — rationalise on per-rule usage, discard dead weight,
+        then map surviving intent to Cato constructs → <strong>DEPLOY</strong> monitor-first, so
+        every translated rule earns evidence before it can hurt anyone →
+        <strong>OPTIMISE</strong> against events and hit counts until the policy is demonstrably
+        right. Review-and-map, not lift-and-shift: per-box rule bases collapse into one global
+        policy, and the clean-up is what makes that mapping tractable.
+      </p>
+      <p>
+        This page covers the policy workstream only. The network side — parallel Socket
+        deployment, the hub interconnect, SD-RED swap-outs, remote-access cohorts and the
+        Sophos-endpoint-stays framing — is the companion page,
+        <a href="migration-sophos.html">Sophos (XGS Firewall &amp; Central) to Cato</a>.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;How many of your SFOS firewall rules have passed no traffic in the last 90 days
+        — and how many of the rest are conditioned on a Security Heartbeat status that won't
+        exist once the firewall is gone?&rdquo;</p>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the mapping and sequencing with
+        Cato Professional Services before using it with a customer.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>SFOS firewall rules &amp; the NAT table</h2>
+      <p>
+        <strong>The construct.</strong> SFOS firewall rules are ordered, zone-based rules in a
+        per-appliance table: source/destination zones (LAN, WAN, DMZ, VPN, Wi-Fi), IP hosts and
+        host groups, services, identity (users and groups), schedules — with security delivered
+        as <strong>policies attached per rule</strong>: a web policy, an application filter
+        policy, an IPS policy, anti-virus scanning and zero-day protection. Inspection happens
+        only where a policy is attached. Since SFOS 18, NAT lives in its own decoupled rule table
+        — source NAT/masquerading for egress, DNAT server-access rules for published services —
+        rather than inside each firewall rule. Synchronized Security adds a Sophos twist: rules
+        can be conditioned on the endpoint's Security Heartbeat status.
+      </p>
+      <p>
+        <strong>Export.</strong> The full backup restores a firewall — it does not feed a mapping
+        workbook. The parseable artefacts are the XML configuration export and the SFOS XML API:
+      </p>
+      <pre class="code"><span class="cmt"># Per appliance — full backup is an (encrypted) restore artefact, not a mapping input</span>
+<span class="kw">Backup &amp; firmware → Backup &amp; restore</span>
+
+<span class="cmt"># The parseable rulebase: XML configuration export, or the XML API for scripted pulls</span>
+<span class="kw">Backup &amp; firmware → Import export → Export full configuration</span>
+
+<span class="cmt"># Usage evidence: per-rule traffic counters in the rule table + Central Firewall Reporting</span></pre>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SFOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Internet-egress rules (LAN → WAN)</td>
+              <td>Internet Firewall rules</td>
+              <td>Default-allow blocklist — the opposite posture to the SFOS default drop; see cross-domain practices</td>
+            </tr>
+            <tr>
+              <td>Site-to-site / VPN-zone rules</td>
+              <td>WAN Firewall rules</td>
+              <td>Default-block allowlist — matches the SFOS default-drop model</td>
+            </tr>
+            <tr>
+              <td>Inter-VLAN / local east-west rules</td>
+              <td>Socket LAN Firewall policy</td>
+              <td>Enforced locally on the Socket, managed from CMA</td>
+            </tr>
+            <tr>
+              <td>IP hosts, host groups, FQDN hosts</td>
+              <td>Hosts, IP ranges, subnets and groups</td>
+              <td>Global objects — dedupe per-box copies first; creation is scriptable via the GraphQL API or Terraform provider</td>
+            </tr>
+            <tr>
+              <td>Services / service groups</td>
+              <td>Custom services</td>
+              <td>Protocol/port definitions translate almost mechanically</td>
+            </tr>
+            <tr>
+              <td>Identity-based rules (AD users/groups)</td>
+              <td>Identity-scoped rules via IdP + SCIM</td>
+              <td>Provision Entra ID SSO and SCIM groups before mapping — the estate is almost always Microsoft</td>
+            </tr>
+            <tr>
+              <td>IPS policy + AV + zero-day protection per rule</td>
+              <td>Cato IPS and Next-Gen Anti-Malware</td>
+              <td>Account-level layers of the single-pass engine — per-rule carve-outs become explicit exceptions</td>
+            </tr>
+            <tr>
+              <td>Schedules</td>
+              <td>Rule time constraints</td>
+              <td>Re-model recurring windows per rule</td>
+            </tr>
+            <tr>
+              <td>Source NAT / masquerading rules</td>
+              <td>PoP egress NAT</td>
+              <td>Egress NAT is a platform property — most masquerade rules simply dissolve</td>
+            </tr>
+            <tr>
+              <td>DNAT server-access rules (published services)</td>
+              <td>Remote port forwarding / static IP for inbound</td>
+              <td>Inbound published services move on their own change windows — audit which are still used first</td>
+            </tr>
+            <tr>
+              <td>Security Heartbeat conditions on rules</td>
+              <td>No direct equivalent — Device Posture + Client Connectivity Policy</td>
+              <td>Posture checks (incl. third-party AV/EDR) gate access continuously; agree the replacement in discovery</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> One SFOS rule table becomes <em>layers</em>: a single
+        rule with its attached policies decomposes into a firewall rule, account-level IPS/NGAM
+        settings and a TLS inspection rule — agree the layer mapping before translating rule one.
+        Zone semantics have no equivalent; recover the intent (which segment reaches what) rather
+        than transliterating zone pairs. Traffic that escaped inspection on SFOS because no policy
+        was attached <em>will</em> be inspected by Cato's single-pass engine — expect new
+        detections in the monitor phase and triage them before enabling block. And
+        heartbeat-conditioned rules are the trap that bites late: they silently encode a
+        firewall↔endpoint dependency that disappears with the XGS, so inventory them in
+        discovery, not after the objection lands.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Pull the XML export per appliance; retire zero-traffic rules
+        and collapse duplicate per-box objects against the usage evidence; push the cleaned
+        object model through the API or Terraform first, then build the rule layers on top of
+        it; deploy new WAN Firewall and Internet Firewall rules monitor-first and let events
+        prove them before enforcement. Treat the NAT table as its own mini-workstream — most of
+        it dissolves, and what survives (published services) moves on scheduled change windows.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Web policies, application control &amp; SSL/TLS inspection</h2>
+      <p>
+        <strong>The construct.</strong> SFOS web filtering lives in web policies attached per
+        firewall rule: ordered rules matching users/groups against activities — web categories,
+        URL groups, file types — with Allow, Warn or Block actions and time constraints, usually
+        accumulated as several near-identical policy variants, one per user population.
+        Application control is a separate attachment: application filter policies matching apps
+        by category, risk and characteristics, with Synchronized App Control using the endpoint
+        agent to classify traffic the engine cannot identify. Since SFOS 18, SSL/TLS inspection
+        is its own rule table with decryption profiles, sized against the appliance's inspection
+        throughput. Sophos DNS Protection enforces similar categories at the resolver.
+      </p>
+      <p>
+        <strong>Export.</strong> All of it travels in the same XML configuration export as the
+        firewall rules — web policies, URL groups, application filter policies and the SSL/TLS
+        inspection rules — with Central Firewall Reporting as the evidence base for what each
+        category action actually affects.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SFOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sophos web categories</td>
+              <td>Cato URL categories in Internet Firewall rules</td>
+              <td>Taxonomies differ in names and granularity — map by intent, review every blocked category individually</td>
+            </tr>
+            <tr>
+              <td>Web-policy action: Block</td>
+              <td>Block (with block page)</td>
+              <td>Deploy contentious categories as monitor first</td>
+            </tr>
+            <tr>
+              <td>Web-policy action: Warn</td>
+              <td>Prompt action</td>
+              <td>User coaching — proceed after acknowledging the warning</td>
+            </tr>
+            <tr>
+              <td>Custom URL groups</td>
+              <td>Custom categories</td>
+              <td>Consolidate allow/block lists into custom categories referenced by rules</td>
+            </tr>
+            <tr>
+              <td>Per-population web-policy variants</td>
+              <td>User/group-scoped Internet Firewall rules</td>
+              <td>Depends on IdP/SCIM group provisioning — sequence it first</td>
+            </tr>
+            <tr>
+              <td>File-type controls in web policy</td>
+              <td>File attribute conditions in DLP rules</td>
+              <td>Re-homed into the data-protection domain — see Domain 4</td>
+            </tr>
+            <tr>
+              <td>Application filter policies</td>
+              <td>App-aware Internet / WAN Firewall rules</td>
+              <td>Application awareness is native to the rule, not a bolt-on policy</td>
+            </tr>
+            <tr>
+              <td>Synchronized App Control classifications</td>
+              <td>Cato application catalogue + App Analytics</td>
+              <td>Endpoint-assisted classification disappears with the firewall — Cato classifies inline at the PoP</td>
+            </tr>
+            <tr>
+              <td>SSL/TLS inspection rules + decryption profiles</td>
+              <td>Cato TLS Inspection policy</td>
+              <td>Cloud-scale decryption — no appliance headroom maths; stage by category and pilot group</td>
+            </tr>
+            <tr>
+              <td>Sophos DNS Protection</td>
+              <td>Cato DNS Security (inline at the PoP)</td>
+              <td>One policy governs the flow — no separate resolver-layer policy to keep in sync</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> The taxonomy mismatch is the headline risk: a Sophos
+        category and a similarly-named Cato category are not guaranteed to cover the same sites,
+        so a mechanical name-for-name mapping silently changes what is blocked. Fidelity is the
+        second: without TLS inspection both platforms act on domain/SNI only, so stage TLS
+        inspection before judging SWG parity — and note that on SFOS, inspection scope was often
+        set by appliance headroom rather than policy intent. Sophos' own XGS marketing leads with
+        4.8–5× TLS-inspection throughput gains over XG precisely because inspection throughput is
+        what runs out; on Cato the sizing exercise does not exist, so the migrated TLS policy
+        should encode what the customer <em>wants</em> decrypted, not what the box could afford.
+        Finally, policy sprawl should die here: collapse the near-identical web-policy variants
+        into a small number of group-scoped rule tiers instead of recreating each one.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Build a category translation sheet mapping each Sophos
+        category-action to a Cato category and action by intent; consolidate URL groups into
+        custom categories; deploy the blocked set in monitor mode and compare events against
+        Central Firewall Reporting; flip to block per category once the evidence matches
+        expectations, using Prompt where the customer used Warn.
+      </p>
+    </section>
+
+    <section id="casb" class="reveal">
+      <div class="section-kicker">Domain 3 — CASB policy · greenfield</div>
+      <h2>CASB: not a translation — an upgrade</h2>
+      <p>
+        <strong>There is usually nothing to export.</strong> Sophos Firewall has no inline CASB:
+        SaaS control in an SFOS estate — where it exists at all — is a few web categories and
+        application filter rules doing a job they were never designed for, with cloud-application
+        visibility limited to usage reporting. Frame this honestly in the room: <strong>this is
+        not a migration gap, it is the upgrade the customer is buying</strong>. The CASB policy is
+        built greenfield from Cato best practice, not translated from a rulebase that does not
+        exist.
+      </p>
+      <p>
+        <strong>What the estate does contribute:</strong> application usage data from the
+        firewall's reporting seeds the sanctioned-app conversation — which SaaS the business
+        already lives in — and the category worksheet from the SWG domain flags any informal SaaS
+        blocks worth preserving as proper CASB rules.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>In the Sophos estate</th><th>Cato construct</th><th>What changes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>App/web reporting on the firewall and in Central</td>
+              <td>App Analytics + Cloud Apps Dashboard</td>
+              <td>Continuous shadow-IT discovery with risk scores, covering sites and remote users alike</td>
+            </tr>
+            <tr>
+              <td>Web/app categories doubling as SaaS control</td>
+              <td>CASB application rules with granular activity controls</td>
+              <td>Allow the app but govern the activity — upload, download, share — instead of a binary block</td>
+            </tr>
+            <tr>
+              <td>Nothing — no app risk model</td>
+              <td>Application catalogue with risk scoring</td>
+              <td>Sanctioned / tolerated / unsanctioned decisions made on evidence, per app</td>
+            </tr>
+            <tr>
+              <td>Nothing — no tenant awareness</td>
+              <td>Tenant restrictions on sanctioned apps</td>
+              <td>Corporate tenant allowed, personal instances of the same app controlled</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Build sequence (best practice).</strong> Stage TLS inspection first — CASB
+        activity-level control depends on it. Run shadow-IT discovery over a representative
+        business cycle in App Analytics and the Cloud Apps Dashboard; classify the estate into
+        sanctioned / tolerated / unsanctioned with the risk scores as evidence; write CASB rules
+        in <strong>monitor mode</strong>; review the hits with the business owners; then enforce,
+        strictest-risk apps first.
+      </p>
+      <div class="callout">
+        <div class="co-title">Position it as the upgrade it is</div>
+        <p>&ldquo;Day one on Cato you will see every SaaS app in use, scored for risk — visibility
+        the firewall estate has never had. We turn that into control at your pace: monitor first,
+        then enforce.&rdquo; That is a selling point, not a migration risk.</p>
+      </div>
+    </section>
+
+    <section id="dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — DLP policy · greenfield</div>
+      <h2>DLP: build from the data, not from a rulebase</h2>
+      <p>
+        <strong>Again, nothing to export.</strong> Sophos Firewall carries no network DLP
+        rulebase: the nearest constructs are file-type blocks inside web policies — upload
+        hygiene, not data protection — and any email data-control rules live in the email stack,
+        which this migration does not touch. Like CASB, this is a greenfield build, and the input
+        is not a config file but a conversation: a short data-protection workshop with the
+        compliance or security owner on what data matters (cardholder data, PII, credentials,
+        source code), where it lives, and who legitimately moves it.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>In the Sophos estate</th><th>Cato construct</th><th>What changes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>File-type blocks in web policies</td>
+              <td>DLP file-type controls inside content-aware rules</td>
+              <td>File type becomes one condition among many, not the whole policy</td>
+            </tr>
+            <tr>
+              <td>Nothing — no content awareness on the wire</td>
+              <td>DLP profiles with predefined data types (PCI, PII, credentials, source code)</td>
+              <td>Start from the predefined types — do not hand-build patterns on day one</td>
+            </tr>
+            <tr>
+              <td>Nothing — no SaaS-aware data policy</td>
+              <td>DLP rules scoped by app, category, user and direction</td>
+              <td>&ldquo;Finance may upload PCI to the sanctioned tenant; nobody uploads it anywhere else&rdquo;</td>
+            </tr>
+            <tr>
+              <td>Nothing — no evidence trail</td>
+              <td>Data Protection Dashboard + DLP events</td>
+              <td>Every match attributed to user, app and data type — the audit trail the estate never had</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Build sequence (best practice).</strong> TLS inspection staged first — DLP cannot
+        inspect what it cannot see. Enable the predefined data types that match the workshop
+        outcomes in <strong>monitor mode</strong>; review matches on the Data Protection
+        Dashboard and tune false positives with the data owners; enforce on the
+        highest-confidence rules first (cardholder data before &ldquo;possible PII&rdquo;), and
+        widen coverage iteratively. Day-one blocking is how DLP projects die — monitor-mode
+        evidence is how they succeed.
+      </p>
+    </section>
+
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: an SFOS rulebase translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative only</div>
+        <p>The tables below are composed to show the translation pattern — they are not console
+        exports, and a real rulebase runs to hundreds of rows — though the screenshot after the
+        CMA table is the real console from a live demo tenant. Every surviving row still travels
+        the full pipeline: rationalise on usage, map, deploy monitor-first, then enforce on
+        evidence.</p>
+      </div>
+
+      <h3>Before — SFOS firewall rule table (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Zones</th><th>Source</th><th>Service</th><th>Action</th><th>Attached policies</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Corp-Web-Access</td>
+              <td>LAN → WAN</td>
+              <td>Corp-Networks</td>
+              <td>Any</td>
+              <td>Accept</td>
+              <td>Corp-Web policy · Block-High-Risk-Apps · IPS LAN-to-WAN · AV scanning</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Guest-WiFi-Web-Only</td>
+              <td>Wi-Fi → WAN</td>
+              <td>Guest-Network</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>Accept</td>
+              <td>Guest-Strict web policy <em>(no IPS)</em></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Legacy-Partner-SFTP</td>
+              <td>LAN → WAN</td>
+              <td>Old-App-Server</td>
+              <td>SFTP</td>
+              <td>Accept</td>
+              <td>— <em>(zero traffic in 90 days — flagged for discard)</em></td>
+            </tr>
+            <tr>
+              <td>0</td>
+              <td>Default drop</td>
+              <td>any → any</td>
+              <td>Any</td>
+              <td>Any</td>
+              <td>Drop</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Alongside the rule table sits the NAT table: a masquerade rule NATing all egress to the
+        WAN interface, and a DNAT server-access rule publishing an internal web server. Neither
+        is &ldquo;translated&rdquo; in place — the masquerade dissolves into PoP egress NAT,
+        which is a platform property, and the published service moves to remote port forwarding
+        on an allocated IP in its own change window, after checking anyone still uses it.
+      </p>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Guest Wi-Fi — allow web</td>
+              <td>Guest-Network</td>
+              <td>Any</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Guest Wi-Fi — block everything else</td>
+              <td>Guest-Network</td>
+              <td>Any</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Corp — block restricted categories</td>
+              <td>Corp-Networks</td>
+              <td>Categories mapped by intent from Corp-Web policy</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The same surface live in a demo tenant — and note the column that is not
+        there: no attached-policy column, because IPS and anti-malware run as account-level
+        layers. The hit-count bars (132.2K on one QUIC block, zeroes on stale rows) are the
+        evidence the rationalise stage runs on.</figcaption>
+      </figure>
+
+      <p style="margin-top:14px">
+        Several Before rows have no After row — deliberately. The IPS and AV attachments on rule
+        1 are no longer per-rule properties: they become the account-level IPS and Next-Gen
+        Anti-Malware layers of the single-pass engine, applied to everything it sees — including
+        the guest network that SFOS left uninspected. There is no &ldquo;Corp-Web-Access&rdquo;
+        allow rule either — the Internet Firewall's default-allow posture does that job, so what
+        survives of rule 1 is its web-policy intent, as rule 3, with the Block-High-Risk-Apps
+        filter re-expressed as app-aware rules. Rule 3 exits the pipeline at REVIEW &amp; MAP on
+        its usage evidence, and rule 0 — the default drop — is a posture decision, not a rule:
+        the WAN Firewall is implicit-block already, and if the customer wants allowlist egress it
+        becomes an explicit final block rule.
+      </p>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px">
+        <li><strong>Attached policies became layers.</strong> The web + app filter + IPS + AV
+        stack attached to rule 1 decomposed into an Internet Firewall category rule plus
+        account-level IPS and NGAM — separate global policy layers of the single-pass engine,
+        with the old per-rule carve-outs re-expressed as explicit, auditable exceptions.</li>
+        <li><strong>Zones became scopes.</strong> LAN → WAN has no equivalent construct — the
+        intent (which segment reaches the internet, under what constraints) is recovered as
+        source scopes in one global rulebase, as the guest rules show.</li>
+        <li><strong>The NAT table dissolved.</strong> Masquerade rules are a platform property at
+        the PoP; only the published services survive, re-homed to remote port forwarding on
+        their own change windows.</li>
+        <li><strong>Usage evidence decided what never made the journey.</strong> The zero-traffic
+        legacy rule was discarded at review rather than translated — the discard pile, and the
+        posture decision that replaces the default drop, are outputs of the migration as much as
+        the rules that survive.</li>
+      </ul>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Cato's WAN Firewall is an allowlist (implicit block); the Internet Firewall is a blocklist (implicit allow). SFOS drops by default everywhere — so egress posture is a decision, not a translation. If the customer wants allowlist egress, add an explicit final block rule; don't discover the difference in production.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection early</h4><p>Without decryption, SWG acts on domain/SNI only and CASB activity control and DLP content inspection cannot see payloads. Phased TLS inspection — by category and pilot group, certificates deployed in advance — is the fidelity prerequisite for three of the four domains, and no longer an appliance-sizing question.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every translated rule, IPS/NGAM protection, CASB control and DLP rule starts in monitor. Enforcement is earned with event evidence, per rule — the pipeline's amber-to-green transition, never a big-bang flip.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Sequence identity first</h4><p>Group-scoped rules are only as good as the groups. Provision Entra ID SSO and SCIM sync before policy deployment, and map the AD users and groups referenced in SFOS rules to the synced directory groups — name drift here breaks rules silently.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Objects before rules</h4><p>Translate and dedupe the host/service object model first — scriptable from the XML export via the GraphQL API or Terraform provider — then build rules on the clean object base. Per-box object copies recreate the sprawl you just removed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events &amp; hit counts</h4><p>The evidence loop closes in Monitor → Events: compare each translated rule's hits against its SFOS ancestor's traffic counters, investigate the deltas, and treat zero-hit rules after a full business cycle as candidates to delete — on the new platform as ruthlessly as on the old.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE</h2>
+      <p>
+        The same pipeline runs for each domain, offset in time — firewall first, SWG behind it,
+        CASB and DLP once TLS inspection and discovery data are in place. The two rulebase
+        domains enter with an XML export; the two greenfield domains enter with discovery inputs
+        — usage data and the data-protection workshop — and skip translation, not the
+        monitor-first discipline. Dead rules leave the pipeline at review and are never
+        translated; everything that survives deploys in monitor and is promoted to enforcement
+        on evidence.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 496" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Sophos SFOS to Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four Sophos policy domains — firewall rules with NAT, web and application control policies, and greenfield CASB and DLP inputs — feed an export stage, then a review and clean stage where dead rules are discarded, marked with a red X. Surviving intent is mapped to Cato Management Application constructs, deployed in monitor mode (amber) and finally enforced (green). Telemetry from deploy and enforce flows to an events and hit-counts node that validates every stage.</desc>
+
+          <!-- SFOS source domains -->
+          <text class="dg-tiny" x="115" y="24" text-anchor="middle">SFOS policy domains</text>
+          <rect class="dg-node" x="30" y="36" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="57" text-anchor="middle">FW rules + NAT</text>
+          <text class="dg-sub" x="115" y="74" text-anchor="middle">per-box rule tables</text>
+
+          <rect class="dg-node" x="30" y="100" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="121" text-anchor="middle">Web &amp; app control</text>
+          <text class="dg-sub" x="115" y="138" text-anchor="middle">web policy · TLS rules</text>
+
+          <rect class="dg-node" x="30" y="164" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="185" text-anchor="middle">CASB — greenfield</text>
+          <text class="dg-sub" x="115" y="202" text-anchor="middle">usage data seeds it</text>
+
+          <rect class="dg-node" x="30" y="228" width="170" height="50" rx="10"/>
+          <text class="dg-label" x="115" y="249" text-anchor="middle">DLP — greenfield</text>
+          <text class="dg-sub" x="115" y="266" text-anchor="middle">workshop-led build</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 200 61 C 250 61, 255 148, 300 150"/>
+          <path class="lane-static" fill="none" d="M 200 125 C 245 125, 255 156, 300 158"/>
+          <path class="lane-static" fill="none" d="M 200 189 C 245 189, 255 172, 300 170"/>
+          <path class="lane-static" fill="none" d="M 200 253 C 250 253, 255 182, 300 178"/>
+
+          <!-- EXPORT -->
+          <rect class="dg-node-dark" x="300" y="132" width="160" height="64" rx="10"/>
+          <text class="dg-label-inv" x="380" y="158" text-anchor="middle">EXPORT</text>
+          <text class="dg-sub-inv" x="380" y="176" text-anchor="middle">XML export · API</text>
+
+          <path class="lane-static" fill="none" d="M 460 164 L 560 164"/>
+
+          <!-- REVIEW & CLEAN -->
+          <rect class="dg-node" x="560" y="132" width="200" height="64" rx="10"/>
+          <text class="dg-label" x="660" y="158" text-anchor="middle">REVIEW &amp; CLEAN</text>
+          <text class="dg-sub" x="660" y="176" text-anchor="middle">rationalise on usage</text>
+
+          <!-- Discarded dead rules -->
+          <path class="lane lane-block" fill="none" d="M 690 198 C 730 218, 758 232, 782 246"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 790 245 L 814 269"/><path class="lane-x" d="M 814 245 L 790 269"/>
+          </g>
+          <text class="dg-tiny" x="802" y="292" text-anchor="middle">dead rules · any-any debt</text>
+
+          <!-- Survivors flow to MAP -->
+          <path class="lane-static" fill="none" d="M 610 198 C 540 265, 330 240, 215 294"/>
+
+          <!-- MAP -->
+          <rect class="dg-node" x="90" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="185" y="322" text-anchor="middle">MAP TO CMA</text>
+          <text class="dg-sub" x="185" y="340" text-anchor="middle">FW · SWG · CASB · DLP</text>
+          <text class="dg-tiny" x="185" y="378" text-anchor="middle">hosts · services · categories</text>
+
+          <path class="lane lane-limit" fill="none" d="M 280 328 L 400 328"/>
+
+          <!-- DEPLOY (monitor) -->
+          <rect class="dg-node" x="400" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="495" y="322" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="dg-sub" x="495" y="340" text-anchor="middle">log-only · no user impact</text>
+
+          <path class="lane lane-allow" fill="none" d="M 590 328 L 690 328"/>
+
+          <!-- ENFORCE -->
+          <rect class="dg-node-green" x="690" y="296" width="190" height="64" rx="10"/>
+          <text class="dg-label" x="785" y="322" text-anchor="middle">ENFORCE</text>
+          <text class="dg-sub" x="785" y="340" text-anchor="middle">flip to block per rule</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 490 362 C 488 386, 490 400, 498 414"/>
+          <path class="lane-static" fill="none" d="M 780 362 C 762 398, 690 410, 622 426"/>
+
+          <rect class="dg-node-dark" x="400" y="416" width="220" height="56" rx="10"/>
+          <text class="dg-label-inv" x="510" y="440" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="dg-sub-inv" x="510" y="458" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-tiny" x="510" y="490" text-anchor="middle">telemetry validates every stage</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Monitor first — log, don't block</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — dead rules never migrate</span>
+        </div>
+        <div class="diagram-caption">
+          The four Sophos policy domains are exported once — the greenfield pair carrying
+          discovery inputs rather than rulebases — rationalised against usage evidence, where
+          dead rules and any-any debt exit the pipeline, and only the surviving intent is mapped
+          to CMA constructs. Every mapped rule deploys in monitor (amber) and is promoted to
+          enforcement (green) when events and hit counts prove it behaves as intended.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This runs best as a working session, not a show-and-tell: ask the customer to bring an
+        SFOS XML configuration export and translate a few real rules live. Nothing sells the
+        model like watching their own policy land in it — and the CASB/DLP answer to &ldquo;what
+        do you run today&rdquo; is almost always &ldquo;nothing&rdquo;, which sets up the upgrade
+        story before you open the console.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline</h4>
+          <p>Walk the EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE diagram. Agree scope: which
+          appliances, which of the four domains are actually in use, who owns the decision to
+          retire a dead rule — and inventory any Security Heartbeat-conditioned rules now.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>One global rulebase, no zones, no per-box tables. Point out the opposite defaults —
+          WAN allowlist, Internet blocklist — and translate one of their egress rules live,
+          discussing which posture they want.</p>
+        </li>
+        <li>
+          <h4>Walk the object model and automation path</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show hosts, groups and custom services, then the API keys page — the SFOS XML export
+          is structured data, so object translation is scriptable end-to-end via the GraphQL API
+          or the Terraform provider rather than re-keyed by hand.</p>
+        </li>
+        <li>
+          <h4>Translate a web policy</h4>
+          <p>Open an Internet Firewall rule and walk the category picker against one of their web
+          policies: map two or three categories by intent, show the Prompt action for their Warn
+          pages, and a custom category absorbing their URL groups. Show an app-aware rule doing
+          what their application filter did.</p>
+        </li>
+        <li>
+          <h4>Show CASB and DLP as the destination state</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Show shadow-IT discovery running with zero configuration, a tenant-control rule, and
+          a DLP rule combining a predefined data type with a file-type condition — the greenfield
+          domains their firewall never had.</p>
+        </li>
+        <li>
+          <h4>Show the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged TLS inspection policy — by category and pilot group — and be
+          explicit that SWG parity, CASB activity control and DLP content inspection all hang off
+          this switch, with no appliance throughput maths deciding the scope.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a single monitor-mode rule and show the hit evidence that would
+          justify flipping it to block — the OPTIMISE phase they will live in for the first
+          months, and the audit trail for every promotion decision.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/22410218141213-What-is-Cato-DNS" target="_blank" rel="noopener">What is Cato DNS (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">DLP — platform page</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://community.sophos.com/sophos-xg-firewall/b/blog/posts/xg-series-hardware-end-of-life-eol-frequently-asked-questions" target="_blank" rel="noopener">Sophos: XG hardware EOL FAQ (backup &amp; migration)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-sophos.html">Sophos (XGS Firewall &amp; Central) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

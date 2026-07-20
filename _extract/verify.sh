@@ -2,15 +2,16 @@
 # verify.sh — one-command health check for the Cato Use Case Library.
 # Usage: bash _extract/verify.sh          (from the library root)
 # Runs: link check, catalog consistency, identifying-reference sweep,
-#       CDN-load check, SVG text measurement, console-error render, mobile fit.
+#       CDN-load check, SVG text measurement, console-error render, mobile fit,
+#       search-index freshness.
 set -u
 cd "$(dirname "$0")/.." || exit 1
 FAIL=0
 
-echo "== 1/6 link check"
+echo "== 1/7 link check"
 python3 _extract/checklinks.py index.html usecases/*.html || FAIL=1
 
-echo "== 2/6 catalog consistency + hygiene"
+echo "== 2/7 catalog consistency + hygiene"
 python3 - <<'EOF' || FAIL=1
 import re, subprocess, sys
 from pathlib import Path
@@ -34,20 +35,20 @@ if errs:
 print("OK")
 EOF
 
-echo "== 3/6 external resource loads (CDN)"
+echo "== 3/7 external resource loads (CDN)"
 if grep -rn -E 'src="http|link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
   echo "OK — file:// safe"
 fi
 
-echo "== 4/6 SVG text measurement (must be silent — any output is a regression)"
+echo "== 4/7 SVG text measurement (must be silent — any output is a regression)"
 python3 _extract/measure_svg.py || FAIL=1
 
-echo "== 5/6 render + console errors (index)"
+echo "== 5/7 render + console errors (index)"
 python3 _extract/shoot.py index.html /tmp/verify-index.png | tail -1 | grep -q "no console errors" && echo "OK" || { echo "FAIL: console errors"; FAIL=1; }
 
-echo "== 6/6 mobile fit (390px, all pages)"
+echo "== 6/7 mobile fit (390px, all pages)"
 python3 - <<'EOF' || FAIL=1
 from playwright.sync_api import sync_playwright
 import pathlib, sys
@@ -68,8 +69,11 @@ if bad:
 print("OK — all pages fit")
 EOF
 
+echo "== 7/7 search index freshness (full-text search)"
+python3 _extract/build-search.py --check || FAIL=1
+
 if [ "${1:-}" = "--external" ]; then
-  echo "== 7/7 external links (optional, network-dependent)"
+  echo "== 8/8 external links (optional, network-dependent)"
   python3 _extract/checkexternal.py || FAIL=1
 fi
 

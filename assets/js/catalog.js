@@ -44,6 +44,16 @@ window.UC_CATALOG = [
     status: "new",
     deck: null
   },
+  {
+    id: "access-remote-worker",
+    file: "usecases/access-remote-worker.html",
+    category: "Access",
+    title: "Remote Worker Experience: Per-User, Per-App Assurance",
+    summary: "Prove and improve every remote worker's day — always-on Cato Client, nearest-PoP egress, and per-user, per-app Experience Monitoring that turns \"the VPN is slow\" into an evidence-backed fix.",
+    tags: ["Experience Monitoring", "DEM", "Cato Client", "Remote Access", "Last Mile"],
+    status: "new",
+    deck: null
+  },
 
   {
     id: "access-identity-design",
@@ -352,6 +362,17 @@ window.UC_CATALOG = [
     deck: null
   },
   {
+    id: "security-healthcare-nhs",
+    vertical: "Healthcare",
+    file: "usecases/security-healthcare-nhs.html",
+    category: "Security",
+    title: "UK Healthcare: NHS DSPT & CAF-Aligned SASE",
+    summary: "Meet the CAF-aligned Data Security and Protection Toolkit with one platform — segmented clinical networks, protected patient data, and audit-ready evidence for trusts, providers and their suppliers.",
+    tags: ["Healthcare", "NHS DSPT", "CAF", "Compliance", "Segmentation"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "security-legal-confidentiality",
     vertical: "Legal",
     file: "usecases/security-legal-confidentiality.html",
@@ -465,6 +486,26 @@ window.UC_CATALOG = [
     title: "Zscaler to Cato: Animated Phased Journey",
     summary: "Follow a Zscaler migration across its phases — interim ZIA co-existence, cohort client swaps, policy cutover, then ZIA and ZCC retired. The dual-agent transition, animated step by step.",
     tags: ["Zscaler", "Phased Migration", "SSE", "Animated", "Journey"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-journey-vpn",
+    file: "usecases/migration-journey-vpn.html",
+    category: "Migration",
+    title: "VPN to ZTNA: Animated Phased Journey",
+    summary: "Watch a VPN retirement unfold — concentrators giving way to cohort-based Cato Client rollout, app-by-app least-privilege policy, and the headends switched off. The remote-access transition, animated.",
+    tags: ["VPN Replacement", "ZTNA", "Phased Migration", "Animated", "Journey"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-journey-firewall",
+    file: "usecases/migration-journey-firewall.html",
+    category: "Migration",
+    title: "Firewall Refresh to FWaaS: Animated Phased Journey",
+    summary: "See an appliance refresh become an exit — branch firewalls absorbed into FWaaS site by site, policy converging in the CMA, and the renewal cancelled. The last hardware refresh, animated.",
+    tags: ["FWaaS", "Firewall Refresh", "Phased Migration", "Animated", "Journey"],
     status: "new",
     deck: null
   },
@@ -609,6 +650,16 @@ window.UC_CATALOG = [
     status: "new",
     deck: null
   },
+  {
+    id: "migration-sophos",
+    file: "usecases/migration-sophos.html",
+    category: "Migration",
+    title: "Sophos (XGS Firewall & Central) to Cato",
+    summary: "Retire the XG/XGS estate and SD-RED overlay — Sophos Firewall policy, Central-managed SD-WAN and remote access mapped to the Cato platform, sized for UK mid-market estates.",
+    tags: ["Sophos", "XGS", "SD-RED", "Central", "UK Mid-Market"],
+    status: "new",
+    deck: null
+  },
 
   {
     id: "migration-zscaler-policy",
@@ -728,6 +779,16 @@ window.UC_CATALOG = [
     title: "Symantec Policy Migration",
     summary: "Translate Symantec policy to Cato — ProxySG CPL and WSS web policy, CloudSOC CASB and DLP rules mapped to the CMA model without lifting twenty years of proxy logic.",
     tags: ["Policy Migration", "CPL", "SWG", "CASB", "DLP"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-sophos-policy",
+    file: "usecases/migration-sophos-policy.html",
+    category: "Migration",
+    title: "Sophos Policy Migration",
+    summary: "Translate Sophos Firewall policy to Cato — firewall and NAT rules, web policy, application control and SSL/TLS inspection re-expressed in the CMA model, with greenfield CASB and DLP.",
+    tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
     deck: null
   }

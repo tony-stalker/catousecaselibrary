@@ -33,7 +33,7 @@
       if (state.cat !== "All" && uc.category !== state.cat) return false;
       if (state.vert !== "All" && uc.vertical !== state.vert) return false;
       if (!state.q) return true;
-      var hay = (uc.title + " " + uc.summary + " " + uc.tags.join(" ") + " " + uc.category + " " + (uc.vertical || "")).toLowerCase();
+      var hay = (uc.title + " " + uc.summary + " " + uc.tags.join(" ") + " " + uc.category + " " + (uc.vertical || "") + " " + ((window.UC_SEARCH && window.UC_SEARCH[uc.id]) || "")).toLowerCase();
       return state.q.toLowerCase().split(/\s+/).every(function (t) { return hay.indexOf(t) !== -1; });
     }
 
@@ -217,6 +217,32 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- dark-mode toggle (head snippet applies the saved theme pre-paint) ---------- */
+  function initTheme() {
+    var inner = $(".topnav-inner");
+    if (!inner) return;
+    var root = document.documentElement;
+    function isDark() { return root.getAttribute("data-theme") === "dark"; }
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme-toggle";
+    function paint() {
+      btn.textContent = isDark() ? "☀︎" : "☾";
+      btn.setAttribute("aria-label", isDark() ? "Switch to light mode" : "Switch to dark mode");
+      btn.title = btn.getAttribute("aria-label");
+    }
+    btn.addEventListener("click", function () {
+      var next = isDark() ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("uc-theme", next); } catch (e) {}
+      paint();
+    });
+    paint();
+    var spacer = $(".spacer", inner);
+    if (spacer) inner.insertBefore(btn, spacer.nextSibling);
+    else inner.appendChild(btn);
+  }
+
   /* ---------- phased migration player ---------- */
   function initPhasePlayers() {
     var players = $$(".phase-player");
@@ -291,6 +317,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    initTheme();
     initIndex();
     initPage();
     initLightbox();

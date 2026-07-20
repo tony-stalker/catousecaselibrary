@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sophos (XGS Firewall &amp; Central) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire the XG/XGS estate and SD-RED overlay — Sophos Firewall policy, Central-managed SD-WAN and remote access mapped to the Cato platform, sized for UK mid-market estates.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-sophos">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Sophos to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Sophos (XGS Firewall &amp; Central) to Cato</h1>
+    <p class="lede">
+      The typical UK mid-market Sophos estate is XGS firewalls at HQ, SD-RED devices at the small
+      sites, a Central-orchestrated IPsec overlay between them, and Sophos Connect for remote users —
+      usually bought and run through an MSP, and usually sitting next to an endpoint stack the
+      customer genuinely likes. This playbook maps the <strong>network</strong> half of that estate to
+      the Cato SASE Cloud and lays out a phased, rollback-friendly cutover — while Sophos Central
+      keeps doing what it does best: endpoint, XDR and MDR.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Sophos</span><span class="tag">XGS</span><span class="tag">SD-RED</span>
+      <span class="tag">Central</span><span class="tag">UK Mid-Market</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <p>
+        Sophos accounts do not suffer from console sprawl — Sophos Central really does manage
+        firewalls, endpoint and MDR from one cloud console, and opening with a consolidation pitch
+        will not land. What puts this migration on the table is a <strong>forced-refresh
+        calendar</strong>: every XG-series firewall has been end-of-life and end-of-support since
+        31&nbsp;March 2025 (the box keeps running, but any new vulnerability stays unpatched, and
+        SFOS v21+ never supported XG), licence prices rose ~30% on the way out, XGS hardware and
+        subscriptions go up a further 10% globally from 1&nbsp;July 2026, and the remote-access
+        products the customer bought are being retired or repackaged — the standalone SSL VPN client
+        is long EOL, and standalone ZTNA disappears into the Sophos Workspace Protection bundle
+        between February and May 2026, with Sophos itself telling MSPs "a price increase will apply
+        in most cases".
+      </p>
+      <p>
+        The refresh money is being spent either way. The honest question for the customer is whether
+        it buys another appliance cycle — sizing, HA pairs, firmware and hotfixes, WAN-facing portals
+        — or removes the appliance cycle entirely. The objective: <strong>replace the network stack
+        (XGS, SD-RED, the Central Orchestration VPN overlay, Sophos Connect and ZTNA) with Cato,
+        keep the Sophos endpoint stack, and give every cutover step a rollback.</strong>
+      </p>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The forcing functions</div>
+      <h2>The calendar, the CVE record — and how to use both fairly</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">2025</div><div class="stat-label">31 March: all XG-series hardware end-of-life and end-of-support — no further fixes</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">30<span class="unit">%</span></div><div class="stat-label">XG-series licence price rise from 1 Oct 2024, on hardware already heading for EOL</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">10<span class="unit">%</span></div><div class="stat-label">Global price rise on XGS hardware and related subscriptions from 1 Jul 2026</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">6</div><div class="stat-label">Exploited-in-the-wild Sophos firewall CVEs in the CISA Known Exploited Vulnerabilities catalogue</div></div>
+      </div>
+
+      <p>
+        Map the customer's renewal dates against this calendar in discovery — the July 2026 hardware
+        rise and the Workspace Protection repricing are natural decision forcing-points:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Sophos milestone</th><th>Date</th><th>Consequence</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>XG-series licence prices raised ~30%</td><td>1 Oct 2024</td><td>Renewal shock on ageing hardware</td></tr>
+            <tr><td>Last order date for XG hardware renewal SKUs</td><td>31 Jan 2025</td><td>No more paid extensions</td></tr>
+            <tr><td><strong>All XG-series hardware end-of-life / end-of-support</strong></td><td><strong>31 Mar 2025</strong></td><td>Runs on, unpatched; staying current means buying XGS</td></tr>
+            <tr><td>SG/UTM renewal SKUs raised 20%</td><td>1 Jun 2025</td><td>Same squeeze on the older SG estate</td></tr>
+            <tr><td>ZTNA gateways on old ESXi/Hyper-V or EOL SFOS unsupported</td><td>1 Oct 2025</td><td>Forced gateway upgrades</td></tr>
+            <tr><td>SFOS v22 released — requires XGS or virtual; no XG/SG support</td><td>Dec 2025</td><td>Software carrot tied to hardware refresh</td></tr>
+            <tr><td>Sophos Workspace Protection GA; ZTNA auto-upgraded into it</td><td>late Feb 2026</td><td>New bundle, new pricing at renewal</td></tr>
+            <tr><td>MSP ZTNA billing moves to Workspace Protection — "a price increase will apply in most cases"</td><td>late Apr 2026</td><td>MSP-billed ZTNA gets dearer</td></tr>
+            <tr><td>Standalone ZTNA term SKUs no longer orderable</td><td>1 May 2026</td><td>The product as bought ceases to exist</td></tr>
+            <tr><td>10% global price rise on XGS hardware and subscriptions</td><td>1 Jul 2026</td><td>The refresh quote just went up again</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Pacific Rim — five years of targeted attacks <span class="tag">Oct 2024</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Sophos' own Pacific Rim report documents a five-year campaign by interlinked China-based actors (TTP overlaps with Volt Typhoon, APT31 and APT41) specifically targeting Sophos firewalls — zero-days used to plant webshells and rootkits on WAN-facing portals. Exploited-in-the-wild Sophos firewall CVEs in the CISA KEV catalogue include CVE-2020-12271 ("Asnarök" pre-auth SQLi → RCE), CVE-2020-15069, CVE-2020-25223 (SG UTM), CVE-2020-29574 (legacy CyberoamOS), CVE-2022-1040 and CVE-2022-3236 — all reachable via the User Portal, web admin or clientless-access surfaces. A December 2024 trio (two rated CVSS 9.8) was hotfixed before broad exploitation.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Use it architecturally, not as vendor-shaming</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Frame this fairly: Sophos handled Pacific Rim with unusual transparency, ships hotfixes automatically by default, and fixed the 2024 trio fast. The argument is that <em>every</em> WAN-facing appliance portal — any vendor; the same KEV table exists for Fortinet, Palo Alto, Cisco and Ivanti — is attack surface the customer must patch on the customer's timeline. Even SFOS v22's headline features (hardened kernel, an embedded XDR sensor watching the firewall itself) are about defending the appliance — evidence the appliance remains the attack surface. A cloud-delivered PoP removes that class of exposure from the estate, including the firewall-hosted ZTNA gateway and VPN portal.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Which of your firewalls are still XG — and who is patching them now support has ended?
+        What does your XGS refresh quote look like after July 2026? And what happens to your ZTNA
+        seat price when it becomes Workspace Protection at renewal?”</p>
+      </div>
+    </section>
+
+    <section id="play" class="reveal">
+      <div class="section-kicker">The shape of the play</div>
+      <h2>Keep the Sophos endpoint stack — replace the network stack</h2>
+      <p>
+        Say this explicitly in the room; it builds credibility and narrows the deal to winnable
+        scope. Sophos is a Leader in the Gartner Magic Quadrant for Endpoint Protection Platforms
+        for the 17th consecutive report (2026), a 2025 Gartner Peer Insights Customers' Choice for
+        both EPP and XDR, and reported 26,000+ MDR customers as of January 2025 (37% growth in
+        2024). The endpoint stack is usually the reason the account is a Sophos shop at all — and
+        <strong>none of it requires a Sophos Firewall</strong>. Moving the network to Cato costs the
+        customer nothing on the endpoint side.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Stays in Sophos Central</th><th>Moves to Cato</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sophos Endpoint / Intercept X</td><td>XGS/XG firewalls and their subscriptions</td></tr>
+            <tr><td>Sophos XDR (endpoint)</td><td>SD-RED site devices</td></tr>
+            <tr><td>Sophos MDR service</td><td>Central Orchestration SD-WAN VPN overlay</td></tr>
+            <tr><td>The MSP's endpoint management relationship</td><td>Sophos Connect remote access and the firewall VPN portal</td></tr>
+            <tr><td></td><td>Sophos ZTNA / Workspace Protection (network access)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Accuracy note — do not claim "Cato has no endpoint"</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato sells Cato EPP — a SASE-managed endpoint protection platform powered by Bitdefender's prevention engine, managed from CMA and feeding the same data lake as Cato XDR (launched January 2024). The honest positioning: Cato EPP exists as a consolidation option later, but Sophos' endpoint stack is a Gartner MQ Leader the customer already owns and staffs — replacing it is a separate conversation, not a prerequisite. Cato does not sell a human-led endpoint MDR equivalent to Sophos MDR; keep that boundary clean.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Be upfront about the two real losses</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Synchronized Security / Security Heartbeat (firewall↔endpoint health signalling and auto-isolation) and the v21.5 NDR Essentials feed both disappear with the XGS. The replacements: Cato Device Posture checks (anti-malware/EDR presence, including third-party agents) gating access continuously via Client Connectivity Policy; and Cato XDR, whose native network sensor is the PoP itself — no appliance taps, and it covers remote users too. Surface both in discovery, not after the objection lands.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">The MSP is often the real buyer</div>
+        <p>Sophos is explicitly channel-first — it defends 250,000+ customers through MSPs, with
+        monthly consumption billing via MSP Connect Flex and the MSP Elevate programme (launched
+        May 2025). A rip-and-replace pitched to the end customer that strands the MSP's margin will
+        be resisted. Bring the MSP into the deal: Cato's partner-delivered model, or split the
+        account — the MSP keeps endpoint/MDR management in Sophos Central and adds Cato as the
+        network platform. Where firewall and endpoint renew together, separate the renewals so the
+        endpoint stack can stay without dragging the firewall renewal along.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        The network estate collapses into one cloud platform and one global rulebase — Sophos
+        Central stays, but the network objects leave it. The table is the translation sheet.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Sophos component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>XGS/XG firewall (SFOS) — firewall rules, IPS, ATP</td>
+              <td>Cato FWaaS (Internet + WAN Firewall), IPS and Anti-Malware at the PoP</td>
+              <td>Removes appliance sizing, HA pairs, the firmware/hotfix cycle and WAN-facing portals</td>
+            </tr>
+            <tr>
+              <td>Web Protection subscription (web filtering, on-box TLS inspection)</td>
+              <td>Cato SWG categories + cloud TLS inspection</td>
+              <td>Cloud TLS inspection scales without appliance headroom maths (see gotchas)</td>
+            </tr>
+            <tr>
+              <td>Zero-Day Protection (sandboxing / ML file analysis)</td>
+              <td>Cato Anti-Malware and threat prevention in the same single pass</td>
+              <td>Engine-for-engine coverage at the PoP, applied once to decrypted traffic</td>
+            </tr>
+            <tr>
+              <td>Xstream SD-WAN + Central Orchestration VPN mesh</td>
+              <td>Cato Socket (X1500/X1600/X1700) + global private backbone</td>
+              <td>The Sophos overlay is firewall-to-firewall IPsec over the public internet — no private middle-mile; Cato adds the backbone and any-to-any PoP routing</td>
+            </tr>
+            <tr>
+              <td>SD-RED 20/60 edge devices</td>
+              <td>Cato Socket — zero-touch, self-provisioning</td>
+              <td>SD-RED has no local inspection: traffic hairpins to the hub firewall. A Socket site gets full inspection at the nearest PoP, no hairpin</td>
+            </tr>
+            <tr>
+              <td>Sophos Connect (IPsec/SSL VPN) + firewall VPN portal</td>
+              <td>Cato Client (SDP/ZTNA) + clientless browser access</td>
+              <td>No VPN termination on an appliance — users hit the nearest PoP with the same inspection as sites</td>
+            </tr>
+            <tr>
+              <td>Sophos ZTNA / Workspace Protection (agent + firewall-hosted or VM gateway)</td>
+              <td>Cato ZTNA — Client + Client Connectivity Policy + Device Posture</td>
+              <td>Delivered from the PoP, not from a gateway hosted on the customer's edge firewall</td>
+            </tr>
+            <tr>
+              <td>Sophos DNS Protection</td>
+              <td>Cato DNS Security (DNS Protections in IPS)</td>
+              <td>Inline at the PoP for all site and user traffic</td>
+            </tr>
+            <tr>
+              <td>Sophos Central — network portion (firewall management, reporting, SD-WAN groups)</td>
+              <td>Cato Management Application (CMA)</td>
+              <td>Central <strong>stays</strong> for endpoint/XDR/MDR — only the network objects migrate</td>
+            </tr>
+            <tr>
+              <td>NDR Essentials (v21.5, Xstream bundle)</td>
+              <td>Cato XDR network stories — the native sensor is the PoP</td>
+              <td>No appliance needed for network detection; remote users covered too</td>
+            </tr>
+            <tr>
+              <td>Synchronized Security / Security Heartbeat</td>
+              <td>Nearest equivalent: Device Posture (EPP/AV checks incl. third-party) gating access via Client Connectivity Policy</td>
+              <td>No direct equivalent — be upfront; agree the replacement runbook in discovery</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Recommended migration path</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the design — especially the hub
+        interconnect, route filtering and rollback details, and anything contract-dependent — with
+        Cato Professional Services before committing it to a customer plan.</p>
+      </div>
+
+      <p>
+        The arc follows the Cato PS methodology — Export → Review &amp; Map → Deploy → Optimise,
+        run as discovery → co-existence → pilot → phased cutover → decommission. Mid-market Sophos
+        estates are usually small enough (5–50 sites) for <strong>parallel connectivity at each
+        site</strong>: a Socket alongside the XGS with an L3 handoff, moving subnets progressively.
+        For hub-and-spoke estates, an interconnect at the hub XGS (IPsec or eBGP handoff) carries
+        un-migrated SD-RED and branch traffic to Cato-side resources during the transition — the
+        same hub-interconnect pattern PS uses for FortiGate estates. The Sophos overlay stays
+        authoritative for un-migrated sites, with default routes filtered at the interconnect.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 500" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Co-existence between a Sophos XGS/SD-RED estate and Cato during phased migration</title>
+          <desc id="dg1-desc">A Cato PoP on the global private backbone serves a migrated branch whose SD-RED has been replaced by a Cato Socket, and a remote user who has moved from Sophos Connect to the Cato Client. At the HQ site a parallel Cato Socket sits alongside the XGS hub firewall with an IPsec or eBGP interconnect carrying un-migrated traffic. A legacy branch still tunnels its SD-RED to the XGS hub. A dashed rollback arrow shows a migrated branch can revert by re-plugging its SD-RED, which re-establishes its tunnel to the hub.</desc>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="300" cy="145" rx="155" ry="50"/>
+          <circle cx="160" cy="166" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="440" cy="124" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="300" y="214" text-anchor="middle">Global private backbone</text>
+
+          <circle class="pulse-ring" cx="300" cy="145" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="145" r="30"/>
+          <text class="dg-label" x="300" y="84" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="300" y="99" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">One global rulebase · full inspection</text>
+
+          <!-- HQ site container -->
+          <rect x="425" y="270" width="470" height="112" rx="12" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text class="dg-tiny" x="660" y="260" text-anchor="middle">HQ site — parallel deployment</text>
+
+          <!-- Parallel socket at HQ -->
+          <rect class="dg-node-green" x="445" y="296" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="530" y="320" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub" x="530" y="338" text-anchor="middle">parallel at the HQ</text>
+
+          <!-- XGS hub -->
+          <rect class="dg-node-dark" x="705" y="296" width="170" height="58" rx="10"/>
+          <text class="dg-label-inv" x="790" y="320" text-anchor="middle">XGS hub firewall</text>
+          <text class="dg-sub-inv" x="790" y="338" text-anchor="middle">Central Orchestration</text>
+
+          <!-- Interconnect handoff -->
+          <path class="lane-static" d="M 615 325 L 705 325"/>
+          <text class="dg-label" x="660" y="314" text-anchor="middle">IPsec/eBGP</text>
+          <text class="dg-tiny" x="660" y="373" text-anchor="middle">default routes filtered</text>
+
+          <!-- Remote user -->
+          <rect class="dg-node-green" x="60" y="270" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="145" y="294" text-anchor="middle">Priya — remote</text>
+          <text class="dg-sub" x="145" y="312" text-anchor="middle">Cato Client, was Connect</text>
+
+          <!-- Migrated branch -->
+          <rect class="dg-node-green" x="60" y="380" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="145" y="404" text-anchor="middle">Branch A — migrated</text>
+          <text class="dg-sub" x="145" y="422" text-anchor="middle">Socket replaces SD-RED</text>
+
+          <!-- Legacy SD-RED branch -->
+          <rect class="dg-node" x="705" y="414" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="790" y="438" text-anchor="middle">Branch B — legacy</text>
+          <text class="dg-sub" x="790" y="456" text-anchor="middle">SD-RED tunnel to hub</text>
+
+          <!-- Flows -->
+          <path class="lane lane-allow" d="M 145 268 C 165 230, 210 195, 262 168"/>
+          <path class="lane lane-allow" d="M 145 378 C 150 300, 205 225, 270 175"/>
+          <path class="lane lane-allow" d="M 512 294 C 470 245, 395 195, 333 165"/>
+          <path class="lane lane-limit" d="M 790 412 C 790 392, 790 374, 790 356"/>
+          <text class="dg-tiny" x="804" y="392" text-anchor="start">tunnel-everything</text>
+
+          <!-- Rollback -->
+          <path d="M 232 432 C 380 478, 560 478, 698 446" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 6"/>
+          <path d="M 698 446 L 684 444 M 698 446 L 688 456" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+          <text class="dg-tiny" x="455" y="494" text-anchor="middle">Rollback — re-plug the SD-RED · its tunnel re-establishes to the hub</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Cato Socket / Client via nearest PoP</span>
+          <span class="key"><span class="swatch limit"></span> Legacy — SD-RED tunnel to the hub XGS</span>
+        </div>
+        <div class="diagram-caption">
+          Interim co-existence: a parallel Socket at the HQ exchanges routes with the XGS hub over an
+          IPsec or eBGP handoff, carrying un-migrated branch traffic to Cato-side resources. SD-RED
+          sites swap to zero-touch Sockets first; XGS branches follow in waves. Rollback at any point
+          is re-plugging the RED or re-adding the site's SD-WAN connection-group membership.
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 0 — Discovery and design</h4>
+          <p>Inventory the estate: firewall models and SFOS versions (any XG left is already
+          unsupported — lead with it), SD-RED sites and their hub firewalls, Central Orchestration
+          connection groups (mesh vs hub-and-spoke), Sophos Connect user counts and whether IPsec or
+          SSL VPN, ZTNA apps and gateways (firewall-hosted vs VM), Standard vs Xstream bundles and
+          renewal dates per box, and the MSP contract terms including Flex billing. Export the SFOS
+          rule bases (backup files plus the XML API/config export) per appliance into the Review
+          &amp; Map workbook. Map renewal dates against the price-rise calendar above, and identify
+          Synchronized Security dependencies (heartbeat rules, auto-isolation runbooks) so the
+          replacement is agreed before cutover.</p>
+        </li>
+        <li>
+          <h4>Phase 1 — Co-existence foundation</h4>
+          <p>Stand up the Cato account: CMA admin model, IdP SSO and SCIM against Entra ID (the
+          estate is almost always Microsoft), and a base policy from Cato best-practice templates.
+          Deploy the parallel Socket(s): per-site L3 handoffs for parallel-connectivity estates, or
+          the hub interconnect (IPsec or eBGP) at the hub XGS for hub-and-spoke. Keep the Sophos
+          overlay authoritative for un-migrated sites and filter default routes at the interconnect.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Pilot</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → TLS Inspection</span></p>
+          <p>Pick 1–3 representative sites: at least one SD-RED site (the simplest possible swap —
+          an unmanaged tunnel device for a zero-touch Socket) and one XGS site with local rules. Put
+          pilot users on the Cato Client alongside the Sophos Connect cohorts — validate SSO,
+          posture and app access, and test Client/Connect coexistence on shared machines (and
+          behaviour alongside the Sophos endpoint agent) before scaling; no vendor statement covers
+          this either way, so prove it in pilot. Map SFOS firewall rules, web policy categories and
+          TLS exclusions to Cato Internet/WAN Firewall rules, categories and TLS-inspection rules —
+          review-and-map, not lift-and-shift: per-box rule bases collapse into one global policy.
+          Run IPS and TLS inspection in monitor mode first.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Phased site cutover</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>SD-RED sites first: ship a Socket, move the LAN, delete the RED interface on the hub
+          firewall — rollback is re-plugging the RED, which re-establishes its tunnel. Then XGS
+          sites by wave: Socket in parallel → move subnets/VLANs → withdraw the site from its
+          Central Orchestration connection group → prefixes propagate via the interconnect →
+          validate → leave the XGS racked through the soak window. Rollback is re-adding the
+          connection-group membership. Update anything keyed to site egress IPs (SaaS allowlists,
+          partner firewalls) per wave.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Users, remote access and ZTNA</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Device Posture</span></p>
+          <p>Roll out the Cato Client per cohort via Intune/MDM — split-tunnel first, then always-on
+          with Client Connectivity Policy and Device Posture. Remove Sophos Connect profiles per
+          cohort and retire the firewall VPN portal (a WAN-facing portal — see the CVE record) as
+          the last cohort clears. Recreate ZTNA per-app policies as Cato application access rules
+          and decommission firewall-hosted gateways with the firewalls. Time this against the
+          Workspace Protection forced transition (Feb–May 2026) — customers mid-transition have a
+          natural exit point before renewal repricing.</p>
+        </li>
+        <li>
+          <h4>Phase 5 — Optimise and decommission</h4>
+          <p>Tighten monitor-mode rules to block, widen TLS-inspection scope, tune QoS and bandwidth
+          priorities on the backbone. Decommission in order: SD-REDs → branch XGS → hub
+          XGS/interconnect → VPN portal and ZTNA gateways → lapse the Network/Web/Xstream firewall
+          subscriptions at renewal. <strong>Retain Sophos Central with the Endpoint/XDR/MDR
+          licences</strong> — and flag to the MSP that only the network SKUs are lapsing.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧯</div><div><h4>The portals leave the estate</h4><p>User Portal, VPN portal and firewall-hosted ZTNA gateway — the surfaces in the KEV record — are retired with the appliances, not patched faster.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Rollback is designed in</h4><p>Re-plug an SD-RED and its tunnel re-establishes; re-add a connection-group membership and the overlay reconverges. No rebuilds mid-window.</p></div></div>
+        <div class="benefit"><div class="b-icon">📏</div><div><h4>No inspection sizing maths</h4><p>TLS inspection happens at the PoP — no picking a box big enough to turn inspection on, and no mid-life upgrade when it runs out.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤝</div><div><h4>The endpoint stack stays</h4><p>Sophos Central keeps endpoint, XDR and MDR; the MSP keeps that relationship. The deal is the network stack, not a bet-everything swap.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Cutover mechanics per estate element</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Element</th><th>Cutover</th><th>Rollback</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SD-RED site</td>
+              <td>Ship a zero-touch Socket, move the LAN, delete the RED interface on the hub firewall</td>
+              <td>Re-plug the RED — it re-establishes its tunnel to the hub</td>
+            </tr>
+            <tr>
+              <td>XGS branch</td>
+              <td>Parallel Socket → move subnets → withdraw from the Central Orchestration connection group → validate → soak with the XGS still racked</td>
+              <td>Re-add the connection-group membership</td>
+            </tr>
+            <tr>
+              <td>Hub XGS</td>
+              <td>Interconnect (IPsec or eBGP) carries un-migrated traffic throughout; hub migrates last, once its spokes are clear</td>
+              <td>The interconnect stays up until the final wave — nothing to unwind early</td>
+            </tr>
+            <tr>
+              <td>Remote users</td>
+              <td>Cato Client per cohort via Intune; remove Sophos Connect profiles per cohort; VPN portal retired last</td>
+              <td>Re-push the Connect profile to the cohort</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Check RED operating modes in discovery</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">RED/SD-RED sites can run in transparent/bridged modes where the remote LAN is effectively part of the hub network — L2 semantics. Cato sites are routed (L3). Where a site relied on bridging, plan re-addressing or local DHCP before its wave, not during the change window.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Agent coexistence — prove it in pilot</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">No vendor statement was found validating Sophos Connect (or the Sophos endpoint agent) alongside the Cato Client on one machine. Keep exactly one VPN/ZTNA data path active per endpoint, test the combinations on shared machines in the pilot cohort, and audit what is actually installed per cohort — estates that recently upgraded off the EOL SSL VPN client may have a mixed picture.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What will come up in the room</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Sophos is already one console”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">True for the vendor suite — concede it. The counters: the network estate is still appliance-anchored (per-box firmware, hotfixes, HA pairs, hardware EOL cycles and WAN-facing portals); the SD-WAN overlay has no private backbone, so international or cloud-bound traffic rides the public internet between firewalls; and v22's headline features harden the appliance itself — evidence that the appliance remains the attack surface.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">TLS-inspection sizing is the wedge</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Sophos' own XGS marketing leads with 4.8–5× TLS-inspection throughput gains over XG (e.g. XG 86 at 75&nbsp;Mbps → XGS 87 at 375&nbsp;Mbps inspected) precisely because inspection throughput, not headline firewall throughput, is what runs out. Size any appliance comparison on inspected-traffic numbers — and position cloud TLS inspection as removing the sizing exercise, and the mid-life “bigger box to turn inspection on” upgrade, entirely.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“ZTNA is free with our firewall”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The gateway is free and built into SFOS 19.5 MR3+, but users are licensed per seat — and between February and May 2026 that seat licence becomes Workspace Protection, with Sophos itself warning MSPs that “a price increase will apply in most cases”. Also worth stating plainly: a ZTNA gateway hosted on the edge firewall means app access terminates on exactly the appliance class in the KEV record.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Synchronized Security loss</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Firewall-triggered endpoint isolation and heartbeat-conditional rules disappear with the XGS. Replacements: Cato Device Posture checks (anti-malware/EDR presence, including third-party) gating access continuously via Client Connectivity Policy, plus MDR-side response through Sophos' own tooling. Raise it in discovery yourself — it lands far worse as a customer objection later.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">NDR Essentials disappears with the firewall</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">It is an Xstream-bundle feature of v21.5, so it goes when the firewall goes. Counter: Cato XDR's native network sensor is the PoP itself — no appliance needed for network detection, and remote users are covered too, which an on-box sensor never sees.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Re-onboarding users is a practised motion</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The standalone SSL VPN client went EOL on 31 January 2022 and SFOS 20.0 MR1+ refuses its connections — many estates have already re-onboarded users to Sophos Connect once. Moving those cohorts to the Cato Client is a like-for-like motion they have already practised, not a novel disruption.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Don't oversell the security history</div>
+        <p>Sophos patched fast, ships automatic hotfixes by default, and published Pacific Rim
+        voluntarily. Use the KEV record to argue that the appliance <em>category</em> is
+        structurally exposed — the same table exists for Fortinet, Palo Alto, Cisco and Ivanti —
+        and that Cato removes the category. Never argue that Sophos is uniquely bad; the customer
+        chose them, and the endpoint half of the pitch depends on respecting that choice. Note also:
+        SD-RED 20/60 hardware has <strong>no declared end-of-life</strong> at the time of research —
+        do not claim it is EOL.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/30175650827677-What-are-Cato-Sockets" target="_blank" rel="noopener">What are Cato Sockets — zero-touch deployment (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/endpoint-protection-epp/" target="_blank" rel="noopener">Cato EPP — the accuracy-note context</a></li>
+            <li><a href="https://community.sophos.com/sophos-xg-firewall/b/blog/posts/xg-series-hardware-end-of-life-eol-frequently-asked-questions" target="_blank" rel="noopener">Sophos: XG-series hardware EOL FAQ</a></li>
+            <li><a href="https://www.sophos.com/en-us/partner-news/sophos-ztna-transition-to-sophos-workspace-protection" target="_blank" rel="noopener">Sophos: ZTNA transition to Workspace Protection</a></li>
+            <li><a href="https://www.sophos.com/en-us/content/pacific-rim" target="_blank" rel="noopener">Sophos: Pacific Rim report</a></li>
+            <li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA Known Exploited Vulnerabilities catalogue</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-sophos-policy.html">Sophos Policy Migration</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+            <li><a href="network-sdwan.html">SD-WAN: Global Private Access</a></li>
+            <li><a href="access-remote-worker.html">Secure Remote Worker Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

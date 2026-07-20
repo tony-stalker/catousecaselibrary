@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE — Cato Use Case Library</title>
+<meta name="description" content="Meet the CAF-aligned Data Security and Protection Toolkit with one platform — segmented clinical networks, protected patient data, and audit-ready evidence for trusts, providers and their suppliers.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  /* DSPT 4-column mapping table: let headers wrap so all columns fit the card */
+  #dspt-map table.data th { white-space: normal; }
+  #dspt-map table.data th:nth-child(1) { width: 18%; }
+  #dspt-map table.data th:nth-child(2) { width: 27%; }
+  #dspt-map table.data th:nth-child(3) { width: 32%; }
+  #dspt-map table.data th:nth-child(4) { width: 23%; }
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-healthcare-nhs">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / UK Healthcare</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE</h1>
+    <p class="lede">
+      Every NHS organisation — and every supplier that touches patient data — answers to the Data
+      Security and Protection Toolkit, and since September 2024 the large-organisation track is an
+      NCSC CAF-aligned, independently audited assessment. The evidence it asks for is network-shaped:
+      segmented clinical systems, isolated medical devices, MFA on every remote path, monitored
+      supplier access. This use case maps Cato to those asks — with LAN Firewall segmentation at the
+      Socket, Device Inventory for the IoMT estate, and one evidence plane for the submission.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Healthcare</span><span class="tag">NHS DSPT</span><span class="tag">CAF</span>
+      <span class="tag">Compliance</span><span class="tag">Segmentation</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        The <strong>Data Security and Protection Toolkit (DSPT)</strong> is the annual assurance
+        submission for health and care organisations in England. In September 2024 it was rebuilt
+        for large organisations around the NCSC Cyber Assessment Framework — <strong>47 contributing
+        outcomes</strong> with achievement levels, replacing the old assertion checklist. The current
+        published edition is <strong>DSPT 2025-26 ("version 8")</strong>, aligned to CAF version 3.4,
+        whose final submission deadline of <strong>30 June 2026</strong> has just passed — so most
+        organisations are now between cycles, digesting audit findings and improvement plans.
+      </p>
+      <p>
+        For the generic Cyber Essentials and CAF story — the five CE control themes, the CE-to-Cato
+        mapping, CAF 4.0's objectives A–D and the honest-positioning rules — see the companion page
+        <a href="security-uk-public-sector.html">UK Public Sector: Cyber Essentials &amp; NCSC CAF</a>.
+        This page goes deep on what is healthcare-specific: the DSPT's tracks and deadlines, clinical
+        network segmentation, IoMT and legacy device isolation, resilient community connectivity, and
+        supplier access after a supplier compromise became a patient-safety incident.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">47<span class="unit"> outcomes</span></div><div class="stat-label">CAF-aligned DSPT contributing outcomes for large NHS organisations (since Sept 2024)</div></div>
+        <div class="stat-tile"><div class="stat-value">30 Jun 2026</div><div class="stat-label">DSPT 2025-26 (v8) final submission deadline — the cycle that has just closed</div></div>
+        <div class="stat-tile"><div class="stat-value">5<span class="unit"> objectives</span></div><div class="stat-label">A–D from the NCSC CAF, plus NHS-specific Objective E — "using and sharing information appropriately"</div></div>
+      </div>
+
+      <h3>Two tracks — know which conversation you are in</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">CAF-aligned track</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">NHS trusts, Integrated Care Boards, CSUs,
+          DHSC arm's-length bodies, NIS-designated operators of essential services, genomics
+          organisations and Key IT Suppliers. Outcome-based against CAF objectives A–E, with
+          <strong>mandatory independent audit</strong> (2025-26 scope published October 2025) and
+          improvement-plan updates due 31 December. This is an evidence-of-outcomes conversation.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Standards-based track</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">GP practices, care homes, pharmacies,
+          dental practices, opticians and most smaller suppliers still complete the "classic" DSPT
+          against the ten National Data Guardian standards — assertions plus evidence, with
+          GP-specific items such as clinical system access controls. A GP-federation or care-group
+          conversation is still an assertion-and-evidence conversation.</p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Staleness check — verify before you present</div>
+        <p>As of mid-July 2026 <strong>no 2026-27 DSPT edition ("v9") has been published</strong> —
+        expect it on the established ~September cadence, and check
+        the DSPT news page before quoting deadlines. Note also the version lag: the NHS regime is
+        aligned to <strong>CAF v3.4</strong> while NCSC's current published CAF is
+        <strong>v4.0</strong> (August 2025) — the NHS has not yet adopted v4.0.</p>
+      </div>
+    </section>
+
+    <section id="incidents" class="reveal">
+      <div class="section-kicker">The patient-safety stakes</div>
+      <h2>When NHS networks fail, patients feel it</h2>
+      <p>
+        Two public incidents anchor every UK healthcare security conversation — one that made
+        segmentation and patching a board issue, and one that made supplier access a
+        patient-safety issue.
+      </p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">81<span class="unit"> of 236</span></div><div class="stat-label">English trusts affected by WannaCry, plus 603 primary-care and other NHS organisations (NAO, 2017)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">10,152</div><div class="stat-label">Acute outpatient appointments postponed across two London trusts after the 2024 pathology ransomware attack</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">~400<span class="unit"> GB</span></div><div class="stat-label">Stolen data published by the Qilin group — analysts estimated it related to &gt;900,000 patients</div></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">WannaCry <span class="tag">May 2017</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">At least 81 of 236 trusts affected; 6,912
+          confirmed cancelled appointments (NHS England estimated over 19,000); five A&amp;E
+          departments diverted patients. The NAO's root causes: unpatched or unsupported Windows and
+          poor internet-facing firewall management — "a relatively unsophisticated attack" that basic
+          practice would have prevented.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">London pathology ransomware <span class="tag">June 2024</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Qilin ransomware encrypted Synnovis, the
+          pathology provider for two south-east London trusts. 10,152 outpatient appointments and
+          1,710 elective procedures postponed; blood testing fell to ~10% of normal, triggering a
+          national O-type blood appeal. A supplier compromise with no lateral containment became a
+          clinical incident.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The first linked death <span class="tag">June 2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A patient-safety investigation at King's
+          College Hospital NHS FT found the cyber attack was one of the contributing factors in a
+          patient's death — a long wait for a blood test result. Widely reported as the first UK case
+          where officials publicly linked a cyber attack to a death. Cyber risk in health
+          <em>is</em> clinical risk.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“If a key supplier were encrypted tonight, which clinical systems keep working — and what
+        could that supplier's credentials reach beyond the one system they support?” · “Could you
+        show an auditor, from live data, which VLANs an unpatched imaging device can reach today?” ·
+        “Which of your community and primary-care sites would drop offline if a single circuit
+        failed?”</p>
+      </div>
+    </section>
+
+    <section id="dspt-map" class="reveal">
+      <div class="section-kicker">Framework mapping — CAF-aligned DSPT</div>
+      <h2>Where the network evidence lands</h2>
+      <p>
+        The CAF-aligned DSPT assesses outcomes, not products, and the judgment belongs to the
+        independent assessor. The network-shaped anchors sit mainly under Objective B — with
+        monitoring under C and impact under D — and NHS England's August 2023 MFA policy gives B2 an
+        unusually concrete edge: MFA <strong>must</strong> be enforced on all remote user access to
+        all systems, and on all privileged accounts accessing externally hosted systems. Walk this
+        table the same way as the CE mapping on the
+        <a href="security-uk-public-sector.html">public-sector page</a> — the fourth column keeps it
+        credible.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>DSPT anchor</th><th>What the assessor looks for</th><th>How Cato contributes</th><th>What stays with you</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>B2 — Identity &amp; access control</strong></td>
+              <td>The NHS MFA policy operating: MFA on all remote access to all systems; privileged accounts to externally hosted systems covered; progress reported through the DSPT.</td>
+              <td>SSO/MFA sits in the access path for every Cato Client connection — one enforcement point covers remote access to <em>all</em> internal systems, not per-app retrofits. Continuous device-posture checks gate the session; RBAC plus MFA protects CMA administrators.</td>
+              <td>MFA inside each clinical and cloud application, privileged-account separation, joiner/leaver lifecycle.</td>
+            </tr>
+            <tr>
+              <td><strong>B3 — Data security</strong></td>
+              <td>Patient data protected in transit between sites, services and workers.</td>
+              <td>Encrypted tunnels for every site, cloud and client path by architecture; TLS inspection and DLP over flows carrying patient-identifiable data to the internet and cloud apps.</td>
+              <td>Data at rest, records management, encryption inside clinical systems.</td>
+            </tr>
+            <tr>
+              <td><strong>B4 / B5 — System security &amp; resilient networks</strong></td>
+              <td>Clinical networks segmented from administrative ones; legacy and medical devices isolated; the network resilient by design.</td>
+              <td>The LAN Firewall enforces east-west segmentation on the Socket per VLAN — clinical, corporate and IoMT estates separated with allow-listed integration flows; IPS virtual patching shields unpatchable devices; multi-link sites and PoP failover replace single-circuit chokepoints.</td>
+              <td>Device hardening and patching where possible, clinical-safety processes, VLAN design decisions.</td>
+            </tr>
+            <tr>
+              <td><strong>C1 — Security monitoring</strong></td>
+              <td>Monitoring that actually covers the estate — hospital, community, primary care, remote.</td>
+              <td>Every flow from every site and client lands in one event store with one clock; XDR correlates events into incident stories; coverage is architectural, not a log-shipping project.</td>
+              <td>SOC processes, triage, escalation into clinical incident management.</td>
+            </tr>
+            <tr>
+              <td><strong>D — Minimising impact</strong></td>
+              <td>Tested response and recovery; disruption contained before it reaches care delivery.</td>
+              <td>Segments contain lateral movement; LAN Firewall rules keep enforcing locally on the Socket even if a site's internet fails; incident stories give responders a correlated timeline from minute one.</td>
+              <td>Incident-response and business-continuity plans, backup and restore, clinical fallback procedures.</td>
+            </tr>
+            <tr>
+              <td><strong>E — Using &amp; sharing information</strong></td>
+              <td>The NHS information-governance overlay — appropriate use and sharing of patient data. No CAF equivalent.</td>
+              <td>Honestly: mostly an IG conversation, not a network one. Cato contributes visibility — CASB and DLP show where patient data actually moves, which supports the IG team's evidence — but does not decide what sharing is appropriate.</td>
+              <td>Almost everything: IG policy, lawful basis, consent, data-sharing agreements.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:22px">Two more healthcare-specific angles</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">HSCN and internet-first</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">HSCN (which replaced N3 by November 2020 —
+          ~12,000 sites migrated) remains fully operational, with no announced successor or
+          retirement date. But the direction since the 2018 Internet First policy is towards
+          internet-delivered services, and NHS England's Networks and Connectivity Programme
+          prioritises off-estate workforce connectivity and network modernisation. Position Cato
+          <strong>alongside</strong> HSCN circuits for internet-first traffic and new sites — never
+          as "the mandated HSCN replacement"; no such mandate exists.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Suppliers: Cyber Essentials Plus</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Under PPN 014, NHS bodies require Cyber
+          Essentials in relevant procurements — and NHS Supply Chain went further in September 2025:
+          in-scope suppliers must demonstrate <strong>CE Plus</strong> (ISO 27001 is not accepted as
+          an alternative), with existing-supplier reviews from 8 September 2025. If the customer
+          <em>is</em> a supplier to the NHS, the
+          <a href="security-uk-public-sector.html">CE mapping</a> is their conversation; Key IT
+          Suppliers also land on the CAF-aligned DSPT track.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>A trust estate, segmented and evidenced</h2>
+      <p>
+        A typical trust estate spans an acute hospital, community clinics, GP-style small sites and
+        thousands of remote and roaming clinicians — plus an IoMT population of infusion pumps,
+        imaging modalities and monitors that cannot run agents and often cannot be patched. Cato
+        treats it as one estate: every site and user crosses the same PoP-enforced policy, and
+        <strong>east-west separation inside each site is enforced by the LAN Firewall — a global
+        policy under Security → LAN Firewall, scoped per site and VLAN, enforced on the Socket
+        itself</strong>. Because enforcement is local to the Socket, clinical-to-device rules keep
+        working even while a site's internet link is down — segmentation that does not depend on the
+        circuit staying up.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">A segmented NHS-style trust estate on the Cato platform</title>
+          <desc id="dg1-desc">An acute hospital site with clinical, IoMT and corporate VLANs behind a Socket running the LAN Firewall, a community clinic, a GP-style small site and remote clinicians all connect through a UK Cato PoP to NHS and cloud services. Inside the hospital, east-west traffic from the IoMT VLAN to the corporate VLAN is blocked by the LAN Firewall on the Socket. A pathology supplier reaches only named systems over restricted ZTNA. A grey evidence lane carries policy, event and device data into the Cato Management Application.</desc>
+
+          <!-- Acute hospital container -->
+          <rect class="dg-node" x="28" y="36" width="224" height="214" rx="10"/>
+          <text class="dg-label" x="140" y="60" text-anchor="middle">Acute hospital</text>
+          <text class="dg-sub" x="140" y="77" text-anchor="middle">Socket · LAN Firewall</text>
+
+          <rect class="dg-node-green" x="44" y="88" width="192" height="44" rx="8"/>
+          <text class="dg-label" x="140" y="106" text-anchor="middle">Clinical VLAN</text>
+          <text class="dg-sub" x="140" y="122" text-anchor="middle">EPR · PACS · pathology</text>
+
+          <rect class="dg-node" x="44" y="140" width="192" height="44" rx="8"/>
+          <text class="dg-label" x="140" y="158" text-anchor="middle">IoMT VLAN</text>
+          <text class="dg-sub" x="140" y="174" text-anchor="middle">pumps · imaging · legacy</text>
+
+          <rect class="dg-node" x="44" y="192" width="192" height="44" rx="8"/>
+          <text class="dg-label" x="140" y="210" text-anchor="middle">Corporate VLAN</text>
+          <text class="dg-sub" x="140" y="226" text-anchor="middle">admin · back office</text>
+
+          <!-- East-west block: IoMT → Corporate, stopped at the Socket -->
+          <path class="lane lane-block" d="M 236 162 C 290 168, 290 208, 236 214"/>
+          <g aria-label="blocked east-west">
+            <path class="lane-x" d="M 264 176 L 288 200"/><path class="lane-x" d="M 288 176 L 264 200"/>
+          </g>
+
+          <!-- Community clinic -->
+          <rect class="dg-node" x="34" y="286" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="129" y="308" text-anchor="middle">Community clinic</text>
+          <text class="dg-sub" x="129" y="325" text-anchor="middle">X1600 · DSL + LTE</text>
+
+          <!-- GP-style small site -->
+          <rect class="dg-node" x="34" y="368" width="190" height="54" rx="10"/>
+          <text class="dg-label" x="129" y="390" text-anchor="middle">GP-style small site</text>
+          <text class="dg-sub" x="129" y="407" text-anchor="middle">Socket · broadband</text>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="520" cy="225" rx="145" ry="70"/>
+          <circle cx="398" cy="252" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="644" cy="198" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="520" y="172" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="520" cy="225" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="225" r="30"/>
+          <text class="dg-label" x="520" y="290" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP — UK</text>
+          <text class="dg-tiny" x="520" y="306" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">FWaaS · IPS · ZTNA · DLP</text>
+
+          <!-- Estate traffic into the PoP -->
+          <path class="lane lane-allow" d="M 252 118 C 340 140, 420 180, 490 208"/>
+          <path class="lane lane-allow" d="M 224 313 C 320 300, 400 270, 486 240"/>
+          <path class="lane lane-allow" d="M 224 395 C 330 380, 420 320, 500 262"/>
+          <path class="lane lane-allow" d="M 432 396 C 460 350, 490 300, 512 262"/>
+
+          <!-- Egress to NHS & cloud services -->
+          <path class="lane lane-allow" d="M 546 208 C 620 160, 680 110, 736 84"/>
+
+          <!-- Supplier ZTNA (restricted) -->
+          <path class="lane lane-limit" d="M 746 330 C 680 320, 610 280, 548 240"/>
+
+          <!-- Evidence lane to CMA -->
+          <path class="lane-static" fill="none" d="M 548 232 C 620 240, 680 220, 744 205"/>
+
+          <!-- NHS & cloud services -->
+          <rect class="dg-node" x="740" y="48" width="190" height="58" rx="10"/>
+          <text class="dg-label" x="835" y="72" text-anchor="middle">NHS &amp; cloud services</text>
+          <text class="dg-sub" x="835" y="89" text-anchor="middle">Spine · M365 · SaaS</text>
+
+          <!-- CMA evidence node -->
+          <rect class="dg-node-dark" x="746" y="170" width="184" height="74" rx="10"/>
+          <text class="dg-label-inv" x="838" y="196" text-anchor="middle">CMA — evidence</text>
+          <text class="dg-sub-inv" x="838" y="214" text-anchor="middle">policy · events · devices</text>
+          <text class="dg-sub-inv" x="838" y="231" text-anchor="middle">Audit Trail exports</text>
+
+          <!-- Pathology supplier -->
+          <rect class="dg-node" x="746" y="300" width="184" height="58" rx="10"/>
+          <text class="dg-label" x="838" y="324" text-anchor="middle">Pathology supplier</text>
+          <text class="dg-sub" x="838" y="341" text-anchor="middle">ZTNA · least privilege</text>
+
+          <!-- Remote clinicians -->
+          <g>
+            <circle cx="420" cy="415" r="23" fill="var(--status-good)"/>
+            <circle cx="420" cy="408" r="6.5" fill="#fff"/>
+            <path d="M 407 428 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="320" y="412" text-anchor="middle">Remote clinicians</text>
+            <text class="dg-sub" x="320" y="428" text-anchor="middle">Cato Client · MFA</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Trust estate — one policy at the PoP</span>
+          <span class="key"><span class="swatch limit"></span> Supplier ZTNA — named systems only</span>
+          <span class="key"><span class="swatch block"></span> East-west blocked by LAN Firewall on the Socket</span>
+        </div>
+        <div class="diagram-caption">Hospital VLANs, community sites and remote clinicians cross one PoP-enforced policy; inside the hospital, the LAN Firewall blocks IoMT-to-corporate traffic at the Socket. The grey lane is the evidence path into the CMA — the raw material of a DSPT submission.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Segmentation enforced at the edge</h4><p>One global LAN Firewall policy, scoped per site and VLAN, enforced on the Socket — clinical, corporate and IoMT estates separated with allow-listed integration flows, and still enforced if the circuit drops.</p></div></div>
+        <div class="benefit"><div class="b-icon">🩻</div><div><h4>See the IoMT estate you actually have</h4><p>Device Inventory analyses traffic to detect and classify connected devices with ML — the asset picture segmentation (and Objective A) depends on, without deploying agents to devices that cannot take them.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Resilient community &amp; primary care</h4><p>Small sites run a Socket over broadband with LTE fallback and PoP failover — clinics and GP-style sites inherit the full policy on day one, without waiting on a dedicated circuit.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>Evidence as a by-product</h4><p>Policy, device inventory, events and an attributable Audit Trail in one console — the CAF-aligned DSPT and its independent audit ask for exactly this record.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Position with care</div>
+        <p>Say “Cato <strong>supports</strong> your DSPT work” — never “Cato makes you compliant”.
+        The DSPT is scored across the whole organisation, independent assessors own the judgment,
+        and Objective E belongs to information governance, not the network. For claims about Cato's
+        own certifications, use only the published
+        <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">security, compliance &amp; privacy page</a>.</p>
+      </div>
+    </section>
+
+    <section id="sector-policies" class="reveal">
+      <div class="section-kicker">Sector blueprint</div>
+      <h2>Typical healthcare policies — a starter rulebase</h2>
+      <p>
+        The mapping table stays at outcome level; this is the layer beneath it — an illustrative
+        starter rulebase a trust or large provider could stand up, then shape to its own estate. It
+        is organised the way a DSPT assessor reasons about a clinical network: clinical access
+        allowed explicitly and posture-checked, medical devices confined to the conversations they
+        clinically need, the corporate estate kept off the clinical VLANs except through named
+        integration flows, and suppliers reaching exactly the system they support. None of it
+        certifies anything on its own; it gives the DSPT conversation something concrete to walk.
+      </p>
+      <div class="callout">
+        <div class="co-title">A starting point — monitor-first, clinically safe</div>
+        <p>These rules are illustrative, not an exported console. Stand every block rule up in
+        <strong>monitor mode first</strong>, watch hit counts against real traffic — in a hospital, a
+        mis-scoped block can interrupt a clinical integration, so the monitor phase is a patient-safety
+        step, not a formality. Flip to enforce only after clinical engineering and the integration
+        team have reviewed what would have been blocked. VLAN design, device groups and clinical-risk
+        sign-off are the customer's to decide: Cato <strong>supports</strong> that work; it does not
+        settle it.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category · Destination</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Clinical staff — clinical systems via ZTNA</td>
+              <td>Clinical staff (SCIM groups) — device posture required</td>
+              <td>ZTNA segments — EPR, PACS, pathology results, per-role least privilege</td>
+              <td>Allow (segment)</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>IoMT → clinical integration only</td>
+              <td>IoMT VLAN (LAN Firewall, scoped to hospital sites)</td>
+              <td>Named integration hosts/ports only — PACS ingest, results interfaces; deny all other east-west</td>
+              <td>Allow listed · default Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>IoMT — internet egress lock</td>
+              <td>IoMT VLAN / device groups (Device Inventory attributes)</td>
+              <td>Only named vendor update/telemetry destinations; deny all other egress</td>
+              <td>Allow listed · default Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Corporate → clinical VLANs — deny</td>
+              <td>Corporate VLAN (LAN Firewall)</td>
+              <td>Clinical VLANs — blocked except named integration flows (e.g. EPR reporting feeds)</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Remote clinicians — MFA + posture</td>
+              <td>All remote users (Cato Client)</td>
+              <td>All internal systems — SSO/MFA in the access path, posture profile required (the NHS MFA policy's "all remote access")</td>
+              <td>Allow (posture)</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Supplier — named system, time-boxed</td>
+              <td>Supplier group (e.g. pathology / imaging vendor)</td>
+              <td>ZTNA segment — the one system they support; nothing else routes</td>
+              <td>Allow (segment)</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">7</td>
+              <td>Legacy modality servers — virtual patching</td>
+              <td>Legacy clinical hosts (host group)</td>
+              <td>IPS — CVE signatures shielding unpatchable systems while replacement is planned</td>
+              <td>Monitor → Protect</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">8</td>
+              <td>Patient &amp; guest Wi-Fi — internet-only</td>
+              <td>Guest network (segment / VLAN)</td>
+              <td>Internet-only egress, filtered; no route to clinical or corporate segments</td>
+              <td>Allow (filtered) · Block segments</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.92rem;color:var(--ink-2)">
+        Read down the Action column and the DSPT anchors fall out of it: rules 1 and 5 are
+        <strong>B2</strong> — access by identity, posture and the MFA policy's remote-access
+        requirement; rules 2–4 and 8 are <strong>B4/B5</strong> — the clinical/corporate/IoMT
+        separation an assessor asks to see, enforced on the Socket by rules 2 and 4 so it holds even
+        off-circuit; rule 6 is the supplier-containment lesson of June 2024 written as policy; rule 7
+        shields the devices that cannot be patched while the replacement programme runs. Every row is
+        tracked as an event — <strong>Objective B enforced and Objective C evidenced in the same
+        place</strong>.
+      </p>
+
+      <h3 style="margin-top:24px">Healthcare scenarios</h3>
+      <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
+        <li><strong>DSPT submission and independent audit.</strong> When the auditor arrives, walk
+        this rulebase as the evidence: Device Inventory is the asset picture, the LAN Firewall policy
+        is the segmentation claim as configured, events show rules 2–4 firing on real traffic, and the
+        Audit Trail shows who changed what and when. One console answers the contributing-outcome
+        questions instead of a screenshot hunt across clinical engineering, network and security
+        teams.</li>
+        <li><strong>An imaging vendor needs remote access this week.</strong> Stand up rule 6 for the
+        vendor's engineers: a ZTNA segment scoped to the one modality management server, MFA in the
+        path, every session evented. When the work finishes, remove the group — the Audit Trail
+        records both ends. The June 2024 pathology incident is the reference point: a supplier
+        compromise must not become a trust-wide one.</li>
+        <li><strong>Ransomware lands in the corporate estate.</strong> A phished back-office laptop
+        starts scanning. Rule 4's corporate-to-clinical block confines it at the Socket — EPR and
+        PACS stay reachable to clinicians while the corporate VLAN is triaged — and because the LAN
+        Firewall enforces locally, containment holds even if responders isolate the site's internet
+        links. The event stream gives the incident team the scan attempts in real time.</li>
+        <li><strong>A new community clinic opens in weeks, not months.</strong> Ship an X1600, connect
+        broadband and LTE, and the site inherits the global policy on day one — clinical VLAN
+        separation, MFA'd remote access, filtered patient Wi-Fi — with no dedicated circuit on the
+        critical path. The same pattern covers vaccination sites and pop-up diagnostic hubs, and
+        aligns with the internet-first direction of travel.</li>
+      </ul>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the track and the date</div>
+        <p>Ask which DSPT track they are on — CAF-aligned (trust, ICB, CSU, ALB, Key IT Supplier) or
+        standards-based (GP federation, care group) — when their next submission or audit lands, and
+        which finding from the last cycle still stings. Anchor every screen to that answer.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Frame with the DSPT mapping</h4>
+          <p>Walk the mapping table above, including the “what stays with you” column — and concede
+          Objective E to information governance up front. Agreeing what Cato does <em>not</em> cover
+          buys the credibility for the segmentation story that follows.</p>
+        </li>
+        <li>
+          <h4>Show the devices you did not know about</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Open the inventory and filter to a hospital site: devices detected and classified from
+          traffic analysis — no agents. This is the asset picture that segmentation, and the DSPT's
+          asset-management outcomes, depend on. “Which of these did clinical engineering know were on
+          this VLAN?”</p>
+        </li>
+        <li>
+          <h4>Segment the clinical estate with the LAN Firewall</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Show the global policy and how each rule is scoped per site and VLAN yet enforced on the
+          Socket. Walk rules 2–4 of the blueprint: IoMT confined to named integration flows,
+          corporate blocked from clinical. Land the differentiator: enforcement is local, so the
+          segmentation holds even if the site loses its internet links.</p>
+        </li>
+        <li>
+          <h4>MFA and posture on every remote path</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Open a posture profile and show it gating a remote clinician's session continuously —
+          then connect it to the NHS MFA policy: one enforcement point puts MFA in front of
+          <em>all</em> remote access to <em>all</em> systems, which is exactly how the policy is
+          worded.</p>
+        </li>
+        <li>
+          <h4>Give a supplier exactly one system</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show the supplier group's rule: allowed to its named system segment, everything else
+          falling to the implicit deny. Log in as a supplier user (say, Priya from the imaging
+          vendor), reach the permitted system, attempt another — then show the block. This is the
+          third-party lesson of June 2024, live.</p>
+        </li>
+        <li>
+          <h4>Close on the audit pack</h4>
+          <p><span class="path">Monitor → Events</span> · <span class="path">Administration → Audit Trail</span></p>
+          <p>Filter events to the supplier's identity and to the LAN Firewall blocks, then open the
+          Audit Trail: policy, enforcement and change history from one console. “This is the
+          contributing-outcome evidence assembling itself as a by-product of operation.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-socket-next-gen-lan-firewall" target="_blank" rel="noopener">What is the Socket Next Gen LAN Firewall (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">Managing the Socket Next Gen LAN Firewall Policy (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">What is Device Inventory? (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/network-segmentation-best-practices" target="_blank" rel="noopener">Network Segmentation — Best Practices (KB)</a></li>
+            <li><a href="https://digital.nhs.uk/cyber-and-data-security/guidance-and-resources/caf-aligned-dspt-guidance" target="_blank" rel="noopener">NHS England — CAF-aligned DSPT guidance (objectives A–E)</a></li>
+            <li><a href="https://digital.nhs.uk/cyber-and-data-security/guidance-and-resources/multi-factor-authentication-mfa-policy" target="_blank" rel="noopener">NHS England — Multi-factor authentication policy</a></li>
+            <li><a href="https://www.dsptoolkit.nhs.uk/News/161" target="_blank" rel="noopener">DSPT 2025-26 (version 8) publication notice</a></li>
+            <li><a href="https://www.nao.org.uk/reports/investigation-wannacry-cyber-attack-and-the-nhs/" target="_blank" rel="noopener">NAO — Investigation: WannaCry and the NHS</a></li>
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Cato rapid CVE mitigation (virtual patching)</a></li>
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy — published certifications</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-uk-public-sector.html">UK Public Sector: Cyber Essentials &amp; NCSC CAF</a></li>
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a></li>
+            <li><a href="management-asset-discovery.html">Asset Discovery &amp; Device Inventory (IoT/OT)</a></li>
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

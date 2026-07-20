@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remote Worker Experience: Per-User, Per-App Assurance — Cato Use Case Library</title>
+<meta name="description" content="Prove and improve every remote worker's day — always-on Cato Client, nearest-PoP egress, and per-user, per-app Experience Monitoring that turns &quot;the VPN is slow&quot; into an evidence-backed fix.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-remote-worker">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / Remote Worker Experience</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Remote Worker Experience: Per-User, Per-App Assurance</h1>
+    <p class="lede">
+      Estate dashboards average away the one person who is actually having a bad day. This use
+      case follows a single remote worker — from onboarding, through the always-on Cato Client and
+      nearest-PoP egress, to the morning they say <em>“it is slow”</em> — and shows how per-user,
+      per-app Experience Monitoring turns that sentence into an evidence-backed fix: last mile,
+      backbone or the app itself, named in one screen.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Experience Monitoring</span><span class="tag">DEM</span>
+      <span class="tag">Cato Client</span><span class="tag">Remote Access</span>
+      <span class="tag">Last Mile</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Two other pages in this library carry the wide-angle versions of this story:
+        <a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a> owns the access
+        policy — one consistent, secure front door for every user — and
+        <a href="management-dem.html">Proactive Digital Experience Monitoring</a> owns the
+        organisation-wide view: sites, probes, path analysis and anomaly detection across the
+        estate. This page deliberately zooms all the way in: <strong>one named worker, one
+        laptop, one home connection</strong> — because that is the granularity at which remote
+        work is actually experienced, and at which support tickets are actually raised.
+      </p>
+      <p>
+        The objective: <strong>for any individual remote worker, at any moment, be able to say
+        what their experience of each application is, and — when it degrades — which segment of
+        their path is responsible</strong>. Not “the network looks fine”; a per-user, per-app
+        answer with numbers behind it.
+      </p>
+    </section>
+
+    <section id="problem" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>One user, zero evidence</h2>
+      <p>
+        Estate-level monitoring is built to spot patterns — a degraded site, a failing circuit, a
+        SaaS outage. A single remote worker generates no pattern. Their home Wi-Fi, their ISP and
+        their laptop are invisible to corporate tooling, so when they report a problem the
+        investigation starts from nothing.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The anecdote trap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A remote worker's ticket is one person's
+          word against a green dashboard. With no telemetry from the home, the helpdesk falls back
+          on ritual: reboot, speed test, “is anyone else seeing this?” — and because nobody else
+          is, the ticket closes as no fault found while the worker's day stays slow.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The per-app blind spot</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">“Slow” is rarely uniform. One SaaS app
+          can crawl while everything else is fine — an app-side problem — or every app can degrade
+          together, which points at the device or the last mile. Without per-app scores for that
+          one user, the two cases are indistinguishable, and each gets escalated to the wrong
+          team.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“Pick one home worker who called the helpdesk last week. Could you see what <em>their</em>
+        Microsoft 365 experience was that morning — as a number, per application — or only what
+        the service health page said for everyone?”</p>
+      </div>
+    </section>
+
+    <section id="journey" class="reveal">
+      <div class="section-kicker">The worker's journey</div>
+      <h2>Brandon, from day one to steady state</h2>
+      <p>
+        Meet <strong>Brandon</strong> — a fictional remote worker on the US west coast, hired by a
+        UK-headquartered organisation that never intends to put a VPN concentrator between him and
+        his work. His journey is four decisions, each made once in policy and enforced
+        automatically ever after:
+      </p>
+
+      <div class="table-wrap" style="margin:18px 0">
+        <table class="data">
+          <thead>
+            <tr><th>Stage</th><th>What happens for Brandon</th><th>Where it lives in CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Day 1 — onboarding</td>
+              <td>The Cato Client is deployed with his laptop build; he signs in with corporate
+              SSO and his provisioned identity (see
+              <a href="access-identity-design.html">Identity Integration Design</a>).</td>
+              <td>Access → Users</td>
+            </tr>
+            <tr>
+              <td>First connect</td>
+              <td>The Client tunnels automatically to the nearest available PoP — for Brandon,
+              Santa Clara — and the Always-On policy keeps it that way.</td>
+              <td>Access → Client Connectivity Policy</td>
+            </tr>
+            <tr>
+              <td>Egress choices</td>
+              <td>By default everything rides the tunnel for full inspection; the split tunnel
+              rule base defines any deliberate exceptions.</td>
+              <td>Access → Split Tunnel Policy</td>
+            </tr>
+            <tr>
+              <td>Continuous posture</td>
+              <td>Device checks (anti-malware, disk encryption, patch level) gate his access —
+              evaluated continuously, not just at sign-in.</td>
+              <td>Access → Device Posture</td>
+            </tr>
+            <tr>
+              <td>Steady state</td>
+              <td>Every sanctioned application he touches is scored Good / Fair / Poor, per app,
+              continuously — before he ever complains.</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The three policies behind the quiet steady state</h3>
+      <div class="grid-3" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Always-On</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">An ordered rule base ties users and
+          groups to mandatory Cato connectivity, so traffic is always inspected. Escape hatches
+          are deliberate, not accidental: admin-issued one-time bypass codes (valid up to 15
+          minutes), user-initiated bypass with a recorded reason (Windows Client v5.9+, macOS
+          v5.5+, iOS v5.6+), and a recovery mode that decides whether internet access continues
+          if the Cato Cloud is unreachable. Not supported on Linux Clients.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Split tunnel &amp; egress</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Default: all traffic through the tunnel
+          to the nearest PoP for full inspection. The Split Tunnel Policy is an ordered rule base
+          with two deliberate alternatives — exclude mode (everything to Cato except named
+          exceptions) and include mode (only named traffic to Cato) — scoped by user or group, OS,
+          country and managed/unmanaged network, matching IP ranges, domains, applications and
+          ports, with local DNS resolution for chosen domains.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Connectivity + posture</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The Client Connectivity Policy checks the
+          device before it joins: posture profiles bundle device checks with AND logic —
+          anti-malware present, disk encryption on, patches current (Windows and macOS) —
+          alongside platform, country and authentication confidence level. A device that stops
+          complying drops to secured-internet-only access or is blocked, per rule.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:14px">
+        The point for the room: Brandon never files a “please set up my VPN” ticket, never picks a
+        gateway from a dropdown, and never works uninspected. The same policies also generate the
+        telemetry the next section runs on — the Client and the PoP see every packet of his
+        working day.
+      </p>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>When Brandon says “it is slow”</h2>
+      <p>
+        Six months in, Brandon messages the helpdesk: <em>“Office 365 has been slow all
+        morning.”</em> Because his Client, his nearest PoP and the backbone between them are one
+        platform, every segment of his path is already instrumented — the answer is a look-up, not
+        an investigation. The diagram shows where the measurements come from:
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">A remote worker's path with Experience Monitoring measurement points</title>
+          <desc id="dg1-desc">Brandon's home office connects across the ISP last mile to the nearest Cato PoP, then over the global private backbone to two targets: Microsoft 365 SaaS and a private application behind the London DC Socket. Four numbered measurement points mark where Experience Monitoring scores the path: the client device, the last-mile tunnel, the backbone, and the application side.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="555" cy="250" rx="150" ry="50"/>
+          <circle cx="690" cy="250" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="555" y="320" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Lanes -->
+          <path class="lane lane-allow" d="M 206 250 L 396 250"/>
+          <path class="lane lane-allow" d="M 464 250 L 676 250"/>
+          <path class="lane lane-allow" d="M 692 242 C 720 205, 738 170, 756 134"/>
+          <path class="lane lane-allow" d="M 692 258 C 720 295, 738 330, 756 366"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="430" cy="250" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="250" r="30"/>
+          <text class="dg-label" x="430" y="180" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Nearest Cato PoP</text>
+          <text class="dg-tiny" x="430" y="197" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Full inspection · egress</text>
+
+          <!-- Home office -->
+          <rect class="dg-node" x="30" y="218" width="176" height="64" rx="10"/>
+          <text class="dg-label" x="118" y="244" text-anchor="middle">Brandon · home</text>
+          <text class="dg-sub" x="118" y="262" text-anchor="middle">Cato Client · always-on</text>
+
+          <!-- Last mile label -->
+          <text class="dg-tiny" x="300" y="228" text-anchor="middle">Last mile · ISP</text>
+
+          <!-- Targets -->
+          <rect class="dg-node" x="760" y="90" width="176" height="64" rx="10"/>
+          <text class="dg-label" x="848" y="116" text-anchor="middle">Microsoft 365</text>
+          <text class="dg-sub" x="848" y="134" text-anchor="middle">SaaS · PoP egress</text>
+
+          <rect class="dg-node" x="760" y="334" width="176" height="64" rx="10"/>
+          <text class="dg-label" x="848" y="360" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="848" y="378" text-anchor="middle">Socket · private apps</text>
+
+          <!-- Measurement points -->
+          <g aria-label="Measurement point 1: client device">
+            <circle cx="118" cy="192" r="11" fill="var(--green-600)"/>
+            <text x="118" y="196.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">1</text>
+          </g>
+          <g aria-label="Measurement point 2: last-mile tunnel">
+            <circle cx="305" cy="250" r="11" fill="var(--green-600)"/>
+            <text x="305" y="254.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">2</text>
+          </g>
+          <g aria-label="Measurement point 3: backbone">
+            <circle cx="565" cy="250" r="11" fill="var(--green-600)"/>
+            <text x="565" y="254.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">3</text>
+          </g>
+          <g aria-label="Measurement point 4: application side, SaaS">
+            <circle cx="728" cy="176" r="11" fill="var(--green-600)"/>
+            <text x="728" y="180.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">4</text>
+          </g>
+          <g aria-label="Measurement point 4: application side, private app">
+            <circle cx="728" cy="324" r="11" fill="var(--green-600)"/>
+            <text x="728" y="328.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">4</text>
+          </g>
+
+          <!-- Marker key -->
+          <text class="dg-tiny" x="480" y="424" text-anchor="middle">1 Device — CPU · RAM · Wi-Fi dBm&#160;&#160;&#160;2 Last mile — tunnel loss · latency&#160;&#160;&#160;3 Backbone — PoP to PoP&#160;&#160;&#160;4 App side — TTFB · TCP · TLS</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Encrypted tunnel — Client to nearest PoP, then backbone to each app</span>
+        </div>
+        <div class="diagram-caption">One platform observes every hop of Brandon's path — so a Fair score can be pinned to a segment. Loss at ② with a clean ③ and ④ is his ISP; a slow ④ with ①–③ green is the application's side of the fence.</div>
+      </div>
+
+      <p>
+        In the CMA that logic lands on one page: Brandon's <strong>user drill-down</strong> in
+        Experience Monitoring. The summary strip identifies the session — user, site
+        (<em>Remote User</em>), last connected PoP and ISP, plus his device's OS, Client version
+        and internal/external IPs. The <strong>Select Application</strong> widget ranks his top
+        applications by usage with an average experience score for each, and selecting one reveals
+        its per-app measurements: <strong>Time to First Byte, TCP connect, TLS connect, HTTP
+        latency and HTTP/S errors</strong>. For Zoom, Teams and Webex, a meetings widget breaks
+        each call down by audio, video and screen sharing — packet loss, jitter, latency and
+        bitrate.
+      </p>
+
+      <figure class="shot">
+        <img src="../assets/img/em-remote-user.png" alt="CMA User Experience Monitoring drill-down for a remote user, filtered to Connection Type Is Remote and Application Is Microsoft Office365. The summary strip shows the user active on site Remote User with WAN and Internet access, 30 scored apps (23 Good, 5 Fair, 2 Poor) and last connected PoP Santa Clara. The Select Application widget lists HTTP(S) at 667 MB Good, ChatGPT Fair, Microsoft Office365 at 72.2 MB Fair (selected, average TTFB 486 ms, 30.5 MB down, 41.8 MB up, 508 flows), Microsoft General Good and Grok Fair. A Devices panel shows a Windows 11 laptop on Client 6.4.6.8830 with internal and external IPs and the ISP, and the score graph below is annotated with four Security Block Events for Microsoft Office365.">
+        <figcaption><strong>Home → Experience Monitoring → the remote-user drill-down</strong> — Brandon's
+        morning, in evidence (demo tenant; the identity shown is a fictional demo user). Filters pin the
+        view to <em>Connection Type Is Remote</em> and <em>Application Is Microsoft Office365</em>:
+        Office 365 sits at <strong>Fair — 486 ms average TTFB across 508 flows</strong> — while HTTP(S)
+        and Microsoft General score Good, so the last mile is not the story. The Devices panel gives the
+        support call its context (Windows 11, Client 6.4.6.8830, current IPs, ISP, last PoP Santa Clara),
+        and the score graph is annotated with four security block events — the “slow app” conversation
+        may actually be a policy conversation.</figcaption>
+      </figure>
+
+      <p>
+        When the complaint is “everything is slow” rather than one app, the
+        <strong>Connection Details</strong> view decomposes his path into scored nodes —
+        <strong>client device, Wi-Fi, LAN gateway, last mile (tunnel) and application</strong> —
+        each independently rated against published thresholds: CPU Good below 70% utilisation,
+        Wi-Fi Good at −67 dBm or stronger, LAN gateway and tunnel Good below 1% loss and 10 ms.
+        The first non-green node names the fault domain; a tunnel-age widget adds context without
+        skewing the score.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧑‍💻</div><div><h4>Per-user, per-app truth</h4><p>Every sanctioned app Brandon uses carries its own Good / Fair / Poor score — so “slow” resolves to <em>which app, how much, since when</em> before anyone remotes into his laptop.</p></div></div>
+        <div class="benefit"><div class="b-icon">📍</div><div><h4>Segment isolation in one screen</h4><p>Device, Wi-Fi, LAN gateway, last-mile tunnel and application are scored as separate nodes — last mile vs backbone vs app-side is a glance, not a war room.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Telemetry as a by-product</h4><p>No extra agent, no synthetic-only view: the always-on Client and the PoP that carry Brandon's traffic are the sensors, so coverage is exactly his working day.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Evidence for every audience</h4><p>TTFB and flow counts for the app team, tunnel loss for the ISP call, posture and block events for security — one drill-down feeds them all.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — dig into the “why”</div>
+        <p>Ask how remote-worker complaints reach IT today and what the last one cost to resolve.
+        Then run the whole demo as one person's story — pick a remote user in the tenant and stay
+        with them. Estate-wide DEM (sites, probes, path analysis, anomalies) is a different
+        conversation: hand that to <a href="management-dem.html">Proactive Digital Experience
+        Monitoring</a> rather than mixing the two.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Find your worker</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Open the <strong>Remote Users</strong> tab and sort by experience, worst first. Pick
+          one user — your “Brandon” — and open their drill-down. Frame it: “this is one employee's
+          working day, as the platform saw it.”</p>
+        </li>
+        <li>
+          <h4>Read the summary strip</h4>
+          <p>Walk the header: site <em>Remote User</em>, network access, the count of scored apps
+          with the Good / Fair / Poor split, the last connected PoP and the ISP. Point out that
+          nobody deployed anything extra to get this — it is the same Client that enforces
+          policy.</p>
+        </li>
+        <li>
+          <h4>Filter to the app they'd complain about</h4>
+          <p>In <strong>Select Application</strong>, choose the busiest degraded app (in the
+          capture above, Microsoft Office 365 at Fair). Show the per-app numbers — average TTFB,
+          data up/down, flow count — and the score graph against the all-apps line. Add the
+          <em>Connection Type Is Remote</em> filter to keep the view to remote sessions; remove it
+          to blend in any office-side activity the same user had behind a Socket.</p>
+        </li>
+        <li>
+          <h4>Isolate the segment in Connection Details</h4>
+          <p>Open <strong>Connection Details</strong> and walk the nodes left to right — client
+          device (CPU, memory), Wi-Fi (signal strength), LAN gateway, last-mile tunnel (loss and
+          latency, upstream and downstream), application. Hover the first non-green node and read
+          its averages: that is the fault domain, decided by thresholds rather than opinion.</p>
+        </li>
+        <li>
+          <h4>Add the connection and posture context</h4>
+          <p>Show the <strong>Devices</strong> panel — OS, Client version, internal and external
+          IP, ISP — then the events on the score graph: user connected, user authenticated, and
+          any security block events for the very app under discussion. Segue: the same platform
+          that measures Brandon also decides what his device may do.</p>
+        </li>
+        <li>
+          <h4>Close on the policies that made it automatic</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Show the Always-On rules (with their controlled bypass options), the posture profiles
+          referenced by the connectivity rules (<span class="path">Access → Device Posture</span>),
+          and the default-full-tunnel rule base in
+          <span class="path">Access → Split Tunnel Policy</span>. Land the message: Brandon's
+          assured experience is policy output, not heroics — it was decided once, on day one.</p>
+        </li>
+      </ol>
+
+      <div class="callout warn">
+        <div class="co-title">Status: verified against documentation</div>
+        <p>There is no source deck for this page — it was authored directly for the library. The
+        Client, policy and Experience Monitoring capabilities stated here were verified against the
+        Cato Learning Center documentation (knowledge.catonetworks.com) in July 2026, and the
+        screenshot was captured from a demo tenant the same month (the identity shown is a
+        fictional demo user). Client-version thresholds for bypass options move with releases —
+        re-check before quoting them in a proposal.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/the-user-experience-monitoring-drill-down-page-remote-and-office-users" target="_blank" rel="noopener">The user Experience Monitoring drill-down page</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/experience-monitoring-connection-details" target="_blank" rel="noopener">Connection Details and node scoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting users with Always-On security</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/routing-with-the-cato-client-split-tunnel-policy" target="_blank" rel="noopener">Routing with the Cato Client (Split Tunnel Policy)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-client-connectivity-policy" target="_blank" rel="noopener">What is the Client Connectivity Policy</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a> — the access-policy story</li>
+            <li><a href="management-dem.html">Proactive Digital Experience Monitoring</a> — the estate-wide view</li>
+            <li><a href="access-identity-design.html">Identity Integration Design</a> — how Brandon's identity got there</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

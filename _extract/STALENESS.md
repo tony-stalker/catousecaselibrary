@@ -26,6 +26,14 @@ build time (July 2026) from the sources cited on each page.
 | "80+ PoPs" and PoP lists | network-global-expansion, others | Semi-annually — count grows |
 | Cloud Interconnect provider list & PoP availability/lead times | network-cloud-interconnect | Semi-annually vs KB |
 | Cato Terraform provider parallelism=1 caveat | migration-cloudflare | Semi-annually |
+| Sophos forced-refresh calendar (XG EOL 31 Mar 2025; SFOS v22 Dec 2025 XGS-only; Workspace Protection GA Feb 2026; standalone ZTNA SKUs end 1 May 2026; +10% XGS prices 1 Jul 2026) | migration-sophos | Quarterly — Sophos partner news moves fast |
+| Six Sophos firewall CVEs in CISA KEV (incl. CVE-2020-25223 SG UTM, CVE-2020-29574 CyberoamOS) | migration-sophos | Quarterly — counts grow |
+| Sophos endpoint credentials (Gartner MQ EPP Leader 17th consecutive 2026; MDR 26k+ customers Jan 2025; MSP Elevate May 2025) | migration-sophos | On next MQ / annually |
+| SD-RED 20/60 has NO declared EOL — page explicitly says do not claim it | migration-sophos | Quarterly — reframe if Sophos declares one |
+| DSPT 2025-26 "v8" aligned to CAF v3.4, deadline 30 Jun 2026 just closed; NO 2026-27 (v9) edition yet — page carries a staleness callout | security-healthcare-nhs | Sep 2026 — new edition expected on ~Sept cadence |
+| NCSC CAF v4.0 (Aug 2025) vs NHS still on v3.4 | security-healthcare-nhs | On next DSPT edition |
+| NHS Supply Chain requires CE+ from in-scope suppliers (Sep 2025); NHS England MFA policy (Aug 2023); HSCN operational, no announced successor | security-healthcare-nhs | Annually |
+| Always-On bypass minimum Client versions (Win 5.9+ / macOS 5.5+ / iOS 5.6+); EM Connection Details scoring thresholds | access-remote-worker | Quarterly vs KB — versions move with releases |
 
 Rendering note: as of 19 Jul 2026 measure_svg.py runs completely silent — all label
 bleeds fixed, and the script now ignores rects wider than 250 user-units (band/container
