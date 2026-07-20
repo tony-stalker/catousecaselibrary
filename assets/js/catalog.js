@@ -439,6 +439,36 @@ window.UC_CATALOG = [
     deck: null
   },
   {
+    id: "migration-journey-mpls",
+    file: "usecases/migration-journey-mpls.html",
+    category: "Migration",
+    title: "MPLS to Cato: Animated Phased Journey",
+    summary: "Watch an MPLS exit unfold phase by phase — DC socket first, sites migrating over the backbone while legacy sites stay reachable, then the circuit switched off. An animated walkthrough of the co-existence pattern.",
+    tags: ["MPLS", "Phased Migration", "Co-existence", "Animated", "Journey"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-journey-sdwan",
+    file: "usecases/migration-journey-sdwan.html",
+    category: "Migration",
+    title: "SD-WAN to Cato: Animated Phased Journey",
+    summary: "See an SD-WAN displacement step through its phases — parallel sockets at the hub, eBGP co-existence with the legacy fabric, spoke-by-spoke cutover, then the overlay retired. The eBGP hub pattern, animated.",
+    tags: ["SD-WAN", "Phased Migration", "eBGP", "Animated", "Journey"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-journey-zscaler",
+    file: "usecases/migration-journey-zscaler.html",
+    category: "Migration",
+    title: "Zscaler to Cato: Animated Phased Journey",
+    summary: "Follow a Zscaler migration across its phases — interim ZIA co-existence, cohort client swaps, policy cutover, then ZIA and ZCC retired. The dual-agent transition, animated step by step.",
+    tags: ["Zscaler", "Phased Migration", "SSE", "Animated", "Journey"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "migration-zscaler",
     file: "usecases/migration-zscaler.html",
     category: "Migration",

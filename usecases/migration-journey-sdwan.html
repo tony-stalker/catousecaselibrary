@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SD-WAN to Cato: Animated Phased Journey — Cato Use Case Library</title>
+<meta name="description" content="See an SD-WAN displacement step through its phases — parallel sockets at the hub, eBGP co-existence with the legacy fabric, spoke-by-spoke cutover, then the overlay retired. The eBGP hub pattern, animated.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-journey-sdwan">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / SD-WAN Journey</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>SD-WAN to Cato: Animated Phased Journey</h1>
+    <p class="lede">
+      SD-WAN displacements rarely stall on whether Cato is better — they stall on one question in
+      the room: <em>how do both fabrics coexist mid-cutover without breaking routing?</em> This is
+      that answer as a walkthrough. Press play and watch the eBGP-hub journey unfold phase by phase —
+      a parallel socket at the hub, spoke-by-spoke cutover with instant rollback, then the legacy
+      overlay switched off. For the full pattern catalogue and the routing detail behind it, see the
+      <a href="migration-methodology.html">Migration Methodology</a> page.
+    </p>
+    <div class="meta-row">
+      <span class="tag">SD-WAN</span><span class="tag">Phased Migration</span><span class="tag">eBGP</span>
+      <span class="tag">Co-existence</span><span class="tag">Animated</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The question that stalls the deal</h2>
+      <p>
+        A prospect running a legacy SD-WAN fabric — the same overlay steering every branch back to a
+        regional hub — believes the destination. What they can't picture is the <em>transition</em>:
+        the weeks when half the estate is on Cato and half is still on the incumbent overlay, and
+        traffic has to flow cleanly between them without asymmetric routing tearing sessions apart.
+      </p>
+      <p>
+        The proven answer is the <strong>eBGP-hub co-existence pattern</strong>: stand a Cato Socket
+        up in parallel at the hub, hand routes between the two fabrics over eBGP, and let AS-path
+        length anchor every site to its own hub so paths stay symmetric. Below, that pattern is
+        animated end to end. It is deliberately generic — a regional hub, three spokes and a DC —
+        so it maps onto any legacy SD-WAN overlay. The vendor-specific mechanics live in the
+        <a href="migration-fortinet.html">Fortinet playbook</a> and the routing options A–F in the
+        <a href="migration-methodology.html">Migration Methodology</a>.
+      </p>
+    </section>
+
+    <section id="walkthrough" class="reveal">
+      <div class="section-kicker">The journey, animated</div>
+      <h2>Five phases, one stable topology</h2>
+      <p>
+        Node positions never move between phases — only the thing that phase changes moves: a socket
+        appears, a link goes dormant, a spoke turns green, the overlay is struck through. That is the
+        migration itself, watched as a progression. Use the dots or arrows to step through it, or let
+        it play.
+      </p>
+
+      <div class="diagram-card">
+        <div class="phase-player" data-autoplay="4500">
+          <div class="phase-stage">
+
+            <!-- ================= PHASE 0 — Legacy overlay ================= -->
+            <figure class="phase" data-title="Overlay">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Every branch on the legacy SD-WAN overlay to a central legacy hub; no Cato in the path.">
+                <text class="dg-tiny" x="460" y="15" text-anchor="middle">Hub site</text>
+                <!-- DC behind the hub -->
+                <rect class="dg-node" x="372" y="22" width="176" height="46" rx="10"/>
+                <text class="dg-label" x="460" y="43" text-anchor="middle">London DC / cloud</text>
+                <text class="dg-sub" x="460" y="59" text-anchor="middle">at the hub site</text>
+                <!-- Legacy SD-WAN hub -->
+                <rect class="dg-node-dark" x="372" y="92" width="176" height="56" rx="10"/>
+                <text class="dg-label-inv" x="460" y="116" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="dg-sub-inv" x="460" y="134" text-anchor="middle">incumbent overlay</text>
+                <!-- Spokes -->
+                <rect class="dg-node" x="40" y="54" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="78" text-anchor="middle">Bristol spoke</text>
+                <text class="dg-sub" x="115" y="95" text-anchor="middle">legacy overlay</text>
+                <rect class="dg-node" x="40" y="184" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="208" text-anchor="middle">Leeds spoke</text>
+                <text class="dg-sub" x="115" y="225" text-anchor="middle">legacy overlay</text>
+                <rect class="dg-node" x="40" y="314" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="338" text-anchor="middle">Glasgow spoke</text>
+                <text class="dg-sub" x="115" y="355" text-anchor="middle">legacy overlay</text>
+                <!-- DC to hub -->
+                <path class="lane lane-static" d="M 460 68 L 460 92"/>
+                <!-- Overlay links -->
+                <path class="lane lane-static" d="M 190 82 C 262 96, 322 104, 372 114"/>
+                <path class="lane lane-static" d="M 190 208 C 264 190, 322 150, 372 128"/>
+                <path class="lane lane-static" d="M 190 336 C 268 300, 330 175, 372 140"/>
+              </svg>
+              <figcaption>Every branch rides the incumbent SD-WAN overlay back to a central legacy hub — no Cato in the path yet.</figcaption>
+            </figure>
+
+            <!-- ================= PHASE 1 — Parallel socket at hub ================= -->
+            <figure class="phase" data-title="Parallel hub">
+              <svg viewBox="0 0 960 420" role="img" aria-label="A Cato Socket runs in parallel at the hub with an eBGP handoff to the legacy hub; the Cato PoP and backbone are online.">
+                <text class="dg-tiny" x="460" y="15" text-anchor="middle">Hub site</text>
+                <!-- Cato backbone + PoP -->
+                <ellipse class="dg-backbone" cx="792" cy="206" rx="116" ry="50"/>
+                <circle class="pulse-ring" cx="792" cy="206" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="792" cy="206" r="30"/>
+                <text class="dg-label" x="792" y="160" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+                <text class="dg-tiny" x="792" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Global Backbone</text>
+                <!-- DC behind the hub -->
+                <rect class="dg-node" x="372" y="22" width="176" height="46" rx="10"/>
+                <text class="dg-label" x="460" y="43" text-anchor="middle">London DC / cloud</text>
+                <text class="dg-sub" x="460" y="59" text-anchor="middle">at the hub site</text>
+                <!-- Legacy SD-WAN hub -->
+                <rect class="dg-node-dark" x="372" y="92" width="176" height="56" rx="10"/>
+                <text class="dg-label-inv" x="460" y="116" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="dg-sub-inv" x="460" y="134" text-anchor="middle">incumbent overlay</text>
+                <!-- Cato socket parallel at hub -->
+                <rect class="dg-node-green" x="372" y="232" width="176" height="56" rx="10"/>
+                <text class="dg-label" x="460" y="256" text-anchor="middle">Cato Socket</text>
+                <text class="dg-sub" x="460" y="274" text-anchor="middle">parallel at the hub</text>
+                <!-- Spokes -->
+                <rect class="dg-node" x="40" y="54" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="78" text-anchor="middle">Bristol spoke</text>
+                <text class="dg-sub" x="115" y="95" text-anchor="middle">legacy overlay</text>
+                <rect class="dg-node" x="40" y="184" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="208" text-anchor="middle">Leeds spoke</text>
+                <text class="dg-sub" x="115" y="225" text-anchor="middle">legacy overlay</text>
+                <rect class="dg-node" x="40" y="314" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="338" text-anchor="middle">Glasgow spoke</text>
+                <text class="dg-sub" x="115" y="355" text-anchor="middle">legacy overlay</text>
+                <!-- DC to hub -->
+                <path class="lane lane-static" d="M 460 68 L 460 92"/>
+                <!-- eBGP handoff hub <-> socket -->
+                <path class="lane lane-static" d="M 460 148 L 460 232"/>
+                <text class="dg-tiny" x="470" y="194" text-anchor="start">eBGP handoff</text>
+                <!-- socket to backbone -->
+                <path class="lane lane-allow" d="M 548 254 C 628 246, 700 224, 762 210"/>
+                <!-- Overlay links (unchanged) -->
+                <path class="lane lane-static" d="M 190 82 C 262 96, 322 104, 372 114"/>
+                <path class="lane lane-static" d="M 190 208 C 264 190, 322 150, 372 128"/>
+                <path class="lane lane-static" d="M 190 336 C 268 300, 330 175, 372 140"/>
+              </svg>
+              <figcaption>A Cato Socket runs in parallel at the hub with an eBGP handoff — the two fabrics exchange routes, but nothing has moved yet.</figcaption>
+            </figure>
+
+            <!-- ================= PHASE 2 — First spoke cuts over ================= -->
+            <figure class="phase" data-title="First spoke">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Bristol cuts over to a Cato site; its legacy overlay link goes dormant and AS-path length keeps its routing symmetric.">
+                <text class="dg-tiny" x="460" y="15" text-anchor="middle">Hub site</text>
+                <ellipse class="dg-backbone" cx="792" cy="206" rx="116" ry="50"/>
+                <circle class="pulse-ring" cx="792" cy="206" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="792" cy="206" r="30"/>
+                <text class="dg-label" x="792" y="160" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+                <text class="dg-tiny" x="792" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Global Backbone</text>
+                <rect class="dg-node" x="372" y="22" width="176" height="46" rx="10"/>
+                <text class="dg-label" x="460" y="43" text-anchor="middle">London DC / cloud</text>
+                <text class="dg-sub" x="460" y="59" text-anchor="middle">at the hub site</text>
+                <rect class="dg-node-dark" x="372" y="92" width="176" height="56" rx="10"/>
+                <text class="dg-label-inv" x="460" y="116" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="dg-sub-inv" x="460" y="134" text-anchor="middle">incumbent overlay</text>
+                <rect class="dg-node-green" x="372" y="232" width="176" height="56" rx="10"/>
+                <text class="dg-label" x="460" y="256" text-anchor="middle">Cato Socket</text>
+                <text class="dg-sub" x="460" y="274" text-anchor="middle">parallel at the hub</text>
+                <!-- Bristol migrated -->
+                <rect class="dg-node-green" x="40" y="54" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="78" text-anchor="middle">Bristol spoke</text>
+                <text class="dg-sub" x="115" y="95" text-anchor="middle">migrated · Cato</text>
+                <rect class="dg-node" x="40" y="184" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="208" text-anchor="middle">Leeds spoke</text>
+                <text class="dg-sub" x="115" y="225" text-anchor="middle">legacy overlay</text>
+                <rect class="dg-node" x="40" y="314" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="338" text-anchor="middle">Glasgow spoke</text>
+                <text class="dg-sub" x="115" y="355" text-anchor="middle">legacy overlay</text>
+                <path class="lane lane-static" d="M 460 68 L 460 92"/>
+                <path class="lane lane-static" d="M 460 148 L 460 232"/>
+                <text class="dg-tiny" x="470" y="194" text-anchor="start">eBGP handoff</text>
+                <text class="dg-tiny" x="610" y="176" text-anchor="middle">AS-path keeps it symmetric</text>
+                <path class="lane lane-allow" d="M 548 254 C 628 246, 700 224, 762 210"/>
+                <!-- Bristol legacy link now dormant -->
+                <path class="lane-standby" d="M 190 82 C 262 96, 322 104, 372 114"/>
+                <!-- Bristol on Cato -->
+                <path class="lane lane-allow" d="M 190 88 C 250 150, 250 340, 360 352 C 520 366, 660 320, 764 224"/>
+                <!-- Leeds & Glasgow still legacy -->
+                <path class="lane lane-static" d="M 190 208 C 264 190, 322 150, 372 128"/>
+                <path class="lane lane-static" d="M 190 336 C 268 300, 330 175, 372 140"/>
+              </svg>
+              <figcaption>Disable the legacy spoke, bring up the Cato site; routes propagate over eBGP, and rollback is the mirror image.</figcaption>
+            </figure>
+
+            <!-- ================= PHASE 3 — Spokes migrating ================= -->
+            <figure class="phase" data-title="Migrating">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Leeds has also moved to Cato; Glasgow is still on the legacy overlay and the legacy hub is fading as it empties.">
+                <text class="dg-tiny" x="460" y="15" text-anchor="middle">Hub site</text>
+                <ellipse class="dg-backbone" cx="792" cy="206" rx="116" ry="50"/>
+                <circle class="pulse-ring" cx="792" cy="206" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="792" cy="206" r="30"/>
+                <text class="dg-label" x="792" y="160" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+                <text class="dg-tiny" x="792" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Global Backbone</text>
+                <rect class="dg-node" x="372" y="22" width="176" height="46" rx="10"/>
+                <text class="dg-label" x="460" y="43" text-anchor="middle">London DC / cloud</text>
+                <text class="dg-sub" x="460" y="59" text-anchor="middle">at the hub site</text>
+                <!-- legacy hub greyed a little -->
+                <g opacity="0.55">
+                  <rect class="dg-node-dark" x="372" y="92" width="176" height="56" rx="10"/>
+                  <text class="dg-label-inv" x="460" y="116" text-anchor="middle">Legacy SD-WAN hub</text>
+                  <text class="dg-sub-inv" x="460" y="134" text-anchor="middle">emptying out</text>
+                </g>
+                <rect class="dg-node-green" x="372" y="232" width="176" height="56" rx="10"/>
+                <text class="dg-label" x="460" y="256" text-anchor="middle">Cato Socket</text>
+                <text class="dg-sub" x="460" y="274" text-anchor="middle">parallel at the hub</text>
+                <!-- Bristol migrated -->
+                <rect class="dg-node-green" x="40" y="54" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="78" text-anchor="middle">Bristol spoke</text>
+                <text class="dg-sub" x="115" y="95" text-anchor="middle">migrated · Cato</text>
+                <!-- Leeds migrated -->
+                <rect class="dg-node-green" x="40" y="184" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="208" text-anchor="middle">Leeds spoke</text>
+                <text class="dg-sub" x="115" y="225" text-anchor="middle">migrated · Cato</text>
+                <!-- Glasgow still legacy -->
+                <rect class="dg-node" x="40" y="314" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="338" text-anchor="middle">Glasgow spoke</text>
+                <text class="dg-sub" x="115" y="355" text-anchor="middle">legacy overlay</text>
+                <path class="lane lane-static" d="M 460 68 L 460 92"/>
+                <path class="lane lane-static" d="M 460 148 L 460 232"/>
+                <text class="dg-tiny" x="470" y="194" text-anchor="start">eBGP handoff</text>
+                <text class="dg-tiny" x="610" y="176" text-anchor="middle">AS-path keeps it symmetric</text>
+                <path class="lane lane-allow" d="M 548 254 C 628 246, 700 224, 762 210"/>
+                <!-- dormant legacy links for Bristol & Leeds -->
+                <path class="lane-standby" d="M 190 82 C 262 96, 322 104, 372 114"/>
+                <path class="lane-standby" d="M 190 208 C 264 190, 322 150, 372 128"/>
+                <!-- Bristol & Leeds on Cato -->
+                <path class="lane lane-allow" d="M 190 88 C 250 150, 250 340, 360 352 C 520 366, 660 320, 764 224"/>
+                <path class="lane lane-allow" d="M 190 218 C 280 250, 300 352, 402 356 C 540 360, 660 320, 766 226"/>
+                <!-- Glasgow still legacy -->
+                <path class="lane lane-static" d="M 190 336 C 268 300, 330 175, 372 140"/>
+              </svg>
+              <figcaption>Spoke by spoke, in waves — each cutover independent, each with instant rollback while the legacy hub empties out.</figcaption>
+            </figure>
+
+            <!-- ================= PHASE 4 — Overlay retired ================= -->
+            <figure class="phase" data-title="Retired">
+              <svg viewBox="0 0 960 420" role="img" aria-label="The last spoke has moved; the legacy hub, its overlay links and controllers are struck through and decommissioned. Every site and the DC run on Cato.">
+                <text class="dg-tiny" x="460" y="15" text-anchor="middle">Hub site</text>
+                <ellipse class="dg-backbone" cx="792" cy="206" rx="116" ry="50"/>
+                <circle class="pulse-ring" cx="792" cy="206" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="792" cy="206" r="30"/>
+                <text class="dg-label" x="792" y="160" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+                <text class="dg-tiny" x="792" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Global Backbone</text>
+                <rect class="dg-node" x="372" y="22" width="176" height="46" rx="10"/>
+                <text class="dg-label" x="460" y="43" text-anchor="middle">London DC / cloud</text>
+                <text class="dg-sub" x="460" y="59" text-anchor="middle">on Cato backbone</text>
+                <!-- retired legacy hub -->
+                <g opacity="0.4">
+                  <rect class="dg-node-dark" x="372" y="92" width="176" height="56" rx="10"/>
+                  <text class="dg-label-inv" x="460" y="116" text-anchor="middle">Legacy SD-WAN hub</text>
+                  <text class="dg-sub-inv" x="460" y="134" text-anchor="middle">decommissioned</text>
+                </g>
+                <path class="lane-x" d="M 442 104 L 478 136"/>
+                <path class="lane-x" d="M 478 104 L 442 136"/>
+                <text class="dg-tiny" x="460" y="166" text-anchor="middle" style="fill:var(--lane-block)">overlay &amp; controllers retired</text>
+                <rect class="dg-node-green" x="372" y="232" width="176" height="56" rx="10"/>
+                <text class="dg-label" x="460" y="256" text-anchor="middle">Cato Socket</text>
+                <text class="dg-sub" x="460" y="274" text-anchor="middle">the only hub now</text>
+                <!-- all spokes migrated -->
+                <rect class="dg-node-green" x="40" y="54" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="78" text-anchor="middle">Bristol spoke</text>
+                <text class="dg-sub" x="115" y="95" text-anchor="middle">migrated · Cato</text>
+                <rect class="dg-node-green" x="40" y="184" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="208" text-anchor="middle">Leeds spoke</text>
+                <text class="dg-sub" x="115" y="225" text-anchor="middle">migrated · Cato</text>
+                <rect class="dg-node-green" x="40" y="314" width="150" height="52" rx="10"/>
+                <text class="dg-label" x="115" y="338" text-anchor="middle">Glasgow spoke</text>
+                <text class="dg-sub" x="115" y="355" text-anchor="middle">migrated · Cato</text>
+                <!-- retired overlay links -->
+                <path class="lane-x" d="M 274 96 L 298 120"/>
+                <path class="lane-x" d="M 298 96 L 274 120"/>
+                <!-- DC now on Cato -->
+                <path class="lane lane-allow" d="M 460 68 C 556 96, 556 204, 502 232"/>
+                <!-- socket to backbone -->
+                <path class="lane lane-allow" d="M 548 254 C 628 246, 700 224, 762 210"/>
+                <!-- all spokes on Cato -->
+                <path class="lane lane-allow" d="M 190 88 C 250 150, 250 340, 360 352 C 520 366, 660 320, 764 224"/>
+                <path class="lane lane-allow" d="M 190 218 C 280 250, 300 352, 402 356 C 540 360, 660 320, 766 226"/>
+                <path class="lane lane-allow" d="M 190 344 C 300 366, 470 366, 600 352 C 678 344, 730 300, 770 232"/>
+              </svg>
+              <figcaption>Last spoke moved. The overlay, its controllers and licences are decommissioned — every site and the DC now run on Cato.</figcaption>
+            </figure>
+
+          </div>
+          <div class="phase-nav">
+            <button class="phase-prev" type="button" aria-label="Previous phase">&lsaquo;</button>
+            <div class="phase-steps"></div>
+            <button class="phase-play" type="button"></button>
+            <button class="phase-next" type="button" aria-label="Next phase">&rsaquo;</button>
+          </div>
+          <div class="phase-caption" aria-live="polite"></div>
+        </div>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> On the Cato backbone</span>
+          <span class="key"><span class="swatch standby"></span> Legacy SD-WAN overlay (live / dormant)</span>
+          <span class="key"><span class="swatch block"></span> Retired &amp; decommissioned</span>
+        </div>
+        <div class="diagram-caption">The topology is fixed across all five phases; only the element each phase changes moves. This is the eBGP-hub co-existence pattern from the <a href="migration-methodology.html">Migration Methodology</a>, watched as a progression.</div>
+      </div>
+    </section>
+
+    <section id="phases" class="reveal">
+      <div class="section-kicker">Phase by phase</div>
+      <h2>What happens at each step</h2>
+      <p>
+        The same five phases, as a reference table — what changes on the ground, and what routing
+        looks like while that phase is live.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Phase</th><th>What changes</th><th>Routing during this phase</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>0 · Legacy overlay</strong></td>
+              <td>Baseline: every branch on the incumbent SD-WAN fabric, steering back to a central legacy hub. No Cato.</td>
+              <td>All spoke-to-spoke and spoke-to-DC traffic transits the legacy hub over the overlay. Nothing to co-exist with yet.</td>
+            </tr>
+            <tr>
+              <td><strong>1 · Parallel socket at hub</strong></td>
+              <td>A Cato Socket is stood up beside the legacy hub; the Cato PoP and backbone come online; an eBGP handoff peers the two fabrics.</td>
+              <td>Legacy still carries all production. The fabrics exchange routes over eBGP — validated with test prefixes before a single site moves.</td>
+            </tr>
+            <tr>
+              <td><strong>2 · First spoke cuts over</strong></td>
+              <td>Bristol's legacy spoke is disabled and a Cato site brought up; its overlay link falls dormant.</td>
+              <td>Bristol rides the Cato backbone; to reach still-legacy sites it crosses the hub eBGP handoff. Rollback re-enables the legacy spoke.</td>
+            </tr>
+            <tr>
+              <td><strong>3 · Spokes migrating</strong></td>
+              <td>Leeds cuts over next; Glasgow stays on the overlay. The legacy hub begins to empty out.</td>
+              <td>Migrated spokes are symmetric on Cato, legacy spokes symmetric on the overlay — AS-path length anchors each to its own hub. No asymmetry across the handoff.</td>
+            </tr>
+            <tr>
+              <td><strong>4 · Overlay retired</strong></td>
+              <td>Glasgow moves; the legacy hub, its overlay links, controllers and licences are decommissioned.</td>
+              <td>Every site and the DC run on the Cato backbone. The eBGP handoff and the legacy overlay are removed — one fabric remains.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="symmetry" class="reveal">
+      <div class="section-kicker">The routing insight</div>
+      <h2>Why routing stays symmetric throughout</h2>
+      <p>
+        The whole journey hangs on one property: while both fabrics are live, a flow and its return
+        must take the <em>same</em> hub — otherwise the stateful firewalls on each side see only half
+        the conversation and sessions drop. Three things hold that line.
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>A parallel socket at the hub</h4><p>The Cato Socket sits alongside the legacy hub at the same site — the two fabrics meet in one place, so there is a single, controlled boundary between them rather than a mesh of interconnects.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>An eBGP handoff between the fabrics</h4><p>Routes are exchanged dynamically at that boundary. Migrating a spoke withdraws its prefixes from one fabric and advertises them into the other automatically — no per-site static route engineering during the window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>AS-path length anchors each site</h4><p>Crossing between fabrics adds an AS hop, so best-path selection keeps a site's traffic — and its return — on its own regional hub. Symmetry is a property of the routing, not a manual pin.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>Rollback is reconvergence</h4><p>Every cutover reverses by re-enabling configuration that still exists: re-enable the legacy spoke and BGP reconverges. No rebuild, no truck roll — which is exactly what makes the phased approach safe to start.</p></div></div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Where the detail lives</div>
+        <p>This page is the animated shape of the journey. For the route-filtering discipline, the
+        static routed-range alternative when BGP isn't available, and the six multi-region options
+        (A–F) that keep symmetry across regional hubs, see the
+        <a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a> page,
+        and the <a href="migration-fortinet.html">Fortinet playbook</a> for a worked vendor example of
+        the same eBGP-hub pattern.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273474065-Configuring-BGP-Neighbors-for-a-Cato-Socket" target="_blank" rel="noopener">Configuring BGP neighbours for a Cato Socket (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-fortinet.html">Fortinet (FortiGate &amp; FortiSASE) to Cato</a></li>
+            <li><a href="migration-journey-mpls.html">MPLS to Cato: Animated Phased Journey</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

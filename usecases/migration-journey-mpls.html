@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPLS to Cato: Animated Phased Journey — Cato Use Case Library</title>
+<meta name="description" content="Watch an MPLS exit unfold phase by phase — DC socket first, sites migrating over the backbone while legacy sites stay reachable, then the circuit switched off. An animated walkthrough of the co-existence pattern.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-journey-mpls">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / MPLS Journey</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>MPLS to Cato: Animated Phased Journey</h1>
+    <p class="lede">
+      Nobody stalls at the start of an MPLS migration, or at the end — they stall in the middle,
+      unsure whether migrated and un-migrated sites can still reach each other. This page is the
+      animated companion to the full co-existence use case: press play and watch the exit unfold
+      one phase at a time, from the first datacentre socket to the day the last circuit is switched off.
+    </p>
+    <div class="meta-row">
+      <span class="tag">MPLS</span><span class="tag">Phased Migration</span>
+      <span class="tag">Co-existence</span><span class="tag">Animated</span><span class="tag">Journey</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The middle is where migrations stall</h2>
+      <p>
+        A WAN migration is never a single weekend. Circuits expire on different dates, so for months
+        some sites sit on Cato while others are still on MPLS — and the only question that matters is
+        whether they can all still talk to each other. They can, throughout. The walkthrough below
+        steps through the five phases of a typical MPLS exit; for the routing tables line by line,
+        see the full detail in <a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence</a>.
+      </p>
+    </section>
+
+    <section id="journey" class="reveal">
+      <div class="section-kicker">The walkthrough</div>
+      <h2>The MPLS exit, phase by phase</h2>
+      <p>
+        Three branches — Bristol, Leeds and Glasgow — plus the London DC start hub-and-spoke on MPLS.
+        Watch the datacentre become the bridge, the sites move to the backbone one at a time, and the
+        legacy cloud finally retire. Autoplay steps every few seconds; use the dots or arrows to move
+        at your own pace.
+      </p>
+
+      <div class="diagram-card">
+        <div class="phase-player" data-autoplay="4500">
+          <div class="phase-stage">
+
+            <!-- ============ PHASE 0 — Legacy MPLS ============ -->
+            <figure class="phase" data-title="Legacy">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: three branches and the London datacentre all connect hub-and-spoke to a central MPLS cloud. No Cato yet.">
+                <!-- MPLS cloud -->
+                <ellipse cx="452" cy="118" rx="92" ry="50" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="452" y="116" text-anchor="middle">MPLS</text>
+                <text class="dg-sub-inv" x="452" y="136" text-anchor="middle">carrier hub</text>
+                <!-- static spokes -->
+                <path class="lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
+                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <!-- Branch nodes -->
+                <rect class="dg-node" x="26" y="40" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="dg-sub" x="110" y="90" text-anchor="middle">on MPLS</text>
+                <rect class="dg-node" x="26" y="178" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="208" text-anchor="middle">Leeds</text>
+                <text class="dg-sub" x="110" y="228" text-anchor="middle">on MPLS</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="346" text-anchor="middle">Glasgow</text>
+                <text class="dg-sub" x="110" y="366" text-anchor="middle">on MPLS</text>
+                <!-- London DC -->
+                <rect class="dg-node" x="756" y="170" width="178" height="78" rx="10"/>
+                <text class="dg-label" x="845" y="200" text-anchor="middle">London DC</text>
+                <text class="dg-sub" x="845" y="222" text-anchor="middle">MPLS hub</text>
+              </svg>
+              <figcaption>Everything hub-and-spokes over MPLS — three branches and the London datacentre all backhaul through the carrier cloud.</figcaption>
+            </figure>
+
+            <!-- ============ PHASE 1 — DC socket in ============ -->
+            <figure class="phase" data-title="DC socket">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: the London datacentre gains a green Cato Socket and a Cato backbone appears. The DC is now dual-homed on MPLS and Cato. Branches remain on MPLS.">
+                <!-- MPLS cloud -->
+                <ellipse cx="452" cy="118" rx="92" ry="50" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="452" y="116" text-anchor="middle">MPLS</text>
+                <text class="dg-sub-inv" x="452" y="136" text-anchor="middle">carrier hub</text>
+                <!-- Cato backbone -->
+                <ellipse class="dg-backbone" cx="452" cy="316" rx="150" ry="46"/>
+                <circle cx="330" cy="330" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="572" cy="302" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="452" cy="316" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="452" cy="316" r="28"/>
+                <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
+                <!-- static spokes (branches + DC still on MPLS) -->
+                <path class="lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
+                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <!-- DC now also on Cato -->
+                <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
+                <!-- Branch nodes -->
+                <rect class="dg-node" x="26" y="40" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="dg-sub" x="110" y="90" text-anchor="middle">on MPLS</text>
+                <rect class="dg-node" x="26" y="178" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="208" text-anchor="middle">Leeds</text>
+                <text class="dg-sub" x="110" y="228" text-anchor="middle">on MPLS</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="346" text-anchor="middle">Glasgow</text>
+                <text class="dg-sub" x="110" y="366" text-anchor="middle">on MPLS</text>
+                <!-- London DC (green socket) -->
+                <rect class="dg-node-green" x="756" y="170" width="178" height="78" rx="10"/>
+                <text class="dg-label" x="845" y="200" text-anchor="middle">London DC</text>
+                <text class="dg-sub" x="845" y="222" text-anchor="middle">+ Cato Socket</text>
+              </svg>
+              <figcaption>The datacentre becomes the bridge: a Cato Socket goes in alongside MPLS, and its socket advertises the branch prefixes into the Cato backbone.</figcaption>
+            </figure>
+
+            <!-- ============ PHASE 2 — First site migrates ============ -->
+            <figure class="phase" data-title="First site">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: Bristol turns green and joins the Cato backbone; its MPLS link goes dormant. Bristol reaches the still-on-MPLS sites the long way round via the London DC.">
+                <!-- MPLS cloud -->
+                <ellipse cx="452" cy="118" rx="92" ry="50" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="452" y="116" text-anchor="middle">MPLS</text>
+                <text class="dg-sub-inv" x="452" y="136" text-anchor="middle">carrier hub</text>
+                <!-- Cato backbone -->
+                <ellipse class="dg-backbone" cx="452" cy="316" rx="150" ry="46"/>
+                <circle cx="330" cy="330" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="572" cy="302" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="452" cy="316" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="452" cy="316" r="28"/>
+                <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
+                <!-- Leeds + Glasgow still on MPLS -->
+                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <!-- DC dual-homed -->
+                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
+                <!-- Bristol's MPLS link now dormant -->
+                <path class="lane-standby" d="M 194 78 C 260 84, 320 98, 374 102"/>
+                <!-- Bristol on Cato -->
+                <path class="lane lane-allow" d="M 150 104 C 200 200, 262 292, 328 312"/>
+                <!-- transit: Bristol -> PoP -> DC -> MPLS -> Leeds -->
+                <path class="lane lane-limit" d="M 168 100 C 240 210, 300 300, 402 316 C 500 330, 640 300, 742 236 C 660 195, 585 150, 548 140 C 430 128, 300 172, 198 214"/>
+                <!-- transit branch: MPLS -> Glasgow -->
+                <path class="lane lane-limit" d="M 508 152 C 400 200, 300 300, 200 332"/>
+                <!-- Branch nodes -->
+                <rect class="dg-node-green" x="26" y="40" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="dg-sub" x="110" y="90" text-anchor="middle">on Cato</text>
+                <rect class="dg-node" x="26" y="178" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="208" text-anchor="middle">Leeds</text>
+                <text class="dg-sub" x="110" y="228" text-anchor="middle">on MPLS</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="346" text-anchor="middle">Glasgow</text>
+                <text class="dg-sub" x="110" y="366" text-anchor="middle">on MPLS</text>
+                <!-- London DC -->
+                <rect class="dg-node-green" x="756" y="170" width="178" height="78" rx="10"/>
+                <text class="dg-label" x="845" y="200" text-anchor="middle">London DC</text>
+                <text class="dg-sub" x="845" y="222" text-anchor="middle">bridge · both</text>
+              </svg>
+              <figcaption>Bristol cuts over to Cato and its MPLS circuit goes dormant. It still reaches the un-migrated sites the long way round — via the DC bridge.</figcaption>
+            </figure>
+
+            <!-- ============ PHASE 3 — Most sites moved ============ -->
+            <figure class="phase" data-title="Most sites">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: Leeds also turns green on Cato; only Glasgow remains on a smaller, greyed MPLS cloud. Glasgow still reaches the migrated sites via the London DC.">
+                <!-- MPLS cloud (smaller, greyed) -->
+                <ellipse cx="452" cy="118" rx="58" ry="34" fill="var(--navy-800)" opacity="0.4"/>
+                <text class="dg-sub-inv" x="452" y="123" text-anchor="middle" style="opacity:0.85">MPLS</text>
+                <!-- Cato backbone -->
+                <ellipse class="dg-backbone" cx="452" cy="316" rx="150" ry="46"/>
+                <circle cx="330" cy="330" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="572" cy="302" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="452" cy="316" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="452" cy="316" r="28"/>
+                <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
+                <!-- Glasgow still on the shrinking MPLS -->
+                <path class="lane-static" d="M 194 340 C 300 300, 380 220, 420 152"/>
+                <!-- DC still bridges to small MPLS -->
+                <path class="lane-static" d="M 756 190 C 660 165, 560 150, 508 138"/>
+                <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
+                <!-- Bristol on Cato -->
+                <path class="lane lane-allow" d="M 150 104 C 200 200, 262 292, 328 312"/>
+                <!-- Leeds on Cato (new) -->
+                <path class="lane lane-allow" d="M 194 226 C 250 268, 290 300, 322 314"/>
+                <!-- transit: Glasgow -> MPLS -> DC -> backbone -->
+                <path class="lane lane-limit" d="M 200 334 C 320 260, 400 190, 470 150 C 560 168, 660 205, 722 214 C 640 258, 560 300, 500 312"/>
+                <!-- Branch nodes -->
+                <rect class="dg-node-green" x="26" y="40" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="dg-sub" x="110" y="90" text-anchor="middle">on Cato</text>
+                <rect class="dg-node-green" x="26" y="178" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="208" text-anchor="middle">Leeds</text>
+                <text class="dg-sub" x="110" y="228" text-anchor="middle">on Cato</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="346" text-anchor="middle">Glasgow</text>
+                <text class="dg-sub" x="110" y="366" text-anchor="middle">on MPLS</text>
+                <!-- London DC -->
+                <rect class="dg-node-green" x="756" y="170" width="178" height="78" rx="10"/>
+                <text class="dg-label" x="845" y="200" text-anchor="middle">London DC</text>
+                <text class="dg-sub" x="845" y="222" text-anchor="middle">bridge · both</text>
+              </svg>
+              <figcaption>Site by site the traffic shifts to the backbone. Leeds is now on-net; only Glasgow remains on a shrinking MPLS, still reaching everyone via the DC.</figcaption>
+            </figure>
+
+            <!-- ============ PHASE 4 — MPLS retired ============ -->
+            <figure class="phase" data-title="Retired">
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: Glasgow turns green on Cato; the MPLS cloud is retired with a red cross and all its links removed. All four sites and the DC ride the Cato backbone.">
+                <!-- MPLS cloud (retired) -->
+                <ellipse cx="452" cy="118" rx="58" ry="34" fill="var(--navy-800)" opacity="0.22"/>
+                <text class="dg-sub-inv" x="452" y="123" text-anchor="middle" style="opacity:0.5">MPLS</text>
+                <path class="lane-x" d="M 424 100 L 480 136"/>
+                <path class="lane-x" d="M 480 100 L 424 136"/>
+                <text class="dg-tiny" x="452" y="172" text-anchor="middle" style="fill:var(--status-critical);font-weight:700">retired</text>
+                <!-- Cato backbone -->
+                <ellipse class="dg-backbone" cx="452" cy="316" rx="150" ry="46"/>
+                <circle cx="330" cy="330" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="572" cy="302" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="452" cy="316" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="452" cy="316" r="28"/>
+                <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">every site any-to-any · one routing table</text>
+                <!-- all four sites + DC on Cato -->
+                <path class="lane lane-allow" d="M 150 104 C 200 200, 262 292, 328 312"/>
+                <path class="lane lane-allow" d="M 194 226 C 250 268, 290 300, 322 314"/>
+                <path class="lane lane-allow" d="M 194 342 C 260 350, 300 344, 330 332"/>
+                <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
+                <!-- Branch nodes -->
+                <rect class="dg-node-green" x="26" y="40" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="dg-sub" x="110" y="90" text-anchor="middle">on Cato</text>
+                <rect class="dg-node-green" x="26" y="178" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="208" text-anchor="middle">Leeds</text>
+                <text class="dg-sub" x="110" y="228" text-anchor="middle">on Cato</text>
+                <rect class="dg-node-green" x="26" y="316" width="168" height="64" rx="10"/>
+                <text class="dg-label" x="110" y="346" text-anchor="middle">Glasgow</text>
+                <text class="dg-sub" x="110" y="366" text-anchor="middle">on Cato</text>
+                <!-- London DC -->
+                <rect class="dg-node-green" x="756" y="170" width="178" height="78" rx="10"/>
+                <text class="dg-label" x="845" y="200" text-anchor="middle">London DC</text>
+                <text class="dg-sub" x="845" y="222" text-anchor="middle">on Cato</text>
+              </svg>
+              <figcaption>The last circuit is switched off and the MPLS contract cancelled. Every site and the datacentre now ride the Cato backbone — one network, one routing table.</figcaption>
+            </figure>
+
+          </div>
+          <div class="phase-nav">
+            <button class="phase-prev" type="button" aria-label="Previous phase">&lsaquo;</button>
+            <div class="phase-steps"></div>
+            <button class="phase-play" type="button"></button>
+            <button class="phase-next" type="button" aria-label="Next phase">&rsaquo;</button>
+          </div>
+          <div class="phase-caption" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="phases" class="reveal">
+      <div class="section-kicker">At each phase</div>
+      <h2>What changes, and who can reach whom</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Phase</th><th>What changes</th><th>Reachability during this phase</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>0 · Legacy MPLS</strong></td>
+              <td>Baseline — every branch and the London DC backhaul hub-and-spoke through the MPLS cloud.</td>
+              <td>Full any-to-any over MPLS; nothing on Cato yet.</td>
+            </tr>
+            <tr>
+              <td><strong>1 · DC socket in</strong></td>
+              <td>London DC gains a Cato Socket and the backbone appears. The socket advertises the branch prefixes into Cato.</td>
+              <td>Unchanged — branches still on MPLS; the DC is now reachable both ways.</td>
+            </tr>
+            <tr>
+              <td><strong>2 · First site migrates</strong></td>
+              <td>Bristol cuts over to Cato; its MPLS last mile goes dormant.</td>
+              <td>Bristol reaches the DC on-net, and Leeds/Glasgow via the DC bridge.</td>
+            </tr>
+            <tr>
+              <td><strong>3 · Most sites moved</strong></td>
+              <td>Leeds cuts over too; the MPLS cloud shrinks to a single remaining site.</td>
+              <td>Migrated sites are on-net; Glasgow still reaches everyone via the DC.</td>
+            </tr>
+            <tr>
+              <td><strong>4 · MPLS retired</strong></td>
+              <td>Glasgow cuts over; the MPLS CE router and the contract are decommissioned.</td>
+              <td>Full any-to-any over the Cato backbone; one routing table.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Why reachability never breaks</div>
+        <p>
+          The London DC socket advertises the prefixes of every site still on MPLS into the Cato
+          backbone — a static route pointed at the MPLS CE router on the DC LAN. So a migrated site
+          always has a route to an un-migrated one (via the DC), and vice-versa. No site is ever cut
+          off, at any point in the migration. The
+          <a href="network-mpls-migration.html">full co-existence use case</a> walks the two routing
+          tables that make this work, line by line.
+        </p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE Cloud architecture — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato Professional Services — migration delivery</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato knowledge base — sockets, sites &amp; routing</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-mpls-migration.html">MPLS to SASE Migration &amp; Co-existence — the full detail</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="migration-journey-sdwan.html">SD-WAN to Cato: Animated Phased Journey</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

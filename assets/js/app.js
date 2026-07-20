@@ -184,6 +184,7 @@
     });
     diagrams.forEach(function (d) {
       if (!d.querySelector("svg")) return;
+      if (d.querySelector(".phase-player") || d.closest(".phase-player")) return; // interactive: not a lightbox target
       d.classList.add("zoomable");
       d.setAttribute("title", "Click to enlarge");
       d.addEventListener("click", function () {
@@ -216,10 +217,84 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- phased migration player ---------- */
+  function initPhasePlayers() {
+    var players = $$(".phase-player");
+    if (!players.length) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    players.forEach(function (pl) {
+      var phases = $$(".phase", pl);
+      if (phases.length < 2) return;
+      pl.classList.add("ready");
+      pl.setAttribute("tabindex", "0");
+      pl.setAttribute("role", "group");
+      pl.setAttribute("aria-roledescription", "phased walkthrough");
+      var i = 0, timer = null;
+      var autoMs = parseInt(pl.getAttribute("data-autoplay") || "0", 10);
+      var caption = pl.querySelector(".phase-caption");
+      var steps = pl.querySelector(".phase-steps");
+      var dots = [];
+      function capOf(ph) {
+        var fc = ph.querySelector("figcaption");
+        return ph.getAttribute("data-caption") || (fc ? fc.textContent : "");
+      }
+      phases.forEach(function (ph, idx) {
+        var title = ph.getAttribute("data-title") || ("Phase " + idx);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "phase-dot";
+        b.setAttribute("aria-label", title);
+        b.innerHTML = '<span class="phase-dot-n">' + idx + "</span><span class=\"phase-dot-t\">" + esc(title) + "</span>";
+        b.addEventListener("click", function () { stop(); show(idx); updatePlay(); });
+        if (steps) steps.appendChild(b);
+        dots.push(b);
+      });
+      function show(n) {
+        i = (n + phases.length) % phases.length;
+        phases.forEach(function (ph, idx) { ph.classList.toggle("active", idx === i); });
+        dots.forEach(function (d, idx) {
+          d.classList.toggle("active", idx === i);
+          d.setAttribute("aria-current", idx === i ? "step" : "false");
+        });
+        if (caption) caption.textContent = capOf(phases[i]);
+      }
+      function next() { show(i + 1); }
+      function prev() { show(i - 1); }
+      function start() { if (timer || !autoMs || reduce) return; timer = setInterval(next, autoMs); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      function updatePlay() {
+        if (!pp) return;
+        pp.textContent = timer ? "❚❚" : "▶";
+        pp.setAttribute("aria-label", timer ? "Pause" : "Play walkthrough");
+      }
+      // controls sit inside a .diagram-card on some pages — don't let clicks bubble to a zoom handler
+      pl.addEventListener("click", function (e) { if (e.target.closest(".phase-nav, .phase-dot")) e.stopPropagation(); });
+      var pv = pl.querySelector(".phase-prev"),
+          nx = pl.querySelector(".phase-next"),
+          pp = pl.querySelector(".phase-play");
+      if (pv) pv.addEventListener("click", function () { stop(); prev(); updatePlay(); });
+      if (nx) nx.addEventListener("click", function () { stop(); next(); updatePlay(); });
+      if (pp) { if (reduce) { pp.style.display = "none"; } else pp.addEventListener("click", function () { if (timer) stop(); else start(); updatePlay(); }); }
+      pl.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight") { stop(); next(); updatePlay(); e.preventDefault(); }
+        else if (e.key === "ArrowLeft") { stop(); prev(); updatePlay(); e.preventDefault(); }
+      });
+      show(0);
+      if (autoMs && !reduce && "IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) { if (en.isIntersecting) start(); else stop(); updatePlay(); });
+        }, { threshold: 0.4 });
+        io.observe(pl);
+      }
+      updatePlay();
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initIndex();
     initPage();
     initLightbox();
     initReveal();
+    initPhasePlayers();
   });
 })();

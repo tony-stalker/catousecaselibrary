@@ -288,6 +288,29 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .lane-dot { stroke-dasharray: 3 8; }    /* identity variant B: dotted */
 @keyframes lane-march { to { stroke-dashoffset: -16; } }
 
+/* ---------- Phased migration player ---------- */
+.phase-player { margin: 22px 0; }
+.phase-player:focus-visible { outline: 2px solid var(--green-300); outline-offset: 4px; border-radius: var(--radius); }
+.phase-player:not(.ready) .phase + .phase { margin-top: 16px; }
+.phase-player.ready .phase-stage { display: grid; }
+.phase-player.ready .phase { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .45s ease; }
+.phase-player.ready .phase.active { opacity: 1; visibility: visible; }
+.phase-player.ready .phase figcaption { display: none; }
+@media (prefers-reduced-motion: reduce) { .phase-player.ready .phase { transition: none; } }
+.phase svg { display: block; width: 100%; height: auto; }
+.phase-caption { text-align: center; font-size: .9rem; color: var(--ink-2); margin-top: 12px; min-height: 2.7em; }
+.phase-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.phase-nav button { cursor: pointer; border: 1px solid var(--hairline); background: var(--surface); border-radius: 8px; font-family: var(--font); }
+.phase-prev, .phase-next, .phase-play { width: 34px; height: 34px; font-size: .95rem; color: var(--ink-2); line-height: 1; }
+.phase-prev:hover, .phase-next:hover, .phase-play:hover { border-color: var(--green-500); color: var(--green-700); }
+.phase-steps { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.phase-dot { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px 4px 5px; font-size: .8rem; color: var(--ink-3); border-color: transparent !important; background: transparent !important; }
+.phase-dot-n { display: inline-flex; width: 19px; height: 19px; border-radius: 50%; background: var(--hairline); color: var(--ink-2); align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+.phase-dot.active { color: var(--green-700); font-weight: 600; }
+.phase-dot.active .phase-dot-n { background: var(--green-600); color: #fff; }
+@media (max-width: 600px) { .phase-dot-t { display: none; } }
+@media print { .phase-player.ready .phase { position: static; opacity: 1; visibility: visible; page-break-inside: avoid; margin-bottom: 12px; } .phase-player.ready .phase-stage { display: block; } .phase-player.ready .phase figcaption { display: block; } .phase-nav, .phase-caption { display: none; } }
+
 .lane-x { stroke: var(--lane-block); stroke-width: 3.4; stroke-linecap: round; }
 .pulse-ring { transform-origin: center; transform-box: fill-box; animation: pulse-ring 2.4s ease-out infinite; }
 @keyframes pulse-ring { 0% { opacity: .8; transform: scale(.85);} 70% { opacity: 0; transform: scale(1.35);} 100% { opacity: 0; transform: scale(1.35);} }
