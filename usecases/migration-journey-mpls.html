@@ -86,10 +86,10 @@
                 <text class="dg-label-inv" x="452" y="116" text-anchor="middle">MPLS</text>
                 <text class="dg-sub-inv" x="452" y="136" text-anchor="middle">carrier hub</text>
                 <!-- static spokes -->
-                <path class="lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
-                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
-                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
-                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <path class="lane lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
+                <path class="lane lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <path class="lane lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
                 <!-- Branch nodes -->
                 <rect class="dg-node" x="26" y="40" width="168" height="64" rx="10"/>
                 <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
@@ -124,10 +124,10 @@
                 <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
                 <!-- static spokes (branches + DC still on MPLS) -->
-                <path class="lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
-                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
-                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
-                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <path class="lane lane-static" d="M 194 78 C 260 84, 320 98, 374 102"/>
+                <path class="lane lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <path class="lane lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
                 <!-- DC now also on Cato -->
                 <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
                 <!-- Branch nodes -->
@@ -164,10 +164,10 @@
                 <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
                 <!-- Leeds + Glasgow still on MPLS -->
-                <path class="lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
-                <path class="lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
+                <path class="lane lane-static" d="M 194 205 C 280 190, 340 165, 386 150"/>
+                <path class="lane lane-static" d="M 194 340 C 300 300, 380 210, 428 165"/>
                 <!-- DC dual-homed -->
-                <path class="lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
+                <path class="lane lane-static" d="M 756 195 C 660 165, 590 145, 544 132"/>
                 <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
                 <!-- Bristol's MPLS link now dormant -->
                 <path class="lane-standby" d="M 194 78 C 260 84, 320 98, 374 102"/>
@@ -210,9 +210,9 @@
                 <text class="dg-tiny" x="452" y="258" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <text class="dg-tiny" x="452" y="384" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">nearest PoP · one routing table</text>
                 <!-- Glasgow still on the shrinking MPLS -->
-                <path class="lane-static" d="M 194 340 C 300 300, 380 220, 420 152"/>
+                <path class="lane lane-static" d="M 194 340 C 300 300, 380 220, 420 152"/>
                 <!-- DC still bridges to small MPLS -->
-                <path class="lane-static" d="M 756 190 C 660 165, 560 150, 508 138"/>
+                <path class="lane lane-static" d="M 756 190 C 660 165, 560 150, 508 138"/>
                 <path class="lane lane-allow" d="M 845 248 C 760 288, 660 300, 590 306"/>
                 <!-- Bristol on Cato -->
                 <path class="lane lane-allow" d="M 150 104 C 200 200, 262 292, 328 312"/>
@@ -287,6 +287,13 @@
           </div>
           <div class="phase-caption" aria-live="polite"></div>
         </div>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> On the Cato backbone</span>
+          <span class="key"><span class="swatch limit"></span> Reaching a legacy site via the datacentre</span>
+          <span class="key"><span class="swatch standby"></span> Legacy MPLS (live / dormant)</span>
+          <span class="key"><span class="swatch block"></span> Retired &amp; decommissioned</span>
+        </div>
+        <div class="diagram-caption">The topology is fixed across all five phases; only the element each phase changes moves — the MPLS-to-Cato co-existence pattern from the <a href="network-mpls-migration.html">full MPLS migration page</a>, watched as a progression.</div>
       </div>
     </section>
 
