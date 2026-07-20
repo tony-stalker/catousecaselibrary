@@ -32,6 +32,7 @@ git add -A && git commit             # after a clean verify
 python3 _extract/whatsnew.py         # regenerate whatsnew.html, commit it
 git push                             # master tracks origin/main
 bash _extract/package.sh             # shareable zip in dist/ (clean decks only)
+python3 _extract/build-prospect.py   # regenerate ../catoprospectlibrary (prospect edition; commit+push there)
 ```
 
 Conventions and gotchas:
