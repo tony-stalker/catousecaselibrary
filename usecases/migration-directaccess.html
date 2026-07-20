@@ -265,12 +265,14 @@
           reach.</p>
         </li>
         <li>
-          <h4>Pilot cohort — deploy alongside</h4>
-          <p>Deploy the Cato Client to a pilot cohort while DirectAccess stays in place. The two take
-          different paths — DirectAccess over IP-HTTPS to the DA gateway, the Cato Client to the PoP — so
-          they can coexist during the transition. Validate this in the pilot: confirm always-on connects,
-          every in-scope application is reachable, posture verdicts are correct, and there is no
-          split-tunnel or route conflict between the two clients before you scale.</p>
+          <h4>Pilot cohort — swap, don't stack</h4>
+          <p>DirectAccess installs its own VPN tunnel adapter, and it does not tolerate a second
+          always-on tunnel beside it: leave DirectAccess and the Cato Client both active on one device and
+          their adapters and routing tables fight, producing intermittent, hard-to-diagnose connectivity.
+          So the pilot is a <strong>per-device swap, not a parallel run</strong> — remove the DirectAccess
+          client configuration for the device (GPO / unenrol) so its tunnel adapter tears down, then the
+          Cato Client becomes the sole tunnel. Validate on that device: always-on connects, every in-scope
+          application is reachable, and posture verdicts are correct before you widen the ring.</p>
         </li>
         <li>
           <h4>Wave rollout</h4>
@@ -301,18 +303,25 @@
       <div class="section-kicker">Co-existence &amp; rollback</div>
       <h2>Cohort mechanics, GPO as the lever</h2>
       <p>
-        Client migrations co-exist by <strong>cohort</strong>. At any moment during the rollout some users
-        run DirectAccess and some run the Cato Client — and because the two take different paths, a device
-        can carry both during the pilot while you validate reach and confirm no route conflict. The lever
-        that moves a cohort, and the lever that rolls it back, is the same: the DirectAccess client GPO.
+        Client migrations co-exist by <strong>cohort</strong>, not on the device. At any moment during the
+        rollout some users run DirectAccess and some run the Cato Client — but never both on the same
+        endpoint at the same time: their tunnel adapters conflict and the user gets unpredictable
+        connectivity. The swap is therefore atomic per device, and the lever that moves a cohort — and the
+        lever that rolls it back — is the same: the DirectAccess client GPO.
       </p>
+      <div class="callout warn">
+        <div class="co-title">One tunnel at a time</div>
+        <p>Do not run DirectAccess and the Cato Client together on one device — the two always-on tunnel
+        adapters clash and produce intermittent, hard-to-diagnose behaviour. Removing the DirectAccess
+        client configuration must happen <em>as</em> the Cato Client takes over, not after.</p>
+      </div>
       <div class="grid-3">
         <div class="card">
           <h3 style="margin-top:0">Cohort mechanics</h3>
           <p style="font-size:.92rem;color:var(--ink-2)">Cohorts follow deployment rings: pilot → early adopters → departmental
-          waves. Deploy the Cato Client, confirm enrolment and app reach, then remove the DirectAccess GPO
-          for that cohort so the Client becomes primary — with a per-cohort acceptance checklist of the
-          apps that cohort actually uses.</p>
+          waves. Per device, remove the DirectAccess GPO so its tunnel adapter tears down as the Cato
+          Client takes over as the sole tunnel — never both at once — with a per-cohort acceptance
+          checklist of the apps that cohort actually uses.</p>
         </div>
         <div class="card">
           <h3 style="margin-top:0">GPO revert = rollback</h3>
