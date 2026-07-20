@@ -30,6 +30,21 @@
 <main class="main">
     <div class="card" style="margin-bottom:16px">
       <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Add animated phased-migration journey pages (MPLS, SD-WAN, Zscaler)</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New reusable .phase-player component (app.js initPhasePlayers + style.css):</li><li>cross-fading phase stepper with dots, prev/next/play-pause, keyboard,</li><li>reduced-motion and no-JS fallbacks. Three journey pages each walk a</li><li>5-phase migration, all phase SVGs sharing one viewBox with stable node</li><li>positions so the transition reads as progression.</li><li>Also fixed: phase-player controls inside a diagram-card were bubbling</li><li>clicks into the lightbox (opened a static clone) — interactive players</li><li>are now excluded from zoom and control clicks stop propagating.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Fix DirectAccess migration: DA and Cato Client adapters clash — swap, don&#x27;t stack</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Step 3 wrongly implied a device could run DirectAccess and the Cato Client</li><li>in parallel. DirectAccess installs its own always-on tunnel adapter that</li><li>conflicts with the Cato Client adapter, giving unpredictable connectivity.</li><li>Reworded the pilot step, co-existence intro and cohort mechanics to an</li><li>atomic per-device swap, plus a &#x27;one tunnel at a time&#x27; warning.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
+      
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
       <h3 style="margin:4px 0 0">Add Microsoft DirectAccess to Cato migration use case</h3>
       <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Focused remote-access play (sibling to the AnyConnect page): DirectAccess</li><li>is deprecated and on the Windows Server removal path, Windows-only and</li><li>domain-joined-only, with NLS/PKI/IP-HTTPS plumbing — replaced by Cato SDP</li><li>always-on ZTNA. Lifecycle wording verified verbatim at learn.microsoft.com.</li></ul>
     </div>
