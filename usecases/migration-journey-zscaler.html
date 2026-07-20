@@ -76,192 +76,207 @@
       <div class="section-kicker">The walkthrough</div>
       <h2>Five phases, one moving picture</h2>
       <p>
-        Priya works from a branch site behind a firewall; Marcus is a remote user on a laptop. Watch
-        how each of them keeps internet security at every step as the estate moves onto Cato.
+        A branch site sits behind its firewall; Priya is a remote user on a laptop. Watch how each
+        of them keeps internet security at every step as the estate moves onto Cato — the site over
+        a Socket first, then Priya through the dual-agent bridge.
       </p>
 
       <div class="diagram-card">
         <div class="phase-player" data-autoplay="4500">
           <div class="phase-stage">
 
-            <!-- ===================== PHASE 0 ===================== -->
+            <!-- ============ PHASE 0 — On Zscaler ============ -->
             <figure class="phase" data-title="On Zscaler">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0 — on Zscaler: the branch site over GRE/IPsec and the remote user over ZCC both reach the Zscaler ZIA cloud for internet security. No Cato yet.">
-                <!-- Sources -->
-                <rect class="dg-node" x="40" y="72" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="100" text-anchor="middle">Branch site</text>
-                <text class="dg-sub" x="131" y="120" text-anchor="middle">Firewall · GRE / IPsec</text>
-                <text class="dg-tiny" x="131" y="140" text-anchor="middle">internet via ZIA</text>
-
-                <rect class="dg-node" x="40" y="274" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="302" text-anchor="middle">Remote user</text>
-                <text class="dg-sub" x="131" y="322" text-anchor="middle">ZCC agent</text>
-                <text class="dg-tiny" x="131" y="342" text-anchor="middle">internet via ZIA</text>
-
-                <!-- Zscaler ZIA cloud -->
-                <rect class="dg-node-dark" x="716" y="66" width="204" height="80" rx="10"/>
-                <text class="dg-label-inv" x="818" y="100" text-anchor="middle">Zscaler ZIA</text>
-                <text class="dg-sub-inv" x="818" y="120" text-anchor="middle">internet security</text>
-
-                <!-- Lanes: both reach ZIA (amber = current internet path) -->
-                <path class="lane lane-limit" d="M 222 104 C 420 82, 560 92, 716 102"/>
-                <path class="lane lane-limit" d="M 222 312 C 440 300, 560 176, 716 128"/>
-                <text class="dg-tiny" x="452" y="76" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">current internet path</text>
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: the branch site and the remote user Priya both send internet traffic down to the dark Zscaler ZIA cloud in the lower band — GRE/IPsec from the site, ZCC on the user — and ZIA egresses to Internet and SaaS on the right. No Cato yet.">
+                <!-- LOWER BAND: Zscaler ZIA cloud -->
+                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">Zscaler ZIA</text>
+                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">internet security</text>
+                <!-- current internet paths: site + user down to ZIA -->
+                <path class="lane lane-limit" d="M 194 90 C 300 150, 356 250, 412 300"/>
+                <path class="lane lane-limit" d="M 194 342 C 290 356, 350 362, 404 358"/>
+                <!-- ZIA egress out to the internet -->
+                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <!-- Branch site + remote user (left column, fixed) -->
+                <rect class="dg-node" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Branch site</text>
+                <text class="dg-sub" x="110" y="91" text-anchor="middle">GRE/IPsec to ZIA</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="342" text-anchor="middle">Priya · remote</text>
+                <text class="dg-sub" x="110" y="363" text-anchor="middle">ZCC to ZIA</text>
+                <!-- Internet & SaaS (right, fixed) -->
+                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+                <text class="dg-sub" x="841" y="226" text-anchor="middle">egress via ZIA</text>
               </svg>
-              <figcaption>Internet security runs through Zscaler ZIA today — GRE/IPsec from the site, ZCC on the remote user. No Cato in the picture yet.</figcaption>
+              <figcaption>Internet security runs through Zscaler ZIA today — GRE/IPsec from the branch site, ZCC on Priya's laptop. No Cato in the picture yet.</figcaption>
             </figure>
 
-            <!-- ===================== PHASE 1 ===================== -->
+            <!-- ============ PHASE 1 — Interim IPsec ============ -->
             <figure class="phase" data-title="Interim IPsec">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1 — a Cato Socket brings the branch WAN onto a Cato PoP over a green lane, while internet still bridges from the PoP to Zscaler ZIA over an amber interim IPsec tunnel. The remote user is still on ZCC to ZIA.">
-                <!-- Sources -->
-                <rect class="dg-node" x="40" y="72" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="100" text-anchor="middle">Branch site</text>
-                <text class="dg-sub" x="131" y="120" text-anchor="middle">Cato Socket</text>
-                <text class="dg-tiny" x="131" y="140" text-anchor="middle">WAN → Cato PoP</text>
-
-                <rect class="dg-node" x="40" y="274" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="302" text-anchor="middle">Remote user</text>
-                <text class="dg-sub" x="131" y="322" text-anchor="middle">ZCC agent</text>
-                <text class="dg-tiny" x="131" y="342" text-anchor="middle">internet via ZIA</text>
-
-                <!-- Cato PoP -->
-                <circle class="pulse-ring" cx="478" cy="205" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="478" cy="205" r="30"/>
-                <text class="dg-label" x="478" y="150" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">Cato PoP</text>
-                <text class="dg-tiny" x="478" y="166" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">WAN security</text>
-
-                <!-- Zscaler ZIA cloud -->
-                <rect class="dg-node-dark" x="716" y="66" width="204" height="80" rx="10"/>
-                <text class="dg-label-inv" x="818" y="100" text-anchor="middle">Zscaler ZIA</text>
-                <text class="dg-sub-inv" x="818" y="120" text-anchor="middle">internet security</text>
-
-                <!-- Lanes -->
-                <path class="lane lane-allow" d="M 222 104 C 322 132, 400 172, 450 194"/>
-                <path class="lane lane-limit" d="M 506 192 C 590 152, 640 120, 716 106"/>
-                <path class="lane lane-limit" d="M 222 312 C 440 300, 560 176, 716 128"/>
-                <text class="dg-tiny" x="600" y="140" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">interim IPsec</text>
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; the branch site gains a Cato Socket with a green link up to the PoP, and an amber interim IPsec lane bridges the PoP down to the Zscaler ZIA cloud. Priya still runs ZCC straight to ZIA.">
+                <!-- LOWER BAND: Zscaler ZIA cloud -->
+                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">Zscaler ZIA</text>
+                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">internet security</text>
+                <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
+                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
+                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="468" cy="96" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="468" cy="96" r="28"/>
+                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- site's old GRE tunnel now dormant -->
+                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
+                <!-- Priya still on ZCC to ZIA -->
+                <path class="lane lane-limit" d="M 194 342 C 290 356, 350 362, 404 358"/>
+                <!-- ZIA egress out to the internet -->
+                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <!-- site swings up to Cato -->
+                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <!-- interim IPsec bridge: PoP down to ZIA -->
+                <path class="lane lane-limit" d="M 486 118 C 560 150, 566 240, 502 294"/>
+                <text class="dg-tiny" x="600" y="208" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">interim IPsec</text>
+                <!-- Branch site + remote user -->
+                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Branch site</text>
+                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Socket</text>
+                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="342" text-anchor="middle">Priya · remote</text>
+                <text class="dg-sub" x="110" y="363" text-anchor="middle">ZCC to ZIA</text>
+                <!-- Internet & SaaS -->
+                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+                <text class="dg-sub" x="841" y="226" text-anchor="middle">egress via ZIA</text>
               </svg>
-              <figcaption>Sockets bring the WAN onto Cato; internet still bridges to ZIA over an interim IPsec tunnel from the Cato PoP. The remote user has not moved yet.</figcaption>
+              <figcaption>A Socket brings the branch WAN onto Cato; internet still bridges from the Cato PoP down to ZIA over an interim IPsec tunnel. Priya has not moved yet.</figcaption>
             </figure>
 
-            <!-- ===================== PHASE 2 ===================== -->
+            <!-- ============ PHASE 2 — Dual-agent ============ -->
             <figure class="phase" data-title="Dual-agent">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2 — a pilot cohort of remote users runs the Cato Client with ZCC nested inside it. The green Cato lane carries a thin amber ZCC lane to the PoP, which still bridges to ZIA. WAN is on Cato; internet is still via ZIA.">
-                <!-- Sources -->
-                <rect class="dg-node" x="40" y="72" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="100" text-anchor="middle">Branch site</text>
-                <text class="dg-sub" x="131" y="120" text-anchor="middle">Cato Socket</text>
-                <text class="dg-tiny" x="131" y="140" text-anchor="middle">WAN → Cato PoP</text>
-
-                <rect class="dg-node" x="40" y="274" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="300" text-anchor="middle">Remote user</text>
-                <text class="dg-sub" x="131" y="320" text-anchor="middle">Cato Client + ZCC</text>
-                <text class="dg-tiny" x="131" y="340" text-anchor="middle">pilot cohort</text>
-
-                <!-- Cato PoP -->
-                <circle class="pulse-ring" cx="478" cy="205" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="478" cy="205" r="30"/>
-                <text class="dg-label" x="478" y="150" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">Cato PoP</text>
-                <text class="dg-tiny" x="478" y="166" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">WAN security</text>
-
-                <!-- Zscaler ZIA cloud -->
-                <rect class="dg-node-dark" x="716" y="66" width="204" height="80" rx="10"/>
-                <text class="dg-label-inv" x="818" y="100" text-anchor="middle">Zscaler ZIA</text>
-                <text class="dg-sub-inv" x="818" y="120" text-anchor="middle">internet security</text>
-
-                <!-- Lanes -->
-                <path class="lane lane-allow" d="M 222 104 C 322 132, 400 172, 450 194"/>
-                <path class="lane lane-limit" d="M 506 192 C 590 152, 640 120, 716 106"/>
-                <!-- remote user: green Cato lane + nested thin amber ZCC lane -->
-                <path class="lane lane-allow" d="M 222 314 C 322 300, 402 254, 454 226"/>
-                <path class="lane lane-limit" d="M 222 322 C 322 308, 404 262, 460 232" style="stroke-width:2"/>
-                <text class="dg-tiny" x="330" y="252" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">ZCC inside socket</text>
-                <text class="dg-tiny" x="600" y="140" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">interim IPsec</text>
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: Priya turns green and runs both agents — the Cato Client with ZCC riding inside it. Her green lane swings up to the Cato PoP with a thin amber ZCC lane nested alongside; the PoP still bridges internet down to ZIA over interim IPsec.">
+                <!-- LOWER BAND: Zscaler ZIA cloud -->
+                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
+                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">Zscaler ZIA</text>
+                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">internet security</text>
+                <!-- UPPER BAND: Cato backbone + PoP -->
+                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
+                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="96" r="28"/>
+                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- Priya's old direct ZCC path now dormant -->
+                <path class="lane-standby" d="M 194 342 C 290 356, 350 362, 404 358"/>
+                <!-- ZIA egress out to the internet -->
+                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <!-- site on Cato -->
+                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <!-- interim IPsec bridge still live -->
+                <path class="lane lane-limit" d="M 486 118 C 560 150, 566 240, 502 294"/>
+                <text class="dg-tiny" x="600" y="208" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">interim IPsec</text>
+                <!-- Priya swings up to Cato, ZCC nested inside the tunnel -->
+                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
+                <path class="lane lane-limit" d="M 194 352 C 326 314, 410 214, 462 126" style="stroke-width:2"/>
+                <text class="dg-tiny" x="430" y="254" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">ZCC inside the tunnel</text>
+                <!-- Branch site + remote user -->
+                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Branch site</text>
+                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Socket</text>
+                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="342" text-anchor="middle">Priya · remote</text>
+                <text class="dg-tiny" x="110" y="363" text-anchor="middle">ZCC + Cato Client</text>
+                <!-- Internet & SaaS -->
+                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+                <text class="dg-sub" x="841" y="226" text-anchor="middle">egress via ZIA</text>
+                <!-- pulse-ring on the just-migrated user -->
+                <circle class="pulse-ring" cx="110" cy="346" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Pilot users run the Cato Client with ZCC nested inside it — internet still egresses via ZIA, the WAN now rides Cato. The rest of the fleet follows cohort by cohort.</figcaption>
+              <figcaption>Pilot users run the Cato Client with ZCC riding inside it — the WAN is on Cato, internet still egresses via ZIA. The fleet follows cohort by cohort.</figcaption>
             </figure>
 
-            <!-- ===================== PHASE 3 ===================== -->
+            <!-- ============ PHASE 3 — Policy cutover ============ -->
             <figure class="phase" data-title="Policy cutover">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3 — web policy is live in Cato. A green lane now runs from the Cato PoP straight to Internet and SaaS, the ZIA bridge drops to standby, and SWG, CASB and TLS inspection are enforced at the PoP.">
-                <!-- Sources -->
-                <rect class="dg-node" x="40" y="72" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="100" text-anchor="middle">Branch site</text>
-                <text class="dg-sub" x="131" y="120" text-anchor="middle">Cato Socket</text>
-                <text class="dg-tiny" x="131" y="140" text-anchor="middle">WAN + web via Cato</text>
-
-                <rect class="dg-node" x="40" y="274" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="300" text-anchor="middle">Remote user</text>
-                <text class="dg-sub" x="131" y="320" text-anchor="middle">Cato Client</text>
-                <text class="dg-tiny" x="131" y="340" text-anchor="middle">web via Cato PoP</text>
-
-                <!-- Cato PoP -->
-                <circle class="pulse-ring" cx="478" cy="205" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="478" cy="205" r="30"/>
-                <text class="dg-label" x="478" y="150" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">Cato PoP</text>
-                <text class="dg-tiny" x="478" y="166" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">SWG · CASB · TLSi</text>
-
-                <!-- Zscaler ZIA cloud (bridge going dormant) -->
-                <rect class="dg-node-dark" x="716" y="66" width="204" height="80" rx="10"/>
-                <text class="dg-label-inv" x="818" y="100" text-anchor="middle">Zscaler ZIA</text>
-                <text class="dg-sub-inv" x="818" y="120" text-anchor="middle">bridge on standby</text>
-
-                <!-- Internet &amp; SaaS (new node) -->
-                <rect class="dg-node-green" x="716" y="278" width="204" height="80" rx="10"/>
-                <text class="dg-label" x="818" y="312" text-anchor="middle">Internet &amp; SaaS</text>
-                <text class="dg-sub" x="818" y="332" text-anchor="middle">M365 · web · cloud apps</text>
-
-                <!-- Lanes -->
-                <path class="lane lane-allow" d="M 222 104 C 322 132, 400 172, 450 194"/>
-                <path class="lane lane-allow" d="M 222 314 C 322 300, 402 254, 454 224"/>
-                <path class="lane-standby" d="M 506 192 C 590 152, 640 120, 716 106"/>
-                <text class="dg-tiny" x="600" y="138" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">standby</text>
-                <path class="lane lane-allow" d="M 500 230 C 580 268, 640 300, 716 314"/>
-                <text class="dg-tiny" x="612" y="284" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">direct breakout</text>
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: web policy is live in Cato — a green lane now runs from the Cato PoP up to Internet and SaaS, with SWG, CASB and TLS inspection enforced at the PoP. The interim bridge and the ZIA egress drop to grey dotted standby and the ZIA cloud dims.">
+                <!-- LOWER BAND: ZIA dimming, bridge on standby -->
+                <g opacity="0.55">
+                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
+                  <text class="dg-label-inv" x="468" y="332" text-anchor="middle">Zscaler ZIA</text>
+                  <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">bridge on standby</text>
+                </g>
+                <!-- UPPER BAND: Cato backbone + PoP -->
+                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
+                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="96" r="28"/>
+                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">SWG · CASB · TLSi at the PoP</text>
+                <!-- interim bridge + ZIA egress now dormant -->
+                <path class="lane-standby" d="M 486 118 C 560 150, 566 240, 502 294"/>
+                <path class="lane-standby" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <!-- site + Priya on Cato -->
+                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
+                <!-- NEW: internet breaks out at the Cato PoP -->
+                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <text class="dg-tiny" x="652" y="146" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">direct breakout</text>
+                <!-- Branch site + remote user -->
+                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Branch site</text>
+                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Socket</text>
+                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="342" text-anchor="middle">Priya · remote</text>
+                <text class="dg-tiny" x="110" y="363" text-anchor="middle">ZCC + Cato Client</text>
+                <!-- Internet & SaaS, now reached via Cato -->
+                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+                <text class="dg-sub" x="841" y="226" text-anchor="middle">egress via Cato</text>
+                <!-- pulse-ring on the new breakout -->
+                <circle class="pulse-ring" cx="841" cy="210" r="44" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
               <figcaption>Web policy is live in Cato — SWG, CASB and TLS inspection enforced at the PoP. Internet flips from ZIA to direct breakout at the Cato PoP; the ZIA bridge drops to standby.</figcaption>
             </figure>
 
-            <!-- ===================== PHASE 4 ===================== -->
+            <!-- ============ PHASE 4 — Retired ============ -->
             <figure class="phase" data-title="Retired">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4 — ZCC is uninstalled and the Zscaler ZIA cloud is decommissioned, shown crossed out in red. The site and remote user are fully green to the Cato PoP and out to Internet and SaaS. One client, one platform.">
-                <!-- Sources -->
-                <rect class="dg-node" x="40" y="72" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="100" text-anchor="middle">Branch site</text>
-                <text class="dg-sub" x="131" y="120" text-anchor="middle">Cato Socket</text>
-                <text class="dg-tiny" x="131" y="140" text-anchor="middle">WAN + web via Cato</text>
-
-                <rect class="dg-node" x="40" y="274" width="182" height="80" rx="10"/>
-                <text class="dg-label" x="131" y="300" text-anchor="middle">Remote user</text>
-                <text class="dg-sub" x="131" y="320" text-anchor="middle">Cato Client</text>
-                <text class="dg-tiny" x="131" y="340" text-anchor="middle">one agent</text>
-
-                <!-- Cato PoP -->
-                <circle class="pulse-ring" cx="478" cy="205" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="478" cy="205" r="30"/>
-                <text class="dg-label" x="478" y="150" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">Cato PoP</text>
-                <text class="dg-tiny" x="478" y="166" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">SWG · CASB · TLSi</text>
-
-                <!-- Zscaler ZIA cloud (retired) -->
-                <rect class="dg-node-dark" x="716" y="66" width="204" height="80" rx="10" style="opacity:.5"/>
-                <text class="dg-label-inv" x="818" y="100" text-anchor="middle" style="opacity:.7">Zscaler ZIA</text>
-                <text class="dg-sub-inv" x="818" y="120" text-anchor="middle" style="opacity:.7">decommissioned</text>
-                <path class="lane-x" d="M 748 78 L 888 134"/>
-                <path class="lane-x" d="M 888 78 L 748 134"/>
-
-                <!-- Internet &amp; SaaS -->
-                <rect class="dg-node-green" x="716" y="278" width="204" height="80" rx="10"/>
-                <text class="dg-label" x="818" y="312" text-anchor="middle">Internet &amp; SaaS</text>
-                <text class="dg-sub" x="818" y="332" text-anchor="middle">M365 · web · cloud apps</text>
-
-                <!-- Lanes: all green -->
-                <path class="lane lane-allow" d="M 222 104 C 322 132, 400 172, 450 194"/>
-                <path class="lane lane-allow" d="M 222 314 C 322 300, 402 254, 454 224"/>
-                <path class="lane lane-allow" d="M 500 230 C 580 268, 640 300, 716 314"/>
-                <text class="dg-tiny" x="612" y="284" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;">internet &amp; SaaS via Cato</text>
+              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: the Zscaler ZIA cloud is dimmed, struck through with a red cross and decommissioned; ZCC is gone from Priya's laptop. The branch site and Priya ride green lanes up to the Cato PoP and out to Internet and SaaS. One client, one platform.">
+                <!-- LOWER BAND: Zscaler ZIA, retired -->
+                <g opacity="0.4">
+                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
+                  <text class="dg-label-inv" x="468" y="332" text-anchor="middle">Zscaler ZIA</text>
+                  <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">internet security</text>
+                </g>
+                <path class="lane-x" d="M 430 312 L 506 360"/>
+                <path class="lane-x" d="M 506 312 L 430 360"/>
+                <text class="dg-tiny" x="468" y="278" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">decommissioned</text>
+                <!-- UPPER BAND: Cato backbone + PoP -->
+                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
+                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="96" r="28"/>
+                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one client · one platform</text>
+                <!-- everything green: site + Priya up to Cato, breakout to the internet -->
+                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
+                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <!-- Branch site + remote user -->
+                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="70" text-anchor="middle">Branch site</text>
+                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Socket</text>
+                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="dg-label" x="110" y="342" text-anchor="middle">Priya · remote</text>
+                <text class="dg-sub" x="110" y="363" text-anchor="middle">Cato Client only</text>
+                <!-- Internet & SaaS -->
+                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="dg-label" x="841" y="204" text-anchor="middle">Internet &amp; SaaS</text>
+                <text class="dg-sub" x="841" y="226" text-anchor="middle">egress via Cato</text>
+                <!-- pulse-ring on the retiring ZIA cloud -->
+                <circle class="pulse-ring" cx="468" cy="336" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>
-              <figcaption>ZCC uninstalled, ZIA decommissioned — the site and remote user run fully on Cato, out to internet and SaaS from the PoP. One client, one platform.</figcaption>
+              <figcaption>ZCC uninstalled, ZIA decommissioned — the site and Priya run fully on Cato, out to internet and SaaS from the PoP. One client, one platform.</figcaption>
             </figure>
 
           </div>
@@ -274,11 +289,12 @@
           <div class="phase-caption" aria-live="polite"></div>
         </div>
         <div class="dg-legend">
-          <span class="key"><span class="swatch allow"></span> On Cato — WAN &amp; internet</span>
-          <span class="key"><span class="swatch limit"></span> Interim / ZIA path (temporary)</span>
-          <span class="key"><span class="swatch block"></span> Retired / decommissioned</span>
+          <span class="key"><span class="swatch allow"></span> On the Cato backbone</span>
+          <span class="key"><span class="swatch limit"></span> Interim internet via ZIA</span>
+          <span class="key"><span class="swatch standby"></span> Zscaler ZIA (live / dormant)</span>
+          <span class="key"><span class="swatch block"></span> Retired &amp; decommissioned</span>
         </div>
-        <div class="diagram-caption">The site, the remote user, the ZIA cloud and the Cato PoP hold their positions across all five phases — only the lanes between them change, so the cross-fade reads as one continuous migration.</div>
+        <div class="diagram-caption">The topology is fixed across all five phases — the branch site and Priya on the left, the Zscaler ZIA cloud in the lower band, the Cato backbone above; only the element each phase changes moves. The dual-agent co-existence pattern from the <a href="migration-zscaler.html">full Zscaler migration page</a>, watched as a progression.</div>
       </div>
     </section>
 
