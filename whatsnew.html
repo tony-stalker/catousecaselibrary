@@ -30,6 +30,21 @@
 <main class="main">
     <div class="card" style="margin-bottom:16px">
       <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Redesign all three journey diagrams on a unified vertical metaphor</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>MPLS, SD-WAN and Zscaler journey pages rebuilt to one visual language:</li><li>UPPER band = Cato (PoP + green backbone), LOWER band = the legacy core</li><li>(dims across phases, struck through with one red X when retired), LEFT =</li><li>sites/users. Each site&#x27;s link visibly swings up to Cato one per phase,</li><li>with a single pulse-ring highlighting the change. All three share one</li><li>viewBox, node coordinates, legend (4 keys) and caption — a coherent set.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Polish journey diagrams: fix MPLS filled lanes + legend, SD-WAN stray X</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>MPLS journey: bare .lane-static curves were filling black (missing the</li><li>.lane fill:none) — now class=&#x27;lane lane-static&#x27; like the others, plus a</li><li>legend and caption note to match the SD-WAN/Zscaler pages.</li><li>SD-WAN journey: phase 4 had a stray red X floating in empty space (a</li><li>&#x27;retired overlay link&#x27; X with no link drawn) — removed; the hub X now</li><li>spans the retired node cleanly like the Zscaler retired-node pattern.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
+      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
+      
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">20 July 2026</div>
       <h3 style="margin:4px 0 0">Add animated phased-migration journey pages (MPLS, SD-WAN, Zscaler)</h3>
       <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New reusable .phase-player component (app.js initPhasePlayers + style.css):</li><li>cross-fading phase stepper with dots, prev/next/play-pause, keyboard,</li><li>reduced-motion and no-JS fallbacks. Three journey pages each walk a</li><li>5-phase migration, all phase SVGs sharing one viewBox with stable node</li><li>positions so the transition reads as progression.</li><li>Also fixed: phase-player controls inside a diagram-card were bubbling</li><li>clicks into the lightbox (opened a static clone) — interactive players</li><li>are now excluded from zoom and control clicks stop propagating.</li></ul>
     </div>
