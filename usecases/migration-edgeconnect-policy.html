@@ -331,6 +331,11 @@
         </table>
       </div>
 
+      <figure class="shot">
+        <img src="../assets/img/cma-network-rules.png" alt="CMA Network Rules page showing a published custom rulebase: application-aware rules with source, app/category chips, bandwidth priority (P10–P40), routing methods including NAT egress via named PoPs, route via a PoP and backhaul via a socket, active TCP acceleration, and per-rule hit counts" loading="lazy">
+        <figcaption>The construct the &ldquo;After&rdquo; table lands in — a demo-tenant Network Rules rulebase: app-aware match, bandwidth priority, explicit routing method (NAT egress, route via a PoP, backhaul via a socket) and per-rule hit counts, with AI-driven rule insights checking the policy daily.</figcaption>
+      </figure>
+
       <h3 style="margin-top:22px">What changed in translation</h3>
       <ul style="padding-left:20px;font-size:.95rem;color:var(--ink-2)">
         <li><strong>One overlay became a rule and a profile, not a tunnel set.</strong> Each BIO&rsquo;s steering and priority intent lands in two clean constructs — an application-aware network rule plus a bandwidth-management profile — instead of an overlay carrying topology, bonding and breakout in one object.</li>
@@ -481,6 +486,10 @@
           <span class="path">Network → Bandwidth Management</span> — a BIO's steering and QoS
           intent expressed in two clean constructs instead of an overlay. Note that its topology
           went to the WAN Firewall and its breakout policy to the Internet Firewall.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-bandwidth-management.png" alt="CMA Bandwidth Management page listing priority tiers P10 to P255 with upload and download limits applied only when the line is congested, and the classes of traffic assigned to each tier — voice and video at P10 down to default internet traffic at P255" loading="lazy">
+            <figcaption>Bandwidth Management in the demo tenant: the priority tiers EdgeConnect QoS classes map to — P10 real-time down to the P255 default, with limits that only bite when the line is congested.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>WAN Firewall — topology intent becomes an allowlist</h4>
