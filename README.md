@@ -37,7 +37,8 @@ bash _extract/verify.sh --external   # + probe all external URLs (curl-based; se
 git add -A && git commit             # after a clean verify
 python3 _extract/whatsnew.py         # regenerate whatsnew.html, commit it
 git push                             # master tracks origin/main
-bash _extract/package.sh             # shareable zip in dist/ (clean decks only)
+bash _extract/package.sh             # shareable zip in dist/ (clean decks only, ~58M)
+bash _extract/package.sh lite        # deck-free lite zip (~12M, deck buttons stripped)
 python3 _extract/build-prospect.py   # regenerate ../catoprospectlibrary (prospect edition; commit+push there)
 ```
 
