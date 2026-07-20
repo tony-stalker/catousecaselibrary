@@ -173,7 +173,7 @@
       <div class="diagram-card">
         <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">Inbound protection via allocated IP, PoP-based IPS and Remote Port Forwarding</title>
-          <desc id="dg1-desc">A legitimate user and an attacker both connect to an allocated IP at the Cato PoP in London. The attacker's SQLi, XSS and RCE payloads are blocked by the inbound IPS at the PoP edge. The legitimate request is remote-port-forwarded over the socket's outbound DTLS tunnel to the on-prem web server at Bracknell Lab, which has no inbound ports open.</desc>
+          <desc id="dg1-desc">A legitimate user and an attacker both connect to an allocated IP at the Cato PoP in London. The attacker's SQLi, XSS and RCE payloads are blocked by the inbound IPS at the PoP edge. The legitimate request is remote-port-forwarded over the socket's outbound DTLS tunnel to the on-prem web server at the HQ lab site, which has no inbound ports open.</desc>
 
           <!-- Sources (left) -->
           <g>
@@ -230,7 +230,7 @@
 
           <rect class="dg-node" x="838" y="166" width="112" height="78" rx="10"/>
           <text class="dg-label" x="894" y="194" text-anchor="middle">Web server</text>
-          <text class="dg-sub" x="894" y="212" text-anchor="middle">Bracknell Lab</text>
+          <text class="dg-sub" x="894" y="212" text-anchor="middle">On-prem lab</text>
           <text class="dg-tiny" x="894" y="230" text-anchor="middle">no inbound ports</text>
         </svg>
         <div class="dg-legend">
@@ -293,7 +293,7 @@
         <li>
           <h4>Create the Remote Port Forwarding rule</h4>
           <p>Forward HTTP/HTTPS from the allocated IP to a lab web resource — an Azure or AWS tenancy
-          attached to your lab works well (e.g. a web server behind the “AWS Site eu-west-2” vSocket
+          attached to your lab works well (e.g. a web server behind an AWS vSocket site (eu-west-2)
           or the Azure vSocket hub). Show the inbound source filtering options while you are there:
           restrict by source IP or country if the service is only for known partners.</p>
         </li>

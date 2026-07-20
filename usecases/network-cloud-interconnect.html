@@ -90,7 +90,7 @@
       <div class="table-wrap">
         <table class="data">
           <thead>
-            <tr><th>On-ramp</th><th>Footprint</th><th>Throughput character</th><th>Typical use</th><th>In this tenant</th></tr>
+            <tr><th>On-ramp</th><th>Footprint</th><th>Throughput character</th><th>Typical use</th><th>In your demo tenant</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -98,21 +98,21 @@
               <td>Cato virtual appliance inside the VNet/VPC, deployable as an HA pair; encrypted tunnels to the nearest PoP</td>
               <td>Strong for general application traffic; tunnel-based, so encryption overhead applies on every flow</td>
               <td>The full site experience in the cloud — WAN optimisation, QoS, deep analytics</td>
-              <td>“AWS Site eu-west-2” (HA pair, London PoP, connected)</td>
+              <td>an AWS vSocket site (eu-west-2) — HA pair on the London PoP, connected</td>
             </tr>
             <tr>
               <td><strong>IPsec</strong></td>
               <td>No footprint at all — IKEv2 from the cloud provider's native gateway to the Cato PoP</td>
               <td>Bound by the provider gateway's per-tunnel limits; internet last mile</td>
               <td>Fast onboarding of a region, or estates already standardised on cloud VPN hubs</td>
-              <td>“Azure-VWAN-Hub-Site” (Azure vWAN, London PoP)</td>
+              <td>an Azure vWAN hub site (London PoP)</td>
             </tr>
             <tr>
               <td><strong>Cloud Interconnect</strong></td>
               <td>No appliance and no tunnel — a dedicated layer-2 circuit into the Cato PoP via an exchange fabric or physical cross-connect</td>
               <td>Deterministic latency and high sustained throughput; no per-tunnel ceilings or encryption overhead in the circuit</td>
               <td>DC-class flows: replication, bulk data movement, latency-sensitive DC-to-cloud traffic</td>
-              <td>“AWS Cross-Connect” (cloud interconnect, Manchester PoP)</td>
+              <td>a Cloud Interconnect site (configuration example)</td>
             </tr>
           </tbody>
         </table>
@@ -138,8 +138,8 @@
         <li><strong>Public cloud</strong> — the provider's private-link service (the ExpressRoute /
         Direct Connect / Partner Interconnect / FastConnect class of service) lands on the exchange
         fabric, which cross-connects into the Cato PoP. Per-cloud Learning Center guides cover
-        Azure, GCP and Oracle, and AWS is equally supported — this tenant's interconnect site is
-        an AWS one.</li>
+        Azure, GCP and Oracle, and AWS is equally supported — the Cloud Interconnect site in your
+        demo tenant is an AWS one.</li>
         <li><strong>Private datacentre</strong> — a customer DC or colo cage connects via physical
         cross-connect or the exchange fabric into the nearest Cato PoP. No socket appliance, no
         IPsec tunnel anywhere in the path.</li>
@@ -204,7 +204,7 @@
           <!-- WAN destinations (right) -->
           <rect class="dg-node" x="780" y="66" width="166" height="64" rx="10"/>
           <text class="dg-label" x="863" y="92" text-anchor="middle">Branch site</text>
-          <text class="dg-sub" x="863" y="110" text-anchor="middle">Reading Office · Socket</text>
+          <text class="dg-sub" x="863" y="110" text-anchor="middle">Bristol Office · Socket</text>
 
           <rect class="dg-node" x="780" y="330" width="166" height="64" rx="10"/>
           <text class="dg-label" x="863" y="356" text-anchor="middle">Remote users</text>
@@ -278,23 +278,24 @@
       <h2>How to run the demo</h2>
       <div class="callout">
         <div class="co-title">Demo honestly</div>
-        <p>The tenant's “AWS Cross-Connect” site exists as a configuration example and is not
-        currently passing traffic. Walk the site configuration and the positioning — don't promise
-        live traffic graphs from it. For live charts, pivot to the vSocket site in step 5.</p>
+        <p>A Cloud Interconnect site exists in your demo tenant as a configuration example only — it
+        is not currently passing traffic, and a live traffic view needs a provisioned circuit. Walk
+        the site configuration and the positioning; don't promise live traffic graphs from it. For
+        live charts, pivot to the vSocket site in step 5.</p>
       </div>
       <ol class="steps">
         <li>
           <h4>Frame the choice</h4>
-          <p>Open on the on-ramp table above: three ways onto the WAN, and this tenant runs all of
-          them side by side — 23 sites, 8 of them cloud-DC type. Clouds here are first-class
-          sites, however they connect.</p>
+          <p>Open on the on-ramp table above: three ways onto the WAN, run side by side in your
+          demo tenant. Clouds here are first-class sites, however they connect.</p>
         </li>
         <li>
-          <h4>Open the interconnect site</h4>
+          <h4>Show the interconnect site</h4>
           <p><span class="path">Network → Sites</span></p>
-          <p>Filter to <strong>AWS Cross-Connect</strong>: site type Cloud Datacenter, connection
-          type Cross-Connect, description “AWS Cloud Interconnect Site”, homed to the Manchester
-          PoP. That one line is the whole deployment story.</p>
+          <p>A <strong>Cloud Interconnect</strong> site has site type Cloud Datacenter, connection
+          type Cross-Connect and a description like “AWS Cloud Interconnect Site”, homed to its
+          nearest PoP. Create one in the site-creation flow, or open the configuration example in
+          your demo tenant — either way, that one line is the whole deployment story.</p>
         </li>
         <li>
           <h4>Walk the configuration</h4>
@@ -310,7 +311,7 @@
         </li>
         <li>
           <h4>Contrast with a live cloud site</h4>
-          <p>Open <strong>AWS Site eu-west-2</strong> — the vSocket HA pair homed to the London
+          <p>Open <strong>an AWS vSocket site (eu-west-2)</strong> — the vSocket HA pair homed to the London
           PoP, connected and passing traffic. Show its real-time analytics and make the point:
           the moment an interconnect circuit goes live, it gets exactly this same visibility.</p>
         </li>

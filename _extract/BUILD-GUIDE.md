@@ -79,11 +79,10 @@ on bars, direct value labels in ink (never series-colored text), no dual axes, h
 gridlines `var(--hairline)` only.
 
 ## Example environment details (use for believable examples — a UK-flavoured demo estate; keep pages generic, never reference a specific account)
-Sites: London DC (Socket X1500, datacenter) · Manchester DC (X1700) · Bracknell Lab (X1500, HQ) ·
-Reading Office / Glasgow / Helmsdale / Dubai Office (X1500/X1600 branches) · Mobile Office
-(X1600 LTE) · "AWS Site eu-west-2" (AWS vSocket, HA pair) · "AWS Ireland" (AWS vSocket, HA) ·
-"Azure-UKS-Hub-vSocket" (Azure vSocket, HA) · Azure-VWAN-Hub-Site (IPsec) · FGT-IPSec
-(FortiGate IPsec) · AWS Cross-Connect (cloud interconnect) · aws-ap-southeast-2-ipsec (Sydney).
+Sites (generic archetypes — never reference a specific account): London DC (X1500 datacentre
+socket) · Manchester DC (X1700) · HQ lab (X1500) · Bristol Office / Glasgow / Madrid Office
+branches (X1500/X1600) · an X1600 LTE site · AWS eu-west-2 vSocket (HA) · Azure-UKS-Hub-vSocket ·
+an Azure vWAN hub (IPsec) · aws-sydney-ipsec · a Cloud Interconnect site.
 PoPs in use: London, Manchester, Dublin, Frankfurt, Tel Aviv, Dubai, Johannesburg, Sydney.
 Example users: use first-name-only fictional users (e.g. "Priya", "Marcus") — EXCEPT the DLP
 screenshot which shows its own user; describe what the screenshot shows.
@@ -91,7 +90,8 @@ screenshot which shows its own user; describe what the screenshot shows.
 ## CMA navigation paths (for `.path` chips — use these or paths from your source digest)
 Monitor → Topology / Events / App Analytics / Threats Dashboard / Data Protection Dashboard /
 Cloud Apps Dashboard / Experience Monitoring · Network → Sites / Network Rules / Bandwidth
-Management · Security → WAN Firewall / Internet Firewall / IPS / Anti-Malware / CASB / DLP
+Management · Security → WAN Firewall / LAN Firewall (global policy, scoped per site/VLAN, enforced
+on the Socket) / Internet Firewall / IPS / Anti-Malware / CASB / DLP
 Configuration / TLS Inspection · Access → Client Connectivity Policy / Device Posture / Users ·
 Assets → Device Inventory · Administration → API & Integrations / Audit Trail
 

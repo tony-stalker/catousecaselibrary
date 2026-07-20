@@ -116,14 +116,14 @@
         Terraform against the Cato GraphQL API — and the sites, their ranges and their locations exist
         in the account in minutes. Ship a Socket to each site; it connects to the nearest PoP and the
         acquired estate joins the same global network, under the same converged security policy, as
-        London DC and Bracknell Lab. In parallel, Entra ID integration provisions the acquired users
+        London DC and the HQ lab site. In parallel, Entra ID integration provisions the acquired users
         and groups, so policy can name them immediately — no directory trust project required.
       </p>
 
       <div class="diagram-card">
         <svg viewBox="0 0 960 420" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">M&amp;A onboarding: acquired sites deployed through the Cato API onto the global backbone</title>
-          <desc id="dg1-desc">Three acquired-company sites and a Microsoft Entra ID tenant on the left. Terraform pushes site definitions through the Cato API into the Cato cloud, a PoP ring on the global private backbone. Animated green lanes show acquired-site traffic joining the fabric and reaching the existing corporate sites, London DC and Bracknell Lab, on the right. A dashed line shows Entra ID provisioning users and groups into Cato.</desc>
+          <desc id="dg1-desc">Three acquired-company sites and a Microsoft Entra ID tenant on the left. Terraform pushes site definitions through the Cato API into the Cato cloud, a PoP ring on the global private backbone. Animated green lanes show acquired-site traffic joining the fabric and reaching the existing corporate sites, London DC and the HQ lab site, on the right. A dashed line shows Entra ID provisioning users and groups into Cato.</desc>
 
           <!-- Acquired company group -->
           <text class="dg-label" x="126" y="36" text-anchor="middle">Acquired company</text>
@@ -187,7 +187,7 @@
           <text class="dg-sub" x="850" y="151" text-anchor="middle">Socket X1500 · core apps</text>
 
           <rect class="dg-node" x="770" y="250" width="160" height="56" rx="10"/>
-          <text class="dg-label" x="850" y="273" text-anchor="middle">Bracknell Lab</text>
+          <text class="dg-label" x="850" y="273" text-anchor="middle">On-prem lab</text>
           <text class="dg-sub" x="850" y="291" text-anchor="middle">Socket X1500 · HQ</text>
         </svg>
         <div class="dg-legend">
@@ -255,7 +255,7 @@
         <li>
           <h4>Confirm site creation in CMA</h4>
           <p><span class="path">Monitor → Topology</span></p>
-          <p>The new sites appear in the topology alongside London DC and Bracknell Lab. Explain the
+          <p>The new sites appear in the topology alongside London DC and the HQ lab site. Explain the
           physical step: Sockets ship to site, anyone plugs them in, and zero-touch provisioning brings
           each site up on the nearest PoP.</p>
         </li>

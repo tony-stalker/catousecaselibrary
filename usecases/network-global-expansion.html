@@ -57,7 +57,7 @@
       <div class="section-kicker">Business objective</div>
       <h2>Why this matters</h2>
       <p>
-        Expansion is a board-level event: a new sales office in Dubai, a plant in South Africa, a
+        Expansion is a board-level event: a new sales office in Madrid, a plant in South Africa, a
         joint venture in Sydney, a manufacturing partner in China. The commercial team signs the
         lease in weeks — and then discovers that the network needs carrier circuits ordered
         months in advance, firewalls purchased, staged and shipped, and an engineer on a plane to
@@ -158,7 +158,7 @@
       <div class="diagram-card">
         <svg viewBox="0 0 960 420" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">A growing global footprint joining the Cato backbone through nearest PoPs</title>
-          <desc id="dg1-desc">The existing London DC connects to the London PoP on the Cato global private backbone. Three new sites join on the right: the Dubai Office over a zero-touch socket to the Dubai PoP, a Sydney IPsec site to the Sydney PoP, and a new plant whose day-one users are on the Cato Client to the Johannesburg PoP while its socket is in transit. Bottom left, a Shanghai office connects compliantly onto the backbone via a licensed local partner.</desc>
+          <desc id="dg1-desc">The existing London DC connects to the London PoP on the Cato global private backbone. Three new sites join on the right: the Madrid Office over a zero-touch socket to the Madrid PoP, a Sydney IPsec site to the Sydney PoP, and a new plant whose day-one users are on the Cato Client to the Johannesburg PoP while its socket is in transit. Bottom left, a Shanghai office connects compliantly onto the backbone via a licensed local partner.</desc>
 
           <!-- Backbone -->
           <ellipse class="dg-backbone" cx="480" cy="220" rx="200" ry="58"/>
@@ -181,21 +181,21 @@
 
           <!-- Regional PoPs on the backbone -->
           <circle cx="612" cy="176" r="14" fill="none" stroke="var(--green-600)" stroke-width="5"/>
-          <text class="dg-tiny" x="606" y="150" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Dubai PoP</text>
+          <text class="dg-tiny" x="606" y="150" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Madrid PoP</text>
           <circle cx="684" cy="220" r="14" fill="none" stroke="var(--green-600)" stroke-width="5"/>
           <text class="dg-tiny" x="684" y="196" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Sydney PoP</text>
           <circle cx="612" cy="268" r="14" fill="none" stroke="var(--green-600)" stroke-width="5"/>
           <text class="dg-tiny" x="600" y="300" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Johannesburg PoP</text>
 
-          <!-- New site: Dubai Office (zero-touch socket) -->
+          <!-- New site: Madrid Office (zero-touch socket) -->
           <rect class="dg-node-green" x="764" y="62" width="180" height="60" rx="10"/>
-          <text class="dg-label" x="854" y="86" text-anchor="middle">Dubai Office</text>
+          <text class="dg-label" x="854" y="86" text-anchor="middle">Madrid Office</text>
           <text class="dg-sub" x="854" y="104" text-anchor="middle">Socket X1600 · zero-touch</text>
           <path class="lane lane-allow" d="M 764 92 C 716 108, 672 140, 626 168"/>
 
           <!-- New site: Sydney IPsec -->
           <rect class="dg-node-green" x="764" y="190" width="180" height="60" rx="10"/>
-          <text class="dg-label" x="854" y="214" text-anchor="middle" style="font-size:13.5px">aws-ap-southeast-2-ipsec</text>
+          <text class="dg-label" x="854" y="214" text-anchor="middle" style="font-size:13.5px">aws-sydney-ipsec</text>
           <text class="dg-sub" x="854" y="232" text-anchor="middle">Sydney · IPsec · day one</text>
           <path class="lane lane-allow" d="M 764 220 C 744 220, 722 220, 700 220"/>
 
@@ -219,7 +219,7 @@
         <div class="dg-legend">
           <span class="key"><span class="swatch allow"></span> Live site traffic — nearest-PoP on-ramp, full stack inherited instantly</span>
         </div>
-        <div class="diagram-caption">A growing footprint: the London estate plus Dubai (zero-touch socket), Sydney (IPsec from day one) and a new plant on the Cato Client while its socket ships — each lands on its nearest PoP under the same policy. China joins compliantly via a licensed local partner.</div>
+        <div class="diagram-caption">A growing footprint: the London estate plus Madrid (zero-touch socket), Sydney (IPsec from day one) and a new plant on the Cato Client while its socket ships — each lands on its nearest PoP under the same policy. China joins compliantly via a licensed local partner.</div>
       </div>
 
       <h3>Three on-ramps, one outcome</h3>
@@ -230,7 +230,7 @@
         </div>
         <div class="card">
           <h3 style="margin-top:0">Client &amp; IPsec on day one</h3>
-          <p style="font-size:.92rem;color:var(--ink-2)">The landing team works from day one on the Cato Client; an existing router, firewall or cloud edge joins over IPsec — exactly how the Sydney site (<span class="mono">aws-ap-southeast-2-ipsec</span>) runs in the demo tenant.</p>
+          <p style="font-size:.92rem;color:var(--ink-2)">The landing team works from day one on the Cato Client; an existing router, firewall or cloud edge joins over IPsec — exactly how the Sydney site (<span class="mono">aws-sydney-ipsec</span>) runs in your demo tenant.</p>
         </div>
         <div class="card">
           <h3 style="margin-top:0">China via licensed partners</h3>
@@ -280,7 +280,7 @@
         <li>
           <h4>Show day-one connectivity while hardware is in transit</h4>
           <p><span class="path">Network → Sites</span></p>
-          <p>Open <strong>aws-ap-southeast-2-ipsec</strong> — a Sydney site connected over IPsec
+          <p>Open <strong>aws-sydney-ipsec</strong> — a Sydney site connected over IPsec
           with no Cato hardware at all. Make the point: the landing team can work from day one on
           the Cato Client, and any existing edge device can join over IPsec, weeks before the
           socket arrives.</p>
@@ -288,7 +288,7 @@
         <li>
           <h4>Show the new region on the map</h4>
           <p><span class="path">Monitor → Topology</span></p>
-          <p>Point at the spread: <strong>Dubai Office</strong> on the Dubai PoP, the Sydney IPsec
+          <p>Point at the spread: <strong>Madrid Office</strong> on the Madrid PoP, the Sydney IPsec
           site on the Sydney PoP, the UK estate on London — one map, one health view. A new region
           appears here the moment it connects, with the same drill-down as a site next door.</p>
         </li>
@@ -296,13 +296,13 @@
           <h4>Prove there is no per-site policy build</h4>
           <p><span class="path">Security → Internet Firewall</span></p>
           <p>Walk the rulebase and show that no rule mentions a region-specific firewall: the same
-          global policy applied to Dubai the second it connected. Contrast with rebuilding and
+          global policy applied to Madrid the second it connected. Contrast with rebuilding and
           maintaining a firewall config per country.</p>
         </li>
         <li>
           <h4>Show the experience from the new region</h4>
           <p><span class="path">Monitor → App Analytics</span></p>
-          <p>Filter to Dubai Office or the Sydney site and show application experience — latency
+          <p>Filter to Madrid Office or the Sydney site and show application experience — latency
           and quality to the SaaS apps the region actually uses. This is the day-two conversation
           answered on day one: not just connected, but measurably usable.</p>
         </li>

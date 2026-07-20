@@ -273,7 +273,7 @@
       <div class="diagram-card">
         <svg viewBox="0 0 960 532" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane</title>
-          <desc id="dg1-desc">Top lane, retained: public website traffic continues to the Cloudflare CDN and WAF, which stay on Cloudflare. Below, the migration scope: a wave 2 user cohort on WARP and the Reading Office's interim Magic WAN IPsec tunnel steer to the Cloudflare Zero Trust edge, which reaches private applications through a retiring cloudflared connector — all interim amber paths. A migrated wave 1 cohort on the Cato Client and the Reading Office Socket steer green paths to a Cato PoP on the Global Private Backbone, reaching the London DC applications behind a Socket X1700 via SDP rules.</desc>
+          <desc id="dg1-desc">Top lane, retained: public website traffic continues to the Cloudflare CDN and WAF, which stay on Cloudflare. Below, the migration scope: a wave 2 user cohort on WARP and the Bristol Office's interim Magic WAN IPsec tunnel steer to the Cloudflare Zero Trust edge, which reaches private applications through a retiring cloudflared connector — all interim amber paths. A migrated wave 1 cohort on the Cato Client and the Bristol Office Socket steer green paths to a Cato PoP on the Global Private Backbone, reaching the London DC applications behind a Socket X1700 via SDP rules.</desc>
 
           <!-- Retained lane (top) -->
           <text class="dg-tiny" x="36" y="20" text-anchor="start">Retained — not part of this migration</text>
@@ -318,7 +318,7 @@
           <text class="dg-sub" x="126" y="192" text-anchor="middle">WARP (Cloudflare One)</text>
 
           <rect class="dg-node" x="36" y="296" width="180" height="74" rx="10"/>
-          <text class="dg-label" x="126" y="320" text-anchor="middle">Reading Office</text>
+          <text class="dg-label" x="126" y="320" text-anchor="middle">Bristol Office</text>
           <text class="dg-sub" x="126" y="338" text-anchor="middle">Magic WAN IPsec — interim</text>
           <text class="dg-tiny" x="126" y="356" text-anchor="middle">Socket X1500 — target</text>
 

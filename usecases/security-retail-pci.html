@@ -253,7 +253,8 @@
         IoT the narrowest breakout they need, keep store staff on sanctioned apps, and sweep the
         estate for the traffic classes that have no business on a store network. It maps back to the
         <a href="#solution">PCI DSS 4.0 themes above</a> — that table is the <em>why</em>, this is the
-        <em>how</em>. The rows mix engines: rules 1–2 are the site <strong>LAN firewall</strong>,
+        <em>how</em>. The rows mix engines: rules 1–2 are the <strong>LAN firewall</strong> (a
+        global policy scoped to the store VLANs in the rulebase, enforced locally on the Socket),
         rules 3–7 the <strong>Internet firewall</strong> (FWaaS), and row 8 is a
         <strong>network / bandwidth rule</strong> — all defined once and inherited by every store.
       </p>
@@ -320,8 +321,8 @@
       <div class="callout">
         <div class="co-title">Mapping the demo tenant to a store estate</div>
         <p>A demo tenant has no 400-branch retail estate — so narrate it as one.
-        <strong>Bracknell Lab</strong> stands in for a typical store (Socket, multiple VLANs, LAN
-        firewall); <strong>Mobile Office</strong> (Socket X1600 with LTE) is the failover story.
+        <strong>The HQ lab site</strong> stands in for a typical store (Socket, multiple VLANs, LAN
+        firewall); an <strong>X1600 LTE site</strong> is the failover story.
         Every rule you show, add: “this is defined once and applies to every store.”</p>
       </div>
 
@@ -335,22 +336,23 @@
         </li>
         <li>
           <h4>Show the store build — VLANs behind one Socket</h4>
-          <p><span class="path">Network → Sites → Bracknell Lab → Networks</span></p>
+          <p><span class="path">Network → Sites → the HQ lab site → Networks</span></p>
           <p>Walk the site's network ranges: a POS/cardholder VLAN, guest, staff and a camera/IoT
           VLAN. Make the zero-touch point here — the Socket shipped to site and was plugged in by
           non-technical staff; everything you're looking at was configured centrally.</p>
         </li>
         <li>
-          <h4>Isolate the POS VLAN with the LAN firewall</h4>
-          <p><span class="path">Network → Sites → Bracknell Lab → LAN Firewall</span></p>
-          <p>Show (or build live) the rule set: block guest and IoT VLANs from reaching the POS VLAN,
-          allow POS devices to their payment destinations only. Point at the hit counters — the
-          segmentation isn't a diagram claim, it's enforced and counted at the store edge.</p>
+          <h4>Isolate the POS VLAN with the LAN Firewall</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>In the global LAN Firewall policy, scope a rule to this store's VLANs: block guest and
+          IoT VLANs from reaching the POS VLAN, allow POS devices to their payment destinations only.
+          The policy is managed centrally but enforced locally on the Socket. Point at the hit
+          counters — the segmentation isn't a diagram claim, it's enforced and counted at the store edge.</p>
         </li>
         <li>
           <h4>Prove the tills keep trading — LTE failover</h4>
-          <p><span class="path">Network → Sites → Mobile Office</span></p>
-          <p>Open Mobile Office (X1600 with LTE) and show its WAN links. Describe the failure drill:
+          <p><span class="path">Network → Sites → the X1600 LTE site</span></p>
+          <p>Open the X1600 LTE site and show its WAN links. Describe the failure drill:
           pull the primary connection and the Socket fails over to LTE — the card payments keep
           flowing, and Topology shows the link-state change in seconds. In a store estate this is the
           difference between a quiet alert and a store that can't sell.</p>

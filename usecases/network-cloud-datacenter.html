@@ -106,35 +106,35 @@
 
     <section id="methods" class="reveal">
       <div class="section-kicker">Connection options</div>
-      <h2>Three ways in — all live in this tenant</h2>
+      <h2>Three ways in — all live in your demo tenant</h2>
       <p>
         Cato gives you three ways to bring a cloud datacentre onto the WAN. They are not
-        alternatives to choose once — most estates mix them by region and requirement, and this
+        alternatives to choose once — most estates mix them by region and requirement, and your
         demo tenant runs all three side by side.
       </p>
       <div class="table-wrap">
         <table class="data">
           <thead>
-            <tr><th>Method</th><th>How it connects</th><th>Choose it when</th><th>Live in this tenant</th></tr>
+            <tr><th>Method</th><th>How it connects</th><th>Choose it when</th><th>Live in your demo tenant</th></tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>vSocket</strong></td>
               <td>Cato Socket as a virtual appliance inside the VNet/VPC, encrypted tunnels to the nearest PoP; deployable as an HA pair</td>
               <td>You want the full site experience — WAN optimisation, QoS, deep analytics — inside the cloud network</td>
-              <td>“Azure-UKS-Hub-vSocket” (Azure, HA pair) · “AWS Site eu-west-2” (HA pair) · “AWS Ireland”</td>
+              <td>“Azure-UKS-Hub-vSocket” (Azure, HA pair) · “AWS eu-west-2” (HA pair) · a second AWS vSocket (Dublin)</td>
             </tr>
             <tr>
               <td><strong>IPsec</strong></td>
               <td>IKEv2 tunnels from the cloud provider’s native gateway straight to a Cato PoP — no VM footprint at all</td>
               <td>You already run Azure Virtual WAN / cloud VPN gateways, or want a region connected in minutes</td>
-              <td>“Azure-VWAN-Hub-Site” (Azure VWAN hub) · “aws-ap-southeast-2-ipsec” (Sydney)</td>
+              <td>an Azure vWAN hub site · “aws-sydney-ipsec” (Sydney)</td>
             </tr>
             <tr>
               <td><strong>Cross-Connect</strong></td>
               <td>Private layer-2 link between the cloud provider edge and the Cato PoP in the same facility — no tunnel overhead</td>
               <td>You need the highest throughput and deterministic latency into a major region</td>
-              <td>“AWS Cross-Connect” (cloud interconnect)</td>
+              <td>a Cloud Interconnect site</td>
             </tr>
           </tbody>
         </table>
@@ -223,19 +223,19 @@
 
           <rect class="dg-node" x="756" y="150" width="174" height="70" rx="10"/>
           <text class="dg-label" x="843" y="176" text-anchor="middle">AWS VPC · eu-west-2</text>
-          <text class="dg-sub" x="843" y="193" text-anchor="middle">AWS Site eu-west-2</text>
+          <text class="dg-sub" x="843" y="193" text-anchor="middle">AWS eu-west-2</text>
           <text class="dg-tiny" x="843" y="208" text-anchor="middle">vSocket HA pair</text>
           <rect class="dg-node-green" x="886" y="141" width="36" height="18" rx="9"/>
           <text class="dg-tiny" x="904" y="154" text-anchor="middle">HA</text>
 
           <rect class="dg-node" x="756" y="256" width="174" height="70" rx="10"/>
           <text class="dg-label" x="843" y="282" text-anchor="middle">Azure Virtual WAN</text>
-          <text class="dg-sub" x="843" y="299" text-anchor="middle">Azure-VWAN-Hub-Site</text>
+          <text class="dg-sub" x="843" y="299" text-anchor="middle">Azure vWAN hub</text>
           <text class="dg-tiny" x="843" y="314" text-anchor="middle">IPsec from the VWAN hub</text>
 
           <rect class="dg-node" x="756" y="362" width="174" height="70" rx="10"/>
           <text class="dg-label" x="843" y="388" text-anchor="middle">AWS region</text>
-          <text class="dg-sub" x="843" y="405" text-anchor="middle">AWS Cross-Connect</text>
+          <text class="dg-sub" x="843" y="405" text-anchor="middle">Cloud Interconnect</text>
           <text class="dg-tiny" x="843" y="420" text-anchor="middle">Cloud interconnect at the PoP</text>
         </svg>
         <div class="dg-legend">
@@ -247,7 +247,7 @@
 
       <div class="grid-2" style="margin-top:14px">
         <div class="benefit"><div class="b-icon">⚡</div><div><h4>On the WAN in about an hour</h4><p>Deploy the vSocket from the cloud marketplace or as code, and the VPC/VNet is a routed, policy-governed WAN site — no circuits to order.</p></div></div>
-        <div class="benefit"><div class="b-icon">🧬</div><div><h4>HA pairs, managed for you</h4><p>vSockets deploy as primary/secondary pairs with automatic failover — “AWS Site eu-west-2” and the Azure hub both run HA in this tenant.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>HA pairs, managed for you</h4><p>vSockets deploy as primary/secondary pairs with automatic failover — an AWS vSocket site (eu-west-2) and the Azure hub both run HA in your demo tenant.</p></div></div>
         <div class="benefit"><div class="b-icon">🧱</div><div><h4>Consistent security everywhere</h4><p>The WAN firewall sits between the branch and the VPC — one rule base and one audit trail covering cloud and physical sites alike.</p></div></div>
         <div class="benefit"><div class="b-icon">📊</div><div><h4>Full flow visibility</h4><p>Every flow to and from the cloud DC lands in App Analytics and Events — the visibility cloud virtual firewalls never gave the network team.</p></div></div>
       </div>
@@ -273,15 +273,15 @@
           <h4>Show cloud sites in the topology</h4>
           <p><span class="path">Monitor → Topology</span></p>
           <p>Point out the cloud sites connected alongside the physical estate:
-          <strong>Azure-UKS-Hub-vSocket</strong> (Azure), <strong>AWS Site eu-west-2</strong> and
-          <strong>AWS Ireland</strong> (vSockets), <strong>Azure-VWAN-Hub-Site</strong> and
-          <strong>aws-ap-southeast-2-ipsec</strong> (IPsec), and <strong>AWS Cross-Connect</strong>
-          (cloud interconnect). They render exactly like Glasgow or the London DC — that is the point.</p>
+          <strong>Azure-UKS-Hub-vSocket</strong> (Azure) and an <strong>AWS vSocket site (eu-west-2)</strong>
+          plus <strong>a second AWS vSocket (Dublin)</strong>, an <strong>Azure vWAN hub site</strong> and
+          <strong>aws-sydney-ipsec</strong> over IPsec, and <strong>a Cloud Interconnect site</strong>.
+          They render exactly like Glasgow or the London DC — that is the point.</p>
         </li>
         <li>
           <h4>Open the HA pair</h4>
           <p><span class="path">Network → Sites</span></p>
-          <p>Open <strong>AWS Site eu-west-2</strong> and show the high-availability status: primary
+          <p>Open <strong>an AWS vSocket site (eu-west-2)</strong> and show the high-availability status: primary
           and secondary vSocket, both tunnelled to the PoP, with automatic failover. Contrast with
           designing, licensing and failover-testing an HA firewall pair yourself.</p>
         </li>
