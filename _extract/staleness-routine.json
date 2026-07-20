@@ -1,0 +1,30 @@
+{
+  "_readme": "Prepared config for the monthly staleness-review cloud routine (claude.ai Code routines). BLOCKED on a one-time step: connect GitHub (run /web-setup in Claude Code, or install the Claude GitHub App on tony-stalker/catousecaselibrary via https://claude.ai/code/onboarding?magic=github-app-setup). Then ask Claude to 'create the staleness routine from _extract/staleness-routine.json'. Schedule: 1st of every month, 07:00 UTC (~08:00 UK). The agent re-verifies due rows of _extract/STALENESS.md against primary sources, edits pages minimally, rebuilds the search index, writes _extract/staleness-reports/YYYY-MM.md and opens a PR (never pushes to main). Playwright checks must still be run locally before merging.",
+  "name": "Use-case library monthly staleness review",
+  "cron_expression": "0 7 1 * *",
+  "enabled": true,
+  "job_config": {
+    "ccr": {
+      "environment_id": "env_011suQeKPFuHuBZcMWmqw8bt",
+      "session_context": {
+        "model": "claude-sonnet-5",
+        "sources": [{"git_repository": {"url": "https://github.com/tony-stalker/catousecaselibrary"}}],
+        "allowed_tools": ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebSearch", "WebFetch"]
+      },
+      "events": [
+        {
+          "data": {
+            "uuid": "3f6c2a1e-8b4d-4e2a-9c7f-5d1a0b9e6c43",
+            "session_id": "",
+            "type": "user",
+            "parent_tool_use_id": null,
+            "message": {
+              "role": "user",
+              "content": "You are running the MONTHLY STALENESS REVIEW of the Cato SASE Use Case Library (this repo — a static HTML library of 76 use-case pages for sales engineers; see README.md).\n\nTASK\n1. Read _extract/STALENESS.md — the register of dated facts, where each lives, and its recheck trigger. Note today's date.\n2. Triage every row: which are due (trigger date passed, or 'quarterly'/'semi-annually'/'annually' cadence elapsed since the library was built in July 2026 or since the row's last update)?\n3. For each DUE row, re-verify the fact against primary sources on the web (vendor lifecycle pages, CISA KEV feed, NCSC/NHS England/dsptoolkit.nhs.uk, Gartner announcements, knowledge.catonetworks.com docs — fetch the .md variant of knowledge pages). Do NOT guess.\n4. Where a fact has genuinely changed (a date passed so wording must reframe future→past, a count grew, a new edition/version released), EDIT the affected page(s) named in the row with the minimal correction, and update the STALENESS.md row (fact + recheck trigger). Follow the house rules: UK English, no customer names, never invent statistics, keep SVG diagram labels short, do not restructure pages.\n5. If a fact is unchanged, leave the page alone but note it as verified in your report.\n6. After ANY page edit, run: python3 _extract/build-search.py  (regenerates the full-text search index — required, verify.sh fails without it).\n7. Write your report to _extract/staleness-reports/YYYY-MM.md (create the dir if needed): rows due, verdict per row (unchanged / updated / needs-human), sources checked with URLs, and pages edited.\n\nDELIVERABLE\n- If you made edits: commit them on a branch named staleness-review-YYYY-MM and open a pull request to the default branch titled 'Monthly staleness review YYYY-MM'. In the PR description include the report and this warning: 'Playwright-based checks (shoot.py, measure_svg.py, verify.sh steps 4-6) were NOT run in the cloud — run bash _extract/verify.sh locally before merging.'\n- If nothing changed: still commit the report file on the branch and open the PR so there is a visible audit trail.\n- NEVER push directly to the default branch. NEVER touch the PPTX deck folders.\n\nSpecial rows to watch: the DSPT 2026-27 (v9) edition (expected ~Sept 2026 — security-healthcare-nhs.html carries an on-page staleness callout to update), ASA 5506/5508/5516-X EOS Aug 2026 (reframe as past from Sep 2026), AnyConnect 4.x support end Mar 2027, CISA KEV counts for Fortinet and Sophos (counts grow), and the annual Gartner MQ refresh."
+            }
+          }
+        }
+      ]
+    }
+  }
+}
