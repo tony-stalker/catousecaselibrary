@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Discovery &amp; Device Inventory (IoT/OT) — Cato Use Case Library</title>
+<meta name="description" content="You cannot secure what you cannot see — the IoT/OT licence turns every Socket into a passive discovery sensor, fingerprinting and classifying every device into one live inventory, no agents or disruptive scans.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="management-asset-discovery">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / Asset Discovery &amp; Device Inventory</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Asset Discovery &amp; Device Inventory (IoT/OT)</h1>
+    <p class="lede">
+      You cannot secure what you cannot see. The unmanaged half of the estate — PLCs, IP cameras,
+      printers, medical devices, badge readers, BYOD laptops — never gets a Cato Client, yet it is
+      live on the network. The IoT/OT Security licence turns every Socket into a passive discovery
+      sensor: it fingerprints and classifies each device from its own traffic — no agents, no
+      disruptive active scans — into one live inventory that then drives device-attribute policy.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Asset Discovery</span><span class="tag">Device Inventory</span>
+      <span class="tag">IoT/OT Licence</span><span class="tag">Fingerprinting</span>
+      <span class="tag">Visibility</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Every security control an organisation owns assumes it knows what is on the network. That
+        assumption breaks the moment you count the devices that can <em>never</em> run an endpoint
+        agent — operational technology, IoT, medical and building-management kit, printers, cameras,
+        badge readers, and the BYOD devices staff plug in without asking. They have no EDR, no client,
+        and no place in the CMDB, yet they are already talking to your servers and the internet.
+      </p>
+      <p>
+        The objective of this use case is the first, unglamorous half of every OT/IoT and
+        zero-trust story: <strong>build one live, accurate inventory of everything on the
+        network — including the things nobody installed on purpose.</strong> Cato does it with the
+        <strong>IoT/OT Security licence</strong>, which uses the Socket already at each site as a
+        passive discovery sensor. This is the visibility story; its enforcement sibling —
+        <a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a> — is where the same
+        classified devices become segmentation and firewall rules. Once you can see them, you can
+        segment them.
+      </p>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>Why the unmanaged estate stays invisible</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">The shadow-device problem</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Agentless devices — a camera added by a
+          contractor, a sensor that arrived with a machine, a personal laptop on the guest VLAN —
+          join the network silently. There is nothing to install a client on, so they never appear
+          in any agent-based tool. They are the exact assets attackers look for first.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The stale spreadsheet / CMDB</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Most inventories are a spreadsheet or a
+          CMDB that was accurate on the day it was compiled and has drifted ever since. It records
+          what was <em>procured</em>, not what is <em>connected</em> — and it says nothing about a
+          device's category, model or firmware, which is precisely what a policy needs.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Active scanning is a risk to OT</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The classic answer — an active network
+          scanner that probes every host — is dangerous on fragile kit. As general practice, OT and
+          medical teams restrict or forbid active scans because unexpected probes can hang or crash
+          a PLC, a controller or a clinical device. Visibility must not become an outage.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">No single source of truth</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Even where discovery tools exist, they sit
+          per-site or per-domain: one for IT, another bolted onto the OT network, nothing for the
+          branches. There is no single, cross-site view that answers "what is on <em>our</em>
+          network, everywhere?" in one place.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"If I asked you to produce a complete list of every device on your network right now —
+        across every site, including the OT, IoT and BYOD kit that has never run an agent — how long
+        would it take, and how confident would you be that it is correct?"</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Passive discovery at the Socket — no agents, no scans</h2>
+      <p>
+        With the IoT/OT Security licence enabled, Device Inventory uses
+        <strong>a passive method of detection with no special setup or agents required</strong>. The
+        engine analyses <strong>WAN-bound and outbound traffic</strong> as it already flows through
+        the Socket, and from that traffic it detects, identifies and classifies every connected
+        device. Nothing is injected onto the network, nothing probes the endpoints, and the fragile
+        OT and medical devices that active scanners can knock over are never touched — they are
+        simply observed.
+      </p>
+      <p>
+        Each device is resolved into a set of attributes — <strong>category, type, model, OS and OS
+        version, manufacturer, device name, MAC address and IP</strong> — and lands in one inventory
+        that spans every site behind a Socket. Those same attributes are what firewall rules match
+        on, so discovery and enforcement share one vocabulary: the device you see on the inventory
+        page is the device a rule can target.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Passive device discovery at the Socket feeding one Device Inventory</title>
+          <desc id="dg1-desc">A mixed device estate — a PLC, an IP camera, a printer, a medical device, a badge reader and a BYOD laptop — sits at a site behind a Cato Socket acting as a passive sensor. Their traffic flows through the Socket to a Cato PoP, then into a Device Inventory that classifies each device by category, type, model, OS, OS version, manufacturer, device name, MAC and IP. From the inventory, a green lane feeds device-attribute firewall policy and a neutral lane exports to a CMDB or ITSM via the Cato API.</desc>
+
+          <!-- Site frame -->
+          <rect x="24" y="64" width="252" height="352" rx="12" fill="var(--page)" stroke="var(--hairline)"/>
+          <text class="dg-label" x="150" y="52" text-anchor="middle">Mixed device estate</text>
+
+          <!-- Device nodes -->
+          <rect class="dg-node" x="60" y="76" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="95" text-anchor="middle">PLC</text>
+          <text class="dg-sub" x="136" y="111" text-anchor="middle">OT controller</text>
+
+          <rect class="dg-node" x="60" y="130" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="149" text-anchor="middle">IP camera</text>
+          <text class="dg-sub" x="136" y="165" text-anchor="middle">Surveillance</text>
+
+          <rect class="dg-node" x="60" y="184" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="203" text-anchor="middle">Printer</text>
+          <text class="dg-sub" x="136" y="219" text-anchor="middle">Office endpoint</text>
+
+          <rect class="dg-node" x="60" y="238" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="257" text-anchor="middle">Medical device</text>
+          <text class="dg-sub" x="136" y="273" text-anchor="middle">Clinical IoMT</text>
+
+          <rect class="dg-node" x="60" y="292" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="311" text-anchor="middle">Badge reader</text>
+          <text class="dg-sub" x="136" y="327" text-anchor="middle">Access control</text>
+
+          <rect class="dg-node" x="60" y="346" width="152" height="44" rx="10"/>
+          <text class="dg-label" x="136" y="365" text-anchor="middle">BYOD laptop</text>
+          <text class="dg-sub" x="136" y="381" text-anchor="middle">Unmanaged</text>
+
+          <!-- Estate -> Socket connector -->
+          <path class="lane-static" d="M 276 255 L 300 255" fill="none"/>
+
+          <!-- Cato Socket (passive sensor) -->
+          <rect class="dg-node-dark" x="300" y="200" width="118" height="110" rx="12"/>
+          <text class="dg-label-inv" x="359" y="240" text-anchor="middle">Cato Socket</text>
+          <text class="dg-sub-inv" x="359" y="260" text-anchor="middle">Passive sensor</text>
+          <text class="dg-sub-inv" x="359" y="280" text-anchor="middle">Agentless</text>
+
+          <!-- Socket -> PoP passive discovery lane -->
+          <path class="lane-static" d="M 418 255 L 480 255" fill="none"/>
+          <text class="dg-tiny" x="449" y="245" text-anchor="middle">discovery</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="512" cy="255" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="512" cy="255" r="30"/>
+          <text class="dg-label" x="512" y="200" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="512" y="214" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato Cloud</text>
+
+          <!-- PoP -> Device Inventory lane -->
+          <path class="lane-static" d="M 544 250 C 590 235, 610 192, 632 170" fill="none"/>
+
+          <!-- Device Inventory -->
+          <rect class="dg-node" x="632" y="104" width="216" height="168" rx="10"/>
+          <text class="dg-label" x="740" y="132" text-anchor="middle">Device Inventory</text>
+          <text class="dg-sub" x="740" y="158" text-anchor="middle">Category · Type · Model</text>
+          <text class="dg-sub" x="740" y="180" text-anchor="middle">OS · OS version</text>
+          <text class="dg-sub" x="740" y="202" text-anchor="middle">Manufacturer</text>
+          <text class="dg-sub" x="740" y="224" text-anchor="middle">Device name</text>
+          <text class="dg-sub" x="740" y="246" text-anchor="middle">MAC · IP address</text>
+
+          <!-- Inventory -> policy (green) -->
+          <path class="lane lane-allow" d="M 726 272 C 700 300, 680 322, 662 344"/>
+          <text class="dg-tiny" x="620" y="312" text-anchor="end">device group</text>
+          <!-- Inventory -> CMDB (static) -->
+          <path class="lane-static" d="M 756 272 C 800 300, 842 322, 866 344" fill="none"/>
+          <text class="dg-tiny" x="812" y="312" text-anchor="start">API export</text>
+
+          <!-- Policy node -->
+          <rect class="dg-node-green" x="560" y="344" width="200" height="72" rx="10"/>
+          <text class="dg-label" x="660" y="374" text-anchor="middle">Device-attribute rules</text>
+          <text class="dg-sub" x="660" y="394" text-anchor="middle">LAN · WAN · Internet FW</text>
+
+          <!-- CMDB node -->
+          <rect class="dg-node" x="792" y="344" width="150" height="72" rx="10"/>
+          <text class="dg-label" x="867" y="374" text-anchor="middle">CMDB / ITSM</text>
+          <text class="dg-sub" x="867" y="394" text-anchor="middle">via GraphQL API</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Discovered devices → device-attribute policy</span>
+          <span class="key"><span class="swatch standby"></span> Passive discovery &amp; inventory export</span>
+        </div>
+        <div class="diagram-caption">Every device behind the Socket is discovered passively from its own traffic — no agents, no active scans — then classified into one inventory that feeds device-attribute firewall policy and can sync outward to a CMDB via the Cato API.</div>
+      </div>
+
+      <h3>Why this beats the alternatives</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🛰️</div><div><h4>Discovery with no footprint</h4><p>The Socket is already in the traffic path. Detection is passive — no agents to deploy, no scanners to license, and no probe traffic that could disturb a production line or a clinical device.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>Classified, not just counted</h4><p>Each device is fingerprinted into category, type, model, OS, OS version and manufacturer — the attributes a rule can act on — rather than reduced to a bare IP or MAC on a list.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>One inventory, every site</h4><p>Because discovery happens at every Socket and rolls up in the CMA, the inventory is a single cross-site source of truth — HQ lab, Bristol Office, a hospital wing and a manufacturing plant in one view.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔗</div><div><h4>Discovery feeds enforcement</h4><p>The classification is the same object the firewall consumes. A device the inventory identifies as a Siemens PLC is immediately a candidate for a device-attribute rule — no re-keying between tools.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Set expectations on timing and accuracy</div>
+        <p>Because identification is behaviour-based, it can take <strong>up to 12 hours</strong> to
+        complete for a newly seen device, and an occasional field can be classified incorrectly.
+        Treat the inventory as a living picture that sharpens over time: review it before you build
+        enforcement on it — which is exactly the monitor-first discipline the enforcement pages
+        already preach.</p>
+      </div>
+    </section>
+
+    <section id="attributes" class="reveal">
+      <div class="section-kicker">What gets captured</div>
+      <h2>The attributes — and what each one unlocks</h2>
+      <p>
+        Device Inventory resolves each device into nine attributes. Five of them — <strong>Category,
+        Type, Model, OS and Manufacturer</strong> (with OS version) — are directly usable as firewall
+        rule criteria across WAN, Internet and LAN policy; the rest are identification and
+        correlation data that make an event or a device unambiguous.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Attribute</th><th>What Cato captures</th><th>What it unlocks</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Category</td>
+              <td>The broad class — e.g. IT, IoT, OT, Mobile, Server</td>
+              <td>Top-level policy scope; drives the dashboard's identified-IoT and identified-OT counts</td>
+            </tr>
+            <tr>
+              <td>Type</td>
+              <td>The device role — e.g. PLC, IP camera, printer, mobile phone, network appliance, workstation</td>
+              <td>Type-based rules and device groups ("every IP camera", "every PLC")</td>
+            </tr>
+            <tr>
+              <td>Model</td>
+              <td>The specific product model</td>
+              <td>Precision targeting — narrow a rule to one controller or camera model</td>
+            </tr>
+            <tr>
+              <td>Manufacturer</td>
+              <td>The vendor that made the device</td>
+              <td>Vendor-based allow/deny — e.g. keep one networking brand off the internet</td>
+            </tr>
+            <tr>
+              <td>OS &amp; OS version</td>
+              <td>Operating system and version where identifiable</td>
+              <td>Firmware-/OS-aware scoping; spot devices on out-of-date software</td>
+            </tr>
+            <tr>
+              <td>Device name</td>
+              <td>A human-readable name for the device</td>
+              <td>Readable identification in the inventory and in events</td>
+            </tr>
+            <tr>
+              <td>MAC address</td>
+              <td>The hardware address</td>
+              <td>Stable identity that does not move when DHCP reassigns an IP</td>
+            </tr>
+            <tr>
+              <td>Device IP</td>
+              <td>The current network address</td>
+              <td>Where the device sits now; ties inventory to live events and flows</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.9rem;color:var(--ink-2)">
+        The data surfaces in two places in the CMA. The <strong>Device Inventory</strong> page is the
+        filterable, per-device list — group by Site, Manufacturer, Type and more, and click any device
+        for a Quick View of its details and the events and apps it generates. The <strong>Device
+        Dashboard</strong> is the roll-up: a summary bar of total device connections, newly seen
+        devices, and identified IoT and OT counts, with "Discover Now" breakdowns by type and model,
+        OS and manufacturer, and Security widgets showing IPS and firewall events by device category
+        and type. A <strong>Segmentation Flows</strong> Sankey visualises the protocols and
+        destinations devices actually use — the evidence you turn into the right segmentation rules.
+      </p>
+    </section>
+
+    <section id="inventory-to-control" class="reveal">
+      <div class="section-kicker">From inventory to control</div>
+      <h2>Once you can see them, segment them</h2>
+      <p>
+        Discovery is only valuable if it changes what the network does. Because a discovered device is
+        already described in the same attribute vocabulary the firewall speaks, turning inventory into
+        control is a short step: a device (or a whole category or type) becomes a
+        <strong>device-attribute object</strong> that a rule matches on, and the rule then follows the
+        device wherever it appears — now or in the future — regardless of its IP.
+      </p>
+      <p>
+        That enforcement is the subject of the sibling page,
+        <a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a>, which already shows a
+        live device-attribute rulebase and Purdue-model segmentation on the Socket's
+        <strong>LAN firewall</strong> (a global policy under <span class="path">Security → LAN
+        Firewall</span>, scoped per site and VLAN and enforced on the Socket). This page deliberately
+        stops at the inventory; that page picks it up and segments it. The join between them is one
+        object:
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">👁️</div><div><h4>This page — see</h4><p>Passive discovery classifies the estate into one inventory: category, type, model, OS, manufacturer. You now know what is connected.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>The sibling page — segment</h4><p>Those same attributes become device groups and LAN/WAN/Internet firewall rules, enforcing least-privilege between Purdue levels and to the internet.</p></div></div>
+      </div>
+      <p style="font-size:.9rem;color:var(--ink-2)">
+        The inventory is also enriched, not just built, in isolation. <strong>Device Management
+        connectors</strong> merge metadata from third-party platforms — Microsoft Intune and Defender,
+        CrowdStrike, Armis, Claroty, Juniper Mist and Zoom — with Cato's passive discovery to create
+        unified device profiles, giving managed and unmanaged assets one coherent record. These
+        connectors require the IoT/OT Security licence (plus the relevant third-party entitlement).
+      </p>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — anchor on their blind spot</div>
+        <p>Ask how they inventory devices today, when it was last accurate, and whether it covers OT,
+        IoT and BYOD. Ask whether they are allowed to run active scans on their OT or clinical
+        networks. Their answers are the gap you fill in the next five minutes.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open the inventory — the visibility they lack</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Show the live list of devices Cato has discovered and classified passively from traffic —
+          no agents, no scanners. Walk the attribute columns: category, type, model, OS, manufacturer.
+          "This built itself from the Socket that is already in place."</p>
+        </li>
+        <li>
+          <h4>Filter and group by what matters</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Group by Manufacturer, Type or Site to answer real questions in one click — "show me every
+          IP camera", "every device from vendor X", "everything at the manufacturing plant". This is
+          the single cross-site source of truth the four discovery-question answers were missing.</p>
+        </li>
+        <li>
+          <h4>Drill into one device</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Click a device to open its Quick View: the full attribute set plus the events it has
+          generated and the apps it is reaching. Pick something evocative — a printer talking to the
+          internet, a camera on old firmware — to make the risk concrete.</p>
+        </li>
+        <li>
+          <h4>Read the dashboard roll-up</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Switch to the Device Dashboard: total device connections, newly seen devices, and
+          identified IoT and OT counts, with breakdowns by type, model, OS and manufacturer, and the
+          Segmentation Flows Sankey of protocols and destinations. Executive-friendly, one screen.</p>
+        </li>
+        <li>
+          <h4>Turn a discovered device into a policy object</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Take a device you just found and build a rule around its attributes — e.g. Type = IP camera,
+          Manufacturer = X — set to <strong>Allow · Event</strong> first. This is the pivot from seeing
+          to segmenting; the full enforcement story lives in
+          <a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a>.</p>
+        </li>
+        <li>
+          <h4>Show the export / API path for CMDB sync</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Close on integration: the inventory is available programmatically via the Cato GraphQL
+          API, so the CMDB can be kept current from the network's own ground truth rather than by hand —
+          the automation angle is covered in
+          <a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a>.
+          Device Management connectors bring third-party context the other way to enrich the same records.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">What is Device Inventory? (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-device-inventory-page" target="_blank" rel="noopener">Using the Device Inventory Page (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-device-dashboard" target="_blank" rel="noopener">Using the Device Dashboard (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-segmentation-flows" target="_blank" rel="noopener">Using Segmentation Flows (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/device-management-connectors" target="_blank" rel="noopener">Device Management Connectors (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-Generation Firewall — solution page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a> — segment what you discover</li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+            <li><a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

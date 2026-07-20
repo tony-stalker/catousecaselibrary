@@ -120,6 +120,17 @@ window.UC_CATALOG = [
     deck: "2 - Management use cases/Visibility/Cato SASE Platform - Visibility PoV.pptx"
   },
 
+  {
+    id: "management-asset-discovery",
+    file: "usecases/management-asset-discovery.html",
+    category: "Management",
+    title: "Asset Discovery & Device Inventory (IoT/OT)",
+    summary: "You cannot secure what you cannot see — the IoT/OT licence turns every Socket into a passive discovery sensor, fingerprinting and classifying every device into one live inventory, no agents or disruptive scans.",
+    tags: ["Asset Discovery", "Device Inventory", "IoT/OT Licence", "Fingerprinting", "Visibility"],
+    status: "new",
+    deck: null
+  },
+
   /* ---------------- 3 · Network ---------------- */
   {
     id: "network-sdwan",
