@@ -509,6 +509,16 @@ window.UC_CATALOG = [
     deck: null
   },
   {
+    id: "migration-directaccess",
+    file: "usecases/migration-directaccess.html",
+    category: "Migration",
+    title: "Microsoft DirectAccess to Cato",
+    summary: "Retire a deprecated, Windows-only always-on VPN — replace DirectAccess (and its PKI, NLS and IP-HTTPS plumbing) with Cato SDP: cross-platform always-on ZTNA, device posture and IdP MFA, no infrastructure to keep alive.",
+    tags: ["DirectAccess", "Cato Client", "SDP", "Always-On", "VPN Replacement"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "migration-versa",
     file: "usecases/migration-versa.html",
     category: "Migration",

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft DirectAccess to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire a deprecated, Windows-only always-on VPN — replace DirectAccess (and its PKI, NLS and IP-HTTPS plumbing) with Cato SDP: cross-platform always-on ZTNA, device posture and IdP MFA, no infrastructure to keep alive.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-directaccess">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / DirectAccess to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Microsoft DirectAccess to Cato</h1>
+    <p class="lede">
+      Microsoft has deprecated DirectAccess and will remove it from a future Windows Server release —
+      so every estate still running it has to move anyway. This is the focused remote-access play:
+      replace DirectAccess and the infrastructure that keeps it alive — the Network Location Server,
+      the PKI, the IP-HTTPS gateway and the Group Policy plumbing — with the Cato Client and SDP.
+      Always-on like DirectAccess, but cross-platform, no domain-join requirement, with device posture,
+      IdP MFA and app-level least privilege enforced at the nearest PoP, and nothing left to keep alive.
+    </p>
+    <div class="meta-row">
+      <span class="tag">DirectAccess</span><span class="tag">Cato Client</span><span class="tag">SDP</span>
+      <span class="tag">Always-On</span><span class="tag">VPN Replacement</span><span class="tag">Device Posture</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The forced decision point</h2>
+      <p>
+        Microsoft has made the decision for you. Its guidance is unambiguous:
+        <em>"DirectAccess has been deprecated and will be removed in a future version of Windows
+        Server,"</em> and it <em>"highly recommends that you use Always On VPN instead of DirectAccess
+        for new deployments."</em> DirectAccess still ships and still functions in Windows Server 2025
+        and other supported releases — but it is on the removal path, and the countdown is your Windows
+        Server refresh cycle. When the estate moves to a release without DirectAccess, remote access
+        stops being a feature you can renew.
+      </p>
+      <p>
+        So the question is not <em>whether</em> to run this project — it is what you land on. Microsoft's
+        in-place successor, Always On VPN, is the sanctioned Windows path, but it is still a VPN gateway
+        estate you build and operate yourself: RRAS gateways, NPS/RADIUS, a certificate authority, HA
+        pairs. DirectAccess had deeper structural limits than any of that fixes. It is
+        <strong>Windows-only and domain-joined-only</strong> — Microsoft states it
+        <em>"provides support only for domain-joined clients,"</em> and only on Enterprise editions of
+        Windows, so Macs, phones, tablets and contractor laptops were never covered. It is
+        transparent but fragile: the Network Location Server is a single point of failure, IP-HTTPS
+        carries a performance cost, and the whole thing rests on a PKI and Group Policy estate that has
+        to be renewed and nursed. And it grants <strong>network-level</strong> access, not least-privilege
+        ZTNA.
+      </p>
+      <p>
+        Cato SDP inverts the model. The Cato Client is always-on like DirectAccess, but it runs on
+        Windows, macOS and mobile, needs no domain join, authenticates through your IdP with SSO and MFA,
+        and checks device posture continuously. It terminates at the nearest of Cato's PoPs — where the
+        full security stack is enforced in the cloud — and reaches datacentre and cloud applications
+        directly over the global private backbone, at the level of the named application rather than the
+        subnet. There is no NLS, no PKI estate, no IP-HTTPS gateway to keep alive.
+        <strong>Same forced migration, fundamentally better end state.</strong>
+      </p>
+      <div class="callout">
+        <div class="co-title">Retiring the other legacy VPN too?</div>
+        <p>This page scopes to DirectAccess. If the estate also runs a classic SSL-VPN concentrator, the
+        parallel play is the sibling to this one: <a href="migration-anyconnect.html">AnyConnect to Cato
+        Client</a> — the same SDP destination, reached from Cisco's remote-access stack.</p>
+      </div>
+    </section>
+
+    <section id="challenge" class="reveal">
+      <div class="section-kicker">The challenge</div>
+      <h2>What DirectAccess costs you — and never covered</h2>
+      <p>Microsoft's lifecycle sets the deadline; the architecture set the ceiling long before that.</p>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">Deprecated</div><div class="stat-label">Microsoft has deprecated DirectAccess and will remove it from a future Windows Server release</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">Windows-only</div><div class="stat-label">Domain-joined Windows Enterprise editions only — no macOS, mobile, contractor or BYOD</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">NLS · PKI · IP-HTTPS</div><div class="stat-label">Three pieces of infrastructure you must keep alive just to keep remote users connected</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">A deprecation with a moving deadline</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">DirectAccess is deprecated today and remains available in Windows Server
+          2025, so it is easy to defer. But it will be removed from a future release, and the trigger is
+          your own server-estate refresh — not a date you control. Planning the move now is cheaper than
+          discovering the feature is gone during an OS upgrade.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The Windows-only, domain-joined ceiling</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">DirectAccess supports only domain-joined clients on Enterprise editions of
+          Windows. Every Mac, every phone, every tablet and every contractor or BYOD laptop sits outside
+          it — served, if at all, by a second remote-access tool. The population DirectAccess never
+          reached is exactly the one that has grown.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Transparent, but fragile</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The Network Location Server tells the client whether it is inside or outside
+          the network — and when it is unreachable, clients misjudge their location and connectivity
+          breaks, which makes it a single point of failure. IP-HTTPS, the fallback that tunnels through
+          firewalls, adds an encryption overhead; and the PKI and GPO estate underneath all needs
+          renewing and nursing.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Network access, not least privilege</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">DirectAccess connects the machine to the corporate network — full intranet
+          reach governed by whatever firewall rules kept pace. There is no per-application gate and no
+          continuous device-posture decision. Once the tunnel is up, lateral reach is the network's, not
+          the policy's.</p>
+        </div>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>How many non-Windows and unmanaged users are unserved by DirectAccess today — Macs, phones,
+        contractors — and what tool covers them instead? What happens to remote clients when the NLS is
+        down? Who owns the certificate authority and the renewal calendar? And which Windows Server
+        release in your estate is the one that finally forces the change?</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>From DA gateway to nearest PoP</h2>
+      <p>
+        The Cato Client is a lightweight, always-on agent that connects each user to the nearest Cato
+        PoP, authenticating through your IdP (Entra ID, Okta, OneLogin — multiple IdPs supported) with
+        SSO and MFA, and evaluating device posture continuously throughout the session rather than only
+        at connect. From the PoP, traffic to private applications rides the global private backbone to
+        the datacentre Socket; internet and SaaS traffic breaks out through the same inspection stack
+        that protects sites. There is no DirectAccess gateway, no Network Location Server, no certificate
+        authority dedicated to remote access and no IP-HTTPS listener — nothing to size, renew or nurse.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">DirectAccess gateway hairpin versus Cato Client via the nearest PoP</title>
+          <desc id="dg1-desc">Two remote users. Priya on a domain-joined Windows laptop follows an amber lane over an IP-HTTPS tunnel across the internet to a DirectAccess gateway and Network Location Server in the datacentre, then on to datacentre applications, hairpinning all traffic through the datacentre. The DirectAccess gateway is marked deprecated and for retirement. Marcus, on a laptop and a phone running the Cato Client, follows a green lane to the nearest Cato PoP on the global private backbone — authenticated by IdP SSO with MFA and device posture — and reaches datacentre applications and cloud apps directly.</desc>
+
+          <!-- Legacy lane: Priya → DA gateway/NLS → DC apps, hairpin -->
+          <rect class="dg-node-dark" x="400" y="62" width="190" height="64" rx="10"/>
+          <text class="dg-label-inv" x="495" y="89" text-anchor="middle">DirectAccess gateway</text>
+          <text class="dg-sub-inv" x="495" y="107" text-anchor="middle">NLS · PKI · IP-HTTPS</text>
+          <text class="dg-tiny" x="495" y="144" text-anchor="middle">Deprecated — being removed</text>
+
+          <path class="lane lane-limit" d="M 127 88 C 220 84, 310 86, 396 92"/>
+          <path class="lane lane-limit" d="M 594 88 C 650 86, 700 88, 756 92"/>
+          <path class="lane lane-limit" d="M 594 116 C 710 160, 740 280, 758 362"/>
+          <text class="dg-tiny" x="258" y="72" text-anchor="middle">IP-HTTPS tunnel</text>
+          <text class="dg-tiny" x="648" y="238" text-anchor="middle">hairpin — all traffic</text>
+          <text class="dg-tiny" x="648" y="254" text-anchor="middle">via the datacentre</text>
+
+          <!-- Backbone + Cato PoP -->
+          <ellipse class="dg-backbone" cx="490" cy="330" rx="155" ry="50"/>
+          <circle cx="610" cy="344" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="490" y="398" text-anchor="middle">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="430" cy="322" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="322" r="30"/>
+
+          <!-- Cato lanes: Marcus → PoP → DC apps + cloud -->
+          <path class="lane lane-allow" d="M 152 318 C 240 322, 320 322, 396 322"/>
+          <path class="lane lane-allow" d="M 452 300 C 560 220, 660 140, 756 106"/>
+          <path class="lane lane-allow" d="M 462 328 C 560 334, 660 356, 756 378"/>
+          <text class="dg-tiny" x="268" y="302" text-anchor="middle">IdP SSO + MFA · posture</text>
+
+          <!-- PoP labels (painted above lanes, with halo) -->
+          <text class="dg-label" x="430" y="260" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Nearest Cato PoP</text>
+          <text class="dg-tiny" x="430" y="276" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">ZTNA · posture · inspection</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="760" y="64" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="845" y="88" text-anchor="middle">Datacentre apps</text>
+          <text class="dg-sub" x="845" y="106" text-anchor="middle">behind a Cato Socket</text>
+
+          <rect class="dg-node" x="760" y="356" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="845" y="380" text-anchor="middle">Cloud &amp; SaaS apps</text>
+          <text class="dg-sub" x="845" y="398" text-anchor="middle">M365 · Salesforce · WWW</text>
+
+          <!-- Users (left) -->
+          <g>
+            <circle cx="100" cy="88" r="23" fill="var(--lane-limit)"/>
+            <circle cx="100" cy="81" r="6.5" fill="#fff"/>
+            <path d="M 87 101 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="100" y="132" text-anchor="middle">Priya — DirectAccess</text>
+            <text class="dg-sub" x="100" y="148" text-anchor="middle">domain-joined Windows</text>
+          </g>
+          <g>
+            <circle cx="96" cy="318" r="23" fill="var(--status-good)"/>
+            <circle cx="96" cy="311" r="6.5" fill="#fff"/>
+            <path d="M 83 331 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <rect x="126" y="305" width="15" height="26" rx="3" fill="var(--green-700)"/>
+            <rect x="128.5" y="309" width="10" height="16" rx="1" fill="#fff"/>
+            <text class="dg-label" x="104" y="362" text-anchor="middle">Marcus — Cato Client</text>
+            <text class="dg-sub" x="104" y="378" text-anchor="middle">laptop + phone · any OS</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> DirectAccess — IP-HTTPS to the DC gateway, network-level</span>
+          <span class="key"><span class="swatch allow"></span> Cato Client — nearest PoP, app-level, any device</span>
+        </div>
+        <div class="diagram-caption">Two users, two architectures: DirectAccess hairpins a domain-joined Windows laptop through a deprecated gateway; the Cato Client terminates a laptop and a phone at the nearest PoP and reaches datacentre and cloud applications directly — posture-checked and IdP-authenticated for the life of the session.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>Cross-platform, no domain join</h4><p>Windows, macOS and mobile on one always-on client — the Macs, phones and contractor laptops DirectAccess never covered are in scope on day one, with no domain membership required.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>Nothing to keep alive</h4><p>No Network Location Server to fail, no dedicated certificate authority to renew, no IP-HTTPS gateway to patch. The PoPs are Cato's to operate — the plumbing simply goes away.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Least privilege by default</h4><p>Policy grants named applications to named users and groups, gated by live device posture — not a routed intranet with firewall rules bolted on to catch up.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Nearest PoP, full stack</h4><p>Users connect to the closest PoP where ZTNA, FWaaS, IPS and the inspection stack are enforced in the cloud, then ride the backbone — no hairpin to the one datacentre that ran the gateway.</p></div></div>
+      </div>
+    </section>
+
+    <section id="path" class="reveal">
+      <div class="section-kicker">The migration path</div>
+      <h2>Six steps from DirectAccess to SDP</h2>
+      <p>The sequencing below follows Cato's recommended practice for always-on client migrations: build
+      the Cato side first, move cohorts cleanly, and keep the DirectAccess gateway warm until the last
+      wave clears — then decommission the plumbing deliberately.</p>
+      <ol class="steps">
+        <li>
+          <h4>Discover &amp; inventory</h4>
+          <p>Map what DirectAccess actually encodes: the client GPOs that push the configuration, the
+          Network Location Server, the certificate authority and certificate templates it depends on, the
+          IP-HTTPS gateway, and the DA server roles. Confirm who is in scope — and explicitly capture the
+          users DirectAccess never covered: Mac, mobile, unmanaged and contractor. That non-Windows
+          population is part of the target from the start, not an afterthought.</p>
+        </li>
+        <li>
+          <h4>Build the Cato side</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Connect the IdP with SSO and SCIM provisioning so users and groups stay in sync. Recreate
+          the "managed corporate device" intent as Device Posture profiles — certificate present, disk
+          encryption, anti-malware, OS version, domain membership where wanted — and run them in
+          <strong>monitor</strong> first. Build the Client Connectivity Policy (who may connect, from
+          where, on what device) and the app-level access rules that replace network-level intranet
+          reach.</p>
+        </li>
+        <li>
+          <h4>Pilot cohort — deploy alongside</h4>
+          <p>Deploy the Cato Client to a pilot cohort while DirectAccess stays in place. The two take
+          different paths — DirectAccess over IP-HTTPS to the DA gateway, the Cato Client to the PoP — so
+          they can coexist during the transition. Validate this in the pilot: confirm always-on connects,
+          every in-scope application is reachable, posture verdicts are correct, and there is no
+          split-tunnel or route conflict between the two clients before you scale.</p>
+        </li>
+        <li>
+          <h4>Wave rollout</h4>
+          <p>Roll cohorts by department or region. For each, remove the DirectAccess client GPO (or
+          unenrol the device) so the Cato Client becomes the primary path, and run the same acceptance
+          checklist. Crucially, extend each wave to the Mac, mobile and contractor users DirectAccess
+          never reached — the same policy now covers the whole workforce, not just domain-joined Windows.</p>
+        </li>
+        <li>
+          <h4>Decommission the plumbing</h4>
+          <p>Once the last cohort is off, retire the DirectAccess gateway, the Network Location Server and
+          the IP-HTTPS listener, and release the certificate-authority role and templates dedicated to
+          remote access. Re-point anything externally keyed to the DA egress addresses as part of the wave
+          plan. This is the estate DirectAccess needed that now simply disappears.</p>
+        </li>
+        <li>
+          <h4>Optimise</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Flip Device Posture from monitor to enforce, keep always-on so users are protected before
+          they think about connecting, and tighten access from network-level reach to app-level rules
+          using real traffic evidence from Events. This is where the estate ends up ahead of where an
+          Always On VPN rebuild would have left it — cross-platform, posture-aware and least-privilege.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="coexistence" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Cohort mechanics, GPO as the lever</h2>
+      <p>
+        Client migrations co-exist by <strong>cohort</strong>. At any moment during the rollout some users
+        run DirectAccess and some run the Cato Client — and because the two take different paths, a device
+        can carry both during the pilot while you validate reach and confirm no route conflict. The lever
+        that moves a cohort, and the lever that rolls it back, is the same: the DirectAccess client GPO.
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Cohort mechanics</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cohorts follow deployment rings: pilot → early adopters → departmental
+          waves. Deploy the Cato Client, confirm enrolment and app reach, then remove the DirectAccess GPO
+          for that cohort so the Client becomes primary — with a per-cohort acceptance checklist of the
+          apps that cohort actually uses.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">GPO revert = rollback</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rollback is mechanical and per cohort: re-apply the DirectAccess client GPO
+          and the device is back on the old path at next policy refresh. Because the DA gateway stays up
+          until the final wave, the known-good route is always there to fall back to.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Keep the gateway warm</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Rollback stays cheap only while the old path exists. Keep the DirectAccess
+          gateway, the NLS and the CA running and monitored until the last cohort completes its soak
+          window — then decommission deliberately, not opportunistically.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Rollback rule</div>
+        <p>Do not retire the Network Location Server, the certificate authority or the IP-HTTPS gateway
+        until the final cohort has cleared. They are the fallback path; pulling them early turns a routine
+        rollback into an incident.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Anchor on their trigger: is it the DirectAccess deprecation notice, a Windows Server upgrade
+        that forces the question, an NLS outage that broke remote users, or the Mac and mobile population
+        DirectAccess never served? Run the demo as "the move you already have to make — made once,
+        properly, and to more than Windows".</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Connect with the Cato Client</h4>
+          <p>Connect as a demo user — SSO and MFA at the IdP — and show the client attach to the nearest
+          PoP, always-on. Make the contrast explicit: no NLS deciding whether the client thinks it is
+          inside or outside, no IP-HTTPS fallback, no domain-join prerequisite. Then note it is the same
+          client on macOS and mobile.</p>
+        </li>
+        <li>
+          <h4>Show the connection gate</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Walk the rules that decide who may establish a session at all — user group, country, device
+          posture profile. This is the control DirectAccess expressed as GPO scoping and security-group
+          membership, made explicit and identity-driven.</p>
+        </li>
+        <li>
+          <h4>Open a Device Posture profile</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Show the checks — certificate, disk encryption, anti-malware, OS version, client version —
+          and make the point that they are evaluated continuously during the session, not assumed from
+          domain membership at connect. This is the "managed device" assurance DirectAccess implied,
+          turned into an enforced, live decision.</p>
+        </li>
+        <li>
+          <h4>App-level access vs network access</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Show a rule granting a user group one named application in the datacentre — and the absence
+          of any rule granting the whole subnet. Then show the same user blocked from an adjacent
+          resource. DirectAccess put the machine on the network; Cato puts the user on the application.</p>
+        </li>
+        <li>
+          <h4>Close on the session trail</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to the demo user: connection, posture verdicts, every allow and block, fully
+          attributed to identity. This is the audit trail a DirectAccess deployment — spread across the DA
+          server, NLS and event logs — never quite delivered in one place.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://support.microsoft.com/en-us/topic/directaccess-deprecation-on-future-windows-server-releases-a-new-era-of-always-on-connectivity-c84f69b4-794e-48e2-9701-c36cb1e258d9" target="_blank" rel="noopener">Microsoft: DirectAccess deprecation notice</a></li>
+            <li><a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-access/directaccess/directaccess" target="_blank" rel="noopener">Microsoft Learn: DirectAccess overview (domain-joined, Enterprise-only)</a></li>
+            <li><a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-access/overview-always-on-vpn" target="_blank" rel="noopener">Microsoft Learn: Always On VPN overview</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-anyconnect.html">AnyConnect to Cato Client — the parallel legacy-VPN play</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
