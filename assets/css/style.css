@@ -460,6 +460,7 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
     --status-good: #35c135;
     --status-critical: #e25858;
     --lane-allow: #1cbc93;
+    --lane-limit: #f2a71b;
     --lane-block: #e25858;
     --series-1: #1cbc93;
     --series-2: #5b9be2;
@@ -485,8 +486,15 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
 
   /* Diagrams: light nodes darken; hardcoded fills get attribute overrides */
   :root[data-theme="dark"] .dg-node { fill: #123240; stroke: #2a4d5d; }
-  :root[data-theme="dark"] .dg-node-dark { stroke: #2a4d5d; }
   :root[data-theme="dark"] svg rect[fill="#fdf6e3"] { fill: #3a2f10; }
+  /* Navy-filled shapes (journey clouds/cores, dg-node-dark) sit at ~surface
+     luminance on dark — lift them so they read as objects again */
+  :root[data-theme="dark"] .dg-node-dark,
+  :root[data-theme="dark"] svg [fill="var(--navy-800)"] { fill: #16455a; stroke: #34617a; stroke-width: 1.5; }
+  /* Neutral/dormant lanes and their legend swatches: too faint on dark */
+  :root[data-theme="dark"] .lane-static { stroke: #8ea7b3; }
+  :root[data-theme="dark"] .lane-standby { stroke: #8ea7b3; }
+  :root[data-theme="dark"] .dg-legend .swatch.standby { border-color: #8ea7b3; }
 
   /* Screenshots keep a white background so UI captures stay readable */
   :root[data-theme="dark"] figure.shot img { background: #fff; border-color: #33566a; }

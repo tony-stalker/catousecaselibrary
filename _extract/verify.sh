@@ -35,12 +35,19 @@ if errs:
 print("OK")
 EOF
 
-echo "== 3/7 external resource loads (CDN)"
+echo "== 3/7 external resource loads (CDN) + theme snippet"
 if grep -rn -E 'src="http|link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
   echo "OK — file:// safe"
 fi
+# every page must carry the dark-mode bootstrap snippet (pages authored in
+# parallel with the snippet sweep have missed it — migration-journey-vpn, Jul 2026)
+SNIPMISS=0
+for f in index.html whatsnew.html usecases/*.html; do
+  grep -q 'uc-theme' "$f" || { echo "FAIL: theme snippet missing in $f"; SNIPMISS=1; }
+done
+[ "$SNIPMISS" = 0 ] && echo "OK — theme snippet on all pages" || FAIL=1
 
 echo "== 4/7 SVG text measurement (must be silent — any output is a regression)"
 python3 _extract/measure_svg.py || FAIL=1
