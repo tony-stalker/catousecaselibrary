@@ -60,8 +60,20 @@ DECK_BTN_RE = re.compile(
     r'\n?[ \t]*<a class="btn btn-ghost" href="[^"]*\.pptx"[^>]*>[^<]*</a>')
 WHATSNEW_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="whatsnew.html">[^<]*</a>')
 
+FIGURE_RE = re.compile(r'<figure class="shot">.*?</figure>', re.DOTALL)
+
+def _strip_section(m):
+    # screenshots are prospect-safe: salvage any figures from removed sections
+    figs = FIGURE_RE.findall(m.group(0))
+    if not figs:
+        return "\n"
+    return ('\n    <section id="gallery" class="reveal">\n'
+            '      <div class="section-kicker">In the console</div>\n'
+            '      <h2>What this looks like live</h2>\n      '
+            + "\n      ".join(figs) + "\n    </section>\n")
+
 def transform(text: str) -> str:
-    text = SECTION_RE.sub("\n", text)
+    text = SECTION_RE.sub(_strip_section, text)
     text = DECK_BTN_RE.sub("", text)
     text = WHATSNEW_LINK_RE.sub("", text)
     for old, new in PHRASES:
