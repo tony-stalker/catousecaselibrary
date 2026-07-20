@@ -284,6 +284,8 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .lane-limit { stroke: var(--lane-limit); animation: lane-march 1.4s linear infinite; }
 .lane-block { stroke: var(--lane-block); animation: lane-march 2s linear infinite; }
 .lane-static { stroke: var(--ink-3); stroke-dasharray: none; stroke-width: 1.6; }
+.lane-alt { stroke-dasharray: 16 6; }   /* identity variant A: long dashes */
+.lane-dot { stroke-dasharray: 3 8; }    /* identity variant B: dotted */
 @keyframes lane-march { to { stroke-dashoffset: -16; } }
 
 .lane-x { stroke: var(--lane-block); stroke-width: 3.4; stroke-linecap: round; }
@@ -295,6 +297,8 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-legend .key { display: inline-flex; align-items: center; gap: 7px; }
 .dg-legend .swatch { width: 22px; height: 0; border-top: 3px dashed; border-radius: 2px; }
 .dg-legend .swatch.allow { border-color: var(--lane-allow); }
+.dg-legend .swatch.allow-alt { border-color: var(--lane-allow); border-top-style: solid; }
+.dg-legend .swatch.allow-dot { border-color: var(--lane-allow); border-top-style: dotted; }
 .dg-legend .swatch.limit { border-color: var(--lane-limit); }
 .dg-legend .swatch.block { border-color: var(--lane-block); }
 .dg-legend .swatch.standby { border-color: var(--ink-3); border-top-style: dotted; }

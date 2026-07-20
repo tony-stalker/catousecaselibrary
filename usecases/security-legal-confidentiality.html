@@ -191,13 +191,13 @@
 
           <!-- Team traffic into the PoP (green) -->
           <path class="lane lane-allow" d="M 214 99 C 300 120, 370 180, 445 218"/>
-          <path class="lane lane-allow" d="M 214 185 C 300 200, 370 220, 441 231"/>
-          <path class="lane lane-allow" d="M 214 365 C 300 350, 380 290, 447 254"/>
+          <path class="lane lane-allow lane-alt" d="M 214 185 C 300 200, 370 220, 441 231"/>
+          <path class="lane lane-allow lane-dot" d="M 214 365 C 300 350, 380 290, 447 254"/>
 
           <!-- PoP to Matter A workspace (green) -->
           <path class="lane lane-allow" d="M 497 218 C 580 180, 650 120, 746 86"/>
           <!-- PoP to Matter B workspace for Team B (green, lower approach) -->
-          <path class="lane lane-allow" d="M 498 248 C 590 268, 680 252, 746 224"/>
+          <path class="lane lane-allow lane-alt" d="M 498 248 C 590 268, 680 252, 746 224"/>
 
           <!-- Cross-wall attempt (red, blocked) -->
           <path class="lane lane-block" d="M 499 228 C 550 224, 590 218, 624 211"/>
@@ -235,7 +235,9 @@
           <text class="dg-sub-inv" x="836" y="451" text-anchor="middle">questionnaire pack</text>
         </svg>
         <div class="dg-legend">
-          <span class="key"><span class="swatch allow"></span> Inside the wall — each team to its own matter workspace</span>
+          <span class="key"><span class="swatch allow"></span> Matter A team — to its own workspace</span>
+          <span class="key"><span class="swatch allow-alt"></span> Matter B team — to its own workspace</span>
+          <span class="key"><span class="swatch allow-dot"></span> Remote fee-earner — same wall, wherever they work</span>
           <span class="key"><span class="swatch block"></span> Blocked at the PoP — cross-wall access · privileged-doc exfil</span>
         </div>
         <div class="diagram-caption">Both matter teams share one office and one LAN — the wall is identity, not geography. The same rules follow the remote fee-earner through the Cato Client. The grey lane is the evidence path: every allow and block lands in the CMA.</div>
