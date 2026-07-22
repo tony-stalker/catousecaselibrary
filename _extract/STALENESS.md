@@ -26,7 +26,7 @@ build time (July 2026) from the sources cited on each page.
 | "80+ PoPs" and PoP lists | network-global-expansion, others | Semi-annually — count grows |
 | Cloud Interconnect provider list & PoP availability/lead times | network-cloud-interconnect | Semi-annually vs KB |
 | Cato Terraform provider parallelism=1 caveat | migration-cloudflare | Semi-annually |
-| Sophos forced-refresh calendar (XG EOL 31 Mar 2025; SFOS v22 Dec 2025 XGS-only; Workspace Protection GA Feb 2026; standalone ZTNA SKUs end 1 May 2026; +10% XGS prices 1 Jul 2026) | migration-sophos | Quarterly — Sophos partner news moves fast |
+| Sophos forced-refresh calendar (XG EOL 31 Mar 2025; SFOS v22 Dec 2025 XGS-only; Workspace Protection GA Feb 2026; standalone ZTNA SKUs ended 1 May 2026; +10% XGS prices took effect 1 Jul 2026 — reframed past-tense Jul 2026 review) | migration-sophos | Quarterly — Sophos partner news moves fast |
 | Six Sophos firewall CVEs in CISA KEV (incl. CVE-2020-25223 SG UTM, CVE-2020-29574 CyberoamOS) | migration-sophos | Quarterly — counts grow |
 | Sophos endpoint credentials (Gartner MQ EPP Leader 17th consecutive 2026; MDR 26k+ customers Jan 2025; MSP Elevate May 2025) | migration-sophos | On next MQ / annually |
 | SD-RED 20/60 has NO declared EOL — page explicitly says do not claim it | migration-sophos | Quarterly — reframe if Sophos declares one |
