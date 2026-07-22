@@ -447,6 +447,16 @@ window.UC_CATALOG = [
     status: "new",
     deck: null
   },
+  {
+    id: "ai-eu-ai-act",
+    file: "usecases/ai-eu-ai-act.html",
+    category: "AI Security",
+    title: "EU AI Act: Visibility, Control & Evidence",
+    summary: "Support EU AI Act readiness from the network — discover the AI systems actually in use, enforce usage policy at prompt level, and keep the supporting audit evidence deployer obligations demand.",
+    tags: ["EU AI Act", "Compliance", "Shadow AI", "AI Governance", "Audit Evidence"],
+    status: "new",
+    deck: null
+  },
 
   /* ---------------- 6 · Migration ---------------- */
   {

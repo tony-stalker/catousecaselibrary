@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU AI Act: Visibility, Control &amp; Evidence — Cato Use Case Library</title>
+<meta name="description" content="Support EU AI Act readiness from the network — discover the AI systems actually in use, enforce usage policy at prompt level, and keep the audit evidence deployer obligations demand.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="ai-eu-ai-act">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-ai-security">AI Security</a> / EU AI Act</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-ai-security">AI Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>EU AI Act: Visibility, Control &amp; Evidence</h1>
+    <p class="lede">
+      The EU AI Act reaches general applicability from 2 August 2026 — and while the high-risk wave
+      has moved to late 2027, transparency duties, the GPAI fine regime and member-state enforcement
+      all land now. For an enterprise that <em>uses</em> third-party AI, every obligation starts from
+      the same uncomfortable question: which AI systems are actually in use? This use case shows how
+      Cato supports an AI Act readiness programme from the network — discover the real AI estate,
+      enforce usage policy at prompt level, and keep the supporting audit evidence a deployer will be
+      asked for.
+    </p>
+    <div class="meta-row">
+      <span class="tag">EU AI Act</span><span class="tag">Compliance</span><span class="tag">Shadow AI</span>
+      <span class="tag">AI Governance</span><span class="tag">Audit Evidence</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this lands now</h2>
+      <div class="callout warn">
+        <div class="co-title">Read this first — researched, not legal advice</div>
+        <p>This page is authored from sourced research current to July 2026. It is <strong>not legal
+        advice</strong>, and the regulatory picture is still moving — the omnibus amending regulation
+        described below was awaiting Official Journal publication as this page was written. Validate
+        obligations, dates and interpretations with the customer's counsel before using this in a
+        compliance conversation.</p>
+      </div>
+      <p>
+        Regulation (EU) 2024/1689 — the AI Act — entered into force on 1 August 2024 and applies in
+        phases. Prohibited practices (Art 5) and the AI-literacy duty (Art 4) have applied since
+        2 February 2025; GPAI-provider rules, governance bodies and the penalties chapter since
+        2 August 2025. <strong>From 2 August 2026</strong> the Act reaches general applicability —
+        but what actually starts then was reshaped weeks beforehand by the <strong>"Digital Omnibus
+        on AI"</strong>, a package of targeted amendments the Commission proposed on 19 November 2025.
+        The omnibus completed its legislative journey in mid-2026: political agreement on 7 May 2026,
+        European Parliament adoption on 16 June 2026 and final Council approval on 29 June 2026. It
+        enters into force on the third day after publication in the Official Journal — publication was
+        still pending as this page was written.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">2 Aug 2026</div><div class="stat-label">From this date: Art 50 transparency duties, the Commission's GPAI fine power (Art 101), enforcement of the Art 4 literacy duty, and member-state enforcement machinery</div></div>
+        <div class="stat-tile"><div class="stat-value">2 Dec 2027</div><div class="stat-label">From this date (omnibus-deferred from Aug 2026): Annex III stand-alone high-risk obligations — including the Art 26 deployer duties for those systems</div></div>
+        <div class="stat-tile"><div class="stat-value">2 Aug 2028</div><div class="stat-label">From this date (omnibus-deferred from Aug 2027): Annex I embedded high-risk obligations — AI inside regulated products</div></div>
+      </div>
+      <p>
+        So the headline for a deployer is nuanced, not relaxed. The heavy Art 26 duty set for Annex III
+        high-risk systems now applies from <strong>2 December 2027</strong> — but <strong>from
+        2 August 2026</strong> the transparency obligations of Art 50 apply (with a marking grace
+        period to 2 December 2026 only for systems already on the market before 2 August 2026), the
+        Commission can fine GPAI model providers, supervision of the AI-literacy duty begins, and
+        member-state market-surveillance and penalty machinery switches on for the
+        generally-applicable provisions. As one law-firm analysis put it: <em>August 2 still
+        matters</em> — the extra sixteen months on high-risk are runway, not cancellation. The runway
+        is for building the evidence machine: inventory, usage control, logging and oversight.
+      </p>
+    </section>
+
+    <section id="roles" class="reveal">
+      <div class="section-kicker">Scope and roles</div>
+      <h2>Who you are under the Act decides what you owe</h2>
+      <p>
+        The Act distributes duties across <strong>providers</strong> (who develop an AI system or
+        place it on the market), <strong>deployers</strong> (who use an AI system under their own
+        authority in a professional context), importers and distributors (Art 3). Almost every
+        enterprise is a deployer many times over — of GenAI SaaS, of AI features embedded in everyday
+        software, of internal tools built on GPAI models. Notably, <strong>using ChatGPT, Copilot or
+        Gemini does not make you a GPAI provider</strong>: the Chapter V model obligations fall on
+        model providers only. A deployer meets GPAI through Art 50 transparency, Art 4 literacy and —
+        if a GPAI-based system is used in a high-risk context — Art 26.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">When a deployer becomes a provider (Art 25)</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A deployer inherits the full provider duty
+          set for a high-risk system — conformity assessment included — if it (a) puts its
+          <strong>name or trademark</strong> on the system (subject to any contractual allocation
+          of obligations), (b) makes a <strong>substantial
+          modification</strong> to it while it remains high-risk, or (c) <strong>changes the intended
+          purpose</strong> of a non-high-risk system so it becomes high-risk. White-labelling or
+          heavily customising third-party AI can silently cross that line — one more reason to know
+          exactly which AI is in use, and how.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The UK and extraterritorial angle (Art 2)</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The Act does not apply domestically in the
+          UK — but Art 2(1)(c) catches providers and deployers established in a third country
+          <strong>"where the output produced by the AI system is used in the Union"</strong>. A UK
+          enterprise running AI over EU customers or staff, or feeding AI output into EU operations,
+          is in scope through that output-based trigger — the one that most often surprises UK
+          boards.</p>
+        </div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“Who owns EU AI Act readiness — legal, compliance, the CISO — and do they have a complete
+        inventory of the AI actually in use, including AI features embedded inside your sanctioned
+        SaaS?” · “Have you classified any of your AI uses against the Act's risk tiers — and could
+        any team's customisation of a third-party tool push you from deployer into provider
+        territory?” · “If a regulator asked tomorrow which AI systems process EU customer data, how
+        long would the answer take?”</p>
+      </div>
+    </section>
+
+    <section id="exposure" class="reveal">
+      <div class="section-kicker">The exposure</div>
+      <h2>The price of not knowing</h2>
+      <p>
+        The penalties chapter (Art 99) has applied since 2 August 2025, in three tiers — for SMEs and
+        startups the <em>lower</em> of the amount or percentage applies; for everyone else, the
+        higher:
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">€35M<span class="unit"> / 7%</span></div><div class="stat-label">of worldwide annual turnover — Art 5 prohibited practices (e.g. workplace emotion inference)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">€15M<span class="unit"> / 3%</span></div><div class="stat-label">breaches of listed operator obligations — including Art 26 deployer duties and Art 50 transparency</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">€7.5M<span class="unit"> / 1%</span></div><div class="stat-label">supplying incorrect or misleading information to authorities</div></div>
+      </div>
+      <p>
+        From 2 August 2026, the Commission can additionally fine GPAI <em>model providers</em> up to
+        €15M or 3% of global turnover (Art 101) — a provider-side risk, but one that reshapes the
+        vendor landscape a deployer depends on. Enforcement capacity is uneven: per the AI Act
+        Explorer implementation tracker (updated 17 June 2026), only <strong>9 member states</strong>
+        had fully designated both national competent authorities, 12 partially and 6 not at all —
+        a delay the Commission itself cited among the reasons for the omnibus deferral. Uneven does
+        not mean absent: the machinery for the generally-applicable provisions starts from
+        2 August 2026.
+      </p>
+      <p>
+        And readiness on the deployer side is worse than most boards assume. A Cloud Security
+        Alliance research note (13 March 2026) found that <strong>over half of organisations lack
+        systematic AI inventories</strong>, and cited an appliedAI analysis of 106 enterprise AI
+        systems in which <strong>40% could not be clearly classified</strong> under the Act's risk
+        tiers. Its recommendation to deployers is exactly where this use case starts: audit the
+        deployer obligations for third-party AI systems already in use, and verify human oversight
+        and logging.
+      </p>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Honest mapping</div>
+      <h2>Deployer obligations — what Cato evidences, what stays with governance</h2>
+      <p>
+        Cato does not make anyone “AI Act compliant” — risk classification, fundamental rights
+        impact assessments, conformity assessment and documentation are the customer's governance
+        programme. What the platform contributes is the layer every one of those workstreams
+        presupposes: knowing which AI is in use, controlling how it is used, and evidencing both.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Obligation</th><th>What it asks of a deployer</th><th>What Cato evidences / enforces</th><th>Stays with governance</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Art 4 — AI literacy</strong><br><span style="font-size:.85rem;color:var(--ink-2)">applies since 2 Feb 2025 · enforced from 2 Aug 2026</span></td>
+              <td>Take measures to support the development of AI literacy among staff operating AI (omnibus-softened wording).</td>
+              <td>Real-time user notifications on risky AI interactions are teachable moments; usage and violation data shows exactly which teams and tools to target training at.</td>
+              <td>The literacy programme itself — training content, delivery and records are HR/L&amp;D territory.</td>
+            </tr>
+            <tr>
+              <td><strong>Art 5 — Prohibited practices</strong><br><span style="font-size:.85rem;color:var(--ink-2)">apply since 2 Feb 2025</span></td>
+              <td>Never operate prohibited systems — for deployers, most saliently workplace/education emotion inference and untargeted facial-image scraping. The Commission's Feb 2025 guidelines note the workplace emotion-recognition ban binds the deployer regardless of the provider's contract terms.</td>
+              <td>Block access to services and categories your organisation has classified as prohibited-use, and evidence non-use from the event stream.</td>
+              <td>The legal classification of a practice as prohibited — and any exception analysis — is a legal call.</td>
+            </tr>
+            <tr>
+              <td><strong>Art 50 — Transparency</strong><br><span style="font-size:.85rem;color:var(--ink-2)">applies from 2 Aug 2026</span></td>
+              <td>Inform people exposed to emotion-recognition / biometric-categorisation systems; disclose deepfakes; disclose AI-generated public-interest text unless under human editorial control.</td>
+              <td>Cannot label content or make disclosures on your behalf. The AI inventory shows which content-generating tools are in use — scoping exactly where labelling and disclosure processes are needed.</td>
+              <td>The disclosure and labelling processes themselves, and Art 50 GDPR interplay.</td>
+            </tr>
+            <tr>
+              <td><strong>Art 26 — High-risk deployer duties</strong><br><span style="font-size:.85rem;color:var(--ink-2)">Annex III systems: from 2 Dec 2027</span></td>
+              <td>Use per the provider's instructions; assign competent human oversight; ensure relevant, representative input data; monitor operation and report incidents; keep the system's automatically generated logs ≥ 6 months; inform workers before workplace use.</td>
+              <td>Restrict which users and groups can reach which AI system (oversight support); prompt-level input discipline via the User Interaction Policy; continuous usage monitoring with per-user attribution; supporting audit evidence, exportable.</td>
+              <td>Instructions-for-use compliance, the oversight arrangements themselves, the AI system's own log retention, worker consultation, registration checks.</td>
+            </tr>
+            <tr>
+              <td><strong>Risk classification · FRIA (Art 27) · conformity assessment · documentation · DPIAs</strong></td>
+              <td>Classify each AI use against the risk tiers; run fundamental-rights impact assessments where required; hold the documentation.</td>
+              <td>— (the discovered inventory is the input these exercises start from; Cato claims none of them)</td>
+              <td>Entirely — this is the AI governance programme, typically legal / compliance / DPO owned.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">The retention caveat — be precise in front of a customer</div>
+        <p>Art 26 requires a high-risk deployer to keep <strong>the AI system's own automatically
+        generated logs</strong> — to the extent those logs are under its control — for at least
+        six months. Network events are <strong>supporting
+        evidence</strong> of who used which AI service, when, and what policy decided — never a
+        substitute for the AI system's logs. And mind the window: Cato Data Lake event retention
+        defaults to <strong>3 months, extendable by licence</strong> (verify the current SKU for the
+        tenant) — so for a six-month-plus evidence window, plan a retention extension or continuous
+        export to the customer's SIEM.</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Discover the estate, govern the prompt, keep the evidence</h2>
+      <p>
+        <strong>Shadow AI Discovery</strong> builds the inventory the whole readiness programme
+        starts from. It identifies AI services at network level using a combination of application
+        signatures, domains and behavioural patterns — catching standalone AI tools <em>and</em> AI
+        models embedded inside everyday SaaS (such as Microsoft 365 Copilot or Google Workspace AI
+        features), with user and device context, usage frequency and volume, and risk attributes per
+        application. It is deliberately passive: it does not block traffic by default and does not
+        inspect the content of prompts or responses — discovery first, policy second. The
+        <strong>GenAI Apps Dashboard</strong> turns that into a management view: how many GenAI tools
+        are in use, sanctioned versus unsanctioned, risk-scored applications, top users, data
+        violations and file uploads per app.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-security-discovery.png" alt="CMA AI Security Discovery page showing 67 AI applications, 18 high-risk AI apps and 17 AI users, with a per-application inventory table of AI users, interactions, risk levels, categories and interceptors">
+        <figcaption>The deployer's first AI Act question, answered from traffic: a discovered inventory of every AI application in use — 67 here, 18 of them high-risk — with per-app usage, risk attributes and last activity. This is the input risk classification, Art 26 scoping and Art 50 scoping all start from.</figcaption>
+      </figure>
+      <p>
+        The <strong>User Interaction Policy</strong> is the control point for how people actually use
+        AI. It inspects prompts to AI chat applications in real time as they cross a Cato PoP and
+        enforces a per-interaction decision — <strong>Block</strong>, <strong>Monitor</strong>,
+        <strong>Anonymize and Monitor</strong> or <strong>Anonymize and Block</strong> — with
+        DLP-style content detectors, per-user and per-group scoping, per-app granularity, user
+        notification templates and event logging. It requires TLS inspection: if the customer has not
+        enabled it yet, run the staged rollout in
+        <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> first.
+        Beneath it, Cato's <strong>recommended DLP configuration for AI apps</strong> backstops file
+        uploads and pastes against the Generative AI Tools category.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">AI Act usage control and evidence through the Cato PoP</title>
+          <desc id="dg1-desc">An EU office site, hybrid workforce and a UK headquarters whose AI output is used in the EU all connect through a Cato PoP running TLS inspection and the User Interaction Policy. Prompts to sanctioned AI applications are allowed with inspection; unsanctioned AI is monitored or anonymised; services the organisation has classified as prohibited-use are blocked. Every decision flows to the Cato Management Application as evidence: AI dashboards, events export and the audit trail.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="225" rx="165" ry="52"/>
+          <circle cx="318" cy="238" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="642" cy="212" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="292" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="220" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="220" r="30"/>
+          <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">TLS inspection · User Interaction Policy</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="44" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="68" text-anchor="middle">Madrid Office</text>
+          <text class="dg-sub" x="119" y="86" text-anchor="middle">Socket · EU deployer</text>
+
+          <rect class="dg-node" x="34" y="192" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="216" text-anchor="middle">Hybrid workforce</text>
+          <text class="dg-sub" x="119" y="234" text-anchor="middle">Cato Client · ZTNA</text>
+
+          <rect class="dg-node" x="34" y="340" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="364" text-anchor="middle">London HQ — UK</text>
+          <text class="dg-sub" x="119" y="382" text-anchor="middle">Output used in the EU</text>
+
+          <!-- Inbound lanes (neutral) -->
+          <path class="lane-static" fill="none" d="M 204 70 C 300 90, 380 160, 452 204"/>
+          <path class="lane-static" fill="none" d="M 204 221 C 280 221, 380 221, 446 220"/>
+          <path class="lane-static" fill="none" d="M 204 368 C 300 350, 380 280, 452 236"/>
+
+          <!-- Outcome lanes -->
+          <path class="lane lane-allow" d="M 510 202 C 610 150, 700 90, 752 76"/>
+          <path class="lane lane-limit" d="M 514 224 C 610 228, 690 222, 752 221"/>
+          <path class="lane lane-block" d="M 516 240 C 620 300, 660 340, 712 362"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 720 354 L 744 378"/><path class="lane-x" d="M 744 354 L 720 378"/>
+          </g>
+
+          <!-- AI destinations (right) -->
+          <rect class="dg-node-green" x="756" y="44" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="68" text-anchor="middle">Sanctioned AI</text>
+          <text class="dg-sub" x="841" y="86" text-anchor="middle">Approved · risk-scored</text>
+
+          <rect class="dg-node" x="756" y="192" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="216" text-anchor="middle">Unsanctioned AI</text>
+          <text class="dg-sub" x="841" y="234" text-anchor="middle">Monitor · anonymise</text>
+
+          <rect class="dg-node" x="756" y="340" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="364" text-anchor="middle">Prohibited-use AI</text>
+          <text class="dg-sub" x="841" y="382" text-anchor="middle">Org-classified · blocked</text>
+
+          <!-- Evidence lane -->
+          <path class="lane-static" fill="none" d="M 488 250 C 498 300, 494 340, 486 386"/>
+          <rect class="dg-node-dark" x="370" y="390" width="220" height="72" rx="10"/>
+          <text class="dg-label-inv" x="480" y="414" text-anchor="middle">CMA — evidence</text>
+          <text class="dg-sub-inv" x="480" y="432" text-anchor="middle">AI dashboards · Events export</text>
+          <text class="dg-sub-inv" x="480" y="449" text-anchor="middle">Audit Trail · SIEM feed</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed — prompt inspected &amp; logged</span>
+          <span class="key"><span class="swatch limit"></span> Monitored / anonymised — sensitive values masked</span>
+          <span class="key"><span class="swatch block"></span> Blocked — org-classified prohibited use</span>
+        </div>
+        <div class="diagram-caption">Every AI interaction from EU sites, remote users — and UK users whose AI output is used in the EU — crosses a PoP where the User Interaction Policy decides per prompt: allow with inspection, monitor or anonymise, or block. Each decision lands in the CMA (grey lane) as attributable, exportable evidence.</div>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-security-overview.png" alt="CMA AI Security Overview dashboard showing violation rate 22.8%, 67 total AI apps, 18 AI users and 22.2K AI interactions, with violation breakdown and topic popularity donuts and a top-interactions Sankey flow">
+        <figcaption>The governance view a readiness programme reports from: total AI apps and interactions, violation rate as the one-number posture indicator, violation breakdown by policy rule — including an “AI Usage and Regulation” rule — and interaction flows from application to safe-versus-violation outcome.</figcaption>
+      </figure>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔭</div><div><h4>Inventory before classification</h4><p>Shadow AI Discovery finds standalone tools and embedded AI features from traffic Cato already processes — closing the inventory gap the CSA found in over half of organisations, with nothing deployed.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Policy at prompt level</h4><p>Block, Monitor, Anonymize-and-Monitor or Anonymize-and-Block per interaction, per user, per app — usage control that matches how the Act thinks about AI use, not domain-level yes/no.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>Prohibited-use categories enforced</h4><p>Once legal classifies a practice or service as off-limits — a workforce emotion-analytics SaaS, say — the network blocks it everywhere and the event stream evidences non-use.</p></div></div>
+        <div class="benefit"><div class="b-icon">📜</div><div><h4>Evidence, attributable and exportable</h4><p>Unified events with per-user attribution, CSV export up to 250k events, SIEM export and a full Audit Trail of policy changes — the supporting-evidence layer under the governance file.</p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Position with care</div>
+        <p>Say “Cato <strong>supports</strong> your AI Act readiness programme” — never “Cato makes
+        you AI Act compliant”. Risk classification, FRIAs, conformity assessment and documentation
+        belong to the customer's governance programme. Cato is the visibility, control and evidence
+        layer underneath it.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — find the owner and the gap</div>
+        <p>Ask who owns AI Act readiness and what their inventory looks like today. Most programmes
+        stall at step one — nobody can list the AI actually in use. Lead with discovery, and let the
+        obligation-mapping table frame the rest.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame with the timeline and the mapping table</h4>
+          <p>Walk the three dates — from 2 Aug 2026, from 2 Dec 2027, from 2 Aug 2028 — and the
+          obligation table. Agree which obligations the people in the room own. Anchor: “every row
+          starts with knowing which AI is in use — that's the row we can light up today.”</p>
+        </li>
+        <li>
+          <h4>Open on the AI Security Overview</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span></p>
+          <p>Walk the tiles — total AI apps, AI users, AI interactions — and the violation rate as
+          the one-number posture indicator. The app count is usually multiples of what the customer
+          believes; that gap is their inventory problem, quantified.</p>
+        </li>
+        <li>
+          <h4>Walk the shadow-AI inventory</h4>
+          <p><span class="path">AI Security → Discovery</span></p>
+          <p>Show the discovered inventory: each application with users, interactions, risk level,
+          category and last activity — including embedded AI features inside sanctioned SaaS. Stress
+          how it got there: network-level discovery from traffic Cato already processes, nothing
+          blocked by default, prompt content untouched.</p>
+        </li>
+        <li>
+          <h4>Make it attributable — the AI Users page</h4>
+          <p><span class="path">AI Security → AI Users</span></p>
+          <p>Sort by policy violations and drill into one user: interactions, safe-versus-violation
+          split, applications used. This is the human-oversight supporting view — who is using what,
+          and who needs the literacy conversation Art 4 asks you to support.</p>
+        </li>
+        <li>
+          <h4>Build a User Interaction Policy rule</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>Walk a rule end to end: source users or groups, AI applications in scope, the content
+          profile, the action — Monitor, Anonymize and Monitor, Anonymize and Block, or Block — and
+          a notification template so the user learns the policy in the moment. Note the prerequisite:
+          TLS inspection enabled (<span class="path">Security → TLS Inspection</span>).</p>
+        </li>
+        <li>
+          <h4>Show the evidence trail</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to AI-related events: every monitored, anonymised and blocked interaction with
+          user attribution, exportable to CSV (up to 250k events) or streamed to the customer's SIEM.
+          Be straight about the caveat: this is <em>supporting</em> evidence — Art 26's six-month log
+          duty covers the AI system's own logs, and default Data Lake retention is 3 months unless
+          extended.</p>
+        </li>
+        <li>
+          <h4>Close on governance evidence</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Show who changed which AI policy, when, from where. Close: “you arrived without an AI
+          inventory; you're leaving with one, plus per-prompt usage control and an exportable
+          evidence trail under every row of that obligation table.”</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <p style="font-size:.85rem;color:var(--ink-2);margin:0 0 6px">The regulation</p>
+          <ul style="margin:0 0 10px;padding-left:20px;font-size:.94rem">
+            <li><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj" target="_blank" rel="noopener">Regulation (EU) 2024/1689 — official text (EUR-Lex)</a></li>
+            <li><a href="https://artificialintelligenceact.eu/article/26/" target="_blank" rel="noopener">Art 26 — deployer obligations (AI Act Explorer)</a></li>
+            <li><a href="https://artificialintelligenceact.eu/article/50/" target="_blank" rel="noopener">Art 50 — transparency obligations</a></li>
+            <li><a href="https://artificialintelligenceact.eu/article/99/" target="_blank" rel="noopener">Art 99 — penalty tiers</a></li>
+            <li><a href="https://artificialintelligenceact.eu/national-implementation-plans/" target="_blank" rel="noopener">National implementation tracker</a></li>
+          </ul>
+          <p style="font-size:.85rem;color:var(--ink-2);margin:0 0 6px">Cato capability docs</p>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-genai-apps-dashboard" target="_blank" rel="noopener">Using the GenAI Apps Dashboard</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/ai-security/" target="_blank" rel="noopener">Cato AI Security — solution overview</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+            <li><a href="ai-genai-security.html">GenAI Security for End Users</a></li>
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+            <li><a href="ai-legal-genai.html">Law Firms: GenAI with Privilege Intact</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -34,6 +34,11 @@ build time (July 2026) from the sources cited on each page.
 | NCSC CAF v4.0 (Aug 2025) vs NHS still on v3.4 | security-healthcare-nhs | On next DSPT edition |
 | NHS Supply Chain requires CE+ from in-scope suppliers (Sep 2025); NHS England MFA policy (Aug 2023); HSCN operational, no announced successor | security-healthcare-nhs | Annually |
 | Always-On bypass minimum Client versions (Win 5.9+ / macOS 5.5+ / iOS 5.6+); EM Connection Details scoring thresholds | access-remote-worker | Quarterly vs KB — versions move with releases |
+| Digital Omnibus "publication still pending" wording (agreed May–Jun 2026; delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028) — in the Read-this-first callout AND objective | ai-eu-ai-act | On OJ publication (~weeks) — cite the amending regulation, drop "pending" |
+| AI Act general applicability "from 2 Aug 2026" phrasing; Art 50 marking grace to 2 Dec 2026 for pre-market systems | ai-eu-ai-act | Sep 2026 — confirm "from" reads naturally as past; Dec 2026 for the grace row |
+| Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
+| CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
+| Cato Data Lake default retention 3 months (extendable) — hedged on-page, support page login-gated | ai-eu-ai-act | Quarterly vs KB/SKU — firm up if a public source appears |
 
 Rendering note: as of 19 Jul 2026 measure_svg.py runs completely silent — all label
 bleeds fixed, and the script now ignores rects wider than 250 user-units (band/container
