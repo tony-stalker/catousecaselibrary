@@ -317,6 +317,232 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo points at the map; the PoV lands a real site in a real new region. This is an
+        expansion pilot: one socket shipped to the customer's next market — or the nearest thing to
+        it they can lease a desk in — stood up by local, non-technical hands, and measured against
+        the promise the map makes: nearest-PoP reach, day-one policy inheritance and local egress.
+        Run it inside the frame from <a href="management-pov-framework.html">Running a Cato PoV</a>:
+        criteria agreed at the scope workshop before anything ships, every result a dated artefact
+        on the register. Nothing here blocks or inspects content — the pilot proves reach and
+        performance by observing and measuring. One scope note up front: <strong>China is not this
+        pilot</strong>. It runs on the licensed-partner motion described above and is scoped with
+        the Cato China team as its own engagement — never folded into a standard socket pilot.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <p>Six criteria cover the expansion story end to end — from "the network is already there"
+      to "HQ can reach it under the policy we already have". Agree the target region, the pilot
+      site and the comparison paths at the workshop:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>The region is already on-net</strong></td>
+              <td>Before anything ships: the nearest PoP for the target region is identified from Cato's published PoP list and agreed as the plan — then the site connects to it on day one</td>
+              <td>The planned PoP written into the register at the workshop; the connected PoP in Topology matching it when the site comes up</td>
+              <td>Network → Sites → Site Configuration → General&nbsp;· Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td><strong>Stood up by local hands</strong></td>
+              <td>The socket is couriered to the new office and installed by whoever signs for it — power and a WAN cable, no engineer, no console session, nobody on a plane</td>
+              <td>The timed zero-touch run, clocked exactly per the <a href="network-agility-mna.html#pov">agility pilot's stopwatch criterion</a> — power-on photograph to first flows — performed this time in the new geography</td>
+              <td>Monitor → Topology&nbsp;· Monitor → App Analytics</td>
+            </tr>
+            <tr>
+              <td><strong>Day-one policy inheritance</strong></td>
+              <td>The new site runs under the full global rulebase the moment it connects — zero site-specific policy work between site creation and first traffic</td>
+              <td>Events filtered to the new site showing hits on rules published long before the site existed, plus an Audit Trail view proving no policy edits were made for it</td>
+              <td>Home → Events&nbsp;· Security → Internet Firewall&nbsp;· Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td><strong>Local egress, measured</strong></td>
+              <td>Internet and SaaS traffic leaves at the in-region PoP instead of hairpinning home — proven with numbers against the current backhaul path</td>
+              <td>Last-mile round-trip to the PoP from Real Time; side-by-side timings for the same SaaS transaction via local egress and via today's backhaul, same hour</td>
+              <td>Network → Sites → Site Monitoring → Real Time&nbsp;· Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td><strong>Remote users land locally too</strong></td>
+              <td>Pilot users in the new region on the Cato Client connect through the same in-region PoP — the landing team is served locally before and after the socket arrives</td>
+              <td>Experience Monitoring's Remote Users table, whose PoP column shows the PoP each user is connected to</td>
+              <td>Home → Experience Monitoring → Remote Users</td>
+            </tr>
+            <tr>
+              <td><strong>Reachable from HQ, same WAN policy</strong></td>
+              <td>HQ and the datacentre reach the new site across the backbone under the existing WAN rulebase — no new rules written for the region</td>
+              <td>WAN traffic between HQ and the new site in Topology and App Analytics; hit counts climbing on pre-existing WAN firewall rules, none added</td>
+              <td>Monitor → Topology&nbsp;· Security → WAN Firewall</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one socket site in the target region plus a handful of pilot remote users already working there (or travelling there for the pilot). The existing estate is untouched — it is the control group.</li>
+          <li><strong>Licence agreed before the socket ships:</strong> a site left without a commercial licence ends up disabled and stops passing traffic (<a href="https://knowledge.catonetworks.com/docs/assigning-site-licenses-for-new-cato-accounts" target="_blank" rel="noopener">site licences</a>) — the <a href="network-agility-mna.html#pov">agility PoV</a> verified this the hard way, so settle it with the commercial team at the workshop, not at power-on.</li>
+          <li><strong>Shipping is part of the plan, not the criterion:</strong> network hardware crossing a border needs an importer of record, and customs clearance varies from days to weeks by country. The stopwatch starts at power-on, never at dispatch — and the landing team bridges on the Cato Client or IPsec while the box is in transit, which is itself worth demonstrating.</li>
+          <li><strong>Named local hands:</strong> the person who will physically plug the socket in — office manager, serviced-office reception, the landlord's electrician — plus a phone camera for the power-on photograph. If that person needs a network qualification, the criterion has already failed.</li>
+          <li><strong>Upstream allowances</strong> if the socket lands behind a local router or serviced-office edge: the outbound port and DNS allowances listed in the <a href="network-agility-mna.html#pov">agility runbook's prerequisites</a> apply unchanged — pre-clear them with whoever runs the building's network.</li>
+          <li><strong>Not needed:</strong> TLS inspection, threat modules or identity integration — this pilot proves transport, reach and policy inheritance, so privacy sign-off never sits on the critical path. If a security PoV follows, stage TLSi via the <a href="security-tls-inspection.html">staged rollout playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Confirm the region before anything ships</h4>
+          <p><span class="path">Network → Sites → Site Configuration → General</span></p>
+          <p>Read the target region out of Cato's published
+          <a href="https://knowledge.catonetworks.com/docs/production-pop-guide" target="_blank" rel="noopener">production PoP guide</a> —
+          it lists PoP locations and their ranges by region, flags locations that are
+          <em>Coming soon</em> (which don't count for planning), and shows which PoP serves
+          countries without a dedicated one via geo-localised ranges. Write the planned PoP into
+          the register, then set the site's <em>Preferred PoP Location</em>: Cato's guidance is to
+          keep the default <strong>Automatic</strong> and define the <strong>City</strong>, which
+          steers the choice without fighting the connectivity algorithm
+          (<a href="https://knowledge.catonetworks.com/docs/defining-a-preferred-pop-for-a-site" target="_blank" rel="noopener">preferred PoP for a site</a>).
+          Avoid the restrict-to-preferred option during the pilot — it forces adherence even when
+          that PoP has a problem.</p>
+          <figure class="shot">
+            <img src="../assets/img/pop-map.png" alt="World map of the Cato global private backbone with green ring markers for PoP locations across the Americas, Europe, the Middle East, Africa, Asia and Australia">
+            <figcaption>The pre-flight check the pilot starts with: put the customer's next market on this map, name its nearest PoP from the production PoP guide, and write that PoP into the register — day one then has a prediction to verify, not a hope.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Create the site and assign the licence — weeks before the kit exists</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site as in the demo runbook — name, country, socket model, native range —
+          so it exists as a policy object while the hardware is still on order, and assign its
+          licence at the same sitting. This is deliberately mundane: the point the register will
+          make later is that everything the new region needed from the network team happened here,
+          in minutes, from a desk in the UK.</p>
+        </li>
+        <li>
+          <h4>Ship it, and let local hands stand it up</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Run the zero-touch clock <strong>exactly as written in the
+          <a href="network-agility-mna.html#pov">agility runbook</a></strong> — power-on photograph,
+          the witnessed <em>Activate New Socket</em> assignment, tunnel up, first flows — and don't
+          restate or renegotiate it. What this pilot adds is the geography: the run is performed by
+          the named local hands in the new region, timezone and all, with the admin clicking the
+          activation from home. When the tunnel comes up, screenshot Topology showing the connected
+          PoP and put it next to the prediction from step 1 — that pair is the first criterion
+          closed.</p>
+        </li>
+        <li>
+          <h4>Prove inheritance with events, not assertions</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Home → Events</span></p>
+          <p>The day before the socket powers on, capture the published rulebase, dated. The
+          Internet Firewall is one account-level policy — rules you enable tracking on generate
+          events, and the policy ends in an implicit any-any allow
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Internet Firewall policy</a>) —
+          so the proof is observational: within the first hour of traffic, filter Events to the new
+          site and show hits landing on rules that were published long before the site existed.
+          Close the loop in <span class="path">Administration → Audit Trail</span>: between site
+          creation and first traffic there is not a single policy edit attributable to the new
+          region. The rulebase didn't move; the site moved to it.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase showing an ordered, published global policy with app, category, user and device-scoped rules, Block, Allow and Prompt actions, and live hit counts">
+            <figcaption>The rulebase the new region inherits at first packet: not one rule in it names a country or a site, and the hit counts are the inheritance evidence — the pilot site starts contributing to them the hour it connects.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Set the regional egress — and only where needed, override it</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>By default the new site's internet traffic egresses at the PoP it connects to — local
+          breakout is the starting state, not a project. The override exists for the exceptions:
+          where a SaaS service needs a specific geography (data residency, a tenant pinned to a
+          country, licensing), add a network rule with the <strong>NAT</strong> routing method,
+          which "lets you egress traffic via a specific Cato allocated IP address and its PoP
+          location" — traffic matching the rule is translated to that IP and egressed via the
+          relevant PoP
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-network-rules" target="_blank" rel="noopener">configuring network rules</a>).
+          Keep the pilot honest: start with pure nearest-PoP egress, and add NAT rules only when a
+          measured quirk (step 6 of the troubleshooting grid below) demands one — each override is
+          itself evidence of control.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-network-rules.png" alt="Cato Management Application Network Rules page showing an ordered rulebase with app-aware matches, bandwidth priorities and routing methods including NAT via named egress PoPs and Route via specific PoPs">
+            <figcaption>Regional egress as policy: routing methods in the live rulebase steering named applications out of named PoPs. For the expansion pilot the default — nearest PoP — does the work; these rules are what the exceptions look like when a SaaS service cares which country it sees.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Run the measurement days</h4>
+          <p><span class="path">Home → Experience Monitoring</span> <span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>Three comparisons, captured on agreed days. <strong>Egress A/B:</strong> the same SaaS
+          transaction — same file, same hour — from the new site via its local PoP and via the
+          legacy backhaul path (their existing VPN or the interim hairpin), timed side by side,
+          with the last-mile round-trip to the PoP from Real Time alongside. <strong>Remote
+          users:</strong> the Remote Users view in Experience Monitoring with its PoP column
+          showing the pilot users on the in-region PoP, and per-app TTFB trending across the pilot
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a>).
+          <strong>HQ reachability:</strong> a routine transfer from the datacentre to the new site
+          across the backbone, visible in Topology and App Analytics, with the WAN firewall hit
+          counts as the no-new-rules proof. Everything lands on the register dated, against its
+          criterion, the day it happens.</p>
+          <figure class="shot">
+            <img src="../assets/img/em-home-users.png" alt="Cato Management Application Experience Monitoring page, Remote Users tab, showing per-user experience scores with a PoP column, application counts, flows, usage and average TTFB">
+            <figcaption>The remote-user criterion on one screen: each pilot user's experience score next to the PoP column — for the expansion pilot, the pass is that column reading the in-region PoP, with TTFB numbers to back it.</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up the register holds the paired prediction-and-proof for the PoP (planned at
+        the workshop, matched in Topology), the local-hands stand-up clocked to the agility
+        criterion, the first-hour events landing on a rulebase nobody touched, the egress A/B table
+        with the backhaul path losing on its own numbers, the Remote Users capture with the PoP
+        column reading in-region, and the HQ transfer under unchanged WAN rules. Read together they
+        make the expansion argument arithmetically: the next market is this register re-run with a
+        different courier address — and the quarters-long project the customer budgeted for is the
+        line that never appears.
+      </p>
+      <!-- capture-wanted: Monitor → Topology showing a newly connected site in a new region on its in-region PoP, beside the existing estate -->
+      <!-- capture-wanted: Home → Events filtered to a single new site's first hour — Internet Firewall events hitting pre-existing global rules -->
+      <!-- capture-wanted: Site Monitoring → Real Time for a new-region site — last-mile round-trip to the local PoP -->
+      <!-- capture-wanted: Network → Sites → Site Configuration → General — Preferred PoP Location section with Automatic + City set -->
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>The slow bit is customs, not config</h4><p>Be honest at the workshop: the longest lead item in this pilot is a box crossing a border — importer of record, duties, in-country courier handoff. None of it is product, all of it is real. Keep shipping outside the stopwatch, ship early, and let the Client/IPsec bridge carry the landing team so the pilot never waits on a customs shed.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Socket powers on but never calls home</h4><p>In serviced offices and new markets the socket often sits behind someone else's edge. The outbound port and DNS allowances from the <a href="network-agility-mna.html#pov">agility runbook</a> apply unchanged — and a NAT device that rewrites source ports between socket and PoP can stop tunnels forming. Pre-clear the building network before the timed day.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>"The new office feels slow — is it Cato?"</h4><p>The question every new-region pilot gets, usually in week two. Experience Monitoring separates the fault domains: the last-mile views isolate the local ISP loop from the tunnel and the backbone. Loss and round-trip that start at the first ISP hop, against a clean PoP, is evidence in the local carrier's own language — attribution, not argument.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>SaaS turns up in the wrong language or currency</h4><p>Egress-IP geolocation: the nearest PoP may sit across a border from the office, and some SaaS services key language, currency, content or even access off the egress country. The fix is step 5's NAT rule — an allocated IP in the geography the service needs, scoped to that application only. Log each quirk found; the list is valuable discovery output.</p></div></div>
+        <div class="benefit"><div class="b-icon">📍</div><div><h4>Site connected to an unexpected PoP</h4><p>Automatic selection weighs conditions, not just the map. Set the Preferred PoP Location — Automatic plus City per Cato's guidance — and note the socket drifts back to a preferred PoP within about an hour by default after connecting elsewhere. Resist hard-restricting to one PoP mid-pilot: it holds the site there even when that PoP has a bad day.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Site passes no traffic at all</h4><p>Before debugging networking, check the licence: a site without an assigned commercial licence ends up disabled and stops passing traffic, and a scheduled licence passes nothing until it reaches staging. Thirty seconds in the site's licence assignment saves an afternoon of tunnel forensics.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The PoP count is a moving target.</strong> This page says 80+; what matters at the workshop is the live list for <em>their</em> region — read it from the production PoP guide on the day, and treat <em>Coming soon</em> locations as exactly that: not part of the plan.</li>
+          <li><strong>Nearest PoP may mean a neighbouring country.</strong> Coverage is per-PoP, not per-capital-city. Agree at the workshop which egress geography the business actually needs — proximity for latency and country-of-egress for SaaS are separate criteria, and conflating them fails both.</li>
+          <li><strong>China stays out of scope.</strong> Compliant China connectivity runs through Cato's in-country presence with licensed local partners and is scoped with the Cato China team per entity — position it as the section above does and keep the standard pilot clean.</li>
+          <li><strong>Capture weekly.</strong> Experience Monitoring holds at most a three-month window and near-real-time data can lag by up to 30 minutes — the egress A/B and TTFB trends go into the register at each weekly sync, dated, not reconstructed at the end.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>If the site converts to production — the usual outcome, since the office is real — the
+        exit is simply tidying: remove any PoV-only NAT egress rules from the next published
+        revision and reconsider the preferred-PoP settings for steady state. If it does not
+        convert, decommission per the documented teardown sequence the
+        <a href="network-agility-mna.html#pov">agility runbook</a> timed — references, licence,
+        socket, then delete — returning the licence to the pool and the socket to the drawer. The
+        register survives either way, and it walks into the decision meeting carrying the only
+        line that matters: the next market entry is a courier label, not a project.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

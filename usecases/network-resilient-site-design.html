@@ -408,6 +408,234 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This PoV is a <strong>resilience drill card</strong>: every failure mode in the design above
+        becomes a timed, witnessed drill on one pilot site, run in a change window, with the expected
+        behaviour written down from the knowledge base <em>before</em> the drill and the measured
+        result stamped on the card after it. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — criteria agreed at the scope
+        workshop, evidence dated as it lands. The
+        <a href="network-sdwan.html#pov">SD-WAN PoV</a> already proves a single link pull with voice
+        continuity; this runbook goes further — LTE last resort, Socket HA, PoP behaviour and
+        power-loss recovery — and it deliberately doubles as a <strong>change-management test</strong>:
+        if the customer's process can't book, execute and record five planned failures, that finding
+        belongs in the wrap-up too.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria — the drill card</h3>
+      <p>Agree the card at the workshop: which drills the pilot hardware supports, the recovery
+      objective per drill (from the site-class tiering above), and who witnesses. Timing is measured
+      by stopwatch and a continuous ping log; CMA events corroborate — they don't replace the watch,
+      because event thresholds round up (see gotchas). Each row states the expected behaviour as the
+      knowledge base documents it:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Drill</th><th>Expected behaviour (per the KB)</th><th>Evidence artefact</th><th>Rollback to steady state</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>D1 — Primary link pull</strong></td>
+              <td>Flows on the failed link move to the surviving link immediately; a live voice call continues without redial (a slight, temporary disruption is documented as possible for connection-sensitive applications)</td>
+              <td>Stopwatch time to stable traffic; Transport graphs showing throughput shifting between links; connectivity events book-ending the pull</td>
+              <td>Reconnect the cable — flows redistribute by configured bandwidth ratio; confirm both tunnels up in Topology</td>
+            </tr>
+            <tr>
+              <td><strong>D2 — Second pull, onto LTE</strong></td>
+              <td>The last-resort link activates only once <em>all</em> active and passive links are down or failing the SLA thresholds (grace timer default 0&nbsp;s); site traffic rides cellular</td>
+              <td><em>Passive Connected</em> event; Transport tab showing traffic on the LTE link; noted cellular data consumed during the drill</td>
+              <td>Restore a wired link — LTE stands down after 10 continuous minutes of restored health (the timer resets if the link wobbles)</td>
+            </tr>
+            <tr>
+              <td><strong>D3 — Socket HA failover</strong></td>
+              <td>Standby takes over — 3&nbsp;s of missed VRRP keepalives on a real failure — and announces itself with GARP; a <em>Socket Fail-Over</em> event is generated once the secondary is active for more than 35&nbsp;s</td>
+              <td>Timed observation of user traffic through the takeover; the Socket Fail-Over event; HA status captures before and after</td>
+              <td><em>Stop HA Failover</em> from Socket Actions (or restart the primary); confirm the site shows <strong>Ready</strong> again</td>
+            </tr>
+            <tr>
+              <td><strong>D4 — PoP failover</strong></td>
+              <td>Automatic: the Socket reconnects to another PoP during PoP maintenance or when all links fail the Connection SLA against the current PoP; preferred primary/secondary locations steer the choice, with automatic return after 60&nbsp;min by default</td>
+              <td>Preferred-PoP configuration capture; any <em>Changed PoP</em> events landing during the pilot window</td>
+              <td>Automatic — the Socket returns to the preferred PoP on its own; no operator action</td>
+            </tr>
+            <tr>
+              <td><strong>D5 — Power-loss recovery</strong></td>
+              <td>Cold boot to passing traffic, unattended: tunnels re-form and the site returns to the same steady state captured at baseline; the <em>Connected</em> event stamps the recovery once the tunnel has been up for 30&nbsp;s</td>
+              <td>Stopwatch from power-on to first successful ping; the ping log; the Connected event timestamp</td>
+              <td>None — the recovery <em>is</em> the drill; verify the site matches the baseline capture (link roles, HA Ready)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — run the drills your hardware supports</div>
+        <p style="margin-bottom:6px">The card is honest about fit: a single-link, single-Socket pilot
+        site can only run D4 and D5 — mark the rest <em>not applicable</em>
+        rather than pretending. Map before the workshop:</p>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>D1 needs two last miles</strong> at the pilot site — any commodity pair.</li>
+          <li><strong>D2 needs LTE/5G fitted</strong> — an X1600 LTE Socket or an external modem, configured as precedence&nbsp;3, with an agreed data budget for the drill minutes.</li>
+          <li><strong>D3 needs an HA pair</strong> showing <strong>Ready</strong>; manual failover from the CMA requires both Sockets on Socket OS version 24 or higher, and someone physically on site during the drill.</li>
+          <li><strong>D4 and D5 need any Socket site</strong> — for D4, set preferred primary and secondary PoPs on the critical tier first so there is a configuration to verify; D5 needs physical access to the power feed.</li>
+          <li><strong>Every drill needs a booked change window and a change record</strong> — the HQ lab archetype is the ideal pilot because a drill that misbehaves inconveniences nobody.</li>
+          <li><strong>Test harness:</strong> a softphone call for D1/D2, a continuous timestamped ping from a LAN endpoint for every drill, and a stopwatch (a phone video of the console clock works — it captures timing and witness in one artefact).</li>
+          <li><strong>Not needed:</strong> TLS inspection or identity integration — this is a transport PoV, which keeps privacy sign-off off the critical path.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Map the drill card to the pilot hardware</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Open the pilot site's Socket configuration and read off what it actually has: WAN port
+          precedence roles (1 active, 2 passive, 3 last resort), whether LTE is fitted, whether the
+          site is an HA pair. Strike unsupported drills from the card in writing at the workshop —
+          the drills you run are determined by the hardware, not the slideware.</p>
+        </li>
+        <li>
+          <h4>Capture the steady state — the rollback target</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Before anything is pulled, capture the state every drill must return to: tunnels up on
+          all links, link roles, current PoP, and on the HA site the three indicators behind
+          <strong>Ready</strong> — Connected, Keepalive, Compatible Version
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-socket-ha" target="_blank" rel="noopener">What is Socket HA</a>).
+          Every rollback column on the card means "matches this capture". An HA site that is not
+          Ready does not get drill D3 until it is — that is a finding, not a blocker.</p>
+        </li>
+        <li>
+          <h4>Arm the evidence feed and learn its timing</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Filter Connectivity events for the pilot site and keep the view open through every
+          drill. Know the semantics before you rely on them: <em>Connected</em> fires after a tunnel
+          has been up for 30 seconds; <em>Disconnected</em> only fires when an active
+          (precedence&nbsp;1) link's tunnel is down for more than 2½ minutes; a quick restore lands
+          as <em>Reconnected</em>; last-resort and passive links raise <em>Passive
+          Connected</em>/<em>Passive Disconnected</em> instead
+          (<a href="https://knowledge.catonetworks.com/docs/monitoring-your-site-with-connectivity-events" target="_blank" rel="noopener">connectivity events</a>).
+          This is why the stopwatch is the measurement and the event is the corroboration.</p>
+        </li>
+        <li>
+          <h4>Drill D1 — pull the primary link</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>Voice call up, ping running, cable out, watch the Transport tab as throughput shifts to
+          the surviving link. Expected per the KB: packets belonging to flows on the dead link are
+          sent to the link that is still up, with at most a slight, temporary disruption for
+          connection-sensitive applications
+          (<a href="https://knowledge.catonetworks.com/docs/active-active-traffic-distribution" target="_blank" rel="noopener">Active/Active Traffic Distribution</a>).
+          The call should not drop. Restore the cable, watch flows redistribute, and stamp the card:
+          measured gap in the ping log, call verdict, event IDs.</p>
+        </li>
+        <li>
+          <h4>Drill D2 — pull the second link onto LTE</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>With the primary still out, pull the remaining wired link. Expected: the last-resort
+          link activates only now — when all active and passive links are down or failing SLA — after
+          the grace timer, which defaults to 0&nbsp;s
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-a-last-resort-link" target="_blank" rel="noopener">Configuring a Last-Resort Link</a>).
+          Be honest in the room about the caveats: the drill minutes carry full site traffic over
+          cellular at cellular prices; off-cloud (Socket-to-Socket) traffic is not supported on a
+          last-resort link; and rollback is slow <em>by design</em> — LTE stands down only after a
+          wired link has met the SLA for 10 continuous minutes, so book the window accordingly.</p>
+        </li>
+        <li>
+          <h4>Drill D3 — fail over the HA pair</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Two variants. <strong>Controlled:</strong> from the Socket's Actions menu choose
+          <em>Activate Manual HA Failover</em> (both Sockets on version 24+, state Ready) — the
+          primary stops sending VRRP keepalives, the secondary takes over, and the CMA transiently
+          shows both as primary with "HA not ready"; that display is documented as expected. Wait
+          about 120 seconds and refresh to verify, then revert with <em>Stop HA Failover</em>
+          (<a href="https://knowledge.catonetworks.com/docs/manually-activate-socket-ha-failover" target="_blank" rel="noopener">Manually Activate Socket HA Failover</a>).
+          <strong>Real:</strong> pull power on the primary — takeover on 3&nbsp;s of missed
+          keepalives, GARP announcement, Socket Fail-Over event once the secondary has been active
+          35&nbsp;s. Heed the KB warning: manual failover is a test tool, not a maintenance method —
+          using it to hold the pair failed over invites split-brain. Someone stays on site
+          throughout.</p>
+        </li>
+        <li>
+          <h4>Drill D4 — verify the PoP failover posture</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>The honest drill: PoP failover is automatic and the KB documents no supported way to
+          force it on demand — reconnects happen during PoP maintenance or when every link fails the
+          Connection SLA against the current PoP. So D4 verifies the posture rather than staging the
+          failure: preferred primary and secondary PoP locations set on the critical tier, the
+          restrict-to-preferred option a deliberate choice (restricted sites will not connect
+          elsewhere even in trouble), and the 60-minute automatic return understood so a planned
+          reconnect surprises nobody
+          (<a href="https://knowledge.catonetworks.com/docs/defining-a-preferred-pop-for-a-site" target="_blank" rel="noopener">Defining a Preferred PoP for a Site</a>).
+          If a <em>Changed PoP</em> event lands naturally during the pilot, capture it — that is the
+          live proof; if not, the card records "configuration and event trail verified", and says
+          so plainly.</p>
+        </li>
+        <li>
+          <h4>Drill D5 — kill the power</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Last drill of the window: power off the Socket (on the HA site, the whole pair — the
+          single-Socket takeover was D3), wait one minute, power on, and time from switch-on to the
+          first successful ping from the LAN endpoint. No hands on keyboards — the point is that
+          recovery is unattended. Time the Socket separately from the comms stack if the modem/ONT
+          also lost power, so the minutes are attributed fairly. Close by confirming the site matches
+          the steady-state capture from step 2: link roles, current PoP, HA Ready.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up the drill card is fully stamped: every drill dated, timed, witnessed, with its
+        event IDs and its return-to-steady-state confirmation — and every struck drill marked not
+        applicable with the hardware reason. A failed drill is recorded with the same care as a pass,
+        classified setup or product (see troubleshooting): "LTE never activated because a passive
+        link was still healthy" is a design conversation, not a product defect, and saying so is what
+        makes the rest of the card credible. The connectivity-event timeline from
+        Home → Events is the spine of the evidence pack; the ping logs and
+        stopwatch times hang off it.
+      </p>
+      <!-- capture-wanted: Monitor → Topology — HA site expanded showing Ready with the Connected / Keepalive / Compatible Version indicators -->
+      <!-- capture-wanted: Home → Events filtered to Connectivity sub-types for one site across a drill window (Connected, Reconnected, Passive Connected, Socket Fail-Over) -->
+      <!-- capture-wanted: Network → Sites → Site Monitoring → Real Time — Transport tab during a link pull, throughput shifting to the surviving link and the LTE link activating -->
+      <!-- capture-wanted: Socket Actions menu showing Activate Manual HA Failover / Stop HA Failover -->
+
+      <h3 style="margin-top:26px">Troubleshooting — setup failure or product failure?</h3>
+      <p>The card's credibility rests on classifying every miss correctly. The first three are setup
+      problems wearing a product costume; the last three are documented behaviour that only looks
+      like failure if nobody read the manual:</p>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>LTE never activated (setup)</h4><p>Last resort fires only when <em>all</em> active and passive links are down or failing SLA. A forgotten precedence-2 link that is still healthy — or a grace timer somebody set above 0 — keeps LTE idle. Check the link roles and the timer before blaming the modem.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>Manual HA failover refused (setup)</h4><p>It requires both Sockets on version 24+ and the pair in Ready state. A red Keepalive or Compatible Version indicator is the actual finding — fix the cabling or the version skew, capture that as evidence, then drill.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Cold boot looked slow (setup)</h4><p>If the modem/ONT lost power too, its boot time dominates the measurement. Time the Socket from the moment its uplink is genuinely available, or drill the Socket's power feed alone — attribute the minutes to the right box.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>No Disconnected event after a pull (product — by design)</h4><p>Disconnected fires only after an active link's tunnel is down for over 2½ minutes; a fast drill lands as Reconnected instead. The ping log and Transport graphs are the sub-minute evidence — that's why the stopwatch is the measurement.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧠</div><div><h4>Both Sockets showed primary (product — expected, briefly)</h4><p>During a manual failover the transient both-primary, "HA not ready" display is documented behaviour confirming takeover. Sustained split-brain is different — usually keepalive cabling, or manual failover left active as a maintenance hack. Restart the primary to restore.</p></div></div>
+        <div class="benefit"><div class="b-icon">🐢</div><div><h4>LTE wouldn't stand down (product — by design)</h4><p>Deactivation needs a higher-precedence link healthy for 10 continuous minutes, and the timer resets on every wobble. A flapping restored link keeps the site on cellular legitimately — evidence for the "order diverse circuits" conversation, not a defect.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Every drill is a deliberate outage.</strong> Never run one during business hours without change control — and treat the change process itself as under test. A customer whose process can't schedule five planned failures in four weeks has learned something important about their real recovery posture.</li>
+          <li><strong>Event timestamps round up.</strong> The 30-second Connected dwell and the 2½-minute Disconnected threshold mean event times understate how fast the platform actually moved. Quote the stopwatch and ping log as the measurement; cite events as corroboration.</li>
+          <li><strong>Don't promise the <em>Failover</em> event by name.</strong> The KB documents the WAN-link Failover sub-type for Socket v8.0 and earlier — on current Sockets, evidence a link pull with Transport graphs and the Connected/Reconnected pair instead.</li>
+          <li><strong>LTE drills cost real money.</strong> Idle last-resort links carry only minimal system traffic, but drill minutes carry the site's full traffic over cellular. Agree the data budget before D2, not on the invoice.</li>
+          <li><strong>PoP failover cannot be staged on demand.</strong> Set that expectation at the workshop so D4's "posture verified" outcome is the agreed pass, not a disappointment.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>There is little to unwind — the drills change nothing permanent by design. Confirm any
+        manual HA failover was stopped and the pair shows Ready, revert any precedence or grace-timer
+        values altered for testing, remove PoV-only notification recipients, and check the site
+        against the steady-state capture one final time. The stamped drill card is the artefact that
+        survives: it walks into the decision meeting as measured proof the designs on this page fail
+        the way the slides claim — and it becomes the customer's own recurring test plan, re-run
+        after every ISP change or Socket upgrade.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

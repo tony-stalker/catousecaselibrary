@@ -422,6 +422,201 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This is the <strong>enforcement pilot</strong> — the engagement that follows a discovery
+        baseline. The four-week <a href="security-ai-visibility.html">GenAI Visibility
+        Assessment</a> ends with an inventory, a violation rate and a report; this PoV proves the
+        customer can act on it: one pilot group taken up the User Interaction Policy's action
+        ladder step by evidenced step, one off-net device cohort covered by the browser plugin, and
+        the DLP backstop producing a match report — all of it exported as the governance evidence
+        pack. Agree the criteria below <em>before</em> configuring anything; the frame for that
+        conversation is <a href="management-pov-framework.html">Running a Cato PoV</a>.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What is demonstrated</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>The action ladder, walked</strong></td>
+              <td>One pilot group moves Monitor → Anonymize and Monitor → one agreed Block — each step held long enough to produce events before the next.</td>
+              <td>Dated events per rung + the violation breakdown by rule, week over week</td>
+              <td><span class="path">AI Security → User Interaction Policy</span> <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td><strong>Anonymise proven on a live prompt</strong></td>
+              <td>A seeded prompt with sensitive values is masked in-flight and still answered — the user keeps working, the data stays home.</td>
+              <td>User-side screenshot of the tokenised prompt (the Govern-section figure above is the shape) + the matching event</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td><strong>Plugin proven off Cato steering</strong></td>
+              <td>One cohort of managed Chromium-browser devices whose traffic never crosses a Cato PoP gets the same outcomes via the browser plugin, pushed by Intune.</td>
+              <td>Plugin-attributed interactions in the inventory and events for the cohort's users</td>
+              <td><span class="path">AI Security → Monitoring → Discovery</span></td>
+            </tr>
+            <tr>
+              <td><strong>DLP backstop with a match report</strong></td>
+              <td>The recommended DLP configuration for AI apps runs in monitor against the Generative AI Tools category; the match report is reviewed with the data owners.</td>
+              <td>Events export annotated true/false positive, per recommended rule</td>
+              <td><span class="path">Monitor → Events</span> <span class="path">Security → DLP Configuration</span></td>
+            </tr>
+            <tr>
+              <td><strong>Users educated, not just policed</strong></td>
+              <td>Notification templates fire at the moment of use — engage and notify — and the pilot group's violation rate visibly falls before anything is blocked.</td>
+              <td>Notification screenshot + the AI Violation Rate trend for the pilot group</td>
+              <td><span class="path">AI Security → Monitoring → Overview</span></td>
+            </tr>
+            <tr>
+              <td><strong>Evidence pack delivered</strong></td>
+              <td>Dashboards plus an events export the governance owner can file — the per-prompt audit trail promised at the workshop.</td>
+              <td>Overview and AI Users captures, dated; events CSV export</td>
+              <td><span class="path">AI Security → Monitoring → Overview</span> <span class="path">Monitor → Events</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence:</strong> AI Security for End Users is a separate per-user licence — distinct from AI Security for Apps, which covers the organisation's own AI applications and agents. Confirm the trial covers the pilot group and the plugin cohort before the workshop.</li>
+          <li><strong>TLS inspection enabled at account level</strong> — the User Interaction Policy cannot inspect AI traffic without it. Stage it on the pilot group per the <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with scope approved by whoever owns privacy.</li>
+          <li><strong>Identity integration syncing the pilot group</strong> — the ladder's evidence is per-user by design; unattributed events persuade nobody.</li>
+          <li><strong>The baseline exists:</strong> assessment findings (or at least two weeks of monitor-mode discovery) naming the apps, users and data patterns the pilot will act on. Enforcement follows evidence — never leads it.</li>
+          <li><strong>Prompt storage and privacy signed off</strong>, with a restricted RBAC role for who may read captured prompts — agreed before the first prompt is stored, not after.</li>
+          <li><strong>For the plugin cohort:</strong> Intune (or the customer's MDM) access to the cohort's devices, and — where those devices sit behind a third-party SASE such as Zscaler — the <code>catonetworks.com</code> TLD allowlisted so the plugin can reach the Cato service.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Fix the ladder at the workshop</h4>
+          <p>From the baseline, agree three things in writing: the pilot group (one department, say
+          Finance, plus the off-net cohort), the data classes that matter (from the assessment's
+          violation breakdown), and the calendar for the ladder — which week each action starts and
+          what evidence gates the next rung. The one agreed Block is named now, not improvised in
+          week four.</p>
+        </li>
+        <li>
+          <h4>Week 1 — Monitor: the User Interaction Policy rule</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>Create the pilot rule: source = the pilot group, the AI applications in scope (or Any
+          supported application — the wide net is the point in week one), the engine profile that
+          evaluates the prompt, action <strong>Monitor</strong>. The prompt is sent to the AI
+          vendor and the interaction is logged — nothing changes for users, and every prompt now
+          lands as an event (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          Note the rules take precedence over TLS inspection bypass rules — but the traffic still
+          has to reach a PoP, which is exactly why the off-net cohort gets the plugin instead.</p>
+          <!-- capture-wanted: «User Interaction Policy rulebase showing a pilot rule with source group, engine profile, action and notification template» -->
+        </li>
+        <li>
+          <h4>Week 1 — the DLP backstop, in monitor</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Apply Cato's recommended DLP configuration for AI apps: four content profiles — PII,
+          financial data, access keys &amp; tokens, and legal data (ML classifiers) — each in a
+          monitor rule against the <em>Generative AI Tools</em> application category
+          (<a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a>).
+          Accounts created after 25 March 2025 have the recommended rules pre-defined; earlier
+          accounts add them manually. This is the file-and-upload backstop beneath the prompt
+          layer — leave every rule in monitor for the whole PoV unless the match report argues
+          otherwise.</p>
+          <!-- capture-wanted: «Events filtered to the four recommended AI DLP rules — the match report as the data owners review it» -->
+        </li>
+        <li>
+          <h4>Week 1 — deploy the plugin to the off-net cohort</h4>
+          <p>Push the AI Security Browser Plugin via Intune to the cohort's managed devices —
+          Chrome, Edge and other Chromium-based browsers are supported
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-the-ai-security-browser-plugin" target="_blank" rel="noopener">What is the AI Security Browser Plugin</a>).
+          The plugin intercepts supported AI applications in the browser itself and enforces
+          block, anonymise or engage-user outcomes, masking content before the prompt reaches the
+          LLM — which is what makes a contractor estate on another vendor's SASE provable at all.
+          Verify one cohort device end to end on day one: plugin installed, reaching the Cato
+          service, its interactions visible in the inventory.</p>
+          <!-- capture-wanted: «Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome» -->
+        </li>
+        <li>
+          <h4>Week 2 — Anonymize and Monitor, with the user told why</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>With a week of monitor events reviewed, move the pilot rule to <strong>Anonymize and
+          Monitor</strong> and attach a notification template. Have a pilot user — Priya — seed a
+          prompt containing fictional test values for the agreed data classes: the sensitive values
+          are masked in-flight, the prompt is still answered, and the notification explains what
+          happened. The Govern-section figure above shows exactly what her screen looks like.
+          Screenshot it from the user's side and pair it with the event — that pairing is the
+          single most persuasive artefact this PoV produces.</p>
+          <p>Be precise about the boundary: <strong>only detectors that support anonymisation are
+          masked</strong>. In the figure above the name, email address and bank account number are
+          tokenised while the date of birth passes through untouched — it is not in the detector
+          set. Test the customer's own data classes in monitor before promising masking for them;
+          where a class must never leave and its detector cannot anonymise, <strong>Anonymize and
+          Block</strong> is the honest setting — masked where supported, blocked otherwise.</p>
+        </li>
+        <li>
+          <h4>Week 3 — the engage moment, on the access layer</h4>
+          <p><span class="path">AI Security → User Access Policy</span></p>
+          <p>Education is a policy action, not a memo. On the access layer — evaluated before
+          Interaction Policies — put an <strong>Engage User</strong> rule on the personal tiers of
+          otherwise-sanctioned tools, and a redirect or block on the apps the baseline rated high
+          risk. Users see the policy at the moment of use, with a notification template written in
+          the customer's own words. Watch the pilot group's violation rate on the Overview
+          dashboard: the criterion is that it falls <em>before</em> anything is blocked.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-access-policy.png" alt="CMA AI Security User Access Policy rulebase with three published rules — Engage User on free and personal ChatGPT tiers, Redirect for high- and critical-risk AI applications, and Block for a named service — each carrying a user notification template and a detection count" loading="lazy">
+            <figcaption>The engage/notify rung as a published rulebase: personal chatbot tiers engage the user, high- and critical-risk apps redirect to sanctioned alternatives, one named service blocks — each rule with its notification template and a detection count showing the education actually landing. This is the week-3 evidence that behaviour shifted before enforcement arrived.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Week 4 — the one agreed Block</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span> <span class="path">Monitor → Events</span></p>
+          <p>Promote the single case named at the workshop — typically the highest-risk app or
+          data class the monitor weeks kept surfacing — to <strong>Block</strong>: the prompt is
+          rejected and nothing is sent to the AI vendor, with the notification template saying so
+          plainly. Seed the test with a pilot user (Marcus, fictional values), capture the blocked
+          event and the user-side notice, and stop there. One block, evidenced, is worth more than
+          ten promised.</p>
+        </li>
+        <li>
+          <h4>Assemble the evidence pack</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span> <span class="path">Monitor → Events</span></p>
+          <p>For the wrap-up: dated captures of the Overview dashboard (violation rate trend across
+          the four weeks, breakdown by rule) and the AI Users page for the pilot group; the DLP
+          match report with the data owners' true/false-positive annotations; the plugin cohort's
+          inventory view; and the events export — every monitored, anonymised, engaged and blocked
+          interaction, attributed and exportable for compliance auditing. Read it against the
+          criteria table, row by row, in the decision meeting booked at the workshop.</p>
+        </li>
+      </ol>
+
+      <h3>Troubleshooting — when the evidence doesn't land</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Prompts not being evaluated</h4><p>Almost always TLS inspection scope: the policy needs TLSi enabled at account level, and the pilot user's traffic must actually cross a PoP. Interaction rules take precedence over TLSi bypass rules — but a device that never reaches Cato needs the plugin path, not the inline one.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Plugin misbehaving alongside other extensions</h4><p>Browser extensions that rewrite page content — ad blockers, other security or DLP plugins — can interfere with prompt interception. Test the cohort's standard extension set on one device first, and check the plugin can reach the Cato service (allowlist the catonetworks.com TLD in any third-party SASE in the path).</p></div></div>
+        <div class="benefit"><div class="b-icon">🎭</div><div><h4>Anonymise left a value unmasked</h4><p>Working as documented, not broken: only detectors that support anonymisation mask values — anything outside the detector set passes through (the DOB in the figure above is the canonical example). Verify each promised data class in monitor, and use Anonymize and Block where an unmasked leak is unacceptable.</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>Events show IPs, not names</h4><p>Identity sync lag or an unsynced pilot user. Confirm the IdP integration is populating the pilot group before the first weekly review — the ladder's whole story is per-user.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>DLP match report empty or noisy</h4><p>Empty: check TLSi covers the pilot group and the rules target the Generative AI Tools category. Noisy: tune thresholds with the data owners on the annotated export — and give monitor mode enough traffic time; a day-three report convinces no one.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>API-sourced usage won't enforce</h4><p>By design: with the AI Security API Integration module, the User Interaction Policy supports monitoring actions only. Enforcement evidence must come from the inline path or the browser plugin — position API-sourced visibility as discovery, not control.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout">
+        <div class="co-title">Say these out loud before the wrap-up, not after</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence boundary:</strong> AI Security for End Users and AI Security for Apps are separate per-user licences. Everything in this PoV is End Users evidence; agents and homegrown apps are a different licence and a different engagement — keep the wrap-up honest about which licence bought which slide.</li>
+          <li><strong>Enforcement follows evidence, never leads it:</strong> if a stakeholder pushes to block in week one, the answer is the assessment's own lesson — monitor first, or the pilot proves nothing except that blocking is possible.</li>
+          <li><strong>Anonymisation has a documented edge:</strong> the detector set is finite. Never promise masking for a data class you have not seen masked in this tenant, in monitor, on seeded test data.</li>
+          <li><strong>Export as you go:</strong> take dated captures and event exports weekly rather than reconstructing at the end — retention windows are licence-dependent, and the wrap-up should read a register, not memories.</li>
+          <li><strong>Clean exit:</strong> return Interaction and Access Policy pilot rules to monitor (or disable them), remove the plugin from the cohort via Intune, and hand over the evidence pack. The recommended DLP monitor rules are worth leaving in place — they are the start of the production policy, and the customer will ask to keep the dashboards.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -297,6 +297,179 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This is deliberately the <strong>light one</strong> — a one-to-two-week AI-security starter
+        pilot whose job is orientation and routing, not depth. It proves the platform sees the
+        customer's real AI usage, moves exactly one control from monitor to enforcement, and ends
+        with a decision about which deeper pilot to run next — each of those has its own full PoV
+        runbook on the sibling pages linked below. Agree the success criteria <em>before</em>
+        configuring anything; the frame for that conversation is
+        <a href="management-pov-framework.html">Running a Cato PoV</a>.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What is demonstrated</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Shadow-AI discovery week delivers the inventory</strong></td>
+              <td>The AI application inventory built from the customer's real traffic — which AI apps, how widely used, which are higher-risk. Discovery is passive: nothing blocked, no prompt content read.</td>
+              <td>Dated Discovery-screen screenshot + the inventory reviewed against what they <em>thought</em> was in use</td>
+              <td><span class="path">AI Security → Monitoring → Discovery</span></td>
+            </tr>
+            <tr>
+              <td><strong>One rule taken monitor → anonymise</strong></td>
+              <td>A single User Interaction Policy rule on one AI app and one pilot group moves from Monitor to Anonymize and Monitor, with before/after evidence.</td>
+              <td>Monitor-mode detection counts (before) + an anonymised prompt from the user's side (after)</td>
+              <td><span class="path">AI Security → User Interaction Policy</span></td>
+            </tr>
+            <tr>
+              <td><strong>GenAI dashboards populated and walked</strong></td>
+              <td>Overview and AI Users dashboards showing the customer's own numbers — apps, users, interactions, adoption and violation rate — walked live in a sync.</td>
+              <td>The walkthrough itself, plus dated dashboard screenshots into the evidence doc</td>
+              <td><span class="path">AI Security → Monitoring → Overview</span></td>
+            </tr>
+            <tr>
+              <td><strong>Route-map decision made</strong></td>
+              <td>The findings point at the next engagement: end-user GenAI enforcement, agentic AI, or the structured Visibility Assessment.</td>
+              <td>A written next step, with an owner, in the wrap-up notes</td>
+              <td>Wrap-up meeting</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence:</strong> the KB is explicit that <em>AI for End Users</em> and <em>AI for Applications</em> are separate per-user licences
+          (<a href="https://knowledge.catonetworks.com/docs/ai-security" target="_blank" rel="noopener">AI Security</a>).
+          This starter pilot runs entirely on the End Users side — arrange the trial with your SE and CSM.</li>
+          <li><strong>TLS inspection staged for the interaction step.</strong> TLS Inspection must be enabled at the account level for the User Interaction Policy to inspect AI traffic
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>) —
+          stage it per the <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>. Discovery itself is
+          network-level and does not read prompt content, so the inventory starts building while the TLSi conversation is still running.</li>
+          <li><strong>Identity integration syncing the pilot group</strong> — the inventory and dashboards should say "Priya uses these five AI apps", not "an IP address does".</li>
+          <li><strong>Prompt privacy approved up front:</strong> whoever owns privacy signs off what interaction data is captured and who may view it — before the first rule, not after.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Let discovery soak — nothing to deploy, nothing blocked</h4>
+          <p><span class="path">AI Security → Monitoring → Discovery</span></p>
+          <p>Shadow AI Discovery classifies the traffic Cato already carries against AI application
+          signatures, domains and behavioural patterns — the KB states it "does not block traffic by
+          default, and it does not inspect the content of AI prompts or responses"
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a>).
+          Give it a week of real traffic, then read the inventory back with the customer: which AI
+          apps are in use, how widely, and which are higher-risk. The gap between "apps we sanctioned"
+          and "apps we found" is the moment this pilot earns its keep.</p>
+        </li>
+        <li>
+          <h4>Create one User Interaction Policy rule — in Monitor</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>One rule only: source = the pilot group, application = one AI app the inventory shows in
+          real use, an engine profile to evaluate prompts, action = <strong>Monitor</strong>, plus a
+          notification template. Let it gather detections for a few days — that detection count is the
+          "before" evidence, and it tells you whether the engine profile matches what the customer
+          actually cares about.</p>
+          <!-- capture-wanted: «AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count» -->
+        </li>
+        <li>
+          <h4>Flip the rule to Anonymize and Monitor — the before/after moment</h4>
+          <p>Change that one rule's action to <strong>Anonymize and Monitor</strong>: sensitive values
+          are masked in-flight and the prompt still goes through, so the pilot user keeps working while
+          the data stays home. Have a pilot user — "Marcus" — submit a prompt seeded with fictional
+          PII and capture what the AI app actually received. Note the rule precedence point from the
+          KB: AI Interaction Policy rules take precedence over TLS inspection bypass rules.</p>
+          <figure class="shot">
+            <img src="../assets/img/genai-anonymised-prompt.png" alt="ChatGPT conversation where the submitted prompt reads 'Redraft this notice for [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]' — the name, email address and bank account number replaced by anonymisation tokens before reaching the model, with ChatGPT replying normally.">
+            <figcaption>The "after" evidence, from the user's side of the glass: the name, email address
+            and bank account number were masked in-flight by the Anonymize action, the tokens are what
+            the model received, and the conversation carries on. (The DOB passed through — it isn't in
+            the detector set — which is exactly the kind of finding the deeper end-user pilot exists to
+            tune.)</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Walk the dashboards with the customer</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span> <span class="path">AI Security → Monitoring → AI Users</span></p>
+          <p>Thirty minutes, their data on screen: total AI apps, AI users, interactions and adoption
+          rate up top, the AI Violation Rate as the one-number risk posture, violation breakdown by
+          rule, the latest-application-discovered feed and topic popularity
+          (<a href="https://knowledge.catonetworks.com/docs/ai-security-for-end-users-overview-dashboard" target="_blank" rel="noopener">Overview Dashboard</a>).
+          Then AI Users to put names against the numbers. Dated screenshots into the evidence doc as
+          you go — this walkthrough is a success criterion in its own right.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-access-policy.png" alt="CMA AI Security User Access Policy: a published rulebase of three rules — engage users on ChatGPT free and personal tiers, redirect high- and critical-risk AI applications, and block Gemini — each with a user-notification template and a detection count, beneath a how-it-works banner explaining that access policies are evaluated before interaction policies.">
+            <figcaption>Worth showing during the walkthrough as the shape of what comes next: a published
+            User Access Policy tiering access by risk — engage, redirect, block — evaluated before the
+            interaction policies this pilot exercised. Building it out belongs to the deeper end-user
+            pilot, not this one.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Make the route-map decision</h4>
+          <p>Close the wrap-up by choosing the next engagement — the findings usually make the choice
+          obvious. Each route below carries its own full PoV runbook:</p>
+        </li>
+      </ol>
+
+      <div class="grid-3" style="margin-top:6px">
+        <div class="card">
+          <h3 style="margin-top:0">End-user GenAI</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The inventory is large, the violation rate is
+          real, and the customer wants enforcement: the full monitor → coach → redact → enforce
+          lifecycle, the browser plugin and the DLP backstop.</p>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="ai-genai-security.html#pov">GenAI Security for End Users — PoV runbook →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Agentic AI</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The conversation kept drifting to coding
+          agents, Copilot Studio or agents the customer builds: agent inventory with Scout, session
+          auditing and runtime guardrails.</p>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="ai-agentic-security.html#pov">Securing Agentic AI — PoV runbook →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Visibility Assessment</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Governance needs a board-ready artefact
+          before anything is enforced: the packaged four-week assessment, monitor mode only, ending in
+          an AI risk report mapped to NIST AI RMF, ISO/IEC 42001 and the EU AI Act.</p>
+          <p style="font-size:.88rem;margin-bottom:0"><a href="security-ai-visibility.html#pov">GenAI Visibility Assessment — PoV runbook →</a></p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Interaction data isn't appearing</h4><p>The usual cause is TLS inspection: it must be enabled at the account level before the User Interaction Policy can inspect AI traffic. Check <span class="path">Security → TLS Inspection</span> and confirm the pilot group's traffic is in inspection scope.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>A feature you expected isn't licensed</h4><p><em>AI for End Users</em> and <em>AI for Applications</em> are separate per-user licences. Agent- and homegrown-app capabilities sit on the Applications side — out of scope for this starter pilot; confirm the trial covers what you promised before promising it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Inventory shows IPs, not people</h4><p>Identity integration isn't syncing the pilot group. Fix the IdP sync before the dashboard walkthrough — anonymous rows undercut the whole "who is using what" story (see <a href="access-identity-design.html">Identity Integration Design</a>).</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Anonymise isn't available on a rule</h4><p>If the tenant sees AI traffic through the AI Security API Integration module, the KB notes the User Interaction Policy supports monitoring actions only. The monitor → anonymise step needs inline traffic through a Cato PoP.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout">
+        <div class="co-title">Monitor-first — and stay light</div>
+        <p>Exactly one rule ever leaves Monitor in this pilot, and only as far as Anonymize and
+        Monitor, on one app and one group. Nothing blocks. If the customer pushes for enforcement
+        breadth, more detector tuning or agent coverage, that is the route-map decision asserting
+        itself — take the ask to the relevant deeper PoV rather than growing this one.</p>
+      </div>
+      <p>
+        Exit is deliberately clean: set the pilot rule back to Monitor (or disable it), keep discovery
+        running — it is passive and costs the customer nothing operationally — and record the route
+        decision with an owner and a date. The evidence pack (inventory, before/after prompt, dashboard
+        screenshots) becomes the opening exhibit of whichever deeper pilot comes next.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -467,6 +467,235 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The displacement PoV is deliberately small: <strong>one branch, one parallel socket, the
+        Quantum estate untouched</strong>. The only Check Point-side change in the whole engagement
+        is a single route on the transit VLAN — SmartConsole, the management server, the blades and
+        any Harmony SASE tenant all stay exactly as found, which is also what makes rollback a
+        route withdrawal rather than a project. Everything else happens in the customer's Cato
+        tenant: a bounded, hit-count-rationalised slice of the access layers translated
+        monitor-first, HTTPS-inspection scope compared honestly through staged Cato TLSi, a pilot
+        cohort swapped from the legacy client — the Harmony SASE agent where it is in the estate,
+        Endpoint Security VPN otherwise — to the Cato Client, and threat prevention evidenced on
+        real traffic. Agree the success criteria <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — and book the decision
+        meeting at the same workshop.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Co-existence holds — the socket carries the migrated pilot subnet in parallel while the Quantum gateway remains default gateway, with no user-visible disruption</td>
+              <td>Dated day-one screenshots: tunnels up, transit-VLAN handoff routes exchanged, first traffic flowing</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Network → Sites</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Policy parity on a representative slice — the 15–20 highest-hit access-layer rules translated as <em>effective</em> policy and firing with the same intent (same flows allowed and blocked)</td>
+              <td>Per-rule events compared against the <code>show-hits</code> baseline exported from SmartConsole in week zero</td>
+              <td><span class="path">Monitor → Events</span> <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>Inspection scope compared honestly — staged Cato TLSi on the pilot cohort measured against what the HTTPS Inspection blade actually decrypts today, with new detections expected and counted, not hidden</td>
+              <td>The blade's inspect/bypass rulebase export beside the Cato TLSi rulebase; events from newly decrypted traffic, triaged with the customer</td>
+              <td><span class="path">Security → TLS Inspection</span> <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>The pilot cohort works a full week on the Cato Client — legacy client removed, identity-scoped rules matching, no fallback</td>
+              <td>Experience Monitoring scores for the cohort; connected-client inventory; helpdesk ticket count from the group</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Threat-prevention verdicts demonstrated — IPS and Anti-Malware run monitor-first on pilot traffic, then block, with a harmless test detection stopped and attributed</td>
+              <td>Threat events attributed to user, device and site; block-page screenshot after the flip</td>
+              <td><span class="path">Monitor → Threats Dashboard</span></td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Rollback shown to be a route withdrawal — pull the pilot prefix in a change window and traffic reverts to the Quantum gateway, timed and evidenced</td>
+              <td>Before/after Topology views with timestamps; the reversion window measured in minutes</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Administration → Audit Trail</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree these before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Trial licences</strong> confirmed for every capability under test — Cato Client (SDP) seats for the pilot cohort, IPS, Anti-Malware/NG Anti-Malware and TLS inspection — live for the whole PoV window.</li>
+          <li><strong>TLS inspection staged first</strong> where content-level verdicts matter (Anti-Malware file verdicts, full-path URL matching) — follow the phased approach in <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with the Cato root certificate deployed to the pilot cohort only.</li>
+          <li><strong>Identity in place</strong> — the pilot cohort exists as a SCIM/LDAP-provisioned group in CMA and is syncing <em>before</em> any user-scoped rule is written. The Check Point Identity Awareness estate stays untouched; Cato identity comes from the directory and the Client.</li>
+          <li><strong>The SmartConsole baseline</strong> — a read-only <code>mgmt_cli</code> export of the branch's access layers with hit counts. This is the yardstick criteria 2 and 3 are measured against, and the only thing the PoV ever asks of the Check Point estate besides the handoff route.</li>
+          <li><strong>Scope</strong> — one branch socket (shipped and staged), a transit VLAN agreed with the network team, and change windows for the handoff route and the rollback rehearsal.</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Week zero — capture the SmartConsole baseline before touching anything</h4>
+          <p>Export the pilot branch's access layers with hit counts and pick the representative
+          slice: the 15–20 highest-hit rules <em>as effective policy</em> — what actually passes
+          every ordered and inline layer, per the number-one gotcha above — deliberately including
+          at least one identity-scoped rule and one URL Filtering / App Control rule, the two
+          shapes that stress the translation. Also export the HTTPS Inspection rulebase and its
+          bypass list: that is the honesty baseline for criterion 3. Dead rules stay dead —
+          zero-hit rules are out of PoV scope by design, exactly as
+          <a href="migration-checkpoint-policy.html">Check Point Policy Migration</a> prescribes.</p>
+          <pre class="code"><span class="cmt"># Per layer — rulebase with hit counts, objects resolved (paginate: limit caps at 500;</span>
+<span class="cmt"># inline layers are queried separately)</span>
+<span class="kw">mgmt_cli show access-rulebase</span> name "Branch-Policy Network" use-object-dictionary true \
+  show-hits true limit 500 offset 0 --format json</pre>
+        </li>
+        <li>
+          <h4>Stand up the parallel socket at the pilot branch</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site, connect the socket on the transit VLAN and let it tunnel out through
+          the existing internet path — the Quantum gateway remains L3 default gateway and nothing
+          changes for users. Confirm in <span class="path">Monitor → Topology</span> that the site
+          is up against its nearest PoP, and take the dated day-one screenshots: this is evidence
+          item zero for criterion 1.</p>
+        </li>
+        <li>
+          <h4>Configure the handoff — statics or eBGP to Gaia</h4>
+          <p><span class="path">Network → Sites → Site Settings → BGP</span></p>
+          <p>Per the co-existence pattern above, either point statics for the pilot subnet at the
+          socket from the L3 switch or gateway, or bring up an eBGP neighbour to Gaia (which
+          supports BGP natively): set the peer and Cato ASNs in <em>ASN Settings</em>, the peer IP,
+          and advertise <em>Summary routes</em> towards the gateway with the <em>Metric</em> set so
+          the Quantum still prefers its own default; verify with <em>Show BGP Status</em>
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">Configuring BGP Neighbors for a Cato Socket</a>).
+          Keep learned legacy routes isolated from the rest of the Cato account by tagging them
+          with the Cato ASN and community 32768 (socket v15+ — see
+          <a href="migration-methodology.html">Migration Methodology</a>). Either way, the pilot
+          subnet now reaches Cato per prefix — and the rollback lever for criterion 6 already
+          exists.</p>
+        </li>
+        <li>
+          <h4>Translate the access-layer slice — monitor-first</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Flatten the slice into the two rulebases: east-west intent into the WAN Firewall
+          allowlist, egress intent into the Internet Firewall — and wherever an inline layer's
+          implicit cleanup did the dropping, write the explicit block rule that layer never had to
+          spell out. Every translated rule gets <em>Event</em> tracking; nothing blocks that the
+          Quantum did not already block. The full four-domain method, layer-semantics traps and a
+          worked before/after example live on
+          <a href="migration-checkpoint-policy.html">Check Point Policy Migration</a> — the PoV
+          runs that method on the slice only.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection — and make the comparison honest</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Enabling TLSi inspects all HTTPS by default, so scope it deliberately: run the wizard
+          to lay down the bypass-first rules (<em>Bypass Sensitive Categories</em>, <em>Bypass
+          Embedded Operating Systems</em>) and start with the pilot cohort as the test group, per
+          Cato's controlled-rollout guidance
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-tls-inspection-configuration-wizard" target="_blank" rel="noopener">TLS Inspection Configuration Wizard</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">Best Practices for TLS Inspection</a>).
+          Deploy the root certificate to the cohort, block QUIC so web traffic stays inspectable,
+          and carry the <em>intent</em> of the blade's bypass list — never its rules. Then put the
+          two rulebases side by side: on most estates the HTTPS Inspection blade runs constrained
+          or off for performance reasons, so expect Cato to decrypt more than the blade ever did —
+          say so up front, and count the new detections as findings, not regressions.</p>
+        </li>
+        <li>
+          <h4>Swap the pilot cohort to the Cato Client</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Users</span></p>
+          <p>Confirm the SCIM/LDAP group is populated, then switch each machine scripted and
+          short: install Cato Client → validate application access → uninstall the legacy client —
+          the Harmony SASE agent where the customer runs it, Endpoint Security VPN otherwise. Do
+          not leave both resident: third-party VPN drivers on the same machine can conflict with
+          the Cato Client (see co-existence above). Keep the VPN blades and any Harmony tenant
+          warm — they are the rollback lever for criterion 4, not day-one waste.</p>
+        </li>
+        <li>
+          <h4>Threat prevention — monitor, then block, on the pilot scope</h4>
+          <p><span class="path">Security → IPS</span> <span class="path">Security → Anti-Malware</span></p>
+          <p>Enable IPS in <em>Monitor</em> — verdicts generate events while traffic continues
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Configuring the IPS Policy</a>) —
+          and Anti-Malware with NG Anti-Malware on top of it (it requires the base engine enabled;
+          <a href="https://knowledge.catonetworks.com/docs/configuring-the-anti-malware-policy" target="_blank" rel="noopener">Configuring the Anti-Malware Policy</a>).
+          Note for the comparison with SandBlast: encrypted-file and full-content verdicts depend
+          on the TLSi scope staged in step 5. Review a week of verdicts with the customer, then
+          flip the pilot scope to block and demonstrate a harmless test detection stopped, block
+          page shown, event attributed to user, device and site — criterion 5 evidenced in one
+          screen.</p>
+        </li>
+        <li>
+          <h4>Build the evidence pack — and rehearse the rollback</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events per translated rule and set the counts against the week-zero
+          <code>show-hits</code> baseline: same flows, same intent, now with user and device
+          attribution — and generate the rule hit count report from
+          <span class="path">Home → Reports</span> as the dated PDF artefact
+          (<a href="https://knowledge.catonetworks.com/docs/generating-rule-hit-count-reports-for-security-and-network-policies" target="_blank" rel="noopener">rule hit count reports</a>).
+          Capture the cohort's Experience Monitoring week and the threat events. Then close the
+          loop on criterion 6 in a change window: withdraw the handoff route (remove the static or
+          disable the BGP neighbour), watch traffic revert to the Quantum gateway, time it,
+          screenshot it, restore it. A rollback that has been <em>rehearsed and measured</em> is
+          the strongest slide in the wrap-up deck.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with app and category objects, user and device scopes, Block, Allow and Prompt actions, event tracking and live hit-count bars" loading="lazy">
+        <figcaption>Criterion 2 in one screen: the translated slice as one flat, first-match rulebase with live hit counts — no ordered layers, no inline cleanups, the Prompt action standing in for UserCheck pages. Read the hit-count bars against the week-zero <code>show-hits</code> baseline to show the same intent enforced on the new platform.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato Management Application TLS Inspection policy from a demo tenant: bypass rules for sensitive categories, embedded operating systems, platforms and source exceptions ordered above phased inspect rules scoped to test networks and pilot user groups" loading="lazy">
+        <figcaption>Criterion 3 made visible: bypass-first ordering — sensitive categories, embedded platforms, pinned-app exceptions — above phased inspect rules scoped to test networks and pilot groups. This is the staged rulebase you put beside the HTTPS Inspection blade's export to have the honest scope conversation.</figcaption>
+      </figure>
+      <!-- capture-wanted: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–Gaia eBGP transit-VLAN handoff -->
+      <!-- capture-wanted: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page -->
+      <!-- capture-wanted: Monitor → Events filtered to TLSi-decrypted pilot traffic showing first-time detections surfaced after staging -->
+      <figure class="shot">
+        <img src="../assets/img/em-remote-user.png" alt="Experience Monitoring drill-down for a remote user on the Cato Client: application experience scores, per-app TTFB and flows, device details with Client version, and security events on the score timeline" loading="lazy">
+        <figcaption>Criterion 4 evidenced: a pilot-cohort user's week on the Cato Client after the swap from the Harmony SASE agent or Endpoint Security VPN — per-app experience scores, the device and Client version in inventory, and security events on the same timeline. This is the view that answers "how do we know the cohort isn't suffering in silence?"</figcaption>
+      </figure>
+
+      <h3 style="margin-top:26px">Troubleshooting the PoV</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Asymmetric routing through the Quantum</h4><p>Migrated-subnet sessions stall or reset: traffic egressed via Cato but returned via the stateful gateway, whose inspection drops the unseen flow — and ClusterXL flow ownership makes it strict about this. Check SmartLog for out-of-state drops to the pilot subnet; fix by advertising the pilot prefix consistently in both directions and never splitting a flow's egress and return between the two edges.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>A flow passes on Cato that the blade dropped</h4><p>Almost always an inline layer's implicit cleanup that never became an explicit rule — configuration nobody wrote, silently lost in flattening. Re-derive the effective policy for that flow across every layer and add the missing block with the parent rule's scope. This is the policy page's number-one gotcha showing up on live traffic.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Double TLS inspection</h4><p>Pinned apps failing, certificate warnings doubling up: the HTTPS Inspection blade is still active on a path Cato now also inspects. Disable blade inspection for Cato-routed pilot traffic, keep the wizard's bypass rules ahead of every inspect rule, and confirm QUIC is blocked so browsers cannot sidestep the inspected path.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity-scoped rules that never match</h4><p>A translated access-role rule shows zero events: the SCIM/LDAP group is empty or stale in CMA, so the rule cannot match. Remember Cato identity comes from the directory and the Client — not from AD Query or Identity Collector, which keep serving the Check Point side untouched. Check group membership under Access → Users before touching the rule.</p></div></div>
+        <div class="benefit"><div class="b-icon">📴</div><div><h4>Cohort machine sends no traffic via Cato</h4><p>The legacy client was left installed alongside the Cato Client, and its driver is overriding Client settings — the documented dual-VPN conflict, and Harmony SASE's agent counts. Uninstall it, reboot, reconnect. Keep the per-machine swap scripted so the two clients never cohabit longer than validation takes.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>New detections read as regressions</h4><p>Events appear on Cato with no SmartConsole ancestor: usually traffic the blade never decrypted, now inspected for the first time under staged TLSi. Triage each against the week-zero HTTPS Inspection export — if the blade bypassed or never saw the flow, it is a finding for the wrap-up, not a parity failure. Compare on flow outcomes, never on rule names.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Boundaries to state up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Each capability under test needs its trial licence live for the whole PoV window — a licence lapsing mid-pilot reads as a product failure.</li>
+          <li>TLS inspection is automatically bypassed for Android, Linux and unidentified operating systems — keep those devices out of the pilot cohort or scope criterion 3 around them.</li>
+          <li>Maestro sizing, VSX tenancy design and DC east-west policy are out of PoV scope by design — they are migration-phase workstreams; park them in the next-steps register, per the framework page.</li>
+          <li>Export the evidence pack weekly, not at the end — screenshots and event exports dated as they land, so the wrap-up reads a register rather than excavating history.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit has two doors, both clean.</strong> If the criteria pass, nothing is thrown
+        away: the pilot branch, transit-VLAN handoff and cohort become the first wave of the
+        migration path above, and the parked asks become the rollout scope. If the customer stops,
+        the unwind is the rollback rehearsal run once more without the restore: withdraw the
+        handoff route, re-enable the legacy client for the cohort (the VPN blades and Harmony
+        tenant stayed warm throughout), uninstall the Cato Client, and export the evidence pack
+        and <span class="path">Administration → Audit Trail</span> before trial licences lapse.
+        The Check Point estate ends the engagement exactly as it started — one route removed,
+        nothing else ever changed.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

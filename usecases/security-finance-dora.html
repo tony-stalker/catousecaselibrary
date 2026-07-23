@@ -447,6 +447,223 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo argues the pillar map; this PoV runs a <strong>DORA-evidence pilot</strong> on the
+        customer's own tenant — one branch socket and a pilot user group, with each success criterion
+        mapped to a pillar from <a href="#pillars">the table above</a> and each producing an artefact
+        a DORA workstream owner could file: policy exports for ICT risk management, a staged benign
+        incident traced on one clock for reporting readiness, a resilience drill with user-experience
+        evidence, and a due-diligence-plus-control pack for third-party oversight. Agree the criteria
+        <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — and put someone from risk or
+        compliance on the register as an owner, because they are the ones who will file the evidence.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Read this first — control evidence, not legal advice</div>
+        <p>This runbook is authored from Cato's published documentation and is <strong>not legal or
+        regulatory advice</strong>. The pilot produces control and evidence artefacts; whether they
+        satisfy a DORA obligation is a judgement for the entity's risk and compliance functions and
+        their counsel. Reuse only what this page states on dates — DORA applies from
+        17 January 2025 — and do not improvise incident-classification thresholds or reporting
+        deadlines in front of the customer.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion (pillar)</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Policy as an artefact <em>(ICT risk management)</em></td>
+              <td>The pilot's controls exist as one documented policy set covering the socket site and the pilot users — a slice of the <a href="#sector-policies">sector blueprint</a>, built monitor-first</td>
+              <td>Rulebase CSV exports (Internet firewall, WAN firewall, TLS inspection, application control) plus dated rulebase screenshots with hit counts</td>
+              <td>Security → Internet Firewall · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>Incident-reporting readiness <em>(incident reporting)</em></td>
+              <td>A staged, benign incident is detected and traced end-to-end: every event of the window on one clock, attributed to user and device — the raw material of an incident report, not the report itself</td>
+              <td>The filtered events view and a CSV export of the incident window; the correlated story screenshot where the account is licensed for stories</td>
+              <td>Monitor → Events · Monitor → Threats Dashboard</td>
+            </tr>
+            <tr>
+              <td>Resilience-drill evidence <em>(resilience testing)</em></td>
+              <td>A controlled failover drill on the pilot site, with what users actually experienced captured before, during and after the window</td>
+              <td>Experience Monitoring captures around the drill window plus the drill log — method per the <a href="network-resilient-site-design.html#pov">Resilient Site Design PoV drill card</a></td>
+              <td>Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>Provider oversight <em>(ICT third-party risk)</em></td>
+              <td>Due diligence on Cato itself from published certifications — and proof the customer stays in control: every configuration change of the PoV recorded with previous and new values</td>
+              <td>The certification pack from Cato's <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">security &amp; compliance page</a>; filtered Audit Trail captures of the PoV's changes</td>
+              <td>Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td>Monitor-first verdicts <em>(the blueprint enacted)</em></td>
+              <td>After at least a week of live traffic, each blueprint rule has an evidence trail of what it would have caught — the tuning review that precedes any enforcement decision</td>
+              <td>Event rows per rule over the pilot window, reviewed rule by rule at the weekly sync and recorded in the register</td>
+              <td>Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one branch socket plus a pilot group on the Cato Client, and a
+          named owner from risk or compliance on the test-case register — DORA is an organisational
+          programme, and evidence without a filing owner goes nowhere.</li>
+          <li><strong>Licences:</strong> IPS and Anti-Malware enabled (monitor mode is fine) for the
+          staged incident. Correlated stories need the paid
+          <a href="https://knowledge.catonetworks.com/docs/introduction-to-cato-xops" target="_blank"
+          rel="noopener">XOps (Detection &amp; Response) tier or MDR</a> — the readiness criterion
+          stands on the events evidence either way. Full Experience Monitoring needs the DEM
+          licence.</li>
+          <li><strong>TLS inspection staged first</strong> where content-level proof matters: the
+          finance-data DLP rule and the HTTPS variant of the benign incident both depend on it. Stage
+          per <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> —
+          and note the standard bypass blueprint exempts sensitive categories
+          <em>including Finance</em>, which matters more to this vertical than most.</li>
+          <li><strong>Identity integration</strong> connected and the pilot group syncing
+          (<a href="access-identity-design.html">Identity Integration Design</a>) — regulator-shaped
+          evidence says "Priya's device", not "an IP address".</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough — assembled pillar by pillar</h3>
+      <ol class="steps">
+        <li>
+          <h4>ICT risk management: enact the blueprint slice, monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → WAN Firewall</span></p>
+          <p>Build a two-to-three-rule slice of the <a href="#sector-policies">sector blueprint</a>
+          scoped to the pilot site and group — typically the settlement allowlist pair, the
+          finance-data DLP rule and the anonymiser/mining category rule — every rule tracking
+          <strong>Event</strong> and nothing enforcing until the week-of-evidence review. The point
+          is not the rules themselves but that one policy set covers the site and the users
+          identically: the documented control framework matching the wire.</p>
+        </li>
+        <li>
+          <h4>ICT risk management: export the policy artefacts</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Use the rulebase <strong>Export</strong> button — the
+          <a href="https://knowledge.catonetworks.com/docs/exporting-security-rules-to-a-csv-file"
+          target="_blank" rel="noopener">CSV export</a> covers the Internet firewall, WAN firewall,
+          TLS inspection and application control policies, rules in priority order with exceptions
+          beside their parents (an Editor-role admin is needed). Dated and filed weekly with the
+          register, these are the pilot's policy-inventory artefacts: the control framework as a
+          document, regenerated on demand rather than maintained by hand.</p>
+        </li>
+        <li>
+          <h4>Incident reporting: stage the benign incident and trace it</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>On a date in the drill plan, run the KB's
+          <a href="https://knowledge.catonetworks.com/docs/testing-threat-prevention-for-anti-malware-and-ips"
+          target="_blank" rel="noopener">documented EICAR test</a> from a pilot machine — the HTTP
+          variant fires without inspection; the HTTPS variant proves the TLSi path. Then assemble the
+          timeline: filter
+          <a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network"
+          target="_blank" rel="noopener">Events</a> to the incident window (Anti-malware preset,
+          user, site), walk it on screen — every flow, verdict and attribution on one clock — and
+          export the window to CSV (up to 250,000 events, spans up to 31 days). Where the account has
+          the XOps tier, pivot into the correlated story and capture it. Position with care: this is
+          the <em>underlying evidence</em> a reporting workflow consumes — classification against
+          DORA's thresholds and the report itself belong to the entity.</p>
+        </li>
+        <li>
+          <h4>Resilience testing: run the drill on the pilot site</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Run a controlled failover drill in an agreed window — method, sequencing and the
+          last-mile variations are the
+          <a href="network-resilient-site-design.html#pov">Resilient Site Design PoV's drill
+          card</a>; don't restate it, reuse it. What this PoV adds is the evidence discipline:
+          <a href="https://knowledge.catonetworks.com/docs/what-is-cato-experience-monitoring"
+          target="_blank" rel="noopener">Experience Monitoring</a> captures before, during and after
+          the window, filed with the drill log so the testing-programme owner gets "users stayed at
+          Good through link loss" as a dated artefact rather than an anecdote.</p>
+        </li>
+        <li>
+          <h4>Third-party oversight: the due-diligence pack and the control evidence</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Hand the vendor-assessment workstream Cato's
+          <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank"
+          rel="noopener">published certifications</a> — SOC 2 and SOC 3, PCI DSS Level 1,
+          ISO/IEC 27001, 27017, 27018 and 27701, Cyber Essentials, CSA STAR, ENS — as the input to
+          one due-diligence exercise instead of many. Then show the other half of oversight: the
+          <a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank"
+          rel="noopener">Audit Trail</a> records every addition, deletion and edit of the PoV with
+          <strong>previous and new values</strong>, attributed to the admin who made it — the
+          customer demonstrably in control of what the provider's platform enforces. Admin logins
+          themselves land in Events under the "Cato Management Application" sub-type.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        The artefacts are the console, captured dated as they land: rulebases with hit counts, the
+        staged incident's window in Events, Experience Monitoring around the drill, and Audit Trail
+        diffs of the PoV's own changes.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall policy showing an ordered rulebase with per-rule hit counts, block and prompt actions, and user- and device-scoped rules">
+        <figcaption>The pillar-one artefact in live form: an ordered rulebase with per-rule hit counts — the same policy the CSV export turns into a filed document, with the hit counts proving the controls run on real traffic.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/dlp-incident-cma.png" alt="CMA data incident detail showing user attribution, the matched credit-card data type, the rule and DLP profile that fired, and a secured forensics evidence panel">
+        <figcaption>The record shape the finance-data control produces: user, application, file, the rule and data profile that matched, and secured forensic evidence. This capture shows a block; in the pilot the same record appears with the monitor-mode action while evidence accrues.</figcaption>
+      </figure>
+      <!-- capture-wanted: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values -->
+      <!-- capture-wanted: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open -->
+      <!-- capture-wanted: a correlated Detection & Response story generated from a staged benign incident — timeline and related events on one screen -->
+      <!-- capture-wanted: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧪</div><div><h4>The staged incident is silent</h4><p>Check Anti-Malware/IPS are enabled for the pilot site (monitor mode counts), and which variant you ran — the HTTP EICAR test fires without inspection; HTTPS is only caught once TLS inspection applies to that flow. Events usually land within about five minutes but can lag up to 30 — wait before concluding failure.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪫</div><div><h4>No correlated story appears</h4><p>Story generation needs the paid XOps tier or MDR — without it, events still flow but stories are not generated. Don't let a licence mismatch fail the criterion: the readiness evidence is the events timeline; the story is the bonus where licensed. See <a href="management-soc-xdr.html">SOC Modernisation with XDR &amp; MDR</a> for the full licensing picture.</p></div></div>
+        <div class="benefit"><div class="b-icon">🙈</div><div><h4>The finance-data rule sees nothing</h4><p>Content-level DLP needs the flow inspected — and the standard TLSi blueprint bypasses sensitive categories including Finance, so the very destinations this vertical cares about may be exempt. Review the bypass scope against the pilot's flows and make any carve-out a documented, risk-accepted decision (that record is itself pillar-one evidence).</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>Events read as IP addresses, not people</h4><p>Identity attribution lags when the IdP sync is stale or the pilot group is outside the synced scope. Fix identity before capturing any evidence you intend to file — re-shot artefacts with names are cheap in week one and expensive at wrap-up.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕰️</div><div><h4>An Audit Trail entry seems missing</h4><p>Changes can take several minutes to appear, and the page shows up to three months at a time within its 12-month history — check the window before doubting the record. Capture Audit Trail evidence monthly rather than saving it all for the final week.</p></div></div>
+        <div class="benefit"><div class="b-icon">✂️</div><div><h4>An events export comes back truncated</h4><p>The CSV export caps at 250,000 events and the page at a 31-day span. Export per drill window rather than per PoV — narrower, dated exports are also better evidence, because each maps one-to-one to a register entry.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>DORA is organisational:</strong> the platform contributes controls and
+          evidence; governance, the testing programme, the register of information and the
+          information-sharing arrangements belong to the entity. The fifth pillar in particular is a
+          process between firms — structured incident data feeds it, but no product performs it.</li>
+          <li><strong>No regulatory reports:</strong> the platform assembles the timeline evidence
+          underneath a report. Incident classification against DORA's thresholds, the deadlines and
+          the submission itself are the entity's — never demo "the report" as an output.</li>
+          <li><strong>The trust page is not a DORA attestation:</strong> Cato's published
+          certifications are strong due-diligence input, but the page makes no DORA claim — let the
+          customer's third-party-risk framework do the assessing.</li>
+          <li><strong>Retention boundaries:</strong> the Audit Trail holds 12 months and sits outside
+          the data lake, and event exports are window-capped — dated exports filed as they land are
+          the durable record, not a wrap-up-day harvest.</li>
+          <li><strong>Monitor-first is the finding, not a limitation:</strong> a week of "would have
+          caught" evidence is precisely the tuning review DORA-minded auditors like to see documented
+          — resist switching anything to enforce inside the PoV window unless the customer asks and
+          the register records it.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> disable or delete the pilot's blueprint rules (monitor-mode, so
+        removal is invisible to users), remove test files from the drill machines, and export the
+        final artefact set — rulebase CSVs, event exports, Experience Monitoring captures,
+        certification pack — before tenant access ends. The
+        <span class="path">Administration → Audit Trail</span> entries recording both the build and
+        the unwind make a tidy closing exhibit: the platform arriving, operating and leaving under
+        the customer's documented control.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -349,6 +349,220 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows one contractor in a portal; the PoV proves the claim that actually closes this
+        conversation: <strong>data never settles on a device you don't manage</strong>. Run a small
+        unmanaged-device pilot — typically six to ten people split across the browser on-ramps: a
+        contractor cohort on the Applications Portal, a BYOD cohort on the Browser Extension in their
+        own Chrome, and, where the tenant is licensed for it, an Enterprise Browser cohort — with one
+        twist that makes the evidence land: at least one pilot user keeps working on their corporate
+        laptop all week, proving the controls bite <em>per device</em>, not per person. Agree the
+        criteria below <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Portal reaches the named apps — view-only proven</td>
+              <td>A contractor's portal shows only the named internal applications, and inside the RBI-routed session her download and copy attempts fail — the attempt is evidenced, not asserted</td>
+              <td>Screenshot of the refused download/copy in the isolated session, beside the portal session events for the same identity</td>
+              <td>Applications Portal · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Policy enforced inside a personal Chrome</td>
+              <td>A BYOD user's staged sensitive upload from their own Chrome, running the Browser Extension, is blocked at the PoP mid-session — no client anywhere on the device</td>
+              <td>Apps Security block event carrying the file name and the matched DLP profile</td>
+              <td>Monitor → Events · Security → App &amp; Data Inline</td>
+            </tr>
+            <tr>
+              <td>Enterprise Browser keeps private-app data pinned <em>(where licensed)</em></td>
+              <td>A pilot user reaches a private application inside the Enterprise Browser while copy/paste, downloads and printing are refused by the browser workspace itself</td>
+              <td>Screenshot of the refused action in the browser, beside the session's events</td>
+              <td>Cato Enterprise Browser · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>The corporate device is untouched</td>
+              <td>The same BYOD user's corporate laptop on the Cato Client works exactly as before — on the same day their personal-device block fires</td>
+              <td>Events filtered to one identity: the BYOD block beside the corporate-device allow, same date</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Zero footprint, full audit</td>
+              <td>No Cato software is installed on any pilot personal device, yet every sign-in, app launch and block is attributed to a named user for the whole pilot</td>
+              <td>Portal sign-in from a bare private window; per-identity event export for the pilot period</td>
+              <td>Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences</strong> — ZTNA/SDP user licences covering the cohort for the PoV
+          period. The Browser Extension and Enterprise Browser sit inside the ZTNA user licence per
+          the callout above — but <strong>confirm the Enterprise Browser is available in this tenant
+          before criterion three is written</strong>; if it isn't, run a two-on-ramp pilot rather than
+          promise a third.</li>
+          <li><strong>TLS inspection staged first</strong> — the in-browser data-control proof rides
+          on content inspection: Data Control rules require TLS inspection to see the content. Stage
+          it per <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>,
+          with privacy sign-off that explicitly covers pilot sessions from personal devices.</li>
+          <li><strong>Identity first</strong> — the cohort exists in the customer's IdP and provisions
+          to Cato via SCIM as a dedicated group (e.g. <em>BYOD-Pilot</em>) before any policy is
+          written; the portal authenticates by SSO against the same IdP (design choices in
+          <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>The named application list</strong> — two or three internal applications,
+          written down at the workshop. The portal publishes web applications and RDP/SSH hosts;
+          RDP farms behind a connection broker or load balancer are not supported, so pick targets
+          accordingly.</li>
+          <li><strong>Two devices per key user</strong> — at least one BYOD pilot user brings both
+          their personal device and their corporate laptop. Criterion four — the one that proves
+          policy follows the device, not the person — depends on it.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the cohort in identity</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Provision the <em>BYOD-Pilot</em> group via SCIM and confirm the cohort — Priya the
+          contractor, Marcus with his personal Chrome, Amira on the Enterprise Browser — appears
+          under Users. Group changes reflect in near real time, and a user unassigned in the IdP is
+          disabled at the next sync — which is the offboarding story you will tell at the wrap-up
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Publish the named applications to the portal</h4>
+          <p>Add each named application as an <strong>Internal Application in the Applications
+          Portal</strong>, entitled to <em>BYOD-Pilot</em>. The portal brokers every session through
+          the PoP — there is no direct communication between the user's device and the resource — and
+          alongside internal web apps it can publish RDP or SSH hosts if a jump-style target is on
+          the list
+          (<a href="https://knowledge.catonetworks.com/docs/browser-application-portal-overview-securing-remote-access-to-applications" target="_blank" rel="noopener">Browser Application Portal Overview</a>).</p>
+          <!-- capture-wanted: «CMA Applications Portal configuration — named internal apps published to a pilot group» -->
+        </li>
+        <li>
+          <h4>Route the portal cohort through RBI — this is the view-only proof</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Configure the contractor cohort's portal access through <strong>RBI</strong> (invoked via
+          the Remote Browsing action): the published app executes remotely and only a visual stream
+          reaches Priya's browser, with downloads, copy/paste, file transfer and printing blocked.
+          Note the mechanics honestly: portal apps configured for RBI open the <em>entire</em> portal
+          in one isolated session — every app in it shares that session
+          (<a href="https://knowledge.catonetworks.com/docs/controlling-access-to-private-apps-through-rbi" target="_blank" rel="noopener">Controlling Access to Private Apps Through RBI</a>,
+          <a href="https://knowledge.catonetworks.com/docs/rbi" target="_blank" rel="noopener">RBI</a>).
+          In week two, have Priya attempt a download and a copy on camera — the refused attempt is
+          the criterion's artefact, so stage it deliberately.</p>
+          <!-- capture-wanted: «RBI-isolated portal session — download/copy attempt refused in the browser» -->
+        </li>
+        <li>
+          <h4>Stage TLS inspection, then write the Data Control rule — monitor-first</h4>
+          <p><span class="path">Security → TLS Inspection</span> <span class="path">Security → App &amp; Data Inline</span></p>
+          <p>With TLSi staged over the pilot scope, add a Data Control rule for <em>BYOD-Pilot</em>:
+          upstream and downstream, matching the DLP profiles the customer cares about (PII is the
+          usual pick), tracking on. Run it in <strong>monitor for the first week</strong> — the
+          monitor events are the baseline that makes the week-two block honest — then flip the action
+          to Block. Blocks land as Apps Security events carrying the file name and matched profile
+          (<a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Creating the Data Control Policy</a>,
+          <a href="https://knowledge.catonetworks.com/docs/understanding-event-fields" target="_blank" rel="noopener">Understanding Event Fields</a>).</p>
+          <!-- capture-wanted: «CMA Monitor → Events — Apps Security block event for an upload from a Browser Extension session» -->
+        </li>
+        <li>
+          <h4>Enrol the BYOD cohort's own Chrome on the Browser Extension</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Marcus installs the extension in his personal Chrome and enables it — minutes, no admin
+          rights, no client. His browser traffic now routes to the forward proxy at the nearest PoP
+          and through the same security engines as everyone else. Add a dedicated Client Connectivity
+          Policy rule scoping what extension sessions may reach, and — the closing trick — have the
+          customer's IdP conditional access require the extension for the pilot SaaS apps, so the
+          sanctioned path is also the only path
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-browser-extension" target="_blank" rel="noopener">What is the Cato Browser Extension</a>).</p>
+          <!-- capture-wanted: «Cato Browser Extension enabled in a personal Chrome profile, session routed via the PoP» -->
+        </li>
+        <li>
+          <h4>Where licensed, add the Enterprise Browser cohort</h4>
+          <p>Amira works in the Cato Enterprise Browser: a dedicated, managed browser workspace on
+          her unmanaged laptop reaching SaaS <em>and</em> private WAN applications through the PoP,
+          with copy/paste, downloads, printing and unauthorised extensions restricted in the browser
+          itself — and Internet Firewall, CASB and Data Protection policies applied in the same pass
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-enterprise-browser" target="_blank" rel="noopener">What is the Cato Enterprise Browser</a>).
+          Her evidence pair: a private app open and usable, and the same app refusing a download.</p>
+        </li>
+        <li>
+          <h4>Run the two-device day, then assemble the evidence packs</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>The set-piece: on one agreed day, Marcus stages the sensitive upload from his personal
+          Chrome — blocked — then does his normal work from his corporate laptop on the Cato Client,
+          unhindered. Filter Events to his identity and screenshot the two records side by side: same
+          user, same date, different device, different verdict. Close the pilot with one event export
+          per cohort member — every portal sign-in, app launch and block attributed to a named person,
+          from devices that carry no Cato software at all.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase with hit counts, including a rule pinning named contractor users to the browser access portal and an RBI default rule routing uncategorised destinations through isolation" loading="lazy">
+        <figcaption>The portal cohort's policy shape (demo tenant, fictional identities): rule 2 pins named contractor users to the browser access portal as their only way in, and the RBI default rule shows isolation as a rulebase action — the constructs your pilot's view-only criterion lands in.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-app-data-inline-policy.png" alt="CMA App and Data Inline Protection policy showing Data Control rules that block uploads of credit card numbers and sensitive data with severity, action and tracking columns" loading="lazy">
+        <figcaption>The in-browser enforcement leg (demo tenant): Data Control rules blocking sensitive uploads by DLP profile — the same rule shape your pilot scopes to <em>BYOD-Pilot</em>, first in monitor, then Block. The Apps Security event each block generates is criterion two's artefact.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Portal user sees an empty portal</h4><p>Published applications follow group entitlement: either the app was never added as an Internal Application, or the user isn't in the entitled group. Check membership under <span class="path">Access → Users</span> and the publication — and resist granting individually.</p></div></div>
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>The staged upload sails through</h4><p>Data Control needs TLS inspection to see content — if the pilot app matches a TLSi bypass rule (sensitive category, source-based exception), the DLP rule never sees the file. Walk the TLS Inspection rulebase top-down for the pilot scope before blaming the Data Control rule.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖼️</div><div><h4>A portal app misbehaves under RBI</h4><p>Remember the mechanics: RBI-routed users open the whole portal in one isolated session, and RDP farms behind a connection broker aren't supported. Test every named app through RBI in week one, not in front of the customer in week three.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Extension installed, nothing inspected</h4><p>The extension protects the browser profile it is installed and enabled in. If sessions aren't appearing, the user is in another profile or another browser — the durable fix is IdP conditional access requiring the extension for the pilot apps, not user discipline.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>New cohort member can't sign in</h4><p>Check identity before policy: is the user visible under <span class="path">Access → Users</span> and inside <em>BYOD-Pilot</em>? SCIM reflects IdP changes in near real time, but not instantly — trigger on-demand provisioning from the IdP rather than re-editing Cato policy.</p></div></div>
+        <div class="benefit"><div class="b-icon">💼</div><div><h4>The corporate laptop tripped a pilot block</h4><p>A pilot rule was scoped wider than the cohort's browser on-ramps, so the client-based session matched it too. Tighten the rule's source and scope to the pilot group and its access method — criterion four depends on the corporate device staying clean.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>View-only cuts both ways.</strong> RBI's blocked downloads and copy are the
+          headline proof — and a blanket over the whole portal session. A cohort that must genuinely
+          edit or move files belongs on a different on-ramp; decide per cohort at the workshop, not
+          mid-pilot.</li>
+          <li><strong>Enterprise Browser honesty.</strong> It sits in the ZTNA user licence per the
+          callout above, but confirm it is actually available in this tenant before the criterion is
+          agreed. A criterion quietly dropped in week three costs more credibility than one never
+          promised.</li>
+          <li><strong>The extension protects the browser it lives in.</strong> A personal device can
+          still browse outside it — the pilot's containment argument is that portal apps are only
+          reachable through the portal, and corporate SaaS only accepts extension sessions once IdP
+          conditional access says so. Say that plainly rather than implying device-wide control.</li>
+          <li><strong>Monitor week doesn't block.</strong> The Data Control rule spends week one in
+          monitor, so sensitive uploads are recorded, not stopped. The customer accepts that week
+          knowingly — it is what makes the week-two block evidence honest.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> unpublish the portal applications; disable — don't delete
+        — the pilot Internet Firewall and Data Control rules, since their hit counts and events are
+        the evidence record; have the cohort remove the extension from their own browsers; relax any
+        TLSi scope added for the pilot; and de-scope <em>BYOD-Pilot</em> from SCIM only if it was
+        created for the PoV. There is nothing else to recover — no clients to uninstall, no
+        certificates to revoke, no laptops to chase, which is rather the point. If the decision is a
+        yes, the pilot policy set is the production BYOD pattern, already live.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

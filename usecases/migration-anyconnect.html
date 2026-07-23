@@ -371,6 +371,224 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo argues the architecture; the PoV retires it for real — one cohort wave of
+        <strong>5–20 AnyConnect users</strong> swapped to the Cato Client in a single change window
+        and living on it for two weeks, while the ASA/FTD headends stay racked, licensed and
+        <strong>completely untouched</strong>. Rollback is the AnyConnect profile re-pushed from
+        MDM, which is exactly why the wave can be sold as low-risk. Agree the success criteria
+        below <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each is measurable, each
+        names its evidence artefact, and each is read out at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The wave swaps clean</td>
+              <td>Every wave member is off AnyConnect and working through the Cato Client, with zero help-desk tickets attributable to the swap</td>
+              <td>MDM deployment report for the change window; ticket log filtered to the wave, triaged ticket by ticket</td>
+              <td>Customer MDM &amp; helpdesk · Access → Users</td>
+            </tr>
+            <tr>
+              <td>Always-on, MFA, posture — enforced and evidenced</td>
+              <td>A wave user cannot casually disconnect; sign-in is SSO with the IdP's MFA; a device failing posture is refused at connect</td>
+              <td>Client refusing disconnect (screenshot); IdP sign-in log for a wave connection; posture block event for the sacrificial device</td>
+              <td>Monitor → Events · Access → Always-On Policy · IdP logs</td>
+            </tr>
+            <tr>
+              <td>Private-app parity, least privilege</td>
+              <td>Every app on the wave's old VPN ACL slice works — through named allow rules over an implicit deny, not a routed subnet</td>
+              <td>Signed-off per-user acceptance checklist; WAN Firewall rules with hit counts against the ACL export</td>
+              <td>Security → WAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Concentrator load visibly down</td>
+              <td>The headend's concurrent AnyConnect session count drops by the wave's size at peak — with no ASA config change</td>
+              <td>Dated <code>show vpn-sessiondb anyconnect</code> output, before and after; Cato-side mirror of the wave connected</td>
+              <td>ASA/FTD CLI · Access → SDP Users Overview</td>
+            </tr>
+            <tr>
+              <td>Experience baselined vs the VPN</td>
+              <td>Every wave member has an Experience Monitoring baseline — score, connected PoP, per-app TTFB — set against their VPN-era experience</td>
+              <td>Remote Users tab captures, weekly and dated, beside the wave's VPN-era complaints/ticket themes</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>Rollback rehearsed, not assumed</td>
+              <td>One wave machine is deliberately rolled back — AnyConnect profile re-pushed via MDM — and is on the old path within minutes, then re-migrated</td>
+              <td>Timed rollback record: profile push, reconnect to the headend, re-swap</td>
+              <td>Customer MDM · ASA/FTD session table</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences</strong> — ZTNA/SDP user licences covering the wave for the PoV period.</li>
+          <li><strong>Identity first</strong> — IdP SSO connected and a dedicated wave group provisioning
+          via SCIM before any policy is written (design choices in
+          <a href="access-identity-design.html">Identity Integration Design</a>). MFA lives at the
+          IdP — confirm it is enforced on the Cato SSO app.</li>
+          <li><strong>A Socket in front of the private apps</strong> — the parity proof needs the
+          datacentre applications reachable behind a Cato Socket (or IPsec site). If nothing is
+          connected yet, that build is week zero, not week one.</li>
+          <li><strong>MDM that can do the swap</strong> — remove the AnyConnect VPN profile and install
+          the Cato Client in one scripted change window; admin permissions on the device are required
+          for the install. Deploy via GPO/MDM per the KB, not user downloads.</li>
+          <li><strong>The wave's ACL slice exported</strong> — tunnel-group, split-tunnel ACL and posture
+          rules for the wave's user population. The ACL export <em>is</em> the parity checklist.</li>
+          <li><strong>Headends out of scope</strong> — write it down: no ASA/FTD configuration changes
+          during the PoV. Rollback stays cheap only because the old path is untouched.</li>
+          <li><strong>TLS inspection only if claimed</strong> — none of the proofs above needs content
+          inspection; if the customer adds content-level criteria, stage TLSi first per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Take the headend baseline and export the wave's slice</h4>
+          <p>Before anything changes, capture the evidence the "load down" and "parity" criteria
+          will be measured against — on the customer's own CLI, captured by their own engineer:</p>
+          <pre class="code"><span class="cmt"># On the ASA/FTD headend — dated, at the agreed peak hour</span>
+show vpn-sessiondb anyconnect          <span class="cmt"># concurrent session baseline</span>
+show run tunnel-group &lt;wave-group&gt;     <span class="cmt"># the wave's connection profile</span>
+show access-list &lt;split-tunnel-acl&gt;    <span class="cmt"># the ACL slice = parity checklist</span></pre>
+          <p>Turn the ACL lines into a named application list per user population — that document
+          drives step 4 and the acceptance checklist in step 5.</p>
+        </li>
+        <li>
+          <h4>Pin the wave in identity</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Create a dedicated IdP group (e.g. <em>AnyConnect-Wave-1</em>), scope SCIM provisioning
+          to it and confirm the members appear in the CMA. Every policy below references this synced
+          group, so wave 2 is a membership change, not a policy project
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Recreate posture, then gate the connection — monitor-first</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Translate the wave's ISE/HostScan rules into device checks — anti-malware, disk
+          encryption, OS version, certificate — bundled into a profile (checks combine with AND,
+          so the device must satisfy every one). Then add a Client Connectivity rule for
+          <em>AnyConnect-Wave-1</em> with posture profile <em>Any</em> and action
+          <strong>Allow WAN and Internet</strong>: the policy is first-match and ends in an implicit
+          any-any block, and nothing is enforced against posture until the wave has a clean baseline
+          week (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Device Posture Profiles and Checks</a>,
+          <a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+          <!-- capture-wanted: «CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet» -->
+        </li>
+        <li>
+          <h4>Build the parity rules — named apps over an implicit deny</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Recreate the ACL slice as WAN Firewall allow rules: source <em>AnyConnect-Wave-1</em>,
+          destination the named application or host, service/port as exported — every rule tracking
+          events. The WAN Firewall ends in a default any-any block, so the wave gets exactly the
+          applications on its list and nothing else; this is where "lands on a subnet" quietly
+          becomes least privilege. Resist improving the list mid-PoV — parity first, tightening is
+          step 7 (<a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-wan-firewall" target="_blank" rel="noopener">What is the Cato WAN Firewall</a>).</p>
+          <!-- capture-wanted: «CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing» -->
+        </li>
+        <li>
+          <h4>Swap the wave — one change window, uninstall then install</h4>
+          <p>The ordering is the honesty: Cato documents that AnyConnect can override the Cato
+          Client's DNS settings, so the wave <strong>swaps</strong> rather than dual-runs. The MDM
+          job removes the AnyConnect VPN profile first, then installs the Cato Client (admin
+          permissions required), then confirms enrolment. Each user signs in — SSO and MFA at the
+          IdP — and walks their acceptance checklist from step 1. The headends notice nothing except
+          fewer sessions
+          (<a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">Distributing Cato Clients to Devices</a>).</p>
+          <!-- capture-wanted: «Cato Client for Windows connected via the nearest PoP — post-swap wave device» -->
+        </li>
+        <li>
+          <h4>Turn the keys — posture, then always-on</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Always-On Policy</span></p>
+          <p>After the clean baseline week, edit the connectivity rule to require the posture
+          profile, and prove the gate with a sacrificial device that fails a check — the block event
+          is the criterion's artefact. Then add an Always-On rule for the wave so the client cannot
+          be casually switched off; bypass is admin-governed (one-time passcodes valid up to
+          15 minutes) and worth demonstrating rather than hiding
+          (<a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting Users with Always-On Security</a>).</p>
+          <!-- capture-wanted: «Monitor → Events — Client Connectivity block event naming the failed posture check for a wave device» -->
+        </li>
+        <li>
+          <h4>Evidence week — baseline, session count, rollback rehearsal</h4>
+          <p><span class="path">Home → Experience Monitoring</span> <span class="path">Access → SDP Users Overview</span></p>
+          <p>Capture the wave weekly in the Remote Users tab — score, connected PoP, apps, average
+          TTFB per user — and set it against the VPN-era ticket themes
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>).
+          Have the customer re-run <code>show vpn-sessiondb anyconnect</code> at the same peak hour:
+          the count is down by the wave, headends untouched. Finally, rehearse rollback on one
+          machine — re-push the AnyConnect profile via MDM, time the return to the old path, then
+          re-swap. A rollback that has been demonstrated is a risk register entry closed.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase of named allowlist rules scoped to user groups, SDP users and hosts, with direction, service and port pairs and live hit counts over an implicit deny" loading="lazy">
+        <figcaption>Parity, made auditable (demo tenant, fictional identities): the wave's old split-tunnel ACL slice recreated as named allow rules over the WAN Firewall's default any-any block. The hit counts are the parity evidence — every rule the wave actually uses lights up, and anything the ACL never really needed shows zero and gets removed in the tightening pass.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring Remote Users tab listing remote users with device name, experience score, application count, connected PoP, flows, usage and average TTFB" loading="lazy">
+        <figcaption>The wave's post-swap baseline (demo tenant, fictional identities): the Remote Users tab shows each migrated user's experience score, connected PoP and average TTFB — captured weekly and dated, this is the artefact that replaces "the VPN felt slow" with numbers the wrap-up can read out.</figcaption>
+      </figure>
+      <!-- capture-wanted: «Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap» -->
+
+      <h3>Troubleshooting the wave</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>AnyConnect leftovers break DNS</h4><p>A swapped device connects but cannot resolve internal names — classic sign the AnyConnect removal was incomplete, since it can override the Cato Client's DNS settings. Verify the VPN profile and virtual adapter are actually gone, reboot, and fix the MDM uninstall sequence before the next wave inherits the fault.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>Wave member missing from the group</h4><p>A user cannot sign in or matches no rule. Check membership under <span class="path">Access → Users</span> and the IdP provisioning log — SCIM push cycles are not instant. Trigger on-demand provisioning at the IdP rather than widening Cato policy to compensate.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚦</div><div><h4>Blocked — but by which implicit deny?</h4><p>Both the Client Connectivity Policy and the WAN Firewall end in an any-any block. Read the event in <span class="path">Monitor → Events</span> first: a connectivity block means group or posture scoping; a WAN block means the parity list is missing an app the old ACL quietly carried. Fix the right layer.</p></div></div>
+        <div class="benefit"><div class="b-icon">📋</div><div><h4>The ACL wasn't the whole truth</h4><p>Mid-week a wave user hits an app nobody exported — reachable before only because the tunnel landed on a subnet. That block event is a finding, not a failure: it is the least-privilege argument proving itself. Add a named rule, note it in the register, move on.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Posture fails a compliant device</h4><p>The anti-malware check names a vendor/product string the installed agent does not match. Loosen to "any supported anti-malware" to confirm the mechanism, then re-tighten with the correct vendor and a minimum-version operator before calling the criterion evidenced.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>MFA loops at sign-in</h4><p>Repeated prompts at client sign-in usually mean an aggressive conditional-access or session-lifetime policy on the Cato SSO app at the IdP, or clock skew on the device. Align the session lifetime with the working day and fix the clock before touching Cato configuration.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Swap, don't dual-run.</strong> Running the Cato Client full-tunnel alongside
+          AnyConnect is the combination the documentation cautions against. If the customer insists on
+          a coexistence machine, scope it as its own test case with the Secure Client-for-VPN-only
+          pattern — proven, not assumed.</li>
+          <li><strong>Always-On covers Windows, macOS, iOS and Android — not Linux.</strong> If the
+          wave includes Linux devices, scope the "cannot casually disconnect" criterion to the
+          platforms it applies to.</li>
+          <li><strong>The session-count evidence is the customer's.</strong> <code>show
+          vpn-sessiondb</code> runs on their headend, captured by their engineer at an agreed hour —
+          agree the capture routine at the workshop so the before/after is like-for-like.</li>
+          <li><strong>Experience Monitoring has edges</strong> — application metrics are calculated
+          for outbound TCP traffic and data can lag by up to 30 minutes; anomaly stories depend on
+          licensing. Do not promise a baseline from minute one of the swap window.</li>
+          <li><strong>Zero attributable tickets needs triage discipline.</strong> Agree up front how
+          a wave ticket gets attributed — "which client are you on?" first, then cause. A password
+          expiry during the pilot week is not a migration failure.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> rollback is the mechanism you already rehearsed —
+        re-push the AnyConnect VPN profile via MDM per machine and the user is back on the untouched
+        headend in minutes. On the Cato side, relax the connectivity rule's posture requirement to
+        <em>Any</em> before removing anything, disable the Always-On rule, delete the wave's WAN
+        Firewall rules, and de-scope the wave group from SCIM only if it was created for the PoV.
+        If the decision is a yes, keep all of it: wave 1's policy set, checklist and MDM job
+        <em>are</em> the migration plan for waves 2 through N — which is rather the point.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

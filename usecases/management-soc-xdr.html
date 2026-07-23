@@ -290,6 +290,224 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo tells the correlation story on our tenant; this PoV runs a <strong>SOC-workflow
+        pilot</strong> on theirs — not "does a story appear?" but "can our analysts work this queue?".
+        The <a href="management-visibility.html">Visibility PoV</a> proves one story exists; this one
+        goes deeper: stories generated inside an agreed warm-up window, one story triaged end-to-end
+        with the disposition recorded, detection sources converging into one queue, a safe
+        true-positive drill, and the story feed landing in the customer's SIEM. Agree the criteria
+        below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — each has a measurement, an
+        evidence artefact and a place in the CMA where it is read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Stories from their traffic, inside the warm-up window</td>
+              <td>XDR stories generate from pilot traffic without anyone writing a rule — Threat Prevention stories in near real time once sensors fire; Threat Hunting correlations as the first week of data accrues</td>
+              <td>The Stories Workbench on the Security Operations preset, dated screenshots week by week from the empty day-zero view onwards</td>
+              <td>Home → Stories Workbench</td>
+            </tr>
+            <tr>
+              <td>One story triaged end-to-end</td>
+              <td>A customer analyst works a real story through the documented flow — Open → Pending → Closed — recording Analyst Verdict, Analyst Severity and Classification via Manage Story</td>
+              <td>The story's timeline widget showing the status and verdict changes, captured at each step alongside the evidences table</td>
+              <td>Home → Stories Workbench → story detail</td>
+            </tr>
+            <tr>
+              <td>Detection sources converging</td>
+              <td>Stories from the network sensor sit in the same ranked queue as alert stories from the endpoint feeds the customer owns (Cato EPP, Microsoft Defender for Endpoint, SentinelOne or CrowdStrike)</td>
+              <td>The workbench grouped by Source with more than one producer represented, plus the connector status screen</td>
+              <td>Home → Stories Workbench · Security → Connectors</td>
+            </tr>
+            <tr>
+              <td>Benign true-positive drill</td>
+              <td>The KB's safe EICAR tests fire the Anti-Malware sensor on demand — proof the pipeline detects, on a date we chose (the story walk itself uses real traffic; see the gotchas)</td>
+              <td>The blocked download plus the event rows under the Anti-malware preset, timestamped against the drill plan</td>
+              <td>Home → Events</td>
+            </tr>
+            <tr>
+              <td>Story feed in the SIEM</td>
+              <td>Detection and Response events for new and updated stories arrive in the customer's SIEM through a Response Policy rule — the SOC keeps its system of record</td>
+              <td>The SIEM record of a story event beside the Response Policy rule that produced it</td>
+              <td>Home → Detection &amp; Response Policy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence honesty:</strong> story generation needs the paid <strong>XOps
+          (Detection &amp; Response) licence</strong> — or the managed MDR service — on the trial
+          account. Cato's <a href="https://knowledge.catonetworks.com/docs/introduction-to-cato-xops"
+          target="_blank" rel="noopener">XOps documentation</a> and FAQ are explicit that without one,
+          events from some third-party integrations still flow but <em>stories are not generated</em>.
+          Cato EPP alert stories additionally require the EPP licence. Confirm entitlement before any
+          criterion is written down.</li>
+          <li><strong>Traffic to detect on:</strong> XDR reads the flows the platform already
+          inspects, so the pilot socket and client cohort must be live and genuinely busy — and IPS
+          and Anti-Malware enabled (monitor mode is fine) so the sensors have something to say.</li>
+          <li><strong>Endpoint feeds — only what they own:</strong> the Microsoft Defender for
+          Endpoint connector needs Defender for Endpoint Plan 2 or an M365 E5-class licence, a global
+          admin to grant consent, and a CMA admin with editor permission for Integrations. Cato EPP
+          integrates natively with no connector. SentinelOne and CrowdStrike alert connectors are
+          documented too — claim only the feeds the customer actually runs.</li>
+          <li><strong>TLS inspection:</strong> needed only for the HTTPS variant of the benign drill —
+          the HTTP variant works uninspected. Stage it per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> if the
+          drill is in scope over HTTPS.</li>
+          <li><strong>SIEM target:</strong> the SOC's SIEM reachable for an event integration —
+          Splunk and Microsoft Sentinel have turnkey integrations; others via the generic feed.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Confirm the licence, then pin the warm-up window in writing</h4>
+          <p>Verify the XOps entitlement on the trial account before the workshop. Then set the
+          expectation the KB supports: Threat Prevention stories update in near real time for the
+          documented indications, but Threat Hunting correlations are identified over a week's data
+          and anomaly baselines take about 14 days — so the criterion says "within the first two
+          weeks", not "on day one". Write that window into the test-case register per
+          <a href="management-pov-framework.html">Running a Cato PoV</a>.</p>
+        </li>
+        <li>
+          <h4>Connect the detection sources the customer owns</h4>
+          <p><span class="path">Security → Connectors</span></p>
+          <p>For Microsoft estates, add the Microsoft 365 parent connector, then the
+          <a href="https://knowledge.catonetworks.com/docs/xops-connectors" target="_blank"
+          rel="noopener">Defender for Endpoint child connector</a> — a global admin grants the
+          permissions, and the authentication certificate auto-renews. Cato EPP needs nothing: it
+          feeds stories natively. SentinelOne incidents correlate by agent UUID and file hash;
+          CrowdStrike by incident ID. The point of this step is criterion three — more than one
+          producer in one queue.</p>
+        </li>
+        <li>
+          <h4>Build the workbench view the SOC will actually work</h4>
+          <p><span class="path">Home → Stories Workbench</span></p>
+          <p>Apply the <strong>Security Operations</strong> preset (Network Operations exists for the
+          NOC view), widen the window from the default two days as history accrues (maximum 90),
+          and group by Indication or Source — each group header counts its high, medium and low
+          criticality stories, which is the shift's working view. Save the screenshot on day zero:
+          the empty state is the baseline every later capture is measured against.</p>
+        </li>
+        <li>
+          <h4>Run the benign true-positive drill</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>On a date in the drill plan, fetch the EICAR test file from the
+          <a href="https://knowledge.catonetworks.com/docs/testing-threat-prevention-for-anti-malware-and-ips"
+          target="_blank" rel="noopener">KB's documented test sources</a> from a pilot machine — the
+          HTTP variant works without inspection; the HTTPS variant proves the TLSi path. The download
+          is blocked and the events land under the Anti-malware preset, attributed to the user and
+          device. This proves the sensor fires on demand; it does not manufacture a story — see the
+          gotchas.</p>
+        </li>
+        <li>
+          <h4>Triage one real story end-to-end with their analyst driving</h4>
+          <p><span class="path">Home → Stories Workbench</span></p>
+          <p>Pick a story from pilot traffic and have the customer's analyst — not you — walk the
+          <a href="https://knowledge.catonetworks.com/docs/drilling-down-and-analyzing-xops-security-stories"
+          target="_blank" rel="noopener">documented drill-down</a>: criticality (an ML score over 40+
+          parameters), predicted verdict, MITRE ATT&amp;CK mappings, the evidences table and target
+          intelligence. Then close it properly: <strong>Actions → Manage Story</strong>, set Analyst
+          Verdict, Analyst Severity, Status and Classification, moving Open → Pending → Closed.
+          Capture the timeline widget at each step — it records the verdict and severity changes,
+          which <em>is</em> the evidence trail for criterion two.</p>
+        </li>
+        <li>
+          <h4>Feed the stories into their SIEM</h4>
+          <p><span class="path">Home → Detection &amp; Response Policy</span></p>
+          <p>On the Response Policy tab, create a rule scoped to the pilot: choose the story sources,
+          add criteria (criticality, indication, status), set the trigger — Story Created, or Created
+          or Updated — and select <strong>Event</strong> as the response, wired to the SIEM event
+          integration. Stories then arrive as
+          <a href="https://knowledge.catonetworks.com/docs/exporting-xops-stories-to-your-siem"
+          target="_blank" rel="noopener">Detection and Response events</a> in Splunk or Sentinel.
+          The same rule engine sends mailing-list and webhook notifications (ServiceNow, Jira,
+          Slack) if the SOC's workflow lives there.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        The artefacts are the console itself, captured dated as they land: the workbench filling up
+        week by week from its day-zero empty state, one story's timeline showing a disposition
+        recorded by the customer's own analyst, and a story event sitting in their SIEM. Capture
+        weekly — the workbench window caps at 90 days, so evidence is gathered as it happens, never
+        reconstructed at wrap-up.
+      </p>
+      <!-- capture-wanted: Home → Stories Workbench, Security Operations preset grouped by Indication — group headers showing high/medium/low criticality counts -->
+      <!-- capture-wanted: Detection & Response story detail — criticality score, MITRE ATT&CK mapping and evidences table on one screen -->
+      <!-- capture-wanted: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure -->
+      <!-- capture-wanted: Security → Connectors showing the Microsoft Defender for Endpoint connector connected alongside Cato sources -->
+      <!-- capture-wanted: Home → Detection & Response Policy, a Response Policy rule with the Event response, beside the resulting Detection and Response event in a SIEM -->
+
+      <h3>SOC metrics — from the workbench, never invented</h3>
+      <p>
+        Resist quoting MTTR improvements the pilot cannot measure. The workbench gives you three
+        honest talking points: the <strong>criticality distribution</strong> (the grouped view counts
+        high, medium and low stories per indication — how much of the queue actually demands senior
+        eyes), <strong>story ageing</strong> (the Created and Updated columns, and each story's
+        duration, show how long work sits at each status), and <strong>queue shape over the
+        weeks</strong> (statuses moving from Open to Closed across the register's weekly captures).
+        Put those next to the numbers the customer already tracks and let them do the arithmetic —
+        their baseline, their conclusion, your credibility intact.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🪫</div><div><h4>No stories at all</h4><p>Check in this order: licence — without XOps or MDR, connector events can flow but stories are not generated; warm-up — Threat Hunting correlates over a week of data and anomaly baselines take ~14 days; traffic — a quiet ten-user pilot gives the sensors little to correlate. Fix the licence, then let the window run.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗓️</div><div><h4>The workbench looks emptier than it is</h4><p>The default view shows only the previous two days. Widen the date range (up to 90 days) before concluding stories are missing — mid-PoV, most of the evidence sits outside the default window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Defender connector won't connect</h4><p>Confirm the Microsoft licence (Defender for Endpoint Plan 2 or an E5-class bundle), that a global admin granted the parent Microsoft 365 app's permissions, and that the CMA admin holds editor permission for Integrations. Certificates are valid three months and auto-renew — a lapsed grant shows up as a silent feed.</p></div></div>
+        <div class="benefit"><div class="b-icon">♻️</div><div><h4>A closed story came back</h4><p>Stories reopen automatically when new matching traffic appears 12+ hours after closure. That is the platform behaving as documented — brief the analyst before the triage drill so a Reopened status reads as detection continuity, not a fault.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔕</div><div><h4>Noisy stories drown the queue</h4><p>Tune at two levels: scope the Response Policy rule's criteria (criticality, indication, source) so the SIEM and mailing lists only receive what the SOC would act on, and fix chatty detections at the policy generating the underlying events. Network-side Site Operations stories have their own Mute Stories mechanism.</p></div></div>
+        <div class="benefit"><div class="b-icon">📭</div><div><h4>Nothing arriving in the SIEM</h4><p>No Response Policy rule means no Detection and Response events — the feed is opt-in. Check the rule exists and matches the pilot's stories, then the trigger: a rule set to Story Created stays silent on status and verdict updates unless you chose Created or Updated.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The drill proves the sensor, not the story:</strong> the KB documents EICAR
+          tests generating Anti-Malware events — it does not promise a test detection surfaces as a
+          story. Run the drill as event-pipeline proof and let the triage criterion stand on a story
+          from real traffic.</li>
+          <li><strong>Near real time has a scope:</strong> the KB lists the specific Threat
+          Prevention indications updated in near real time; hunting and anomaly stories take days to
+          weeks by design. Keep the warm-up wording per source.</li>
+          <li><strong>Endpoint Alert stories triage differently:</strong> the Story Actions panel is
+          not configurable for Endpoint Alert stories — run the end-to-end triage criterion on a
+          network-sensor story.</li>
+          <li><strong>MDR changes who configures:</strong> on MDR-managed accounts, Response Policy
+          rules go through the Cato support/SOC team rather than self-service — plan the SIEM
+          criterion's lead time accordingly.</li>
+          <li><strong>90-day window:</strong> the workbench date range caps at 90 days — the weekly
+          dated captures are the durable record, not a wrap-up-day export.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> delete the Response Policy rule and the SIEM event integration
+        (stopping the story feed), disconnect the endpoint connectors — for Microsoft, revoke the
+        Cato apps' permissions in Entra ID as well — and return any IPS/Anti-Malware settings staged
+        for the drill to their pre-PoV state. Export the dated workbench captures, the triaged
+        story's screenshots and the SIEM records before tenant access ends; the
+        <span class="path">Administration → Audit Trail</span> entries for what the PoV added and
+        removed make a tidy closing exhibit.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

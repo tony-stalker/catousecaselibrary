@@ -364,6 +364,216 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This is a <strong>visibility-first pilot</strong> in the newest area of the platform, and it is
+        run to the standard frame — scope agreed, criteria written down, weekly cadence, a decision
+        meeting booked before anything is deployed (see
+        <a href="management-pov-framework.html">Running a Cato PoV</a>). The deliverable is not a
+        blocked attack; it is an <strong>agent inventory the customer has never had, one agent's
+        behaviour observed end-to-end, and a governance recommendation grounded in that evidence</strong>.
+        Where enforcement is exercised at all, it is in monitor mode, on one agreed agent, with its
+        owner in the room.
+      </p>
+      <div class="callout warn">
+        <div class="co-title">Observation vs control — what the KB documents today (verified July 2026)</div>
+        <p>Every capability claim below is anchored to the published overview set:
+        <a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-agents" target="_blank" rel="noopener">AI Security for Agents</a> and its
+        <a href="https://knowledge.catonetworks.com/docs/what-is-local-ai-agents-security" target="_blank" rel="noopener">local</a>,
+        <a href="https://knowledge.catonetworks.com/docs/what-is-managed-ai-agents-security" target="_blank" rel="noopener">managed</a> and
+        <a href="https://knowledge.catonetworks.com/docs/what-is-custom-ai-agents-security" target="_blank" rel="noopener">custom</a> agent pages.</p>
+        <p><strong>Solidly documented observation:</strong> Scout scans endpoints and identifies
+        installed local agents, their configurations, licence types and connected MCP servers; managed
+        platforms (AWS Bedrock, Azure AI Foundry, Microsoft Copilot Studio) are connected via API and
+        every deployed agent is auto-discovered with its instructions, tools, knowledge bases and
+        permissions; sessions are traced as prompts, model responses, tool invocations and results.
+        Note the mechanisms honestly: local-agent discovery is <em>endpoint scanning</em> and managed
+        discovery is <em>platform APIs</em> — this inventory is not derived from network traffic.</p>
+        <p><strong>Documented at overview level only:</strong> enforcement. The KB states the AI
+        Firewall can alert, log or block traced managed/custom agent interactions, and that runtime
+        policies cover all four inspection points for local agents — but detailed policy-configuration
+        articles are not yet public, and several deep-dive pages have already moved or been renamed.
+        This area moves fast: <strong>date every claim and every screenshot</strong>, and re-verify
+        capability statements the week you present them, not the week you scoped the PoV.</p>
+      </div>
+
+      <h3>Success criteria — agreed before anything is deployed</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What is demonstrated</th><th>Priority</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1 · Local-agent inventory delivered</strong></td>
+              <td>Scout deployed to the agreed pilot endpoint group; discovered agents listed with configurations, licence types and connected MCP servers</td>
+              <td>Must prove</td>
+              <td>Dated inventory capture in the evidence doc</td>
+              <td>AI Security → Local Agents</td>
+            </tr>
+            <tr>
+              <td><strong>2 · Managed-agent estate discovered</strong></td>
+              <td>One platform (Bedrock, AI Foundry or Copilot Studio) connected by API; deployed agents auto-discovered with instructions, tools, knowledge bases and permissions</td>
+              <td>Should prove — only if the customer runs one</td>
+              <td>Dated inventory capture</td>
+              <td>AI Security → Managed Agents</td>
+            </tr>
+            <tr>
+              <td><strong>3 · One agent observed end-to-end</strong></td>
+              <td>For one agreed agent, a full session traced: prompts, model responses, tool calls with parameters, tool results</td>
+              <td>Must prove</td>
+              <td>Dated session record, walked through with the agent's owner</td>
+              <td>AI Security → Agent Sessions</td>
+            </tr>
+            <tr>
+              <td><strong>4 · One control exercised in monitor mode</strong></td>
+              <td>A policy applied to the agreed agent with the action set to alert or log — nothing blocked</td>
+              <td>Should prove — see the note below</td>
+              <td>Alert/log event tied to an agreed test interaction</td>
+              <td>AI Security → Agents Policy</td>
+            </tr>
+            <tr>
+              <td><strong>5 · Exposure review &amp; recommendation</strong></td>
+              <td>An evidence-led review of which agents can touch which code, data and systems — closed with a written governance recommendation</td>
+              <td>Must prove</td>
+              <td>One-page recommendation plus the criteria register</td>
+              <td>Evidence doc (built from criteria 1–4)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Be honest about criterion 4 at the workshop.</strong> The alert/log/block choice is
+        documented for managed and custom agents via the AI Firewall; for local agents the KB
+        documents blocking and redaction but not a distinct monitor mode. If the tenant or licence
+        does not expose a monitor-mode control during the PoV window, the agreed fallback — in
+        writing, on day one — is that the pilot succeeds on <strong>inventory plus observation</strong>
+        (criteria 1, 3 and 5), and enforcement moves to the next-steps register. That honesty is what
+        makes the rest of the evidence credible.
+      </p>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week 1</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licensing in writing.</strong> The public KB pages verified for this runbook do not state licence terms for AI Security for Agents (the end-user capability is a separate per-user licence) — confirm entitlement and trial scope with the Cato account team before the workshop, and record it in the register.</li>
+          <li><strong>An MDM route for Scout</strong> to the pilot endpoint group — typically one engineering team's laptops. Agree the group and its owner up front.</li>
+          <li><strong>Platform API credentials</strong> for criterion 2, with enough permission to enumerate deployed agents in the chosen environment.</li>
+          <li><strong>A named owner per agent.</strong> Attribution is a deliverable, not an afterthought — every discovered instance gets an owner in week 1, and the "one agreed agent" for criteria 3–4 has its owner in the weekly sync.</li>
+          <li><strong>TLS inspection is not the gate here.</strong> Unlike prompt-level end-user inspection (where TLSi is staged first — see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>), local-agent discovery is endpoint-based and managed discovery is API-based, so this pilot is not blocked on a TLSi rollout.</li>
+        </ul>
+      </div>
+
+      <h3>Walkthrough — five weeks, monitor-first throughout</h3>
+      <ol class="steps">
+        <li>
+          <h4>Run the scoping workshop</h4>
+          <p>Pick the pilot endpoint group, the one managed platform (if any), and the <strong>one
+          agreed agent</strong> for end-to-end observation — a coding agent on a developer's laptop or
+          one Copilot Studio agent both work well. Agree what counts as sensitive exposure for
+          criterion 5 (source repositories? customer data? production APIs?), write the criteria table
+          above into the register, and book the weekly sync and the wrap-up meeting.</p>
+        </li>
+        <li>
+          <h4>Deploy Scout to the pilot group</h4>
+          <p><span class="path">AI Security → Local Agents</span></p>
+          <p>Push Scout to the agreed endpoints via the customer's MDM and let discovery run. Evidence
+          lands in Local Agents: each discovered instance with its configuration, licence type and
+          connected MCP servers. Capture the first inventory the day it populates — dated — and again
+          at the end; the delta (new agents appearing mid-pilot) is often the finding that lands
+          hardest. Nothing is enforced at this stage.</p>
+        </li>
+        <li>
+          <h4>Connect the managed platform</h4>
+          <p><span class="path">AI Security → Integrations</span></p>
+          <p>If criterion 2 is in scope, connect the chosen platform by API. The KB documents
+          auto-discovery of every deployed agent with its name, purpose and instructions, connected
+          tools and connectors, knowledge bases and data sources, and assigned permissions — review
+          the result in Managed Agents with the platform owner and capture it for the register.</p>
+        </li>
+        <li>
+          <h4>Optional stretch — route one custom agent through the AI-FW</h4>
+          <p>If the customer builds agents in-house and a developer owner volunteers a non-production
+          agent, the documented pattern is to redirect the agent's LLM base URL to the AI-FW proxy
+          endpoint and add an authentication header — the AI-FW proxies on to the original provider
+          with no change to the agent's logic:</p>
+<pre class="code"><span class="cmt"># Illustrative shape only — take the endpoint and key from AI Security → Integrations</span>
+client = OpenAI(
+    base_url=<span class="kw">"https://&lt;ai-fw-proxy-endpoint&gt;/v1"</span>,
+    default_headers={<span class="kw">"Authorization"</span>: <span class="kw">"Bearer &lt;ai-fw-key&gt;"</span>}
+)</pre>
+          <p>Keep this out of the success criteria unless the customer insists — it is a strong
+          expansion signal, not a pilot gate.</p>
+        </li>
+        <li>
+          <h4>Observe the agreed agent end-to-end</h4>
+          <p><span class="path">AI Security → Agent Sessions</span></p>
+          <p>With the agent's owner ("Priya", if it is her coding agent), review real sessions: the
+          prompts that went in, the model's responses, each tool call with its parameters, and the
+          tool results that came back. Walk one complete session in the weekly sync and ask the owner
+          to narrate what the agent was doing — the moment a session trace matches (or contradicts)
+          the owner's mental model of their own agent is the pilot's most persuasive minute. Capture
+          the session, dated, for criterion 3.</p>
+        </li>
+        <li>
+          <h4>Apply one control in monitor mode</h4>
+          <p><span class="path">AI Security → Agents Policy</span></p>
+          <p>Scope a single policy to the agreed agent only, action set to <strong>alert or
+          log</strong> — the modes the KB documents for AI-Firewall evaluation of traced interactions.
+          Then generate an agreed, benign test interaction with the owner rather than waiting for
+          traffic. One attributed alert against one known interaction is the whole criterion; resist
+          any request to "just try block mode" — that belongs on the next-steps register.</p>
+        </li>
+        <li>
+          <h4>Hold the exposure review and deliver the recommendation</h4>
+          <p>Close with the conversation the evidence was collected for: <strong>which agents touch
+          what</strong>. Per agent — owner, licence type, the MCP servers and tools it connects to,
+          and (for managed agents) the knowledge bases and permissions it holds. Deliver a one-page
+          recommendation: the sanctioned agent list, the ownership register, shadow instances to
+          regularise, and a monitor-to-enforce roadmap with the honest caveat of what was observed
+          versus controlled during the pilot.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-access-policy.png" alt="CMA AI Security area, July 2026: left navigation showing Monitoring (Overview, Discovery, AI Users, Session Explorer; Local Agents and Agent Sessions under AI Security for Agents; Guards, Homegrown Agents, Interaction Explorer, Managed Agents under AI Security for Apps) and Configuration (Engine Profiles, Playground, Integrations, User Interaction Policy, User Access Policy, Browser Plugin, Agents Policy), with the User Access Policy rulebase open in the main pane" loading="lazy">
+        <figcaption>The CMA's AI Security area as it stands (July 2026) — the pilot's evidence map is
+        the left navigation: <strong>Local Agents</strong> and <strong>Agent Sessions</strong> under
+        monitoring are where criteria 1 and 3 land, <strong>Managed Agents</strong> and
+        <strong>Integrations</strong> carry criterion 2, and <strong>Agents Policy</strong> under
+        configuration is where the monitor-mode control lives. The open pane is the neighbouring
+        end-user access policy — a useful reminder in the wrap-up that agent governance arrives
+        alongside, not instead of, the user-facing AI controls.</figcaption>
+      </figure>
+      <!-- capture-wanted: AI Security → Local Agents inventory with one instance drilled into (MCP servers, tools, licence type) -->
+      <!-- capture-wanted: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session -->
+      <!-- capture-wanted: AI Security → Agents Policy rulebase with a rule scoped to one agent in an alert/log action -->
+      <!-- capture-wanted: AI Security → Managed Agents inventory after a platform API integration -->
+
+      <h3>Troubleshooting — what actually goes wrong</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>A known agent is missing from Local Agents</h4><p>Scout never reached that endpoint or has not re-scanned. Check the MDM deployment status for the device, confirm it is in the pilot group, and check the instance's last-seen timestamp after the next scan cycle before concluding anything about the product.</p></div></div>
+        <div class="benefit"><div class="b-icon">☁️</div><div><h4>Managed agents not appearing after integration</h4><p>The API credential can connect but cannot enumerate — wrong project, environment or permission scope on the platform side. Re-check the integration's credentials against the platform's requirements with the platform owner, then re-sync.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧵</div><div><h4>Custom-agent sessions never arrive</h4><p>The agent's traffic is not crossing the AI-FW: the base-URL redirect was applied in the repo but not in the running environment (an environment variable overrides it, or a sidecar bypasses it). Verify the deployed configuration, not the source code.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏷️</div><div><h4>Inventory without owners</h4><p>A hostname is not an owner, and criterion 5 fails without attribution. Map every discovered instance to a named person in week 1 while the list is short. Personal or free-tier instances are flagged, not shamed — the shadow-agent finding is a pilot deliverable, not a disciplinary file.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>The monitor-mode policy shows nothing</h4><p>A quiet agent or a mis-scoped rule looks identical to a broken one. Do not wait for organic traffic: generate the agreed benign test interaction with the owner, then check the scope of the rule before checking anything else.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Agent evidence muddled with end-user evidence</h4><p>The same person's ChatGPT browsing and their coding agent's sessions are different surfaces with different views. Keep agent criteria evidenced from Local Agents / Agent Sessions and user-prompt findings in the end-user views — or the register (and the wrap-up) blurs two different stories.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout risk">
+        <div class="co-title">Honesty clauses for the wrap-up</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence honesty:</strong> the KB pages verified for this runbook (July 2026) publish no licence terms for AI Security for Agents. Present entitlement as whatever the account team confirmed in writing — nothing more.</li>
+          <li><strong>Currency honesty:</strong> this product area is moving quickly and deep-dive documentation is still landing; every claim in the wrap-up deck carries a date, and anything older than the pilot itself gets re-verified before the decision meeting.</li>
+          <li><strong>Capability honesty:</strong> the wrap-up states plainly what was <em>observed</em> (inventory, sessions) versus <em>controlled</em> (one monitor-mode alert, if achieved) — the criteria register enforces this framing by construction.</li>
+          <li><strong>Clean exit:</strong> disable and delete the monitor-mode Agents Policy rule, disconnect the platform API integration, uninstall Scout from the pilot endpoints via the same MDM route, and revert any custom-agent base-URL change. The inventory export, session evidence and governance recommendation are the customer's to keep — the deliverable outlives the configuration.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>
@@ -372,9 +582,9 @@
           <h3 style="margin-top:0">Documentation</h3>
           <ul style="margin:0;padding-left:20px;font-size:.94rem">
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-agents" target="_blank" rel="noopener">What is AI Security for Agents</a></li>
-            <li><a href="https://knowledge.catonetworks.com/docs/understanding-scouts-and-agent-controls" target="_blank" rel="noopener">Understanding Scouts and Agent Controls</a></li>
-            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-local-agents" target="_blank" rel="noopener">Monitoring Local Agents</a></li>
-            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-agent-sessions" target="_blank" rel="noopener">Monitoring Agent Sessions</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-local-ai-agents-security" target="_blank" rel="noopener">Local AI Agents Security</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-managed-ai-agents-security" target="_blank" rel="noopener">Managed AI Agents Security</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-custom-ai-agents-security" target="_blank" rel="noopener">Custom AI Agents Security</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/advanced-configuration-for-claude-code" target="_blank" rel="noopener">Advanced Configuration for Claude Code</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/working-with-the-cato-remote-mcp-server" target="_blank" rel="noopener">Working with the Cato Remote MCP Server</a></li>
           </ul>

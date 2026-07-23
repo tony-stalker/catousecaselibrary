@@ -341,6 +341,206 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo tells the kill-chain story on our tenant; this PoV runs a <strong>kill-chain-controls
+        pilot</strong> on theirs — each network-visible stage from the table above becomes a
+        demonstrated control, evidenced by a safe, staged, change-controlled test. Nothing in this
+        runbook involves real malware or contact with real attacker infrastructure: delivery uses the
+        KB's harmless EICAR-style test file, exfiltration uses a fictional-data document you create,
+        and the C2 stage is evidenced from monitor logs rather than simulated. Agree the criteria
+        below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — every drill has a date in
+        the test-case register and a named owner on the customer side.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Kill-chain stage</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Delivery blocked on every path</td>
+              <td>The KB's EICAR-style safe test file is blocked inline by Anti-Malware from the pilot site <em>and</em> from a Cato Client user — HTTP first, HTTPS once TLS inspection is staged</td>
+              <td>Two Anti-Malware block events (same file, site source and SDP-user source) plus the Threats Dashboard entry</td>
+              <td>Monitor → Events · Monitor → Threats Dashboard</td>
+            </tr>
+            <tr>
+              <td>C2 visibility — evidenced, never simulated</td>
+              <td>IPS in monitor and Suspicious Activity Monitoring generate events from the pilot's real traffic towards malicious and suspicious destinations</td>
+              <td>Dated Events filtered to the IPS and Suspicious Activity sub-types across the pilot window</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Lateral movement contained</td>
+              <td>East-west traffic restricted by WAN Firewall between sites and LAN Firewall within the pilot site — monitor first, then one agreed flow blocked in a change window</td>
+              <td>The blocked WAN Firewall event for the agreed test flow; LAN Firewall events under their own sub-type</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Exfiltration caught by DLP</td>
+              <td>A staged upload of a fictional-data file matches a monitor-mode Data Control rule scoped to the pilot cohort</td>
+              <td>The Apps Security event naming the DLP profile, file name and user</td>
+              <td>Monitor → Events · Monitor → Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>Stages converge into one picture</td>
+              <td>The drills and monitor findings surface together in the Threats Dashboard — and, where the XOps licence is present, as XDR stories</td>
+              <td>Threats Dashboard capture with its View Events drill-down; a Stories Workbench story if licensed</td>
+              <td>Monitor → Threats Dashboard</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot branch socket plus a client cohort (5–20 users), and one WAN destination site — a DC or second branch — for the east-west test. The LAN Firewall stage needs the pilot site on a Socket: the policy is enforced locally on the Socket, not at the PoP.</li>
+          <li><strong>Safety and change control:</strong> every artefact is safe by construction — the <a href="https://knowledge.catonetworks.com/docs/testing-threat-prevention-for-anti-malware-and-ips" target="_blank" rel="noopener">KB's documented EICAR-style test files</a> and a fictional-data document for the DLP stage. Each drill has a booked date in the register and sign-off from the customer's security team. Never real malware; never a connection to real C2 infrastructure.</li>
+          <li><strong>Licences:</strong> IPS and Anti-Malware active (NG Anti-Malware where scoped — it requires the base service); Suspicious Activity Monitoring is included in the IPS licence. Data Control rules need the CASB and DLP licences. XDR stories need the XOps licence — the licence-honesty note in the <a href="management-soc-xdr.html#pov">SOC/XDR PoV</a> applies verbatim.</li>
+          <li><strong>TLS inspection staged first:</strong> the HTTPS variant of the delivery drill depends on it, and the KB is explicit that DLP content inspection requires it. Follow <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> and clear the scope with whoever owns privacy.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough — one stage, one control, monitor-first</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the scope, book the drills, take the baseline</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Confirm the pilot socket and cohort are live, then put a date against every kill-chain
+          drill in the test-case register — the drills only carry weight because they are staged and
+          announced, not sprung. Dated topology and policy screenshots are evidence item zero.</p>
+        </li>
+        <li>
+          <h4>Delivery — block the safe test file on both paths</h4>
+          <p><span class="path">Security → Anti-Malware</span></p>
+          <p>Enable Anti-Malware (and NG Anti-Malware where licensed) and run the KB's EICAR test from
+          a machine behind the socket, then as a cohort user on the Client. The HTTP variant is blocked
+          without inspection; the HTTPS variant downloads cleanly until TLS inspection is staged — a
+          useful before/after exhibit, then a block. The full two-path discipline, including timing the
+          policy propagation, is already written up in
+          <a href="security-consistent.html#pov">Consistent Security Everywhere — PoV runbook</a>;
+          run this stage to that recipe and file the artefacts against this criterion.</p>
+        </li>
+        <li>
+          <h4>C2 — monitor the real thing, simulate nothing</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>Set IPS to Monitor for the scoped directions (semantics in the
+          <a href="security-consistent.html#pov">consistent-security PoV</a>), and enable
+          <a href="https://knowledge.catonetworks.com/docs/monitoring-suspicious-activity-with-ips-sam" target="_blank" rel="noopener">Suspicious
+          Activity Monitoring</a> on the Suspicious Activity tab — monitor-only by design, because the
+          traffic is suspicious rather than definitely malicious. The KB documents no safe C2
+          simulation, so this criterion is evidenced from monitor logs: over the pilot window, filter
+          Events to the IPS and Suspicious Activity sub-types and let the tenant's own traffic — scanner
+          noise, risky destinations, odd HTTP patterns — make the case. If the customer wants to see
+          inline IPS enforcement fire on demand, the KB's documented safe drill is a Geo Restriction
+          rule tested against a site hosted in the blocked country: run it from the site path only, and
+          allow up to ten minutes for the rule to take effect.</p>
+        </li>
+        <li>
+          <h4>Lateral movement across the WAN — monitor, then one agreed block</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>The <a href="https://knowledge.catonetworks.com/docs/managing-the-wan-firewall-policy" target="_blank" rel="noopener">WAN
+          Firewall rulebase</a> is ordered and ends in an implicit any-any <em>block</em> — east-west
+          is deny-by-default, the opposite of the Internet Firewall. Add a rule covering pilot-site
+          user subnets towards the DC or backup destinations with Track = Event and let a week of
+          events map who actually talks east-west. Then, in the booked change window, make the one
+          agreed change of the pilot: block the agreed flow (say, SMB from a pilot workstation towards
+          the backup VLAN) and run the test. The blocked event — user, source, destination, rule —
+          is the artefact.</p>
+        </li>
+        <li>
+          <h4>Lateral movement inside the site — LAN Firewall on the Socket</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>The <a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">LAN
+          Firewall</a> is a single account-wide policy, scoped per site and enforced locally on the
+          Socket — the traffic is routed by the Socket and never sent to the PoP. A LAN Network rule
+          defines the transport; the LAN Firewall rules nested beneath it allow or block within that
+          scope — mirror the WAN stage: track events first (they land under the LAN Firewall event
+          sub-type), block only what was agreed. App/category conditions need Layer 7 rules enabled on
+          the pilot site, and same-site traffic that matches no LAN rule is treated as WAN traffic —
+          so the two stages together close the east-west picture.</p>
+        </li>
+        <li>
+          <h4>Exfiltration — a DLP monitor rule and a staged fictional upload</h4>
+          <p><span class="path">Security → App &amp; Data Inline</span> <span class="path">Security → Data Types &amp; Profiles</span></p>
+          <p>Build a <a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Data
+          Control rule</a> scoped to the pilot cohort: upload activity, a DLP profile built from
+          predefined data types (UK PII or credit-card types read well), action Monitor. Stage the
+          drill: a document seeded entirely with fictional data — invented names, standard test card
+          numbers — uploaded to a personal cloud-storage app by a cohort user, on the booked date. The
+          resulting Apps Security event names the DLP profile, file name and user: the double-extortion
+          stage, caught on the wire, with nothing real at risk.</p>
+        </li>
+        <li>
+          <h4>Convergence — one dashboard, and stories where licensed</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span></p>
+          <p>Close the loop where the customer will live day-to-day: the
+          <a href="https://knowledge.catonetworks.com/docs/using-the-security-threats-dashboard" target="_blank" rel="noopener">Threats
+          Dashboard</a> aggregates IPS, DNS Protection and Anti-Malware activity (up to 90 days) and
+          its View Events drill-down lands on the exact rows behind each widget — capture it with the
+          delivery and C2 evidence in view. Where the account holds the XOps licence, run the stories
+          criterion to the <a href="management-soc-xdr.html#pov">SOC/XDR PoV runbook</a> — including
+          its gotcha that the EICAR drill proves the sensor, not the story: let stories stand on real
+          traffic, and keep this criterion licence-honest.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA Security → WAN Firewall rulebase: twelve site-, user- and host-scoped Allow rules with direction, service/port pairs and live hit counts, over the implicit any-any block.">
+        <figcaption>The containment layer the lateral-movement stage lands in: every east-west allowance is an explicit, hit-counted rule over an implicit deny. In the PoV, your monitor rule and the one agreed block sit in this list — and the blocked test flow becomes the artefact.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/dlp-incident-cma.png" alt="CMA DLP data incident detail: a blocked upload of a document containing credit-card data, showing user, application, file name, matched rule, DLP profile and data types, with a secured forensics evidence panel.">
+        <figcaption>The incident detail a staged upload produces — user, application, file name, matched profile and data types on one screen. This capture shows a Block action; in the pilot your rule runs in Monitor, so the same detail records the catch without touching traffic.</figcaption>
+      </figure>
+      <!-- capture-wanted: Security → LAN Firewall — a LAN Network rule with nested LAN Firewall rules and hit counts on a pilot Socket site -->
+      <!-- capture-wanted: Monitor → Events filtered to the Suspicious Activity sub-type — SAM findings from real pilot traffic -->
+      <!-- capture-wanted: Monitor → Events — the blocked WAN Firewall event for the agreed lateral-movement test flow -->
+      <!-- capture-wanted: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view -->
+      <p>
+        The wrap-up reads as five stages, five artefacts: two Anti-Malware blocks with different
+        sources, a window of IPS and Suspicious Activity events from real traffic, one blocked
+        east-west flow, one monitor-mode DLP catch, and the dashboard (or story) that shows them
+        together. Every one is dated against a booked drill in the register — staged evidence, not
+        lucky timing.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>HTTPS test file downloads fine</h4><p>The flow wasn't inspected. Check the TLS Inspection policy order for a bypass rule catching the test source, confirm the root certificate on the test device, and remember inspection is auto-bypassed for some operating systems — the checklist is in the <a href="security-consistent.html#pov">consistent-security PoV</a>.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>The endpoint AV eats the test file first</h4><p>Desktop AV quarantining EICAR before the browser saves it muddies "was it blocked on the wire?". The network artefact is the Cato block page and the Anti-Malware event — read those, not the disk — or agree a temporary endpoint-AV exclusion for the test directory with the endpoint team.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>No C2-stage events</h4><p>The IPS policy must be enabled before SAM can be switched on, a new IPS rule can take up to ten minutes to become effective, and a quiet ten-user cohort gives the sensors little to say. Check IPS state, widen the Events window, and let the pilot run — this criterion accrues, it doesn't fire on demand.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>The lateral test wasn't blocked</h4><p>First match wins — an earlier, broader allow is swallowing the flow. Also check which policy actually saw it: same-site traffic that matches no LAN Firewall rule is treated as WAN traffic, so the event may be sitting under the WAN Firewall rather than the LAN Firewall sub-type.</p></div></div>
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>The DLP rule never fires</h4><p>No TLS inspection means no content inspection — it is a hard prerequisite. Then check the rule's activity direction covers upload, the profile's data-type thresholds against your fictional document, and that the account holds both the CASB and DLP licences.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>LAN Firewall evidence looks missing</h4><p>LAN Firewall traffic does not appear in the app and network analytics dashboards — that is documented behaviour, not a fault. Filter Events by the LAN Firewall sub-type for the artefact, and set expectations before the customer goes looking.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>This pilot evidences network-layer controls — and only those.</strong> Endpoint detection and response, backup integrity and recovery testing are separate domains with their own owners; a ransomware programme needs all of them, and this PoV should say so in the wrap-up rather than imply coverage it didn't test.</li>
+          <li><strong>Safe by construction, or not at all:</strong> EICAR-style files and fictional data are the only test artefacts. If a stage cannot be evidenced safely (C2), it is evidenced from monitor logs — never by simulating the attacker.</li>
+          <li><strong>One block flip:</strong> everything runs in monitor except the single agreed lateral-movement block, in its change window. Resist requests to "just block it all" mid-pilot — that is a production rollout decision, and it belongs after the decision meeting.</li>
+          <li><strong>Licence edges:</strong> stories need XOps (see the <a href="management-soc-xdr.html#pov">SOC/XDR PoV</a>), Data Control needs CASB plus DLP, and NG Anti-Malware needs the base service — write entitlements against each criterion before week one.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> remove the WAN and LAN drill rules and the DLP monitor rule, return
+        IPS and Anti-Malware to the agreed end-state, and publish once — remembering a published
+        revision cannot be un-published, so the before-state you recorded at baseline is the map for
+        unwinding. Export the dated artefacts before tenant access ends; the
+        <span class="path">Administration → Audit Trail</span> record of everything the pilot added
+        and removed doubles as the closing exhibit: one console, five stages, one story.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

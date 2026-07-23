@@ -537,6 +537,213 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        Be honest about what this PoV is: nobody can pilot their way to a Cyber Essentials
+        certificate. IASME and the NCSC own the schemes — CE is scored against the whole IT estate
+        under the current question set, and CAF judgments belong to the assessor. What a pilot
+        <em>can</em> prove, measurably, on a council-archetype estate — a civic-centre socket plus a
+        pilot cohort of remote and field staff — is that the platform produces
+        <strong>assessor-consumable evidence for the network side of the CE technical controls</strong>
+        and for named CAF contributing outcomes, exactly as the two mapping tables above frame them.
+        The <a href="#cyber-essentials">CE mapping table</a> is the scope: each control theme becomes
+        an evidence family, each family gets dated artefacts from pilot traffic, and the
+        “what stays with you” column travels with every row. Agree the criteria before configuring
+        anything, per <a href="management-pov-framework.html">Running a Cato PoV</a> — and say the
+        “position with care” caveat out loud at the workshop.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we deliver</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CE evidence matrix agreed up front</td>
+              <td>A workshop with the CE lead (and whoever faces the assessor) walks the five-theme mapping table above and strikes it down to the pilot's honest scope — the four network-relevant families (firewalls, secure configuration, user access control, malware protection) plus the narrow Cato slice of security update management</td>
+              <td>The signed matrix, dated, with the “what stays with you” column completed for every row</td>
+              <td>Shared evidence doc — the workshop's output and the pilot's contract</td>
+            </tr>
+            <tr>
+              <td>Each CE control family evidenced from pilot traffic</td>
+              <td>No family asserted on architecture: each carries dated, platform-generated artefacts from the pilot window — policy CSV exports, rule hit count report PDFs, Audit Trail extracts, posture profiles and event exports — with monitor-first discipline wherever enforcement changes</td>
+              <td>Platform-generated files (CSV/PDF), dated inside the PoV window, filed per control theme</td>
+              <td>Security policy pages' Export action · Home → Reports · Administration → Audit Trail · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Two or three CAF contributing outcomes evidenced</td>
+              <td>Named artefacts against the outcomes the CAF table above maps: posture-checked ZTNA in the access path (B2), FWaaS/IPS/anti-malware enforced on every pilot flow (B4), and one event store with one clock covering site and remote traffic alike (Objective C) — contribution language only, never “achieved”</td>
+              <td>One artefact set per outcome: posture-gated access events; enforcement events plus hit counts; a single unified event export spanning every pilot edge</td>
+              <td>Monitor → Events · Access → Device Posture · Home → Reports</td>
+            </tr>
+            <tr>
+              <td>Shared-responsibility line drawn per row</td>
+              <td>Every matrix row states what the platform evidences <em>and</em> what stays organisational — endpoint controls, the 14-day patching clock, MFA settings inside each cloud service, and above all: CE certification through IASME and the CAF self-assessment stay with the organisation and its assessor</td>
+              <td>The “stays with the organisation” column, completed for every row — mirroring the mapping table's fourth column</td>
+              <td>The matrix itself</td>
+            </tr>
+            <tr>
+              <td>Sector blueprint slice enacted</td>
+              <td>Three or four rules from the <a href="#sector-policies">starter rulebase</a> stood up on pilot traffic — the high-risk category and anonymiser blocks, the posture-checked admin segment — monitor first, blocking only once events prove the match</td>
+              <td>The enacted rules in the policy export, their firing events, and the Audit Trail entries showing the monitor-to-block promotion</td>
+              <td>Security → Internet Firewall · Monitor → Events · Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td>Member/officer-ready readout delivered</td>
+              <td>One page a committee can read — verdict per criterion in plain language — backed by the indexed assessor pack: one section per control family with control text, the platform control, the dated artefacts and the responsibility note</td>
+              <td>The readout page plus the pack (PDF/folder), walked by the CE lead at the meeting booked at the workshop</td>
+              <td>Wrap-up / decision meeting</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The CE lead in the room</strong> — whoever answers the IASME question set (and, where CAF applies, whoever owns the self-assessment) chooses the scope at the workshop. Without them the matrix is our guess and the pack inherits it.</li>
+          <li><strong>Licences checked against the matrix:</strong> IPS and Anti-Malware for the malware-protection family, and the CASB licence if the cloud-services-in-use inventory (the MFA-coverage list) is a row. A family only counts if the capability evidencing it is licensed in this tenant.</li>
+          <li><strong>TLS inspection staged first</strong> where content-level detection evidence matters — the KB is explicit that maximum detection results require it; see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>.</li>
+          <li><strong>Identity integration syncing</strong> — staff, schools and admin SCIM groups populated, so artefacts read “Priya did this”, not “an IP did this”; see <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>Tracking on for every in-scope rule</strong> — per the KB, a rule set to not generate events reports a hit count of zero, and a zero-evidence row is a failed row. An admin with the Editor role is needed for policy CSV export.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration — assemble per control family</h3>
+      <ol class="steps">
+        <li>
+          <h4>Workshop the matrix with the CE lead</h4>
+          <p>One session before anything is configured. Bring the five-theme mapping table; the CE
+          lead strikes and edits until every surviving row names a control family, an artefact and a
+          responsibility split. Be honest in the strike-through: security update management keeps
+          only its narrow Cato slice (the enforcement stack Cato maintains, plus IPS virtual
+          patching as a shield while the customer's own 14-day clock runs). Book the member/officer
+          readout in the same session, per <a href="management-pov-framework.html">the PoV
+          framework</a>.</p>
+        </li>
+        <li>
+          <h4>Connect the pilot slice and take the baseline</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>One civic-centre or depot socket plus the pilot cohort on the Cato Client. On
+          connection day, capture evidence item zero: tunnels up, the cohort connecting through the
+          same PoP-enforced policy as the site. Dated screenshots into the evidence doc — the pack
+          starts on day one, not at wrap-up.</p>
+        </li>
+        <li>
+          <h4>Firewalls family — the boundary, once</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Confirm the ordered, default-deny rule base fronting the pilot site and cohort, and
+          enact the blueprint slice: the high-risk category and anonymiser blocks (starter rules
+          4–5), tracking enabled, <strong>monitor first</strong>. Export the policy to CSV — the
+          KB supports CSV export for the Internet Firewall, WAN Firewall, TLS Inspection and
+          Application Control policies (<a href="https://knowledge.catonetworks.com/docs/exporting-security-rules-to-a-csv-file" target="_blank" rel="noopener">Editor
+          role required; sections are not included in the file</a>). This is the “what the control
+          is” half of the family.</p>
+        </li>
+        <li>
+          <h4>Schedule the rule hit count report</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>From the Catalog tab, generate the
+          <a href="https://knowledge.catonetworks.com/docs/generating-rule-hit-count-reports-for-security-and-network-policies" target="_blank" rel="noopener">rule
+          hit count report</a> — one PDF covering the Internet Firewall, WAN Firewall and Network
+          Rules, with per-rule counts and last-hit timestamps — and set it recurring weekly for the
+          pilot. This is the “the control operated” half: a vendor-generated, timestamped document
+          rather than a screenshot.</p>
+        </li>
+        <li>
+          <h4>Secure configuration family — the change record</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>The pilot's own build is the exhibit: every rule created in steps 3–7 appears here,
+          attributed, with previous and new values
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">the
+          trail holds 12 months, viewable up to 3 months at a time; changes can take several
+          minutes to appear</a>). Extract the pilot window. One global rule base with an
+          attributable change history is the secure-configuration evidence the mapping table
+          promises — demonstrated on changes the assessor can cross-check.</p>
+        </li>
+        <li>
+          <h4>User access control family — posture in the access path</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Build a posture profile from the
+          <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">documented
+          device checks</a> — anti-malware present, disk encryption, minimum OS version — and
+          reference it in the Client Connectivity Policy and in the posture-checked admin segment
+          (starter rule 2). Show RBAC plus MFA on CMA administrators. If the CASB licence is in
+          scope, capture the cloud-services-in-use inventory — the list the customer's own
+          MFA-on-cloud-services evidence has to cover under Danzell. The MFA settings inside each
+          service stay theirs.</p>
+        </li>
+        <li>
+          <h4>Malware protection family — monitor, then block</h4>
+          <p><span class="path">Security → Anti-Malware</span> <span class="path">Security → IPS</span></p>
+          <p>Follow the KB's
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-implementing-cato-threat-prevention" target="_blank" rel="noopener">threat-prevention
+          rollout</a>: enable in monitor mode, where malicious traffic is logged but not blocked;
+          review events for a few days; then gradually switch to block. The monitor-to-block
+          promotion itself lands in the Audit Trail — rollout discipline that doubles as change
+          evidence. Export the IPS and Anti-Malware events per family
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">up
+          to 250,000 events per export, 31-day maximum range</a>) — weekly, not at wrap-up.</p>
+        </li>
+        <li>
+          <h4>Name the CAF artefacts, then compile the readout</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Three named artefact sets, in the CAF table's own framing: posture-gated access events
+          for B2, the enforcement exports and hit counts for B4, and — for Objective C — one event
+          export spanning site and remote traffic with one clock, coverage that is architectural
+          rather than a log-shipping project. Then compile: the one-page member/officer readout
+          (verdict per criterion, plain language), the indexed pack per CE family, and a supplier
+          annex citing Cato's own certifications exactly as the
+          <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">security,
+          compliance &amp; privacy page</a> publishes them — at the time of writing it lists UK
+          Cyber Essentials alongside SOC 2/SOC 3, PCI DSS Level 1 and the ISO/IEC 27001 family —
+          as supplier due diligence, never as the customer's badge.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase with ordered rules scoped to users, devices and categories, showing Block, Allow and Prompt actions with live per-rule hit counts.">
+        <figcaption>The firewalls family's evidence pair in one view: an ordered, default-deny rule base (exported to CSV for the pack) with live hit counts proving the boundary operated on pilot traffic — the same policy for the civic centre, every depot and each remote worker, which is the CE firewalls answer given once.</figcaption>
+      </figure>
+      <!-- capture-wanted: Access → Device Posture — a posture profile showing anti-malware, disk-encryption and minimum-OS device checks -->
+      <!-- capture-wanted: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window -->
+      <!-- capture-wanted: Home → Reports — a generated rule hit count PDF from the Generated PDFs tab -->
+
+      <h3>Troubleshooting — assessor scepticism and evidence gaps</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🏅</div><div><h4>“Your vendor's CE badge isn't ours”</h4><p>Correct, and the pack says so first: the annex evidences supplier due diligence, nothing more. The customer's certificate comes from their own IASME assessment against the current question set, scored across their whole estate — the pilot contributes technical-control evidence inside its scope.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧐</div><div><h4>“Monitor mode isn't a control”</h4><p>Fair — monitor-first is rollout discipline, not the end state. By the readout, the agreed families are in block with blocking events as artefacts, and the Audit Trail shows the promotion. Anything still in monitor at wrap-up is labelled as such in the pack, never dressed up.</p></div></div>
+        <div class="benefit"><div class="b-icon">0️⃣</div><div><h4>Hit counts read zero</h4><p>Per the KB: a rule set to not generate events reports a hit count of zero — the control may be enforcing perfectly and still produce no evidence. Enable tracking on every in-scope rule in week one, then let traffic accumulate before the first report run.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>A row has no artefact — feature not licensed</h4><p>The cloud-services inventory needs the CASB licence; dashboards carry their own gates. Mark the row “not evidenced — capability not licensed in pilot”, state what the commercial proposal must include, and never substitute a demo-tenant capture — one borrowed screenshot taints the whole pack.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Malware-protection events are sparse</h4><p>The KB ties maximum detection to TLS inspection — if the anti-malware family looks quiet, check the TLSi policy scope and exclusions for the pilot cohort before judging the control, then re-test with a harmless seeded file. Quiet is only evidence once inspection coverage is confirmed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📆</div><div><h4>Windows expire before the readout</h4><p>An Events export spans at most 31 days, so evidence is exported as the pilot runs, weekly, per family — not reconstructed at the end. The Audit Trail's 12 months (viewable 3 at a time) is the safety net, not the plan.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>IASME and the NCSC own the schemes.</strong> Question sets move on their clock, not ours — Willow gave way to Danzell for new assessments from 27 April 2026 — so check the current set and the customer's assessment date before the readout. The pilot evidences technical controls against the five themes; it does not track scheme versions for anyone.</li>
+          <li><strong>The pilot evidences technical controls only.</strong> CE is scored against the whole estate — including end-user devices, patching clocks and cloud-service MFA settings the platform does not manage — and CAF judgments (GovAssure, the CAF-aligned DSPT) belong to the assessor. Write “contributes evidence towards”, never “meets” or “compliant”.</li>
+          <li><strong>Cite Cato's certifications only from the trust page, checked before every readout</strong> — present what is published, dated, and route requests for current certificates to Cato rather than paraphrasing.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwind is small and itself evidenced. Disable or delete the
+        monitor-mode rules created for the pilot — the removals land in the Audit Trail, a tidy
+        closing exhibit of change control — or promote the blueprint slice into the full
+        <a href="#sector-policies">sector starter rulebase</a> as the rollout template. Hand the
+        matrix and pack to the CE lead as their asset: the rows marked “not evidenced — capability
+        not licensed” become the commercial conversation, and the same pilot shape runs for a
+        health body under the CAF-aligned DSPT — see
+        <a href="security-healthcare-nhs.html">UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE</a>.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

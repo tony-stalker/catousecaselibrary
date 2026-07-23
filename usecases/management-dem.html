@@ -447,6 +447,208 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows the console; the PoV proves the <strong>operational practice</strong> — that a
+        pilot slice of the customer's estate can be scored, triaged worst-first and escalated with
+        evidence, by their own team, inside the PoV window. Keep the scope distinct from its
+        neighbours: the <a href="management-visibility.html">visibility PoV</a> proves estate-wide
+        reporting, the <a href="access-remote-worker.html">remote-worker PoV</a> proves one cohort's
+        per-user experience — this one proves the DEM <em>working method</em>: queue, verdict,
+        artefact, review. Agree the criteria below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>; each has a measurement, an
+        artefact and a place in the CMA where it is read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DEM live across the pilot scope</td>
+              <td>Probes and policy deployed to the pilot sites and user cohort; every in-scope site and user carries an experience score within the documented lag (typically 5 minutes, occasionally up to 30)</td>
+              <td>The Experience Monitoring landing page with the pilot scope scored, dated day zero</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>Worst-first triage, used in anger</td>
+              <td>One real Poor or Fair entry from the top of the queue investigated to a named fault-domain verdict — device, Wi-Fi, LAN, last mile or app — not "still looking"</td>
+              <td>Connection Details with exactly one node off-green, plus the verdict recorded against the originating ticket</td>
+              <td>User / site drill-down → Path Analysis</td>
+            </tr>
+            <tr>
+              <td>One ISP escalation pack produced</td>
+              <td>A last-mile verdict converted into a circuit case: hop-by-hop loss and latency, historically, with the fault starting inside the ISP's network</td>
+              <td>The copied full-traceroute data pasted into a real circuit ticket, with the Command Line view screenshotted</td>
+              <td>Path Analysis → Command Line</td>
+            </tr>
+            <tr>
+              <td>One app-side verdict</td>
+              <td>"It's not the network", proven: an application scoring Poor on TTFB against its baseline while every path node stays green — the escalation goes to the vendor, with numbers</td>
+              <td>The app drill-down TTFB evidence alongside an all-green Connection Details chain</td>
+              <td>Home → Experience Monitoring → Applications</td>
+            </tr>
+            <tr>
+              <td>Weekly experience review, run twice</td>
+              <td>The customer's operations lead opens the worst-first queue and walks it — with the SE the first week, without the SE the second</td>
+              <td>Two dated sync notes plus the recurring Site and User Experience PDF landing on schedule</td>
+              <td>Home → Experience Monitoring · Home → Reports</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>DEM licence:</strong> the DEM pages and features require a separate DEM licence
+          — confirm the trial entitlement in writing before the criteria are signed, not when the
+          dashboard turns out to be dark in week two.</li>
+          <li><strong>Scope:</strong> two or three pilot sites — deliberately including the circuit
+          the customer already grumbles about — plus a named user cohort (10–20) on the Cato Client.
+          A queue with nothing in it proves nothing.</li>
+          <li><strong>Version gates:</strong> probe protocols have Socket minimums — ICMP v20+,
+          TCP/HTTP(S)/DNS v21+, Traceroute v25+ (early availability). Underlay probes need Socket
+          v21.1.18975+ (vSocket v22+), or Client Windows 5.17 / macOS 5.10+ for remote users.
+          Device, Wi-Fi and LAN gateway nodes need Client Windows 5.12.10 / macOS 5.7+. Audit
+          before promising a probe type or a node.</li>
+          <li><strong>TLS inspection:</strong> not required — scoring and probes work on uninspected
+          traffic, so nothing here waits on a privacy approval.</li>
+          <li><strong>Identity:</strong> the queue names users, so the cohort must be enrolled and
+          syncing from the IdP — see <a href="access-identity-design.html">Identity Integration
+          Design</a> if that plumbing is not already in place.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Gate-check the estate, then pin the scope</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Assets → Device Inventory</span></p>
+          <p>Check the pilot Sockets and cohort Client versions against the gates above and write
+          the result into the scope: which probe types and which Connection Details nodes this
+          pilot can honestly show. A vSocket on v21 cannot send underlay probes; promise
+          accordingly. This ten-minute audit is the difference between a criterion and an apology.</p>
+        </li>
+        <li>
+          <h4>Build the probe set, mapped to applications</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span></p>
+          <p>Define probes for the three-to-five applications the pilot actually complains about —
+          HTTP/S against the ERP and the customer portal, DNS against the internal resolver, ICMP
+          where nothing else fits — and set each probe's <strong>Application</strong> field so its
+          metrics surface on that app's Experience Monitoring pages. Set the Socket and User
+          intervals (in seconds) deliberately: frequent enough to catch intermittent loss, not so
+          frequent the numbers drown. Add a Traceroute probe if the Sockets clear v25 — it feeds
+          the Application Routes half of Path Analysis.</p>
+        </li>
+        <li>
+          <h4>Deploy the policy: one Site rule, one User rule</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span></p>
+          <p>Two ordered rules cover the pilot: a Site rule matching the pilot Sockets and a User
+          rule matching the cohort group (rules can also target countries, platforms and
+          device-posture profiles; maximum 20 probes per rule). If cohort members work from the
+          pilot offices, enable <strong>Use Probes in Office Mode</strong> so their probing
+          continues behind the Socket. Nothing in this policy blocks or shapes anything — this is
+          the rare PoV that is monitor-only by construction.</p>
+        </li>
+        <li>
+          <h4>Confirm scores land within the documented lag</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Probe data takes several minutes to start appearing, and the page is typically current
+          within 5 minutes (occasionally up to 30) — so criterion one is checkable the same
+          morning. Walk the Sites, Office Users and Remote Users tabs and confirm every in-scope
+          entry carries a score rather than "No score"; chase the gaps now (see troubleshooting),
+          then screenshot the scored landing page, dated: evidence item zero.</p>
+        </li>
+        <li>
+          <h4>Work the queue to a verdict — both directions</h4>
+          <p><span class="path">User / site drill-down → Path Analysis</span></p>
+          <p>At the first weekly sync, sort worst-first and take the top real entry to a verdict in
+          Connection Details, live. If the amber sits on the last mile, expand the node: overlay
+          loss inside the tunnel <em>and</em> underlay loss outside it means the circuit, not the
+          tunnel — open the Command Line tab, note where the loss starts, and click
+          <strong>Show Full Traceroute Data</strong> to copy the evidence into the circuit ticket:
+          the ISP pack, criterion three. If instead every node is green while the app's TTFB sits
+          Poor against its baseline, the verdict points the other way — that is criterion four,
+          and the escalation goes to the application owner with numbers attached.</p>
+        </li>
+        <li>
+          <h4>Hand the practice over, then prove it repeats</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>Schedule a recurring <strong>Site and User Experience</strong> report — weekly, scoped
+          to the pilot, the customer's operations lead on the mailing list (external recipients are
+          supported). Run the review twice: week one the SE drives the worst-first walk; week two
+          the customer's lead drives it while the SE watches. The second run is the criterion —
+          a practice one person can only perform is a demo, not an operation.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        The figures earlier on this page are the shapes to aim for, on the customer's own estate:
+        the triage queue with a Poor site at the top (the demo tab's landing-page shot), one amber
+        node in an otherwise green chain (Connection Details), and per-hop loss starting inside the
+        ISP's network (Command Line). The escalation pack itself reads like this when pasted into a
+        circuit ticket:
+      </p>
+      <pre class="code"><span class="cmt"># Circuit evidence — pilot site → London PoP, 1,010 probes per hop, historical window</span>
+hop 1  192.168.1.1   local gateway   loss 0.0%    avg 1 ms
+hop 2  84.65.0.1     Preston, GB     loss 24.3%   avg 269 ms   wrst 327 ms
+hop 9  Cato PoP      London, GB      loss 0.0%    avg 6 ms
+<span class="cmt"># Verdict: loss begins at the first hop inside the ISP and clears before the PoP.</span>
+<span class="cmt"># Source: drill-down → Path Analysis → Command Line → "Show Full Traceroute Data"</span></pre>
+      <!-- capture-wanted: Home → Experience Monitoring Probes — the policy page showing one Site rule and one User rule scoped to a pilot, with probes mapped to applications -->
+      <!-- capture-wanted: an application drill-down where the app scores Poor on TTFB while the Connection Details chain is green end to end — the "not the network" verdict -->
+      <!-- capture-wanted: the Show Full Traceroute Data panel open, with the copy control visible -->
+      <!-- capture-wanted: Home → Reports — a recurring Site and User Experience report schedule with a customer mailing list -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>No scores anywhere</h4><p>Check in order: the Experience Monitoring Policy toggle is on; a Site or User rule actually matches the source; the probe protocol clears the Socket gate (ICMP v20+, TCP/HTTP/DNS v21+, Traceroute v25+). Then allow for the lag — data is typically current within 5 minutes but can trail by 30.</p></div></div>
+        <div class="benefit"><div class="b-icon">📵</div><div><h4>One app never scores</h4><p>Application metrics are calculated for outbound TCP traffic only, from successful flows — blocked traffic doesn't count, and bypassed traffic lacks HTTP/S metrics. A UDP-heavy or inbound app will never score passively: cover it with a synthetic probe instead, and say so in the criteria.</p></div></div>
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>Device, Wi-Fi and LAN nodes missing</h4><p>Those three nodes need Client Windows 5.12.10 / macOS 5.7 or higher on the endpoint. If part of the cohort shows a shorter chain, their Clients are behind — upgrade rather than quietly narrowing the criterion.</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>Underlay graphs empty</h4><p>Underlay probes need Socket v21.1.18975+ (vSocket v22+); remote users need Client Windows 5.17 / macOS 5.10+; users working behind a Socket need the Office Mode toggle enabled. Without underlay data you cannot make the circuit-versus-tunnel case — fix this before a last-mile criterion is tested.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛜</div><div><h4>Wi-Fi blamed unfairly</h4><p>The Wi-Fi node leans on Windows location services, which users can disable — and −67.43 dBm scores Fair by a whisker while the real fault may sit elsewhere. Before a Wi-Fi verdict, cross-check the last mile: overlay and underlay both clean puts the fault at the access layer; both lossy moves it to the circuit.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗺️</div><div><h4>Traceroute tabs empty</h4><p>Last Mile Routes come from the predefined Underlay Path Trace probe; Application Routes need a custom Traceroute probe in the policy — and both need Socket v25+, an early-availability gate. If the pilot Sockets are older, scope Path Analysis out honestly rather than promising it.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scores are relative, not an SLA:</strong> Good/Fair/Poor for applications is
+          judged against the app's AI baseline — better, in-range or worse than expected. Write
+          absolute numbers into criteria only where the thresholds are published (the node table in
+          the solution section), never for the app score itself.</li>
+          <li><strong>Anomaly stories arrive late by design:</strong> the Experience Anomaly engine
+          baselines TTFB per site-and-app pair for 14 days before evaluating daily — in a
+          three-to-four-week PoV, stories are a closing exhibit, not a week-one deliverable.</li>
+          <li><strong>Three-month window:</strong> Experience Monitoring time ranges cap at three
+          months — capture dated artefacts weekly per the PoV framework rather than excavating at
+          wrap-up.</li>
+          <li><strong>The ISP pack is evidence, not a lever:</strong> 1,010 probes of hop-by-hop
+          loss turns "no fault found" into a documented dispute — how fast the carrier acts on it
+          is the carrier's metric, so the criterion is "pack produced", not "circuit fixed".</li>
+          <li><strong>Licence honesty:</strong> if the DEM trial entitlement lapses at PoV end, the
+          dashboards the customer just learnt to run go dark — put the commercial follow-on on the
+          wrap-up agenda, not in the small print.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwinding is deliberately trivial because nothing was enforced —
+        delete (or disable) the two probe-policy rules and the probes, and delete the recurring
+        report schedule to stop the emails. No traffic was blocked, shaped or inspected differently
+        at any point. Export the report PDFs, the copied traceroute packs and the dated screenshots
+        before tenant access ends — the evidence outlives the trial, and
+        <span class="path">Administration → Audit Trail</span> holds the record of everything the
+        PoV added and removed.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

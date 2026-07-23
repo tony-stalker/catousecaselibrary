@@ -278,6 +278,208 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo replays an acquisition; the PoV replays it <strong>on the clock</strong>. This is an
+        agility-timing pilot: every success criterion is an elapsed time, started and stopped at events
+        both sides can point to, performed by the customer's own administrator with you watching — timed
+        and witnessed, never asserted. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: the clocks are agreed at the
+        scope workshop before anything is configured, and each measured time lands in the evidence
+        register as a dated artefact. Nothing in this pilot inspects content or blocks traffic — it is
+        pure moves-adds-changes, so privacy sign-off never sits on the critical path.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <p>Five criteria, five stopwatches. Agree the exact start and stop event for each row at the
+      workshop — the elapsed time <em>is</em> the deliverable, so an ambiguous clock is a failed
+      criterion:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>The timed run</th><th>Start / stop events</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>New site, socket in a box</strong></td>
+              <td>A pilot branch stood up by whoever is on site — plug the Socket into power and the ISP handoff, no engineer, no console cable — until real traffic passes</td>
+              <td>Start: Socket powered on (photograph the timestamp). Stop: tunnel up in Topology and the first flows in App Analytics for the new site</td>
+              <td>Monitor → Topology&nbsp;· Monitor → App Analytics</td>
+            </tr>
+            <tr>
+              <td><strong>Global policy change</strong></td>
+              <td>A rule change published once and propagated to every PoP — no push jobs, no maintenance window, no per-device rollout</td>
+              <td>Start: Publish clicked. Stop: My Policy Changes shows 100&nbsp;% propagation (Cato's documented average is under a minute)</td>
+              <td>Notifications (bell) → My Policy Changes</td>
+            </tr>
+            <tr>
+              <td><strong>Bandwidth change, no truck roll</strong></td>
+              <td>The pilot site's configured link bandwidth raised in the CMA — the kind of change that used to mean a circuit order or a site visit</td>
+              <td>Start: Site Configuration edit saved. Stop: the new ceiling visible in the site's Real Time throughput graphs under load</td>
+              <td>Network → Sites → Site Configuration&nbsp;· Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Pop-up site: up <em>and</em> down</strong></td>
+              <td>A temporary site — a project office, an event stand, an M&amp;A war room — created, passing traffic, then cleanly decommissioned with the licence and Socket back in the pool</td>
+              <td>Two clocks: creation (definition applied → traffic passing) and teardown (decommission started → site deleted, Socket showing <em>Installed</em>)</td>
+              <td>Network → Sites&nbsp;· Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td><strong>Every change attributed</strong></td>
+              <td>The whole pilot re-read from the audit log: each change above shown with who made it, when, and the previous and new values</td>
+              <td>No clock — the stop condition is completeness: one Audit Trail view covering all four runs with nothing unattributed</td>
+              <td>Administration → Audit Trail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot branch Socket plus one spare Socket for the pop-up (any model — the point is reuse), shipped to site before the timed day. The courier is not part of the criterion; the clock starts at power-on.</li>
+          <li><strong>Licences:</strong> a site licence for the pilot branch and one spare for the pop-up. A site without an assigned licence does not pass traffic — the pop-up criterion depends on that spare, so agree it with the commercial team up front (<a href="https://knowledge.catonetworks.com/docs/assigning-site-licenses-for-new-cato-accounts" target="_blank" rel="noopener">site licences</a>).</li>
+          <li><strong>Firewall ports</strong> where a Socket sits behind an existing edge firewall: outbound UDP 53, UDP 443 and TCP 443, plus DNS resolution of the Cato service domains — vpn.catonetworks.net, the cc2 controllers and steering.catonetworks.com (<a href="https://knowledge.catonetworks.com/docs/cato-socket-connection-prerequisites-and-known-limitations" target="_blank" rel="noopener">Socket connection prerequisites</a>).</li>
+          <li><strong>An API key</strong> under Administration → API &amp; Integrations if the sites are defined as code — the same Terraform definition from the demo runbook works unchanged.</li>
+          <li><strong>A named witness:</strong> the customer administrator who performs every change, and an agreed timestamp source (the CMA's own event times plus a phone camera for the physical steps). Agility proven by the vendor's own engineer proves nothing — the customer drives, you navigate.</li>
+          <li><strong>Not needed:</strong> TLS inspection, threat modules or identity integration — this pilot times the network plumbing. If the customer wants the timed policy change to name an acquired Entra ID group (the full M&amp;A story), stage the directory integration first and add it as a sixth criterion rather than blocking these five.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Agree the clocks, then build the register</h4>
+          <p>One row per criterion: start event, stop event, who performs it, who witnesses it. Ban
+          retrospective timing — if a run was not clocked live, it reruns. This discipline is what makes
+          the wrap-up unarguable: the register holds elapsed times with artefacts either side, not
+          recollections.</p>
+        </li>
+        <li>
+          <h4>Define the sites as code — the definition file is your template</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Reuse the demo runbook's Terraform definition for both the pilot branch and the pop-up —
+          name, connection type, native range, location is everything a site needs
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-cma-to-add-sites" target="_blank" rel="noopener">adding sites in the CMA</a>).
+          The CMA has no separate site-template construct; the versioned definition file <em>is</em> the
+          template, which is precisely the point — the pop-up is a copy-paste-edit of the pilot branch,
+          and the next acquisition is a <code>for_each</code> over a CSV. Creating the site in the CMA
+          works identically if the customer prefers clicks to code; time it either way.</p>
+        </li>
+        <li>
+          <h4>Run the zero-touch clock</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>On the timed day: whoever is on site connects the ISP handoff to the Socket's WAN port,
+          LAN to port 1, and powers on — that photograph starts the clock. The Socket connects to an
+          optimal PoP automatically and upgrades its own firmware if needed
+          (<a href="https://knowledge.catonetworks.com/docs/socket-x1500-deployment-guide" target="_blank" rel="noopener">X1500 deployment guide</a>).
+          One admin action remains — zero-touch, not zero-click: the CMA raises an <em>Activate New
+          Socket</em> notification and the witness assigns the Socket to the waiting site. Tunnel up in
+          Topology, first flows in App Analytics: stop the clock. Time the pop-up site's creation the
+          same way.</p>
+        </li>
+        <li>
+          <h4>Time the global policy change</h4>
+          <p><span class="path">Notifications (bell) → My Policy Changes</span></p>
+          <p>Have the witness edit a rule that touches the new site — adding it to a network rule or a
+          WAN firewall rule is ideal, because its hit count later proves the rule is live. Changes save
+          into a private unpublished revision (name it after the criterion), and nothing applies until
+          Publish
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-policy-revisions" target="_blank" rel="noopener">policy revisions</a>).
+          Publish, then watch My Policy Changes track the change to 100&nbsp;% across every relevant PoP —
+          <a href="https://knowledge.catonetworks.com/docs/visibility-for-publishing-cma-policies" target="_blank" rel="noopener">Cato's documentation</a>
+          states policy changes propagate on average in under a minute. Screenshot the completed status
+          with its timestamp against the publish time: that artefact is the criterion.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-network-rules.png" alt="Cato Management Application Network Rules page showing an ordered, published rulebase with app-aware match chips, bandwidth priority tiers, routing methods and per-rule hit counts" loading="lazy">
+            <figcaption>The rulebase the timed change lands in: one published revision governing every site — including the one that came on-net this morning — with per-rule hit counts as the proof the change is not just propagated but firing.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Time the bandwidth change</h4>
+          <p><span class="path">Network → Sites → Site Configuration</span></p>
+          <p>Raise the pilot site's configured upstream/downstream on the WAN interface — whole numbers
+          or one decimal, within what the licence and the physical line support — and save. Start a bulk
+          transfer and watch the throughput ceiling move in the site's Real Time graphs. Contrast this
+          out loud with the legacy answer: a circuit order measured in weeks or an engineer visit
+          measured in days, versus a witnessed edit measured in minutes. If the commercial licence
+          itself changes mid-contract, that is an account-team conversation — what the PoV proves is
+          that <em>applying</em> the change is an edit, not a truck roll.</p>
+        </li>
+        <li>
+          <h4>Stand the pop-up down — and time that too</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Agility cuts both ways: the pop-up criterion only passes when the site is gone and the
+          parts are reusable. Follow Cato's documented decommission sequence — remove the site from
+          groups and policies, unassign its licence, unassign the Socket (Site Configuration → Socket →
+          Actions → Unassign), wait for the Socket to show <em>Installed</em> under Sockets &amp;
+          Accessories, then delete the site
+          (<a href="https://knowledge.catonetworks.com/docs/decommissioning-a-socket-site" target="_blank" rel="noopener">decommissioning a Socket site</a>).
+          The licence returns to the pool and the Socket goes back in the drawer for the next pop-up —
+          screenshot the empty slot in Topology and the <em>Installed</em> status as the stop
+          artefacts.</p>
+        </li>
+        <li>
+          <h4>Close with the audit trail</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Filter the Audit Trail to the pilot window and walk it with the witness: site created,
+          Socket assigned, policy published, bandwidth edited, site deleted — each entry attributed to
+          the named administrator with previous and new values shown for the policy changes
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">using the Audit Trail</a>).
+          For a network team inheriting an acquisition, this is the quiet closer: every change the
+          pilot made is already evidenced to change-control standard, with nothing written up by
+          hand.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up the register holds four elapsed times and one completeness check: power-on to
+        passing traffic for the pilot branch; publish to 100&nbsp;% propagation with the sub-minute
+        screenshot; the bandwidth edit with its before/after Real Time graphs; the pop-up's two clocks
+        book-ended by the <em>Installed</em> Socket status; and the Audit Trail view that attributes the
+        lot. Put the times next to the customer's own history — their last new site, their last global
+        firewall change, their last bandwidth upgrade — and let the register argue the M&amp;A case: an
+        acquisition is just these four moves repeated per site.
+      </p>
+      <!-- capture-wanted: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp -->
+      <!-- capture-wanted: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation -->
+      <!-- capture-wanted: Administration → Audit Trail filtered to the pilot window — site create, socket assign, policy publish, bandwidth edit and site delete attributed to one named admin with previous/new values -->
+      <!-- capture-wanted: Sockets & Accessories showing a decommissioned Socket back in Installed state, ready for reassignment -->
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Socket powers on but never connects</h4><p>Nearly always the upstream firewall at the new site. Check outbound UDP 53, UDP 443 and TCP 443, and that the Socket can resolve vpn.catonetworks.net, the cc2 controller domains and steering.catonetworks.com. Fix the allowlist before touching the Socket — and pre-stage these rules at pop-up venues you don't control.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔔</div><div><h4>No "Activate New Socket" notification</h4><p>The Socket may still be pulling its firmware upgrade — the notification follows the upgrade, so give it time on a slow link. Check the Socket's status under Sockets &amp; Accessories; a unit reused from a previous site that still shows <em>Delivered</em> may need a factory reset before it re-registers.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Second WAN link won't tunnel</h4><p>A documented limitation: with a NAT device between Socket and PoP, source-port rewriting can stop one or more WAN links connecting. Give the Socket public-facing paths or NAT rules that preserve source ports — worth checking before a timed run at a site behind someone else's router.</p></div></div>
+        <div class="benefit"><div class="b-icon">📭</div><div><h4>My Policy Changes shows nothing</h4><p>By design it tracks only policies you <em>Publish</em> (not pages that merely Save), only your own changes, and only the last 30 days. Make sure the witness who clicks Publish is the one watching the propagation — another admin's session will not see the entry.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>The change isn't in the Audit Trail yet</h4><p>The KB notes policy changes can take several minutes to be recorded in the Audit Trail — that is logging latency, not propagation. Time propagation in My Policy Changes; read attribution in the Audit Trail afterwards. Don't let the two clocks get conflated in front of the customer.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Site won't delete cleanly</h4><p>Teardown fails when dependencies remain: the site is still referenced in groups or policies, or the licence and Socket are still assigned. Follow the decommission order exactly — references, licence, Socket, then delete. A site left without a licence outside this flow simply goes Disabled and stops passing traffic, which is not the tidy exit the criterion demands.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Zero-touch has one admin click.</strong> Nobody technical is needed at the site, but activating a new Socket is a deliberate CMA assignment, not silent auto-adoption — frame it as a security feature, because it is one.</li>
+          <li><strong>Licences bound the agility.</strong> Configured bandwidth must sit within the site's licence, and an unlicensed site does not pass traffic. Rapid moves-adds-changes are an operational reality inside the licence pool; changing the pool itself is a commercial motion — keep the two distinct in the criteria.</li>
+          <li><strong>The propagation figure is an average.</strong> "Under a minute" is Cato's documented average, not a per-change guarantee — time several publishes across the pilot rather than betting the criterion on one run.</li>
+          <li><strong>Audit Trail windows:</strong> records are available for 12 months, viewed up to 3 months at a time — ample for the pilot, but export the filtered view into the evidence register anyway so the artefact outlives the tenant access.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>The pop-up teardown already proved the exit works — repeat it for the pilot branch if it is
+        not converting to production: decommission per the documented sequence, revoke the PoV API key
+        under Administration → API &amp; Integrations, and delete the timed test rules from the next
+        published revision. The register — five criteria, four elapsed times, one attributed audit view —
+        walks straight into the decision meeting, and the M&amp;A conversation writes itself from
+        there.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

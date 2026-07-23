@@ -445,6 +445,227 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo builds a wall in minutes; the PoV proves one <strong>holds</strong> — for a
+        fortnight, on the firm's own tenant, between two named matter teams. Pick the pair with the
+        conflicts team: two teams already behind a declared information barrier, or a synthetic pair
+        stood up for the pilot — here they are the fictional <em>Matter A</em> and <em>Matter B</em>
+        teams, with Priya on Matter A, Sofia on Matter B and Marcus as the fee-earner who will change
+        teams mid-pilot. The pilot enacts rows 1–4 and 6 of the
+        <a href="#sector-policies">starter rulebase above</a> as a slice, nothing more. Agree the
+        criteria below <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The wall holds — both ways</td>
+              <td>A Matter A identity cannot reach the Matter B workspace segment, and vice versa — each attempt lands as a block event naming the user and the wall rule, not a silent timeout</td>
+              <td>A dated block-event pair, one per direction, each carrying user, rule name, action and destination</td>
+              <td>Monitor → Events · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>The wall survives location changes</td>
+              <td>The same cross-wall attempt is blocked by the same rule from the office, from home and from court Wi-Fi — the barrier is identity, not geography</td>
+              <td>Three block events, identical rule and user, three source contexts</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Per-matter flows are evidenced</td>
+              <td>For each matter workspace, one filtered view lists every identity that reached it during the pilot — and contains only that matter's team: the SRA-style audit trail of the barrier working</td>
+              <td>Events export per matter workspace, named users only, for the pilot period</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Privileged material is visible in flight</td>
+              <td>A privileged-class test document bound for personal cloud storage matches the predefined Legal ML profile in monitor — evidenced, with nothing blocked yet</td>
+              <td>DLP event showing the matched Legal classifier, user and destination</td>
+              <td>Monitor → Events · Monitor → Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>A team move flips access in a measured window</td>
+              <td>Moving a fee-earner between matter groups in the IdP flips their access — old workspace blocked, new one allowed — within a sync window the customer measures rather than takes on trust</td>
+              <td>Three timestamps: IdP group change, first blocked old-matter attempt, first allowed new-matter access</td>
+              <td>IdP console · Access → Users · Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The conflicts team nominates the wall.</strong> The pilot evidences a barrier
+          the firm's information-barrier policy already governs — Cato does not define who is walled
+          from what. Get the pair, and the COLP's awareness, in writing at the workshop.</li>
+          <li><strong>Two addressable workspaces.</strong> The wall is network policy, so the two
+          matter workspaces must be distinct WAN destinations — separate hosts, subnets or
+          application segments. If both matters sit behind one DMS front-end on one address, agree
+          the segment mapping (or a test-workspace pair) before week one, not mid-pilot.</li>
+          <li><strong>Identity first, and flat.</strong> The matter-team groups sync from the firm's
+          IdP via SCIM before any rule is written — and they must be flat: nested-group provisioning
+          is not supported over SCIM, so flatten in the IdP (design patterns in
+          <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>Both teams on Cato end to end</strong> — the pilot office behind a socket and
+          every pilot fee-earner on the Cato Client, so the office / home / court Wi-Fi criterion is
+          an honest test of one policy, not three.</li>
+          <li><strong>TLS inspection staged first for the DLP slice only.</strong> The wall proofs
+          need no decryption; the Legal-profile slice does. Stage TLSi for the pilot cohort per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with
+          whoever owns privacy signing the scope.</li>
+          <li><strong>Licences</strong> — ZTNA/SDP covering the pilot cohort for the period, and the
+          DLP capability in scope for the monitor slice.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Provision the matter-team groups</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Sync two flat IdP groups — <em>WALL-A</em> and <em>WALL-B</em> — via SCIM and confirm
+          the rosters under Users match the conflicts register exactly: Priya in WALL-A, Sofia in
+          WALL-B, Marcus starting in WALL-A. Membership changes reflect in near real time once the
+          IdP syncs, and every rule in this pilot references these groups — so the team-move drill
+          later rides the same mechanism
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Author the wall — monitor-first</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Create the four rules of blueprint rows 1–4: each team allowed to its own workspace
+          segment, and — for week one only — the two cross-wall rows set to <strong>Allow</strong>
+          with tracking on Events rather than Block. Rules evaluate top-down, first-match, over the
+          final implicit ANY ANY block, and take users and groups as source objects
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-wan-firewall-policy" target="_blank" rel="noopener">Managing the WAN Firewall Policy</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/reference-for-rule-objects" target="_blank" rel="noopener">Reference for Rule Objects</a>).
+          The monitor week earns its keep twice: it proves the rules match the right traffic before
+          anything blocks, and any cross-wall hit it records is a finding about today's flat network
+          — reachability the current estate cannot even see.</p>
+          <!-- capture-wanted: «CMA Security → WAN Firewall — symmetric wall rule pair scoped to two IdP matter-team groups» -->
+        </li>
+        <li>
+          <h4>Enforce, then stage the cross-wall test</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Monitor → Events</span></p>
+          <p>Start of week two: review the monitor week's events with the customer, then flip the two
+          cross-wall rows to <strong>Block</strong>. Run the test that anchors the PoV: Priya opens
+          her own Matter A workspace (allow, named rule), then attempts Matter B — blocked, attributed
+          to her identity, dated. Sofia mirrors it in the other direction. Screenshot the pair: the
+          barrier proven both ways, as evidence rather than assertion.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — cross-wall WAN Firewall block event attributed to a named user, beside the same user's own-matter allow» -->
+        </li>
+        <li>
+          <h4>Move the attempt, not the policy</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Priya repeats the cross-wall attempt from home on the Cato Client, and again from court
+          Wi-Fi. Same rule name, same block, three source contexts — filter events to her identity
+          and show the three rows side by side. This is the criterion the flat-VPN estate cannot
+          meet: the wall is enforced at the PoP, so location never re-decides policy.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one identity, the same wall-rule block from office, remote and public Wi-Fi source contexts» -->
+        </li>
+        <li>
+          <h4>Add the Legal DLP slice — monitor only</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>One Data Control rule scoped to the two pilot groups: uploads to personal cloud storage,
+          matched against Cato's predefined <strong>Legal</strong> profile — ML classifiers for
+          agreements, patents, court documents and powers of attorney — tracking events, blocking
+          nothing
+          (<a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/dlp-content-profiles" target="_blank" rel="noopener">DLP Content Profiles</a>).
+          Trigger it with a fictional privileged-style test document, never a real one. Scoping is
+          group- and data-type-based, not matter-aware — say so in the sync, exactly as the
+          obligation map above does. The GenAI half of the data story belongs to
+          <a href="ai-legal-genai.html">Law Firms: GenAI with Privilege Intact</a> — keep it out of
+          this pilot's scope.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — DLP monitor event matching the Legal ML classifier profile on an upload to personal storage» -->
+        </li>
+        <li>
+          <h4>Run the team-move drill</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Monitor → Events</span></p>
+          <p>Mid-pilot, the customer moves Marcus from WALL-A to WALL-B in the IdP — always at the
+          IdP, never in Cato directly. Record three timestamps: the IdP change, his first blocked
+          Matter A attempt, his first allowed Matter B access. Set expectations from the
+          documentation, then measure: Entra ID initiates its automatic sync roughly every
+          40 minutes, and on-demand provisioning does not cover group assignment — so the window is
+          the sync cycle, and the criterion is the number you record, not "instant"
+          (<a href="https://knowledge.catonetworks.com/docs/scim-provisioning-with-entra-id-formerly-azure" target="_blank" rel="noopener">SCIM Provisioning with Entra ID</a>).
+          The same drill, run with removal instead of a move, is the leaver story from the demo —
+          one mechanism, evidenced twice.</p>
+        </li>
+        <li>
+          <h4>Assemble the per-matter evidence pack</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Administration → Audit Trail</span></p>
+          <p>Filter events by each matter workspace as destination and export: every identity that
+          reached it, when, under which rule — a list that should read as the matter team's roster
+          and nothing else. Add the cross-wall block pairs, the three-location set, the DLP monitor
+          events and the Audit Trail of every policy change, dated into the evidence doc. At the
+          wrap-up this pack goes to the COLP as the network layer's contribution to the firm's
+          "effective measures" file — evidence for the firm's judgment, not a substitute for it.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-dlp-ml-classifiers.png" alt="CMA Data Types catalogue with Predefined ML Classifiers selected, listing document-classifier families including Legal and Contracts among seventeen categories" loading="lazy">
+        <figcaption>The classifier shelf the DLP slice draws on (demo tenant): predefined ML document families including <em>Legal</em> and <em>Contracts</em>. The pilot's monitor rule pairs the Legal profile with the two matter-team groups — evidence of privileged-class material in flight, without blocking a single deadline.</figcaption>
+      </figure>
+      <p>
+        The wall itself should look like the rulebase screenshot in
+        <a href="#solution">the solution section above</a>: your four pilot rows sit in exactly that
+        construct — group-scoped allows over the implicit deny, hit counts accumulating as the
+        fortnight's quiet evidence that each team touched only its own matter.
+      </p>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Group roster doesn't match the register</h4><p>Members missing from a synced group usually belong via a nested group — nested-group provisioning is not supported over SCIM. Flatten in the IdP so every member is direct, re-sync, and re-check the roster against the conflicts register before any rule is trusted.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚪</div><div><h4>The wall "leaks" via a side door</h4><p>A Matter B document reaches a Matter A fee-earner through a shared mailbox or the DMS's own sharing. Be honest: the network wall governs reachability to the workspace segment; DMS-internal permissions and mail flow are the DMS's and mail platform's job. Record it as a finding for those controls — never claim the network rule should have caught it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Cross-wall attempt not blocked</h4><p>Rules are first-match top-down: check nothing above the wall rows (a broad site-to-site allow is the classic) matches first, that both directions are covered by the rule pair, and that the event attributes the flow to the user — an unattributed flow means the identity chain, not the wall, failed.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>The block happened but no event shows it</h4><p>Tracking is per rule — a rule with Events unticked matches silently, and the blocked-attempt artefact is the criterion. Confirm every pilot row generates Events, then re-run the attempt.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Team move slower than expected</h4><p>Entra ID's automatic cycle runs roughly every 40 minutes, and on-demand provisioning does not assign group membership — wait for the cycle rather than "fixing" membership in Cato, where an IdP-sourced change would be overwritten anyway. Record the real window; it is the criterion.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>DLP slice sees nothing</h4><p>Almost always TLS inspection: the Legal classifiers need content, so the pilot cohort must be in TLSi scope with personal cloud storage not sitting in a bypass rule. Re-test with the fictional document after checking the TLSi events for the destination.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The wall evidences separation; the firm's policy governs it.</strong> Conflicts
+          decisions, wall declarations and the judgment that combined measures meet the SRA's
+          "effective measures" bar remain the firm's and its COLP's — nothing here is legal advice,
+          and the PoV output is input to that judgment, not a certificate.</li>
+          <li><strong>Network reachability is the scope.</strong> DMS-internal permissions, mail,
+          seating and undertakings are other layers of the barrier — this pilot proves the network
+          layer, deliberately and only.</li>
+          <li><strong>The monitor week is an Allow.</strong> For week one the cross-wall rows watch
+          rather than block; the customer accepts that knowingly, and it is what makes the week-two
+          block evidence honest.</li>
+          <li><strong>The DLP slice is class-aware, not matter-aware</strong> — it evidences
+          privileged-class material leaving, not one matter's files specifically. Keep the claim
+          exactly that size.</li>
+          <li><strong>The sync window is measured, not promised.</strong> Quote the timestamps from
+          the drill, never "same day" as an adjective.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the four wall rows and the DLP slice rather than
+        deleting them — hit counts and events are the pilot's record; de-scope the pilot groups from
+        SCIM only if they were created for the PoV; and hand the evidence pack to the COLP whatever
+        the verdict, because the questionnaire it answers will arrive regardless. If the decision is
+        a yes, the pilot rows are the firm's first production wall — already live, already evidenced,
+        and the pattern every subsequent conflict repeats.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

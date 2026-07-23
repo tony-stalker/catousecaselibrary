@@ -531,6 +531,228 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The PoV is the migration plan in miniature, run at one EdgeConnect hub: a parallel
+        Socket beside the EC hub appliance, an eBGP handoff exchanging routes with the fabric —
+        subnet sharing and every BIO left exactly as they are — one branch cut over behind it,
+        one overlay's intent translated as the pilot policy slice, and the Boost question
+        answered with measurements instead of promises. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: agree the success
+        criteria below with the customer <em>before</em> anything is configured, and book the
+        decision meeting at the same workshop.
+      </p>
+
+      <h3>Success criteria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Criterion — what we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>The eBGP hub handoff is established and exchanging routes: EC-fabric prefixes learned by Cato, Cato prefixes redistributed into subnet sharing</td>
+              <td>Show BGP Status with the neighbour Established, the account routing table, and Orchestrator's routes view showing the Cato prefixes — captured side by side</td>
+              <td><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>The pilot branch, cut to a Cato Socket, reaches un-migrated EC branches through the hub handoff — and they reach it back</td>
+              <td>Bidirectional reachability tests; the branch prefix visible in subnet sharing via the handoff; legacy prefixes in Cato's routing table with AS path and communities</td>
+              <td><span class="path">Monitor → Topology</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>One BIO's intent runs as the pilot slice — an app-aware network rule plus a bandwidth profile — with every match tracked as events, nothing enforced by surprise</td>
+              <td>Per-rule hit counts and rule events for the translated slice, compared against Orchestrator's overlay statistics for the same applications</td>
+              <td><span class="path">Network → Network Rules</span> and <span class="path">Network → Bandwidth Management</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td><strong>The Boost honesty test</strong>: the flagged Boost-dependent flow re-baselined on Cato — throughput and completion time measured against the business window agreed up front, not against the dedup ratio</td>
+              <td>Timed transfer runs on Cato beside Orchestrator's Boost data-reduction report for the same workload, both dated into the evidence doc</td>
+              <td><span class="path">Monitor → App Analytics</span> (pilot site), plus the transfer logs</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>The pilot site's formerly service-chained web traffic is inspected natively at the PoP — its SSE tunnel is simply not rebuilt</td>
+              <td>Events filtered to the pilot site showing firewall and IPS verdicts attributed to named users; the SSE tenant showing no traffic from the site</td>
+              <td><span class="path">Monitor → Events</span> and <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Rollback is real: the EC spoke re-enabled in Orchestrator, subnets back in subnet sharing, BGP reconverged — timed, then cut forward again</td>
+              <td>Timestamped routing tables before / during / after, and a continuous ping across the reversion showing convergence time</td>
+              <td><span class="path">Network → Routing Table</span> and Orchestrator's routes view</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Two sockets shipped: one for the hub (parallel, alongside the EC appliance), one for the pilot branch. Socket firmware matters: BGP filtering on socket sites needs Socket v21.1+, and the &lt;Cato ASN&gt;:32768 isolated-route community needs v15+.</li>
+          <li>A spare routed interface (or 802.1Q sub-interface) on the EC hub's LAN side, an agreed transit VLAN and /29 for the handoff, and private ASNs agreed — Cato is eBGP-only with default ASN 64515, so the EC side must differ.</li>
+          <li>Design confirmation that the hub appliance's BGP peer type redistributes Cato-learned routes into subnet sharing — BGP-PE-learned routes deliberately are not shared (see the HPE subnet-sharing tech note in Resources).</li>
+          <li>Orchestrator access for the window: disabling and re-enabling the pilot spoke, reading Boost data-reduction reports, and exporting the overlay statistics used as the parity baseline.</li>
+          <li>The Boost-dependent flow and its business window named at the workshop, from the Phase-1 Boost inventory — criterion 4 is meaningless without an agreed pass threshold.</li>
+          <li>Trial licences for every capability under test, and TLS inspection staged first if content-level parity against the SSE tenant is to be judged — certificates on the pilot cohort in advance (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Change windows booked for the branch cutover and the deliberate rollback drill; both policy planes — Orchestrator and the SSE tenant — frozen except for mirrored changes.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Stand up the parallel Socket at the hub — transit VLAN and eBGP</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>Cable the parallel socket's LAN port to the hub switch, carry the transit VLAN to the
+          EC appliance's LAN side, and create the BGP neighbour on the Cato site: Cato's ASN
+          64515 (the default), the EC hub's private ASN as peer, the appliance's transit-VLAN IP
+          as peer IP. Leave the defaults unless design says otherwise — metric 100, hold time
+          60&nbsp;s, keep-alive 20&nbsp;s — and enable MD5 authentication
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">KB: configuring BGP neighbours for a socket</a>).
+          In Orchestrator, enable BGP on the hub appliance's transit interface and set the peer
+          type so learned routes redistribute into subnet sharing. Advertise <em>summary
+          routes</em> for the Cato side — Cato does not aggregate learned routes for you, so
+          define the summaries explicitly.</p>
+          <pre class="code"><span class="cmt"># Handoff design sheet (illustrative)</span>
+<span class="kw">Transit</span>    VLAN 3999 · 10.255.99.0/29
+<span class="kw">Socket</span>     10.255.99.1 · AS 64515 (Cato default)
+<span class="kw">EC hub</span>     10.255.99.2 · AS 65020 (must differ — Cato is eBGP-only)
+<span class="kw">Timers</span>     metric 100 · hold 60 s · keep-alive 20 s · MD5 on
+<span class="kw">Advertise</span>  Cato-side summaries only, e.g. 10.60.0.0/16
+<span class="kw">Filter</span>     drop 0.0.0.0/0 · drop prefixes of half-migrated sites</pre>
+        </li>
+        <li>
+          <h4>Filter the exchange before it can hurt anyone</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>On the neighbour, add inbound filtering — an accept or drop list matched on route or
+          community: drop the default route and the prefixes of any site with parallel
+          connectivity, so a half-migrated site is never reachable via two paths at once
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-bgp-filtering" target="_blank" rel="noopener">KB: BGP filtering</a>).
+          Two behaviours to know: editing BGP filters resets the session immediately (build
+          window, not mid-test; inbound filters cap at 500 CIDRs), and prefixes the EC side tags
+          with <strong>&lt;Cato ASN&gt;:32768</strong> install only in the hub socket's routing
+          table and are never propagated to the PoP. The pilot branch sits across the backbone,
+          so the prefixes it must reach cannot carry that community.</p>
+        </li>
+        <li>
+          <h4>Validate routing on both sides — before anything moves</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>Advertise a test prefix first. Use Show BGP Status on the neighbour to confirm the
+          session is Established and inspect learned routes, then open the account routing table
+          (<a href="https://knowledge.catonetworks.com/docs/showing-the-routing-table-for-your-account" target="_blank" rel="noopener">KB: account routing table</a>):
+          filter to the exchanged prefixes and check next hop, AS path and received communities,
+          with the active-routes toggle on. Mirror the check in Orchestrator — the hub
+          appliance's routes view must show the Cato test prefix redistributed into subnet
+          sharing, or the peer typing is wrong and criterion 1 fails before it starts.</p>
+        </li>
+        <li>
+          <h4>Cut the pilot branch to a Socket</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>The standard spoke move: disable the branch's EC spoke in Orchestrator — its subnets
+          withdraw from subnet sharing and, at the hub, from the eBGP exchange — bring up the
+          Cato socket site, and let routes propagate to both domains. Then prove criterion 2 both
+          ways: from the migrated branch to a host behind an un-migrated EC branch, and from that
+          branch back — traffic crossing the backbone to the hub socket, the eBGP handoff, and
+          the EC fabric.</p>
+        </li>
+        <li>
+          <h4>Translate one overlay as the pilot slice — tracked, not enforced</h4>
+          <p><span class="path">Network → Network Rules</span> <span class="path">Network → Bandwidth Management</span></p>
+          <p>From the overlay-intent inventory take one BIO — the business-critical overlay in
+          the worked example on <a href="migration-edgeconnect-policy.html">EdgeConnect Policy
+          Migration</a> — and land it as an app-aware network rule with a bandwidth profile
+          (P20, limits that bite only under congestion) and Active TCP Acceleration on. Its
+          topology restriction becomes a WAN Firewall rule and its breakout behaviour an
+          Internet Firewall rule, each with Track = Event and block actions deferred. Rule
+          events and hit counts against Orchestrator's overlay statistics for the same
+          applications are criterion 3's evidence.</p>
+        </li>
+        <li>
+          <h4>Run the Boost honesty test</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>Take the flagged flow — say the nightly file replication between the pilot branch
+          and the DC. Export Orchestrator's Boost data-reduction report for it as the
+          &ldquo;before&rdquo;, then run the same transfer through the socket with TCP
+          acceleration active
+          (<a href="https://knowledge.catonetworks.com/docs/explaining-the-cato-tcp-acceleration-and-best-practices" target="_blank" rel="noopener">KB: TCP acceleration best practices</a>),
+          both runs cold — dedup ratios inflate on repeat data. Record completion time and
+          sustained throughput, and judge against the agreed business window. Either verdict is
+          a finding: a pass is evidence; a miss prices the mitigations — last-mile sizing,
+          replication windows, application-native dedup — into the project design instead of
+          discovering them at cutover.</p>
+        </li>
+        <li>
+          <h4>Prove native inspection for the pilot cohort</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>The pilot site's internet traffic now egresses inspected at the PoP; its SSE tunnel
+          is simply not rebuilt, and the Orchestrator service-chain config for the site sits
+          idle. Filter Events to the pilot site: firewall and IPS verdicts attributed to named
+          users, on the same single pass that classifies the traffic — with the SSE tenant's own
+          console showing the site gone quiet. Judge category-level parity against the SSE
+          tenant only after TLS inspection is staged; without it, matching is domain/SNI-level
+          on both platforms.</p>
+        </li>
+        <li>
+          <h4>Demonstrate rollback — deliberately, on camera</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>In a change window, run the reversion as a rehearsed drill: re-enable the EC spoke
+          in Orchestrator, watch its subnets re-enter subnet sharing and the eBGP exchange, and
+          time the reconvergence with a continuous ping running from an un-migrated branch.
+          Capture the routing table before, during and after, then cut forward again the same
+          way. This is the criterion that de-risks every later wave — the customer watches
+          routing do the work in minutes, with the EC fabric and every BIO untouched
+          throughout.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: «Network → Routing Table filtered to the exchanged prefixes — EC-fabric routes learned over the hub handoff with AS path and received communities» -->
+      <!-- capture-wanted: «Site Settings → BGP — Show BGP Status with the EC hub neighbour Established and learned routes listed» -->
+      <!-- capture-wanted: «Monitor → Events filtered to the pilot site — firewall and IPS events attributed to named users, no SSE service chain in path» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-network-rules.png" alt="CMA Network Rules rulebase with app-aware match chips, bandwidth priority column, routing methods, Active TCP Acceleration ticks and per-rule hit counts" loading="lazy">
+        <figcaption>Criterion 3's evidence surface: the pilot slice lands as ordered network rules with app-aware match, a bandwidth priority, an explicit routing method and Active TCP Acceleration — and the per-rule hit counts accumulate the proof that the translated rule is matching what its overlay matched.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-bandwidth-management.png" alt="CMA Bandwidth Management priority tiers P10 to P255 with congestion-only upload and download limits and assigned classes of traffic" loading="lazy">
+        <figcaption>The pilot BIO's QoS priority re-expressed as a bandwidth-management tier: during the PoV the slice runs at P20 with limits that only bite when the line is congested — so the evidence shows shaping under load, not throttling at rest.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Session up, but the fabric can't see Cato</h4><p>Peer typing on the EC hub: routes learned from a BGP-PE-type peer are deliberately not redistributed into subnet sharing — re-type the transit peer per the subnet-sharing tech note. Then check the Cato-side accept/drop lists, and remember every filter edit resets the BGP session.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Routes stop at the hub socket</h4><p>Prefixes tagged &lt;Cato ASN&gt;:32768 install locally on the hub socket and never reach the PoP (Socket v15+ behaviour) — so the pilot branch across the backbone cannot see them. Strip the community on the EC side, or use it only where local-to-the-hub routing is the deliberate design.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>The old overlay steers around the pilot</h4><p>An un-migrated branch still reaches the migrated subnets via a stale BIO route, static or subnet-sharing metric — traffic returns through a different path and dies at a stateful EC firewall. Check Orchestrator's routes view for lingering advertisements of the pilot prefix, and keep the pilot behind a single hub handoff so symmetry cannot be bypassed.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>Keep the Boost comparison fair</h4><p>Run both sides cold — Boost's reduction ratio inflates on repeat data — and measure completion time against the business window, not the ratio. Keep the test flow on the Cato Cloud transport: TCP acceleration is not supported on Alt-WAN or off-cloud paths, and TLS inspection activates the TCP proxy regardless of the rule toggle.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries of this PoV</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>One hub proves the pattern, not the estate.</strong> Multi-region AS-path symmetry, inbound NAT on EC appliances, EC-V dispositions and any SD-Branch population are design work for the project — park them on the next-steps register.</li>
+          <li><strong>The Boost criterion is honest by construction:</strong> the pass threshold is the business window agreed up front. A miss with a priced mitigation is a good PoV outcome; a parity promise is not.</li>
+          <li><strong>Licence edges:</strong> the threat-prevention trial must be active before inspection evidence can accumulate, and Experience Monitoring drill-downs need the DEM licence if the pilot leans on them.</li>
+          <li><strong>Evidence outlives retention:</strong> export events, routing-table captures and the Boost runs into the evidence doc weekly — do not rely on tenant retention windows at wrap-up.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the PoV ends without a project, reverse in order —
+        re-enable the pilot branch's EC spoke and confirm reachability (the rollback drill, one
+        last time); disable or delete the pilot-slice rules (they only tracked, so removal is
+        invisible); delete the BGP neighbour and its filters, remove the transit VLAN and the hub
+        appliance's transit peer in Orchestrator, and recover both sockets. Subnet sharing, every
+        BIO and the SSE tenant were never touched — that is the point of the pattern.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

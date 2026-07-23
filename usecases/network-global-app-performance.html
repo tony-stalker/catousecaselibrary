@@ -233,11 +233,12 @@
         </li>
         <li>
           <h4>Live proof: a call from the far side of the world</h4>
-          <p><span class="path">Monitor → App Analytics</span></p>
+          <p><span class="path">Home → Experience Monitoring</span></p>
           <p>Make a Teams or Zoom call from a far site — the Sydney-homed
-          <strong>aws-sydney-ipsec</strong> to London works well — then open App Analytics
-          and show the QoE view for that app: experience scored per user and site, with the latency,
-          jitter and loss behind the score.</p>
+          <strong>aws-sydney-ipsec</strong> to London works well — then open the application
+          drill-down in Experience Monitoring: experience scored per user and site, with the
+          latency and TTFB behind the score. (App Analytics shows usage and risk — the
+          experience scoring lives in Experience Monitoring.)</p>
         </li>
         <li>
           <h4>Separate last mile from middle mile</h4>
@@ -267,6 +268,209 @@
           local internet breakout projects in every country.</p>
         </li>
       </ol>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo narrates the backbone; the PoV measures it — a long-haul application-performance
+        pilot between two real geographies in the customer's estate, run inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: criteria and the measurement
+        methodology agreed at the scope workshop <strong>before anything is configured</strong>,
+        a baseline week before any comparison run, and every number captured dated against its
+        criterion. This page owns the <strong>long-haul story</strong> — latency, TTFB, acceleration
+        and egress across the middle mile. Last-mile resilience, failover and QoS under congestion
+        belong to the <a href="network-sdwan.html#pov">SD-WAN PoV runbook</a>; run the two together
+        for a full network PoV, but keep their criteria separate on the register. The examples below
+        use London&nbsp;↔&nbsp;Sydney — substitute the pair of geographies the complaints actually
+        come from.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <p>Five criteria cover the long-haul story. At the workshop, name the two sites, the pilot
+      application and the SaaS app — then agree the exact wording of each row and put it on the
+      test-case register:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Long-haul latency, side by side</strong></td>
+              <td>Round-trip time between the two pilot geographies over the backbone against today's internet/VPN path — measured in the same hour, repeated across several days</td>
+              <td>Dated RTT table for both paths, plus each site's in-tunnel Distance graph showing a short, stable hop to its local PoP</td>
+              <td>Monitor → Topology&nbsp;· Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Named-app TTFB delta</strong></td>
+              <td>The pilot application — say the intranet hosted in the London DC, used from the Sydney site — with time-to-first-byte from the far end before and after steering through the backbone</td>
+              <td>Experience Monitoring drill-down for the app: TTFB and experience score trend with the before/after windows marked</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td><strong>TCP acceleration evidenced</strong></td>
+              <td>The same single-stream transfer over the long-haul path with <em>Active TCP Acceleration</em> off, then on, in the pilot app's network rule — cold runs, same file, same hour</td>
+              <td>Timed A/B completion pairs plus the rule's hit count proving the flow matched</td>
+              <td>Network → Network Rules&nbsp;· Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Egress beside the SaaS</strong></td>
+              <td>A named SaaS app — Microsoft 365 works well — egressing at the PoP nearest the application instance rather than a regional breakout, and the far-region experience improving with it</td>
+              <td>The <em>Route via PoP</em> rule showing the selected egress location, plus the SaaS app's TTFB from the far site before and after</td>
+              <td>Network → Network Rules&nbsp;· Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td><strong>Long-haul consistency</strong></td>
+              <td>Jitter and packet loss on the backbone path graphed across the whole baseline week — flat and low, hour after hour — against spot checks of the internet path in the same windows</td>
+              <td>Transport-tab jitter/loss graphs for both ends, plus the dated internet-path probe results</td>
+              <td>Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Both ends of a real long-haul path:</strong> a socket or IPsec site at each geography — a London DC socket and a Sydney IPsec or vSocket site is the classic pair. The far end can live in a cloud region if that is where the users are.</li>
+          <li><strong>A named pilot application and a named SaaS app</strong>, chosen at the workshop from where the complaints come — not picked mid-PoV to flatter the numbers.</li>
+          <li><strong>The legacy path stays alive:</strong> side-by-side measurement needs today's internet/VPN route available for the whole PoV. Agree who runs the far-end tests and in which change windows.</li>
+          <li><strong>Test harness:</strong> a repeatable single-stream transfer (a large file over SMB/HTTPS, or single-stream iperf), a scripted TTFB probe (<code>curl -w</code> against the pilot app), and the Socket WebUI speed test for validating the lines themselves (<a href="https://knowledge.catonetworks.com/docs/best-practices-to-measure-last-mile-performance" target="_blank" rel="noopener">last-mile measurement guidance</a>).</li>
+          <li><strong>Licences:</strong> SD-WAN site licences for both ends. Base Experience Monitoring needs nothing extra; application-specific UCaaS drill-downs need the DEM add-on — check before a criterion depends on them.</li>
+          <li><strong>Transports:</strong> keep pilot flows on the Cato Cloud transport — TCP acceleration is not supported on Alternative-WAN or off-cloud transports, so a pilot path pinned to Alt-WAN cannot prove criterion three.</li>
+          <li><strong>Not needed — and actively parked:</strong> TLS inspection. Enabling TLSi activates the TCP proxy for all TLS traffic, which would erase the acceleration-off baseline run. Stage it in a security PoV afterwards via the <a href="security-tls-inspection.html">TLS inspection playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Connect both ends and record the PoP homing</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Onboard the two pilot sites and confirm each connects to its nearest PoP — note which
+          PoPs, because the segment between them is the part of the path Cato owns and the part the
+          whole PoV measures. Capture the topology view on day one: two sites, two nearby PoPs, the
+          backbone between them. That screenshot is evidence item zero.</p>
+        </li>
+        <li>
+          <h4>Write the measurement plan before touching policy</h4>
+          <p>A performance PoV lives or dies on fair methodology, so fix it in writing at the
+          workshop and never bend it mid-flight:</p>
+          <div class="callout warn">
+            <div class="co-title">The fairness rules — agree them, print them, follow them</div>
+            <ul style="margin:6px 0 0;padding-left:20px">
+              <li><strong>Same object, cache-busted:</strong> fetch the same file/URL on both paths with a unique query string per run, so neither path is quietly served by a CDN edge.</li>
+              <li><strong>Same hour, both paths:</strong> every backbone run is paired with an internet-path run inside the same window — never Tuesday's backbone against Friday's internet.</li>
+              <li><strong>Cold runs:</strong> no warm caches, no resumed transfers; new session per run.</li>
+              <li><strong>Repeat across days:</strong> at least three days, including the far site's busy hour — a single good run proves nothing about consistency.</li>
+              <li><strong>Single stream for the acceleration test</strong>, parallel streams recorded separately — and only ever compared like with like.</li>
+              <li><strong>Raw outputs kept:</strong> timestamps, transfer logs and probe output into the evidence register on the day, not summarised from memory later.</li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <h4>Steer the pilot app with a network rule</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>Create a WAN rule matching the pilot application between the two sites, with
+          <em>Active TCP Acceleration</em> left <strong>off</strong> for the baseline week — the rule
+          makes the PoP act as a TCP proxy for matching traffic, splitting the long connection into
+          client-to-PoP, PoP-to-PoP and PoP-to-destination legs, each with its own short RTT and a
+          window sized to RTT&thinsp;×&thinsp;bandwidth
+          (<a href="https://knowledge.catonetworks.com/docs/explaining-the-cato-tcp-acceleration-and-best-practices" target="_blank" rel="noopener">Cato TCP acceleration and best practices</a>).
+          Network Rules are ordered, first match wins — keep the pilot rule specific and above
+          anything broad, and watch its hit count to prove the flow matches
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-network-rules" target="_blank" rel="noopener">Configuring Network Rules</a>).</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-network-rules.png" alt="Cato Management Application Network Rules page showing an ordered rulebase with app-aware match chips, routing methods including NAT with named egress PoP locations, Active TCP Acceleration ticks and per-rule hit counts">
+            <figcaption>The two levers of the long-haul PoV in one rulebase: Active TCP Acceleration ticks per rule for the A/B, and routing methods naming egress PoP locations for the smart-egress criterion — with hit counts proving the pilot flows actually match.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Point the SaaS egress at the app's front door</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>For the named SaaS app, add an internet rule using <em>Route via PoP</em> — it "lets
+          you select the egress PoP location from which the traffic is sent to the Internet" — and
+          choose the PoP nearest the application instance (or <em>NAT</em>, to egress via a specific
+          allocated IP at that PoP, if the customer needs a fixed address for tenant allowlisting).
+          The far-region user now rides the backbone to a front door beside the app instead of
+          crossing the public internet to a regional breakout.</p>
+          <!-- capture-wanted: Network → Network Rules — Route via PoP rule editor with an egress PoP location selected for a SaaS app -->
+        </li>
+        <li>
+          <h4>Run the baseline week</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>Before enabling any optimisation, let both ends run for a week: the Transport tab
+          graphs in-tunnel Distance (round-trip to the Cato Cloud), jitter, packet loss and
+          throughput per link
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-data-for-a-site-in-real-time" target="_blank" rel="noopener">real-time site analytics</a>).
+          In the same windows, run the scripted probes over the legacy path. This week is half the
+          evidence — the internet path's hour-to-hour variance against the backbone's flat line is
+          the consistency criterion, and no staged comparison can reconstruct it later.</p>
+        </li>
+        <li>
+          <h4>Run the evidence days</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Enable <em>Active TCP Acceleration</em> on the pilot rule and run the A/B pairs per the
+          measurement plan: timed single-stream transfers off/on, TTFB probes over both paths in the
+          same hour, and the SaaS egress comparison from the far site. Experience Monitoring scores
+          the pilot app continuously through it all — TTFB, TCP connect, TLS connect and HTTP
+          latency against per-app thresholds
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a>)
+          — so the human story ("Sydney stopped complaining") lands with a measured trend behind it.
+          Every capture goes into the register dated, against its criterion, on the day.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up the register should hold five artefact sets: the same-hour RTT table for both
+        paths across several days; the pilot app's Experience Monitoring trend with the before/after
+        windows marked; the acceleration off/on transfer pairs with their rule hit counts; the
+        <em>Route via PoP</em> rule beside the SaaS app's far-site TTFB improvement; and the
+        baseline-week jitter/loss graphs against the internet-path spot checks. Experience
+        Monitoring is the thread through all of it — per-site and per-app scores, drillable from
+        account level down to the far site, with TTFB as the headline number the customer's own
+        users would recognise.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/em-home-sites.png" alt="Cato Management Application Experience Monitoring page, Sites tab, showing per-site experience scores, application counts, flows and average TTFB alongside the account experience score graph and a feed of link-quality stories">
+        <figcaption>The user-experience delta, captured: per-site experience scores with average TTFB per site — the far site's row is the number to screenshot weekly, because its TTFB trend across the PoV is the criterion-two artefact.</figcaption>
+      </figure>
+      <!-- capture-wanted: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them -->
+      <!-- capture-wanted: Home → Experience Monitoring — Applications drill-down for a WAN-hosted app showing TTFB trend across a multi-week window -->
+      <!-- capture-wanted: Site Monitoring → Real Time — Transport tab for a long-haul site: Distance, jitter and loss flat across a baseline week -->
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🗄️</div><div><h4>The internet run "won"</h4><p>Almost always cached CDN content — the test object came from an edge node ten milliseconds away on one path and from origin on the other. Cache-bust every fetch with a unique query string and compare origin-to-origin, or accept you measured the CDN, not the path.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕑</div><div><h4>Results swing run to run</h4><p>Different test hours mean a different internet — hot-potato routing and peering congestion change through the day. Only same-window pairs count; discard any run whose partner on the other path is missing, and re-run rather than average across hours.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛤️</div><div><h4>Acceleration A/B shows nothing</h4><p>Check the transport first: TCP acceleration is not supported on Alternative-WAN or off-cloud paths, and it does nothing for UDP. Then check the flow really matches the pilot rule (hit count), and that the endpoints aren't already window-tuned to fill the path.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎛️</div><div><h4>The "off" run wasn't off</h4><p>TLS inspection activates the TCP proxy for all TLS traffic regardless of the rule toggle, and complex rules or egress-IP rules can activate it automatically. Keep TLSi out of the pilot scope and the pilot rule simple, or the baseline leg of the A/B is silently accelerated too.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧵</div><div><h4>Parallel streams hide the story</h4><p>Enough parallel streams will fill a long-haul pipe with no help at all — the window-scaling win shows single-stream, which is how real file copies and replication behave. Record single-stream and parallel results separately and never compare one against the other.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Speed tests disappoint</h4><p>The DTLS tunnel adds overhead, so raw synthetic throughput through the tunnel can read below the naked line speed. Validate the line with the Socket WebUI speed test, then judge the PoV on application outcomes — completion times and TTFB — not synthetic Mbps.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Never promise percentage improvements — measure them.</strong> The gain depends on distance, loss, application chattiness and what the internet path happens to be doing that week. Write criteria as "measured side by side, methodology stated", never "40&thinsp;% faster" — a promised number that under-delivers loses a PoV the evidence was winning.</li>
+          <li><strong>The 99.999&thinsp;% SLA is PoP-to-PoP.</strong> The last mile at each end is still the local ISP — which is the <a href="network-sdwan.html#pov">SD-WAN PoV's</a> story to prove, not this one's. Keep the two fault domains separate in the criteria wording.</li>
+          <li><strong>Experience Monitoring has edges:</strong> application performance metrics are calculated for outbound TCP traffic only, history caps at three months, and data can lag by up to 30 minutes — capture dated screenshots at each weekly sync, and don't put a UDP-only app behind criterion two.</li>
+          <li><strong>Egress location is a policy choice, not magic:</strong> Route via PoP helps when the far-region user is crossing the internet to a distant breakout today. If their breakout is already local to the app instance, this criterion will show parity — check the current path at the workshop before promising a delta.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>Delete the pilot network rules — the steering rule, the acceleration toggle and the
+        <em>Route via PoP</em>/NAT egress rules — so no PoV-era routing decision lingers into
+        production unexamined, and re-run one probe pair to confirm behaviour reverted. Decommission
+        or convert the pilot sites per the commercial agreement. The measurement plan and the
+        evidence register survive: the same-hour tables walk straight into the decision meeting,
+        and the methodology becomes the template for the rollout's acceptance tests.</p>
+      </div>
     </section>
 
     <section id="resources" class="reveal">

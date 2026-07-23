@@ -333,6 +333,222 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        Be honest about what this PoV is: consolidation has no config of its own to demonstrate.
+        You prove TCO by <strong>aggregating evidence from the other pilots</strong> — the firewall
+        parity tests, the TLS inspection ratios, the DLP incidents, the failover pulls — into a
+        single consolidation evidence pack the economic buyer can read in one sitting. The success
+        criteria below are therefore about the <em>pack</em>, not about toggles: an inventory built
+        from the customer's own numbers, a coverage matrix where every row points at live pilot
+        evidence, and a renewal overlay that turns "one platform" into "these contracts, on these
+        dates". Agree them up front, per <a href="management-pov-framework.html">Running a Cato
+        PoV</a> — this page is that framework's wrap-up made into a deliverable.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we deliver</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Current-state inventory completed</td>
+              <td>A workshop with the customer produces the estate list: vendor, product, function, next renewal date, annual run cost, contract owner — <strong>their numbers, from their contracts and invoices, never ours</strong></td>
+              <td>The inventory spreadsheet, dated and owned by a named person on the customer side</td>
+              <td>Shared evidence doc (customer-side artefact — nothing in the CMA can produce this)</td>
+            </tr>
+            <tr>
+              <td>Capability-coverage matrix agreed</td>
+              <td>Every incumbent product mapped to the platform capability that replaces it — and to the linked pilot where that capability was demonstrated on their traffic</td>
+              <td>The matrix below, completed, with a pilot reference and artefact list per row — gaps conceded in writing</td>
+              <td>Evidence doc, cross-referencing the linked pilot PoV tabs</td>
+            </tr>
+            <tr>
+              <td>Two live artefacts per claim</td>
+              <td>No consolidation row is asserted on architecture alone: each carries at least two dated artefacts from the customer's own tenant (events, reports, dashboard exports)</td>
+              <td>Screenshots and report PDFs attached to each matrix row, dated within the PoV window</td>
+              <td>Monitor → Events · Home → Reports · the pilots' own evidence registers</td>
+            </tr>
+            <tr>
+              <td>Renewal-timeline overlay</td>
+              <td>The next 24 months of renewal dates from the inventory, each marked: absorb at renewal / needs a further pilot first / retain</td>
+              <td>One timeline page — inventory dates overlaid with the matrix verdicts</td>
+              <td>Evidence doc; walked through at the readout</td>
+            </tr>
+            <tr>
+              <td>Exec-ready readout delivered</td>
+              <td>A short consolidation readout — one page per claim: incumbent, capability shown, the two artefacts, the renewal date, the decision being asked for — presented at the decision meeting booked at the workshop</td>
+              <td>The readout deck/PDF plus the meeting where it was read</td>
+              <td>Wrap-up / decision meeting with the economic buyer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>At least two technical pilots running or complete</strong> in the same account, with their own success criteria met — this pack aggregates their evidence; it cannot substitute for them. The usual sources are the PoV tabs on <a href="security-consistent.html#pov">Consistent Security Everywhere</a>, <a href="security-tls-inspection.html#pov">TLS Inspection</a>, <a href="security-data-casb-dlp.html#pov">CASB &amp; DLP</a> and <a href="network-sdwan.html#pov">SD-WAN &amp; Last-Mile Resilience</a>.</li>
+          <li><strong>A named owner for contract data</strong> — someone from procurement or vendor management who can bring renewal dates and run costs to the workshop. Without them the inventory is guesswork and the whole pack inherits the guess.</li>
+          <li><strong>The no-invented-numbers rule, in writing:</strong> no savings figure enters the pack unless it comes from the customer's own inventory. Structural claims (fewer boxes, fewer renewals, fewer consoles) stand on pilot evidence; financial claims stand only on their numbers.</li>
+          <li><strong>The pilots' own prerequisites</strong> still apply upstream — notably TLS inspection staged first where content-level evidence (DLP, anti-malware verdicts) feeds a matrix row; see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3>The capability-coverage matrix</h3>
+      <p>
+        One row per incumbent product family. The middle columns are the point: every claim names the
+        pilot that demonstrated it <em>in this customer's tenant</em> and the artefacts that prove it.
+        Where the incumbent is a named vendor, add that vendor's playbook to the row — for an
+        EdgeConnect overlay, for example, <a href="migration-edgeconnect.html">the EdgeConnect
+        playbook</a> supplies the like-for-like mapping and the gaps to concede.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Incumbent product</th><th>Platform capability</th><th>Demonstrated in</th><th>Example artefacts to attach</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Branch / edge firewalls</td>
+              <td>FWaaS — one rulebase, enforced at the PoP</td>
+              <td><a href="security-consistent.html#pov">Consistent Security PoV</a></td>
+              <td>One rule firing from the pilot site <em>and</em> a Client user (Events filtered by rule name); policy-propagation record</td>
+            </tr>
+            <tr>
+              <td>SWG / web proxy</td>
+              <td>SWG in the same single pass — no PAC files or proxy tier</td>
+              <td><a href="security-consistent.html#pov">Consistent Security PoV</a> · <a href="security-tls-inspection.html#pov">TLS Inspection PoV</a></td>
+              <td>Internet Firewall category rule with live hit counts; branded block page over an inspected session</td>
+            </tr>
+            <tr>
+              <td>TLS decryption appliance / proxy decrypt tier</td>
+              <td>Cloud TLS inspection with staged bypass policy</td>
+              <td><a href="security-tls-inspection.html#pov">TLS Inspection PoV</a></td>
+              <td>Inspection-ratio report for the pilot cohort; dated exclusion register; per-OS certificate checks</td>
+            </tr>
+            <tr>
+              <td>CASB / DLP point products</td>
+              <td>Native inline CASB &amp; DLP on inspected traffic</td>
+              <td><a href="security-data-casb-dlp.html#pov">CASB &amp; DLP PoV</a></td>
+              <td>Shadow-IT inventory from their traffic; DLP monitor-to-block event pair; one incident walked end to end</td>
+            </tr>
+            <tr>
+              <td>SD-WAN overlay · MPLS + edge routers</td>
+              <td>SD-WAN native to Socket + PoP; backbone replaces carriage</td>
+              <td><a href="network-sdwan.html#pov">SD-WAN &amp; Resilience PoV</a> (vendor playbook where named, e.g. <a href="migration-edgeconnect.html">EdgeConnect</a>)</td>
+              <td>Mid-call link-pull failover evidence; QoS-under-congestion capture; backbone vs internet transfer times</td>
+            </tr>
+            <tr>
+              <td>VPN concentrators</td>
+              <td>Cato Client + ZTNA — same policy as sites</td>
+              <td><a href="security-consistent.html#pov">Consistent Security PoV</a> (client path)</td>
+              <td>Identical rule and threat verdicts on the Client path; identity attribution on both paths</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>How to assemble the pack</h3>
+      <ol class="steps">
+        <li>
+          <h4>Run the current-state inventory workshop</h4>
+          <p>One session, before any consolidation claim is drafted. The customer builds the estate
+          list from their own records — vendor, product, function, renewal date, annual run cost,
+          owner. Your job is the template and the discipline, not the numbers. Anything they cannot
+          source stays blank and is marked blank in the readout; a blank cell is more credible than
+          an estimate with your logo on it.</p>
+        </li>
+        <li>
+          <h4>Build the matrix and harvest the pilot registers</h4>
+          <p>Copy the matrix above, strike the rows that do not apply, and against each remaining row
+          pull the two best artefacts from the linked pilots' evidence registers — they were dated
+          and filed weekly if the pilots followed <a href="management-pov-framework.html">the
+          framework</a>, so this step is collation, not archaeology.</p>
+        </li>
+        <li>
+          <h4>Generate the tenant reports</h4>
+          <p><span class="path">Home → Reports</span> <span class="path">Monitor → App Analytics</span></p>
+          <p>From the report catalogue, generate the
+          <a href="https://knowledge.catonetworks.com/docs/generating-rule-hit-count-reports-for-security-and-network-policies" target="_blank" rel="noopener">rule
+          hit count report</a> — it covers the Internet Firewall, WAN Firewall and Network Rules
+          policies in one PDF, which is itself a consolidation exhibit: network and security rule
+          activity from a single report engine. Add an App Analytics export for the pilot scope as
+          the "what actually runs here" baseline the inventory is checked against.</p>
+        </li>
+        <li>
+          <h4>Extract the audit-trail record</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Filter the <a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Audit
+          Trail</a> to the PoV window: every change the pilots made — network rules, firewall rules,
+          TLSi policy, DLP rules — sits in one chronological, attributed log (the CMA keeps 12 months,
+          viewable three months at a time). Screenshot it for the pack: this is the "one console, one
+          audit story" claim proven on their own change history, against however many per-vendor logs
+          the same period spans today.</p>
+        </li>
+        <li>
+          <h4>Overlay the renewal timeline</h4>
+          <p>Take the inventory's renewal dates for the next 24 months and mark each contract with the
+          matrix verdict: <strong>absorb at renewal</strong> (capability proven, artefacts attached),
+          <strong>needs a further pilot</strong> (capability plausible, not yet evidenced here), or
+          <strong>retain</strong> (conceded gap or out of scope). The overlay is the exec's map from
+          evidence to action — which conversations to stop renewing by default, and when.</p>
+        </li>
+        <li>
+          <h4>Write and deliver the readout</h4>
+          <p>One page per claim: the incumbent line item, the capability shown, the two artefacts, the
+          renewal date, and the decision being asked for. Present it at the decision meeting booked at
+          the workshop, with the parked-asks register as the expansion roadmap and
+          <a href="migration-methodology.html">Migration Methodology</a> as the "what happens next"
+          hand-off.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase with thirteen ordered rules — user, device and category scoped — showing Block, Allow and Prompt actions and live hit-count bars.">
+        <figcaption>One artefact, two matrix rows: a single Internet Firewall rulebase with live hit counts stands in for both the branch-firewall estate and the web gateway — the same screenshot the firewall and SWG claims attach, from the customer's own tenant.</figcaption>
+      </figure>
+      <!-- capture-wanted: Home → Reports catalogue with the rule hit count report template selected, and a generated PDF in the Generated PDFs tab -->
+      <!-- capture-wanted: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log -->
+      <p>
+        The finished pack reads in one sitting: inventory (their numbers), matrix (every row with two
+        dated tenant artefacts or an honest concession), renewal overlay, readout. If any row's
+        evidence column is thin, the fix is never prose — it is another artefact from the pilot, or
+        the row moves to "needs a further pilot".
+      </p>
+
+      <h3>Troubleshooting — the honest objections</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>"Boost gives us 60–90% data reduction — match that?"</h4><p>Concede it: Boost's byte-level deduplication and CIFS acceleration have no like-for-like Cato equivalent — Cato optimises via backbone TCP acceleration, packet-loss mitigation and routing, which is architecturally different. Mark Boost-dependent flows "retain / re-baseline", measure them during the pilot soak, and point at the mitigations on <a href="migration-edgeconnect.html">the EdgeConnect playbook</a>. A conceded row keeps the other rows believable.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Licence boundaries blur the matrix</h4><p>A row only counts if the trial licence actually covered the pilot that evidenced it — capabilities are licensed modules, not free toggles (NG Anti-Malware, for instance, requires the base Anti-Malware service). Check entitlements against every matrix row before the readout, and state in the readout which capabilities the commercial proposal must include.</p></div></div>
+        <div class="benefit"><div class="b-icon">📆</div><div><h4>Contracts outlive the evidence</h4><p>Proving a capability does not end the incumbent's contract — notice periods, early-exit penalties and co-termination clauses set the real exit dates. That is exactly what the renewal overlay is for: earliest <em>sensible</em> exit per contract, with dual-running windows planned per <a href="migration-methodology.html">Migration Methodology</a>, not a promise of day-one savings.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>"You don't replace X"</h4><p>Correct — and the matrix should say so. Endpoint EDR estates, mutual-TLS portals excluded from the TLSi scope, niche appliance features: rows the platform does not absorb are marked "retain", in writing. A matrix with honest gaps survives the customer's own due diligence; a full-house matrix does not.</p></div></div>
+        <div class="benefit"><div class="b-icon">📸</div><div><h4>Evidence from the wrong tenant</h4><p>A demo-tenant screenshot in the pack taints every claim next to it. Every artefact must come from the customer's account, dated inside the PoV window — if a row has only demo evidence, it has no evidence, and it moves to "needs a further pilot".</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>The inventory stalls</h4><p>Renewal dates and run costs live with procurement, and if their owner was not at the workshop the spreadsheet comes back half-empty. Escalate through the sponsor for the named owner rather than filling gaps with list prices — the readout's credibility is worth the delay.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Never claim savings the inventory doesn't support.</strong> No assumed percentages, no industry benchmarks dressed as their numbers. If the customer has not supplied a run cost, the readout says "cost data not provided" — the structural argument (fewer boxes, renewals, consoles) still stands on the pilot evidence alone.</li>
+          <li><strong>The pack is aggregation, not configuration.</strong> Its claims are only as strong as the pilots underneath — if a pilot criterion failed, the matching matrix row reports the failure, not a softer wording of it.</li>
+          <li><strong>Date everything.</strong> Inventory, matrix, artefacts and overlay all carry dates; renewal data goes stale fast, and an undated pack invites the "when was this true?" question in the worst possible meeting.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> this PoV adds nothing to the tenant, so there is nothing to unwind here
+        — each technical pilot documents its own clean exit on its PoV tab. The pack itself is handed
+        to the customer as their asset: inventory, matrix, overlay and readout become the working
+        papers for the commercial conversation, and the parked-asks register becomes the roadmap for
+        whatever the platform absorbs next.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

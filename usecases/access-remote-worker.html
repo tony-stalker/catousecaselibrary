@@ -308,7 +308,8 @@
         <strong>Connection Details</strong> view decomposes his path into scored nodes —
         <strong>client device, Wi-Fi, LAN gateway, last mile (tunnel) and application</strong> —
         each independently rated against published thresholds: CPU Good below 70% utilisation,
-        Wi-Fi Good at −67 dBm or stronger, LAN gateway and tunnel Good below 1% loss and 10 ms.
+        Wi-Fi Good at −67 dBm or stronger, LAN gateway Good below 1% loss and 10 ms, and the
+        last-mile tunnel Good below 1% loss and 20 ms.
         The first non-green node names the fault domain; a tunnel-age widget adds context without
         skewing the score.
       </p>
@@ -390,6 +391,215 @@
         fictional demo user). Client-version thresholds for bypass options move with releases —
         re-check before quoting them in a proposal.</p>
       </div>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo told Brandon's story in our tenant; the PoV re-runs it on the customer's own remote
+        workers — an <strong>experience-assurance pilot</strong> that is observe-only by construction.
+        Nothing in this runbook enforces anything: the posture, always-on and one-policy proofs
+        belong to the companion
+        <a href="access-hybrid-workforce.html#pov">Securing the Hybrid Workforce PoV</a>, and the
+        estate-wide view (sites, probes fleet-wide, anomalies) to
+        <a href="management-visibility.html#pov">Operational &amp; Executive Visibility</a>. This one
+        proves a single sentence: <em>for any pilot user who says "it is slow", the platform names
+        the fault domain, evidences the fix and answers "is it just me" — from the console</em>.
+        Agree the success criteria below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cohort baseline established</td>
+              <td>Every pilot remote worker carries a per-user, per-app baseline within week one — score split, top applications, average TTFB, connected PoP</td>
+              <td>Remote Users tab view plus one drill-down per cohort member, captured weekly, dated</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>One real complaint, one verdict</td>
+              <td>A genuine "it is slow" from the cohort taken end-to-end during the pilot: the app named, then the segment — device, Wi-Fi, LAN gateway, last mile or application — decided by published thresholds, not opinion</td>
+              <td>The drill-down evidence pack: filtered per-app view plus Connection Details with the off-green node and its measured values</td>
+              <td>User drill-down → Connection Details</td>
+            </tr>
+            <tr>
+              <td>Before/after fix proof</td>
+              <td>The named fault remediated and the improvement visible in the same screen that made the verdict — e.g. a Fair Wi-Fi node back to Good after the fix</td>
+              <td>Two dated Connection Details captures for the same user, before and after</td>
+              <td>User drill-down → Connection Details</td>
+            </tr>
+            <tr>
+              <td>"Is it just me?" in under a minute</td>
+              <td>For the complaint's application, the fleet-wide answer — one degraded user or a cohort-wide pattern — read live, timed with a stopwatch</td>
+              <td>The Remote Users tab sorted worst-first, filtered to the app, with the elapsed time noted against the criterion</td>
+              <td>Home → Experience Monitoring → Remote Users</td>
+            </tr>
+            <tr>
+              <td>ISP escalation pack, produced once</td>
+              <td>Evidence a provider cannot wave away: last-mile tunnel loss and latency against published thresholds, the ISP and external IP named — plus, where a socket site is in scope, a per-hop loss table with geolocation</td>
+              <td>Connection Details last-mile readings + Devices panel; Path Analysis → Command Line table (socket-side)</td>
+              <td>User drill-down · Path Analysis</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>DEM licence</strong> — Cato's documentation is explicit that a separate DEM
+          licence is required for DEM pages and features
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-cato-experience-monitoring" target="_blank" rel="noopener">What is Cato Experience Monitoring</a>).
+          Confirm the trial entitlement before any criterion is signed.</li>
+          <li><strong>Current Clients on the cohort</strong> — the widgets in this runbook are
+          version-gated: user DEM analytics need Windows Client v5.12+ / macOS v5.7+, the device,
+          Wi-Fi and LAN gateway nodes in Connection Details need Windows v5.11 / macOS v5.7, and
+          underlay probe data for remote users needs Windows v5.17 / macOS v5.10. Standardise the
+          pilot on current Clients and the whole page lights up.</li>
+          <li><strong>Cohort</strong> — 10–20 genuinely remote workers, deliberately including a
+          couple of known complainers: this PoV needs at least one real "it is slow" to land during
+          the pilot window.</li>
+          <li><strong>Identity connected</strong> — drill-downs must carry names, not IPs; IdP
+          provisioning per <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>Policy stays out of scope</strong> — no posture, always-on or split-tunnel
+          changes in this runbook; if the customer wants those proven too, run the
+          <a href="access-hybrid-workforce.html#pov">hybrid-workforce PoV</a> alongside rather than
+          blending the two.</li>
+          <li><strong>Optional socket site</strong> — only needed if the per-hop traceroute artefact
+          is in the criteria: path-analysis traceroute runs from the Socket (v25+), not from a home
+          laptop.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Switch on the Experience Monitoring policy, scoped to the cohort</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span></p>
+          <p>Enable the <strong>Experience Monitoring Policy</strong> toggle, then add a
+          <strong>User rule</strong> whose source is the pilot group — user rules can additionally
+          scope by platform and country, and the rulebase is ordered, first match wins. Each rule
+          takes between one and 20 probes; user probes run at a default 300-second interval
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-experience-monitoring-probes-and-policy" target="_blank" rel="noopener">Configuring the Experience Monitoring Probes and Policy</a>).</p>
+          <!-- capture-wanted: «CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list» -->
+        </li>
+        <li>
+          <h4>Define probes for the apps they would actually complain about</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span></p>
+          <p>Create probes for the cohort's real working set — the productivity suite, the UC app,
+          one private application behind the datacentre socket. Each probe is a destination (URL or
+          IP, classified Internet or WAN) plus a protocol: ICMP, TCP, HTTP/HTTPS or DNS. Probe
+          traffic traverses the security policy like any other traffic and can be blocked by an
+          existing rule — worth knowing before you diagnose a silent probe. Nothing here enforces
+          anything: probes observe.</p>
+        </li>
+        <li>
+          <h4>Capture the week-one baseline, per user</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>On the <strong>Remote Users</strong> tab, capture the cohort view — experience score,
+          app count, connected PoP, flows and average TTFB per user — then open a drill-down for
+          each cohort member and capture the Select Application widget with its per-app scores and
+          measurements (TTFB, TCP connect, TLS connect, HTTP latency, HTTP/S errors). Scores are
+          relative to <em>expected</em> experience, so let the baseline settle for a few days before
+          reading meaning into a Fair
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>,
+          <a href="https://knowledge.catonetworks.com/docs/the-user-experience-monitoring-drill-down-page-remote-and-office-users" target="_blank" rel="noopener">the user drill-down page</a>).</p>
+        </li>
+        <li>
+          <h4>Rehearse the complaint drill before the complaint arrives</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Practise the walk you will run live: summary strip → Select Application → per-app
+          measurements → <strong>Connection Details</strong>, reading the five nodes left to right
+          against their published thresholds — CPU Good below 70% and memory below 60%, Wi-Fi Good
+          at −67 dBm or stronger, LAN gateway Good below 1% loss and 10 ms, last-mile tunnel Good
+          below 1% loss and 20 ms. Each node is scored independently, and the tunnel-age widget is
+          context only — it never skews the score
+          (<a href="https://knowledge.catonetworks.com/docs/experience-monitoring-connection-details" target="_blank" rel="noopener">Experience Monitoring Connection Details</a>).</p>
+        </li>
+        <li>
+          <h4>Take the real complaint end-to-end — then time the fleet-wide check</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>When the genuine ticket lands, run the drill live with the customer watching and save
+          every screen, dated, into the evidence pack: the per-app score that names the app, the
+          Connection Details node that names the segment. Then answer "is it just me?" — back to the
+          Remote Users tab, sort worst-first, filter to the application, read the cohort. Time it
+          with a stopwatch; the elapsed minute is itself the artefact for criterion four.</p>
+          <!-- capture-wanted: «CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check» -->
+        </li>
+        <li>
+          <h4>Fix it, re-capture, and build the escalation pack once</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>Remediate the named fault and take the "after" capture in the same Connection Details
+          view — a Fair Wi-Fi node (say, −72 dBm on a congested band) back to Good after moving the
+          user's AP or band is the cleanest before/after in the library. Windows Client v6.0+ even
+          nags the user directly below −75 dBm, no DEM licence required for the notification
+          (<a href="https://knowledge.catonetworks.com/docs/experience-monitoring-in-the-cato-client" target="_blank" rel="noopener">Experience Monitoring in the Cato Client</a>).
+          If the verdict was last mile instead, assemble the ISP pack: the tunnel's upstream and
+          downstream loss and latency against thresholds, plus the ISP name and external IP from the
+          Devices panel — and where a socket site is in scope, the per-hop Command Line table
+          (<a href="https://knowledge.catonetworks.com/docs/using-traceroute-for-path-analysis-in-experience-monitoring" target="_blank" rel="noopener">Using Traceroute for Path Analysis</a>).</p>
+          <!-- capture-wanted: «CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)» -->
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="CMA Experience Monitoring landing page on the Remote Users tab: account experience score graph and story feed above a table of four fictional remote users, each with an experience chip, app count, connected PoP, flows, usage and average TTFB between 61 and 298 ms" loading="lazy">
+        <figcaption>Criteria one and four on one screen (demo tenant, fictional identities): the cohort baseline — per-user score, PoP and average TTFB — and the "is it just me?" answer. Sort worst-first, filter to the complaint's app, and the fleet-wide verdict is read in seconds; note the elapsed time against the criterion.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-connection-details.png" alt="CMA user drill-down Connection Details: a node chain from device through Wi-Fi, LAN gateway and last mile to the application, with the Wi-Fi node scored Fair at -67.43 dBm average signal strength and every other node Good" loading="lazy">
+        <figcaption>Criterion two's verdict — and the "before" half of criterion three (demo tenant). One user's path decomposed into five independently scored nodes: Wi-Fi Fair at −67.43 dBm against the −67 dBm threshold, device, LAN gateway, last mile and application all Good. The fault domain is the user's own Wi-Fi — decided by numbers, closed with the "after" capture once the band is fixed.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-command-line.png" alt="CMA Path Analysis Command Line tab: an MTR-style per-hop table from a user to the London PoP showing 24.3 percent loss and 269 ms average latency at the ISP's first public hop, intermediate hops largely clean, and the Cato PoP at 0 percent loss and 6 ms, with 1010 probes sent per hop" loading="lazy">
+        <figcaption>The escalation pack's closing page (demo tenant): per-hop loss with geolocation — 24.3% loss at the ISP's first public hop against a Cato PoP at 0% and 6 ms, over 1,010 probes per hop. Captured from the socket-side path analysis (Socket v25+): for a purely remote user the tunnel loss/latency in Connection Details carries the escalation instead, so scope this leg to a hybrid cohort member or the pilot site.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🪫</div><div><h4>Drill-down is blank or "No score"</h4><p>Check in order: the DEM licence entitlement on the trial, the Experience Monitoring Policy toggle, then whether any User rule actually matches the cohort member — the rulebase is first-match, and a user matched by no rule is simply not measured.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Device, Wi-Fi or LAN nodes missing</h4><p>Connection Details shows the last-mile and application nodes but nothing device-side. That is Client version, not fault: those nodes need Windows v5.11 / macOS v5.7+, and remote-user underlay probe data needs Windows v5.17 / macOS v5.10. Upgrade the cohort rather than annotating around the gap.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤔</div><div><h4>Score says Good, user says slow</h4><p>Scores are relative to expected experience and averaged over the window — a Good day can hide a bad hour. Narrow the time range around the complaint, read the per-app measurements rather than the chip, and check the score graph's event annotations: a run of security block events can be the real story, as in this page's centrepiece capture.</p></div></div>
+        <div class="benefit"><div class="b-icon">📵</div><div><h4>A probe never answers</h4><p>Probe traffic traverses the security policy like user traffic — an existing firewall rule can block it, and the block lands in Events. Check there before blaming the target, and remember user probes fire every 300 seconds by default: curves build in minutes, not seconds.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Per-app metrics missing for one app</h4><p>Application metrics are calculated for outbound TCP traffic, and the Select Application widget ranks the user's top applications by usage — a rarely used app may not chart. Data can also lag: allow up to 30 minutes (Teams meeting data likewise) before concluding the widget is broken.</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>Half the cohort's Wi-Fi shows Fair</h4><p>The −67 dBm boundary catches a lot of real home setups — that is the threshold working, not a false positive. Do not chase the whole cohort: pick the one complaint user for the before/after criterion, fix their band or AP placement, and present the rest as the baseline's honest picture of home working.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The DEM licence is a boundary, not a footnote</strong> — agree what the trial
+          includes before criteria are signed, not when a page renders empty.</li>
+          <li><strong>Scores are relative</strong> — Good/Fair/Poor measures deviation from the
+          expected experience, not an SLA. Put the absolute numbers — TTFB in ms, loss in %, dBm —
+          in the evidence pack, never just the colours.</li>
+          <li><strong>Traceroute is socket-side</strong> — the per-hop Traceroute and Command Line
+          views run from Sockets (v25+); a purely remote laptop evidences its last mile through the
+          Connection Details tunnel readings. Do not promise an MTR table from a home sofa.</li>
+          <li><strong>A real complaint cannot be scheduled</strong> — the criterion says "during the
+          pilot", and the cohort includes known complainers for a reason. Agree a synthetic fallback
+          in the register up front (a deliberately throttled sacrificial laptop), used only if the
+          window closes quietly.</li>
+          <li><strong>Version gates move with releases</strong> — the Client thresholds quoted here
+          were verified in July 2026; re-check before quoting them in a proposal.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the Experience Monitoring Policy toggle, or
+        delete the pilot User rule and its probes — nothing else was changed, because nothing was
+        enforced. Export the evidence pack first: the weekly baselines, the complaint-to-verdict
+        drill-down set, the before/after pair and the ISP pack outlive tenant access. If the
+        decision is a yes, keep the rule and widen the source from the pilot group to the remote
+        workforce — the pilot's probe set is the production starting point.
+      </p>
     </section>
 
     <section id="resources" class="reveal">

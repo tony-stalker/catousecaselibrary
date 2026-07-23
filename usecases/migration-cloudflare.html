@@ -423,6 +423,238 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        A Cloudflare displacement is proven the way this page says it is migrated: bounded, cohort
+        by cohort, with the web estate untouched. The pilot that de-risks the decision has three
+        legs — one user cohort swapped from WARP to the Cato Client with a Gateway HTTP/DNS policy
+        slice at parity in monitor mode, a handful of named Access applications replaced by Cato
+        ZTNA with device posture enforced, and (only where Magic WAN is actually in the estate)
+        one site's tunnel re-pointed to a Cato IPsec site. Everything else — every other user,
+        every other Access app, the CDN, WAF and authoritative DNS — stays exactly where it is.
+        Run it under the discipline of the <a href="management-pov-framework.html">PoV
+        framework</a>: agree the success criteria below <em>before</em> anything is configured,
+        and book the decision meeting the same day. And be straight about what the pilot proves:
+        the converged difference — one client, one policy engine, a managed WAN edge — not a
+        failure of Cloudflare's network, which keeps the public web estate throughout.
+      </p>
+
+      <h3>Success criteria</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Every row's artefact goes into a dated evidence pack, exported as it lands — the wrap-up
+        reads the pack, not memories.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Every pilot user connects through the Cato Client with the WARP profile disabled, and is identified by name — never as an unidentified user</td>
+              <td>Connected cohort list with device, Client version and PoP</td>
+              <td><span class="path">Access → Users</span> · <span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td>Gateway policy-slice parity — the agreed test list of blocked HTTP categories and DNS protections returns the same verdicts on Cato as on Gateway</td>
+              <td>Side-by-side policy-hit events: Cato event export next to the matching Gateway log lines</td>
+              <td><span class="path">Monitor → Events</span> (Internet firewall + DNS) + exported Gateway analytics</td>
+            </tr>
+            <tr>
+              <td>Named Access apps replaced — each pilot application reachable through Cato ZTNA for a compliant device, and refused when the device fails its posture profile</td>
+              <td>WAN Firewall allow events per app attributed to user and device, plus one recorded posture-failure refusal</td>
+              <td><span class="path">Monitor → Events</span> · <span class="path">Access → Client Connectivity Policy</span></td>
+            </tr>
+            <tr>
+              <td>Magic WAN re-point (only where Magic WAN exists) — one site's traffic re-terminated on a Cato IPsec site with both tunnels up, and the old tunnel config held idle for rollback</td>
+              <td>Site connectivity view with primary and secondary tunnels up; site traffic visible in events</td>
+              <td><span class="path">Network → Sites</span> · <span class="path">Monitor → Topology</span></td>
+            </tr>
+            <tr>
+              <td>No user-reported degradation — cohort experience scores hold through the pilot week, and no cohort-raised tickets against the helpdesk baseline</td>
+              <td>Experience Monitoring per-user scores across the pilot week, plus the helpdesk queue</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before anything is configured</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Success criteria signed off and the decision meeting booked, per the <a href="management-pov-framework.html">PoV framework</a>.</li>
+          <li>Trial licences confirmed for every capability under test — TLS inspection if HTTP content verdicts are in the parity slice; RBI and DLP only if explicitly scoped.</li>
+          <li>IdP integration connected, with a dedicated pilot group provisioned over SCIM and visibly syncing before any rule references it (see <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li>TLS inspection staged first where content-level verdicts matter — certificate out via MDM, bypasses in, then inspection (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Scope is deliberately narrow: 10–25 users across two or three archetypes, three to five named Access applications, and at most one Magic WAN site — and the site leg only exists if Magic WAN is in the estate. Many Cloudflare Zero Trust estates have no WAN product at all; then this is a two-leg pilot.</li>
+          <li>The stays-on-Cloudflare register from phase 1 is agreed in writing — CDN, WAF, authoritative DNS, Workers, Magic Transit are out of scope and never touched.</li>
+          <li>Access service tokens are out of the pilot: machine-to-machine flows keep their Access applications and cloudflared connectors untouched throughout.</li>
+          <li>WARP stays authoritative for everyone outside the cohort — nothing in this runbook touches the wider estate's enrolment or forwarding.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Provision the cohort and capture the before pack</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Create the pilot IdP group, confirm SCIM has synced it, and assemble the reference
+          evidence <em>from the Cloudflare side</em>: 30 days of Gateway analytics for the cohort's
+          users (top blocked and allowed categories, DNS policy hits), DEX test results where
+          licensed, and the helpdesk ticket baseline for the same users. That export is the parity
+          reference every verdict is judged against — and because the cohort has no Cato Client
+          yet, it is the only "before" there is.
+          <a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience
+          Monitoring</a> starts scoring the cohort (per-user score, apps, PoP, TTFB) from the day
+          of the swap in step 5.</p>
+        </li>
+        <li>
+          <h4>Convert the Gateway slice — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Recreate only the Gateway HTTP and DNS rules the cohort actually hits, scoped to the
+          pilot group as source, with <strong>Track = Event on every rule</strong> — events are
+          the evidence. Cato's
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Internet
+          firewall</a> ends in an implicit any-any allow — the same default posture as Gateway's
+          HTTP policies — so unmatched traffic behaves identically. Map categories by intent, not
+          name, and arm blocks only for the agreed test list; everything else runs in monitor
+          until its events prove it. Gateway's DNS-policy intent needs no DNS-location construct:
+          <a href="https://knowledge.catonetworks.com/docs/dns-security" target="_blank" rel="noopener">Cato
+          DNS Security</a> inspects queries in-line at the PoP for any traffic already on Cato,
+          whichever resolver the device uses, with Allow / Block / Sinkhole actions across eight
+          protection categories. Full construct-by-construct mapping:
+          <a href="migration-cloudflare-policy.html">Cloudflare Policy Migration</a>.</p>
+        </li>
+        <li>
+          <h4>Replace the named Access apps with ZTNA — posture included</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Device Posture</span></p>
+          <p>For each of the three to five named applications, build an app segment holding only
+          the application subnets, then a
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-wan-firewall-policy" target="_blank" rel="noopener">WAN
+          Firewall</a> allow rule from the pilot group to that segment — the WAN Firewall ends in
+          an implicit block, so the rule <em>is</em> the entitlement, exactly as this page's
+          mapping table describes. Access's posture conditions move to a Device Posture profile
+          referenced from the
+          <a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Client
+          Connectivity Policy</a>: a device that fails its checks does not connect, and the Client
+          tells the user why — record one deliberate posture failure (e.g. Priya's laptop with the
+          EPP agent stopped) as evidence. The Access applications themselves stay live for
+          everyone outside the cohort, and their cloudflared connectors keep serving them —
+          nothing retires during the pilot.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection for the cohort — only if content verdicts are in the slice</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>If the parity list includes verdicts that depend on content inside TLS, deploy the
+          Cato root certificate to cohort devices through the same MDM channel, then add an
+          Inspect rule scoped to the pilot group. Rebuild Gateway's Do-Not-Inspect entries
+          deliberately —
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">certificate-pinned
+          applications must be bypass rules</a>, and Cato bypasses Android, Linux and unidentified
+          operating systems automatically — rather than porting the list wholesale. If the slice
+          is category- and DNS-level only, skip this step and say so in the criteria: an
+          uninspected rule matches on SNI/domain, not content.</p>
+        </li>
+        <li>
+          <h4>Swap the cohort's agent — WARP profile off, Cato Client on</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Per this page's hard rule, the cohort <strong>swaps, never overlaps</strong>: in one
+          MDM change per device, disable the WARP (Cloudflare One Client) profile — disable, not
+          delete; it is the rollback lever — and
+          <a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">deploy
+          the Cato Client through the same GPO/MDM channel</a>. The default
+          <a href="https://knowledge.catonetworks.com/docs/split-tunnel-policy" target="_blank" rel="noopener">split-tunnel
+          behaviour</a> routes traffic via the Cato Cloud when no rule matches, so the cohort's
+          internet, DNS and ZTNA all land on the PoP without extra routing work — DNS protection
+          moves with the agent automatically, in both directions. Confirm each device connects
+          and attributes to its named user before the parity week starts.</p>
+        </li>
+        <li>
+          <h4>Re-point one Magic WAN site — only where Magic WAN is in the estate</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Configure the site as an
+          <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">IPsec
+          IKEv2 site</a>:
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">Cato-allocated
+          IPs</a> for the primary and secondary tunnels (primary and secondary terminate on
+          different PoPs), a PSK of up to 64 characters, and AES-GCM ciphers for tunnels of
+          100&nbsp;Mbps or more. Then re-point the site's existing edge device from Cloudflare's
+          anycast GRE/IPsec endpoints to the Cato tunnel endpoints — the same router that spoke
+          to Magic WAN now speaks to the PoP, no hardware shipped. Leave the Magic WAN tunnel
+          definition (and any Cloudflare One Appliance) configured but idle: re-pointing back is
+          the rollback. If the estate has no Magic WAN, skip this leg entirely rather than
+          inventing a site to migrate.</p>
+        </li>
+        <li>
+          <h4>Run the parity week and build the evidence pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Walk the agreed test list with a cohort user: blocked HTTP categories, DNS
+          protections, each named app reached through ZTNA, the posture refusal. Filter Events to
+          the pilot rules, confirm each verdict attributes to the named user and rule, and export
+          the filtered view as a dated CSV per criterion
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">a
+          single export carries up to 250,000 events</a>). Pair each Cato event with its matching
+          Gateway log line from the before pack; the cohort's Experience Monitoring week and the
+          helpdesk queue close the pack.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase: thirteen ordered rules with user- and device-scoped sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The Gateway parity slice landed: one ordered Internet firewall rulebase where DNS-, category- and app-level intent that Gateway split across three policy types sits together, every rule tracking events with live hit counts. Rule 9's RBI action is where a Browser Isolation "Isolate" intent lands — a policy action, not an add-on SKU.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase: twelve allowlist rules scoped to users, groups and sites against hosts, segments and applications, with services, direction and hit counts over an implicit deny" loading="lazy">
+        <figcaption>What the named Access apps become: WAN Firewall allow rules from users and groups to specific hosts, segments and applications over an implicit block-all — rule 3's "All SDP Users → VMware" shape is exactly the pilot pattern, one rule per replaced Access application, each hit an attributable event.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Cato Experience Monitoring page, Remote Users tab: account experience score graph and a per-user table with experience chips, connected PoP, flows, usage and average TTFB">
+        <figcaption>The no-degradation criterion on one screen: from the day of the WARP swap, Experience Monitoring scores every cohort user — experience chip, connected PoP, average TTFB. A week of Good chips beside an empty cohort ticket queue is the evidence the swap cost users nothing.</figcaption>
+      </figure>
+      <!-- capture-wanted: Network → Sites IPsec IKEv2 site with primary and secondary tunnels up (a re-pointed Magic WAN edge) -->
+      <!-- capture-wanted: Monitor → Events filtered to pilot rules showing Internet-firewall Block and DNS Protection verdicts attributed to a named pilot user -->
+      <!-- capture-wanted: Access → Client Connectivity Policy rule referencing a Device Posture profile, with the Client-side posture-failure message -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🥊</div><div><h4>WARP still connected after the swap</h4><p>If a swapped device shows WARP active alongside the Cato Client, the swap didn't complete — both vendors document the routing/DNS/firewall contention, and no parity event from that device is valid. Finish disabling the profile via MDM before reading any evidence.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>DoH remnants steal the DNS verdicts</h4><p>A browser or OS policy still forcing DNS-over-HTTPS to Cloudflare resolvers carries queries past Cato's in-line DNS protection, so DNS criteria never fire. Remove enforced DoH/resolver policies in the same MDM change as the agent swap — then re-test the DNS list.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>Pinned apps break under TLSi</h4><p>Apps that Gateway's Do-Not-Inspect list quietly exempted fail the moment Cato inspects them. Certificate-pinned applications must be TLS bypass rules; rebuild the list from observed TLSi events — the old Do-Not-Inspect list is a clue, not a config.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>SaaS egress-IP allowlists</h4><p>Third-party tenants allowlisted to Cloudflare dedicated egress IPs lock the cohort out the moment egress moves to the PoP. Sweep the allowlists for the pilot's apps before the swap and add the customer's Cato allocated IPs, leaving the Cloudflare IPs allowed until the pilot ends.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Cohort rules never match</h4><p>SCIM sync lag — or pilot users landing unidentified — means group-scoped rules silently never fire. Verify membership in Access → Users and prove one event attributes to a named pilot user before the parity week starts.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌉</div><div><h4>Re-pointed tunnel won't come up</h4><p>IKE parameter or PSK mismatch, NAT-T disabled on the edge, or traffic selectors still shaped for Cloudflare's anycast endpoints are the usual culprits. Work the <a href="https://knowledge.catonetworks.com/docs/troubleshooting-ipsec-connectivity" target="_blank" rel="noopener">KB flow</a>: Connection Status for the parameter snapshot, the connection log for history, then reset the tunnel.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; the exit plan</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say these before the customer finds them</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Parity means intent, not identical counts.</strong> Gateway's and Cato's category taxonomies do not line up one-to-one — judge the agreed test list verdict by verdict, never by comparing event volumes.</li>
+          <li><strong>The baseline is asymmetric.</strong> There is no Cato-side "before" for a WARP cohort: the reference is Gateway analytics, DEX where licensed, and the helpdesk queue. Do not compare a Cato experience score with a Cloudflare DEX score — judge degradation on verdicts, app behaviour and tickets.</li>
+          <li><strong>Licence boundaries.</strong> Content-level verdicts need TLS inspection live; RBI parity for Browser Isolation intent and any DLP work are workstreams of their own — keep them out unless licensed and explicitly scoped.</li>
+          <li><strong>Service tokens are out of scope.</strong> Machine-to-machine Access flows keep their apps and connectors untouched; designing their replacement is phase-1 work on this page, not pilot work.</li>
+          <li><strong>Config-as-code customers.</strong> If the pilot must be built in Terraform, the <code>catonetworks/cato</code> provider covers it — with this page's caveat intact: the API executes sequentially, so run with <code>parallelism=1</code>.</li>
+          <li><strong>Evidence windows.</strong> An Events query spans at most 31 days — export weekly as the framework prescribes, rather than reconstructing at wrap-up.</li>
+          <li><strong>The site leg is conditional.</strong> If there is no Magic WAN, say so and run a two-leg pilot — a stronger story than a contrived site migration, and the mapping table's WAN row still lands in the decision meeting as roadmap.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>If the pilot passes</strong>, nothing is thrown away: the pilot rules are the first
+        production wave's policy, the cohort widens into the BU waves of phase 3, and the
+        re-pointed site becomes the template for every Magic WAN re-termination. <strong>If it
+        must unwind</strong>, revert in reverse order: re-enable the WARP profile via MDM and
+        remove the Cato Client (Gateway verdicts and DNS protection return with the agent,
+        automatically), re-point the site's edge back to its idle Magic WAN tunnel definition,
+        and set the pilot's Internet Firewall and WAN Firewall rules to disabled rather than
+        deleted — the conversion work remains an asset for the real migration. The TLSi root
+        certificate is inert and can stay or go with the same MDM tooling; the untouched Access
+        apps, service tokens and connectors never knew the pilot happened. Tear down the Cato
+        IPsec site last, once nothing routes through it. The cohort lands exactly where it
+        started: WARP-enrolled, Gateway-protected, decision de-risked.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

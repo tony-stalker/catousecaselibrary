@@ -445,6 +445,224 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer&rsquo;s tenant</h2>
+      <p>
+        A Cisco estate is three planes — a DNS/web policy plane in Umbrella, a remote-access plane
+        on AnyConnect, and a WAN plane on Meraki or Catalyst SD-WAN — so the PoV pilots each plane
+        in a bounded way rather than boiling the estate: one Umbrella policy slice translated to
+        Cato at parity, monitor-first; one AnyConnect cohort on the Cato Client with posture and
+        always-on; and one branch in eBGP-hub co-existence with the legacy overlay. Each plane keeps
+        its own rollback lever — a DNS re-point, an MDM profile re-push, a BGP withdrawal — and each
+        rollback is rehearsed on purpose before anyone asks. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: agree the success criteria
+        below with the customer <em>before</em> anything is configured, and book the decision
+        meeting at the same workshop.
+      </p>
+
+      <h3>Success criteria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Criterion — what we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>The Umbrella slice — one destination-list pair, the pilot population&rsquo;s category settings and the DNS-layer protections — runs at parity on Cato, monitor-first</td>
+              <td>Rule-hit events per translated rule and DNS Protection events, compared against Umbrella&rsquo;s activity reports for the same flows; every delta triaged and explained</td>
+              <td><span class="path">Monitor → Events</span> and <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>The AnyConnect pilot cohort works a full week on the Cato Client — posture evaluated continuously, always-on enforced, apps behind un-migrated sites reachable</td>
+              <td>Experience Monitoring scores for the cohort across the week; posture verdicts and connection events; no unresolved helpdesk tickets from the group</td>
+              <td><span class="path">Monitor → Experience Monitoring</span> (Remote Users) and <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>The pilot branch, cut to a Cato Socket, reaches un-migrated overlay sites through the eBGP hub handoff — and they reach it back</td>
+              <td>BGP neighbour Established with learned routes captured on both sides (Show BGP Status plus the legacy hub&rsquo;s routing table), and bidirectional reachability tests</td>
+              <td><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Rollback is real on every plane: DNS re-pointed to Umbrella, the AnyConnect profile re-pushed via MDM, the branch withdrawn over BGP — each rehearsed and timed</td>
+              <td>Timestamped before / during / after captures per plane, and a continuous ping across the branch reversion showing convergence time</td>
+              <td><span class="path">Network → Routing Table</span> and <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Convergence is visible: events from all three planes land in one feed, attributed to user, site and rule — the multi-console problem, closed on screen</td>
+              <td>A single Events export filtered per plane, shown to the sponsor from one console next to today&rsquo;s four dashboards</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Two Sockets shipped: one for the regional interconnect hub (in parallel with the legacy hub) and one for the pilot branch. BGP filtering on Socket sites needs Socket v21.1+. Where the WAN plane is ASA-fronted branches rather than an SD-WAN overlay, run the branch plane over interim ASA IPsec to the PoP instead — the full design is <a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA</a>.</li>
+          <li>A spare routed interface (or 802.1Q sub-interface) at the handoff device — the Viptela hub cEdge, or the L3 core switch behind a Meraki MX (never the MX itself) — plus an agreed transit VLAN and /29. Private ASNs agreed: Cato&rsquo;s default is 64515 and Cato is eBGP-only, so the Cisco side must differ.</li>
+          <li>Trial licences for every capability under test. DNS Protections come with the IPS licence — no separate SKU — and Experience Monitoring&rsquo;s DEM drill-downs need the DEM licence.</li>
+          <li>IdP SSO and SCIM live for the pilot cohort, and MDM able to remove the AnyConnect VPN profile and deploy the Cato Client in one change window — the cohort swaps clients, it does not dual-run (see <a href="migration-anyconnect.html">AnyConnect to Cato Client</a> for the full play).</li>
+          <li>The Umbrella artefacts in hand before the build: destination lists to CSV (dashboard download or the Destination Lists API), the category settings from a policy walk-through, and the Umbrella activity reports that will serve as the parity baseline.</li>
+          <li>If web-policy parity is to be judged beyond domain/SNI, stage TLS inspection first — Cato certificate pushed to the cohort via MDM in advance (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Change windows booked for the branch cutover <em>and</em> for the deliberate three-plane rollback rehearsal.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Freeze the slices — one per plane, in writing</h4>
+          <p>Bound each pilot at the workshop: which destination lists and categories, which cohort
+          (a department of 20–50 users with a known app list), which branch. Everything else is
+          parked on the next-steps register. The Umbrella slice must belong to the pilot site and
+          cohort — remember the egress-IP dependency from the co-existence section: the moment the
+          Socket goes live, that site stops matching its Umbrella network identity, so its policy
+          <em>must</em> move in the same window.</p>
+        </li>
+        <li>
+          <h4>Translate the Umbrella slice — categories first, monitor everywhere</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → DNS Protection</span></p>
+          <p>Dedupe the exported destination lists against Cato system categories, build
+          <a href="https://knowledge.catonetworks.com/docs/working-with-categories" target="_blank" rel="noopener">custom categories</a>
+          (domains match subdomains; FQDNs are exact) for the survivors, and attach them to Internet
+          firewall rules with Track&nbsp;=&nbsp;Event and block actions deferred. Recreate the
+          DNS-layer controls in
+          <a href="https://knowledge.catonetworks.com/docs/dns-security" target="_blank" rel="noopener">DNS Protections</a> —
+          eight protections including phishing, C&amp;C and DNS tunnelling, enforced at the PoP
+          whatever resolver the client uses; leave actions on Allow (monitor) for the PoV, and note
+          Sinkhole as the end-state option for identifying infected hosts. The per-domain method and
+          worked example are on <a href="migration-cisco-policy.html">Cisco Policy Migration</a>.</p>
+        </li>
+        <li>
+          <h4>Stand up the hub handoff — transit VLAN and eBGP</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>Cable the interconnect Socket&rsquo;s LAN port to the hub switch, carry the transit VLAN
+          to the cEdge (or the L3 core behind the Meraki MX), and create the
+          <a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">BGP neighbour</a>
+          on the Cato site: defaults are metric 100, hold time 60&nbsp;s, keep-alive 20&nbsp;s
+          (keep it at a third of hold time), with MD5 authentication supported. Advertise summary
+          routes for the Cato side — Cato does not perform route summarisation for you, so define
+          them explicitly. Then add
+          <a href="https://knowledge.catonetworks.com/docs/working-with-bgp-filtering" target="_blank" rel="noopener">BGP filtering</a>
+          on the neighbour: drop the default route and any parallel-site prefixes so no site is ever
+          reachable via two paths at once — and do it in the build window, because every filter edit
+          resets the BGP session immediately.</p>
+          <pre class="code"><span class="cmt"># Catalyst SD-WAN hub (cEdge, IOS-XE) — the other end of the handoff (illustrative)</span>
+<span class="kw">router bgp 65010</span>
+ neighbor 10.255.99.1 remote-as 64515   <span class="cmt"># Socket IP on the transit VLAN · Cato default ASN</span>
+ address-family ipv4 unicast
+  neighbor 10.255.99.1 activate
+  redistribute omp                      <span class="cmt"># legacy-spoke routes → Cato</span>
+<span class="kw">sdwan</span>
+ omp
+  address-family ipv4
+   advertise bgp                        <span class="cmt"># Cato-learned routes → the overlay</span>
+<span class="cmt"># Verify:  show ip bgp summary   ·   show sdwan omp routes</span>
+<span class="cmt"># Meraki estates: configure the same eBGP peering on the L3 core switch or
+# firewall behind the MX — MX dynamic routing is too limited to anchor the handoff.</span></pre>
+        </li>
+        <li>
+          <h4>Cut the pilot branch — and move its Umbrella policy in the same window</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Validate the exchange with a test prefix first, then run the spoke move: disable the
+          branch&rsquo;s cEdge spoke (OMP withdraws its routes; Meraki: remove the spoke from
+          Auto-VPN), bring up the Socket site, and let routes propagate to both domains. Prove
+          criterion 3 both ways — from the migrated branch to a host behind an un-migrated overlay
+          site, and back. In the same window, the branch&rsquo;s web and DNS policy switches from
+          Umbrella to the monitor-mode Cato slice built in step 2; the Umbrella virtual appliances
+          and internal AD DNS are untouched throughout.</p>
+        </li>
+        <li>
+          <h4>Swap the pilot cohort onto the Cato Client — posture monitor-first</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>One scripted MDM change per endpoint: remove the AnyConnect VPN profile, install the
+          Cato Client, confirm enrolment — never two full-tunnel agents on one machine (AnyConnect
+          can override the Cato Client&rsquo;s DNS; the KB link is in Resources). Recreate the ISE
+          posture rules as
+          <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Device Posture profiles</a>
+          — anti-malware, disk encryption, OS version, device certificate among the eleven available
+          checks, combined with AND logic — referenced from the Client Connectivity Policy in
+          monitor posture first. Verify the cohort reaches apps behind un-migrated sites: that is
+          the hub handoff proven from the user side.</p>
+        </li>
+        <li>
+          <h4>Enforce always-on for the cohort</h4>
+          <p><span class="path">Access → Always-On Policy</span></p>
+          <p>Once the cohort&rsquo;s first days are quiet, add an
+          <a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Always-On rule</a>
+          scoped to the pilot group (Windows, macOS, Android and iOS — not Linux), and show the
+          admin-side one-time bypass passcode (valid up to 15 minutes) as the operational escape
+          hatch. Client Connectivity Policy and device authentication take precedence over
+          Always-On — a non-compliant device is refused, not silently tunnelled. This is the
+          moment the pilot is demonstrably <em>ahead</em> of AnyConnect, not just level.</p>
+        </li>
+        <li>
+          <h4>Rehearse all three rollbacks — deliberately, on camera</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>In one change window, run the reversions as drills and time each. <strong>WAN:</strong>
+          re-enable the legacy spoke and withdraw the branch from the Cato side — OMP/BGP
+          re-converges with a continuous ping running (interim-IPsec variant: drop the tunnel and
+          let the ASA&rsquo;s original default route resume). <strong>Client:</strong> re-push the
+          AnyConnect profile via MDM to one machine and watch it return to the headend.
+          <strong>DNS/web:</strong> re-point the pilot site at Umbrella and confirm its network
+          identity matches again. Then cut all three forward once more. Nothing on the Cisco side
+          was decommissioned, so every reversion is minutes — that fact is the evidence.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: «Security → DNS Protection — the eight protections with actions set to Allow (monitor) for the PoV» -->
+      <!-- capture-wanted: «Network → Routing Table filtered to the pilot prefixes, showing BGP-learned overlay routes via the hub handoff» -->
+      <!-- capture-wanted: «Access → Device Posture — a profile recreating ISE posture checks (anti-malware + disk encryption + OS version)» -->
+      <!-- capture-wanted: «Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Internet Firewall rulebase in the CMA with ordered rules, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>The Umbrella slice as it lands: destination lists deduped into custom categories and attached to ordered Internet Firewall rules, hit-count bars accumulating per rule. In the PoV these hits — and the events behind them — are compared against the Umbrella activity reports for the same flows before anything flips from monitor to block; identity-scoped rules replace egress-IP network identities.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab, with per-user experience scores, connected PoPs, flows and average TTFB" loading="lazy">
+        <figcaption>Criterion 2&rsquo;s evidence: the AnyConnect pilot cohort&rsquo;s week on the Cato Client, scored per user with PoP, flows and TTFB. A quiet, green week here — with posture evaluated continuously and always-on enforced — is the concentrator model retired without anyone noticing.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>Cohort endpoint misbehaving</h4><p>First question: is AnyConnect still installed? Its VPN agent can override the Cato Client&rsquo;s DNS settings, and dual full-tunnel agents are the documented unsupported case. The fix is the swap discipline from step 5 — profile removed, Client installed, one data path per endpoint — and the per-cohort rollback is the MDM re-push, not debugging cohabitation.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳</div><div><h4>Umbrella &ldquo;stopped working&rdquo; for the pilot site</h4><p>Expected, not a fault: behind the Socket the site egresses from a shared Cato PoP address and no longer matches its Umbrella network identity. Its policy is the Cato slice now — that is why step 4 moves it in the cutover window. Roaming-module users are unaffected until their cohort swaps; un-migrated sites keep matching Umbrella throughout.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>BGP session up, routes missing</h4><p>Check the neighbour&rsquo;s accept/drop lists first — an over-broad filter silently eats prefixes, and every filter edit resets the session, so audit them in a window. Then check communities in <span class="path">Network → Routing Table</span>: prefixes tagged &lt;Cato&nbsp;ASN&gt;:32768 stay local to the hub Socket and never reach the PoP — the pilot branch prefixes must not carry that tag. Meraki estates: confirm the peering really is on the L3 core, not the MX.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Overlay steering around the handoff</h4><p>Traffic to the migrated branch still rides the old overlay: a vSmart centralised policy or app-route rule on an un-migrated cEdge still matches the branch prefix, or a Meraki hub-priority entry survives. Check <code>show sdwan omp routes</code> and the policy hit counters, retire stale entries for migrated prefixes, and confirm <code>advertise bgp</code> is actually propagating the Cato-learned routes into OMP.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>Keep the parity comparison fair</h4><p>Umbrella and Cato category taxonomies differ, and Cato&rsquo;s single-pass engine inspects flows Umbrella never saw — so monitor-mode deltas split into taxonomy drift (map by intent, re-order rules) and coverage gained (new detections, not false positives). Judge web-policy parity beyond domain/SNI only after TLS inspection is staged, on either platform.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>DNS Protections noisier than Umbrella</h4><p>Protections such as Newly Registered Domains ship with defaults tuned to false-positive risk, and inline inspection at the PoP sees every resolver — including ones the Umbrella virtual appliances never fronted. Keep actions on Allow (monitor) for the PoV, triage the event stream weekly, and present Sinkhole as the end-state control for infected-host identification rather than enabling it mid-pilot.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries of this PoV</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>One branch and one hub prove the pattern, not the estate.</strong> Multi-region AS-path symmetry, the full destination-list corpus, ISE&rsquo;s wired-NAC scope and the DNS virtual-appliance retirement are project design work — park them on the next-steps register.</li>
+          <li><strong>Licence edges:</strong> DNS Protections ride the IPS licence, but the DEM drill-downs behind criterion 2 need the DEM licence, and the threat-prevention trial must be active before monitor-mode evidence can accumulate.</li>
+          <li><strong>Evidence outlives retention:</strong> export events, routing-table captures and Experience Monitoring views into the evidence doc weekly — do not rely on tenant retention windows at wrap-up.</li>
+          <li><strong>Umbrella stays live throughout:</strong> the tenancy, virtual appliances and roaming modules keep protecting everything outside the pilot — which is exactly what keeps all three rollback levers cheap.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the PoV ends without a project, reverse in order —
+        re-enable the branch&rsquo;s spoke and confirm reachability (the rollback drill, one last
+        time); re-push the AnyConnect profile to the cohort via MDM, then remove the Cato Client;
+        re-point the pilot site&rsquo;s DNS and web policy at Umbrella; disable or delete the
+        monitor-mode rules, custom categories and posture profiles (they blocked nothing, so removal
+        is invisible); delete the BGP neighbour and its filters, remove the transit VLAN, and
+        recover both Sockets. The Cisco estate never depended on any of it — that is the point of
+        the three-plane pattern.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

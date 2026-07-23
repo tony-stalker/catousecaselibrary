@@ -305,6 +305,220 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The renewal-decision pilot is deliberately small: <strong>one branch, one parallel socket,
+        the appliance estate untouched</strong> — whatever the vendor on the bezel. The only
+        appliance-side change in the whole engagement is a single route on the transit VLAN, which
+        is also what makes rollback a routing change rather than a project. Everything else happens
+        in the customer's Cato tenant: a bounded, hit-count-rationalised slice of the rulebase
+        translated monitor-first, the appliance's inter-VLAN job demonstrated on the LAN Firewall
+        where the estate needs it, threat prevention evidenced on real traffic, and every artefact
+        filed into a renewal-decision evidence pack that states plainly what the appliance does
+        today and what FWaaS demonstrated. Agree the success criteria <em>before</em> configuring
+        anything, per <a href="management-pov-framework.html">Running a Cato PoV</a> — and book the
+        decision meeting at the same workshop. If the bezel says Palo Alto or Check Point, run the
+        vendor-specific displacement PoV on
+        <a href="migration-palo-alto.html">Palo Alto Displacement</a> or
+        <a href="migration-checkpoint.html">Check Point Displacement</a> instead; the phased path
+        this pilot feeds is animated on
+        <a href="migration-journey-firewall.html">the firewall-refresh journey page</a>.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Co-existence holds — the socket carries the pilot subnet in parallel while the appliance remains default gateway, with no user-visible disruption</td>
+              <td>Dated day-one screenshots: tunnels up, transit-VLAN handoff routes exchanged, first traffic flowing</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Network → Sites</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Policy parity on a hit-count-rationalised slice — the 15–20 highest-hit rules translated and firing with the same intent (same flows allowed and blocked)</td>
+              <td>Per-rule events plus the <span class="path">Home → Reports</span> rule hit count PDF, read against the appliance's own rule-usage baseline from week zero</td>
+              <td><span class="path">Monitor → Events</span> <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>East-west enforced without the appliance — the branch's inter-VLAN control demonstrated as LAN Firewall rules enforced locally on the Socket</td>
+              <td>LAN Firewall events (generated on the Socket) showing the rule matching per VLAN; the global rulebase scoped to the pilot site</td>
+              <td><span class="path">Security → LAN Firewall</span> <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Threat-prevention verdicts demonstrated — IPS and Anti-Malware run monitor-first on pilot traffic, then block, with a harmless test detection stopped and attributed</td>
+              <td>Threat events attributed to user, device and site; block-page screenshot after the flip</td>
+              <td><span class="path">Monitor → Threats Dashboard</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>The renewal-decision pack assembled — what the appliance enforces today beside what FWaaS demonstrated, gaps conceded in writing, every claim dated</td>
+              <td>The two-column comparison plus the artefacts behind criteria 1–4, exported weekly</td>
+              <td><span class="path">Home → Reports</span> <span class="path">Administration → Audit Trail</span></td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Rollback shown to be a routing change — withdraw the handoff route in a change window and traffic reverts to the appliance, timed and evidenced</td>
+              <td>Before/after Topology views with timestamps; the reversion window measured in minutes</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Administration → Audit Trail</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree these before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Trial licences</strong> confirmed for every capability under test — IPS, Anti-Malware/NG Anti-Malware and TLS inspection — live for the whole PoV window.</li>
+          <li><strong>TLS inspection staged first</strong> where content-level verdicts matter (Anti-Malware file verdicts, full-path URL matching) — follow the phased approach in <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with the Cato root certificate deployed to pilot devices only.</li>
+          <li><strong>Identity in place</strong> — pilot users exist as a SCIM/LDAP-provisioned group in CMA and are syncing <em>before</em> any user-scoped rule is written.</li>
+          <li><strong>The appliance baseline</strong> — a read-only export of the pilot branch's rulebase with hit counts (every mainstream NGFW exposes rule usage under some name), plus the list of inspection features actually enabled today. This is the yardstick criteria 2 and 5 are measured against, and the only thing the PoV ever asks of the appliance besides the handoff route.</li>
+          <li><strong>Socket version</strong> — if the east-west story needs device-attribute criteria (camera VLANs, OT gear), confirm the pilot Socket runs v26 or higher — and that device criteria are enabled for the account (the KB directs accounts to Cato to switch this on) — before writing that step into the plan.</li>
+          <li><strong>Scope</strong> — one branch socket (shipped and staged), a transit VLAN agreed with the network team, and change windows for the handoff route and the rollback drill.</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Week zero — baseline the appliance before touching anything</h4>
+          <p>Export the pilot branch's rulebase with hit counts and rationalise on them first:
+          the representative slice is the 15–20 highest-hit rules, deliberately including one
+          identity-scoped rule and one app- or category-based rule. Dead rules stay dead —
+          zero-hit rules are out of PoV scope by design. In the same pass, record what the
+          appliance <em>actually does</em> today: which inspection features are licensed, which
+          are enabled, and — the usual honesty moment — whether TLS decryption is really on.
+          That inventory becomes the left-hand column of the renewal-decision pack.</p>
+        </li>
+        <li>
+          <h4>Stand up the parallel socket at the pilot branch</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site, connect the socket on the transit VLAN and let it tunnel out through
+          the existing internet path — the appliance remains L3 default gateway and nothing changes
+          for users. Confirm in <span class="path">Monitor → Topology</span> that the site is up
+          against its nearest PoP, and take the dated day-one screenshots: evidence item zero for
+          criterion 1.</p>
+        </li>
+        <li>
+          <h4>Configure the handoff — statics or eBGP</h4>
+          <p><span class="path">Network → Sites → Site Settings → BGP</span></p>
+          <p>Either point statics for the pilot subnet at the socket from the L3 switch or
+          appliance, or bring up an eBGP neighbour: set the peer and Cato ASNs in <em>ASN
+          Settings</em>, the peer IP, and advertise <em>Summary routes</em> towards the appliance
+          with the <em>Metric</em> set so it still prefers its own default; verify with <em>Show
+          BGP Status</em>
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">Configuring BGP Neighbors for a Cato Socket</a>).
+          Either way, the pilot subnet now reaches Cato per prefix — and the rollback lever for
+          criterion 6 already exists.</p>
+        </li>
+        <li>
+          <h4>Translate the policy slice — monitor-first, at parity</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → WAN Firewall</span></p>
+          <p>Rebuild the slice at parity: egress intent into the Internet Firewall, site-to-site
+          intent into the WAN Firewall allowlist, identity scopes from the synced pilot group.
+          Every translated rule gets <em>Event</em> tracking, and nothing blocks that the appliance
+          did not already block — the PoV proves the same intent enforced, not a new posture.
+          Expect rule names never to line up between vendors; parity is judged on flow outcomes,
+          which is what the troubleshooting grid below is for.</p>
+        </li>
+        <li>
+          <h4>Show the east-west story — LAN Firewall where the estate needs it</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>The branch appliance's other job is inter-VLAN filtering, and that work does not go to
+          the PoP: the LAN Firewall is a global policy whose rules are scoped per site (or site
+          group) and VLAN, and <strong>enforced locally on the Socket</strong> — events are
+          generated on the Socket itself
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">Socket LAN Firewall policy</a>).
+          Write one representative rule for the pilot site — guest VLAN to corporate VLAN blocked,
+          say, or a device-attribute rule for a camera VLAN (criteria need Socket v26+, and
+          device-attribute rules only match devices the Device Inventory engine has detected, and are enforced only where the device's MAC address was seen — the Cato DHCP service helps ensure that). Enable the site's Layer 7
+          capabilities before using app-layer objects, and remember the scope boundary: intra-site
+          traffic that matches no LAN Firewall rule is treated as WAN traffic, even when it
+          hairpins via the PoP.</p>
+        </li>
+        <li>
+          <h4>Threat prevention — monitor, then block, on the pilot scope</h4>
+          <p><span class="path">Security → IPS</span> <span class="path">Security → Anti-Malware</span></p>
+          <p>Enable IPS in <em>Monitor</em> — verdicts generate events while traffic continues to
+          its destination
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Configuring the IPS Policy</a>) —
+          and Anti-Malware with NG Anti-Malware on top of it (it requires the base engine enabled;
+          <a href="https://knowledge.catonetworks.com/docs/configuring-the-anti-malware-policy" target="_blank" rel="noopener">Configuring the Anti-Malware Policy</a>).
+          Review a week of verdicts with the customer, then flip the pilot scope to block and
+          demonstrate a harmless test detection stopped, block page shown, event attributed to
+          user, device and site — criterion 4 evidenced in one screen, and the monitor→block
+          discipline itself is part of the story: this is how the estate-wide rollout would be
+          governed too.</p>
+        </li>
+        <li>
+          <h4>Assemble the renewal-decision pack — and run the rollback drill</h4>
+          <p><span class="path">Home → Reports</span> <span class="path">Monitor → Events</span></p>
+          <p>Generate the rule hit count report as the dated PDF artefact — it covers the Internet
+          Firewall, WAN Firewall and Network Rules policies
+          (<a href="https://knowledge.catonetworks.com/docs/generating-rule-hit-count-reports-for-security-and-network-policies" target="_blank" rel="noopener">rule hit count reports</a>);
+          LAN Firewall parity is evidenced from its Socket-generated events instead. Set the
+          counts against the week-zero appliance baseline, then build the two-column comparison:
+          what the appliance enforces today (from the week-zero inventory) beside what FWaaS
+          demonstrated, with gaps conceded honestly on both sides — features the appliance runs
+          that the PoV did not test, and things Cato showed that the appliance has switched off.
+          Close criterion 6 in a change window: withdraw the handoff route, watch traffic revert
+          to the appliance, time it, screenshot it, restore it. A rollback that has been
+          <em>rehearsed and measured</em> is the strongest slide in the wrap-up deck.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with app and category objects, user and device scopes, Block, Allow and Prompt actions, event tracking and live hit-count bars" loading="lazy">
+        <figcaption>Criterion 2 in one screen: the translated slice as an ordered, first-match rulebase with live hit-count bars — the renewal conversation's centrepiece. Read the bars against the appliance's own rule-usage export to show the same intent enforced with no box behind it, then export the <span class="path">Home → Reports</span> hit count PDF as the dated artefact.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/iot-rulebase-cma.png" alt="CMA firewall rulebase with an expanded device-attribute rules group: allow rules matching devices by category, type, model and manufacturer, a discovery rule and a block rule, each with live hit counts" loading="lazy">
+        <figcaption>The east-west grammar for criterion 3: rules matching devices by category, type and manufacturer with live hit counts — the inter-VLAN control a branch appliance does today, expressed as policy. In the LAN Firewall the same rule shapes are scoped per site and VLAN and enforced on the Socket (device-attribute criteria from Socket v26).</figcaption>
+      </figure>
+      <!-- capture-wanted: Security → LAN Firewall global rulebase with rules scoped per site/VLAN and a block rule between VLANs -->
+      <!-- capture-wanted: Home → Reports generated rule hit count PDF (Top Matched / Least Matched / full priority list) -->
+      <!-- capture-wanted: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page -->
+      <!-- capture-wanted: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff -->
+
+      <h3 style="margin-top:26px">Troubleshooting the PoV</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Asymmetric routing through the appliance</h4><p>Pilot-subnet sessions stall or reset: traffic egressed via Cato but returned via the stateful appliance, which drops the unseen flow. Check the appliance's session log for out-of-state drops to the pilot subnet; fix by advertising the pilot prefix consistently in both directions and never splitting a flow's egress and return between the two edges.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Rule names never line up — compare fairly</h4><p>The same flow can be a generic web rule on the appliance and a named catalogue app on Cato, so a name-by-name comparison always "fails". Judge parity on flow outcomes — source, user, destination, allow/block — and re-create any custom app objects as Cato custom apps placed above broader catalogue entries, or their traffic silently matches a wider category.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Double TLS inspection</h4><p>Pinned apps failing, certificate warnings doubling up: the appliance's decryption is still active on a path Cato now also inspects. Disable appliance decryption for Cato-routed pilot traffic, keep the TLSi wizard's bypass rules ahead of every inspect rule, and block QUIC so browsers cannot sidestep the inspected path.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>The LAN Firewall rule never matches</h4><p>Three usual causes: the pilot Socket is below v26, the version from which rule criteria are supported; the device was never detected by the Device Inventory engine or its MAC address was never seen (attribute rules are enforced only for MAC-detected devices — Cato DHCP is the best practice); or app-layer objects are in the rule without the site's Layer 7 capabilities enabled. Check all three before debugging the rule itself — and remember unmatched intra-site traffic is handled as WAN traffic, not dropped.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity-scoped rules that never match</h4><p>A translated user-scoped rule shows zero events: the SCIM/LDAP group is empty or stale in CMA, so the rule cannot match. Check the group's membership under <span class="path">Access → Users</span> before touching the rule — identity provisioning lag, not translation, is the usual culprit.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>New detections read as regressions</h4><p>Events appear on Cato with no ancestor in the appliance's logs: usually traffic the appliance never decrypted or never inspected, now seen for the first time under staged TLSi. Triage each against the week-zero feature inventory — if the appliance had the capability off, it is a finding for the renewal pack, not a parity failure.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Boundaries to state up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The refresh-vs-exit decision is commercial, and the PoV never makes it</strong> — it informs it. Renewal quotes, EOL dates and the wider TCO case belong to <a href="management-vendor-consolidation.html">Vendor Consolidation &amp; Network TCO</a>; the pack's job is to make that meeting an evidence review, not a demo.</li>
+          <li>Each capability under test needs its trial licence live for the whole PoV window — a licence lapsing mid-pilot reads as a product failure.</li>
+          <li>The rule hit count report covers the Internet Firewall, WAN Firewall and Network Rules policies — LAN Firewall evidence comes from its Socket-generated events, so file both artefact types in the pack.</li>
+          <li>TLS inspection is bypassed for embedded and unsupported operating systems — keep such devices out of the pilot scope or write the criterion around them.</li>
+          <li>Export the evidence pack weekly, not at the end — screenshots and event exports dated as they land, so the wrap-up reads a register rather than excavating history.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit has two doors, both clean.</strong> If the criteria pass, nothing is thrown
+        away: the pilot branch, handoff and translated slice become wave one of the
+        <a href="migration-journey-firewall.html">phased retirement journey</a>, and the parked
+        asks become the rollout scope. If the customer renews the appliances instead, they renew
+        with better information than any refresh cycle before — and the unwind is the rollback
+        drill run once more without the restore: withdraw the handoff route, disable the pilot
+        policies, and export the evidence pack and <span class="path">Administration → Audit
+        Trail</span> before trial licences lapse. The appliance estate ends the engagement exactly
+        as it started — one route removed, nothing else ever changed.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

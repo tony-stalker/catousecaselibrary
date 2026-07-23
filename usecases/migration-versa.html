@@ -482,6 +482,242 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The PoV is the migration plan in miniature: one Versa hub gets a parallel Socket and an
+        eBGP handoff into its LAN-side routing, one branch cuts over behind it, one bounded slice
+        of Director-generated policy is translated at parity, and — deliberately — a greenfield
+        CASB/DLP build runs on the pilot cohort, because that is the capability the VOS estate has
+        nothing to compare against. The MP-BGP overlay is left intact throughout, and rollback is
+        demonstrated on purpose, timed, before anyone asks. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: agree the success criteria
+        below with the customer <em>before</em> anything is configured, and book the decision
+        meeting at the same workshop. In carrier-managed estates, add the provider to the cast
+        list on day one — several of the steps below are their change tickets, not yours.
+      </p>
+
+      <h3>Success criteria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Criterion — what we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>The eBGP handoff at the Versa hub is established and exchanging routes: overlay prefixes learned by Cato, Cato prefixes learned by the VOS hub</td>
+              <td>BGP neighbour state and learned routes on both sides — Show BGP Status in the CMA, captured beside the hub VR's neighbour state from Director's appliance monitoring (or the provider's portal)</td>
+              <td><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>The pilot branch, cut to a Cato Socket, reaches un-migrated VOS sites via the hub handoff — and they reach it back</td>
+              <td>Bidirectional reachability tests; the branch prefix visible in the Versa overlay via the hub, and the overlay prefixes visible in Cato's routing table with AS path and received communities</td>
+              <td><span class="path">Monitor → Topology</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>A bounded Director policy slice — the pilot site's firewall rules plus one URL-filtering profile — runs at parity on Cato, monitor-first</td>
+              <td>Rule-hit events for each translated rule, compared against the Versa Analytics baseline for the same flows; deltas triaged and explained</td>
+              <td><span class="path">Monitor → Events</span>, <span class="path">Security → WAN Firewall</span>, <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Greenfield CASB and DLP produce evidence on the pilot cohort's real traffic — a scored shadow-IT inventory and monitor-mode DLP matches the Versa estate has never had</td>
+              <td>Cloud Apps discovery view with risk scores; DLP monitor-mode events attributed to user, app and data type on the Data Protection Dashboard</td>
+              <td><span class="path">Monitor → Cloud Apps Dashboard</span> and <span class="path">Monitor → Data Protection Dashboard</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>An experience baseline exists: the pilot site and cohort scored across a full working week</td>
+              <td>Experience Monitoring scores, TTFB and per-app views for the pilot site and users; no unresolved helpdesk tickets from the cohort</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Rollback is real: the Versa spoke is re-enabled, the socket site taken down, and traffic reverts to the overlay — timed, then cut forward again</td>
+              <td>Timestamped routing tables before / during / after, and a continuous ping across the reversion showing convergence time</td>
+              <td><span class="path">Network → Routing Table</span>, plus the hub VR's routing table from Director or the provider</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Two sockets shipped: one for the Versa hub (parallel, alongside the VOS kit), one for the pilot branch. Socket firmware matters: the community-32768 isolated-route behaviour needs Socket v15+, summary routes need v19+, and BGP filtering on socket sites needs v21.1+.</li>
+          <li>A spare routed interface (or 802.1Q sub-interface) on the VOS hub's LAN-side virtual router, an agreed transit VLAN and /29 for the handoff, and private ASNs agreed — Cato's default is 64515 and Cato is eBGP-only, so the Versa side must use a different ASN.</li>
+          <li>The Director export and the pilot site's Versa Analytics reports requested in week one — <strong>in carrier-managed estates both are provider change tickets with lead time</strong>, and the Analytics reports are the parity baseline for criterion 3.</li>
+          <li>Trial licences for every capability under test — CASB/DLP for the greenfield build, and note that Experience Monitoring's DEM drill-downs need a DEM licence.</li>
+          <li>IdP/SCIM sync live for the pilot cohort: group-scoped CASB and DLP rules have nothing to bind to without it.</li>
+          <li>TLS inspection staged first for the cohort — CASB activity-level control and DLP content inspection both require it (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>), with certificates deployed in advance.</li>
+          <li>Change windows booked up front for the branch cutover <em>and</em> the deliberate rollback drill — in provider-managed estates the spoke disable and re-enable are tickets, so both windows need the provider committed, not just informed.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Stand up the hub handoff — transit VLAN and eBGP</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>Cable the parallel socket's LAN port to the hub switch, carry the transit VLAN to the
+          VOS hub's LAN-side virtual router, and create the BGP neighbour on the Cato site with the
+          defaults unless design says otherwise — metric 100, hold time 60&nbsp;s, keep-alive
+          20&nbsp;s — and MD5 authentication on both ends (see
+          <a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">Configuring BGP Neighbors for a Cato Socket</a>).
+          Advertise <em>summary routes</em> for the Cato side rather than the full table: Cato
+          advertises only the summaries you define explicitly — it
+          <a href="https://knowledge.catonetworks.com/docs/working-with-bgp-summary-routes" target="_blank" rel="noopener">does not aggregate for you</a>.
+          The VOS side of the session is Director template work (or a provider ticket) — agree the
+          worksheet below before the build window:</p>
+          <pre class="code"><span class="cmt"># eBGP handoff worksheet — one per hub, agreed before the build window</span>
+<span class="kw">transit VLAN</span>       810              <span class="cmt"># spare routed port or 802.1Q sub-if on the VOS hub VR</span>
+<span class="kw">transit subnet</span>     10.255.99.0/29
+<span class="kw">socket IP</span>          10.255.99.1      <span class="cmt"># Cato side of the session</span>
+<span class="kw">VOS hub VR IP</span>      10.255.99.2      <span class="cmt"># peer IP on the Cato neighbour</span>
+<span class="kw">Cato ASN</span>           64515            <span class="cmt"># Cato default; Cato is eBGP-only</span>
+<span class="kw">VOS-side ASN</span>       65020            <span class="cmt"># any private ASN, must differ from 64515</span>
+<span class="kw">advertise (Cato)</span>   summary routes only — defined explicitly
+<span class="kw">filter (inbound)</span>   drop 0.0.0.0/0 and any half-migrated site prefixes
+<span class="kw">timers / auth</span>      hold 60 s · keep-alive 20 s · metric 100 · MD5</pre>
+        </li>
+        <li>
+          <h4>Filter the exchange before it can hurt anyone</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>On the neighbour's Policy section, add inbound
+          <a href="https://knowledge.catonetworks.com/docs/working-with-bgp-filtering" target="_blank" rel="noopener">BGP filtering</a>
+          — accept or drop lists matched on route or community: drop the default route and the
+          prefixes of any site with parallel connectivity, so a half-migrated site is never
+          reachable via two paths at once. Two behaviours to know: <strong>editing BGP filters
+          resets the BGP session immediately</strong> (do it in the build window, not mid-test),
+          and prefixes the VOS hub tags with the
+          <a href="https://knowledge.catonetworks.com/docs/cato-reserved-bgp-communities" target="_blank" rel="noopener">reserved community &lt;Cato&nbsp;ASN&gt;:32768</a>
+          are installed only in the hub socket's local routing table and are <em>not</em>
+          propagated to the PoP. This pilot needs the overlay prefixes account-wide — the pilot
+          branch reaches them across the backbone — so they must <em>not</em> carry that community.</p>
+        </li>
+        <li>
+          <h4>Validate routing on both sides — before anything moves</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>Use Show BGP Status on the neighbour to confirm the session is Established and inspect
+          learned routes, then open the account routing table: filter to the exchanged prefixes and
+          check next hop, AS path and received communities for each. Mirror the check on the Versa
+          side from Director's appliance monitoring — or, in a managed estate, ask the provider to
+          evidence the hub VR's BGP state as part of the ticket. Advertise a test prefix first and
+          watch it appear in both domains before any production subnet is at stake.</p>
+        </li>
+        <li>
+          <h4>Cut the pilot branch to a Socket</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>The standard spoke move from the co-existence section above: disable the branch's
+          Versa spoke via Director (or the provider's ticket) so its prefixes are withdrawn from
+          the MP-BGP overlay and, via the hub, from the eBGP exchange; bring up the Cato socket
+          site; let routes propagate to both domains. Then prove criterion 2 both ways: from the
+          migrated branch to a host behind an un-migrated VOS site, and from that legacy site back
+          — traffic crossing the backbone to the hub socket, the eBGP handoff, and the Versa
+          overlay beyond it.</p>
+        </li>
+        <li>
+          <h4>Translate the policy slice — monitor first</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Keep the slice bounded: the pilot site's firewall rules plus one URL-filtering
+          profile. Regenerate the branch's <em>effective</em> config first — template stack plus
+          bind data, from the Director export — then rationalise on Analytics hit counts before
+          translating; the full per-domain method, worked example included, is
+          <a href="migration-versa-policy.html">Versa Policy Migration</a>. Every translated rule
+          lands with Track&nbsp;=&nbsp;Event and block actions deferred; nothing blocks until CMA
+          events prove the rule matches what its VOS ancestor matched.</p>
+        </li>
+        <li>
+          <h4>Build CASB and DLP greenfield on the cohort — the differentiator</h4>
+          <p><span class="path">Security → CASB</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>There is nothing to translate — typical VOS estates carry no inline CASB and no DLP —
+          so this step is a best-practice build, positioned as the upgrade it is. Let shadow-IT
+          discovery run on the cohort's traffic in
+          <span class="path">Monitor → Cloud Apps Dashboard</span>, then write
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-application-control-policy" target="_blank" rel="noopener">application control rules</a>
+          in monitor mode with activity-level control (upload, download, share) on the apps the
+          business actually uses, and a
+          <a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Data Control policy</a>
+          on predefined data types — Cato ships more than 350 across 30+ countries and languages —
+          scoped to the cohort. Both depend on the TLS inspection staged in the prerequisites. A
+          fortnight of monitor-mode evidence here is the exhibit the incumbent cannot answer.</p>
+        </li>
+        <li>
+          <h4>Baseline the experience</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Let the pilot site and cohort work a normal week and capture the
+          <a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a>
+          view weekly: per-site and per-user scores, TTFB and per-app drill-downs. This is
+          criterion 5's evidence and the answer to &ldquo;will it feel slower than the
+          overlay?&rdquo; — dated screenshots into the evidence doc, alongside anything Versa
+          Analytics showed for the same site before cutover.</p>
+        </li>
+        <li>
+          <h4>Demonstrate rollback — deliberately, timed, with the provider in the room</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>In a change window, run the reversion as a rehearsed drill: take the socket site down,
+          re-enable the Versa spoke (a Director action — in managed estates a pre-booked provider
+          ticket), and keep a continuous ping running from a legacy site while BGP reconverges.
+          Capture the routing table before, during and after, note the convergence time, then cut
+          forward again the same way. This is the criterion that de-risks every later wave — the
+          customer watches the overlay take the branch back in minutes, with no rebuild and no
+          provider escalation.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: «Network → Routing Table filtered to the pilot and overlay prefixes, showing BGP-learned routes with AS path and received communities» -->
+      <!-- capture-wanted: «Site Settings → BGP — Show BGP Status with the neighbour Established and learned routes listed» -->
+      <!-- capture-wanted: «Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort» -->
+      <!-- capture-wanted: «Monitor → Data Protection Dashboard — monitor-mode DLP matches attributed to user, app and data type» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Internet Firewall rulebase in the CMA with ordered rules, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>Criterion 3's evidence surface: the translated URL-filtering intent as ordered Internet Firewall rules with live hit-count bars. In the PoV these hits — and the events behind them — are set against the Versa Analytics baseline for the same flows before anything flips from monitor to block.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-app-data-inline-policy.png" alt="Cato App and Data Inline Protection policy with application control and data control rules — activity-level matches, tenant restrictions, severities and Block, Allow and Monitor actions" loading="lazy">
+        <figcaption>The greenfield build the VOS estate cannot answer: application control with activity-level matches (upload, video call, login) and data control rules on credit-card and PII profiles — running in monitor mode against the pilot cohort's real traffic within the first fortnight.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab, with per-user experience scores, connected PoPs, flows and average TTFB" loading="lazy">
+        <figcaption>Criterion 5's evidence: the pilot cohort's week scored per user with PoP, flows and TTFB. A quiet, green week here — with no open tickets — is what the experience baseline looks like when the branch lands well on the backbone.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Session up, routes missing</h4><p>Check received communities in <span class="path">Network → Routing Table</span>: prefixes tagged &lt;Cato&nbsp;ASN&gt;:32768 stay local to the hub socket and never reach the PoP — remove the tag on the VOS side if the pilot needs them account-wide. Then check the neighbour's accept/drop lists, and remember every filter edit resets the BGP session.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Overlay still steering around the pilot</h4><p>Traffic to the migrated branch takes the old overlay instead of the handoff: the spoke disable has not propagated, or steering policy on an un-migrated VOS site still prefers a stale path for the branch prefix. Confirm the withdrawal from Director's routing view (or make it an explicit check on the provider's ticket) before debugging anything on the Cato side.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>Keep the parity comparison fair</h4><p>VOS inspected only where a UTM profile was attached to a rule; Cato's single-pass engine inspects everything it sees — so new detections in monitor mode are coverage gained, not false positives, and the Analytics baseline only exists for flows a profile actually touched. Compare per category, with TLS inspection staged before judging web filtering beyond domain/SNI.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕶️</div><div><h4>CASB or DLP shows nothing</h4><p>Almost always a visibility prerequisite, not a policy fault: TLS inspection is not yet inspecting the cohort (check rule order and scope in <span class="path">Security → TLS Inspection</span>), or the SCIM groups the rules are scoped to have not synced. Fix the prerequisite and the dashboards populate within hours.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎫</div><div><h4>Provider lead times eat the timeline</h4><p>In carrier-managed estates the export, the spoke disable, the re-enable and the rollback drill are all provider tickets on provider SLAs. Raise the export in week one, pre-book both change windows at the scope workshop, and put the ticket references in the evidence doc — the lead time itself is evidence for the operating-model argument.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪞</div><div><h4>Asymmetry at the seam</h4><p>During the pilot the branch prefix must be reachable through exactly one handoff. If a second hub already has a parallel socket, keep its exchange filtered so pilot flows cannot exit one hub and return through another VOS firewall's state table — multi-region AS-path anchoring is the project's design work, not the pilot's.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries of this PoV</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>One hub and one branch prove the pattern, not the estate.</strong> Multi-region AS-path symmetry, uCPE/VNF dispositions, inbound NAT and published services, and tenant separation are design work for the project — park them on the next-steps register.</li>
+          <li><strong>Licence edges:</strong> the CASB/DLP trial must be active before monitor-mode evidence can accumulate, and Experience Monitoring's DEM drill-downs need the DEM licence.</li>
+          <li><strong>Evidence outlives retention:</strong> export events, routing-table captures and dashboard views into the evidence doc weekly — and export the Versa Analytics baseline early, because leaving the provider's tenant forfeits it.</li>
+          <li><strong>Summaries are yours to define:</strong> Cato advertises the summary routes you configure but does not aggregate learned routes for you — sloppy summaries at the handoff become the project's routing debt.</li>
+          <li><strong>The provider is inside the loop:</strong> the rollback drill's timing depends on Director access or a provider engineer in the change window — a PoV criterion that quietly tests the provider relationship too.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the PoV ends without a project, reverse in order —
+        re-enable the branch's Versa spoke and confirm reachability (the rollback drill, one last
+        time); disable or delete the translated monitor-mode firewall rules and the CASB/DLP
+        monitor rules (they blocked nothing, so removal is invisible); delete the BGP neighbour and
+        its filters, remove the transit VLAN, and recover both sockets. The MP-BGP overlay never
+        depended on any of it — that is the point of the pattern.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

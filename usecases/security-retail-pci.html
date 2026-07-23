@@ -376,6 +376,217 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo narrates segmentation in <em>our</em> tenant; the PoV is a <strong>store pilot in
+        theirs</strong> — one pilot store's network brought under the LAN Firewall, the POS/CDE VLAN
+        isolated from guest Wi-Fi and back-office monitor-first, and exactly one agreed crossing
+        flipped to Block with the event to show for it. The mechanism is the one the
+        <a href="security-ot-iot.html#pov">OT segmentation PoV</a> verified against the knowledge
+        base — an account-level LAN Firewall policy, scoped per site and VLAN in the rule, enforced
+        locally on the Socket — what changes in retail is what hangs on it: PCI DSS assessment
+        scope. So say the honest sentence at the workshop and again at the readout:
+        <strong>segmentation reduces scope only when the QSA determines it does.</strong> This pilot
+        produces the segmentation evidence and the CDE traffic-path document that conversation
+        needs; it never produces a compliance verdict. Agree the criteria below before configuring
+        anything, per <a href="management-pov-framework.html">Running a Cato PoV</a> — and the
+        store-side rule that sits above the framework: <strong>the tills keep trading.</strong>
+        Nothing blocks until a week of events has shown what the tills actually use.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pilot store's POS/CDE VLAN isolated — monitor-first, then one agreed block</td>
+              <td>The store's VLANs come under a LAN Network rule with a catch-all Allow · Event rule above the default block; after a full trading week, the agreed guest-Wi-Fi → POS crossing is flipped to Block in a change window</td>
+              <td>The rulebase capture and the <strong>blocked-crossing event</strong> — the artefact the QSA conversation opens with</td>
+              <td>Security → LAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>The store's CDE traffic path documented for the QSA conversation</td>
+              <td>One page stating what stays local on the Socket (LAN-firewalled east-west) and what crosses the PoP (payment authorisation and updates through the Internet firewall), with the enforcement point named at each hop</td>
+              <td>The path document, plus the Topology and event captures behind every line of it</td>
+              <td>Monitor → Topology · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Sector blueprint slice enacted monitor-first</td>
+              <td>Rows 1–2 of the <a href="#sector-policies">starter rulebase</a> run as Allow · Event through a full trading week — every destination the tills actually use is in events before any deny exists, and no payment traffic drops unexplained</td>
+              <td>The rules with a week of hits, and the observed payment-destination list reconciled against the acquirer's allowlist</td>
+              <td>Security → LAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Segmentation evidence pack assembled</td>
+              <td>A dated pack a QSA can read without a console login: rulebase captures, weekly event exports, the Audit Trail extract for the pilot window, and the store's device inventory with its Segmentation Flows view</td>
+              <td>The pack itself, every artefact dated inside the pilot window</td>
+              <td>Monitor → Events · Administration → Audit Trail · Home → Devices</td>
+            </tr>
+            <tr>
+              <td>Store link resilience witnessed once</td>
+              <td>Broadband pulled in a change window; the tills keep authorising over the LTE standby link — run exactly as drill <strong>D2</strong> of the <a href="network-resilient-site-design.html#pov">resilience drill card</a>, which owns the expected behaviour, evidence and rollback</td>
+              <td>The Passive Connected event, the transport capture and the stopwatch note, stamped on the drill card</td>
+              <td>Network → Sites → Site Monitoring · Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Socket version — re-verify, don't assume:</strong> the LAN Firewall is an account-level policy enforced locally on the Socket, supported from Socket v22 per <a href="https://knowledge.catonetworks.com/docs/what-is-the-socket-next-gen-lan-firewall" target="_blank" rel="noopener">the LAN Firewall KB</a>; device-attribute criteria need Socket v26 or higher per <a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">the policy KB</a>. Check the pilot store's Socket before the plan promises either.</li>
+          <li><strong>Real VLANs, really crossing the Socket:</strong> POS/CDE, guest, staff and cameras/IoT defined as network ranges on the pilot store's Socket, with their traffic actually traversing it. A guest SSID bridged onto the store LAN by an access point is a name, not a network — the LAN Firewall can only segment traffic it sees on distinct ranges.</li>
+          <li><strong>The payment allowlist, in writing:</strong> the acquirer / payment-gateway destinations and ports from whoever owns the payment estate — before rule 1 of the blueprint exists. The pilot will verify this list against observed traffic; it must not start from a guess.</li>
+          <li><strong>Two named owners:</strong> whoever answers for store trading signs the block window and the rollback; whoever faces the QSA (the compliance owner or ISA) sits in the workshop, because the path document is written for them.</li>
+          <li><strong>LTE fitted if resilience is promised:</strong> the D2 drill needs an LTE/5G-equipped Socket (or external modem) configured as last resort, plus a small agreed data budget — otherwise strike the resilience criterion rather than fudge it.</li>
+          <li><strong>A change window outside trading hours</strong> for the one block flip, with the rollback (disable one rule) written into the change record before the rule exists.</li>
+          <li><strong>Not needed:</strong> TLS inspection, client rollout or identity integration — everything here is enforced on the Socket and touches no till, which also keeps the CDE out of any inspection debate for the duration.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Walk the store build and take the inventory baseline</h4>
+          <p><span class="path">Network → Sites → the pilot store → Networks</span> <span class="path">Assets → Device Inventory</span></p>
+          <p>Confirm the VLAN plan matches the diagram above — POS/CDE, guest, staff, cameras/IoT as
+          ranges on the Socket — and note anything that doesn't. Then open the store's device
+          inventory: classification is passive, from the site's traffic, and can take up to 12 hours
+          per <a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">the Device Inventory KB</a> — start it before the workshop ends. Capture the
+          <a href="https://knowledge.catonetworks.com/docs/using-segmentation-flows" target="_blank" rel="noopener">Segmentation Flows</a> Sankey (device type → application → protocol →
+          destination) as evidence item zero; be precise about what it shows — internet-bound flows
+          by device type, which is exactly what the guest and IoT allowlists will be built from, not
+          an east-west CDE map.</p>
+        </li>
+        <li>
+          <h4>Baseline the crossings before any policy exists</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Before any LAN rule is written, intra-site traffic that matches no LAN Firewall rule is
+          treated as WAN traffic and handled at the PoP — so guest and back-office conversations
+          towards the POS VLAN are already visible in events today. Capture a dated "before" picture
+          of who crosses into the CDE. This is the baseline the blocked-crossing event will be read
+          against at the readout.</p>
+        </li>
+        <li>
+          <h4>Bring the store VLANs under the LAN Firewall — in one change</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Create a LAN Network rule scoped to the pilot store and its VLANs — matching east-west
+          traffic now routes locally on the Socket instead of hairpinning via the PoP.
+          <strong>Know what this does:</strong> every LAN Network rule carries a default ANY-ANY
+          Block as its last child rule, so scoping the store in with no allow rules is already
+          enforcement. Monitor-first therefore means creating the catch-all in the same change: an
+          Any-Any <strong>Allow with Track = Event</strong> above the default block. Net effect:
+          nothing drops, and every crossing between store VLANs lands in Events.</p>
+        </li>
+        <li>
+          <h4>Watch a full trading week, then write the CDE path document</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Monitor → Topology</span></p>
+          <p>A quiet Tuesday is not a store: cover peak trading, delivery mornings and end-of-day
+          reconciliation before you call the picture complete. Then write the one-page CDE traffic
+          path for the QSA conversation: which flows stay local on the Socket under the LAN
+          Firewall (till ↔ store server), which cross the PoP through the Internet firewall
+          (payment authorisation, till updates), and where each control is enforced. Write it as
+          evidence input, not a conclusion — the QSA scopes the environment; this page is what makes
+          that conversation short.</p>
+        </li>
+        <li>
+          <h4>Author the payment-path rules from evidence — still monitoring</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Enact the blueprint slice: rule 1 (POS → payment-processor allowlist) as Allow · Event,
+          and the rule 2 deny-candidate (POS → anything else) also as <strong>Allow · Event</strong>
+          for now — a written record of what the block <em>would</em> catch. Reconcile a week of its
+          events against the acquirer's list: the difference — a backup gateway, a tokenisation
+          service, a till-update CDN — is precisely the traffic that would have stopped trading if
+          you had blocked on day one. Extend the allowlist from evidence, then agree the flip.</p>
+        </li>
+        <li>
+          <h4>Flip the agreed block and produce the crossing event</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>In the booked window, with the store owner's sign-off, set the agreed rule to
+          <strong>Block with Track = Event</strong> — guest Wi-Fi (and, if agreed, cameras/IoT) into
+          the POS/CDE VLAN. Then prove it: from a laptop on the guest SSID, attempt to reach a till's
+          address and watch the <strong>blocked-crossing event</strong> land, enforced on the Socket
+          at the store edge. That event, next to step 2's baseline showing the same crossing
+          succeeding, is the money artefact of the whole pilot. Rollback is the same rule, disabled
+          — seconds, not a change request.</p>
+        </li>
+        <li>
+          <h4>Show the store link die once — and the tills not notice</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>Run the LTE standby drill exactly as <a href="network-resilient-site-design.html#pov">drill
+          D2 of the resilience PoV</a> prescribes — that card owns the expected behaviour, the
+          evidence set and the rollback, so run it once, witnessed and timed, and stamp the result
+          rather than re-deriving it here. The retail framing is the only addition: while the
+          broadband is down, a test card transaction authorises over cellular.</p>
+        </li>
+        <li>
+          <h4>Assemble the evidence pack and read it out</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Administration → Audit Trail</span></p>
+          <p>One indexed pack: the dated LAN Firewall rulebase captures with hit counts; weekly event
+          exports (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">up to 250,000 events per export, 31-day maximum range</a> — export as
+          the pilot runs, not at the end); the Audit Trail extract showing every pilot change
+          attributed; the inventory and Segmentation Flows captures; and the CDE path document on
+          top. Be straight about formats: the CSV rule export covers the Internet firewall, WAN
+          firewall, TLS Inspection and Application Control policies
+          (<a href="https://knowledge.catonetworks.com/docs/exporting-security-rules-to-a-csv-file" target="_blank" rel="noopener">per the KB</a>) — the LAN Firewall rulebase is evidenced with dated
+          captures and its event stream instead. Read the pack against the criteria table, per the
+          <a href="management-pov-framework.html">PoV framework</a>.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Three exhibits carry the readout: the blocked guest-to-POS crossing event beside its
+        "before" baseline; the CDE path document with the rulebase captures behind it; and the
+        indexed pack the compliance owner takes into the QSA meeting. The rulebase below shows the
+        destination shape for the store's cameras-and-IoT VLAN once monitor mode graduates —
+        device-attribute allows logging events, and a block rule accumulating hits.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/iot-rulebase-cma.png" alt="CMA firewall rulebase with an expanded IoT Device Attribute Rules group: allow-with-logging rules for an IP camera, smart plug and mobile phones, an IoT discovery rule, and a block rule with a live hit count">
+        <figcaption>Where the store's cameras-and-IoT VLAN ends up: named device types allowed to their vendor clouds with events on, and a block rule with a live hit count — every hit a crossing that policy stopped at the store edge. The pilot builds this shape for one store; the account-level policy hands it to the rest of the estate.</figcaption>
+      </figure>
+      <!-- capture-wanted: Security → LAN Firewall rulebase with a LAN Network rule scoped to a store's VLANs — catch-all Allow · Event rule above the default ANY-ANY Block -->
+      <!-- capture-wanted: Monitor → Events filtered to LAN Firewall block events — a guest Wi-Fi client stopped from reaching a POS/CDE address -->
+      <!-- capture-wanted: Home → Devices → Segmentation tab — Segmentation Flows Sankey for a store site (device type → application → protocol → destination) -->
+      <!-- capture-wanted: Network → Sites → Networks for a store site showing POS/CDE, guest, staff and cameras/IoT ranges -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🛒</div><div><h4>POS devices never appear in Device Inventory</h4><p>Discovery is passive and classification can take up to 12 hours — and tills behind a routed payment switch present the router's MAC, not their own, so attribute-based detection sees one device where there are twelve. Segment the CDE with IP-range rules, use the Cato DHCP service where MAC detection matters, and never make the CDE criteria depend on device attributes.</p></div></div>
+        <div class="benefit"><div class="b-icon">🫓</div><div><h4>The store is flatter than anyone admitted</h4><p>One subnet, separation by SSID name only — then there is no VLAN boundary for the LAN Firewall to scope to. The pilot starts one step earlier: stand up the POS VLAN for the pilot store, and use step 2's baseline events as the written justification. That finding is itself PoV output, not a failure.</p></div></div>
+        <div class="benefit"><div class="b-icon">📶</div><div><h4>Guest Wi-Fi bleeds into the store LAN</h4><p>Access points bridging the guest SSID onto the staff VLAN are the classic leak. Check whether guest traffic actually arrives at the Socket on its own VLAN tag: if it doesn't, fix the AP and switch trunking first — the LAN Firewall segments the ranges it sees, and a capture proving the bleed is a strong exhibit in its own right.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏪</div><div><h4>Franchise realities stall the pilot</h4><p>Franchisee-owned broadband, third-party EPOS maintainers and no head-office change authority can stall a store pilot before week one. Pick a corporate-owned store for the pilot; the franchise answer is in the scenarios above — per-group policy scoping under estate-wide guardrails — and belongs in the rollout conversation, not the PoV.</p></div></div>
+        <div class="benefit"><div class="b-icon">💳</div><div><h4>The payment allowlist would have broken the tills</h4><p>Processor estates sprawl — backup gateways, tokenisation services, update CDNs the acquirer's document never mentioned. This is why rule 2 runs as Allow · Event for a full trading week first: the "would-block" events are the gap list. Reconcile, extend the allowlist, and only then flip. If a destination can't be explained, that goes to the payment provider, not into the rulebase.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Expected traffic never lands in LAN Firewall events</h4><p>Intra-site traffic matching no LAN rule is treated as WAN traffic and handled at the PoP — look in WAN Firewall events first, then check the LAN Network rule's scope covers both VLANs in the conversation. And keep the catch-all Event rule temporary: the KB recommends tracking only high-priority LAN rules in steady state, so retire it as the explicit allows take over.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — the QSA owns the verdict</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope reduction is the QSA's determination, full stop.</strong> The pilot produces segmentation evidence and a documented CDE path; whether that removes guest Wi-Fi and cameras from assessment scope is the assessor's call on the customer's whole environment. Write "evidence for the scoping conversation" in every artefact — never "out of scope" as a conclusion, and never a compliance claim.</li>
+          <li><strong>Cato's own PCI DSS certification is supplier due diligence, not the customer's compliance.</strong> Cite it as published on the <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">trust page</a> and stop there — the <a href="security-compliance.html#pov">compliance evidence-pack PoV</a> is the fuller treatment of that boundary.</li>
+          <li><strong>Scoping a VLAN into the LAN Firewall is not passive:</strong> the default ANY-ANY Block under a LAN Network rule means a store scoped in without its catch-all allow is being enforced immediately — in a trading store. Build the LAN Network rule and the monitor rule as one change, never two.</li>
+          <li><strong>One store is one store:</strong> the pilot proves the mechanism on one till estate; segmenting four hundred stores is the project it justifies. The account-level policy makes the rollout the same rulebase re-scoped — say that in the wrap-up, don't imply it has already happened.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwinding is one action — disable the block rule and the store behaves
+        exactly as before; keep or retire the monitor rules as the customer prefers. The better
+        outcome is that nothing is unwound: the monitor rulebase becomes row one of the estate
+        rollout, the CDE path document goes to the QSA meeting, and the blocked-crossing event goes
+        in front of whoever signs the assessment budget. Every change made and removed during the
+        pilot stays recorded in <span class="path">Administration → Audit Trail</span> — which is
+        itself the closing exhibit of change control.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

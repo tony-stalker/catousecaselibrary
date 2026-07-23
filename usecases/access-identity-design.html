@@ -446,6 +446,218 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This is the <strong>week-zero PoV</strong> — the identity-integration pilot that every other
+        runbook in this library quietly depends on. The hybrid-workforce pilot pins its cohort in a
+        SCIM-synced group; the third-party pilot scopes contractors by IdP group; every security PoV
+        wants its evidence attributed to a named person. Run identity as its own short PoV
+        <em>first</em>, with its own success criteria agreed up front per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — then the pilots in
+        <a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a> and
+        <a href="access-third-party.html">De-risking 3rd-Party Access</a> inherit a proven foundation
+        instead of a hopeful assumption.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Provisioning live from the IdP</td>
+              <td>Pilot users and groups exist in Cato via SCIM, and a group membership change made in
+              the IdP is reflected in Cato within one measured provisioning cycle (Entra ID initiates
+              sync every 40 minutes)</td>
+              <td>Dated before/after screenshots of the group's Members tab, beside the IdP
+              provisioning-log entry</td>
+              <td>Access → Users · Access → User Groups</td>
+            </tr>
+            <tr>
+              <td>SSO + MFA signs in the Client</td>
+              <td>A pilot user signs in to the Cato Client through the IdP over OIDC, with the IdP's
+              MFA prompted inside the flow, and the session lands under their single identity</td>
+              <td>Screenshot of the IdP MFA prompt inside the Client sign-in, plus the connected
+              session on the user's page</td>
+              <td>Cato Client · Monitor → Users</td>
+            </tr>
+            <tr>
+              <td>Named users behind the socket</td>
+              <td>The Identity Agent (or AD Query) turns IP-only events from the pilot office subnet
+              into named-user events</td>
+              <td>Paired event records from the same subnet — one pre-awareness showing only an IP,
+              one post showing the username</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>The leaver drill</td>
+              <td>A user unassigned or disabled in the IdP is disabled in Cato at the next sync and a
+              fresh Client sign-in fails — with the IdP-to-dead window measured, not assumed</td>
+              <td>Three timestamps: the IdP audit entry, the user showing Disabled in Cato, the failed
+              sign-in attempt</td>
+              <td>Access → Users · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Attribution on every surface</td>
+              <td>The same pilot user is named — not an IP — in Events, in Experience Monitoring and in
+              the dashboards the wrap-up will quote</td>
+              <td>One screenshot per surface, same user, same day, dated into the evidence doc</td>
+              <td>Monitor → Events · Home → Experience Monitoring</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The IdP admin in the room</strong> — creating the provisioning app, assigning
+          users and reading the provisioning log all happen on their side. This PoV cannot run as a
+          Cato-only exercise; that is rather the point of it.</li>
+          <li><strong>A SCIM-capable IdP</strong> — SCIM provisioning is documented for Entra ID
+          (Azure), Okta, OneLogin and DTS. Purpose-built, <em>flat</em> pilot groups created in the
+          IdP first: nested groups are not supported over SCIM.</li>
+          <li><strong>One pilot socket site</strong> — an office subnet whose managed devices can run
+          the Cato Client as Identity Agent (Windows Client v5.18+ / macOS v5.11+ report identity
+          with a one-time authentication and no ZTNA licence), or domain-controller access for AD
+          Query where the Client cannot go.</li>
+          <li><strong>No TLS inspection required</strong> — none of these proofs needs content
+          inspection, which is exactly why identity runs as week zero: it never waits on a privacy
+          approval.</li>
+          <li><strong>The leaver drill agreed in writing</strong> — a named test account (call her
+          Amara) that the IdP admin is authorised to disable, and agreement on what "access is dead"
+          means: next sign-in refused, or live session ended. Measure whichever was agreed.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Enable SCIM and connect the IdP</h4>
+          <p><span class="path">Access → Directory Services</span></p>
+          <p>On the SCIM tab, enable SCIM provisioning, save, and copy the <strong>Base URL</strong>
+          and <strong>Bearer Token</strong>. In Entra ID, create the <em>Cato Networks
+          Provisioning</em> enterprise app, paste them as Tenant URL and Secret Token, run
+          <strong>Test Connection</strong>, set provisioning to Automatic and start it — assigning
+          only the pilot users and groups. Write down the cycle time: Entra initiates sync every
+          40 minutes, and that figure defines every measured window in this PoV
+          (<a href="https://knowledge.catonetworks.com/docs/scim-provisioning-with-entra-id-formerly-azure" target="_blank" rel="noopener">SCIM Provisioning with Entra ID</a>,
+          <a href="https://knowledge.catonetworks.com/docs/provisioning-users-with-scim" target="_blank" rel="noopener">Provisioning Users with SCIM</a>).</p>
+          <!-- capture-wanted: «CMA Access → Directory Services — SCIM tab with Base URL and bearer token (token redacted)» -->
+        </li>
+        <li>
+          <h4>Verify the synced objects — and time the sync</h4>
+          <p><span class="path">Access → Users</span> · <span class="path">Access → User Groups</span></p>
+          <p>Confirm pilot users show the IdP as their directory source and group member counts match
+          the IdP. Then run the first measurement: move a test user into a pilot group in the IdP,
+          note the time, and watch the Members tab until the change lands. Entra's on-demand
+          provisioning can push a single user faster — but it does not support assigning users to a
+          group, so group-membership timings must be taken against the automatic cycle.</p>
+          <!-- capture-wanted: «CMA Access → Users — pilot users with the IdP shown as directory source» -->
+        </li>
+        <li>
+          <h4>Set the authentication policy to SSO</h4>
+          <p><span class="path">Access → User Authentication</span></p>
+          <p>Set the account-wide method to SSO so sign-in, MFA and conditional access stay in the
+          IdP; keep one break-glass admin on a per-user override
+          (<span class="path">Access → Users</span> → User Settings → Authentication). Two facts to
+          state before anyone asks: Cato user SSO is <strong>OIDC only</strong> — a SAML-federated
+          estate integrates at the IdP, which fronts Cato over OIDC — and users provisioned with
+          registration codes cannot use SSO or MFA at all
+          (<a href="https://knowledge.catonetworks.com/docs/sso-authentication-for-users-with-cato" target="_blank" rel="noopener">SSO Authentication for Users with Cato</a>,
+          <a href="https://knowledge.catonetworks.com/docs/configuring-the-authentication-policy-for-cato-clients" target="_blank" rel="noopener">Configuring the Authentication Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Sign the pilot cohort in through the Client</h4>
+          <p><span class="path">Monitor → Users</span></p>
+          <p>Each pilot user signs in to the Cato Client: the PoP hands them to the IdP, they complete
+          login including the IdP's MFA, and the PoP validates the IdP token before issuing the Cato
+          token. Capture the MFA prompt mid-flow and the resulting session on the user's page — that
+          pair is the evidence for the SSO criterion, and the moment the customer's identity team sees
+          their own conditional-access policy governing Cato access.</p>
+        </li>
+        <li>
+          <h4>Turn on user awareness behind the pilot socket</h4>
+          <p><span class="path">Access → User Awareness</span></p>
+          <p><strong>Take the "before" screenshot first</strong> — events from the pilot subnet showing
+          bare IPs. Then enable the Identity Agent: the Client on each managed device reports the
+          logged-in identity to the PoP about every 30 seconds, with IP changes reported immediately.
+          For machines the Client cannot reach, add AD Query domain controllers instead (service
+          account in Distributed COM Users, Event Log Readers and Server Operators; WMI reachable;
+          Directory Services configured first). The before/after event pair from the same subnet is
+          the most persuasive artefact this PoV produces
+          (<a href="https://knowledge.catonetworks.com/docs/using-cato-identity-agents-for-user-awareness" target="_blank" rel="noopener">Using Cato Identity Agents</a>,
+          <a href="https://knowledge.catonetworks.com/docs/using-ad-query-for-user-awareness" target="_blank" rel="noopener">Using AD Query for User Awareness</a>).</p>
+          <!-- capture-wanted: «CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet» -->
+        </li>
+        <li>
+          <h4>Run the leaver drill</h4>
+          <p><span class="path">Access → Users</span> · <span class="path">Monitor → Events</span></p>
+          <p>The IdP admin unassigns Amara from the provisioning app (or disables her) and notes the
+          time. At the next SCIM sync she is automatically <strong>disabled</strong> — not deleted —
+          in Cato: confirm her state under <span class="path">Access → Users</span>, then have her
+          attempt a fresh Client sign-in and record the refusal. Report the measured window honestly
+          (on Entra, up to one 40-minute cycle) and check it against whatever the customer's leaver
+          SLA actually is — for most, "provably dead within the hour, with an audit trail at both
+          ends" beats their current deprovisioning process by days. A disabled user is also no longer
+          identified by the Identity Agent, so attribution stops with access.</p>
+          <!-- capture-wanted: «CMA Access → Users — pilot user showing Disabled after IdP unassignment, beside the IdP provisioning log» -->
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="CMA Experience Monitoring landing page on the Remote Users tab: summary tiles, an account experience score graph over green, amber and red bands beside a feed of SLA stories, and a table of remote users named individually with device, experience score, connected PoP, flows, usage and average TTFB" loading="lazy">
+        <figcaption>The attribution criterion on the Experience Monitoring surface (demo tenant, fictional identities): every row is a <em>named person</em> with their device, PoP and experience score — the same identities your Events and dashboard evidence will carry, because they all read the one identity plane this PoV builds.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase with ordered rules whose sources include named individual users and user groups, with actions, tracking and live hit counts" loading="lazy">
+        <figcaption>Where the pilot leads (demo tenant, fictional identities): a rulebase whose sources are users and groups, with live hit counts proving the rules actually match. Rules like these are only writable once provisioning, SSO and awareness — the three things this PoV proves — are in place.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>Sync lag — the change hasn't landed</h4><p>A group change made in the IdP is not yet in Cato. Check the IdP's provisioning log before touching anything in Cato — Entra pushes on its own 40-minute cycle, and on-demand provisioning cannot assign users to groups. If the log shows the push succeeded and Cato still disagrees, that is a finding; if the log shows nothing, the IdP hasn't sent it yet.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪆</div><div><h4>Nested groups — members missing</h4><p>A synced group shows fewer members than the IdP because some belong via a nested group. Nested-group provisioning is not supported over SCIM: flatten the pilot groups in the IdP so every member is direct, and keep the flat, purpose-named group pattern from the design section above.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Two directory sources fighting</h4><p>Estates mid-migration try to run LDAP and SCIM together — and SCIM sync overrides existing LDAP groups with the same name, silently rewriting policy scope. Provision from one source, follow the documented LDAP-to-SCIM migration path, and treat any group-name collision as a change-control event, not a coincidence.</p></div></div>
+        <div class="benefit"><div class="b-icon">↩️</div><div><h4>The leaver won't come back</h4><p>After the drill, re-enabling the test user appears to do nothing. Reinstatement follows the same cycle as removal: Entra revives a disabled user only at the next provisioning cycle, and an Okta-disabled user stays disabled until explicitly re-enabled. Wait out the cycle — do not hand-edit users in Cato mid-drill, or the measurement is void.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕶️</div><div><h4>Identity Agent silent — events still IP-only</h4><p>Check client versions first: licence-free enhanced awareness needs Windows v5.18+ or macOS v5.11+, Linux has no enhanced awareness, and macOS Ventura devices need a reboot after a Client upgrade before reporting resumes. Remember disabled or deleted users are never identified — a stale test account produces exactly this symptom.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖧</div><div><h4>AD Query can't reach the DCs</h4><p>No login events arrive from a Real Time Sync domain controller. Verify the service account sits in Distributed COM Users, Event Log Readers and Server Operators, that WMI/DCOM ports are open from the collector path, and that Directory Services was configured before User Awareness — a CMA-to-DC connectivity failure is the documented first suspect.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Two different clocks.</strong> SCIM pushes on the IdP's cycle (Entra: every
+          40 minutes); AD/LDAP directory sync is daily at 12:00&nbsp;am UTC or on demand. Quote the
+          right clock for the right claim, or the leaver-drill numbers will not survive scrutiny.</li>
+          <li><strong>OIDC only, and say it early.</strong> SAML-based user SSO is not supported; a
+          SAML-federated estate integrates at the IdP. Surfacing this in week zero is precisely why
+          identity runs first.</li>
+          <li><strong>Awareness is source-side.</strong> Users identified behind a site are matched as
+          traffic <em>sources</em> — the documented limitation is that they are not matched in WAN
+          destination rules. Scope success criteria to source attribution.</li>
+          <li><strong>Drill on a test account, not a real leaver.</strong> Amara exists so nobody
+          disables a live employee mid-meeting — and so the re-enable behaviour above is a footnote,
+          not an incident.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> there is rarely anything to unwind — this PoV <em>is</em>
+        the production foundation, and if the engagement continues, the synced groups, SSO policy and
+        awareness config are exactly what the next pilot builds on. If the decision is a genuine no:
+        stop provisioning from the IdP side (users become disabled, not deleted), remove the
+        provisioning app assignment, disable the Identity Agent under
+        <span class="path">Access → User Awareness</span>, and return the authentication policy to its
+        prior method. Then hand the customer the measured sync and leaver windows anyway — they are a
+        useful audit of the IdP estate regardless of the outcome.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

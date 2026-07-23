@@ -326,6 +326,192 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo publishes a lab resource from <em>our</em> estate; the PoV publishes one of
+        <em>theirs</em> — a <strong>non-production test service</strong> behind the pilot socket,
+        fronted by an allocated IP at a PoP of their choosing. The pattern is the deliverable: prove
+        it end to end on the test service, and the production cutover becomes a routine DNS change
+        rather than a leap of faith. Never pilot on the production ingress. Agree the criteria below
+        <strong>before allocating anything</strong>, per <a href="management-pov-framework.html">Running
+        a Cato PoV</a> — each with a measurement, an evidence artefact and the CMA screen it is read
+        from.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Published without exposure</td>
+              <td>An allocated IP at the agreed PoP fronts the test service via a Remote Port Forwarding rule — the pilot site itself has no inbound ports open</td>
+              <td>The allocation entry and the RPF rule, screenshotted; an external port scan of the site's own egress IP showing nothing listening is optional icing</td>
+              <td>Network → IP Allocation · Security → Remote Port Forwarding</td>
+            </tr>
+            <tr>
+              <td>Legitimate traffic flows</td>
+              <td>Requests from an outside connection reach the test service through the PoP and the socket's outbound tunnel</td>
+              <td>Allowed inbound events for the allocated IP, matched to the backend's own access log for the same requests</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Edge handled a benign probe</td>
+              <td>A connection from a source outside the RPF allow list is dropped at the PoP — it never appears in the backend's log</td>
+              <td>Before/after connection attempts from an un-listed source (a phone hotspot works), plus the rule's source configuration</td>
+              <td>Security → Remote Port Forwarding · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>IPS in front of the service</td>
+              <td>Inbound IPS is enabled in front of the published port; internet-facing IPs attract real scanner traffic quickly, and those verdicts land as events without anything reaching the site</td>
+              <td>IPS/scanner events accumulating against the allocated IP over the pilot window</td>
+              <td>Security → IPS · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Geo-restriction <em>(if in scope)</em></td>
+              <td>An inbound Geo Restriction rule applies to the RPF resource — connections from an excluded country are blocked with an event</td>
+              <td>The geo rule plus a block event; Cato's KB confirms inbound geo rules apply to RPF resources</td>
+              <td>Security → IPS → Geo Restriction · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Protected before patched</td>
+              <td>The virtual-patching story stands on public evidence: Cato Security Research writes and deploys IPS signatures to every PoP without customer involvement — the Rapid CVE page shows 0–2 day detect-to-protect on recent critical CVEs</td>
+              <td>The live <a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE Mitigation</a> page, walked through against the CVE history of the customer's own published stack</td>
+              <td>— (public page; IPS posture in Security → IPS)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>A non-production test service</strong> behind the pilot socket — a copy of the real app, or any web service the customer owns. Prefer plain HTTP for the pilot: TLS inspection is not performed on inbound traffic, so a cleartext test service lets the IPS see full payloads rather than only what reputation and protocol checks catch.</li>
+          <li><strong>Allocated-IP licence headroom:</strong> the number of IPs an account can allocate is set by licence — confirm at least one is free for the pilot before the workshop.</li>
+          <li><strong>PoP choice:</strong> pick the PoP nearest the service's audience. Note RPF is not supported on PoPs located in China — plan around it if that geography matters.</li>
+          <li><strong>IPS active</strong> for the account, with the inbound direction in scope for the trial.</li>
+          <li><strong>A test DNS name</strong> the customer controls (e.g. <code>pilot.&lt;their-domain&gt;</code>) — the production record is never touched during the PoV.</li>
+          <li><strong>Ground rule on testing:</strong> any active scanning is performed by the customer's authorised security team, against their own test service, through their own change process. The SE never runs attack tooling against anyone's infrastructure — the KB-documented safe tests and real background scanner traffic carry the evidence.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Allocate the IP at the agreed PoP</h4>
+          <p><span class="path">Network → IP Allocation</span></p>
+          <p>Allocate a static public IP at the chosen PoP (London, for a UK-facing service) — per
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">the
+          KB</a>, allocated IPs are account-specific, not shared between customers, and the number
+          available is determined by licence. Screenshot the allocation, dated — evidence item zero:
+          this address, not the customer's site, is what the internet will see.</p>
+        </li>
+        <li>
+          <h4>Enable Remote Port Forwarding and build the rule</h4>
+          <p><span class="path">Security → Remote Port Forwarding</span></p>
+          <p>Enable the service, then create the rule per
+          <a href="https://knowledge.catonetworks.com/docs/configuring-remote-port-forwarding-for-the-account" target="_blank" rel="noopener">the
+          KB</a>: the allocated IP and external port on one side, the test service's internal IP and
+          port on the other. Keep the port range to exactly what the service needs — one published
+          port is one criterion; a range is scope creep.</p>
+        </li>
+        <li>
+          <h4>Restrict who can even connect</h4>
+          <p><span class="path">Security → Remote Port Forwarding</span></p>
+          <p>In the rule's Remote IPs settings choose one of the two mutually exclusive modes: an
+          <strong>Allow List</strong> (block everything except listed sources) or a
+          <strong>Block List</strong> (allow everything except listed sources) — sources can be IP
+          ranges, subnets or countries. For a partner-facing pilot, allow-list the partner ranges plus
+          the customer's own test sources; the dropped-probe criterion falls straight out of this
+          configuration.</p>
+        </li>
+        <li>
+          <h4>Set the inbound IPS posture</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>On the <a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Protection
+          Policy tab</a>, IPS covers inbound, outbound and WAN directions with Block or Monitor per
+          direction. For a test service the customer can go straight to <strong>Block</strong> on
+          inbound — nothing production depends on it — but running week one in Monitor and flipping
+          after reviewing events together is the gentler pattern, and the before/after event stream is
+          itself an artefact. Remind them: signatures are written and deployed by Cato Security
+          Research — there is nothing on their side to patch.</p>
+        </li>
+        <li>
+          <h4>Add geo-restriction, if it is a criterion</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>On the <a href="https://knowledge.catonetworks.com/docs/configuring-ips-and-geo-restriction" target="_blank" rel="noopener">Geo
+          Restriction tab</a>, add an inbound rule for the agreed excluded countries with Event
+          tracking — the KB states inbound geo rules apply to RPF resources. Scope note: geo rules are
+          <em>not</em> applied to traffic from Cato SDP Clients, so this control is about internet
+          sources reaching the published service — never test it from a device running the Client.</p>
+        </li>
+        <li>
+          <h4>Point the test DNS name at the allocated IP</h4>
+          <p>Have the customer create <code>pilot.&lt;their-domain&gt;</code> as an A record to the
+          allocated IP, with a short TTL. This is deliberately a new record: the production name keeps
+          resolving to today's ingress for the whole PoV, and the eventual cutover is a separate,
+          planned change.</p>
+        </li>
+        <li>
+          <h4>Run the three tests</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>From an outside connection on an allow-listed source, browse to the test name and confirm
+          the service loads — then find the allowed events. From a source that is not on the list,
+          try again and show the connection fail with nothing in the backend log. Then let the
+          allocated IP do what internet-facing IPs do: collect real scanner and recon traffic, and
+          review the IPS verdicts against it with the customer. If they want active proof beyond
+          that, their authorised security team can run their standard vulnerability scan against the
+          test service through the published IP, per their own change process — their scanner, their
+          service, their change record.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: Network → IP Allocation showing a static IP allocated at the London PoP -->
+      <!-- capture-wanted: Security → Remote Port Forwarding rule — external allocated IP/port mapped to an internal test-service IP/port, with an Allow List of permitted source ranges -->
+      <!-- capture-wanted: Monitor → Events filtered to the allocated IP — allowed inbound flows alongside IPS/scanner block events against the same address -->
+      <p>
+        The money shot is a single Events filter — the allocated IP — returning two interleaved
+        stories: allowed flows carrying real users to the test service, and blocked rows where
+        scanner traffic and out-of-policy sources died at the PoP. Pair that with the backend's own
+        access log for the same window, which contains only the allowed requests, and the "scrubbed
+        before it arrives" claim from the diagram above becomes a dated, filterable artefact. The
+        page's flow diagram and the Rapid CVE table are the story; this filter is the proof.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Test name resolves to the wrong place</h4><p>DNS caching — check the record's TTL and query the authoritative server directly to confirm the A record. Keep the pilot on its own test name so stale caches never touch production, and set a short TTL now: it is also the rehearsal for the eventual cutover.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Service unreachable via the allocated IP</h4><p>Work outside-in: is the RPF service toggle enabled (it is off by default), does the rule's external IP/port match what you are hitting, is the tester's source on the Allow List, and can the socket actually reach the internal IP and port? Test the internal leg from inside the site before blaming the edge.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Backend logs show unexpected source addresses</h4><p>Do not assume the original client IP survives to the backend — verify what the backend actually logs during week one, and enforce source restrictions in the RPF Allow List at the PoP rather than in backend ACLs. If the app needs the true client address for its own logic, that is a finding to record, not to discover at cutover.</p></div></div>
+        <div class="benefit"><div class="b-icon">🩺</div><div><h4>Health checks and monitors go red</h4><p>External uptime monitors are inbound sources like any other: in Allow List mode their probe ranges are dropped unless listed. Add the monitoring provider's source ranges to the list — and treat their first successful probe as free evidence for the legitimate-path criterion.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Expecting content verdicts on inbound HTTPS</h4><p>TLS inspection is not performed on inbound traffic — the KB is explicit. For encrypted flows the IPS works from reputation and protocol-level checks, not decrypted payloads. That is why the pilot runs on a cleartext test service; write the HTTPS scope honestly into the criteria rather than around it.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>A new rule seems ignored</h4><p>Cato's testing KB notes an IPS rule can take up to 10 minutes to become effective — wait before diagnosing. And if the allocated IP is also used by IPsec sites, keep UDP 500 and 4500 out of the forwarded port ranges, or the tunnels and the rule will fight.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The PoV proves the pattern, not the migration:</strong> production cutover is a separate, planned change — TTL run-down on the real record, a rollback path, and its own window. Resist the "it works, just flip prod" moment in week two; write the cutover into the next-steps register instead.</li>
+          <li><strong>Inbound inspection has a stated boundary:</strong> no TLS inspection inbound means encrypted payloads are not content-inspected. The criteria table above is written for what the platform states it does — keep it that way in front of the customer.</li>
+          <li><strong>Licence and geography edges:</strong> allocated-IP count is licence-bound, and RPF is not supported on China PoPs.</li>
+          <li><strong>No attack tooling, ever:</strong> the SE demonstrates with legitimate requests, allow-list behaviour and the background scanner traffic every public IP attracts. Anything more active belongs to the customer's authorised security team, against their own test service, under their own change process.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> at wrap-up, remove the test DNS record, delete the RPF rule (or leave
+        it as the seed of the production design if the PoV converts — that decision is the point),
+        release or repurpose the allocated IP against the licence, and return any geo or IPS changes
+        to their agreed end-state. <span class="path">Administration → Audit Trail</span> holds the
+        record of everything the PoV added and removed — and for the auditor conversation this page
+        started with, that trail is itself the closing exhibit.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

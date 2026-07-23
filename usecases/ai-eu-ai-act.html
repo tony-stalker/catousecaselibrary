@@ -432,6 +432,195 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        Be honest about what this PoV is: AI Act readiness has no toggle to demonstrate. What you can
+        prove — measurably, on the customer's own traffic — is that the platform delivers the
+        visibility, control and evidence layer the obligation table above presupposes. So this pilot
+        is a <strong>readiness-evidence engagement</strong>: each success criterion maps to a row of
+        that table, the customer's AI-governance owner agrees the criteria before anything is
+        configured (per <a href="management-pov-framework.html">Running a Cato PoV</a>), and the
+        wrap-up hands over an inventory, a working control set and a supporting-evidence pack —
+        with the "stays with governance" column handed back explicitly, not quietly absorbed. Say
+        the position-with-care caveat out loud at the workshop: Cato <strong>supports</strong> the
+        readiness programme; nothing in this pilot makes anyone AI Act compliant, and none of it is
+        legal advice.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we deliver</th><th>Evidence artefact</th><th>Obligation-table row it lights up</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The AI inventory, delivered from traffic</td>
+              <td>Within the discovery week, a per-application inventory of the AI actually in use — standalone tools and embedded SaaS AI features — with users, interactions, risk attributes and last activity, from traffic Cato already processes; nothing deployed, nothing blocked, prompt content untouched</td>
+              <td>Dated Discovery capture plus the GenAI report PDF, filed as the pilot's first exhibit</td>
+              <td>The deployer's first AI Act answer — the input <a href="#mapping">risk classification, Art 26 scoping and Art 50 scoping all start from</a></td>
+            </tr>
+            <tr>
+              <td>Access tiering enacted, monitor-first</td>
+              <td>A published User Access Policy rulebase mirroring the pattern shown above: engage users on personal tiers of a sanctioned assistant, redirect high- and critical-risk AI apps to approved alternatives, block only what the customer's own classification puts off-limits — each rule with a user notification, promoted only after detection counts prove the match</td>
+              <td>Published rulebase capture with per-rule detection counts; access events from the pilot window</td>
+              <td>Art 26 — "restrict which users and groups can reach which AI system"; Art 5 — evidenced non-use of org-classified prohibited services</td>
+            </tr>
+            <tr>
+              <td>Prompt-level input discipline demonstrated</td>
+              <td>One User Interaction Policy rule on an agreed pilot group: Monitor with a notification template first, then Anonymize and Monitor once a week of events proves the detector matches the right things — sensitive values masked in-flight, the prompt still answered</td>
+              <td>The rule as published, plus anonymised-interaction events attributed to fictional pilot users</td>
+              <td>Art 26 — input-data discipline via the User Interaction Policy</td>
+            </tr>
+            <tr>
+              <td>Supporting-evidence pack, retention answered</td>
+              <td>Weekly attributed event exports, a recurring GenAI report PDF and an Audit Trail extract — assembled as the pilot runs, with the retention caveat handled in writing: default Data Lake retention is 3 months, extendable by licence, against Art 26's ≥ 6-month window for the AI system's own logs, so the pack must demonstrate the extension-or-export answer, not promise it</td>
+              <td>The pack itself, plus a one-page retention plan (licence extension or continuous SIEM export) accepted by the customer</td>
+              <td>Art 26 — supporting audit evidence, exportable; the retention caveat above, demonstrated rather than footnoted</td>
+            </tr>
+            <tr>
+              <td>Governance handoff completed</td>
+              <td>A readout that sorts every finding into the obligation table's two columns: what the platform now evidences and enforces, and what stays with governance — risk classification, FRIAs, conformity assessment, documentation, the literacy programme, Art 50 disclosure processes — handed to the named AI-governance owner with the inventory as their starting input</td>
+              <td>The handoff note, presented at the wrap-up meeting booked at the workshop</td>
+              <td>The "stays with governance" column — those rows stay theirs, and the pilot says so in writing</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>A named AI-governance owner</strong> — legal, compliance or the CISO, whoever owns AI Act readiness — in the workshop choosing the criteria. The handoff criterion needs an addressee; without one, findings land on nobody's desk.</li>
+          <li><strong>AI Security licensed for the pilot group</strong> — the AI Security for End Users capability behind Discovery, the dashboards and both AI policies; confirm scope with the account team before criteria are signed.</li>
+          <li><strong>TLS inspection staged first</strong> — the User Interaction Policy requires TLS inspection enabled at the account level; discovery works without it, prompt inspection does not. If the customer has not enabled it, run <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> before week one, with TLSi scope approved by whoever owns privacy.</li>
+          <li><strong>Identity integration syncing</strong> — evidence must read "Priya did this", not "an IP did this"; see <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>The retention question asked in week one</strong> — check the tenant's Data Lake retention SKU on day one, not at the readout, so the extension-or-export answer is demonstrated inside the pilot window.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough — one step per criterion</h3>
+      <ol class="steps">
+        <li>
+          <h4>Workshop the criteria against the obligation table</h4>
+          <p>One session before anything is configured. Put the <a href="#mapping">deployer-obligation
+          table</a> on screen and let the AI-governance owner pick which rows the pilot will light up —
+          then write each as a measurable criterion with an artefact and an owner, and book the
+          wrap-up readout in the same meeting, per
+          <a href="management-pov-framework.html">the PoV framework</a>. Agree the pilot group and
+          the sanctioned-versus-off-limits app classification here too: the access tiering in step 3
+          enforces <em>their</em> classification, never our guess.</p>
+        </li>
+        <li>
+          <h4>Deliver the inventory — the discovery week</h4>
+          <p><span class="path">AI Security → Discovery</span> <span class="path">Home → Reports</span></p>
+          <p>Let <a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">Shadow
+          AI Discovery</a> run on the traffic Cato already processes — it is deliberately passive:
+          nothing blocked by default, prompt content untouched. At the end of the week, capture the
+          Discovery inventory dated, and from the Reports Catalog generate the
+          <a href="https://knowledge.catonetworks.com/docs/generating-a-genai-report" target="_blank" rel="noopener">GenAI
+          report</a> — usage, data protection and per-user application sections in one
+          vendor-generated PDF — and set it recurring weekly for the rest of the pilot. This is the
+          deployer's first AI Act answer, and the app count is usually multiples of what the
+          customer believes.</p>
+        </li>
+        <li>
+          <h4>Enact access tiering — engage, redirect, block</h4>
+          <p><span class="path">AI Security → User Access Policy</span></p>
+          <p>Build the rulebase the screenshot above shows, on the customer's own classification:
+          engage users on free and personal tiers of the sanctioned assistant, redirect high- and
+          critical-risk AI applications to the approved alternative, and block only named services
+          their governance call has already put off-limits — each rule carrying a user notification
+          template, so the policy teaches as it enforces. Access rules are evaluated before
+          Interaction Policy rules, so keep this rulebase coarse (who reaches what) and leave
+          content decisions to step 4. Monitor-first discipline: start with the engage action, watch
+          the per-rule detection counts accumulate, and promote a rule to redirect or block only
+          when the counts prove it matches what the workshop intended.</p>
+        </li>
+        <li>
+          <h4>Demonstrate input discipline — one interaction rule</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span> <span class="path">Security → TLS Inspection</span></p>
+          <p>One rule, on the agreed pilot group and the agreed applications: source, AI apps in
+          scope, an engine profile for the content classes the customer worries about, action
+          <strong>Monitor</strong> with a notification template
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">working
+          with the User Interaction Policy</a>). After a week of events proves the detector matches
+          the right prompts, flip the action to <strong>Anonymize and Monitor</strong>: sensitive
+          values masked in-flight, the prompt still answered, the user still productive. Note the
+          boundaries as you build: TLS inspection must be enabled at the account level for prompt
+          inspection, and the API-based integration module supports monitoring actions only.</p>
+        </li>
+        <li>
+          <h4>Assemble the pack as the pilot runs</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Home → Reports</span> <span class="path">Administration → Audit Trail</span></p>
+          <p>Weekly, not at wrap-up: export AI-related events per criterion
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">up
+          to 250,000 events per export, 31-day maximum query range</a>), file the recurring GenAI
+          report PDF, and extract the
+          <a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Audit
+          Trail</a> for the pilot window — every AI policy change, attributed, with previous and new
+          values (the trail holds 12 months, viewable up to 3 months at a time). Then close the
+          retention criterion in writing: this tenant's Data Lake window today, the extension SKU or
+          the continuous SIEM export that reaches the ≥ 6-month Art 26 horizon, and which of the two
+          the customer chooses.</p>
+        </li>
+        <li>
+          <h4>Run the governance handoff</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span></p>
+          <p>At the readout, open on the Overview — apps, users, interactions, violation rate — then
+          walk the criteria table row by row with its artefacts. Close on the two-column sort: what
+          the platform now evidences and enforces stays running; risk classification, FRIAs,
+          conformity assessment, documentation, the literacy programme and Art 50 disclosure
+          processes go to the AI-governance owner, with the discovered inventory as their input.
+          The strongest close is the honest one: "these rows are yours — here is the evidence layer
+          under them."</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-users.png" alt="CMA AI Security AI Users page showing a per-user table with AI interaction counts, activity sparklines, policy violation hits and rates, and last-seen dates">
+        <figcaption>Oversight support, per person: each pilot user's AI interactions, violation count and rate, and last activity. This is the view the governance owner keeps after the handoff — who is using what, and who needs the literacy conversation the usage data points at.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/genai-report-data-protection.png" alt="GenAI report data-protection page showing events by action with six blocked, violations by data profile split across PII, finance and credit cards, a rules hit count table dominated by monitor rules, and a data violations over time chart">
+        <figcaption>A page from the evidence pack: the recurring GenAI report's data-protection view — events by action, violations by data profile, per-rule hit counts, trend over time — a dated, vendor-generated PDF rather than a screenshot, showing monitor-mode findings against GenAI apps.</figcaption>
+      </figure>
+      <!-- capture-wanted: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template -->
+      <!-- capture-wanted: Monitor → Events filtered to AI Security events with the CSV export action visible -->
+      <!-- capture-wanted: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week -->
+
+      <h3>Troubleshooting — where this pilot actually goes wrong</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Inventory looks thin</h4><p>Discovery only sees traffic that crosses Cato. If the app count looks low, check the pilot cohort is actually routing through the platform — sites behind Sockets, remote users on the Client — and give it a full working week before judging; a Friday-afternoon capture is not an inventory.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Interaction rule matches nothing</h4><p>Prompt inspection requires TLS inspection enabled at the account level and covering the pilot cohort. If interaction events aren't landing, check the TLSi policy scope and exclusions before touching the rule — an AI app excluded from inspection is invisible at prompt level, however correct the rule.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Detector coverage boundaries</h4><p>An inventory row is not automatically an enforcement row: the User Interaction Policy governs supported AI chat applications, embedded AI features inside SaaS are discovered but not all prompt-inspectable, Anonymize applies where the detector supports it, and the API-based integration is monitor-only. Scope criterion 3 to supported apps at the workshop — never promise prompt control over the whole inventory.</p></div></div>
+        <div class="benefit"><div class="b-icon">📆</div><div><h4>Evidence windows expire</h4><p>An Events query spans at most 31 days and Data Lake retention defaults to 3 months — evidence must be exported as the pilot runs, not reconstructed at the readout. The weekly export cadence in step 5 is the fix; the Audit Trail's 12 months is the safety net, not the plan.</p></div></div>
+        <div class="benefit"><div class="b-icon">🙈</div><div><h4>Blocking sends usage dark</h4><p>Block a tool people rely on and they move to personal devices and accounts — the inventory starts lying exactly when the readiness programme needs it truthful. That is why the tiering starts at engage and redirect, and why block is reserved for what the customer's own classification already prohibits.</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>Attribution reads as IPs</h4><p>If events show addresses instead of names, the identity sync is lagging or the pilot group isn't mapped — fix it in week one, because "supporting evidence" that cannot name the user supports very little. Check the IdP connection and group membership before the first export.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say them before the customer does</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Supporting evidence, never compliance.</strong> Network events are supporting evidence of who used which AI service, when, and what policy decided — never a substitute for the AI system's own automatically generated logs that Art 26 requires a high-risk deployer to keep for at least six months. And Cato does not make anyone "AI Act compliant": risk classification, FRIAs, conformity assessment and documentation belong to the customer's governance programme, exactly as the obligation table draws it.</li>
+          <li><strong>Not legal advice, and dates move.</strong> This page's regulatory content is researched to July 2026 with the omnibus awaiting Official Journal publication — quote the timeline only as the page states it, and have the customer validate obligations, dates and interpretations with counsel before any of this enters a compliance file.</li>
+          <li><strong>The retention caveat is a pilot deliverable, not small print.</strong> Default Data Lake retention is 3 months, extendable by licence; Art 26's window for the AI system's logs is at least six months. A pilot that hasn't produced the written extension-or-export answer has failed criterion 4, however good the dashboards looked.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwind is small and itself evidenced. Return the interaction rule to
+        Monitor or disable it, disable the pilot access rules, and stop the recurring report — every
+        removal lands in the Audit Trail as a tidy closing exhibit of change control. Discovery was
+        passive throughout, so there is nothing to roll back on the inventory side. The inventory,
+        the pack and the retention plan leave with the AI-governance owner as their assets: the
+        inventory becomes the working paper for risk classification, and the criteria table becomes
+        the skeleton of the readiness file the Act will eventually ask them to open.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

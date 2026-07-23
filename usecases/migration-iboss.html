@@ -163,7 +163,7 @@
           <tbody>
             <tr><td>SWG / web filtering &amp; malware defence</td><td>Internet firewall — URL categories, anti-malware, IPS; TLS inspection policy</td><td>Category taxonomies differ — map categories and exceptions rule-by-rule, don't assume 1:1</td></tr>
             <tr><td>SafeSearch / YouTube controls</td><td>Content Restrictions — SafeSearch plus YouTube Moderate/Strict</td><td>Cato documents a DoH caveat: browsers using DNS-over-HTTPS bypass Content Restrictions — control DoH via browser policy</td></tr>
-            <tr><td>Cloud connector agents (Windows/macOS/mobile)</td><td>Cato Client — Windows, macOS, Linux, iOS, Android via MSI + MDM/Intune</td><td>Transparent steering to the nearest PoP — no proxy config. ChromeOS is not in Cato's documented Client OS list (see callout)</td></tr>
+            <tr><td>Cloud connector agents (Windows/macOS/mobile)</td><td>Cato Client — Windows, macOS, Linux, iOS, Android via MSI + MDM/Intune</td><td>Transparent steering to the nearest PoP — no proxy config. Chromebook now appears in Cato's Client OS list (Jul 2026) — validate the ChromeOS approach (see callout)</td></tr>
             <tr><td>PAC files / explicit proxy settings</td><td>Transparent steering via Cato Client (roaming) or Socket/IPsec site (on-network)</td><td>PAC/GPO cleanup is part of cutover — but keep the PAC hosted during co-existence as the rollback lever</td></tr>
             <tr><td>GRE/IPsec tunnels from sites</td><td>Cato Socket (X1500/X1700) or IPsec to the nearest Cato PoP</td><td>Sockets add last-mile HA, QoS and full WAN capability — a functional upgrade, not a tunnel swap</td></tr>
             <tr><td>ZTNA / VPN replacement</td><td>Cato SDP — Private Access Policy, App Connector, clientless browser access</td><td>Rides the same Client and backbone as internet security — one agent, one policy plane</td></tr>
@@ -178,10 +178,11 @@
       </div>
       <div class="callout risk">
         <div class="co-title">Qualify before you commit — two documented gaps</div>
-        <p><strong>Chromebook fleets:</strong> iboss covers Chromebooks via a Chrome extension, but
-        ChromeOS does not appear in Cato's documented Client OS list (Windows, macOS, Linux, iOS,
-        Android). For Chromebook-heavy schools this is the first technical qualification question —
-        agree the supported approach with Cato PS/product before committing a migration plan.</p>
+        <p><strong>Chromebook fleets:</strong> iboss covers Chromebooks via a Chrome extension.
+        Cato's client-distribution documentation now lists &ldquo;Android and Chromebook&rdquo; among
+        Client platforms (verified Jul 2026) — an improvement on earlier documentation — but the
+        ChromeOS deployment and management approach for a school fleet is still the first technical
+        qualification question: agree it with Cato PS/product before committing a migration plan.</p>
         <p><strong>Google Workspace identity:</strong> Cato documents SCIM provisioning for
         Entra ID, Okta and OneLogin — Google Workspace is not on that list. Google-identity schools
         need an agreed identity design (SSO and provisioning path) validated in discovery. Do not
@@ -510,6 +511,229 @@
         for whom", user-attributed events are the "how recorded" — evidence on screen rather than
         a vendor report request.</li>
       </ul>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        An iboss estate is too entangled to PoV whole — years of PAC exceptions, per-OU tiers and
+        IP-keyed allowlists don't move in a fortnight. The pilot that de-risks the decision is a
+        bounded <strong>proxy-exit exercise</strong>: one cohort — say, the central-team staff of a
+        multi-academy trust, or one school's staff OU — swapped from iboss PAC/agent steering to
+        the Cato Client, plus one pilot site given socket breakout in place of its GRE/IPsec
+        tunnel. Education-grade content controls are proven at parity in monitor mode, iboss stays
+        authoritative for every other user and school, and the hosted PAC remains the way back
+        throughout. Run it under the discipline of the
+        <a href="management-pov-framework.html">PoV framework</a>: agree the success criteria below
+        with the customer — and the safeguarding lead — <em>before</em> anything is configured, and
+        book the decision meeting the same day.
+      </p>
+      <div class="callout">
+        <div class="co-title">Why the pilot cohort is staff, not pupils</div>
+        <p>Monitor-first discipline means nothing blocks until events prove it — which is exactly
+        why pupils stay out of scope. Safeguarding filtering for pupils must never run
+        monitor-only, so pupil waves follow later, on category rules whose verdicts this pilot has
+        already evidenced. A staff cohort exercises the same steering, inspection and policy
+        machinery without ever thinning the pupil filter.</p>
+      </div>
+
+      <h3>Success criteria</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Every row's artefact goes into a dated evidence pack, exported as it lands — the wrap-up
+        reads the pack, not memories.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Every pilot device connects through the Cato Client with the iboss connector disabled, and its user is identified by name from the synced SCIM group</td>
+              <td>Connected cohort list with device, Client version and PoP; one event attributed to a named user</td>
+              <td><span class="path">Access → Users</span> · <span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td>Safeguarding-category parity — the agreed test URL list returns the intended verdict on Cato, in monitor, matching the iboss action for the same tier</td>
+              <td>Events filtered to the translated rules, verdict by verdict beside the iboss report for the same list</td>
+              <td><span class="path">Monitor → Events</span> (Internet firewall)</td>
+            </tr>
+            <tr>
+              <td>SafeSearch and YouTube restricted mode enforced for the cohort, with DNS-over-HTTPS controlled so the enforcement holds</td>
+              <td>Screen evidence of forced SafeSearch and restricted YouTube on a cohort device, plus the DoH control change record</td>
+              <td><span class="path">Security → IPS</span> (Content Policy) · <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td>TLS inspection live for the pilot group — certificate deployed via the management tooling, no certificate-error tickets from the cohort</td>
+              <td>Inspect rule scoped to the pilot group; inspected-traffic events; empty cohort helpdesk queue</td>
+              <td><span class="path">Security → TLS Inspection</span> · <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td>SaaS and exam-platform logins succeed from the new egress — Cato allocated IPs dual-listed beside iboss IPs before the swap, zero lockouts</td>
+              <td>Login test record per allowlisted platform; egress rule showing the allocated-IP NAT binding</td>
+              <td><span class="path">Network → IP Allocation</span> · <span class="path">Network → Network Rules</span></td>
+            </tr>
+            <tr>
+              <td>Rollback proven, not promised — one cohort device re-pointed to the hosted PAC / re-enabled iboss agent profile and back, timed</td>
+              <td>Rollback drill record: change, elapsed minutes, device filtering via iboss again</td>
+              <td>MDM/GPO change log + <span class="path">Monitor → Events</span> (traffic ceases)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before anything is configured</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Success criteria signed off — by the safeguarding lead as well as IT — and the decision meeting booked, per the <a href="management-pov-framework.html">PoV framework</a>.</li>
+          <li>Licences and modules confirmed for everything under test: Client/SDP seats for the cohort, the pilot-site Socket, TLS inspection and allocated IPs.</li>
+          <li>Identity integration connected with the pilot group provisioned over SCIM and visibly syncing before any rule references it — Cato documents SCIM for Entra ID, Okta and OneLogin; Google-identity schools need the identity design agreed first (see the qualification callout in <a href="#mapping">component mapping</a>).</li>
+          <li>TLS inspection staged first: Cato root certificate pushed via the existing MDM/GPO tooling alongside the iboss CA — neither CA is removed (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Scope is staff Windows/macOS devices plus one pilot site. Chromebook fleets stay wholly on iboss for the pilot — the ChromeOS approach is a qualification item, not a pilot variable.</li>
+          <li>The iboss PAC stays hosted and change-frozen, and iboss stays authoritative for everyone outside the cohort — nothing here touches the wider estate's steering.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Provision the cohort's identity and prove the group syncs</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Create the pilot group in the IdP and provision it over
+          <a href="https://knowledge.catonetworks.com/docs/provisioning-users-with-scim" target="_blank" rel="noopener">SCIM</a> —
+          membership changes sync in near real time, and every policy rule in this runbook scopes
+          to this group. Confirm the members appear in Access → Users before building anything
+          else: a group that hasn't synced means rules that silently never match.</p>
+        </li>
+        <li>
+          <h4>Connect the pilot site with a Socket, tunnel left as the way back</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Replace the pilot site's GRE/IPsec-to-iboss tunnel with a
+          <a href="https://knowledge.catonetworks.com/docs/configuring-sites-with-cato-sockets" target="_blank" rel="noopener">Socket site</a> —
+          native range, WAN links and bandwidth set per the site licence. Leave the legacy tunnel
+          configured but down on the site firewall: site-level rollback is re-enabling it and
+          re-pointing the default route, exactly as the co-existence section above describes.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection — certificate first, bypasses second, inspection last</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Push the Cato root certificate to cohort devices through the same MDM/GPO channel that
+          manages the iboss CA — Cato documents that it
+          <a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">must be installed on every device</a>
+          whose traffic is inspected. Seed bypass rules from the harvested iboss SSL and PAC
+          exception lists —
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">certificate-pinned applications must be bypass rules</a>,
+          placed above any Inspect rule, and Cato bypasses Android, Linux and unidentified
+          operating systems automatically. Then add one Inspect rule scoped to the pilot SCIM
+          group. When inspection is first enabled the CMA adds Internet firewall rules blocking
+          QUIC/GQUIC automatically — leave them in place, since QUIC traffic can't be inspected.</p>
+        </li>
+        <li>
+          <h4>Translate the cohort's web tier — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Recreate only the rules the cohort's iboss tier actually hits, scoped to the pilot
+          group as source, with <strong>Track = Event on every rule</strong> — events are the
+          evidence. Cato's
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Internet firewall</a>
+          ends in an implicit any-any allow, so unmatched traffic behaves as it does today; the
+          safeguarding categories land as monitor rules whose events prove the verdicts, with
+          blocks armed only against the agreed test URL list on a test device. The full
+          construct-by-construct translation — and the per-OU tier ladder this pilot is one rung
+          of — lives on <a href="migration-iboss-policy.html">iboss Policy Migration</a>.</p>
+        </li>
+        <li>
+          <h4>Enable Content Restrictions and control DoH in the same change</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>On the Content Policy tab, enforce
+          <a href="https://knowledge.catonetworks.com/docs/restricting-search-content-for-internet-traffic" target="_blank" rel="noopener">SafeSearch for Google and Bing and set YouTube to Moderate or Strict</a>
+          to match the cohort's iboss tier. Two documented boundaries to state up front: browsers
+          using DNS-over-HTTPS bypass these restrictions, so ship the DoH browser policy and the
+          DoH block with this change, not after the first bypass — and Content Restrictions act on
+          search engines, not on direct browsing, which is what the category rules in the previous
+          step are for.</p>
+        </li>
+        <li>
+          <h4>Dual-list the egress IPs before anything swaps</h4>
+          <p><span class="path">Network → IP Allocation</span> <span class="path">Network → Network Rules</span></p>
+          <p>Allocate Cato IPs — the count is
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">licence-determined</a>,
+          and best practice is two from different PoPs for failover — and bind them to the
+          cohort's egress with a
+          <a href="https://knowledge.catonetworks.com/docs/how-to-configure-a-network-rule-to-egress-traffic" target="_blank" rel="noopener">network rule using NAT</a>.
+          Then add those IPs to every SaaS tenant restriction, exam-platform allowlist and partner
+          firewall rule the dependency register found for this cohort — alongside the iboss
+          dedicated IPs, never replacing them. Test one login per platform before the swap.</p>
+        </li>
+        <li>
+          <h4>Swap the cohort's steering — atomically, per device</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Through the same
+          <a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">GPO/MDM channel</a>
+          that deployed the iboss connector: disable the iboss agent profile, clear the PAC/proxy
+          setting, and install the Cato Client — in one maintenance window per device ring, so no
+          device ever runs two TLS-intercepting agents at once. The hosted PAC itself stays
+          untouched: it is the rollback rail, not part of the change.</p>
+        </li>
+        <li>
+          <h4>Run the parity fortnight and build the evidence pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Walk the agreed test URL list with a cohort user; run the SafeSearch, YouTube and
+          exam-platform login checks; then filter Events to the pilot group and the translated
+          rules, confirm each verdict is attributed to a named user and rule, and export the
+          filtered view as a dated CSV per criterion —
+          <a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">a single export carries up to 250,000 events</a>.
+          Close the pack with the rollback drill: one device back to the PAC, timed, and forward
+          again.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase: thirteen ordered rules with user- and group-scoped sources, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>The parity evidence engine: one ordered Internet firewall with group-scoped rules and live hit counts. For this pilot, the graduated Block and Prompt category rules near the bottom are the shape the cohort's iboss tier translates into — every hit an event attributable to a named staff user, which is the safeguarding-reporting continuity story on one screen.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato TLS Inspection policy with bypass rules for sensitive categories, pinned applications and platforms, followed by phased Inspect rules scoped to test networks and a pilot user group" loading="lazy">
+        <figcaption>TLS inspection staged the way the pilot needs it: bypasses first — sensitive categories, pinned apps, device platforms — then Inspect rules scoped to named groups. The pilot-group Inspect rule from step 3 slots into exactly this shape, with the bypass rows seeded from the harvested iboss SSL and PAC lists.</figcaption>
+      </figure>
+      <!-- capture-wanted: Security → IPS Content Policy tab with SafeSearch enforced and YouTube Moderate/Strict selected -->
+      <!-- capture-wanted: Monitor → Events filtered to a pilot user showing Internet-firewall category verdicts and Content Restrictions activity attributed by name -->
+      <!-- capture-wanted: Network → IP Allocation with allocated egress IPs bound to a NAT network rule -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🥊</div><div><h4>Two agents on one device</h4><p>If a swapped device still shows the iboss connector active, the swap didn't complete — two TLS-intercepting agents produce breakage that looks like anything but its cause. Finish the removal via the MDM ring before reading any parity events.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>PAC remnants</h4><p>A browser or GPO still pushing the iboss PAC after the swap sends traffic to the old proxy — or silently around Cato. Check the device's proxy settings; the PAC <em>setting</em> is cleared in the same change as the agent swap even though the PAC <em>file</em> stays hosted for rollback.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>SafeSearch not enforcing</h4><p>Almost always DNS-over-HTTPS: Cato documents that DoH-enabled browsers bypass Content Restrictions. Confirm the browser DoH policy landed and the DoH block is live; then clear DNS and browser caches, which the KB recommends on first enablement.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>Pinned education apps break under TLSi</h4><p>MIS clients, exam-platform lockdown browsers and other pinned apps fail the moment inspection touches them. Certificate-pinned applications must be TLS bypass rules, above the Inspect rule — the harvested iboss SSL bypass list says which ones, and TLSi error events confirm any it missed.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Cohort rules never match</h4><p>SCIM sync lag, or a user connecting before identity attaches, means group-scoped rules silently never fire and the device falls through to the implicit allow. Verify membership in Access → Users and prove one event attributes to a named pilot user before the parity fortnight starts.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏫</div><div><h4>Exam-platform lockout</h4><p>A platform allowlist still keyed only to iboss dedicated IPs locks the cohort out the moment egress moves to the Cato PoP. Sweep the dependency register again, confirm the allocated-IP NAT rule is the cohort's egress path, and re-test logins — before an exam window, never during one.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; the exit plan</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say these before the customer finds them</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Parity means intent, not identical counts.</strong> The iboss and Cato category taxonomies do not line up one-to-one — judge the agreed test URL list verdict by verdict, never by comparing event volumes.</li>
+          <li><strong>Content Restrictions are search-engine controls.</strong> SafeSearch and YouTube enforcement act on Google, Bing and YouTube — direct browsing to unsuitable sites is the category rules' job, and DoH must stay controlled for either to hold.</li>
+          <li><strong>Pupils are out of scope by design.</strong> This pilot proves the machinery on staff devices; pupil cohorts move only in later waves, onto blocks already evidenced — monitor-only pupil filtering is never acceptable.</li>
+          <li><strong>Chromebooks and Google identity are qualification items.</strong> Neither is resolved by this pilot — carry both through the discovery callouts above and agree the approach with Cato PS before any pupil-fleet commitment.</li>
+          <li><strong>Evidence windows.</strong> An Events query spans at most 31 days — export weekly as the framework prescribes, rather than reconstructing at wrap-up.</li>
+          <li><strong>Reporting continuity.</strong> For everyone outside the cohort, iboss remains the statutory safeguarding record throughout — nothing is archived or terminated during a pilot.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>If the pilot passes</strong>, nothing is thrown away: the translated rules are the
+        first wave's policy, the pilot group widens per OU along the phased path above, and the
+        evidence pack becomes the safeguarding lead's sign-off artefact for the pupil waves.
+        <strong>If it must unwind</strong>, revert in reverse order: re-point browser-steered
+        devices to the hosted PAC and re-enable the iboss agent profile through the same MDM ring
+        (filtering returns to iboss immediately), re-enable the pilot site's legacy tunnel and
+        re-point its default route, and set the Cato rules back to monitor — disable rather than
+        delete, because the translation work remains an asset for the real migration. Both root
+        CAs stay where they are — certificate removal was never part of the pilot, so rollback
+        never breaks HTTPS. The cohort lands exactly where it started: PAC-steered,
+        iboss-filtered, decision de-risked.
+      </p>
     </section>
 
     <section id="resources" class="reveal">

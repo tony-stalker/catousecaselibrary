@@ -266,6 +266,228 @@ terraform apply  <span class="cmt"># sites appear in CMA in minutes</span></pre>
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This pilot is an <strong>automation-credibility exercise</strong> for a NetOps/DevOps
+        audience: prove, in their tenant and against their toolchain, that the API surface is real,
+        complete and accountable. The shape is deliberately conservative — read everything, change
+        one thing, prove who changed it, tear it down cleanly, and land one event in their SIEM.
+        Nothing in this runbook touches production traffic: it rides the management plane, inside a
+        scope agreed in writing. Agree the success criteria below <strong>before creating any
+        keys</strong>, per the frame in <a href="management-pov-framework.html">Running a Cato
+        PoV</a> — each has a measurement, an evidence artefact and a place where it is read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it is read out</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The estate, readable as data</td>
+              <td>A read-only API key pulls the full site and user inventory via GraphQL and catocli — no console, no exports by hand</td>
+              <td>The inventory export itself (JSON or CSV), dated, checked into the evidence repo</td>
+              <td>Administration → API &amp; Integrations · the export file</td>
+            </tr>
+            <tr>
+              <td>One change, made as code</td>
+              <td>A single policy change in the agreed pilot scope is authored in Terraform, planned, reviewed and applied — then visible in the CMA</td>
+              <td>The <code>terraform plan</code> diff and apply output, plus the rule in the published rulebase</td>
+              <td>Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>The change is accountable</td>
+              <td>The same change appears in the Audit Trail attributed to the API key, with previous and new values recorded</td>
+              <td>The Audit Trail entry, filtered to the pilot key, screenshotted with its timestamp</td>
+              <td>Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td>Clean teardown</td>
+              <td>A full plan → apply → destroy cycle: destroy removes exactly what apply created, and nothing else</td>
+              <td>The destroy output beside the rulebase after teardown, and the deletion entry in the Audit Trail</td>
+              <td>Security → WAN Firewall · Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td>Events reach their SIEM</td>
+              <td>Cato events from the pilot scope land in the customer's own SIEM at least once — via a push Event Integration or an API pull</td>
+              <td>A Cato event rendered in their SIEM console, side by side with the same event in the CMA</td>
+              <td>Administration → API &amp; Integrations · the customer's SIEM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope in writing:</strong> automation acts only on agreed pilot objects — a
+          named rule prefix (e.g. <code>pov-tf-</code>) and, if a site is in scope, a designated
+          test site. Terraform state contains PoV resources only, so destroy can never reach
+          production.</li>
+          <li><strong>Two API keys, least privilege each:</strong> a <strong>View</strong> key for
+          the inventory and feed work (Viewer permissions run query calls only) and an
+          <strong>Edit</strong> key for the Terraform change. Cato's documentation recommends
+          setting an expiry date on Edit keys; restrict both with <em>Allow access from IPs →
+          Specific IP list</em> to the runner's egress address. Creating a service key requires an
+          admin with the Editor role.</li>
+          <li><strong>Customer-side tooling:</strong> Python 3.6+ for catocli, the Terraform CLI and
+          a Git repository — ideally their existing pipeline. Everything is outbound HTTPS to
+          <code>api.catonetworks.com</code>; no inbound access is needed.</li>
+          <li><strong>SIEM destination:</strong> connection details for one supported Event
+          Integration — Amazon S3, Azure Storage, CrowdStrike, Microsoft Sentinel, Splunk or a
+          custom HTTP push endpoint. An account can hold up to three Event Integrations, so confirm
+          a slot is free.</li>
+          <li><strong>No TLS inspection dependency:</strong> this PoV proves the management plane,
+          not content inspection — it can run before, after or without the data-plane pilots in
+          this library.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Create and scope the two API keys</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Create the View key and the Edit key against the pilot account, set the expiry on the
+          Edit key, and pin both to the runner's IP list. The key value is shown once, in the
+          creation pop-up, and cannot be retrieved again — copy it straight into the customer's
+          secrets vault, never into the repo. Doing this step deliberately, on screen, is itself
+          evidence: scoped credentials are the first thing a DevOps audience looks for
+          (<a href="https://knowledge.catonetworks.com/docs/generating-api-keys-for-the-cato-api" target="_blank" rel="noopener">Cato docs: generating API keys</a>).</p>
+        </li>
+        <li>
+          <h4>Pull the full inventory with the View key</h4>
+          <p>Install and configure catocli, then pull sites and users with the read-only key. The
+          export file is criterion one's evidence — dated and committed to the evidence repo.</p>
+<pre class="code"><span class="cmt"># pip3 install catocli   (Python 3.6+)</span>
+catocli configure set    <span class="cmt"># paste the View key + &lt;your-account-id&gt;</span>
+catocli query entityLookup -accountID &lt;your-account-id&gt; '{"type":"site"}' \
+  -f csv --csv-filename pov-site-inventory.csv
+catocli query entityLookup -accountID &lt;your-account-id&gt; '{"type":"vpnUser"}' \
+  -f csv --csv-filename pov-user-inventory.csv</pre>
+          <p>Seconds from install to a machine-readable estate — make the point that this is the
+          same GraphQL API the CMA itself runs on, consumed from a shell.</p>
+        </li>
+        <li>
+          <h4>Initialise the Terraform provider</h4>
+          <p>Switch to the Edit key (from the vault, via an environment variable — not in code) and
+          initialise the official provider:</p>
+<pre class="code">terraform {
+  required_providers {
+    cato = { source = "catonetworks/cato" }
+  }
+}
+
+provider "cato" {
+  baseurl    = "https://api.catonetworks.com/api/v1/graphql2"
+  account_id = "&lt;your-account-id&gt;"
+  <span class="cmt"># token via env var — never in code or state committed to Git</span>
+}</pre>
+          <p>Known caveat, worth stating before the customer finds it: the API executes
+          sequentially, so Cato recommends running Terraform with <code>parallelism=1</code>. The
+          provider also retries with backoff by default (5 retries, 1–30&nbsp;s waits), which you
+          can tune with its <code>retry_*</code> arguments.</p>
+        </li>
+        <li>
+          <h4>Make one change as code — plan first, always</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>Author one WAN firewall rule named with the agreed <code>pov-tf-</code> prefix, scoped
+          to the pilot. Run <code>terraform plan</code> and walk the diff with the customer — this
+          review step is the governance story. Then
+          <code>terraform apply -parallelism=1</code> and open the rulebase: the rule sits in the
+          published revision alongside every console-authored rule, indistinguishable in effect.</p>
+        </li>
+        <li>
+          <h4>Prove attribution in the Audit Trail</h4>
+          <p><span class="path">Administration → Audit Trail</span></p>
+          <p>Filter the Audit Trail to the pilot's API key and show the change with its previous and
+          new values. Two parameters to know from
+          <a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Cato's Audit Trail documentation</a>:
+          policy changes can take several minutes to be recorded, and the trail holds 12 months of
+          history viewed up to 3 months at a time. Screenshot the entry — criterion three,
+          done.</p>
+        </li>
+        <li>
+          <h4>Tear it down — and audit the teardown</h4>
+          <p>Run <code>terraform destroy -parallelism=1</code>, confirm the rule is gone from the
+          rulebase, then return to the Audit Trail: the deletion entry, attributed to the same key.
+          Create, change, destroy — a full lifecycle where every step is accountable. This is the
+          moment the pilot earns the word "credibility".</p>
+        </li>
+        <li>
+          <h4>Land one event in their SIEM</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Two routes, pick whichever matches their estate: configure a push
+          <a href="https://knowledge.catonetworks.com/docs/getting-started-with-event-integrations" target="_blank" rel="noopener">Event Integration</a>
+          (native Sentinel, Splunk or CrowdStrike connectors, S3 or Azure Storage, or a custom HTTP
+          push), or pull events with the View key via the <code>eventsFeed</code> API from a
+          scheduled job. The criterion is deliberately modest — one Cato event rendered in their
+          SIEM console — because once one arrives, the pipeline argument is over.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        The evidence pack for this PoV is unusually tidy: an inventory file, a plan diff, two
+        screenshots and a SIEM view. The rulebase below is the "before and after" canvas — the
+        pilot rule appears in it at apply and vanishes at destroy.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase showing twelve ordered allowlist rules with sources, destinations, services and live hit counts">
+        <figcaption>The rulebase your pipeline writes into — Security → WAN Firewall, published revision. During the pilot the <code>pov-tf-</code> rule sits here alongside console-authored rules, identical in effect and hit-count telemetry; after <code>terraform destroy</code> it is gone, and only the Audit Trail remembers it.</figcaption>
+      </figure>
+      <!-- capture-wanted: Administration → API & Integrations, API Keys tab showing a View key and an Edit key with expiry and IP allowlist set -->
+      <!-- capture-wanted: terminal output of terraform plan/apply for a cato_wf_rule with parallelism=1 -->
+      <!-- capture-wanted: Administration → Audit Trail entry for an API-key change showing previous and new values -->
+      <!-- capture-wanted: a Cato event rendered in a SIEM (e.g. Sentinel or Splunk) via an Event Integration -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>401 / unauthorised on every call</h4><p>The key was mistyped, has expired, or the caller's egress IP is outside the key's <em>Specific IP list</em>. Remember the key value is only shown once at creation — if it wasn't vaulted, revoke and re-create rather than hunting for it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Queries work, the mutation fails</h4><p>Key scope: Viewer permissions run query API calls only — configuration mutations need the Edit key. Keep both keys and use the least-privileged one per job; that split is a feature of the pilot, not an inconvenience.</p></div></div>
+        <div class="benefit"><div class="b-icon">🐢</div><div><h4>Rate-limit or concurrency errors on apply</h4><p>The API executes sequentially — run Terraform with <code>parallelism=1</code>, per Cato's own recommendation. The provider retries with backoff (5 attempts, 1–30&nbsp;s) before failing; persistent errors usually mean parallel workers, not a broken API.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕰️</div><div><h4>The change isn't in the Audit Trail yet</h4><p>Policy changes can take several minutes to be recorded in the Audit Trail — wait before diagnosing. When searching later, note the view shows up to 3 months at a time from the 12 months held.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔎</div><div><h4>entityLookup returns nothing</h4><p>Almost always the wrong account ID — check <code>catocli configure show</code> or override per call with <code>-accountID &lt;your-account-id&gt;</code>. A valid key against the wrong account returns empty results, not an error.</p></div></div>
+        <div class="benefit"><div class="b-icon">📤</div><div><h4>Manual event exports keep hitting limits</h4><p>The Events page exports at most 250,000 events at a time across a maximum 31-day range — fine for a one-off artefact, wrong for continuous evidence. That is what the Event Integrations and <code>eventsFeed</code> are for; switch route rather than scripting around the cap.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Sequential applies are slow at scale:</strong> <code>parallelism=1</code>
+          means a hundred-site apply runs one resource at a time. Say so up front — the pilot's
+          one-rule change is instant, but size expectations for the full-estate rollout
+          honestly.</li>
+          <li><strong>Keep state small and scoped:</strong> do not import production objects into
+          Terraform state during a pilot. State should contain only <code>pov-tf-</code> resources,
+          so <code>destroy</code> is provably harmless — and console edits to a Terraform-managed
+          rule will be flagged (and reverted) on the next apply, so agree that the pilot rule is
+          owned by the pipeline alone.</li>
+          <li><strong>Edit keys are production credentials:</strong> expiry set, IP-pinned,
+          vaulted, revoked at exit. Treating them that way in front of the customer is part of the
+          evidence.</li>
+          <li><strong>Integration slots are finite:</strong> up to three Event Integrations per
+          account — confirm a free slot before the SIEM criterion is written down.</li>
+          <li><strong>Version the toolchain in the evidence doc:</strong> record the catocli and
+          provider versions used, so the wrap-up is reproducible if the customer re-runs it after
+          the trial.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> the exit is the demo — <code>terraform destroy</code> already
+        removed the pilot rule in criterion four. Beyond that: delete or revoke both API keys,
+        remove the Event Integration (freeing the slot), and hand over the evidence repo —
+        inventory exports, plan diffs, screenshots and the SIEM view. The
+        <span class="path">Administration → Audit Trail</span> keeps the complete, attributed
+        record of everything the pilot created and destroyed for 12 months: the closing exhibit
+        for an automation-credibility engagement.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

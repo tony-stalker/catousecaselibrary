@@ -15,9 +15,10 @@ build time (July 2026) from the sources cited on each page.
 | FortiOS 7.6.3 removes SSL-VPN tunnel mode | migration-fortinet | Stable |
 | 2025 Gartner MQ (Cato Leader, Cloudflare Visionary, ~400 via Gartner) | migration-cloudflare | On next MQ publication (~annual) |
 | Cloudflare One Appliance limits (no fail-open, ~30s failover, no QoS) | migration-cloudflare(-policy) | Quarterly — vendor docs move |
-| Browser Extension = native Chrome; ChromeOS client + Google Workspace SCIM not in documented lists | access-byod-clientless, migration-iboss | Quarterly — support lists grow |
+| Client OS list NOW includes "Android and Chromebook" (KB verified 23 Jul 2026 — iboss caveat softened accordingly); Google Workspace SCIM still not in documented lists | access-byod-clientless, migration-iboss | Quarterly — support lists grow |
 | AI Security: End Users and Apps are separate per-user licences; Enterprise Browser included in ZTNA licence | AI Security pages, access-byod-clientless | On licensing announcements |
-| AI gateway support = LiteLLM; Outpost = separate licence | ai-homegrown-apps | Quarterly — gateway list will grow |
+| AI Gateway consolidated into Guards Jul 2026 (one guard per gateway, virtual keys → Homegrown Agents; still LiteLLM-only); Outpost licensing NO LONGER publicly documented — "confirm with Cato rep" wording on-page | ai-homegrown-apps | Quarterly — this surface moves fastest in the library |
+| AI Security KB churn (Jul 2026): agent docs replaced by four what-is-* pages (old scouts/monitoring slugs 404); what-is-ai-security-for-end-users slug serves Shadow-AI-Discovery content; UIP actions 4-enum, Guards Interaction Policy 3-enum; CASB/DLP Data Control enum = Allow/Block/Notify (tenant UI shows Monitor) | AI Security pages, security-data-casb-dlp | Quarterly — re-run llms.txt link sweep |
 | AI Visibility Assessment deck is DRAFT (Apr 2026), offer "no cost, limited time" | security-ai-visibility | On deck update — remove draft callout |
 | Cato↔ASA IKEv2 multi-TS incompatibility + remedies; IPsec parameter/throughput figures | network-ipsec-asa | Semi-annually vs KB |
 | Socket v15 BGP community 32768 requirement | migration-methodology | When v15 is universal — drop the caveat |
@@ -25,7 +26,7 @@ build time (July 2026) from the sources cited on each page.
 | DORA applies from 17 Jan 2025 | security-finance-dora | Stable as history |
 | "80+ PoPs" and PoP lists | network-global-expansion, others | Semi-annually — count grows |
 | Cloud Interconnect provider list & PoP availability/lead times | network-cloud-interconnect | Semi-annually vs KB |
-| Cato Terraform provider parallelism=1 caveat | migration-cloudflare | Semi-annually |
+| Cato Terraform provider parallelism=1 caveat (+ 5-retry/1–30 s backoff defaults) | migration-cloudflare, management-api-automation | Semi-annually |
 | Sophos forced-refresh calendar (XG EOL 31 Mar 2025; SFOS v22 Dec 2025 XGS-only; Workspace Protection GA Feb 2026; standalone ZTNA SKUs ended 1 May 2026; +10% XGS prices took effect 1 Jul 2026 — reframed past-tense Jul 2026 review) | migration-sophos | Quarterly — Sophos partner news moves fast |
 | Six Sophos firewall CVEs in CISA KEV (incl. CVE-2020-25223 SG UTM, CVE-2020-29574 CyberoamOS) | migration-sophos | Quarterly — counts grow |
 | Sophos endpoint credentials (Gartner MQ EPP Leader 17th consecutive 2026; MDR 26k+ customers Jan 2025; MSP Elevate May 2025) | migration-sophos | On next MQ / annually |
@@ -39,8 +40,9 @@ build time (July 2026) from the sources cited on each page.
 | Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
 | CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
 | Cato Data Lake default retention 3 months (extendable) — hedged on-page, support page login-gated | ai-eu-ai-act | Quarterly vs KB/SKU — firm up if a public source appears |
-| PoV-runbook KB parameters across the 11 pilot #pov sections (client version gates, EM 90-day/3-month windows, 250k-event/31-day export caps, MTU 1383, BGP defaults, DLP 50 MB / 20-type limits, TLSi bypass behaviour, sub-minute policy propagation) — all fetched 23 Jul 2026 | network-sdwan, security-consistent, management-visibility, access-hybrid-workforce, security-tls-inspection, security-data-casb-dlp, network-mpls-migration, migration-{zscaler,palo-alto,fortinet,sophos} | Quarterly vs KB — parameters move with releases |
-| CMA nav naming drift: current KB shows "Home → Experience Monitoring" and "Resources → Device Posture"; library chips use the Monitor →/Access → conventions | all pages with path chips | Confirm against the live CMA, then align the convention library-wide in one sweep |
+| PoV-runbook KB parameters across ALL 57 #pov sections (client/socket version gates, EM windows and thresholds, event/export caps, MTU 1383, BGP defaults incl. AS-path-prepend secondary preference and up-to-6 IKEv2 tunnels/role, DLP 50 MB / 20-type limits, forensics/RBAC facts, TLSi behaviour, sub-minute propagation, Audit Trail 12mo/3mo, XOps/DEM/IoT-OT/AI licence gates) — all fetched 20–23 Jul 2026 | every page with a #pov section (grep 'id="pov"') | Quarterly vs KB — the monthly staleness routine should spot-sample 5–10 sections per run |
+| Trust page lists ISO/IEC 27001:2013 family (checked 23 Jul 2026) — likely to move to 27001:2022 | security-compliance, security-uk-public-sector, security-finance-dora | Quarterly — re-fetch the trust page |
+| CMA nav naming drift: current KB shows "Home → Experience Monitoring (Probes)", "Resources → Device Posture", "Home → Devices", "Account → Audit Trail"; library chips use Monitor →/Access →/Assets →/Administration → conventions (EM probes chips aligned to Home → 23 Jul) | all pages with path chips | Confirm against the live CMA, then align the convention library-wide in one sweep |
 
 Rendering note: as of 19 Jul 2026 measure_svg.py runs completely silent — all label
 bleeds fixed, and the script now ignores rects wider than 250 user-units (band/container

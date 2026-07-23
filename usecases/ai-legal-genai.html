@@ -367,6 +367,240 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows the controls; the PoV runs a <strong>fee-earner GenAI pilot with privilege
+        intact</strong> — one practice group, three to four weeks, on the firm's own traffic, with
+        nothing blocked. The pilot cohort is a single practice group the firm nominates — here the
+        fictional Commercial Litigation group, with Rachel the associate among its fee-earners —
+        and the reviewer is the firm's risk team under the COLP. This pilot is the GenAI half of the
+        law-firm story: the ethical-wall half runs as its own pilot on
+        <a href="security-legal-confidentiality.html#pov">Client Confidentiality &amp; Ethical
+        Walls</a>, whose starter rulebase defers its GenAI row to this page. Agree the criteria
+        below <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — each is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The shadow-AI estate is named</td>
+              <td>Which AI tools the pilot practice group's fee-earners actually use — discovered
+              passively from traffic Cato already carries, prompt content untouched, nothing
+              deployed on laptops</td>
+              <td>Dated shadow-AI inventory for the pilot group: applications, users, usage volume
+              and risk posture</td>
+              <td>AI Security → Discovery</td>
+            </tr>
+            <tr>
+              <td>Privileged-class material is visible in flight</td>
+              <td>The built-in <strong>Legal</strong> DLP profile — ML classifiers for agreements,
+              patents, court documents and powers of attorney — matches real pilot-group traffic to
+              GenAI in monitor mode, with nothing blocked</td>
+              <td>A match report for the pilot period, tabled at the weekly sync and reviewed by
+              the firm's risk team</td>
+              <td>Security → DLP Configuration · Monitor → Events · Monitor → Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>Redaction works — seen from the fee-earner's chair</td>
+              <td>A prompt naming a client is masked in-flight by <strong>Anonymize and
+              Monitor</strong>: the tokens are what the model receives, and the answer still comes
+              back — proven in the fee-earner's own browser, not a console</td>
+              <td>Side-by-side capture: the prompt as typed and the anonymised prompt the AI
+              actually received, plus the matching interaction event</td>
+              <td>AI Security → User Interaction Policy · the fee-earner's browser · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>The AI-use policy has teeth</td>
+              <td>The firm's written AI policy is enforced as notification templates that educate
+              in the moment — and the violation rate for the pilot group visibly moves over the
+              pilot period</td>
+              <td>The notification as the fee-earner sees it, and the AI Violation Rate trend for
+              the pilot window</td>
+              <td>AI Security → Monitoring → Overview · AI Users</td>
+            </tr>
+            <tr>
+              <td>The COLP conversation is defensible</td>
+              <td>Every monitored, anonymised and matched interaction is attributed to a named
+              user, rule and application, and exportable — an audit pack the COLP can put in front
+              of a client security review or the regulator's questions</td>
+              <td>Events export for the pilot period plus the GenAI report, dated into the
+              evidence doc</td>
+              <td>Monitor → Events · AI dashboards</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licensing</strong> — AI Security for End Users covering the pilot cohort for
+          the period, plus DLP in scope for the Legal-profile monitor slice.</li>
+          <li><strong>TLS inspection enabled at account level</strong> — the User Interaction
+          Policy cannot inspect AI prompts without it (its rules take precedence over TLS bypass
+          rules). Stage it for the pilot cohort per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with
+          whoever owns privacy at the firm signing the scope — for a law firm that is a partner
+          conversation, not an IT ticket.</li>
+          <li><strong>One practice group, as an IdP group</strong> — the pilot cohort syncs from
+          the firm's IdP so every rule and every event is identity-scoped (patterns in
+          <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>The cohort on Cato end to end</strong> — office behind a socket, laptops on
+          the Cato Client — so discovery and policy see the same traffic wherever the fee-earner
+          works.</li>
+          <li><strong>A named reviewer on the risk team</strong> — the weekly match-report review
+          is a success criterion, so the COLP's delegate attends the sync from week one.</li>
+          <li><strong>Monitor-first, in writing</strong> — nothing blocks during this pilot. The
+          only user-visible changes are the notification and the masking on the sanctioned
+          assistant.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Scope the pilot to one practice group</h4>
+          <p><span class="path">Access → Users</span></p>
+          <p>Confirm the practice-group IdP group is syncing and the roster matches the group head's
+          list — Rachel and her colleagues, nobody else. Every rule in this pilot takes that group
+          as its source, so the evidence is automatically scoped to the people the firm agreed to
+          observe, and no other fee-earner's AI use is touched.</p>
+        </li>
+        <li>
+          <h4>Run a discovery week — passive, content-blind</h4>
+          <p><span class="path">AI Security → Discovery</span></p>
+          <p>Let Shadow AI Discovery build the inventory from traffic Cato already processes: AI
+          applications classified by signatures, domains and behavioural patterns, including AI
+          features embedded inside everyday SaaS, each with usage volume and risk posture. It is
+          deliberately passive — it blocks nothing by default and does not inspect prompt content
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a>).
+          Export the inventory dated at the end of the week: this is the baseline the whole pilot
+          argues from, and the app list is usually longer than the practice-group head expects.</p>
+          <!-- capture-wanted: «CMA AI Security → Discovery — shadow-AI inventory filtered to one pilot user group, showing apps, users and risk posture» -->
+        </li>
+        <li>
+          <h4>Stand up the Legal DLP profile — monitor only</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Apply Cato's recommended DLP configuration for AI apps, scoped to the pilot group
+          against the <em>Generative AI Tools</em> application category — and lead with the
+          <strong>Legal</strong> profile, whose ML classifiers detect <em>Agreement</em>,
+          <em>Patent</em>, <em>Court</em> and <em>Power of Attorney</em> documents. Accounts
+          created after 25 March 2025 carry the recommended rules pre-defined; earlier accounts add
+          them manually
+          (<a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a>).
+          Everything tracks events, nothing blocks. Each weekly sync opens with the match report —
+          what privileged-class material headed for GenAI, from whom — reviewed by the risk team,
+          exactly as the <a href="security-legal-confidentiality.html#pov">ethical-walls pilot</a>
+          reviews the same profile on the personal-storage path.</p>
+          <!-- capture-wanted: «CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period» -->
+        </li>
+        <li>
+          <h4>Add the Anonymize rule for client identifiers</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span></p>
+          <p>One rule: source the pilot group, the sanctioned assistant in scope, an engine profile
+          catching client identifiers, action <strong>Anonymize and Monitor</strong>, and a
+          notification template that states the firm's AI policy in one sentence. Where the
+          detectors cannot anonymise a value the interaction is monitored rather than silently
+          dropped, and API-based integrations support monitoring only
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          Then prove it from the user's side: Rachel runs a prompt naming a client from her own
+          browser and screenshots what the model actually received. That capture — not a console
+          view — is the artefact that convinces a sceptical partner.</p>
+        </li>
+        <li>
+          <h4>Give the AI-use policy teeth — and measure the effect</h4>
+          <p><span class="path">AI Security → Monitoring → Overview</span></p>
+          <p>The notification template is the firm's AI policy delivered at the moment of use —
+          most fee-earners meet the policy for the first time inside the tool, mid-draft, where it
+          actually lands. Watch the <strong>AI Violation Rate</strong> widget and the AI Users page
+          across the pilot: violations per user, safe-versus-violation split, and the
+          department-level comparison
+          (<a href="https://knowledge.catonetworks.com/docs/monitoring-via-the-ai-users-page" target="_blank" rel="noopener">Monitoring via the AI Users Page</a>).
+          A falling violation rate with usage holding steady is the pilot's headline number: the
+          policy is changing behaviour without driving anyone to a personal account.</p>
+          <!-- capture-wanted: «CMA AI Security → Monitoring → Overview — AI Violation Rate and violation-by-rule widgets over a multi-week pilot window» -->
+        </li>
+        <li>
+          <h4>Assemble the COLP audit pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to the pilot group's AI events and export: every monitored, anonymised and
+          matched interaction attributed to user, application, rule and matched profile, for the
+          whole period. Add the discovery inventory, the weekly match reports, the anonymisation
+          side-by-side and the violation-rate trend, dated into the evidence doc. At the wrap-up
+          this pack goes to the COLP as the answer to two questions the firm could not previously
+          evidence: <em>which AI is in use on our matters</em>, and <em>what controls sit between a
+          fee-earner's prompt and the model</em>.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/genai-anonymised-prompt.png" alt="ChatGPT conversation where the submitted prompt reads 'Redraft this notice for [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]' — the name, email address and bank account number replaced by anonymisation tokens before reaching the model, with ChatGPT replying normally" loading="lazy">
+        <figcaption>The criterion-three artefact, from the fee-earner's side of the glass: the
+        prompt as typed carried a client's name, email address and account number — the User
+        Interaction Policy masked each value in-flight, the tokens are what the model received, and
+        the drafting continues. Matter names and client identifiers never leave the firm; the
+        fee-earner never leaves the sanctioned tool.</figcaption>
+      </figure>
+      <p>
+        The Legal profile's classifier shelf — the ML document families including <em>Legal</em>
+        and <em>Contracts</em> — is shown from the demo tenant on the
+        <a href="security-legal-confidentiality.html#pov">ethical-walls PoV</a>, which runs the
+        same profile against personal cloud storage while this pilot runs it against GenAI: one
+        classifier set, two exits covered.
+      </p>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Who sees captured content</h4><p>For a law firm this is the pilot's own confidentiality question. Event metadata names user, app and rule — the matched content itself sits behind DLP forensics, gated by a dedicated RBAC permission, encrypted with the account's own key, every view audited: seeing the event does not mean seeing the data (facts and the negative test in <a href="security-dlp-forensics.html#pov">DLP Forensics — PoV</a>). Decide before week one which named risk-team members hold that permission.</p></div></div>
+        <div class="benefit"><div class="b-icon">📚</div><div><h4>Classifier coverage vs matter terms</h4><p>The Legal ML classifiers are class-aware, not matter-aware — they recognise that a document is an agreement or a court filing, not that it belongs to a specific matter. A codename or client number alone will not match the Legal profile; pair it with firm-defined data types for identifier patterns, and keep the claim exactly that size — as the ethical-walls pilot's obligation map does.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Prompts pass unmasked</h4><p>Almost always TLS inspection: the User Interaction Policy needs TLSi enabled at account level, and although its rules take precedence over TLS bypass rules, an account with TLSi off inspects nothing. Confirm the pilot cohort is in TLSi scope, the AI app is in the rule's application set, and remember API-based integrations monitor only.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Discovery inventory looks thin</h4><p>Discovery sees traffic that crosses a Cato PoP. Fee-earners on personal devices or off-net machines are invisible to it — which is a finding about shadow use, not a gap to hide. Confirm every pilot laptop runs the Cato Client before reading the inventory as the whole estate.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Violation rate refuses to fall</h4><p>Usually the notification is missing or mute — a rule without a template changes nothing a fee-earner can see, so behaviour never shifts. Check every pilot rule carries a template that states the policy plainly, then compare users on the AI Users page: one heavy violator can hold the group's rate up on their own.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔔</div><div><h4>Match report is noisy</h4><p>A litigation group's daily work <em>is</em> agreements and court documents, so Legal-profile matches on sanctioned GenAI use are expected — the report's job is to show where privileged-class material goes, not to score zero. Review with the risk team which destinations matter; that judgment is what week-N enforcement rules will encode.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Nothing here is legal advice.</strong> Whether a given tool's use is
+          consistent with the SRA's expectations, a client's outside-counsel guidelines or the
+          firm's professional obligations is a judgment for the firm and its COLP — the pilot
+          produces evidence for that judgment, not a certificate.</li>
+          <li><strong>Monitor-first is the point.</strong> No fee-earner is blocked mid-matter on
+          day one: the pilot observes, masks on the sanctioned tool, and educates. Blocking, if it
+          comes, is a decision the firm takes on the pilot's evidence — the staged path is on
+          <a href="ai-genai-security.html">GenAI Security for End Users</a>.</li>
+          <li><strong>Discovery is content-blind; inspection is consented.</strong> Shadow AI
+          Discovery never reads prompts; prompt-level inspection begins only with the User
+          Interaction Policy rules, under a TLSi scope the firm's privacy owner signed. Say both
+          halves to the partnership — it is the difference between monitoring and surveillance.</li>
+          <li><strong>The Legal profile is class-aware, not matter-aware</strong> — it evidences
+          privileged-class material heading to GenAI, not one matter's files specifically.</li>
+          <li><strong>One practice group is the scope.</strong> Findings about other groups'
+          AI use belong in the next-steps register, not in a quiet widening of the pilot.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the pilot rules rather than deleting them — the
+        events and match reports are the record; keep the discovery inventory and hand the audit
+        pack to the COLP whatever the verdict, because the next client security questionnaire will
+        ask these questions regardless. If the decision is a yes, the pilot rules are stage one of
+        the monitor-to-enforce lifecycle already live: extend the source groups practice group by
+        practice group, and let the restricted-team blocks from the demo arrive only where a
+        client's outside-counsel guidelines demand them.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -388,6 +388,241 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo tells the offshore story on demo data; the PoV proves it on <strong>one real
+        cohort</strong>. Pick a single BPO or ODC team — ten to thirty agents or developers on one
+        floor, in one delivery geography — and pilot them against the applications their engagement
+        contract actually names. The archetype used below is a Johannesburg-served contact-centre
+        team working a UK-hosted CRM and VDI estate; substitute Sydney, or whichever PoP sits
+        nearest the floor, and the shape holds. Agree the criteria below <em>before</em> configuring
+        anything, per <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a
+        measurable statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Named apps and VDI, nothing else</td>
+              <td>Every cohort session matches a named allow rule for CRM, VDI or ticketing — and an agent's attempted reach to anything off the list lands as a block event attributed to that person</td>
+              <td>Cohort event export: named-rule allows beside a dated, attributed block</td>
+              <td>Monitor → Events · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>Data provably off the endpoint</td>
+              <td>BPO-owned seats work through isolated browser sessions — pixels on screen, downloads and copy refused — while the DLP slice logs what the cohort's traffic actually carries</td>
+              <td>RBI session with a refused download beside the cohort's DLP event slice</td>
+              <td>Monitor → Events · Monitor → Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>VDI experience quantified</td>
+              <td>Per-app experience scores and TTFB for the cohort via the Johannesburg PoP, side by side with the week-zero measurement of the legacy path — the screen-lag argument settled with numbers, not anecdotes</td>
+              <td>Dated EM drill-down exports for both paths</td>
+              <td>Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>Per-agent audit trail</td>
+              <td>For any named agent, one filtered view answers who reached what, when, under which rule — the artefact the end customer's due-diligence team asks for</td>
+              <td>Events export filtered to a single identity for the pilot period</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Leavers dead within the sync window</td>
+              <td>An agent disabled in the IdP cannot connect at the next attempt — and the customer measures the gap between directory change and refused connection rather than taking our word</td>
+              <td>IdP audit entry timestamped beside the refused connection; no cohort events after that time</td>
+              <td>IdP console · Access → Users · Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The engagement contract is the scope.</strong> The named applications — CRM,
+          VDI broker, ticketing, with hosts and ports — and the data-handling clauses the end
+          customer wrote, copied out at the workshop. "Whatever the floor uses" is not a scope.</li>
+          <li><strong>Licences</strong> — ZTNA/SDP seats covering the cohort for the PoV period,
+          the DLP module, and RBI in scope for the BPO-owned seats.</li>
+          <li><strong>Identity first</strong> — the cohort exists in the customer's IdP as a
+          dedicated group (the outsourcer's joiner/leaver feed lands there) and provisions to Cato
+          via SCIM before any policy is written (see
+          <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>Device reality decided at the workshop</strong> — BPO-owned and personal seats
+          take the clientless portal through RBI; the outsourcer's managed build takes the Cato
+          Client with a posture profile. The decision table is in
+          <a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a> — decide
+          up front, not mid-pilot.</li>
+          <li><strong>TLS inspection staged first.</strong> The DLP evidence in this pilot needs
+          content inspection on the cohort's traffic — stage it per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> before
+          week one, with the outsourcer's privacy owner in the approval chain.</li>
+          <li><strong>Week-zero baseline of the legacy path.</strong> Before anything moves, measure
+          today's VDI experience from the floor — the latency criterion is a comparison, and the
+          "before" number cannot be collected retrospectively.</li>
+          <li><strong>The rest of the floor changes nothing.</strong> One team moves; every other
+          team, and the legacy access path, stay exactly as they are.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the cohort in identity</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Provision the pilot team as a dedicated IdP group (e.g. <em>BPO-Pilot-JNB</em>) via
+          SCIM and confirm the cohort — Thandi and Sipho among them — appears under Users. Every
+          rule below references this synced group, so the same mechanism that onboards the pilot
+          enforces the leaver criterion later: IdP changes reflect in Cato in near real time, users
+          unassigned in the IdP are disabled at the next sync, and a disabled user's ZTNA licence
+          returns to the pool
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Publish the named apps to the portal — isolated</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>The BPO-owned seats never join the network: register CRM and the VDI web client as
+          <strong>Internal Applications in the Applications Portal</strong>, enable the RBI service,
+          and add the Internet Firewall rule that opens the portal in an isolated session for the
+          cohort. Agents see the application and work in it, but the session is rendered remotely —
+          they can view data yet cannot download, copy or interact directly with the private
+          network; note that the whole portal opens inside one RBI session
+          (<a href="https://knowledge.catonetworks.com/docs/controlling-access-to-private-apps-through-rbi" target="_blank" rel="noopener">Controlling Access to Private Apps Through RBI</a>).</p>
+          <!-- capture-wanted: «CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI» -->
+        </li>
+        <li>
+          <h4>Gate the managed build</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>For team leads on the outsourcer's managed laptops: a posture profile — anti-malware
+          plus disk encryption; checks inside a profile combine with AND
+          (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>)
+          — attached to one Client Connectivity rule: source <em>BPO-Pilot-JNB</em>, countries
+          restricted to the delivery geography, action Allow. The policy is ordered, first-match,
+          and ends in an implicit ANY ANY block, so a connection from an unexpected country or a
+          failed posture check never establishes a tunnel
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Author the named-app WAN rules — monitor-first</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>One allow rule per contracted application: source <em>BPO-Pilot-JNB</em>, destination
+          the named host or app, the specific service/port, tracking set to generate Events on every
+          rule. Beneath them, a week-one <strong>discovery rule</strong>: cohort → Any, action
+          Allow, tracking Events — it inventories what the team genuinely touches, so the block you
+          enable later is defensible rather than disruptive. Rules evaluate top-down, first-match,
+          over a final implicit ANY ANY block
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-wan-firewall-policy" target="_blank" rel="noopener">Managing the WAN Firewall Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Lay the DLP slice — monitoring only</h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p>Build a content profile from the predefined catalogue's country-specific PII data types
+          for the end customer's jurisdictions — each with a tunable occurrence threshold
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-predefined-data-types-for-dlp" target="_blank" rel="noopener">Working with Predefined Data Types</a>)
+          — plus custom data types (regex, keywords or a trained ML classifier) for the identifiers
+          the contract actually protects, such as the end customer's account-number format; be
+          honest that source-code and proprietary-ID detection is a custom type you build, not an
+          off-the-shelf entry
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-custom-data-types-for-dlp" target="_blank" rel="noopener">Working with Custom Data Types</a>).
+          Scope one rule to the cohort with events on and nothing blocking — the fortnight of
+          monitor events is both the tuning set and the keep-data-in-country evidence
+          (<a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Creating the Data Control Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Take the experience baseline</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span></p>
+          <p>From day one on Cato, open the cohort users' drill-downs: per-application experience
+          scores built on TTFB and connection metrics, the last connected PoP (Johannesburg for this
+          archetype), and path analysis that separates device, floor Wi-Fi, last mile and the Cato
+          path
+          (<a href="https://knowledge.catonetworks.com/docs/the-user-experience-monitoring-drill-down-page-remote-and-office-users" target="_blank" rel="noopener">The User Experience Monitoring Drill-Down Page</a>).
+          Filter to the VDI application, export dated views weekly, and put them beside the
+          week-zero legacy numbers — on a contact-centre floor, screen lag is handle time, so this
+          is the criterion the outsourcer's operations manager cares about most.</p>
+          <!-- capture-wanted: «CMA Experience Monitoring user drill-down — cohort user on the Johannesburg PoP with the VDI application selected» -->
+        </li>
+        <li>
+          <h4>Enforcement week — run the three tests</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Monitor → Events</span></p>
+          <p>Read the discovery rule's events with the customer, fold anything legitimate into a
+          named rule, then disable the discovery rule so the implicit block takes over. Now the
+          tests: <strong>Thandi</strong> opens CRM (allow, named rule) then attempts the finance
+          file share (block, attributed, dated — screenshot the pair; every event carries user,
+          rule, action and destination per
+          <a href="https://knowledge.catonetworks.com/docs/understanding-event-fields" target="_blank" rel="noopener">Understanding Event Fields</a>).
+          Any DLP rows the customer agreed to enforce flip to Block and are proven on a staged test
+          file. And mid-week, the customer disables <strong>Sipho</strong> at the IdP: record three
+          timestamps — IdP change, refused connection, last event seen — because the leaver
+          criterion is a measured window, not an assurance.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block» -->
+          <!-- capture-wanted: «Portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state» -->
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase of twelve allowlist rules scoping sites, user groups and individual SDP users to named hosts, applications and service/port pairs, with live hit counts over an implicit deny" loading="lazy">
+        <figcaption>The least-privilege construct the pilot builds (demo tenant, fictional identities): group-scoped allow rules to named hosts and service/port pairs, hit counts accumulating as evidence, everything unlisted falling to the implicit block. Your cohort should occupy three rows of a rulebase like this — CRM, VDI, ticketing — no more.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/dlp-incident-cma.png" alt="CMA Data Incident detail pane showing a blocked upload: action Block, the triggering rule, DLP profile, matched data type credit card numbers, with a secured forensics evidence panel below" loading="lazy">
+        <figcaption>What one cohort data incident looks like once a DLP row is enforced (demo tenant): user, application, file, matched data types, the rule that fired and secured forensic evidence — the per-incident artefact behind the keep-data-in-country criterion, ready for the end customer's due-diligence team.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-remote-user.png" alt="CMA Experience Monitoring drill-down for a remote user showing per-application experience scores, TTFB, data volumes, connected PoP and device details" loading="lazy">
+        <figcaption>The construct the latency criterion runs on (demo tenant, fictional user): per-application experience scores with TTFB, flows and volumes, plus the last connected PoP. Your cohort's version shows the Johannesburg PoP with the VDI application selected — exported weekly, dated, beside the week-zero legacy numbers.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>Agent sees an empty portal</h4><p>Published applications follow group entitlement: either CRM/VDI was never added as an Internal Application in the Applications Portal, or the agent is not in the cohort group. Fix the publication or the membership — never grant individually on a churning floor.</p></div></div>
+        <div class="benefit"><div class="b-icon">📎</div><div><h4>Agents cannot download from CRM</h4><p>That is RBI doing its job — isolated sessions are view-only, and the whole portal shares one isolated session. If a sub-team genuinely must export files, that is an on-ramp decision to re-make at the workshop table, not an isolation setting to quietly relax.</p></div></div>
+        <div class="benefit"><div class="b-icon">🐌</div><div><h4>VDI still lags after cutover</h4><p>Open the user's path analysis before blaming the backbone: an amber Wi-Fi or last-mile node against a clean Cato path puts the fault on the floor's own network — evidence for the outsourcer's facilities team, and a finding in its own right.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>The DLP slice sees nothing</h4><p>Three usual causes: TLS inspection not yet staged for the cohort, the rule scoped to the wrong group, or data-type thresholds set higher than real traffic reaches. Confirm TLSi first — without content inspection the slice is blind by design.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧟</div><div><h4>A disabled leaver comes back to life</h4><p>The user was disabled in Cato directly and Entra ID re-enabled them at the next sync — the IdP overrides local state (Okta, by contrast, preserves it). Deprovision at the IdP, always; it is exactly why the leaver test disables there.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Blocked from their own named app</h4><p>The discovery rule came off before the named rules covered everything the app really uses — VDI brokers and auth redirects often ride extra ports. Re-read the discovery events for that destination and fold the missing service/port in — never widen back to Any.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>RBI sessions are view-only.</strong> Right for agents living inside one CRM;
+          wrong for a team that must move files. Decide each cohort's on-ramp at the workshop —
+          this pilot proves the isolated pattern, not every pattern.</li>
+          <li><strong>The monitor week is an Allow rule.</strong> Discovery is Allow-with-Events, so
+          for week one the cohort can still roam; the customer accepts that knowingly — it is what
+          makes the enforcement-week block evidence honest.</li>
+          <li><strong>"In-country" evidence is path and policy, not a legal guarantee.</strong> The
+          pilot evidences where the cohort onramps, where traffic egresses and which exfiltration
+          routes were refused. Where the applications are hosted — and what the law makes of it —
+          remains the customer's architecture and counsel.</li>
+          <li><strong>The sync window is measured, not promised.</strong> SCIM reflects IdP changes
+          in near real time, but the leaver criterion records the actual gap between directory
+          disable and refused connection. Quote the number you measured, never "instant".</li>
+          <li><strong>Custom data types need their tuning fortnight.</strong> A regex for the end
+          customer's account-number format will false-positive before its threshold settles — that
+          is what the monitor-only period is for, and why no DLP row blocks in week one.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the pilot WAN and DLP rules rather than deleting
+        them — their hit counts and events are the evidence record; remove the Client Connectivity
+        rule; unpublish the portal applications and switch off the RBI rule; and de-scope the
+        <em>BPO-Pilot-JNB</em> group from SCIM only if it was created for the PoV. The cohort
+        returns to the legacy path only if the decision is a no — and with a fortnight of attributed
+        allow-and-block evidence, a measured leaver window and the VDI numbers beside the legacy
+        baseline, few decisions are. If it is a yes, the pilot policy is the first team of the
+        floor-by-floor rollout: the next cohort is a group membership, not a rebuild.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

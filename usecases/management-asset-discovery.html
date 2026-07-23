@@ -406,6 +406,198 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows a populated inventory in <em>our</em> tenant; the PoV is an
+        <strong>inventory-truth pilot</strong> in theirs. Pick one site, let passive discovery run for
+        an agreed window, then put what the network actually reports next to what the customer
+        <em>believes</em> is connected — the CMDB or spreadsheet number. The delta between those two
+        figures, in either direction, is the finding: missing devices mean the record is stale,
+        surplus devices mean things are on the network that nobody booked in. Agree the criteria below
+        <strong>before configuring anything</strong>, per the frame in
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — every criterion has a
+        measurement, an evidence artefact and a place in the CMA where it will be read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Inventory populated in the window</td>
+              <td>Device Inventory for the pilot site fills passively within the agreed discovery window — no agents deployed, no scans run</td>
+              <td>Dated capture of the inventory grouped by Site, with the device count against the CMDB expectation recorded beside it</td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+            <tr>
+              <td>The CMDB delta is quantified</td>
+              <td>Discovered count vs the customer's written expectation — the delta itself is the deliverable, whichever direction it runs</td>
+              <td>A two-line table in the evidence doc: expected N, discovered M, delta and its composition</td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+            <tr>
+              <td>Classifications spot-verified</td>
+              <td>A sample of ~10 devices checked against physical reality: make, model, OS and category correct (or honestly logged as partial)</td>
+              <td>The sample list annotated verified / partial / wrong, from Quick View details</td>
+              <td>Assets → Device Inventory (Quick View)</td>
+            </tr>
+            <tr>
+              <td>An unknown device identified <em>(expected outcome)</em></td>
+              <td>At least one device nobody expected is found and named — in practice this almost always happens, but it is an expected outcome, not a promise</td>
+              <td>Quick View capture of the device with its attributes, events and the apps it reaches</td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+            <tr>
+              <td>One rule authored from inventory evidence</td>
+              <td>A LAN Firewall rule built from what discovery found — running in monitor mode (Allow, Track = Event), proving inventory converts to policy</td>
+              <td>The rule in the rulebase plus its LAN Firewall events for the pilot site</td>
+              <td>Security → LAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Inventory extract delivered</td>
+              <td>The classified inventory leaves the console as a document the customer keeps — the artefact their CMDB reconciliation starts from</td>
+              <td>The dated inventory extract itself, attached to the wrap-up pack</td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence:</strong> the IoT/OT Security licence on the trial account — Cato's KB is explicit that <a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">a separate licence is required for the Device Inventory pages and features</a>.</li>
+          <li><strong>Scope:</strong> one pilot site behind a Socket. Discovery itself needs no setup — it is a passive method with no agents, analysing WAN-bound and outbound traffic as it flows — but every VLAN you want inventoried must route through the Socket.</li>
+          <li><strong>The discovery window:</strong> identification can take up to 12 hours per newly seen device, so agree a window (week one works) rather than expecting a same-day list.</li>
+          <li><strong>MAC visibility:</strong> device-attribute firewall rules only apply to devices whose MAC address was detected — Cato recommends using the Cato DHCP service at the pilot site to help ensure MAC detection.</li>
+          <li><strong>Socket version:</strong> the LAN Firewall is configured under <span class="path">Security → LAN Firewall</span> as a global policy; per <a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">the LAN Firewall policy KB</a>, device-attribute <em>criteria</em> in LAN Firewall rules are supported from Socket v26 and higher — check the pilot Socket before writing the rule step into the plan.</li>
+          <li><strong>The CMDB number:</strong> get the customer's expected device count for the pilot site <em>in writing before discovery starts</em> — the delta criterion is meaningless if the expectation is set after the answer is known.</li>
+          <li><strong>Not needed:</strong> TLS inspection, client rollout or identity integration — this pilot is deliberately zero-touch, which is part of its sales value.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Record the expectation, then baseline the site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Write the customer's expected device count (and their device list, if one exists) into the
+          evidence doc, dated. Then confirm the pilot site: Socket up, version noted, all in-scope
+          VLANs defined and routing through the Socket, and — ideally — the Cato DHCP service serving
+          the local segments so MAC addresses are reliably detected. Screenshot the site config as
+          evidence item zero.</p>
+        </li>
+        <li>
+          <h4>Start the clock on passive discovery</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>There is nothing to switch on at the site: with the licence active, the engine detects,
+          identifies and classifies devices from the traffic already traversing the Socket. Note the
+          start date, set the page's time-range filter to the PoV window, and let it run. Per
+          <a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">the KB</a>,
+          allow up to 12 hours for a newly seen device to complete identification and appear.</p>
+        </li>
+        <li>
+          <h4>Count the inventory against the CMDB</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>At the end of the window, group the inventory by Site and read the pilot site's count next
+          to the written expectation. Present the delta neutrally: fewer devices than expected points
+          at stale records or devices that are no longer talking; more devices than expected is the
+          unmanaged estate making itself visible. Either way the customer learns something their
+          current tooling could not tell them — that is the criterion passing.</p>
+        </li>
+        <li>
+          <h4>Spot-verify a sample of classifications</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>With the customer, pick ~10 devices they can physically identify and open each Quick View:
+          is the category, type, model, manufacturer and OS right? Log each as verified, partial or
+          wrong. Be upfront about the mechanism: identification is behaviour-based, so the engine only
+          fills the fields it can confidently identify, and an occasional field can be incorrect — a
+          mostly-right inventory that admits its gaps beats a spreadsheet that admits nothing.</p>
+        </li>
+        <li>
+          <h4>Hunt the unknown device</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Sort by newly seen and walk the list with the customer against their records.
+          The device nobody recognises — a contractor's camera, a smart plug, an unbooked laptop — is
+          the moment the PoV usually turns: open its Quick View and show what it is, when it appeared
+          and what it is talking to. Frame it in the criteria as an <em>expected</em> outcome: you
+          cannot promise a surprise, but an estate with zero surprises would itself be remarkable.</p>
+        </li>
+        <li>
+          <h4>Author one rule from the evidence — monitor mode</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Convert one finding into policy. The LAN Firewall is a <strong>global policy</strong>
+          configured once under <span class="path">Security → LAN Firewall</span>, scoped per site and
+          VLAN in the rule, and enforced locally on the Socket. Build a rule from what discovery found —
+          e.g. the unknown device type, or "IP cameras at the pilot site" — using the Segmentation
+          Flows view to see the protocols and destinations those devices actually use. Set the action
+          to <strong>Allow with Track = Event</strong>: nothing blocks, but every match lands in
+          Events — the monitor-first discipline that makes the enforcement conversation a
+          data-driven one.</p>
+        </li>
+        <li>
+          <h4>Read the rule's events, then deliver the extract</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Assets → Device Inventory</span></p>
+          <p>Show the LAN Firewall events the monitor rule generated for the pilot site — inventory
+          evidence became live policy telemetry without touching production traffic. Close by
+          delivering the inventory extract: the classified device list for the pilot site, dated, into
+          the wrap-up pack. For ongoing CMDB sync the same data is reachable programmatically — the
+          automation angle is covered in
+          <a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a> —
+          but for the PoV the artefact is the extract, not the pipeline.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Three exhibits carry the wrap-up: the inventory grouped by Site with the count visible (set
+        against the written CMDB expectation), one Quick View of the unexpected device with its events
+        and apps, and the LAN Firewall monitor rule beside its first events. The sibling page,
+        <a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a>, shows what the same
+        rulebase looks like once monitor mode graduates to enforcement — device-attribute rules with
+        live hit counts — which is precisely the "phase two" picture to leave on the table.
+      </p>
+      <!-- capture-wanted: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible -->
+      <!-- capture-wanted: Device Inventory Quick View of an unexpected/unmanaged device showing attributes, events and accessed apps -->
+      <!-- capture-wanted: Device Dashboard summary bar — total, newly seen, identified IoT and identified OT counts for the pilot window -->
+      <!-- capture-wanted: Security → LAN Firewall rule with device-attribute criteria and Track = Event, plus the resulting LAN Firewall events in Monitor → Events -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>A known device never appears</h4><p>Discovery reads WAN-bound and outbound traffic through the Socket. A device that only chatters east-west on a segment that never traverses the Socket is invisible — check the VLAN is defined on the site and its traffic actually crosses the Socket, then give it the up-to-12-hour identification window.</p></div></div>
+        <div class="benefit"><div class="b-icon">😴</div><div><h4>A device was there, now it's gone</h4><p>The KB is explicit: a device that hasn't communicated in WAN-bound or outbound traffic for 3 days won't appear on the Devices page. The inventory shows what is <em>currently talking</em>, not an all-time register — note this when reconciling the count against the CMDB.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Attribute fields are blank</h4><p>Identification needs identifiers in the protocols the engine reads — DHCP, HTTP, MAC, TCP/IP, FTP — and it only populates fields it can confidently identify. A quiet, oddball device may resolve to a partial record; log it as partial in the sample, not as a failure.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎭</div><div><h4>A device is misclassified</h4><p>Fingerprinting is behaviour-based, so an occasional field can be wrong. Record it honestly in the spot-check, and where the customer runs Intune, Defender, CrowdStrike, Armis, Claroty, Mist or Zoom, a Device Management connector can merge that platform's metadata into the same record to correct and enrich it.</p></div></div>
+        <div class="benefit"><div class="b-icon">👯</div><div><h4>The count looks inflated</h4><p>A device that connects with multiple IP addresses within 24 hours can create duplicate entries — and occasionally different devices land under one Device ID. Skim for duplicates before you declare the delta, and count conservatively; the finding survives a margin of error.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>The LAN Firewall rule never matches</h4><p>Two usual causes: the device's MAC was never detected (device-attribute rules only apply to MAC-detected devices — the Cato DHCP service is the KB's recommended fix) or the pilot Socket is below v26, the version from which LAN Firewall criteria are supported. Check both before debugging the rule itself.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The count will not match the CMDB — by design:</strong> agree up front, in writing, that a delta in either direction is the deliverable. Without that agreement a mismatch reads as a product fault instead of the finding it is.</li>
+          <li><strong>Don't promise the surprise:</strong> the unknown device is framed as an expected outcome because it almost always happens — but write the criterion as "unknown devices found and identified, count reported", so zero is still a reportable (and remarkable) result.</li>
+          <li><strong>Licence boundaries:</strong> Device Inventory needs the IoT/OT Security licence, and Device Management connectors additionally need the third-party entitlement (e.g. the qualifying Microsoft 365 licence for Intune) — check the trial covers what the criteria assume.</li>
+          <li><strong>Classification is probabilistic:</strong> fields can be missing or occasionally wrong; the spot-check criterion exists to measure that honestly rather than discover it in the decision meeting.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> discovery itself needs no unwinding — it configured nothing and touched
+        no device. The only PoV artefact in policy is the monitor-mode LAN Firewall rule: at wrap-up,
+        either delete it and publish, or — the better outcome — keep it as row one of the segmentation
+        project it just justified, and hand the conversation to
+        <a href="security-ot-iot.html">Manufacturing OT/IoT Device Security</a>. The change record
+        stays in <span class="path">Administration → Audit Trail</span> either way, and the customer
+        keeps the inventory extract: the first accurate answer to "what is on our network?" they have
+        had in years.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -6,8 +6,9 @@ custom diagram, and a step-by-step demo runbook for every scenario. No build ste
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
 Full-text search across every page, light and dark themes (topnav toggle, follows
 system preference), animated phased-migration journeys, and Demo/PoV runbook tabs
-on flagship pages (KB-grounded PoV runbooks: success criteria, config walkthrough,
-troubleshooting, gotchas — see `_extract/POV-GUIDE.md` to author more).
+library-wide: 57 KB-grounded PoV runbooks (success criteria, config walkthrough,
+what-good-looks-like, troubleshooting, gotchas & exit — authoring contract in
+`_extract/POV-GUIDE.md`; wanted demo-tenant captures in `_extract/CAPTURE-LIST.md`).
 
 > **Internal SE / partner enablement. This repository must remain PRIVATE** — the
 > source PPTX decks in its history contain customer references. Share externally

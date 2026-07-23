@@ -135,8 +135,8 @@
       </div>
 
       <div class="stat-row" style="margin:18px 0">
-        <div class="stat-tile"><div class="stat-value">3</div><div class="stat-label">Active tunnels per HA role (IKEv2) — all Primary tunnels to one PoP, Secondary to another</div></div>
-        <div class="stat-tile"><div class="stat-value">≤30<span class="unit">s</span></div><div class="stat-label">For Cato to determine an IPsec tunnel is down</div></div>
+        <div class="stat-tile"><div class="stat-value">6</div><div class="stat-label">Active tunnels per HA role (IKEv2, maximum) — Primary tunnels to one PoP, Secondary to another</div></div>
+        <div class="stat-tile"><div class="stat-value">60<span class="unit">s</span></div><div class="stat-label">An unresponsive tunnel is torn down (10 s keepalives) and rebuilt on ~90 s attempts</div></div>
         <div class="stat-tile"><div class="stat-value">2</div><div class="stat-label">BGP neighbours per IPsec site — one per tunnel</div></div>
         <div class="stat-tile"><div class="stat-value">100<span class="unit">Mbps</span></div><div class="stat-label">At or above this, use AES-GCM-16 only; AES-CBC is for sites below 100 Mbps</div></div>
       </div>
@@ -242,7 +242,7 @@
         <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Full SASE stack, no new hardware</h4><p>Traffic entering the PoP gets the same inspection as any Socket site — WAN/internet firewall, IPS, anti-malware, CASB and DLP — enforced by the policies you already run.</p></div></div>
         <div class="benefit"><div class="b-icon">🔁</div><div><h4>Dual-PoP high availability</h4><p>Primary and secondary tunnels on separate allocated IPs at separate PoPs. If every primary tunnel drops, routes fail over to the secondary automatically.</p></div></div>
         <div class="benefit"><div class="b-icon">📍</div><div><h4>Deterministic peering</h4><p>Allocated IPs are fixed, known endpoints — easy to raise firewall changes against, easy for a partner's security team to approve.</p></div></div>
-        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Static or BGP routing</h4><p>Start static for a handful of ranges; move to BGP so failover needs no route edits — Cato adjusts BGP metrics to prefer the primary tunnel automatically.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Static or BGP routing</h4><p>Start static for a handful of ranges; move to BGP so failover needs no route edits — Cato AS-path prepends the secondary neighbour so the primary tunnel is preferred automatically.</p></div></div>
       </div>
     </section>
 
@@ -382,7 +382,7 @@ nat (inside,outside) source static BRANCH-LAN BRANCH-LAN destination static CATO
           each tunnel, then add up to two BGP neighbours — one per tunnel — with peer ASN, Cato ASN
           and peer IP. Defaults: metric 100, hold time 60 s, keepalive 20 s (keep keepalive at ⅓ of
           hold time). Choose what Cato advertises: default route, all routes or summary routes. With
-          both tunnels running BGP, Cato adjusts route metrics to prefer the primary and moves the
+          both tunnels running BGP, Cato AS-path prepends the secondary so the primary is preferred, and moves the
           site to the secondary automatically on failure.</p>
         </li>
         <li>
@@ -450,6 +450,216 @@ nat (inside,outside) source static BRANCH-LAN BRANCH-LAN destination static CATO
           only the connection type changes.</p>
         </li>
       </ol>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer&rsquo;s tenant</h2>
+      <p>
+        This PoV is an <strong>interim-connectivity pilot</strong>: one ASA-fronted branch joins the
+        Cato backbone over IKEv2 while the rest of the estate carries on untouched. It exists to
+        answer five questions in the customer&rsquo;s own tenant — does the tunnel come up with the
+        documented parameter set, is the ASA traffic-selector quirk genuinely solved, does traffic
+        flow at the licensed rate, does dual-PoP failover work, and does the tunnel survive the ASA
+        being reloaded. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: agree the criteria below
+        <em>before</em> anything is configured, and book the decision meeting at the same workshop.
+        If this pilot is the branch plane of a wider Cisco migration, the three-plane version — DNS,
+        client and WAN together — is the PoV on
+        <a href="migration-cisco.html#pov">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato</a>.
+      </p>
+
+      <h3>Success criteria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Criterion — what we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>The IKEv2 tunnel establishes with the documented parameter set — AES-GCM-256, PRF SHA-256, DH group 14, IKE SA lifetime 19,800&nbsp;s, child SA 3,600&nbsp;s, PSK up to 64 characters (per the KB&rsquo;s IKEv2 site guide)</td>
+              <td>Connection Status showing phase 1/2 up with the negotiated parameters; timeline connection log entry for the first establishment</td>
+              <td><span class="path">Network → Sites → Site Settings → IPsec</span> · Connection Status</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>The documented ASA traffic-selector remedy is validated in practice: the route-based VTI design carries a single 0.0.0.0/0 ↔ 0.0.0.0/0 selector pair and the child SA establishes with <strong>no TS_UNACCEPTABLE</strong> — with the single-TS advanced setting proven as the fallback if the ASA must stay policy-based</td>
+              <td>Clean child SA in the timeline connection log; where needed, a PoP-side traffic capture showing the TS exchange</td>
+              <td><span class="path">Network → Sites → Site Configuration → Advanced Configuration</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>Traffic passes at the site&rsquo;s licensed last-mile bandwidth with AES-GCM negotiated — the KB requires AES 128/256 GCM-16 for IPsec sites at 100&nbsp;Mbps or more, with AES-CBC only below that</td>
+              <td>A sustained transfer (e.g. iperf to a host behind a Socket site) against the configured bandwidth; App Analytics and site metrics for the pilot site</td>
+              <td><span class="path">Monitor → App Analytics</span> and <span class="path">Monitor → Topology</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Failover between the primary and secondary tunnels — terminating on different allocated IPs at <strong>different PoPs</strong>, per the KB recommendation — is demonstrated live, and the site reverts when the primary returns</td>
+              <td>Continuous ping across the drill; Topology showing the site on the secondary PoP; tunnel disconnect/connect events, timestamped</td>
+              <td><span class="path">Monitor → Topology</span> and <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>The tunnel survives an ASA configuration reload without manual intervention — <em>Initiate Connection by Cato</em> rebuilds it (Cato retries every 90&nbsp;s), proving the site is operationally safe to leave on ASA hardware mid-migration</td>
+              <td>Timed gap between tunnel-down and tunnel-up events around the reload; timeline connection log of the recovery</td>
+              <td><span class="path">Monitor → Events</span> · site timeline connection log</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>One pilot branch behind an ASA the customer operates, with a change window for the initial cutover, the failover drill and the reload drill. Confirm the four ASA facts up front: software version (VTI needs 9.7(1)+, IKEv2-on-VTI 9.8(1)+), operator, static vs NATed public IP, and real link bandwidth.</li>
+          <li>A site <strong>bandwidth licence</strong> matching the link — and the tunnel&rsquo;s Downstream/Upstream fields set to the ISP&rsquo;s actual speed, because values above the real link make the QoS engine ineffective (KB).</li>
+          <li>Two <strong>allocated IPs at two different PoPs</strong> (<span class="path">Network → IP Allocation</span>), and a Support ticket confirming the two PoPs sit on separate maintenance schedules before the PoV starts, not after.</li>
+          <li>A generated PSK (up to 64 characters) exchanged out of band — never a documentation example, never e-mail.</li>
+          <li>No TLS inspection or agent dependency: this is a network-plane pilot, so nothing touches endpoints. If the customer wants security-policy evidence on the site&rsquo;s traffic too, that is a scope decision at the workshop — the stack is already inline at the PoP.</li>
+          <li>A reachable target behind an existing Socket or vSocket site (or a second IPsec site) for the throughput and reachability tests.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Freeze the scope and the drill plan</h4>
+          <p>One branch, one ASA, five criteria. Agree at the workshop which subnets ride the tunnel,
+          when the two deliberate-failure drills run (criteria 4 and 5 both need a window), and what
+          &ldquo;reverted&rdquo; means — the ASA&rsquo;s original default route resuming when the
+          tunnel is dropped. Anything else — more sites, security policy, Socket swap — goes on the
+          next-steps register.</p>
+        </li>
+        <li>
+          <h4>Build the Cato side — the parameter sheet is the config</h4>
+          <p><span class="path">Network → Sites → Site Settings → IPsec</span></p>
+          <p>Create the site (Connection Type <strong>IPsec IKEv2</strong>) and configure both
+          tunnels exactly as the design section of this page documents — this sheet, agreed with the
+          customer, is also criterion 1&rsquo;s definition of done
+          (KB: <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 Sites</a>):</p>
+<pre class="code"><span class="cmt"># CMA — IPsec IKEv2 site parameter sheet (pilot)</span>
+Site               &lt;pilot-branch&gt; · Native Range 10.20.0.0/24
+Bandwidth licence  matches the real link (GCM mandatory at ≥100 Mbps)
+Connection mode    Bidirectional · Initiate Connection by Cato: ON (default)
+Primary tunnel     Cato IP (Egress) 198.51.100.10 (nearest PoP) · Site IP 203.0.113.10
+Secondary tunnel   Cato IP (Egress) 198.51.100.20 (alternate PoP) · Site IP 203.0.113.10
+Init (IKE SA)      AES-GCM-256 · PRF SHA256 · DH 14 · lifetime 19,800 s
+Auth (child SA)    AES-GCM-256 · DH 14 (PFS) · lifetime 3,600 s
+PSK                generated, ≤64 characters
+Network Ranges     none beyond native — single 0/0 ↔ 0/0 selector pair (route-based)</pre>
+          <p>Leaving Init/Auth on Automatic is fine for day one; the sheet above is what you pin the
+          parameters to if negotiation misbehaves — exact matches, one algorithm per side.</p>
+        </li>
+        <li>
+          <h4>Build the ASA side — route-based VTI</h4>
+          <p>The condensed pilot config; the full listing, the IKEv1 crypto-map variant and the MSS
+          clamp rationale are in the <a href="#config">configuration walkthrough</a> above.</p>
+<pre class="code"><span class="cmt">! --- ASA (9.8(1)+) — mirror of the CMA sheet ---</span>
+crypto ikev2 policy 10
+ encryption aes-gcm-256
+ integrity null
+ group 14
+ prf sha256
+ lifetime seconds 19800
+crypto ipsec ikev2 ipsec-proposal CATO-ESP
+ protocol esp encryption aes-gcm-256
+crypto ipsec profile CATO-IPSEC
+ set ikev2 ipsec-proposal CATO-ESP
+ set pfs group14
+ set security-association lifetime seconds 3600
+interface Tunnel1
+ tunnel destination 198.51.100.10
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile CATO-IPSEC
+<span class="cmt">! Tunnel2 → 198.51.100.20 · routes into the VTI per the config section</span></pre>
+          <p>The VTI <em>is</em> the traffic-selector remedy: one 0/0 ↔ 0/0 selector pair, so the
+          ASA&rsquo;s single-TS limit is never exercised. If the customer&rsquo;s ASA must stay on a
+          policy-based crypto map, enable the documented workaround instead — the advanced setting
+          under <span class="path">Site Configuration → Advanced Configuration</span> that makes
+          Cato send each traffic selector in a separate packet — and record which remedy the PoV
+          proved.</p>
+        </li>
+        <li>
+          <h4>Prove establishment, then pass traffic</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Open the site&rsquo;s <strong>Connection Status</strong>: phase 1/2 up, negotiated
+          parameters matching the sheet — screenshot it, dated, as criterion 1&rsquo;s evidence and
+          criterion 2&rsquo;s (no TS_UNACCEPTABLE in the timeline connection log). Then run the
+          sustained transfer to the host behind the Socket site and capture App Analytics for the
+          pilot site: criterion 3 is traffic at the licensed rate with GCM doing the encrypting.</p>
+        </li>
+        <li>
+          <h4>Run the failover drill</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>With a continuous ping running from the branch LAN, shut the primary VTI
+          (<code>interface Tunnel1</code> → <code>shutdown</code>). Cato&rsquo;s IKEv2 liveness
+          declares the tunnel dead after 60&nbsp;s without a reply (keep-alives every 10&nbsp;s),
+          and routes fail over to the secondary tunnel at the alternate PoP — Topology shows the
+          site&rsquo;s PoP change, Events shows the disconnect/connect pair. Bring Tunnel1 back and
+          confirm reversion. With BGP on both tunnels (one neighbour per tunnel, maximum two per
+          IPsec site), preference needs no route edits — routes advertised via the secondary carry
+          an extra AS-path prepend; with static routing, floating statics on the ASA do the same
+          job.</p>
+        </li>
+        <li>
+          <h4>Run the reload drill</h4>
+          <p>In the agreed window, <code>reload</code> the ASA. The interesting number is the gap
+          between the tunnel-down event and the tunnel-up event: because <em>Initiate Connection by
+          Cato</em> is on, the PoP rebuilds the tunnel (retrying every 90&nbsp;s) rather than
+          waiting out the ASA&rsquo;s own retry timers. Capture the timed event pair — criterion 5,
+          and the single best answer to &ldquo;is it safe to run production over this while we
+          migrate?&rdquo;</p>
+        </li>
+        <li>
+          <h4>Wrap up against the register</h4>
+          <p>Five criteria, five dated artefacts, one page — presented in the decision meeting
+          booked at the workshop. The natural next step is the wave plan from the
+          <a href="#demo">design review runbook</a>: which sites swap to Sockets first, which stay
+          IPsec and until when.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: «Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet» -->
+      <!-- capture-wanted: «Site Connection Status — live IKEv2 phase 1/2 state showing the negotiated parameters» -->
+      <!-- capture-wanted: «Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill» -->
+      <!-- capture-wanted: «Monitor → Events — tunnel Disconnected/Connected pair around the ASA reload, timeline connection log alongside» -->
+      <p>
+        Each drill produces a before/during/after triplet: Connection Status for state, Topology for
+        which PoP the site is on, Events for the timestamped tunnel transitions. Export all three
+        into the evidence doc on the day — the wrap-up reads dated captures, not memories.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🚧</div><div><h4>TS_UNACCEPTABLE is back</h4><p>The child SA fails and the log shows the ASA rejecting the traffic selectors: something reintroduced multiple TS — Network Ranges added to the Cato site, or the ASA quietly running a crypto map instead of the VTI. Return to the single 0/0 ↔ 0/0 pair, or enable the single-TS advanced setting under <span class="path">Site Configuration → Advanced Configuration</span> — the two documented remedies on this page.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Proposal mismatch</h4><p>IKEv2&rsquo;s <code>NO_PEER_PROPOSAL_SELECTED</code> (IKEv1: &ldquo;no supported p1/p2 transform&rdquo;) means the two sides&rsquo; menus don&rsquo;t intersect. Stop guessing: take the CMA off Automatic and set exact Init/Auth parameters, one algorithm per side, matching the ASA line for line — including PFS, where the ASA&rsquo;s <code>set pfs group14</code> must equal the DH group in Cato&rsquo;s Auth parameters.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>PSK mismatch</h4><p>Authentication fails at phase 1 with parameters that look correct. Re-enter the key on both sides (up to 64 characters) — and on the ASA check <em>both</em> lines: <code>ikev2 remote-authentication</code> and <code>ikev2 local-authentication</code> under the tunnel-group must carry the same key, a classically half-configured pair.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳</div><div><h4>ASA behind NAT</h4><p>Phase 1 completes but ESP never flows, or the tunnel drops under load. IKEv2 has NAT-T built in — confirm UDP 4500 is open end to end and nothing on the path is timing out the pinhole. If the ASA&rsquo;s public address is dynamic, switch the site to Responder Only: Cato can&rsquo;t initiate towards an address it can&rsquo;t predict.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>Drops on the hour</h4><p>Traffic passes, then the tunnel flaps at a suspiciously regular interval: rekey. Cato&rsquo;s child SA lifetime is fixed at 3,600&nbsp;s and the IKE SA at 19,800&nbsp;s — if the ASA&rsquo;s lifetimes or PFS setting differ, the rekey negotiation fails where the original establishment succeeded. Match <code>lifetime seconds</code> in both the IKEv2 policy and the IPsec profile to the sheet.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>None of the above</h4><p>Work the KB&rsquo;s troubleshooting toolkit in order: the timeline connection log for the tunnel&rsquo;s recent history, a PoP-side traffic capture for the low-level exchange, and a tunnel reset to force a clean renegotiation from the Cato end — usually enough to turn &ldquo;it won&rsquo;t connect&rdquo; into a specific mismatched line.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries of this PoV</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>An IPsec site is not a Socket — say so before the customer discovers it.</strong> No last-mile management, no automatic PoP selection or roaming (the secondary tunnel <em>is</em> the PoP redundancy), downstream capping but best-effort upstream shaping. Anything QoS- or link-resilience-shaped on the criteria list is evidence for the Socket swap, not for this pilot.</li>
+          <li><strong>Bandwidth licensing is real:</strong> the pilot site consumes a bandwidth licence sized to the link, and the GCM-at-100-Mbps rule means the licence tier and the crypto choice are one decision, not two.</li>
+          <li><strong>The remedy proven must match production:</strong> if the PoV validated the VTI design but the estate&rsquo;s other ASAs are policy-based crypto maps, the single-TS advanced setting needs its own validation pass before wave planning assumes it.</li>
+          <li><strong>Export evidence weekly</strong> — events, Connection Status captures, App Analytics views — rather than relying on tenant retention at wrap-up.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> the exit is deliberately boring. Remove the ASA&rsquo;s
+        routes into the VTI (its original default route resumes instantly — the same reversion the
+        drills rehearsed), delete the tunnel interfaces and crypto config, delete the Cato site and
+        release the two allocated IPs. Nothing on the ASA estate depended on the pilot. If the
+        verdict is yes, the site doesn&rsquo;t unwind — it converts: the IPsec site was the on-ramp,
+        and the Socket swap inherits its policy, analytics and history.
+      </p>
     </section>
 
     <section id="resources" class="reveal">

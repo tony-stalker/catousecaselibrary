@@ -326,6 +326,233 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        Cloud Interconnect is the one use case in this library where physics sets the timeline: a
+        dedicated circuit has provider lead times measured in weeks to months, and no CMA click
+        changes that. So this PoV runs on <strong>two tracks</strong>. Track A — design validation —
+        is always achievable inside a standard 30-day PoV: the site built in the CMA, feasibility
+        confirmed against Cato's published availability list, and the circuit order fully planned.
+        Track B — live proof over the circuit — only exists once the circuit does, which for most
+        engagements means after the PoV window. Say that at the scope workshop, split the success
+        criteria accordingly, and run the whole thing inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: criteria agreed before
+        anything is configured, every artefact dated against its criterion. The same honesty applies
+        here as in the demo runbook above — a Cloud Interconnect site with no circuit behind it is a
+        configuration example, not a traffic source, and pretending otherwise costs you the
+        credibility the PoV exists to build.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria — split by track</h3>
+      <p>Three criteria the PoV always completes, and three that are contingent on circuit
+      delivery. Put the Track B rows on the register with a <em>target date driven by the provider
+      lead time</em>, not the PoV end date — never promise them inside a 30-day PoV unless the
+      circuit already exists:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Track</th><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A</strong></td>
+              <td><strong>Feasibility confirmed</strong></td>
+              <td>The customer's DC/colo and cloud regions mapped against Cato's Cloud Interconnect availability list — PoP, fabric provider and lead time named for each planned circuit</td>
+              <td>Dated extract of the relevant availability rows plus the agreed PoP choices, on the register</td>
+              <td>KB availability page + the workshop record</td>
+            </tr>
+            <tr>
+              <td><strong>A</strong></td>
+              <td><strong>Site design built in the CMA</strong></td>
+              <td>A Cloud Interconnect site created in the customer's tenant — connection type Cross-Connect, primary and secondary PoP, licensed bandwidth, both BGP peers defined with MD5 — reviewed with their network team</td>
+              <td>Site configuration screenshots and the Audit Trail entries for its creation</td>
+              <td>Network → Sites → Site Configuration → Cloud Interconnect</td>
+            </tr>
+            <tr>
+              <td><strong>A</strong></td>
+              <td><strong>Circuit order plan signed off</strong></td>
+              <td>Who orders what, in which portal, with which VLAN plan and /30 peering addressing — including the LOA/cross-connect step for a physical DC and dates against the published lead time</td>
+              <td>A one-page order plan (design sheet below) accepted by the customer's DC/network owner</td>
+              <td>The evidence register</td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td><strong>BGP up, site connected</strong></td>
+              <td>Both BGP peers established over the circuit, routes learned and advertised, site green in Topology</td>
+              <td>BGP status showing learned/advertised subnets; Test Connectivity pass; the site's Connected event</td>
+              <td>Network → Sites → Site Configuration → Cloud Interconnect&nbsp;· Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td><strong>Performance vs the incumbent path</strong></td>
+              <td>Latency and jitter baseline over the circuit against the same flow over today's IPsec/internet path, and a sustained transfer at the ordered rate</td>
+              <td>Side-by-side timed transfers and round-trip figures, same file, same hour, both paths</td>
+              <td>Network → Sites → Site Monitoring → Real Time&nbsp;· Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td><strong>Failover to a secondary transport</strong></td>
+              <td>Primary peer taken down in a change window — traffic swings to the secondary PoP link (or the retained IPsec/vSocket path) and fails back cleanly</td>
+              <td>BGP peer state-change notifications and the before/during/after routing table captures</td>
+              <td>Home → Events&nbsp;· Monitor → Topology</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Lead-time reality on the table first.</strong> Cato's availability list (checked 23 Jul 2026; the KB page was last updated 5 Jul 2026) spans on-demand provisioning from the CMA at "Immediately available" PoPs to lead times of three weeks to three months elsewhere — and some PoPs have no interconnect provider at all. Which side of that line the customer's location falls on decides whether Track B is even conceivable in-window.</li>
+          <li><strong>Licensing:</strong> a Cloud Interconnect site licence at the ordered bandwidth — 500&nbsp;Mbps is the documented minimum for a Cloud Interconnect site.</li>
+          <li><strong>An incumbent path to beat:</strong> the Track B baseline needs the existing IPsec tunnel or vSocket on-ramp still live for the same flows — do not decommission it mid-PoV; it is both the comparator and the fallback transport.</li>
+          <li><strong>Provider-side access:</strong> rights to order the private-link circuit (Direct Connect / ExpressRoute class) in the cloud account, or the exchange-fabric port / physical cross-connect at the DC — plus whoever signs the colo's paperwork in the room at the workshop.</li>
+          <li><strong>BGP details agreed early:</strong> ASNs both sides, /30 peering subnets, MD5 keys (mandatory), VLAN IDs — one sheet, all parties.</li>
+          <li><strong>Not needed:</strong> TLS inspection, identity integration or any security-policy build — this is a transport PoV. Keep those off the critical path.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Confirm feasibility against the published list (Track A)</h4>
+          <p>Open the
+          <a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-availability" target="_blank" rel="noopener">Cloud Interconnect availability page</a>
+          with the customer and find their PoPs. As checked on 23 Jul 2026: Manchester is
+          Equinix and Megaport, both immediately available; London is Megaport immediately
+          available or Equinix at three weeks; the global spread runs from on-demand to three
+          months, with Megaport on-demand CMA provisioning flagged as Early Availability. Screenshot
+          the rows <em>on the day</em> and date the capture — this list moves, and the dated extract
+          is the feasibility artefact.</p>
+        </li>
+        <li>
+          <h4>Write the circuit order plan (Track A)</h4>
+          <p>Per the
+          <a href="https://knowledge.catonetworks.com/docs/getting-started-with-cloud-interconnect-sites" target="_blank" rel="noopener">getting-started guide</a>,
+          the customer creates the circuits on the provider side — the private-link service
+          (Direct Connect, ExpressRoute, Partner Interconnect, FastConnect) landing on the exchange
+          fabric (Equinix Fabric or Megaport SDCI) — then Cato provisions its side; non-immediate
+          locations are coordinated with the Cato representative and take from a few weeks to
+          several months. For a private DC, add the colo step: the LOA/cross-connect authorisation
+          is issued by the exchange or colocation operator when the port is ordered — that
+          paperwork lives in the colo's ticket queue, not the CMA, and it is the classic hidden
+          fortnight. Name an owner and a date for every line:</p>
+          <pre class="code"><span class="cmt"># Interconnect design sheet — agreed at the workshop, one copy on the register</span>
+Cato PoP (primary / secondary):  Manchester / London
+Fabric provider:                 Megaport SDCI  <span class="cmt"># per availability list, 23 Jul 2026</span>
+Circuit:                         AWS Direct Connect hosted connection, 1 Gbps
+VLAN IDs (per virtual i/f):      1101 (primary) · 1102 (secondary)
+BGP peering (primary):           169.254.10.0/30 — Cato .1, peer .2
+BGP peering (secondary):         169.254.10.4/30 — Cato .5, peer .6
+ASNs:                            Cato side 65010 · DX gateway 64512
+MD5 keys:                        set both peers — mandatory
+Owners &amp; dates:                  circuit order — customer cloud team, wk 1
+                                 LOA / colo cross-connect — DC owner, wk 1
+                                 CMA site + BGP — SE with network team, wk 2</pre>
+        </li>
+        <li>
+          <h4>Build the site in the CMA (Track A)</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the Cloud Interconnect site in the customer's tenant exactly as the demo
+          runbook walks it in yours: for public cloud, connection type <strong>Public Cloud
+          Connection</strong> with the provider (e.g. AWS Direct Connect plus account ID), primary
+          and secondary Cato PoP, destination cloud region, bandwidth matching the licence, and the
+          peering subnets from the design sheet
+          (<a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-for-aws-public-cloud" target="_blank" rel="noopener">Cloud Interconnect for AWS</a>).
+          What lands is a site with connection type Cross-Connect and no socket, tunnel or
+          appliance anywhere in its definition. Until the circuit is live it will sit disconnected
+          with zero hosts — <strong>that is correct, expected, and exactly what the Track A
+          criterion claims</strong>: the design is real, reviewable and ready, and nothing more.</p>
+          <!-- capture-wanted: Network → Sites — Cloud Interconnect site-creation flow showing connection type and primary/secondary PoP selection -->
+        </li>
+        <li>
+          <h4>Define both BGP peers (Track A)</h4>
+          <p><span class="path">Network → Sites → Site Configuration → Cloud Interconnect</span></p>
+          <p>Two peers, primary and secondary, from the design sheet: Cato ASN, peer ASN, peer IP,
+          and MD5 authentication — mandatory for Cloud Interconnect sites. Redundancy is
+          <strong>active/passive only</strong>: BGP decides the live circuit, with the primary
+          preferred by metric (primary ≈90, secondary ≈100) and AS-PATH prepending steering the
+          failover
+          (<a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-sites" target="_blank" rel="noopener">Cloud Interconnect sites</a>).
+          Switch on BGP email notifications for peer state changes now — when the circuit lands,
+          the session coming up is itself a dated evidence artefact, and the same notifications
+          book-end the Track B failover test.</p>
+          <!-- capture-wanted: Site Configuration → Cloud Interconnect — BGP peer definition showing MD5, metrics and primary/secondary PoP -->
+        </li>
+        <li>
+          <h4>Verify the circuit when it lands (Track B)</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The site needs at least one BGP peer established to show as connected. Walk the
+          verification set from the AWS guide: <em>Test Connectivity</em> for ICMP reachability
+          across the circuit, BGP status for learned and advertised subnets, the routing table for
+          the dynamic routes and next hop, and LAN monitoring probing the primary circuit
+          continuously. Capture each one dated — this pack is criterion B1 done.</p>
+          <!-- capture-wanted: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit -->
+          <!-- capture-wanted: Monitor → Topology — a connected Cloud Interconnect site alongside socket and vSocket sites -->
+        </li>
+        <li>
+          <h4>Run the Track B evidence days</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p><strong>Baseline:</strong> the same timed transfer over the circuit and over the
+          incumbent IPsec/internet path, same file, same hour, with round-trip and jitter figures
+          from both — the deterministic-latency claim proven side by side rather than asserted.
+          <strong>Throughput:</strong> a sustained transfer at the ordered rate (parallel streams,
+          not one TCP flow), captured from the Real Time graphs. <strong>Failover:</strong> in a
+          booked change window, take the primary peer down on the provider side, watch traffic
+          swing to the secondary and the peer state-change notifications land, then fail back.
+          Every capture goes on the register dated, against its criterion, on the day.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        At the wrap-up, Track A stands on three artefacts: the dated availability extract with the
+        chosen PoPs, the site-configuration capture set showing a complete Cross-Connect site
+        design in the customer's own tenant, and the signed-off order plan with owners and dates.
+        If the circuit landed in-window, Track B adds the BGP status and Test Connectivity pack,
+        the side-by-side path comparison table, the sustained-throughput graph and the failover
+        event trail. If it did not — which is the common case — the wrap-up says so plainly:
+        Track A complete, circuit ordered on date X with a published lead time of Y, Track B
+        scheduled as the first item on the next-steps register. That sentence, with its dates, is
+        a <em>stronger</em> close than a promise nobody can keep inside 30 days.
+      </p>
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>LOA / provisioning stalls</h4><p>The cross-connect authorisation and patch are executed by the exchange or colo operator on their clock, and non-immediate Cato PoPs need manual back-end configuration coordinated with your Cato representative. Neither shows in the CMA — track both by date on the register and chase weekly, or the "quiet fortnight" eats the window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>Provider says up, CMA says down</h4><p>Follow the <a href="https://knowledge.catonetworks.com/docs/xops-network-playbook-cloud-interconnect-site-is-disconnected" target="_blank" rel="noopener">XOps playbook</a>: on Site Configuration → Cloud Interconnect, check whether errors sit in the connectivity/BGP columns or the Cloud Provider / Fabric Service Provider columns, and run Test Connection. If BGP IPs or service keys changed provider-side, re-apply them in Cato — stale keys are the classic cause.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏷️</div><div><h4>VLAN mismatch</h4><p>One VLAN ID per circuit, agreed across every party — cloud provider, exchange operator, Cato PoP — and each virtual interface needs its own unique VLAN. A single transposed digit in one portal leaves layer 2 dark with nothing to ping. Re-read the design sheet against all three portals before raising tickets.</p></div></div>
+        <div class="benefit"><div class="b-icon">🤝</div><div><h4>BGP session won't establish</h4><p>Work the short list: MD5 key mismatch (it is mandatory, so both sides must set the same key), ASN swapped between Cato side and provider gateway, peer IPs not in the same /30, or the peering subnet differing between the CMA and the provider's virtual interface. The BGP columns on the Cloud Interconnect tab localise which peer is at fault.</p></div></div>
+        <div class="benefit"><div class="b-icon">↔️</div><div><h4>Asymmetry with the fallback path</h4><p>If the incumbent IPsec tunnel still advertises the same ranges during coexistence, flows can egress over the circuit and return through the tunnel — baselines then measure a mongrel path. Prefer the interconnect deliberately (BGP metrics/route preference), verify with the routing table that both directions use it, and keep the tunnel as failover only.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Throughput below the ordered rate</h4><p>A single TCP stream will not fill a high-bandwidth circuit — test with parallel streams. Then check the CMA site bandwidth matches the licence and the provider-side port/virtual-interface speed matches the order; the lowest of the three is the ceiling you are measuring.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The availability list is a living document.</strong> The figures on this page were checked on 23 Jul 2026 against a KB page last updated 5 Jul 2026 — re-check on the day of the workshop and date your extract; a provider or lead time can change under you.</li>
+          <li><strong>Track B is usually post-PoV.</strong> A three-week lead time on a 30-day PoV leaves no margin; three months makes it structural. Scope Track B onto the next-steps register with provider-driven dates and treat its later execution as the expansion motion, not a slipped promise.</li>
+          <li><strong>Active/passive only.</strong> Redundant circuits fail over; they do not load-share. Do not let a criterion imply aggregate bandwidth across both.</li>
+          <li><strong>500&nbsp;Mbps is the floor and bandwidth is licensed</strong> — the circuit, the licence and the CMA site figure need to agree before anyone measures anything.</li>
+          <li><strong>Megaport on-demand provisioning from the CMA is Early Availability</strong> at limited release — confirm it applies to the customer's account before the demo of "provision it from the console" becomes a criterion.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>If the engagement stops after Track A, delete the Cloud Interconnect site from
+        Network → Sites, and make sure any provider-side orders are cancelled
+        before their billing starts — fabric virtual circuits and hosted connections bill from
+        activation whether or not Cato ever sees a packet. If Track B ran, agree whether the
+        circuit converts to production or is decommissioned per the commercial agreement, and
+        remove the BGP notification recipients added for the PoV. The design sheet, the dated
+        availability extract and the evidence register survive either way — they are the input to
+        the production rollout, whichever way the decision lands.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

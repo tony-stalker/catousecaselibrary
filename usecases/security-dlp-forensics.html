@@ -272,6 +272,172 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This is an <strong>incident-workflow pilot</strong>: one staged DLP incident, built from
+        fictional test data, followed end to end — event, incident, secured evidence, audit — the way
+        the customer's own team would investigate it. Policy build-out, match-report tuning and block
+        promotion belong to the sibling PoV on
+        <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a>; this one proves
+        that when a violation happens, the investigation holds up. Agree the criteria below
+        <em>before</em> switching anything on — the frame is
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — and because the evidence
+        <em>is</em> sensitive data, the customer's data-protection officer belongs in the scope
+        workshop, not the wrap-up.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What is demonstrated</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Staged incident traced end to end</strong></td>
+              <td>A seeded fictional file fires a monitor rule; the trail runs event → Data Incident → secured evidence pane → matched content, without leaving the CMA.</td>
+              <td>Dated screenshot of each hop, ending on the evidence viewer</td>
+              <td><span class="path">Monitor → Data Protection Dashboard</span></td>
+            </tr>
+            <tr>
+              <td><strong>Chain of custody articulated</strong></td>
+              <td>Where evidence lives (the customer's own bucket), that encryption cannot be switched off, and exactly who can open it — written down and agreed with the DPO.</td>
+              <td>One-page custody note: storage, encryption, named viewers, retention owner</td>
+              <td><span class="path">Security → Data Types &amp; Profiles</span></td>
+            </tr>
+            <tr>
+              <td><strong>Attribution complete</strong></td>
+              <td>The incident carries the full chain: named user, device, application, activity type, matched data types and the action taken — no second console needed.</td>
+              <td>Data Incident detail screenshot with every attribution field populated</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td><strong>Incident report exported for the DPO</strong></td>
+              <td>The DLP violation history leaves the console as a file the data-protection officer can take into their own records.</td>
+              <td>Filtered DLP events export (CSV), annotated with the staged incident marked</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td><strong>Evidence access proven role-restricted</strong></td>
+              <td>A control admin <em>without</em> the DLP Forensics permission sees the incident but cannot open the evidence — the negative test that makes the RBAC story credible.</td>
+              <td>Side-by-side screenshots: investigator sees content, control admin refused</td>
+              <td><span class="path">Administration → Admins</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences:</strong> Data Control rules require the DLP licence on top of CASB — no DLP licence, no violations, no evidence. Confirm the trial covers it.</li>
+          <li><strong>A working Data Control policy in monitor mode</strong> — this pilot investigates violations, it doesn't build the policy. Stage the policy per
+          <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a>, with TLS inspection already live on the pilot group
+          (<a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li><strong>Customer-owned cloud storage:</strong> an Amazon S3 bucket (or Google Cloud equivalent) in the customer's own account, in a region where AWS STS is active — the China region is not supported.</li>
+          <li><strong>Identity integration syncing</strong> the pilot group — an incident attributed to an IP address proves nothing (see <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>The DPO (or privacy owner) named and present</strong> for the storage decisions in step 2 — evidence capture is configured <em>with</em> them, never before them.</li>
+          <li><strong>Fictional test data prepared:</strong> a seeded document of fabricated card numbers or invented PII. The staged incident never uses live customer data.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Connect the forensic storage connector</h4>
+          <p><span class="path">Resources → Integrations</span></p>
+          <p>In the customer's AWS account, create the bucket, IAM policy and role, then add the
+          integration in the CMA: SaaS Application <em>Amazon S3</em>, Auth <em>AWS Assume Role</em>,
+          plus the Role ARN, region, bucket and folder path
+          (<a href="https://knowledge.catonetworks.com/docs/amazon-s3-configuring-the-forensic-storage-connector" target="_blank" rel="noopener">Amazon S3: Configuring the Forensic Storage Connector</a>).
+          The point to narrate: Cato is being granted write access to <em>their</em> bucket — custody
+          starts customer-side and stays there.</p>
+        </li>
+        <li>
+          <h4>Switch on evidence capture — with the DPO in the room</h4>
+          <p><span class="path">Security → Data Types &amp; Profiles</span></p>
+          <p>On the <strong>Settings</strong> tab, enable <strong>Store DLP Evidence</strong>. Two
+          decisions live here and both belong to the DPO: whether to tick
+          <strong>Store original files upon match</strong> (full files rather than matched snippets —
+          start snippet-only), and noting that the
+          <strong>Encrypt evidence stored in the configured destination</strong> checkbox cannot be
+          unticked — encryption is not optional
+          (<a href="https://knowledge.catonetworks.com/docs/investigating-dlp-violations-with-forensic-evidence" target="_blank" rel="noopener">Investigating DLP Violations with Forensic Evidence</a>).
+          Note that image file types are not supported as evidence, and capture applies from
+          enablement onwards — nothing is captured retroactively.</p>
+          <!-- capture-wanted: «Security → Data Types & Profiles → Settings tab — Store DLP Evidence toggle, Store original files upon match checkbox and the locked encryption checkbox» -->
+        </li>
+        <li>
+          <h4>Scope the staged-incident monitor rule</h4>
+          <p><span class="path">Security → App &amp; Data Inline</span></p>
+          <p>Add one narrow Data Control rule for the pilot: source = the single test user (Priya),
+          the agreed content profile, upload activity, in a non-blocking posture with Events tracking
+          on. Keep it surgical — the rule exists to generate one clean, attributable violation from
+          the seeded file, not to rediscover the estate. Remember the scanning envelope the evidence
+          depends on: files up to 50&nbsp;MB, at most 20 data types across a rule's profiles
+          (<a href="https://knowledge.catonetworks.com/docs/creating-dlp-content-profiles" target="_blank" rel="noopener">Creating DLP Content Profiles</a>).</p>
+        </li>
+        <li>
+          <h4>Grant the investigator role — and keep a control admin</h4>
+          <p><span class="path">Administration → Admins</span></p>
+          <p>Only admins holding the <strong>DLP Forensics</strong> permission can view forensic
+          evidence within an event; grant it to the named investigators only, via a custom role where
+          the customer uses them. Deliberately leave a second admin — the control — without it. That
+          admin is your fifth success criterion: the refusal is the demonstration.</p>
+        </li>
+        <li>
+          <h4>Stage the incident and walk the trail</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Priya uploads the seeded fictional file; the monitor rule fires. From the dashboard's
+          top violating rules, expand the event and click <strong>View forensics</strong> in the
+          Evidence field; the <strong>Data Incident</strong> panel opens with the full attribution
+          chain — user, device, application, activity, matched data types, action (the anatomy is the
+          screenshot in <a href="#evidence">In the CMA</a> above). In the Forensics section, click
+          <strong>View Evidence</strong>, confirm, and show the matched snippet — or
+          <strong>Download File</strong> where originals are stored. Allow for the few minutes it can
+          take after the event before the file is available; dated screenshots of every hop go into
+          the evidence doc.</p>
+          <!-- capture-wanted: «Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident» -->
+        </li>
+        <li>
+          <h4>Prove the governance, export the report</h4>
+          <p><span class="path">Administration → Audit Trail</span> <span class="path">Monitor → Events</span></p>
+          <p>Repeat the evidence view as the control admin and screenshot the refusal. Then open the
+          Audit Trail and show the pilot's own configuration story — the Store DLP Evidence
+          enablement and permission grants, each with previous and new values, retained for 12 months
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Using the Audit Trail</a>).
+          Close by filtering Events to the DLP rule and exporting the incident history for the DPO —
+          up to 250,000 events to a file, queried over a window of up to 31 days
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a>).</p>
+          <!-- capture-wanted: «Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values» -->
+        </li>
+      </ol>
+
+      <h3>Troubleshooting — when the evidence doesn't land</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>No evidence pane on the incident</h4><p>Check the chain in order: DLP licence active, Store DLP Evidence enabled, storage connector healthy (Role ARN, region, STS-active). And remember capture starts at enablement — an event from before the toggle has no evidence behind it.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Evidence missing on some events</h4><p>The scanning envelope: files over 50&nbsp;MB aren't scanned, image file types aren't supported as evidence, and the policy fails open on uncompleted scans by default. Check file size and type in the event detail before suspecting the connector.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>Event fired, file not there yet</h4><p>Evidence can take a few minutes to become available for download after the event is generated. Build the pause into the demo script rather than refreshing anxiously in front of the customer.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>View Evidence refused</h4><p>The admin lacks the DLP Forensics permission — which is the feature working, not failing. Check who holds the permission before the session, and use the refusal deliberately as the RBAC proof point.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Over-capture concerns from the privacy owner</h4><p>Meet them honestly: keep snippet-only (originals off), scope the rule to the pilot user and the agreed profile, and capture only what the policy needs to adjudicate. A DLP pilot that hoovers content it doesn't need loses the DPO — and the deal.</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>Incident attributes an IP, not a person</h4><p>Identity sync lag or an unsynced pilot user. Fix the IdP integration before staging the incident — an investigation criterion that ends at an IP address fails on attribution, whatever the evidence shows.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout">
+        <div class="co-title">Say these out loud before the wrap-up, not after</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Evidence storage is a DPO conversation, not a default-on:</strong> captured content is itself sensitive personal data being processed. Snippet vs original file, which profiles capture, and who holds the viewer permission are the DPO's decisions to make — recorded in the custody note.</li>
+          <li><strong>Retention is the customer's lever:</strong> the public KB sets no Cato-side retention for evidence — it lives in the customer's own bucket, so lifecycle and deletion policy are theirs to define. Agree the retention line in the custody note rather than leaving it implicit.</li>
+          <li><strong>Audit coverage — demonstrate, don't assert:</strong> the public KB documents auditing of configuration changes (12 months, previous and new values); per-view evidence logging is the platform's design intent, so prove it live in your tenant during week one and screenshot what the trail records, rather than asserting it unseen.</li>
+          <li><strong>Evidence windows:</strong> the Events page queries at most 31 days at a time — export the incident history as it lands, not at the wrap-up.</li>
+          <li><strong>Scope boundary:</strong> if the pilot surfaces noisy matching or a block-promotion appetite, that's the sibling PoV on <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a> — park it on the next-steps register rather than absorbing it here.</li>
+          <li><strong>Clean exit:</strong> delete the staged-incident rule, switch off Store DLP Evidence, revoke the DLP Forensics permission grants, and remove the storage integration if not proceeding. The seeded-evidence objects sit in the customer's bucket — purging or retaining them is their call, and handing that decision over is the custody story ending exactly as promised.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -315,6 +315,204 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows three connection methods living side by side; the PoV proves one of them on
+        the customer's own cloud estate. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: success criteria agreed at
+        the scope workshop <strong>before anything is deployed</strong>, and every result captured
+        as a dated artefact against its criterion. The pilot shape is deliberately small — one
+        vSocket site in the customer's primary cloud (AWS or Azure, whichever runs the production
+        workloads), one branch socket and a pilot group of remote users reaching it. Nothing is
+        blocked and nothing is migrated: the pilot proves that a VPC or VNet can be a first-class
+        WAN site, governed by the same policy as everything else.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <p>Four criteria cover the cloud-datacentre story. Agree the exact wording, the pilot
+      VPC/VNet and the failover change window at the workshop, then put each row on the test-case
+      register:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Cloud DC live on the WAN</strong></td>
+              <td>A vSocket HA pair deployed in the pilot VPC (the AWS eu-west-2 archetype — or an Azure VNet per the estate), both members tunnelled to the nearest PoP, site rendered in the topology beside the physical estate</td>
+              <td>Topology view with the cloud site connected; site HA status showing primary active, secondary standby, keepalive Ok</td>
+              <td>Monitor → Topology&nbsp;· Network → Sites</td>
+            </tr>
+            <tr>
+              <td><strong>One rule, three source types</strong></td>
+              <td>The pilot workload reached from a branch site, from the datacentre socket and from a remote user on the Cato Client — all matched by the <em>same</em> WAN Firewall rule</td>
+              <td>The single rule in the rulebase, plus its events showing site and SDP-user sources against the cloud-site destination, fully attributed</td>
+              <td>Security → WAN Firewall&nbsp;· Home → Events</td>
+            </tr>
+            <tr>
+              <td><strong>Throughput sanity check</strong></td>
+              <td>A repeatable timed transfer, branch → VPC across the backbone, with results consistent with the configured WAN bandwidth and the vSocket instance size — scale the instance if it is the bottleneck</td>
+              <td>Transfer timings alongside the real-time throughput graphs for the cloud site, captured on the same run</td>
+              <td>Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>HA failover demonstrated</strong></td>
+              <td>The primary vSocket stopped in an agreed change window; the secondary takes over as active and the workload remains reachable from the branch</td>
+              <td>HA status before/during/after, the cloud route table showing the next hop moved to the secondary (AWS) or the floating IP re-bound (Azure), and the reachability check either side</td>
+              <td>Network → Sites&nbsp;· Home → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot VPC/VNet with a representative workload, one branch socket and a pilot group of remote users already connecting via the Cato Client.</li>
+          <li><strong>Cloud-side permissions:</strong> on AWS, rights to use the Marketplace, launch the CloudFormation template, create IAM roles and key pairs (<a href="https://knowledge.catonetworks.com/docs/deploying-a-vsocket-site-from-the-aws-marketplace" target="_blank" rel="noopener">Marketplace deployment guide</a>); on Azure, owner permissions on the relevant resource groups — the HA script creates a managed identity with the Contributor role on both VMs (<a href="https://knowledge.catonetworks.com/docs/configuring-ha-for-azure-vsockets" target="_blank" rel="noopener">Azure vSocket HA</a>).</li>
+          <li><strong>Network plumbing (AWS):</strong> three subnets — MGMT, WAN and LAN — plus a dedicated LAN subnet for the secondary in HA; two Elastic IPs (WAN and MGMT); remember AWS reserves the first IP addresses of each subnet, so ENI addresses must avoid them (<a href="https://knowledge.catonetworks.com/docs/deploying-an-aws-vsocket-site-manually" target="_blank" rel="noopener">manual deployment reference</a>).</li>
+          <li><strong>Public DNS:</strong> both vSockets must be able to resolve public DNS — a private-DNS-only VPC will break HA API calls and registration.</li>
+          <li><strong>Licences:</strong> a site licence for the cloud site plus the existing branch/SDP scope. TLS inspection is <em>not</em> needed — this is a transport-and-policy PoV, which keeps privacy sign-off out of the critical path.</li>
+          <li><strong>Change window:</strong> booked for the failover test, with the cloud platform team in the room — they own the console you will be stopping an instance in.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Create the cloud site in the CMA</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create a site of type <strong>vSocket AWS</strong> (or the Azure equivalent). The
+          <strong>native range must match the LAN subnet</strong> of the VPC exactly, and the WAN
+          interface bandwidth should be set to what you intend to prove — the QoS engine is only as
+          honest as these figures. The CMA generates a unique serial number for the site; copy it,
+          because the cloud-side template asks for it
+          (<a href="https://knowledge.catonetworks.com/docs/aws-vsocket-sites" target="_blank" rel="noopener">AWS vSocket sites</a>).</p>
+        </li>
+        <li>
+          <h4>Deploy the vSocket from the cloud marketplace</h4>
+          <p>On AWS, subscribe to the Cato Networks Virtual Socket listing and launch the
+          CloudFormation template: VPC and subnet ranges, ENI addresses for MGMT/WAN/LAN, your key
+          pair, the serial number from step 1, and a minimal ingress range on the security group.
+          Pick a certified instance type — the KB suggests <strong>c5n.xlarge for sites with
+          bandwidth above 2&nbsp;Gbps</strong>; smaller certified types suit a pilot. <strong>Reboot
+          the VM after deployment</strong> — it is a documented requirement for the vSocket to
+          connect to the Cato Cloud. On Azure, use the Marketplace or deployment script; the default
+          size for new deployments is Standard_D8ls_v5, and accelerated networking is mandatory on
+          that size (<a href="https://knowledge.catonetworks.com/docs/azure-vsocket-sites" target="_blank" rel="noopener">Azure vSocket sites</a>).</p>
+        </li>
+        <li>
+          <h4>Wire the routing — and agree who owns it</h4>
+          <p><span class="path">Network → Sites → Site Configuration → Networks</span></p>
+          <p>Cloud side: the LAN route table sends 0.0.0.0/0 to the vSocket's LAN ENI, the WAN and
+          MGMT subnets route via the internet gateway, and <strong>source/destination checking is
+          disabled on the LAN interface</strong> (AWS) or <strong>IP forwarding enabled on all three
+          NICs</strong> (Azure) so the instance may forward traffic. Cato side: the native range
+          came in at step 1; add any further VPC ranges as routed ranges with the gateway set to the
+          VPC router — the first host IP of the native-range subnet. Write down which team owns the
+          cloud route tables: a well-meaning "correction" mid-PoV is a classic silent breakage.</p>
+        </li>
+        <li>
+          <h4>Add the secondary vSocket and validate HA</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Deploy the secondary into its own LAN subnet (same AZ or a second one — cross-AZ needs
+          per-AZ WAN and MGMT subnets), associate <strong>both LAN subnets with the same route
+          table</strong>, and open <strong>UDP 20480 bidirectionally between the LAN
+          interfaces</strong> for keepalives. Failover works by the secondary calling the AWS API to
+          repoint the LAN route table at its own ENI, so both instances need an IAM role allowing
+          exactly this:</p>
+          <pre class="code">"Action": [
+  "ec2:CreateRoute",
+  "ec2:DescribeRouteTables",
+  "ec2:ReplaceRoute"
+]</pre>
+          <p>Validate with the <strong>API Test Tool in the Socket WebUI</strong> before the change
+          window — it confirms the IAM permissions and route-table ID without failing anything over,
+          provided the vSocket can resolve the regional AWS API domain
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-ha-for-aws-vsockets" target="_blank" rel="noopener">AWS vSocket HA</a>).
+          On Azure the mechanism differs: a floating IP moves between NICs at failover, driven by
+          the managed identity created by the HA script.</p>
+        </li>
+        <li>
+          <h4>Build the one WAN Firewall rule</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>One rule proves the policy story: source = the pilot branch site, the datacentre site
+          and the pilot SDP user group; destination = the cloud site (or the workload host);
+          action Allow with <strong>Track set to Event</strong>. Resist building more — the point is
+          that a single rule, in the same rulebase that governs the physical estate, covers every
+          path to the VPC. Everything else stays untouched: monitor-first, nothing blocked.</p>
+        </li>
+        <li>
+          <h4>Run the evidence days</h4>
+          <p><span class="path">Monitor → Topology</span> <span class="path">Home → Events</span></p>
+          <p><strong>Reachability:</strong> hit the workload from the branch, from the DC and from a
+          remote user's Client; filter Events to the rule and capture the three source types against
+          one destination. <strong>Throughput:</strong> the same timed transfer, branch → VPC,
+          repeated at the same hour, read against the site's real-time graphs.
+          <strong>Failover:</strong> in the window, stop the primary instance from the cloud console;
+          watch the secondary announce itself, the route table repoint, and the branch's session to
+          the workload continue or re-establish. Bring the instance back and confirm the pair
+          returns to primary-active. Every capture goes into the evidence register dated, against
+          its criterion, on the day it happens.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up the register should hold four artefact sets: the topology and HA-status pair
+        proving the cloud DC is a first-class site; the single WAN Firewall rule beside its events
+        showing site, datacentre and SDP-user sources reaching the VPC; the transfer timings against
+        the real-time throughput graphs; and the failover sequence — keepalive Ok, primary stopped,
+        secondary active, route table repointed, service reachable. If the estate is
+        Virtual-WAN-centric, add the honest comparison as a fifth artefact: an IPsec IKEv2 site from
+        the vWAN hub connects with <strong>no VM footprint at all</strong>, BGP-peered to two PoPs
+        for redundancy, and Cato's Terraform module stands the whole integration up in roughly 30
+        minutes (<a href="https://knowledge.catonetworks.com/docs/integrating-cato-with-azure-vwan" target="_blank" rel="noopener">Azure vWAN integration</a>) —
+        the trade-off is that bandwidth is configured per tunnel and there is no socket inside the
+        VNet, so where deep site analytics and the QoS engine matter, the vSocket remains the
+        answer (<a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">IPsec IKEv2 sites</a>).
+        Cross-connect throughput cases belong in the companion page,
+        <a href="network-cloud-interconnect.html">Cloud Interconnect</a>.
+      </p>
+      <!-- capture-wanted: Monitor → Topology — a cloud vSocket site rendered beside physical sites, both tunnels up -->
+      <!-- capture-wanted: Network → Sites — vSocket HA status: primary active, secondary standby, keepalive Ok -->
+      <!-- capture-wanted: Home → Events filtered to one WAN Firewall rule showing site and SDP-user sources to a cloud-site destination -->
+      <!-- capture-wanted: Network → Sites → Site Monitoring → Real Time — cloud site throughput during a timed branch-to-VPC transfer -->
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>vSocket deployed but never connects</h4><p>Three usual causes, in order: the post-deployment <strong>reboot</strong> was skipped (it is required before the vSocket connects), the security group is not allowing all outbound traffic to reach the Cato Cloud, or the VPC cannot resolve public DNS. Fix the cloud plumbing before touching the site config.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚧</div><div><h4>Site is up but workloads unreachable</h4><p>The instance is forwarding-hostile by default: on AWS, <strong>source/destination checking must be disabled on the LAN ENI</strong>; on Azure, IP forwarding must be enabled on the NICs. If the tunnel is green and pings die at the vSocket, this is where to look.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗺</div><div><h4>Routing table "fixed" mid-PoV</h4><p>The LAN route table must point 0.0.0.0/0 at the vSocket's LAN ENI, and HA needs both LAN subnets on that same table. Cloud teams tidy route tables; agree ownership in week one, and after failover remember it is the <em>route table</em> that moved — check there first, not the CMA.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>HA shows "not ready" or failover test fails</h4><p>Run the Socket WebUI API Test Tool. It will name the culprit: missing IAM actions (CreateRoute / DescribeRouteTables / ReplaceRoute), a wrong route-table ID, or no resolution of the regional AWS API domain. Also confirm UDP 20480 is open both ways between LAN interfaces — no keepalives, no HA.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Transfers stall on large payloads</h4><p>Classic MTU. The effective MTU over a DTLS tunnel is <strong>1383 bytes</strong> (1500 minus tunnel overhead) and LAN ports do not support jumbo frames. If a cloud security layer drops ICMP "fragmentation needed", path-MTU discovery breaks and big packets black-hole — allow it, or set MSS accordingly in the test harness.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>Azure failover looks slow</h4><p>By design: moving the floating IP is a NIC configuration update, and the KB states it <strong>can take up to 120 seconds</strong>. Write the Azure criterion accordingly — "reachable within two minutes" is honest and passable; "seamless" is neither.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>AWS vSocket HA does not support BGP or alternative WAN links</strong> — the failover mechanism is the route-table API call, nothing else. If the design assumes BGP to the VPC, surface it at the workshop, not in week three.</li>
+          <li><strong>Don't promise line-rate numbers.</strong> The KB certifies instance types and suggests c5n.xlarge above 2&nbsp;Gbps, but publishes no per-instance throughput table — so the criterion is a measured transfer consistent with the configured bandwidth, with instance resizing as the documented lever.</li>
+          <li><strong>The Azure HA identity is powerful.</strong> The script grants a managed identity Contributor on both VMs so it can rewrite NIC config at failover — brief the cloud security team before they find it themselves.</li>
+          <li><strong>Position IPsec/vWAN honestly.</strong> For a vWAN-centric estate, or a region needed in minutes, the IPsec site is the right first move and can be the PoV vehicle itself — just swap the HA criterion for primary/secondary tunnel redundancy across two PoPs.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>Delete the PoV WAN Firewall rule, remove the cloud site from the CMA, then tear down the
+        cloud side: delete the CloudFormation stack (or Azure resource group items), release the
+        Elastic IPs, remove the HA IAM role or managed identity, and restore the LAN route table to
+        its pre-PoV state — with the team that owns it watching. The evidence register is the one
+        artefact that survives: it walks straight into the decision meeting, and if the verdict is
+        yes, the same template redeploys the pilot as production in the next change window.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

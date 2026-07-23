@@ -443,6 +443,203 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows segmentation in <em>our</em> tenant; the PoV is a <strong>segmentation pilot on
+        one plant site</strong> in theirs — one OT VLAN brought under the LAN Firewall in monitor
+        mode, its east-west traffic to the corporate VLAN observed, and exactly one agreed flow
+        restricted with the evidence to show for it. Week zero is the inventory: run the
+        <a href="management-asset-discovery.html#pov">Asset Discovery &amp; Device Inventory PoV</a>
+        first and inherit its output — the classified OT/IoT estate and the Segmentation Flows
+        evidence for the pilot site. That page owns the inventory criteria; this one owns
+        segmentation and enforcement. Agree the criteria below <strong>before configuring
+        anything</strong>, per <a href="management-pov-framework.html">Running a Cato PoV</a> — and
+        one rule stands above the framework here: <strong>this is a production plant.</strong>
+        Monitor-first discipline is not just good PoV hygiene in OT, it is safety-critical — a false
+        positive stops a machine, not a web page. Nothing blocks anything until the OT engineer has
+        read the events and signed off the one flow that will be.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pilot site's OT/IoT estate inventoried <em>(week zero)</em></td>
+              <td>The discovery PoV has run and its output is accepted: the OT VLAN's devices classified, and Segmentation Flows showing what they actually talk to</td>
+              <td>The inventory extract and Segmentation Flows capture handed over from the <a href="management-asset-discovery.html#pov">asset-discovery PoV</a></td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+            <tr>
+              <td>One OT VLAN under LAN Firewall control — monitor-first</td>
+              <td>A LAN Network rule scopes the pilot site's OT VLAN into the LAN Firewall with a catch-all Allow · Event rule above the default block — everything flows, everything logs</td>
+              <td>The rulebase showing the LAN Network rule, the catch-all monitor rule and its first events</td>
+              <td>Security → LAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>East-west traffic observed, then restricted</td>
+              <td>OT VLAN ↔ corporate VLAN flows are mapped from a week of monitor events; then one agreed, non-safety-critical flow is flipped to Block</td>
+              <td>The observed flow map, and the <strong>blocked lateral-movement event</strong> — the money artefact of the whole PoV</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Device-attribute rule demonstrated</td>
+              <td>Where detection supports it (Socket v26+, MAC-detected devices), a rule matches on what a device <em>is</em> — e.g. Type = PLC — not its IP</td>
+              <td>The rule with its device criteria visible, plus a matching event attributed to the device</td>
+              <td>Security → LAN Firewall</td>
+            </tr>
+            <tr>
+              <td>No production disruption <em>(the OT golden rule)</em></td>
+              <td>Zero unexplained drops on OT traffic for the whole PoV; the single block rule was agreed with the OT engineer in writing and is reversible in seconds</td>
+              <td>The event log for the pilot window showing no unagreed blocks, plus the signed change record</td>
+              <td>Monitor → Events · Administration → Audit Trail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Week zero complete:</strong> the <a href="management-asset-discovery.html#pov">asset-discovery PoV</a> has run on this site — its IoT/OT Security licence, discovery window and MAC-detection groundwork carry straight over.</li>
+          <li><strong>Socket version — re-verify, don't assume:</strong> the LAN Firewall is an account-level policy under <span class="path">Security → LAN Firewall</span>, scoped per site and VLAN in the rule and enforced locally on the Socket. Per <a href="https://knowledge.catonetworks.com/docs/what-is-the-socket-next-gen-lan-firewall" target="_blank" rel="noopener">the LAN Firewall KB</a> it is supported from Socket v22, and per <a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">the policy KB</a> device criteria need Socket v26 or higher. Week zero checked this once; check it again before the plan promises a device-attribute rule.</li>
+          <li><strong>MAC detection:</strong> device-attribute rules are enforced only for devices whose MAC address was detected — Cato recommends the Cato DHCP service at the site to help ensure it (<a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">Device Inventory KB</a>). Devices behind an L3 boundary present the router's MAC, not their own — know which OT cells are routed before you promise attribute rules there.</li>
+          <li><strong>The OT VLAN:</strong> defined as a network range on the pilot Socket, with its traffic actually traversing the Socket — a cell hanging off its own switch stack that never crosses the Socket cannot be segmented by it.</li>
+          <li><strong>A named OT engineer with authority:</strong> the plant-side owner who reads the flow map, nominates the one non-safety-critical flow that may be blocked, and signs the change. No sign-off, no block — this is a criterion, not a courtesy.</li>
+          <li><strong>Rollback agreed in advance:</strong> the block is one rule; disabling it restores the previous behaviour immediately. Write the rollback into the change record before the rule exists.</li>
+          <li><strong>Not needed:</strong> TLS inspection, client rollout or identity integration — LAN segmentation is enforced on the Socket and this pilot deliberately touches no endpoint.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Inherit week zero — the estate and its flows</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Open the pilot site's inventory filtered to the OT VLAN and walk it with the OT engineer:
+          every PLC, HMI, drive and camera named, and the Segmentation Flows view showing the
+          protocols and destinations each device actually uses. This is the handover artefact from the
+          <a href="management-asset-discovery.html#pov">discovery PoV</a> — date it into the evidence
+          doc as item zero. If it doesn't exist yet, stop and run week zero first.</p>
+        </li>
+        <li>
+          <h4>Baseline east-west before touching policy</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Before any LAN Firewall rule exists, intra-site traffic that matches no LAN rule is
+          treated as WAN traffic and handled at the PoP — which means the OT VLAN ↔ corporate VLAN
+          conversations are already visible in events and analytics today. Capture a dated baseline of
+          who talks to whom across that boundary. This is the "before" picture the blocked-flow
+          evidence will be read against.</p>
+        </li>
+        <li>
+          <h4>Bring the OT VLAN under the LAN Firewall — safely</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Create a LAN Network rule scoped to the pilot site and the OT VLAN. <strong>Know what
+          this does:</strong> per the KB, a LAN Network rule carries a default ANY-ANY <em>Block</em>
+          as its last child rule — zero-trust by design — so scoping the VLAN in with no allow rules
+          is itself an act of enforcement. Monitor-first therefore means creating the catch-all
+          <strong>in the same change</strong>: an Any-Any <strong>Allow with Track = Event</strong>
+          rule above the default block. Net effect: nothing drops, every east-west flow in the OT VLAN
+          now lands in Events, enforced locally on the Socket.</p>
+        </li>
+        <li>
+          <h4>Watch a week, write the flow map</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Let the monitor rule run across at least one full production cycle — shift patterns,
+          batch jobs and weekly backups all generate flows a quiet Tuesday won't show. Then sit with
+          the OT engineer and turn the events into a written flow map: which flows are production
+          (HMI → PLC, historian northbound), which are legitimate but ugly (a vendor laptop, a shared
+          USB-network bridge), and which nobody can explain. The KB recommends tracking only
+          high-priority LAN rules in steady state — the catch-all Event rule is deliberate and
+          temporary, and saying so is part of the credibility.</p>
+        </li>
+        <li>
+          <h4>Author the allow rules — attribute-based where detection supports it</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Convert the agreed flow map into explicit Allow · Event rules above the catch-all:
+          HMI → PLC on the control protocol, historian → corporate on its named service. Where the
+          devices are MAC-detected and the Socket is v26+, build at least one rule on
+          <strong>device attributes</strong> — e.g. Type = PLC as a destination — so the rule follows
+          the device, not its IP. Where the classifier has no name for a niche OT protocol, match on
+          port and protocol instead: the LAN Firewall matches L2–4 natively, with L7 application
+          identification an optional per-site extra. An honest port-based rule beats a wrong
+          app-based one.</p>
+        </li>
+        <li>
+          <h4>Flip the one agreed flow to Block</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>With the OT engineer's written sign-off, in an agreed window, change exactly one rule to
+          <strong>Block with Track = Event</strong> — the single, non-safety-critical flow nominated
+          from the flow map (the classic candidate: corporate workstations reaching the OT VLAN
+          directly). Then prove it: generate the traffic from a corporate machine and watch the
+          <strong>blocked lateral-movement event</strong> land, attributed to source, destination and
+          — where detected — the device itself. That event is the artefact the decision meeting is
+          built on. The rollback is the same rule, disabled: seconds, not a change request.</p>
+        </li>
+        <li>
+          <h4>Close the no-disruption criterion</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Administration → Audit Trail</span></p>
+          <p>Sweep the pilot window's events with the OT engineer: every block matches the one agreed
+          rule, and no production flow was dropped unexplained. Pair that with the Audit Trail record
+          of who changed what, when — the governance story writes itself. Then read the evidence out
+          against the criteria table, per the <a href="management-pov-framework.html">PoV
+          framework</a>: inventoried, monitored, mapped, restricted, undisrupted.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Three exhibits carry the wrap-up: the LAN Firewall rulebase for the OT VLAN — explicit allows
+        above the catch-all monitor rule, one block, hit counts live; the blocked east-west event with
+        its device attribution; and the week-zero inventory beside the flow map that justified every
+        rule. The rulebase below is the destination shape — a device-attribute rulebase after monitor
+        mode has graduated, allows logging and a block accumulating hits.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/iot-rulebase-cma.png" alt="CMA firewall rulebase with an expanded IoT Device Attribute Rules group: allow-with-logging rules for an IP camera, smart plug and mobile phones, an IoT discovery rule, and a block rule with a live hit count">
+        <figcaption>Where the pilot ends up: discovery and allow rules tracking events, and a block rule with a live hit count — every hit an attempted flow that policy, not luck, stopped. The PoV builds this shape for one OT VLAN; the rollout repeats it per site from the same account-level policy.</figcaption>
+      </figure>
+      <!-- capture-wanted: Security → LAN Firewall rulebase showing a LAN Network rule scoped to one site/VLAN with its child rules and the default ANY-ANY Block as the last rule -->
+      <!-- capture-wanted: LAN Firewall rule editor with an OT VLAN as Source, device-attribute criteria (e.g. Type = PLC) and Track = Event set -->
+      <!-- capture-wanted: Monitor → Events filtered to LAN Firewall events showing a blocked east-west flow from a corporate host to the OT VLAN -->
+      <!-- capture-wanted: Assets → Device Inventory Segmentation Flows Sankey for an OT VLAN, protocols and destinations visible -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🎭</div><div><h4>The device-attribute rule never matches</h4><p>Attribute rules are enforced only for MAC-detected devices. Check the device's record in the inventory: no MAC, no match. The Cato DHCP service is the KB's recommended fix; and re-confirm the Socket is v26+, the version device criteria require.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Devices behind an L3 boundary aren't MAC-detected</h4><p>A routed OT cell presents its router's MAC for every device behind it, so attribute detection sees one device where there are forty. Segment those cells with IP-range and port rules instead, and note the boundary honestly in the criteria — attribute rules where detection supports them, not everywhere.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏷️</div><div><h4>The classifier has no name for an OT protocol</h4><p>Mainstream control protocols may be identified; a proprietary or serial-over-IP protocol may not be. Don't force it: the LAN Firewall matches L2–4 natively, so write the rule on port and protocol from the observed flows. L7 identification is an optional per-site extra, not a dependency.</p></div></div>
+        <div class="benefit"><div class="b-icon">🫓</div><div><h4>The plant is flatter than anyone admitted</h4><p>If OT and corporate share one broadcast domain, there is no VLAN boundary for the LAN Firewall to scope to. The pilot then starts one step earlier: stand up an OT VLAN for one cell (or use the flow evidence to justify doing so) — the discovery data tells you exactly which devices move into it.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Expected traffic never appears in LAN Firewall events</h4><p>Intra-site traffic matching no LAN rule is treated as WAN traffic and handled at the PoP — check WAN Firewall events for it, then check the LAN Network rule's scope actually covers both VLANs in the conversation. Traffic that never crosses the Socket at all (an isolated switch stack) is invisible to both.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌊</div><div><h4>The catch-all monitor rule is noisy</h4><p>By design — but the KB recommends tracking only high-priority LAN rules in steady state, because events add overhead over the tunnel. Keep the catch-all Event rule for the observation window, then retire it as explicit allows take over. If event volume swamps the review, filter by the OT VLAN and work flow-by-flow.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — the OT golden rule first</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Never block OT traffic without the plant engineer's sign-off.</strong> Not as a formality — as a hard gate. The PoV's block scope is <em>one</em> agreed, non-safety-critical flow, chosen by the person who answers for the line. Everything else stays in monitor mode for the duration, however tempting the event data makes it.</li>
+          <li><strong>Scoping a VLAN into the LAN Firewall is not passive:</strong> the default ANY-ANY Block under a LAN Network rule means an OT VLAN scoped in without its catch-all allow is being enforced, immediately. Build the LAN Network rule and the monitor rule as one change, never two.</li>
+          <li><strong>Attribute rules have physics:</strong> MAC detection, Socket v26+, and L3 boundaries bound what device-attribute policy can see. Write the criterion as "demonstrated where detection supports it" so a routed cell is a documented limit, not a failed PoV.</li>
+          <li><strong>One site is one site:</strong> the pilot proves the mechanism and the method; estate-wide segmentation is the project it justifies. The account-level policy means the rollout is the same rulebase re-scoped — say that in the wrap-up, don't imply it happened.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwinding is deliberately trivial — disable the one block rule and the
+        plant behaves exactly as before; retire or keep the monitor rules as the customer prefers.
+        The better outcome is that nothing is unwound: the monitor rulebase becomes row one of the
+        segmentation rollout, the flow map becomes its design document, and the blocked-flow event
+        goes in front of whoever owns cyber-insurance and <span style="white-space:nowrap">IEC 62443</span>
+        answers. Every change made and removed stays recorded in
+        <span class="path">Administration → Audit Trail</span> — the PoV leaves the plant untouched
+        and the argument made.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

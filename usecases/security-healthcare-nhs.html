@@ -574,6 +574,220 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo walks the mapping table in our tenant; the PoV is a <strong>trust pilot that
+        produces CAF-aligned DSPT evidence from theirs</strong> — one acute hospital site, one agreed
+        IoMT VLAN, one supplier cohort, one resilience drill, and every artefact filed against a row
+        of the <a href="#dspt-map">mapping table above</a>. Agree the criteria below <em>before</em>
+        configuring anything, per <a href="management-pov-framework.html">Running a Cato PoV</a>.
+        One rule stands above the framework, and it is stricter here than in any factory: this
+        network carries patient care. The clinical golden rule mirrors the
+        <a href="security-ot-iot.html#pov">OT segmentation PoV</a> and then tightens it —
+        <strong>nothing blocks anything without the clinical engineering lead's written sign-off,
+        and wherever patient-care systems are involved the pilot stays monitor-only for the
+        duration</strong>. Monitor-first is not PoV hygiene in a hospital; it is the patient-safety
+        posture the whole engagement is built on.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Legacy &amp; IoMT exposure quantified — the WannaCry lesson as a number</td>
+              <td>Device Inventory classifies the pilot hospital site's connected devices agentlessly from traffic; filtered by OS, it shows how many devices run unsupported operating systems and which VLANs they sit on</td>
+              <td>Dated inventory extract for the pilot site with the unsupported-OS count — the NAO's root cause, live in this estate, as evidence rather than fear</td>
+              <td>Assets → Device Inventory</td>
+            </tr>
+            <tr>
+              <td>Clinical / IoMT / corporate separation demonstrated — monitor-first</td>
+              <td>One agreed IoMT VLAN comes under the LAN Firewall with a catch-all Allow · Event rule; a week of events maps its east-west conversations with the clinical and corporate VLANs, and the rulebase that would enforce the separation is built against that map</td>
+              <td>The rulebase, the written flow map signed by clinical engineering, and attributed east-west events — plus, only if signed off, one blocked non-patient-care flow</td>
+              <td>Security → LAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>One supplier on least-privilege ZTNA</td>
+              <td>A pathology or equipment-vendor archetype cohort reaches exactly the system it maintains; an attempted reach to anything else lands as a block event attributed to a named person, not a shared VPN account</td>
+              <td>Paired allow and block events for one vendor engineer, per the evidence pattern of the <a href="access-third-party.html#pov">supplier-access PoV</a></td>
+              <td>Monitor → Events · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>Community resilience shown once</td>
+              <td>One community-clinic-archetype site (broadband + LTE) survives a pulled primary link in a booked window — a single timed, witnessed drill from the resilience drill card</td>
+              <td>The drill record: link-state events, the transport shift onto LTE, and the measured recovery time, per <a href="network-resilient-site-design.html#pov">the drill card</a></td>
+              <td>Monitor → Topology · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Evidence filed on the DSPT rows — shared responsibility intact</td>
+              <td>Each artefact above is indexed against its outcome row (inventory → B4/B5 asset picture, flow map and rulebase → B4/B5, supplier events → B2, drill → B5/D, event coverage → C1), with the "what stays with you" column read out alongside</td>
+              <td>The evidence pack indexed by DSPT anchor, plus an Audit Trail export of every change the PoV made — handed to the SIRO / DSPT owner</td>
+              <td>Administration → Audit Trail</td>
+            </tr>
+            <tr>
+              <td>No clinical disruption <em>(the golden rule)</em></td>
+              <td>Zero unagreed blocks for the whole pilot; at most one enforcement change, never on a patient-care flow, carrying the clinical engineering lead's written sign-off and a seconds-fast rollback</td>
+              <td>The event-log sweep for the pilot window showing no unagreed blocks, plus the signed change record</td>
+              <td>Monitor → Events · Administration → Audit Trail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences:</strong> Device Inventory requires its own licence (part of the IoT/OT Security offering) for the estate criterion; ZTNA/SDP licences cover the supplier cohort for the pilot period.</li>
+          <li><strong>The pilot hospital site:</strong> a Socket in path, with the agreed IoMT VLAN defined and its traffic actually traversing the Socket — devices whose traffic never crosses the Socket are invisible to both the inventory and the LAN Firewall.</li>
+          <li><strong>Socket versions:</strong> the LAN Firewall is supported from Socket v22 (<a href="https://knowledge.catonetworks.com/docs/what-is-the-socket-next-gen-lan-firewall" target="_blank" rel="noopener">LAN Firewall KB</a>); device-attribute criteria need v26 or higher (<a href="https://knowledge.catonetworks.com/docs/managing-the-socket-next-gen-lan-firewall-policy" target="_blank" rel="noopener">policy KB</a>). Check before the plan promises a device-attribute rule.</li>
+          <li><strong>A named clinical engineering lead with authority:</strong> the person who owns the IoMT estate, reads the flow map, and signs — or refuses — the one candidate block. No sign-off, no block: a criterion, not a courtesy. Patient-care flows are not candidates at all.</li>
+          <li><strong>Supplier cohort in identity first:</strong> the vendor's engineers exist in the customer's IdP as a dedicated SCIM-provisioned group before any policy references them — the <a href="access-third-party.html#pov">supplier-access PoV</a> owns the detail.</li>
+          <li><strong>Change windows booked with ward realities in mind</strong> — see troubleshooting: a 24/7 hospital has no site-wide quiet hour, so windows are negotiated per ward and per modality, not assumed.</li>
+          <li><strong>Not needed:</strong> TLS inspection or a client rollout — segmentation is enforced on the Socket and the supplier slice is access-level. If the customer adds patient-data DLP criteria, that is a scope trade agreed at the workshop, and TLS inspection stages first per <a href="security-tls-inspection.html">the TLSi playbook</a>.</li>
+          <li><strong>Dates:</strong> reuse the staleness check in the objective section above before writing DSPT deadlines into the pilot plan — this page deliberately quotes only the published cycle.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough — one step per criterion</h3>
+      <ol class="steps">
+        <li>
+          <h4>Quantify the estate — turn WannaCry into a count</h4>
+          <p><span class="path">Assets → Device Inventory</span></p>
+          <p>Device Inventory analyses WAN-bound and outbound traffic passively — no agents, which
+          matters in an estate where most devices cannot take one — and classifies each device with
+          ML across attributes including category, type, manufacturer, model, OS and OS version
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-device-inventory" target="_blank" rel="noopener">Device Inventory KB</a>).
+          Filter to the pilot hospital site, sort by OS, and count the devices on unsupported
+          operating systems — then walk the list with clinical engineering: which of these did they
+          know were on that VLAN? Date the extract into the evidence doc. The NAO named unpatched and
+          unsupported Windows as WannaCry's root cause; this artefact is that finding, live, in their
+          own estate.</p>
+        </li>
+        <li>
+          <h4>Bring the agreed IoMT VLAN under the LAN Firewall — safely</h4>
+          <p><span class="path">Security → LAN Firewall</span></p>
+          <p>Create a LAN Network rule scoped to the pilot site and the agreed IoMT VLAN.
+          <strong>Know what this does:</strong> per the KB, a LAN Network rule carries a default
+          ANY-ANY <em>Block</em> as its last child rule — so scoping the VLAN in with no allow rules
+          is itself an act of enforcement. Monitor-first therefore means creating the catch-all
+          <strong>in the same change</strong>: an Any-Any <strong>Allow with Track = Event</strong>
+          rule above the default block. Net effect: nothing drops, and every east-west flow touching
+          the IoMT VLAN lands in Events, enforced locally on the Socket. In a hospital, make even
+          this no-op change in a booked window with the clinical engineering lead on the call — the
+          discipline is part of what the PoV is demonstrating.</p>
+        </li>
+        <li>
+          <h4>Map the flows with clinical engineering — demonstrate the separation</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Let the monitor rule run across at least one full clinical week — imaging lists,
+          overnight backups and vendor telemetry windows all generate flows a quiet afternoon will
+          not. Then sit with the clinical engineering lead and write the flow map: which
+          conversations are clinical integrations (modality → PACS ingest, analyser → results
+          interface), which are vendor maintenance paths, and which nobody can explain. Build the
+          named Allow · Event rules above the catch-all from that map — the rulebase <em>is</em> the
+          separation claim, shown against the events that justify every line. If, and only if, the
+          lead signs off one non-patient-care flow (the classic candidate: corporate workstations
+          reaching the IoMT VLAN directly), flip that one rule to Block · Event in an agreed window
+          and prove it from a test host. If no sign-off is given, monitor-only is still a pass —
+          the criterion is separation <em>demonstrated</em>, and the flow map plus the would-be-blocked
+          events carry it.</p>
+        </li>
+        <li>
+          <h4>Give one supplier exactly one system</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Security → WAN Firewall</span></p>
+          <p>Run the <a href="access-third-party.html#pov">supplier-access PoV</a> scoped down to one
+          cohort — the pathology or imaging vendor archetype whose engineers maintain a named system.
+          Its walkthrough owns the method: the SCIM-provisioned group, the named-system allow rule,
+          the week-one discovery rule, the leaver test. This pilot needs its headline pair as
+          evidence: the vendor engineer (say, Marcus) reaches the analyser middleware he supports
+          under a named rule, attempts anything else, and the block lands attributed to him
+          personally. The page's June 2024 incident framing has already made the argument; the
+          paired events make it in the customer's own tenant.</p>
+        </li>
+        <li>
+          <h4>Show community resilience once</h4>
+          <p><span class="path">Monitor → Topology</span> <span class="path">Monitor → Events</span></p>
+          <p>One drill, one site, one booked window: on a community-clinic-archetype site running
+          broadband with LTE fallback, pull the primary link and watch the transport shift while a
+          timestamped ping and a witness record the gap. The
+          <a href="network-resilient-site-design.html#pov">resilience drill card</a> owns the
+          expected behaviour per the KB, the timing method and the rollback — run its D1 (or D2)
+          exactly as written. This PoV needs precisely one drill: enough to evidence the
+          resilient-networks row without turning a compliance pilot into a resilience programme.</p>
+        </li>
+        <li>
+          <h4>File the evidence on the DSPT rows and close the golden rule</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Administration → Audit Trail</span></p>
+          <p>Sweep the pilot window's events with the clinical engineering lead: every block matches
+          the one signed change (or there were none), and no clinical flow was dropped unexplained —
+          the golden-rule criterion closes on that sweep. Then index the pack against the
+          <a href="#dspt-map">mapping table</a>: inventory extract to B4/B5's asset picture, flow map
+          and rulebase to B4/B5, supplier events to B2, the drill record to B5 and D, the one event
+          store that captured all of it to C1 — and read out the "what stays with you" column beside
+          each row. The pack informs the submission; <strong>the submission, and the achievement-level
+          judgment, stay with the organisation's SIRO / DSPT owner and their independent
+          assessor</strong>. Cato's contribution is that the evidence now exists as a by-product of
+          operation rather than a screenshot hunt.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Three exhibits carry the wrap-up: the dated inventory extract with its unsupported-OS count;
+        the IoMT rulebase beside the flow map that justified every line; and the supplier's paired
+        allow-and-block events. The rulebases below show the destination shape each of the first two
+        is heading for.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/iot-rulebase-cma.png" alt="CMA firewall rulebase with an expanded group of device-attribute rules: allow-with-logging rules matching devices by category, type and manufacturer, a discovery rule, and a block rule with a live hit count" loading="lazy">
+        <figcaption>The shape the IoMT VLAN's rulebase grows into after monitor mode graduates: rules that match what a device <em>is</em> — category, type, manufacturer — logging every hit, with a block rule accumulating evidence. In the hospital pilot the same construct is built for pumps, modalities and monitors, and the block stays subject to the golden rule.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall allowlist rulebase scoping sites, user groups and individual users to named hosts and service/port pairs with live hit counts, the first rule granting access to a patient portal host" loading="lazy">
+        <figcaption>The supplier slice's destination (demo tenant, fictional identities): named-host allow rules with hit counts over an implicit deny — the first row here scopes access to a patient-portal host. The vendor cohort should occupy one or two rows of a rulebase like this, and nothing else should route.</figcaption>
+      </figure>
+      <!-- capture-wanted: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems -->
+      <!-- capture-wanted: Security → LAN Firewall — LAN Network rule scoped to one site's IoMT VLAN with a catch-all Allow · Event rule above the default ANY-ANY Block -->
+      <!-- capture-wanted: Monitor → Events — LAN Firewall events for an IoMT VLAN showing east-west flows to clinical and corporate VLANs in monitor mode -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🩻</div><div><h4>IoMT devices invisible to the inventory</h4><p>Detection is passive analysis of WAN-bound and outbound traffic — a modality that only ever talks inside its own VLAN, or hangs off an isolated switch stack that never crosses the Socket, generates nothing to classify. Check whether its traffic traverses the Socket; if it cannot, record the blind spot honestly in the estate criterion rather than quietly narrowing it.</p></div></div>
+        <div class="benefit"><div class="b-icon">❓</div><div><h4>A device appears but with no OS or attributes</h4><p>The KB is explicit that not every data field is available for every device, and devices behind an L3 boundary present the router's MAC, not their own. Count such devices as <em>unknown</em>, never as unsupported — the exposure number survives audit scrutiny only if its unknowns are labelled as unknowns.</p></div></div>
+        <div class="benefit"><div class="b-icon">🫓</div><div><h4>The clinical network is flatter than anyone admitted</h4><p>If pumps, PCs and PACS share one broadcast domain, there is no IoMT VLAN boundary for the LAN Firewall to scope to. The pilot then starts one step earlier: use the inventory to identify which devices belong in an IoMT VLAN for one ward or modality group, and let the flow evidence justify creating it — that finding is itself DSPT-relevant evidence.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕐</div><div><h4>No change window exists in a 24/7 ward</h4><p>A hospital has no site-wide quiet hour. Monitor-first helps — most of this pilot's steps change nothing — but book windows anyway, negotiated per ward and per modality with clinical engineering (imaging list hours matter more than office hours). The only enforcement change is one rule, reversible in seconds, so the window it needs is minutes, not a weekend.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Expected traffic never appears in LAN Firewall events</h4><p>Intra-site traffic that matches no LAN rule is treated as WAN traffic and handled at the PoP — check WAN Firewall events for it, then check the LAN Network rule's scope actually covers both VLANs in the conversation. Traffic that never crosses the Socket at all is invisible to both.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌊</div><div><h4>The catch-all monitor rule is noisy</h4><p>By design — but the KB recommends tracking only high-priority LAN rules in steady state, because events add overhead over the tunnel. Keep the catch-all Event rule for the observation window, retire it as named allows take over, and say so in the plan: temporary and deliberate.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — patient safety first</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The golden rule outranks the runbook.</strong> Monitor-only wherever patient-care systems are involved, and no block anywhere without the clinical engineering lead's written sign-off. In a factory a false positive stops a machine; here it can interrupt care. If the lead refuses every block, the PoV still passes on monitor-mode evidence — write the criteria so that is true from day one.</li>
+          <li><strong>No compliance verdicts.</strong> This pilot produces evidence, not achievement levels. The independent assessor owns the judgment and the DSPT submission stays with the SIRO / DSPT owner — present the pack as "evidence towards B4", never "B4 achieved".</li>
+          <li><strong>Not clinical-safety advice.</strong> This is a network evidence pilot. Changes affecting clinical systems go through the organisation's own clinical risk management and change processes — the clinical engineering lead's sign-off is this PoV's gate, not a substitute for those processes.</li>
+          <li><strong>Scoping a VLAN into the LAN Firewall is not passive:</strong> the default ANY-ANY Block under a LAN Network rule means an IoMT VLAN scoped in without its catch-all allow is being enforced immediately. Build the LAN Network rule and the monitor rule as one change, never two.</li>
+          <li><strong>One site is one site.</strong> The pilot proves the mechanism on one hospital site and one VLAN; trust-wide segmentation is the programme it justifies. The account-level policy means the rollout is the same rulebase re-scoped — say that in the wrap-up, don't imply it happened.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> disable the single block rule (if one was ever signed off) and the
+        site behaves exactly as before; keep or retire the monitor rules as the customer prefers —
+        kept, they are row one of the segmentation rollout and the flow map is its design document.
+        Disable the supplier's pilot rules rather than deleting them (the hit counts and events are
+        the evidence record), and return the drill site to steady state per the drill card's rollback
+        column. Every change made and removed stays recorded in
+        <span class="path">Administration → Audit Trail</span> — the PoV leaves the hospital
+        untouched, and the SIRO holds an evidence pack their last submission cycle had to assemble
+        by hand.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

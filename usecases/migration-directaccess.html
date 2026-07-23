@@ -395,6 +395,226 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This PoV is a <strong>swap-don't-stack retirement pilot</strong>: a cohort of 10–15 real
+        DirectAccess devices moved cleanly to the Cato Client, one at a time, while the rest of the DA
+        estate carries on untouched. Because the two always-on tunnel adapters clash on a shared device,
+        the swap procedure is not plumbing — it is <em>success criterion number one</em>. Agree the
+        criteria below with the customer before configuring anything, per the frame in
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The swap is clean</td>
+              <td>Every cohort device follows the same order — DA client config removed and verified gone, <em>then</em> the Cato Client installed — and no device ever runs both tunnels</td>
+              <td>Per-device runsheet with timestamps: GPO scope removed → reboot → NRPT empty → Client installed → first connected event</td>
+              <td>Cohort runsheet · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Always-on parity</td>
+              <td>DA's one virtue — the user never thinks about connecting — survives the swap: the client connects at boot and network change for a fortnight, and cannot be casually switched off</td>
+              <td>Connection events across the pilot with no manual intervention; screenshot of the client refusing disconnect; zero "how do I connect" tickets</td>
+              <td>Monitor → Events · Access → Always-On Policy</td>
+            </tr>
+            <tr>
+              <td>Windows-only ceiling lifted</td>
+              <td>At least one macOS or mobile user sits in the cohort under the <em>same</em> policy — the population DirectAccess could never touch</td>
+              <td>Events filtered to that user showing the same rules firing; their row in the Experience Monitoring cohort view</td>
+              <td>Monitor → Events · Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>App reach, least privilege</td>
+              <td>Every application the cohort used over DA is reachable through named app-level rules — and an adjacent resource the old intranet reach would have exposed is blocked</td>
+              <td>WAN Firewall allow events per named app plus one deliberate block event, all identity-attributed</td>
+              <td>Security → WAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Un-migrated estate untouched</td>
+              <td>The NLS, the PKI and the IP-HTTPS gateway run unmodified for the whole pilot; the non-pilot DA population never notices the PoV happened</td>
+              <td>Empty change record for the DA infrastructure across the pilot window; flat helpdesk baseline for non-pilot remote users</td>
+              <td>Customer change &amp; helpdesk systems</td>
+            </tr>
+            <tr>
+              <td>Rollback is a GPO re-apply</td>
+              <td>One cohort device is deliberately rolled back mid-pilot — Cato Client removed, DA client GPO re-applied — and is working on DirectAccess again at the next policy refresh</td>
+              <td>Dated runsheet for the drill; evidence of restored DA connectivity on that device</td>
+              <td>Cohort runsheet · rolled-back device</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences</strong> — ZTNA/SDP user licences covering the cohort for the PoV period.</li>
+          <li><strong>Identity first</strong> — IdP connected and a dedicated pilot group (e.g.
+          <em>DA-Pilot</em>) provisioning via SCIM before any policy is written
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</li>
+          <li><strong>Levers ready on both sides</strong> — the DirectAccess client GPO scoped by a
+          security group, so removing a device is a membership change rather than a GPO edit; and the
+          Cato Client package staged in the same GPO/MDM estate that pushed DA config
+          (<a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">Distributing Cato Clients to Devices</a>).</li>
+          <li><strong>Apps reachable via Cato</strong> — the datacentre resources DA publishes must sit
+          behind a Cato Socket before the first swap, or the first swapped user proves the wrong thing.</li>
+          <li><strong>Cohort composition</strong> — mostly domain-joined Windows laptops (the DA
+          population), plus at least one macOS or mobile user for the ceiling-lifted criterion. Note
+          Always-On does not cover Linux — keep Linux devices out of the parity criterion.</li>
+          <li><strong>No TLS inspection required</strong> — none of the core proofs needs content
+          inspection; keep the pilot's variable count low.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the cohort in identity</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Scope SCIM provisioning to the <em>DA-Pilot</em> group and confirm its members appear under
+          <span class="path">Access → Users</span>. Every Cato policy in this PoV references the synced
+          group — joiners and leavers maintain themselves, which is already an improvement on the
+          security-group-plus-GPO scoping DirectAccess used
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Make the implied trust explicit</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>DirectAccess inferred "managed device" from domain join at connect. Recreate that assurance
+          as posture: a <strong>device certificate check</strong> plus a <strong>disk encryption
+          check</strong>, bundled into a profile (e.g. <em>DA-Pilot-Managed</em>) — checks inside a
+          profile combine with AND, so the device must satisfy every one. Keep platform support in mind
+          from the start: some checks are platform-specific, which matters for the macOS cohort member
+          (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>).</p>
+          <!-- capture-wanted: «CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks» -->
+        </li>
+        <li>
+          <h4>Gate the connection — monitor-first</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Week-one rule: source <em>DA-Pilot</em>, platforms in scope, Device Posture Profile
+          <em>Any</em>, action <strong>Allow WAN and Internet</strong>. The policy is ordered
+          first-match and ends in an implicit any-any block, so the pilot rule must sit where it
+          actually catches the cohort. Posture is not enforced yet — a clean week of connection events
+          is the baseline that makes the enforcement flip in step 7 meaningful
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+          <!-- capture-wanted: «CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet» -->
+        </li>
+        <li>
+          <h4>Replace subnet reach with named applications</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>From the discovery inventory, list what the cohort actually uses over DirectAccess — it is
+          nearly always shorter than anyone expects — and write one WAN Firewall rule per named
+          application, source <em>DA-Pilot</em>. Deliberately leave one adjacent resource unmatched:
+          the block event it generates later is the least-privilege evidence artefact. DirectAccess put
+          the machine on the network; this rulebase puts the user on the application.</p>
+        </li>
+        <li>
+          <h4>Execute the swap — criterion one, per device, in order</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>The adapter clash makes coexistence a non-option, so the order is non-negotiable:
+          <strong>remove the device from the DA GPO scope group → reboot</strong> (computer group
+          membership applies at next boot) <strong>→ verify the DA client config is gone → push the
+          Cato Client → sign in with IdP SSO and MFA</strong>. Verify before installing, on every
+          device:</p>
+          <pre class="code"><span class="cmt"># after reboot, before the Cato Client goes on</span>
+gpupdate /force
+gpresult /r            <span class="cmt"># DA client GPO must no longer be listed</span>
+netsh namespace show effectivepolicy   <span class="cmt"># NRPT must be empty — no DA name-resolution rules</span></pre>
+          <p>The first connected event for the device in <span class="path">Monitor → Events</span>,
+          timestamped after the verification, closes that device's row on the runsheet.</p>
+        </li>
+        <li>
+          <h4>Enforce always-on — the parity proof</h4>
+          <p><span class="path">Access → Always-On Policy</span></p>
+          <p>Add a rule for <em>DA-Pilot</em> so the cohort stays connected to the Cato Cloud without
+          user action — the property DA users will miss if it is absent, delivered without the NLS.
+          Bypass is governed, not hidden: an admin-issued one-time passcode valid for up to 15 minutes,
+          and a user-initiated bypass with a recorded reason on Windows Client 5.9+, macOS 5.5+ and
+          iOS 5.6+. Have a cohort member try to disconnect without one — that refusal screenshot is a
+          success-criterion artefact
+          (<a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting Users with Always-On Security</a>).</p>
+          <!-- capture-wanted: «CMA Access → Always-On Policy — DA-Pilot rule with bypass settings» -->
+        </li>
+        <li>
+          <h4>Turn the posture key, then baseline the fortnight</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Home → Experience Monitoring</span></p>
+          <p>After the clean week, edit the connection rule to require <em>DA-Pilot-Managed</em> — the
+          domain-join assumption is now an enforced, continuous decision. Then let the cohort live on
+          it, capturing the <strong>Remote Users</strong> tab of Experience Monitoring weekly: per-user
+          experience score, connected PoP, flows and average TTFB. The macOS or mobile member's row in
+          that same table, under the same policy, is the ceiling-lifted evidence in one screenshot
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>).</p>
+          <!-- capture-wanted: «Cato Client connected on macOS beside the same user's row in Experience Monitoring» -->
+        </li>
+        <li>
+          <h4>Run the rollback drill — deliberately</h4>
+          <p>Mid-pilot, pick one device and reverse it: <strong>remove the Cato Client first, then
+          re-add the device to the DA GPO scope group and reboot</strong> — the same one-tunnel rule
+          applied backwards. At the next policy refresh the device is on DirectAccess again, because
+          the NLS, PKI and IP-HTTPS gateway were never touched. Rollback proven cheap is what lets the
+          customer sign off wave rollouts with confidence — it is the criterion that de-risks all the
+          others.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase showing twelve allowlist rules whose sources mix sites, user groups and individual SDP users, with direction, service and port pairs, and live hit counts over an implicit deny" loading="lazy">
+        <figcaption>The shape of post-DirectAccess access (demo tenant, fictional identities): named applications granted to named users and groups over an implicit deny, with live hit counts. No rule grants a subnet — the intranet-wide reach DA handed to every connected machine simply has no equivalent row here.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring Remote Users tab listing pilot users with device name, experience score, number of applications, connected PoP, flows, usage and average TTFB" loading="lazy">
+        <figcaption>Always-on parity, quantified (demo tenant, fictional identities): the Remote Users view scoped to the swapped cohort — each member with an experience score, their connected PoP and average TTFB. Captured weekly and dated, this is the artefact that shows nobody thought about connecting all fortnight.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⚡</div><div><h4>Intermittent connectivity right after a swap</h4><p>The signature of both tunnels alive at once. Run <em>gpresult /r</em> and <em>netsh namespace show effectivepolicy</em> on the device — if the DA client GPO or NRPT rules are still present, the removal never took. Pull the device from the DA scope group, reboot, verify clean, and only then let the Cato Client run.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>GPO removal that never lands</h4><p>Computer group membership changes only apply after a reboot — a swap runsheet without the reboot step leaves DirectAccess active underneath the new client. If a device keeps re-acquiring DA config, check for a second GPO link or WMI filter still scoping it in.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>SCIM sync lag</h4><p>A cohort member cannot connect or misses every rule. Check membership under <span class="path">Access → Users</span> and the IdP provisioning log — push cycles are not instant. Trigger on-demand provisioning from the IdP rather than re-editing Cato policy to compensate.</p></div></div>
+        <div class="benefit"><div class="b-icon">🍏</div><div><h4>Posture fails the macOS member</h4><p>A profile built around Windows-issued device certificates cannot pass on a Mac. Scope checks by platform — some check types are platform-specific — and prove the macOS user against the checks their platform supports. This is exactly the conversation DirectAccess never let you have.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>Pilot user hits the implicit block</h4><p>The client signs in but access is refused and no rule matched. The Client Connectivity Policy is first-match and ends in an implicit any-any block — confirm the user is in the synced <em>DA-Pilot</em> group and the pilot rule sits above any narrower rule stealing the match.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧊</div><div><h4>Non-pilot DA users break mid-PoV</h4><p>Almost always someone "tidying" DA infrastructure early — an NLS certificate allowed to lapse, a CRL endpoint moved, an IP-HTTPS listener re-addressed. Freeze all change on the NLS, PKI and gateway for the pilot window; the untouched-estate criterion exists to catch exactly this.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The swap is atomic per device.</strong> Never schedule the Cato Client push
+          before DA removal is verified on that device — the adapter clash produces intermittent,
+          hard-to-diagnose behaviour, which is the worst possible evidence to generate mid-PoV.</li>
+          <li><strong>Always-On covers Windows, macOS, Android and iOS — not Linux</strong>, and the
+          bypass features are client-version-gated (user bypass with reason: Windows 5.9+, macOS 5.5+,
+          iOS 5.6+). Scope the parity criterion to the platforms it applies to.</li>
+          <li><strong>If IT tools relied on DirectAccess manage-out</strong> — reaching into remote
+          machines for patching or support — capture that as a scoped item in the test-case register
+          rather than assuming parity. It is a different workflow, and it deserves its own criterion
+          or its own follow-on, not a silent assumption.</li>
+          <li><strong>Experience Monitoring has edges</strong> — application metrics are calculated for
+          outbound TCP traffic, and some data can be delayed up to 30 minutes. Do not promise a
+          baseline from minute one of a swap.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the decision is a no, the exit is the rollback drill at
+        cohort scale — remove the Cato Client per device, re-apply the DA client GPO, reboot — and
+        because the NLS, PKI and IP-HTTPS gateway ran untouched throughout, the estate is exactly where
+        it started; then disable the pilot policies and de-scope the SCIM group if it was created for
+        the PoV. If the decision is a yes, do none of it: the pilot policy set is wave one of the
+        <a href="#path">six-step migration path</a> above, and the cohort never swaps back.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

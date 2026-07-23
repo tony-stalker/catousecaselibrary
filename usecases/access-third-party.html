@@ -284,6 +284,219 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows a contractor blocked from one page; the PoV proves least privilege on a
+        <strong>real supplier</strong>. Pick exactly one — the managed-IT provider that runs the
+        service desk is the classic — and pilot their contractor cohort (typically three to six
+        people) against the applications that supplier is contracted to touch, enumerated by name
+        at the workshop. Agree the criteria below <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Named apps, nothing else</td>
+              <td>Every session from the supplier cohort matches a named allow rule for one of their enumerated applications — no traffic rides a generic rule</td>
+              <td>Cohort event export in which every allow carries a pilot rule name</td>
+              <td>Monitor → Events · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>The deny is provable</td>
+              <td>A contractor's attempted reach to any resource off the list lands as a block event attributed to that person — not a silent timeout</td>
+              <td>Dated block event: user name, rule, action, destination</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>No network path from unmanaged devices</td>
+              <td>Contractors on their own laptops work through a browser on-ramp; the device never receives a route or address on the WAN</td>
+              <td>Portal session reaching a published app beside the failed direct reach to anything else</td>
+              <td>Applications Portal · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Leavers are dead within the sync window</td>
+              <td>A contractor disabled in the IdP cannot connect at the next attempt — and the customer measures the gap rather than taking our word</td>
+              <td>IdP audit entry timestamped beside the refused connection; no cohort events after that time</td>
+              <td>IdP console · Access → Users · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Per-contractor audit trail</td>
+              <td>For any named contractor, one filtered view answers who reached what, when, under which rule — the artefact the last audit could not produce</td>
+              <td>Events export filtered to a single identity for the pilot period</td>
+              <td>Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The application list is the scope.</strong> The supplier's named applications —
+          hosts, ports, owners — written down at the workshop. "Whatever they use today" is not a
+          scope; it is the absence of one.</li>
+          <li><strong>Licences</strong> — ZTNA/SDP user licences covering the cohort for the PoV
+          period; the clientless portal in scope if any device is unmanaged.</li>
+          <li><strong>Identity first</strong> — the supplier's contractors exist in the customer's
+          IdP and provision to Cato via SCIM as a dedicated group before any policy is written
+          (design choices in <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>On-ramp decided per device reality</strong> — supplier-managed laptops take the
+          Cato Client with a posture profile; unmanaged devices take a browser on-ramp. The
+          comparison table lives in <a href="access-byod-clientless.html">BYOD &amp; Unmanaged
+          Device Access</a> — decide at the workshop, not mid-pilot.</li>
+          <li><strong>The legacy VPN stays up for everyone else.</strong> This pilot moves one
+          supplier; nothing else changes. The supplier's own VPN account is suspended only once
+          their cohort is working through Cato.</li>
+          <li><strong>TLS inspection only if content criteria are added</strong> — the access proofs
+          here need no decryption; if the customer wants DLP on what contractors upload or download,
+          stage TLSi first per <a href="security-tls-inspection.html">TLS Inspection: Staged
+          Rollout Playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the supplier in identity</h4>
+          <p><span class="path">Access → Directory Services</span> <span class="path">Access → Users</span></p>
+          <p>Provision a dedicated IdP group (e.g. <em>Supplier-Pilot</em>) via SCIM and confirm the
+          cohort — Nadia and Stefan among them — appears under Users. Every rule in this PoV
+          references the synced group, so the joiner/leaver criterion later is enforced by the same
+          mechanism that built the pilot. SCIM changes reflect in Cato in near real time, and users
+          unassigned in the IdP are disabled at the next sync
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Stand up the on-ramp the devices deserve</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Supplier-managed laptops: Cato Client, gated by a posture profile (e.g. anti-malware
+          plus disk encryption; checks inside a profile combine with AND —
+          <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>).
+          Unmanaged laptops: publish each named application as an <strong>Internal Application in the
+          Applications Portal</strong> so the browser is the endpoint and the device never joins the
+          network — routed through RBI, the session is view-only: no downloads, no copy, no direct
+          reach into the private network
+          (<a href="https://knowledge.catonetworks.com/docs/controlling-access-to-private-apps-through-rbi" target="_blank" rel="noopener">Controlling Access to Private Apps Through RBI</a>).
+          For SaaS-only suppliers the Browser Extension is the faster route — the decision table is
+          on <a href="access-byod-clientless.html">the BYOD page</a>; don't duplicate it, use it.</p>
+          <!-- capture-wanted: «CMA Applications Portal — named internal apps published to a supplier group» -->
+        </li>
+        <li>
+          <h4>Gate the front door</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>For the client leg, one rule: source <em>Supplier-Pilot</em>, the countries the supplier
+          actually works from, platforms in scope, posture profile attached, action
+          <strong>Allow WAN and Internet</strong>. The policy is first-match and ends in an implicit
+          ANY ANY block, so a supplier contractor connecting from an unexpected country or a failed
+          posture check never establishes a tunnel at all
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Author the named-app rules — monitor-first</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>One allow rule per enumerated application: source <em>Supplier-Pilot</em>, destination
+          the named host or app, the specific service/port, tracking set to generate
+          <strong>Events</strong> on every rule. Beneath them, a week-one <strong>discovery
+          rule</strong>: <em>Supplier-Pilot</em> → Any, action Allow, tracking Events. Nothing blocks
+          yet — the discovery rule inventories what the supplier genuinely touches, so the block you
+          switch on in step 5 is defensible rather than disruptive. Rules evaluate top-down,
+          first-match, over a final implicit ANY ANY block
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-wan-firewall-policy" target="_blank" rel="noopener">Managing the WAN Firewall Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Flip the key, then stage the attempted-access test</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Monitor → Events</span></p>
+          <p>End of week one: read the discovery rule's events with the customer. Anything legitimate
+          gets folded into a named rule — anything else is a finding. Then <strong>disable the
+          discovery rule</strong> so the implicit block takes over, and run the test that wins the
+          PoV: Nadia opens her ticketing console (allow, named rule), then attempts the finance file
+          share (block, attributed to her identity, dated). Screenshot the pair side by side —
+          least privilege proven positively and negatively in two rows.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one contractor identity, named-rule allows beside an attempted-access WAN block» -->
+        </li>
+        <li>
+          <h4>Kill a leaver mid-pilot</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Monitor → Events</span></p>
+          <p>The credential that outlives the contract is this page's headline risk, so prove its
+          death on purpose: mid-pilot, the customer disables Stefan in the IdP (always at the IdP —
+          see the Entra note below). At the next SCIM sync his Cato user is disabled, the next
+          connection attempt is refused, and his ZTNA licence returns to the pool. Record three
+          timestamps — IdP change, refused attempt, last event seen — because the success criterion
+          is a measured window, not an assurance
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+          <!-- capture-wanted: «Cato Client / portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state» -->
+        </li>
+        <li>
+          <h4>Assemble the per-contractor evidence pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to one identity at a time: every record carries the user name, the matched
+          rule, the action and the destination
+          (<a href="https://knowledge.catonetworks.com/docs/understanding-event-fields" target="_blank" rel="noopener">Understanding Event Fields</a>).
+          Export one file per contractor for the pilot period and date them into the evidence doc —
+          at the wrap-up, hand the customer the session-level answer to "who reached what, when"
+          for a population their current VPN logs as an IP address.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase of twelve allowlist rules scoping sites, user groups and individual SDP users to named hosts, applications and service/port pairs, with live hit counts over an implicit deny" loading="lazy">
+        <figcaption>The least-privilege construct your pilot builds (demo tenant, fictional identities): user-scoped allow rules to named hosts and service/port pairs, hit counts accumulating as evidence, and everything unlisted falling to the implicit block. Your supplier cohort should occupy two or three rows of a rulebase like this — no more.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase with hit counts, including a rule constraining named contractor users to the browser access portal only" loading="lazy">
+        <figcaption>The unmanaged-device half of the story (demo tenant, fictional identities): rule 2 pins named contractor users to the browser access portal as their only way in — the same pattern your portal-based cohort lands in, one policy plane away from the WAN rules above.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>Contractor can't connect at all</h4><p>Check the identity chain before any firewall rule: is the user visible under <span class="path">Access → Users</span> and inside the synced group? SCIM cycles are near real time but not instant — trigger on-demand provisioning from the IdP rather than re-editing Cato policy.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Blocked from their own named app</h4><p>The discovery rule was disabled before the named rules covered every service the app really uses (a second port, an auth redirect). Re-read the week-one discovery events for that destination and fold the missing service/port into the named rule — never widen back to Any.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>The block happened but no event shows it</h4><p>Tracking is per rule: a rule with Events unticked matches silently. Confirm every pilot rule — and especially the block behaviour you are evidencing — has tracking set to generate Events, then re-run the attempted-access test.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧟</div><div><h4>A disabled user comes back to life</h4><p>You disabled the contractor in Cato directly and Entra ID re-enabled them at the next sync cycle — the IdP overrides local state. Deprovision at the IdP, always; Okta, by contrast, preserves the disabled state. This is exactly why the leaver test disables at the IdP.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Legitimate contractor refused at connect</h4><p>The Client Connectivity rule's country scope is stricter than the supplier's travel reality. Check for a Client Connectivity block event with the user's source country, then widen the rule's country list deliberately — an agreed change, not a quiet edit.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>Portal user sees an empty portal</h4><p>Published applications follow group entitlement: either the app was never added as an Internal Application in the Applications Portal, or the contractor is not in the entitled group. Fix the publication or the membership — resist the temptation to grant individually.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Portal sessions through RBI are view-only.</strong> Isolation means no
+          downloads, no copy, no direct interaction with the private network — superb for a support
+          console, wrong for a supplier who must move files. Choose that cohort's on-ramp
+          accordingly at the workshop.</li>
+          <li><strong>The monitor week is an Allow rule.</strong> The WAN Firewall's monitor-first
+          discipline is an Allow-with-Events discovery rule, so for week one the supplier can still
+          roam. The customer accepts that week knowingly — it is what makes the week-two block
+          evidence honest.</li>
+          <li><strong>The sync window is measured, not promised.</strong> SCIM reflects IdP changes
+          in near real time, but the leaver criterion records the actual gap between IdP disable and
+          refused connection. Quote the number you measured, never "instant".</li>
+          <li><strong>A big delta in discovery week is a finding, not scope creep.</strong> If the
+          supplier turns out to touch twice what the contract says, that lands in the wrap-up as
+          evidence of today's over-exposure — the pilot list itself changes only by agreement.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the pilot WAN rules rather than deleting them —
+        their hit counts and events are the evidence record; remove the Client Connectivity rule;
+        unpublish the portal applications; and de-scope the <em>Supplier-Pilot</em> group from SCIM
+        only if it was created for the PoV. Re-enable the supplier's legacy VPN account only if the
+        customer insists — with a fortnight of attributed allow-and-block evidence on the table
+        beside a VPN log that says "an IP connected", few do. If the decision is a yes, the pilot
+        rules are the production rollout's first supplier, already live.
+      </p>
+    </section>
+
     <section id="talk-track" class="reveal">
       <div class="section-kicker">Talk track</div>
       <h2>Narrative for the solution slide</h2>

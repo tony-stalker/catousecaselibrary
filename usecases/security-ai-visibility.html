@@ -418,6 +418,202 @@
       </p>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to run it in the customer's tenant</h2>
+      <p>
+        This is the most natural PoV in the library, because the use case <em>is</em> a structured
+        assessment: the engagement section above is the customer-facing shape, and this runbook is the
+        SE's execution copy — what to configure, what evidence to bank each week, and what goes wrong.
+        The frame is <a href="management-pov-framework.html">Running a Cato PoV</a> with the scope
+        pre-packaged: four weeks on a fixed clock, monitor mode throughout, a defined report
+        deliverable. The success criteria are therefore the assessment's own weekly deliverables —
+        agree the table at kickoff, then let the calendar drive.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Week</th><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>The assessment can see prompt level — TLS inspection live for the assessment cohort, prompt storage approved, before the clock starts</td>
+              <td>TLSi policy covering the cohort beside the first classified AI interaction</td>
+              <td>Security → TLS Inspection · AI Security → Session Explorer</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Discovery is live and passive — the tenant is classifying the cohort's GenAI traffic with zero user impact</td>
+              <td>First inventory cut: dated Discovery screenshot — apps, risk ratings, interceptors</td>
+              <td>AI Security → Discovery</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Usage is attributed — named users, per-app interaction counts, embedded AI features separated from standalone tools</td>
+              <td>Interim readout pack: dated Overview and AI Users views</td>
+              <td>AI Security → Overview · AI Security → AI Users</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Data exposure is evidenced without enforcement — what users paste and upload into GenAI, as monitor-mode matches only</td>
+              <td>Data-protection findings plus the draft GenAI Report</td>
+              <td>Monitor → Data Protection Dashboard · Home → Reports</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Board-ready report delivered and a next step agreed with a named owner</td>
+              <td>Final GenAI Report PDF beside wrap-up minutes naming the next journey stage</td>
+              <td>Home → Reports</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Week 0 — prerequisites, agreed before the clock starts</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The offer, stated exactly.</strong> No-cost to customers for a limited time,
+          SE-led — as the draft deck frames it and no more. The deck is marked DRAFT and its
+          prerequisites list ends in "others TBD": validate the current terms with your regional SE
+          lead before committing dates, and do not embellish the offer.</li>
+          <li><strong>TLS inspection staged for the assessment cohort</strong> — the User Interaction
+          Policy inspects AI traffic on the back of account-level TLSi, so without it there is no
+          prompt-level story. Stage it per <a href="security-tls-inspection.html">TLS Inspection:
+          Staged Rollout Playbook</a>, scoped to the cohort.</li>
+          <li><strong>Licences</strong> — AI Security for End Users is a separate per-user licence;
+          the 30-day trial is arranged with your Cato SE and CSM and <em>is</em> the assessment
+          clock, so activate it at kickoff, not before. CASB/DLP enabled (may itself need a trial).</li>
+          <li><strong>Prompt storage authorised in writing</strong> before week 1, with the custom
+          RBAC role from the setup section above so only named reviewers hold View permission on
+          sensitive content.</li>
+          <li><strong>Scope on paper</strong> — which users or groups form the cohort, AI application
+          scope cast wide (shadow discovery is the point), and the two weekly syncs plus the wrap-up
+          booked at the kickoff call.</li>
+        </ul>
+      </div>
+
+      <h3>Week-by-week execution</h3>
+      <ol class="steps">
+        <li>
+          <h4>Week 0 — stage the plumbing before kickoff</h4>
+          <p><span class="path">Security → TLS Inspection</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Everything in the callout above happens before the deployment call, because each item
+          gates the timeline: TLSi approval sits with whoever owns privacy, the trial licence sits
+          with the SE and CSM, and the prompt-storage sign-off sits with legal. Close week 0 by
+          confirming a cohort user's session is being inspected — a single classified AI interaction
+          in the tenant is the proof the four weeks can start.</p>
+        </li>
+        <li>
+          <h4>Week 1 — switch on passive discovery, take the first inventory cut</h4>
+          <p><span class="path">AI Security → User Interaction Policy</span> <span class="path">AI Security → Discovery</span></p>
+          <p>After the 30-minute deployment call, create one User Interaction Policy rule: source =
+          the assessment cohort, applications = Any, action <strong>Monitor</strong> — the prompt
+          reaches the AI vendor and the interaction is recorded, nothing is touched
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          Shadow AI Discovery itself is observational by design — it identifies AI services from
+          application signatures, domains and behavioural patterns, with no vendor API integrations
+          or extra agents
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-shadow-ai-discovery" target="_blank" rel="noopener">What is Shadow AI Discovery</a>).
+          Where agreed, push the browser extension via Intune/MDM for browser-level coverage
+          (<a href="https://knowledge.catonetworks.com/docs/what-is-the-ai-security-browser-plugin" target="_blank" rel="noopener">AI Security Browser Plugin</a>).
+          Then leave it alone: discovery runs passively all week. Close the week with the first
+          inventory cut — a dated Discovery screenshot showing apps found, risk ratings and which
+          interceptor saw each — into the evidence doc as item zero.</p>
+          <!-- capture-wanted: «CMA AI Security → User Interaction Policy — a monitor-mode rule scoped to an assessment cohort» -->
+        </li>
+        <li>
+          <h4>Week 2 — usage deep-dive and the interim readout</h4>
+          <p><span class="path">AI Security → Overview</span> <span class="path">AI Security → AI Users</span></p>
+          <p>Now the numbers mean something. Open the first sync on Overview — total AI apps, AI
+          users, interactions and adoption rate, with the violation-rate and topics-popularity widgets
+          setting the risk frame
+          (<a href="https://knowledge.catonetworks.com/docs/ai-security-for-end-users-overview-dashboard" target="_blank" rel="noopener">AI Security Overview Dashboard</a>).
+          Walk Discovery per app — interaction counts, risk ratings, categories — then put names
+          against the numbers on AI Users, sorting by violations and comparing departments
+          (<a href="https://knowledge.catonetworks.com/docs/monitoring-via-the-ai-users-page" target="_blank" rel="noopener">Monitoring via the AI Users Page</a>):
+          "Priya has used four GenAI tools this fortnight, two of them unsanctioned" is the sentence
+          that starts the acceptable-use conversation. Separate <strong>embedded AI</strong> in the
+          readout — discovery identifies AI capabilities inside broader SaaS platforms (Copilot in
+          M365, Google Workspace features) as well as standalone tools, and embedded volume will
+          otherwise drown the shadow findings. The three CMA screens embedded in
+          <a href="#evidence">Deliverables</a> above are exactly this readout.</p>
+        </li>
+        <li>
+          <h4>Week 3 — the data-protection lens, monitor-mode evidence only</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span> <span class="path">AI Security → Session Explorer</span></p>
+          <p>Shift from <em>who uses what</em> to <em>what leaves</em>: DLP findings against the GenAI
+          application category show what the cohort pastes and uploads, and Session Explorer puts
+          per-prompt detail behind each match — application, detected topic and which profile
+          triggered, with raw prompts visible only to the sensitive-content RBAC role
+          (<a href="https://knowledge.catonetworks.com/docs/monitoring-ai-security-for-end-users" target="_blank" rel="noopener">Monitoring AI Security for End Users</a>).
+          <strong>Nothing is enforced in an assessment.</strong> Every finding is a monitor-mode
+          match — "this rule <em>would have</em> fired" — which keeps the no-disruption promise
+          intact; where the draft deck floats enforcement-mode testing on a test group, record the
+          appetite and route it to the follow-on pilot instead. Close the week by assembling the
+          draft GenAI Report: <span class="path">Home → Reports</span>, a one-time report over the
+          assessment window, filtered to the cohort's sites and users
+          (<a href="https://knowledge.catonetworks.com/docs/generating-a-genai-report" target="_blank" rel="noopener">Generating GenAI Reports</a>).</p>
+          <!-- capture-wanted: «CMA AI Security → Session Explorer — monitor-mode detections on GenAI prompts, sensitive content masked» -->
+          <!-- capture-wanted: «CMA Home → Reports — GenAI Report generation scoped to an assessment cohort» -->
+        </li>
+        <li>
+          <h4>Week 4 — final report, then route the next step</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>Generate the final GenAI Report PDF over the full window. The two report pages embedded
+          in <a href="#evidence">Deliverables</a> above are the artefact templates: the usage page is
+          the week-2 story (categories, risky unsanctioned apps, activity over time) and the
+          data-protection page is the week-3 story (actions, data-profile violations, per-rule hits) —
+          the customer's own tenant produces the same two pages with their numbers. At the wrap-up,
+          read findings against the criteria table row by row, then map the gap to the
+          <a href="#journey">five-stage journey</a>. For most accounts the finding is stage 2 or 3 —
+          usage without control — and the recommended next step is the enforcement pilot on
+          <a href="ai-genai-security.html#pov">GenAI Security for End Users</a>, whose PoV runbook
+          stages the same User Interaction Policy from monitor to block on a test group. The
+          assessment's monitor-mode evidence is that pilot's baseline, already gathered.</p>
+        </li>
+      </ol>
+
+      <h3>Troubleshooting the assessment</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🌵</div><div><h4>A sparse AI-traffic week</h4><p>A small cohort can genuinely produce little GenAI traffic in seven days. Before concluding "we have no shadow AI", check the cohort size and the application scope (cast wide?), confirm TLSi is actually inspecting the cohort, and widen the cohort or let discovery run another week — an empty inventory is only a finding once the pipes are proven.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>TLSi-scope blind spots</h4><p>An app you know is in use never appears. Almost always a TLSi gap: a bypass rule or excluded category covering it, or cohort devices without the Cato certificate. Review exclusions against the cohort — and state in the report that the numbers describe <em>inspected</em> traffic only, so the blind spot is documented rather than hidden.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧬</div><div><h4>Embedded-AI attribution</h4><p>Copilot inside M365 can post interaction counts that dwarf every standalone tool (21K+ in the demo Discovery screen) — sanctioned, embedded volume that masks the shadow findings if left in one bucket. Separate embedded AI features from standalone apps in every readout, and headline the shadow rows.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>Dashboards empty after kickoff</h4><p>Usually sequencing, not signal: the trial licence has not landed, or TLSi went live after the cohort's sessions started. Confirm the licence with your SE and CSM, then watch Session Explorer for the first classified interaction — one event proves the chain end to end.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Reviewers cannot read prompts</h4><p>By design: raw prompt content is gated behind the View-sensitive-content permission on the custom RBAC role from setup. If a reviewer needs it, add them to the role deliberately — do not loosen the default, because that role is what backs the privacy agreement signed in week 0.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Report numbers don't match the syncs</h4><p>The GenAI Report runs account-wide by default; the dashboards you presented were filtered to the cohort. Filter the report to the cohort's sites and users and re-run over the same window — the wrap-up must not open with an arithmetic dispute.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Assessment ≠ enforcement.</strong> Monitor mode throughout is what makes the
+          no-disruption claim true. If the customer wants to see blocking, that is the follow-on
+          enforcement pilot — demonstrating a block mid-assessment converts a visibility engagement
+          into a change-managed one.</li>
+          <li><strong>The draft-deck caveat stays authoritative.</strong> The offer is "no cost
+          (limited time)" exactly as the deck states, the deck is DRAFT and its prerequisites end in
+          TBD — confirm terms with the regional SE lead before quoting them to a customer.</li>
+          <li><strong>The 30-day trial is the clock.</strong> Licence expiry ends visibility: book
+          the wrap-up inside the window and bank every export and the final PDF before it lapses.</li>
+          <li><strong>Prompt privacy is a contract, not a setting.</strong> Storage was approved up
+          front, the RBAC role limits who reads content, and any prompt examples in the report go in
+          anonymised.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the monitor-mode User Interaction Policy rule
+        rather than deleting it — it is the evidence record and, on a yes, the enforcement pilot's
+        first rule; remove the browser extension via Intune if the customer is not continuing; leave
+        TLSi as the customer's standing decision rather than assessment debris; and hand over the
+        final report with the recommendation attached. If the decision is to proceed, nothing is
+        rebuilt — the pilot on <a href="ai-genai-security.html#pov">GenAI Security for End Users</a>
+        starts from the policy and baseline this assessment leaves behind.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

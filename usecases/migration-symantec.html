@@ -406,6 +406,224 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        A Symantec estate is too old and too wide to PoV whole — so pilot the thing this page says
+        makes the migration safe: the two steering planes running side by side. One pilot cohort
+        comes off its PAC and steers transparently through the Cato Client; every other cohort
+        stays exactly where it is, PAC-steered to the policy-frozen ProxySG/WSS estate. On that
+        cohort's real traffic the pilot proves a <strong>rationalised web-policy slice at
+        parity</strong> — the reset the <a href="migration-symantec-policy.html">policy page</a>
+        prescribes, not a port of twenty years of CPL — plus a CloudSOC-to-Cato CASB comparison
+        and staged TLS inspection with no SSL Visibility appliance in the path. Run it under the
+        discipline of the <a href="management-pov-framework.html">PoV framework</a>: agree the
+        success criteria below <em>before</em> anything is configured, and book the decision
+        meeting the same day.
+      </p>
+
+      <h3>Success criteria</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Every row's artefact goes into a dated evidence pack, exported as it lands — the wrap-up
+        reads the pack, not memories.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Every pilot user steers transparently — PAC gone, WSS Agent removed, Cato Client connected, and each one identified by name at the PoP</td>
+              <td>Connected cohort list with device, Client version and PoP</td>
+              <td><span class="path">Access → Users</span> · <span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td>Web-policy parity on the rationalised slice — the agreed test list of categories, coach pages and exceptions returns the intended verdicts from the reset rulebase, without any CPL being ported</td>
+              <td>Cato policy-hit events next to the matching ProxySG/WSS access-log lines, verdict by verdict</td>
+              <td><span class="path">Monitor → Events</span> + exported proxy access logs</td>
+            </tr>
+            <tr>
+              <td>CASB comparison — Cato app discovery on the pilot's SaaS traffic matches or exceeds the CloudSOC Audit picture for the same users, with no SpanVA collector, and one recreated activity policy returns the CloudSOC verdict</td>
+              <td>App inventory export with risk scores plus App Control events attributed to user, app and activity</td>
+              <td><span class="path">Monitor → Cloud Apps Dashboard</span> · <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td>TLS inspection staged without the SSL Visibility appliance — certificate deployed, cohort-scoped Inspect rule live, pinned-app bypasses holding, no user-visible breakage</td>
+              <td>TLSi policy revision plus a week of TLS events with zero unresolved certificate incidents</td>
+              <td><span class="path">Security → TLS Inspection</span> · <span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td>Co-existence intact and no degradation — PAC cohorts work through Symantec untouched all pilot, and the pilot cohort's experience scores are no worse than the proxy-era baseline</td>
+              <td>Experience Monitoring baseline week vs pilot week; zero non-cohort incidents in the helpdesk queue</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before anything is configured</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Success criteria signed off and the decision meeting booked, per the <a href="management-pov-framework.html">PoV framework</a>.</li>
+          <li>Trial licences confirmed for every capability under test — CASB and TLS inspection are both in scope here.</li>
+          <li>IdP integration connected, with a dedicated pilot group provisioned over SCIM and visibly syncing before any rule references it.</li>
+          <li>TLS inspection staged first — the Cato CA certificate rolled to pilot devices ahead of need, bypasses in, then inspection (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Scope is one client-based cohort: 10–25 users across two or three archetypes (an office group behind a socket-connected branch plus some roamers currently on the WSS Agent). Site cutovers, WCCP unwinding and DLP conversion belong to the migration programme above, not this pilot.</li>
+          <li>The rest of the estate stays PAC-steered to ProxySG/WSS with <strong>policy edits frozen</strong> for the pilot's duration — the frozen state is both the parity reference and the rollback target.</li>
+          <li>Reporter hit data and access logs for the pilot cohort exported in week one — on-prem Reporter is EOL (announced 1 Mar 2025) and this evidence base is a wasting asset whatever the pilot decides.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Capture the baseline while both planes still exist</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Monitor → Experience Monitoring</span></p>
+          <p>Provision the pilot IdP group and confirm SCIM has synced it. Export the cohort's
+          ProxySG/WSS access-log lines and Reporter category reports — the parity reference — and
+          run a baseline week of
+          <a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a>
+          (Remote Users tab: per-user score, connected PoP, average TTFB) while the cohort is
+          still proxy-steered. Inventory the cohort's steering surface — PAC/GPO objects,
+          hardcoded proxy settings in browsers, Java, npm/pip and OS images, and which devices run
+          the WSS Agent or SEP WTR. <strong>That inventory is the rollback lever — write it down
+          before touching it.</strong></p>
+        </li>
+        <li>
+          <h4>Build the pilot's web-policy slice — a reset, not a port</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Start from Cato's recommended block baseline, then add only the rules the cohort's
+          hit data proves it needs: the live category blocks, coach pages as Prompt, and the
+          documented exceptions — every rule scoped to the pilot group as source, every rule with
+          <strong>Track = Event</strong>, because events are the evidence. The
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Internet Firewall</a>
+          ends in an implicit any-any allow, so anything the slice doesn't mention passes
+          untouched. Arm Block only for the agreed test list; everything else watches in monitor
+          until its events prove it. No CPL crosses — construct-by-construct reasoning lives on
+          <a href="migration-symantec-policy.html">Symantec Policy Migration</a>, and the pilot
+          exists to prove the reset is safe.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection for the cohort only — the SSLV replacement</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Push the Cato root certificate to pilot devices through the same GPO/MDM channel
+          that manages the fleet — the KB is blunt that
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">you must install the Cato certificate as a root certificate</a>
+          on end-user devices, and that certificate-pinned applications must be bypass rules
+          (Android, Linux and unidentified operating systems are bypassed automatically). Then add
+          an Inspect rule scoped to the pilot group, with QUIC blocked so browsers fall back to
+          inspectable TLS. Rebuild the bypass list from the ProxySG SSL-intercept and SSLV
+          exemption lists <em>entry by entry</em> — verify each against current app behaviour,
+          never copy the lists blind. This step is the whole SSL Visibility story: decryption
+          becomes PoP policy, and the appliance gets no successor.</p>
+        </li>
+        <li>
+          <h4>Arm the CloudSOC comparison — discovery first, one policy at parity</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → CASB</span></p>
+          <p>Shadow-IT discovery needs no build: the
+          <a href="https://knowledge.catonetworks.com/docs/using-the-applications-dashboard" target="_blank" rel="noopener">application dashboards</a>
+          inventory the pilot's SaaS traffic — sanctioned and unsanctioned apps, risk scores, top
+          users — at the PoP, with no SpanVA collector deployed. Alongside it, pick one or two
+          CloudSOC policies the cohort actually trips (a granular activity control, say uploads
+          to unsanctioned storage, and a corporate-tenant restriction) and recreate them as
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-application-control-policy" target="_blank" rel="noopener">Application Control rules</a>
+          in monitor, following the KB's own advice to run new rules with events first and review
+          before enforcing. The comparison artefact is CloudSOC's Audit view next to Cato's — same
+          users, same fortnight.</p>
+        </li>
+        <li>
+          <h4>Sweep the egress-pinned SaaS before the swap</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>Any pilot-relevant SaaS tenant restriction or partner allowlist keyed to Cloud SWG's
+          published egress ranges — or to appliance egress IPs — locks the cohort out the moment
+          its traffic egresses from a Cato PoP. Sweep them now, and where a fixed source IP is
+          required, bind a
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">Cato allocated IP</a>
+          to a network rule's NAT settings so the cohort presents a stable address. Do this before
+          the steering swap, not after the first lockout ticket.</p>
+        </li>
+        <li>
+          <h4>Swap the cohort's steering plane — PAC off, Client on</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>One change window per cohort, three moves in order: neutralise the PAC and
+          explicit-proxy settings via GPO, uninstall the WSS Agent/SEP WTR — never run it
+          alongside the Cato Client — then enable the
+          <a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">GPO/MDM-deployed Cato Client</a>
+          with an
+          <a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Always-On rule</a>
+          scoped to the pilot group, so the cohort cannot quietly drift back to the proxy path.
+          Every other cohort's PAC, GPO and agent state is untouched — that is the dual-plane
+          co-existence this page's diagram describes, running in miniature.</p>
+        </li>
+        <li>
+          <h4>Run the parity fortnight and build the evidence pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Walk the agreed test list with a cohort user: blocked categories, a coach page
+          returned as Prompt, the recreated CASB activity, a pinned app passing through its
+          bypass. Filter Events to the pilot rules, confirm each verdict is attributed to the
+          named user and rule, and export the filtered view as a dated CSV per criterion
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">one export carries up to 250,000 events</a>).
+          Pair each Cato event with its matching proxy access-log line, put the app-inventory
+          export next to CloudSOC Audit, and close the pack with the pilot week's Experience
+          Monitoring scores against the baseline.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase: thirteen ordered rules with user- and device-scoped sources, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>The rationalised slice, live: an ordered Internet Firewall rulebase where Block for Risky Categories (199.1K hits) and Prompt (227K hits — the coach page reborn) carry their own hit evidence. For a cohort that arrived from order-dependent CPL layers, the hit bars are Reporter's role recast — every rule earns its keep on events, not archaeology.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato TLS Inspection policy with bypass rules for sensitive categories, pinned applications and platforms, followed by phased Inspect rules scoped to test networks and a pilot user group" loading="lazy">
+        <figcaption>The SSL Visibility appliance recast as policy: bypasses first — sensitive categories, pinned apps, device platforms — then phased Inspect rules scoped to named groups. The cohort-scoped Inspect rule from step 3 slots in exactly here, and the bypass rows are where the verified ProxySG/SSLV exemptions land.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-app-data-inline-policy.png" alt="Cato Application Control policy with granular app rules: tenant restrictions on Microsoft and OneDrive logins, upload monitoring for online storage apps above a risk threshold, and activity-level block and monitor actions" loading="lazy">
+        <figcaption>Where the CloudSOC intent lands: activity-level rules — personal-tenant OneDrive blocked, external Microsoft logins monitored, storage apps gated by risk score — in the same rulebase as the web policy. For the pilot, one or two of these rows in monitor are the Securlet-and-inline comparison, with every hit an event attributed to a named cohort user.</figcaption>
+      </figure>
+      <!-- capture-wanted: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact -->
+      <!-- capture-wanted: Monitor → Events filtered to pilot Internet-firewall rules, showing Block and Prompt verdicts attributed to a named pilot user -->
+      <!-- capture-wanted: Access → Client Connectivity Policy / Always-On rule scoped to a pilot user group -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Proxy remnants after the swap</h4><p>A browser, Java runtime, npm/pip config or WPAD lookup still pointing at the proxy sends traffic to a policy-frozen box — or silently around Cato. The step-1 steering inventory is the checklist: clear PAC and proxy-enforcement settings in the same change as the agent swap, then verify per-application, not just per-browser.</p></div></div>
+        <div class="benefit"><div class="b-icon">🥊</div><div><h4>WSS Agent still present</h4><p>Broadcom's own KBs document WSS Agent conflicts with third-party tunnel clients. If a swapped device still shows the agent connected, the swap didn't complete — finish the removal before reading any parity events, and script the uninstall so it can't be half-done.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>Pinned-app breakage under TLSi</h4><p>Apps that ProxySG or the SSLV quietly exempted start failing the moment Cato inspects them. Certificate-pinned applications must be bypass rules — rebuild the list from observed TLSi events; the old exemption lists are a clue, not a config.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Cohort rules never fire</h4><p>SCIM sync lag — or a user landing unidentified at the PoP — means group-scoped rules silently never match, which an IWA estate used to proxy challenges will not expect. Verify membership in Access → Users and prove one event attributes to a named pilot user before the parity fortnight starts.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>SaaS egress-IP lockout</h4><p>Conditional access keyed to Cloud SWG's published ranges locks pilot users out the moment egress moves to the PoP. If step 5 missed a tenant, the symptom is sudden MFA loops or flat denials for cohort users only — repoint the allowlist to the Cato allocated IP and retest.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗂️</div><div><h4>Category verdicts disagree</h4><p>Symantec's category taxonomy and Cato's do not line up one-to-one, so some test-list URLs land in different categories. Judge the agreed list verdict by verdict against intent — a mismatch is mapping feedback for the slice, not a parity failure, and monitor-mode events surface it before any user does.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; the exit plan</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say these before the customer finds them</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Parity means intent, not identical counts.</strong> Two category taxonomies, two event models — judge the agreed test list verdict by verdict, never by comparing event volumes.</li>
+          <li><strong>DLP stays out of the pilot.</strong> Symantec DLP remains authoritative throughout — the hybrid design and the monitor-mode reconciliation against the Enforce queue are a migration workstream, not a fortnight's evidence. The CASB comparison here is discovery and activity control, not DLP parity.</li>
+          <li><strong>CloudSOC Securlet coverage is app-by-app.</strong> The pilot compares inline discovery and activity verdicts; API-CASB parity for every sanctioned app is validated in the programme's design phase, per the mapping table above.</li>
+          <li><strong>Evidence windows.</strong> An Events query spans at most 31 days — export weekly as the framework prescribes, rather than reconstructing at wrap-up.</li>
+          <li><strong>Reporter is a wasting asset.</strong> The hit data that justified the rationalised slice — and any history HR, compliance or legal may need — must be exported whatever the pilot decides. Week one, not decommissioning day.</li>
+          <li><strong>Licence boundaries.</strong> The CASB criterion needs the CASB module and TLS inspection live for the cohort; without TLSi, activity-level verdicts cannot reach parity.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>If the pilot passes</strong>, nothing is thrown away: the rationalised slice
+        becomes wave one's production policy, the pilot group simply widens cohort by cohort, and
+        the programme proceeds up this page's five phases. <strong>If it must unwind</strong>,
+        rollback is the config event this page promises: reinstate the PAC/GPO objects from the
+        step-1 inventory, reinstall the WSS Agent where roamers need it, relax the Always-On rule
+        for the group — the cohort returns to the policy-frozen Symantec estate at the next policy
+        refresh, which never stopped being licensed, frozen and authoritative for everyone else.
+        Set the pilot's Internet Firewall, TLSi and CASB rules back to monitor and disable rather
+        than delete — the slice remains an asset for the real migration — and leave the root
+        certificate in place or remove it with the same GPO/MDM tooling; it is inert either way.
+        The estate lands exactly where it started: one steering plane, PAC-steered,
+        Symantec-enforced — and a decision de-risked.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>
