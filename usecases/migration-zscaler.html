@@ -393,6 +393,201 @@
       </p>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        A Zscaler displacement is too big to PoV whole — so don't try. The pilot that actually
+        de-risks the decision is a bounded co-existence exercise: one cohort of users swapped from
+        ZCC to the Cato Client, the converted internet policy proven at parity on their real
+        traffic, ZIA left authoritative for everyone else — and a clean way back if anything
+        surprises. It is phases 2–3 of the
+        <a href="migration-journey-zscaler.html">animated journey</a> in miniature, run under the
+        discipline of the <a href="management-pov-framework.html">PoV framework</a>: agree the
+        success criteria below with the customer <em>before</em> anything is configured, and book
+        the decision meeting the same day.
+      </p>
+
+      <h3>Success criteria</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">
+        Every row's artefact goes into a dated evidence pack, exported as it lands — the wrap-up
+        reads the pack, not memories.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Every pilot user connects through the Cato Client with ZCC removed, and is identified by name — not as an unidentified user</td>
+              <td>Connected cohort list with device, Client version and PoP</td>
+              <td><span class="path">Access → Users</span> · <span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td>SWG policy parity — the agreed test list of blocked and prompted categories returns the same verdicts on Cato as on ZIA</td>
+              <td>Side-by-side policy-hit events: Cato event export next to the matching ZIA log lines</td>
+              <td><span class="path">Monitor → Events</span> (Internet firewall) + exported ZIA logs</td>
+            </tr>
+            <tr>
+              <td>CASB verdict parity — personal-tenant upload blocked, corporate tenant allowed, matching the ZIA Cloud App Control outcome</td>
+              <td>App Control events attributed to user, app and activity</td>
+              <td><span class="path">Monitor → Events</span> · <span class="path">Monitor → Cloud Apps Dashboard</span></td>
+            </tr>
+            <tr>
+              <td>Co-existence intact — users outside the cohort keep working through ZIA for the whole pilot, including any interim IPsec path</td>
+              <td>Interim tunnel up throughout; zero non-cohort incidents logged</td>
+              <td><span class="path">Network → Sites</span> · <span class="path">Monitor → Events</span> (Connectivity)</td>
+            </tr>
+            <tr>
+              <td>No user-reported degradation — cohort experience scores no worse than the ZCC-era baseline, no cohort-raised tickets</td>
+              <td>Experience Monitoring baseline week vs pilot week, plus the helpdesk queue</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before anything is configured</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Success criteria signed off and the decision meeting booked, per the <a href="management-pov-framework.html">PoV framework</a>.</li>
+          <li>Trial licences confirmed for every capability under test — CASB and TLS inspection if verdict parity is in scope.</li>
+          <li>IdP integration connected, with a dedicated pilot group provisioned over SCIM and visibly syncing before any rule references it.</li>
+          <li>TLS inspection staged first where content verdicts matter — certificate out, bypasses in, then inspection (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Scope is the client-based cohort: 10–25 users across two or three archetypes (e.g. an office cohort behind a socket-connected branch, plus remote workers). ZPA / WAN policy and site cutovers are the migration programme above, not this pilot.</li>
+          <li>ZIA stays authoritative for everyone outside the cohort — nothing in this runbook touches the wider estate's forwarding.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pick the cohort and capture the baseline</h4>
+          <p><span class="path">Monitor → Experience Monitoring</span> <span class="path">Access → Users</span></p>
+          <p>The cohort starts in the dual-agent state this page describes — Cato Client for WAN,
+          ZCC still handling internet. Provision the pilot IdP group, confirm SCIM has synced it,
+          and run a baseline week: <a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a> scores for the cohort (Remote Users tab —
+          score, apps, PoP, TTFB per user) alongside an export of the same users' ZIA logs. That
+          export is the parity reference everything is judged against.</p>
+        </li>
+        <li>
+          <h4>Translate the pilot-scope internet policy — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Recreate only the ZIA URL-filtering and firewall rules the cohort actually hits,
+          scoped to the pilot group as source: Block stays Block, Caution becomes Prompt, and
+          <strong>Track = Event on every rule</strong> — events are the evidence. Cato's
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Internet
+          firewall</a> ends in an implicit any-any allow, the same default posture as ZIA, so
+          unmatched traffic behaves identically. Arm blocks only for the agreed test list;
+          everything else runs in monitor until its events prove it. Full construct-by-construct
+          mapping: <a href="migration-zscaler-policy.html">Zscaler Policy Migration</a>.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection for the cohort only</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Deploy the Cato root certificate to cohort devices through GPO/MDM, then add an
+          Inspect rule scoped to the pilot group. Rebuild bypasses deliberately —
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">certificate-pinned
+          applications must be bypass rules</a>, and Cato bypasses Android, Linux and unidentified
+          operating systems automatically — rather than porting the ZIA exemption list wholesale.
+          Without this step, CASB activity and content verdicts cannot reach parity.</p>
+        </li>
+        <li>
+          <h4>Recreate the CASB parity rules</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p>Two rules cover the criterion: a tenant restriction pinning corporate SaaS to the
+          corporate tenant, and a granular block on uploads to personal instances — both in
+          monitor first, promoted for the cohort once the events line up with what ZIA's Cloud
+          App Control was deciding for the same users.</p>
+        </li>
+        <li>
+          <h4>Keep ZIA reachable where the transition needs it</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Network → IP Allocation</span></p>
+          <p>If the estate is running this page's first interim architecture — internet bridged
+          from the Cato PoP to ZIA — configure ZIA as an
+          <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">IPsec IKEv2 site</a>:
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">Cato-allocated IPs</a> for
+          the primary and secondary tunnels, a PSK of up to 64 characters, and up to six active
+          tunnels per HA role for the load-balanced pattern described above (AES-GCM ciphers for
+          tunnels above 100 Mbps). Where sites instead keep their existing firewall's GRE/IPsec
+          into ZIA, there is nothing to build here — the pilot rides the architecture the
+          migration already chose.</p>
+        </li>
+        <li>
+          <h4>Swap the cohort's client — ZCC off, Cato full tunnel on</h4>
+          <p><span class="path">Access → Split Tunnel Policy</span></p>
+          <p>Mirror the case study's Phase 3: the cohort <em>swaps</em>, it does not run two SWGs
+          at once. Remove ZCC from pilot devices through the same
+          <a href="https://knowledge.catonetworks.com/docs/distributing-cato-clients-to-devices" target="_blank" rel="noopener">GPO/MDM channel</a> that deployed
+          it — clearing the ZIA PAC / forwarding profile in the same change — then flip the
+          cohort's internet to Cato with a user-group-scoped
+          <a href="https://knowledge.catonetworks.com/docs/split-tunnel-policy" target="_blank" rel="noopener">split-tunnel rule</a>, so the pilot
+          group's default route goes via the PoP while the rest of the estate keeps its ZCC
+          split-tunnel arrangement untouched.</p>
+        </li>
+        <li>
+          <h4>Run the parity week and build the evidence pack</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Walk the agreed test list with a cohort user: blocked categories, prompted
+          categories, personal versus corporate tenant upload. Filter Events to the converted
+          rules, confirm each verdict is attributed to the named user and rule, and export the
+          filtered view as a dated CSV per criterion (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">a single export carries up to 250,000
+          events</a>). Pair each Cato event with its matching ZIA log line; the cohort's
+          pilot-week Experience Monitoring scores against the baseline close the pack.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase: thirteen ordered rules with Block, Allow and Prompt actions, user- and device-scoped sources, and live hit-count bars" loading="lazy">
+        <figcaption>The parity evidence engine: a live Internet firewall rulebase with hit counts against every rule. For the pilot, this is what "same categories blocked" looks like — Block for Risky Categories (199.1K hits) and Prompt for Risky Categories (227K hits, ZIA's Caution translated), each hit an event attributable to a cohort user.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato TLS Inspection policy with bypass rules for sensitive categories, pinned applications and platforms, followed by phased Inspect rules scoped to test networks and a pilot user group" loading="lazy">
+        <figcaption>TLS inspection staged the way the pilot needs it: bypasses first — sensitive categories, pinned apps, device platforms — then Inspect rules scoped to test networks and named groups. The cohort-scoped Inspect rule from step 3 slots into exactly this shape.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Cato Experience Monitoring page, Remote Users tab: account experience score graph and a per-user table with experience chips, connected PoP, flows, usage and average TTFB" loading="lazy">
+        <figcaption>The no-degradation criterion on one screen: Experience Monitoring's Remote Users view with a per-user score, connected PoP and average TTFB. Captured in the baseline week and again in the pilot week, this pair of screenshots is the evidence that the swap cost users nothing.</figcaption>
+      </figure>
+      <!-- capture-wanted: Monitor → Events filtered to converted Internet-firewall rules, showing Block and Prompt hits attributed to a pilot user by name -->
+      <!-- capture-wanted: Network → Sites IPsec IKEv2 site to a third-party SSE cloud with both tunnels up (interim ZIA bridge) -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🥊</div><div><h4>Two agents on one device</h4><p>Co-existence here means ZCC riding inside the Cato tunnel with ZIA doing the web inspection — never two SWGs inspecting the same flow. If a swapped device still shows ZCC connected, the swap didn't complete: finish the removal before reading any parity events, exactly as the case study's sandboxed cohort test did.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>PAC remnants</h4><p>After ZCC removal, a browser or GPO still pushing the ZIA PAC file sends traffic to a dead proxy — or silently around Cato. Check proxy settings on the misbehaving device; remove PAC and proxy-enforcement GPOs in the same change as the agent swap, not afterwards.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>SSL-pinning breakage</h4><p>Apps that ZIA quietly exempted start failing the moment TLSi inspects them. Certificate-pinned applications must be TLS bypass rules on Cato. Rebuild the bypass list deliberately from observed TLSi events — the old ZIA exemption list is a clue, not a config.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>SaaS egress-IP allowlists</h4><p>Tenants conditional-access-pinned to Zscaler egress ranges lock the cohort out the moment egress moves to the Cato PoP. Sweep M365 and other SaaS tenant allowlists before the swap, and add Cato allocated IPs (bound to egress via network-rule NAT) where a fixed source IP is required.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Cohort rules never match</h4><p>SCIM sync lag — or SDP users landing in an unidentified-users bucket, the case study's hardest-won lesson — means group-scoped rules silently never fire. Verify membership in Access → Users and prove one event attributes to a named pilot user before the parity week starts.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌉</div><div><h4>Interim tunnel down</h4><p>IKE parameter or PSK mismatch, NAT-T disabled on the far side, or misaligned traffic selectors are the usual culprits on the ZIA bridge. Work the <a href="https://knowledge.catonetworks.com/docs/troubleshooting-ipsec-connectivity" target="_blank" rel="noopener">KB flow</a>: Connection Status for the parameter snapshot, the timeline connection log for history, then reset the tunnel.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; the exit plan</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say these before the customer finds them</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Parity means intent, not identical counts.</strong> The two category taxonomies do not line up one-to-one — judge the agreed test list verdict by verdict, never by comparing event volumes.</li>
+          <li><strong>Licence boundaries.</strong> CASB verdict parity needs the CASB module and TLS inspection live; DLP parity is a workstream of its own — keep it out of the pilot unless licensed and explicitly scoped.</li>
+          <li><strong>Evidence windows.</strong> An Events query spans at most 31 days — export weekly as the framework prescribes, rather than reconstructing at wrap-up.</li>
+          <li><strong>Baseline honesty.</strong> The baseline is captured in the dual-agent state — compare like-for-like weeks (same users, same working pattern), or the experience comparison proves nothing.</li>
+          <li><strong>ZPA is out of scope.</strong> WAN and private-access policy never changes during this pilot, so there is nothing on that side to unwind.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>If the pilot passes</strong>, nothing is thrown away: the pilot rules are the first
+        production cohort's policy, the pilot group simply widens, and the programme proceeds up
+        this page's phased cutover. <strong>If it must unwind</strong>, revert the cohort in
+        reverse order: redeploy ZCC and its forwarding profile/PAC over GPO/MDM (internet verdicts
+        return to ZIA immediately), restore the cohort's previous split-tunnel arrangement so the
+        Cato Client goes back to WAN-only duty, and set the pilot's Internet firewall and CASB
+        rules back to monitor — disable rather than delete, because the conversion work remains an
+        asset for the real migration. The TLSi root certificate is inert and can stay or go with
+        the same tooling. Tear down the interim IPsec site last, and only if nothing else routes
+        through it — it usually belongs to the wider transition, not the pilot. The cohort lands
+        exactly where it started: dual-agent, ZIA-protected, decision de-risked.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

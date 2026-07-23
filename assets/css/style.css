@@ -327,6 +327,19 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-legend .swatch.standby { border-color: var(--ink-3); border-top-style: dotted; }
 .lane-standby { fill: none; stroke: var(--ink-3); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }
 
+/* ---------- Runbook tabs (Demo / PoV) — bar is injected by app.js when a page
+   has both section#demo and section#pov; no-JS and print stack both sections ---------- */
+.rb-tabs { display: flex; gap: 6px; margin: 0 0 20px; border-bottom: 2px solid var(--hairline); }
+.rb-tab {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: 10px 18px; background: transparent; border: none;
+  border-bottom: 3px solid transparent; color: var(--ink-2); margin-bottom: -2px;
+}
+.rb-tab:hover { color: var(--green-700); }
+.rb-tab.active { color: var(--green-700); border-bottom-color: var(--green-600); }
+.rb-hidden { display: none; }
+@media print { .rb-tabs { display: none !important; } .rb-hidden { display: block; } }
+
 /* ---------- Code blocks ---------- */
 pre.code {
   background: var(--navy-900); color: #d7ede4;

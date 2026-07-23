@@ -375,6 +375,198 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo walks the policy model; the PoV runs stages 1–4 of the playbook above on the
+        customer's own estate, as evidence. The claim under test is precise: <strong>TLS inspection can
+        be enabled on a defined pilot scope, reach a measurable inspection ratio, and break nothing the
+        business runs on</strong> — while producing at least one verdict that only decryption makes
+        possible. Agree the success criteria below <em>before touching the policy</em>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — and note the quiet payoff: if
+        the PoV converts, nothing is thrown away, because the pilot <em>is</em> phase one of the
+        production rollout.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Certificate trusted on every pilot OS</td>
+              <td>On each device type in scope, the padlock on any HTTPS site shows the issuer as Cato Networks plus the serving PoP</td>
+              <td>Dated per-OS screenshots of the certificate check — evidence item zero</td>
+              <td>Pilot devices (browser padlock); cert served from Security → Certificate Management</td>
+            </tr>
+            <tr>
+              <td>Inspection ratio achieved on the pilot</td>
+              <td>The agreed share of the pilot group's inspectable HTTPS traffic is decrypted and inspected</td>
+              <td>TLS Inspection report: inspected vs. bypassed events per OS, top apps and domains by inspection status</td>
+              <td>Home → Reports (TLS Inspection template, filtered to the pilot)</td>
+            </tr>
+            <tr>
+              <td>Zero business-app breakage</td>
+              <td>After the exclusion baseline is in place, the final pilot week logs no TLSi-attributed helpdesk tickets — breakage surfaced as bypass rules, not outages</td>
+              <td>Tagged service-desk ticket query (zero rows) beside the dated bypass register</td>
+              <td>Monitor → Events (bypass hits) · customer service desk</td>
+            </tr>
+            <tr>
+              <td>A content-level verdict inside TLS</td>
+              <td>An EICAR test file over HTTPS downloads freely for an uninspected user and is blocked for a pilot user — or a DLP match fires on a decrypted upload</td>
+              <td>Before/after event pair: no verdict without inspection, block verdict with it</td>
+              <td>Monitor → Events (Anti-malware preset) · Monitor → Data Protection Dashboard</td>
+            </tr>
+            <tr>
+              <td>A documented exclusion list</td>
+              <td>Every bypass rule carries a reason and an owner; every change to the list is evidenced</td>
+              <td>TLS Inspection policy screenshot plus the matching Audit Trail entries</td>
+              <td>Security → TLS Inspection · Administration → Audit Trail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> a pilot cohort of 5–20 named users (IT early-adopters are the classic) and/or a test network at one branch — with every operating system in the cohort listed up front, because certificate deployment and the achievable ratio both depend on it.</li>
+          <li><strong>Endpoint reach:</strong> the customer can push a root certificate to every pilot device — GPO into the Windows <em>Trusted Root Certification Authorities</em> store, Intune/Jamf profiles for macOS (the KB documents the per-OS manual installs; mass distribution is standard endpoint practice, and the Cato Client adds the certificate to the OS store on enrolled devices). Unmanaged and BYOD devices stay out of scope.</li>
+          <li><strong>Privacy sign-off:</strong> whoever owns privacy approves the inspect scope and the sensitive-category bypasses <em>before</em> any traffic is decrypted — not after.</li>
+          <li><strong>A content engine to prove the verdict:</strong> Anti-Malware enabled for the EICAR-over-HTTPS exhibit, or DLP configured if a data-protection match is the agreed proof — see <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a>.</li>
+          <li><strong>Identity:</strong> the pilot group syncing from the IdP, so the Inspect rule can name a group rather than a list of IPs.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Write the exclusion baseline before decrypting anything</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Run the Configuration Wizard and keep its bypass rules — Sensitive Categories (health,
+          finance, government) and Embedded Operating Systems — as the floor of the exclusion baseline.
+          Add any bypasses the customer already knows it needs (a smart-card portal, a pinned finance
+          app), each recorded in the register with a reason and an owner. This baseline is what the
+          "zero breakage tickets" criterion is measured <em>after</em>.</p>
+        </li>
+        <li>
+          <h4>Deploy the root certificate — and verify it per OS</h4>
+          <p><span class="path">Security → Certificate Management</span></p>
+          <p>Choose the trust anchor (default Cato certificate, or a CSR signed by the customer's CA —
+          only one is active at a time), download PEM/DER, and have the endpoint team push it: GPO to
+          the Windows Trusted Root Certification Authorities store, MDM configuration profiles for
+          macOS. Then verify on <em>every</em> OS in the cohort with the documented check — padlock →
+          certificate → issuer reads <strong>Cato Networks + PoP</strong>. Screenshot each one, dated:
+          that set is evidence item zero, and no device joins the inspect scope without it.</p>
+        </li>
+        <li>
+          <h4>Enable inspection with the documented pilot pattern</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Switch on the <strong>Enable TLS Inspection</strong> slider, and build the KB's test
+          pattern: a <strong>Bypass</strong> rule with Source = Any, and above it an
+          <strong>Inspect</strong> rule naming the pilot group, scoped to the wizard's high-confidence
+          category sets. Leave Untrusted Server Certificates on <strong>Allow</strong> (the default) for
+          the pilot. Cato auto-creates Internet Firewall rules blocking QUIC and GQUIC on first
+          enablement — leave them, so browsers fall back to inspectable TCP 443.</p>
+          <pre class="code">01  Bypass   Sensitive Categories            <span class="cmt">— wizard baseline, privacy-approved</span>
+02  Bypass   Embedded Operating Systems      <span class="cmt">— wizard baseline</span>
+03  Bypass   Known pinned / mTLS apps        <span class="cmt">— reason + owner on every row</span>
+04  Inspect  Pilot group → Popular Cloud Apps, Cato-Recommended Domains
+05  Bypass   Any                             <span class="cmt">— everyone else, for now</span>
+<span class="cmt">--  implicit final rule: Inspect Any — the production end-state</span></pre>
+        </li>
+        <li>
+          <h4>Run the baseline week — measure what would break, on your terms</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>There is no dry-run for decryption: the only honest preview of "what would break" is a
+          small cohort actually being inspected while the downstream engines (IPS, Anti-Malware, SWG
+          categories) stay in monitor/track — so incompatibilities surface as events and user reports,
+          never as outages. Pilot users work normally and log anything odd; each confirmed breaker
+          becomes a narrow bypass rule with a reason, which is exactly how the exclusion-list criterion
+          earns its evidence.</p>
+        </li>
+        <li>
+          <h4>Stage the pilot's category expansion</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Once the first wave is quiet, add a category wave to the pilot's Inspect rule — the same
+          discipline the production rollout will use, demonstrated in miniature. If the estate mix
+          matters, show Device conditions (Platforms, Countries, Posture Profiles, Connection Origin)
+          as the staging levers; note posture-profile conditions apply only to Cato Client users.</p>
+        </li>
+        <li>
+          <h4>Land the content-verdict exhibit</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>The KB's own test: an EICAR file fetched over HTTPS downloads successfully <em>until</em>
+          TLS inspection is enabled — "download over HTTPS is only blocked after TLS inspection is
+          enabled". Run it as an uninspected user, then as a pilot user, and show the pair in Events
+          with the Anti-malware preset (see
+          <a href="https://knowledge.catonetworks.com/docs/testing-threat-prevention-for-anti-malware-and-ips" target="_blank" rel="noopener">Testing Threat Prevention</a>).
+          If DLP is the agreed proof instead, trigger a match on a decrypted upload and read it from the
+          Data Protection Dashboard. Either way, this is the artefact no handshake-only gateway can
+          produce.</p>
+        </li>
+        <li>
+          <h4>Generate the inspection-ratio report for the wrap-up</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>Generate the TLS Inspection report template (one-off, or scheduled weekly into the PoV
+          sync): inspected vs. bypassed events per operating system, top applications and domains split
+          by inspection status, and counts per TLS certificate-error type
+          (<a href="https://knowledge.catonetworks.com/docs/generating-a-tls-inspection-report" target="_blank" rel="noopener">Generating TLS Inspection Reports</a>).
+          Filtered to the pilot users, this is the inspection-ratio criterion read straight off a chart
+          — and the certificate-error section doubles as a health check on the cohort.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="CMA TLS Inspection policy showing ordered bypass rules for sensitive categories, embedded operating systems, devices and source networks, followed by phased Inspect rules scoped to test networks and a finance user group, then broad inspect rules for popular cloud apps and business categories" loading="lazy">
+        <figcaption>The end-of-PoV rule base, live in a demo tenant: the exclusion baseline (sensitive categories, platforms, named app and source bypasses) ordered first, then phased Inspect rules scoped to test networks and a pilot user group — the exact shape week one of this runbook builds. Every bypass row on screen is a line in the exclusion register; every Inspect rule carries its Untrusted Server Certificates decision.</figcaption>
+      </figure>
+      <!-- capture-wanted: Home → Reports TLS Inspection report — inspected vs. bypassed charts per OS, filtered to a pilot group -->
+      <!-- capture-wanted: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user -->
+      <!-- capture-wanted: Security → Certificate Management — active certificate with expiry and PEM/DER download options -->
+      <p>
+        The wrap-up needs three exhibits side by side: the report chart showing the pilot's inspected
+        share climbing wave by wave, the before/after EICAR (or DLP) event pair, and the policy
+        screenshot above next to a zero-row ticket query. Together they read as one sentence: we
+        decrypted the agreed scope, we saw inside it, and nobody noticed.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Warnings on every HTTPS site on one device</h4><p>The root certificate is missing from that device's OS store — Trusted Root Certification Authorities on Windows, Keychain on macOS. Re-push, re-run the padlock check, and only then count the device back into the inspect scope and the ratio.</p></div></div>
+        <div class="benefit"><div class="b-icon">🦊</div><div><h4>Browsers fine, but Firefox / git / builds fail</h4><p>Tools with their own trust stores: Firefox before 120 (import via Settings → Certificates → Authorities; 120+ can trust the OS store), Java via <code>keytool</code>, and git, npm, pip, curl per the KB's <a href="https://knowledge.catonetworks.com/docs/configuring-cli-tools-and-dev-frameworks-to-work-with-cato-tls-inspection" target="_blank" rel="noopener">CLI tools guide</a>. Expect this if developers are in the cohort.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>One app fails while the browser works</h4><p>Certificate pinning — the app refuses any issuer but its own, and the KB is unambiguous that pinned apps don't work under inspection. Check Cato's built-in bypass list first, then add a narrow bypass with reason and owner. In a PoV this is register material, not a failure.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Smart-card or client-cert portal rejects login</h4><p>Mutual TLS: the PoP cannot present the user's client certificate, so the handshake fails by design. Documented handling is a tightly scoped bypass rule for that destination — record it, and flag it early if the customer runs card-authenticated government or banking portals.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧮</div><div><h4>Inspection ratio lower than expected</h4><p>Check the denominators before the policy: Android, Linux and unidentified OS are bypassed by uneditable default rules, and disabled QUIC-block rules let UDP 443 slip past uninspected. Define the criterion against the pilot's <em>inspectable</em> traffic, then check bypass rule order — first match wins.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>Browser security error instead of the block page</h4><p>A blocked HTTPS site can only render the branded block page over a trusted Cato certificate — without it the user sees a raw browser warning and files a ticket that reads like breakage. Fix the certificate on that device; the scary warning becomes a clean, explained block.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>"What would break" cannot be previewed from bypass mode:</strong> a bypassed flow tells you nothing about how it behaves decrypted. The measurement instrument <em>is</em> the pilot — inspect a small cohort with engines in monitor, and read the report's certificate-error counts. Set that expectation in the scope workshop.</li>
+          <li><strong>The ratio has a ceiling:</strong> default bypasses (Android, Linux, unknown OS, Cato's built-in app list) and the sensitive-category baseline mean 100% of <em>all</em> traffic is never the target. Write the criterion against the agreed inspect scope, or the wrap-up argues about arithmetic.</li>
+          <li><strong>Untrusted Server Certificates defaults to Allow:</strong> tightening to Prompt or Block is a documented per-rule decision for the production rollout's maturity curve — don't burn pilot goodwill flipping it in week one.</li>
+          <li><strong>Privacy is a stakeholder, not a setting:</strong> the wizard's sensitive-category bypasses are a floor. Works councils and regional privacy law can constrain inspect scope further — that conversation belongs before week one, per the framework page.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> if the PoV converts, exit forwards — the certificate is deployed, the
+        exclusion register is owned, and the pilot Inspect rule simply widens wave by wave per the
+        playbook above; the PoV config <em>is</em> production phase one. If it does not convert, unwind
+        cleanly: switch the Enable TLS Inspection toggle off (the QUIC-block firewall rules and any
+        bypass rules can then be removed), retire the root certificate through the same GPO/MDM job that
+        deployed it, and hand over the exclusion register and TLS Inspection report anyway — they are an
+        audit of the customer's encrypted-traffic estate that outlives the evaluation, with
+        <span class="path">Administration → Audit Trail</span> as the record of everything added and
+        removed.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

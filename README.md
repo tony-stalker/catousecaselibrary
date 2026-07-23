@@ -5,7 +5,9 @@ sales engineers and partners — business objective, how the platform solves it,
 custom diagram, and a step-by-step demo runbook for every scenario. No build step,
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
 Full-text search across every page, light and dark themes (topnav toggle, follows
-system preference), and animated phased-migration journeys.
+system preference), animated phased-migration journeys, and Demo/PoV runbook tabs
+on flagship pages (KB-grounded PoV runbooks: success criteria, config walkthrough,
+troubleshooting, gotchas — see `_extract/POV-GUIDE.md` to author more).
 
 > **Internal SE / partner enablement. This repository must remain PRIVATE** — the
 > source PPTX decks in its history contain customer references. Share externally

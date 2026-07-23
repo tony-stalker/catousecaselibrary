@@ -313,6 +313,182 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The CASB/DLP PoV is deliberately monitor-first: every piece of evidence comes from the
+        customer's own traffic, and nothing blocks until the match report has been reviewed with the
+        people who own the data. Agree the success criteria below <em>before</em> configuring anything
+        — the frame for that conversation is
+        <a href="management-pov-framework.html">Running a Cato PoV</a>.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What is demonstrated</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Shadow-IT inventory delivered</strong></td>
+              <td>Full cloud-app estate discovered from pilot traffic — sanctioned vs unsanctioned counts, risk scores, newly seen apps.</td>
+              <td>Dated dashboard screenshot + app list reviewed against what they <em>thought</em> was in use</td>
+              <td><span class="path">Monitor → Cloud Apps Dashboard</span></td>
+            </tr>
+            <tr>
+              <td><strong>DLP matches their data, in monitor mode</strong></td>
+              <td>A Data Control policy built from <em>their</em> data types fires on real transfers; false-positive rate reviewed and tuned with data owners.</td>
+              <td>DLP events export (CSV) annotated true/false positive per row</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+            <tr>
+              <td><strong>One rule promoted to block</strong></td>
+              <td>A high-confidence rule moves from monitor to block, with an agreed user-notification message shown to the pilot user.</td>
+              <td>Blocked event + screenshot of the Client notification</td>
+              <td><span class="path">Monitor → Data Protection Dashboard</span></td>
+            </tr>
+            <tr>
+              <td><strong>Incident walk-through end to end</strong></td>
+              <td>One violation followed from event to named user to secured evidence — the investigation workflow their team would actually run.</td>
+              <td>Data incident detail: rule, matched data types, user, evidence panel</td>
+              <td><span class="path">Monitor → Events</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences:</strong> Application Control is included in the CASB licence; enabling Data Control rules additionally requires the DLP licence. Confirm both trials before the workshop.</li>
+          <li><strong>TLS inspection staged first.</strong> Application Control rules require TLS inspection to see the traffic they match — without it there are no app activities and no content to scan. Stage it on the pilot group per the
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with scope and exclusions approved by whoever owns privacy.</li>
+          <li><strong>Identity integration connected</strong> and the pilot group syncing — attribution is the difference between "an IP uploaded this" and "Priya uploaded this" (see <a href="access-identity-design.html">Identity Integration Design</a>).</li>
+          <li><strong>Scope:</strong> one pilot site (e.g. a Bristol-style branch socket) plus a pilot group of Cato Client users. Client notifications need Windows Client v5.10+ / macOS v5.7+.</li>
+          <li><strong>Data owners named:</strong> one person per data category (finance, HR, customer PII) who will sit in the match-report review. Without them, tuning stalls.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <p style="font-size:.94rem;color:var(--ink-2)">Menu names below follow the current CMA
+      navigation; older tenants show the same policies under Security → CASB / DLP Configuration.</p>
+      <ol class="steps">
+        <li>
+          <h4>Stage TLS inspection on the pilot group</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Inspect-first is the gating prerequisite: Cato's KB is explicit that Application Control
+          rules (and category rules with activities) require TLS inspection for the traffic they match
+          (<a href="https://knowledge.catonetworks.com/docs/managing-the-application-control-policy" target="_blank" rel="noopener">Managing the Application Control Policy</a>).
+          Scope inspection to the pilot group only, deploy the Cato certificate, and let it run clean
+          for a few days before any CASB evidence is promised.</p>
+        </li>
+        <li>
+          <h4>Deliver the shadow-IT inventory — zero configuration</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p>The first evidence drop needs no policy at all: with pilot traffic flowing, the dashboard
+          builds the app inventory — top applications, sanctioned vs unsanctioned classification, risk
+          scores and risky GenAI apps
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-applications-dashboard" target="_blank" rel="noopener">Using the Applications Dashboard</a>).
+          Mark the apps the customer confirms as sanctioned directly from the dashboard, then export
+          the inventory review as dated evidence. The gap between "apps we expected" and "apps we
+          found" is usually the moment the PoV earns its keep.</p>
+          <!-- capture-wanted: «Cloud Apps / Applications Dashboard on pilot traffic — sanctioned vs unsanctioned counts and App Risk widget» -->
+        </li>
+        <li>
+          <h4>Build DLP profiles from their data types</h4>
+          <p><span class="path">Security → Data Types &amp; Profiles</span></p>
+          <p>Create a Content Profile per data category agreed at the workshop, combining predefined
+          data types from the Data Catalog (hundreds of country-specific types — pick the UK variants,
+          not the whole catalogue) with the predefined ML document classifiers (HR, Finance, Legal,
+          Medical and so on) where the customer's concern is document families rather than patterns
+          (<a href="https://knowledge.catonetworks.com/docs/creating-dlp-content-profiles" target="_blank" rel="noopener">Creating DLP Content Profiles</a>).
+          Note each data type's <strong>Threshold</strong> — the minimum occurrences before it
+          activates — you will tune these in step 5. Cap ambition: a Data Control rule evaluates at
+          most 20 data types across its profiles, and files are scanned up to 50&nbsp;MB.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-dlp-data-catalogue.png" alt="CMA Data Types catalogue: predefined regional data types such as postal addresses for six countries, each with a description, PII data category and a tunable occurrence threshold.">
+            <figcaption>The Data Catalog is where the PoV gets specific: pick the regional data types that match the customer's data, and note the per-type occurrence thresholds — the main tuning lever for step 5.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Add Data Control rules — monitor posture, pilot scope</h4>
+          <p><span class="path">Security → App &amp; Data Inline</span></p>
+          <p>Add Data Control rules scoped to the pilot group as source: their profiles against upload
+          activity to Any Cloud Application, plus a narrower rule for GenAI tools if that is a named
+          concern. Run every new rule in a non-blocking posture with Events tracking enabled — the KB's
+          own guidance is to run new rules permissively with events on, review what would have been
+          blocked, and only then enforce
+          (<a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Creating the Data Control Policy</a>).
+          Nothing blocks in week one.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-app-data-inline-policy.png" alt="CMA App and Data Inline Protection policy: a rule group mixing App and Data rules — monitor rules for logins, Gmail attachments and risky storage apps alongside block rules for credit-card and GenAI uploads — each with source, application, criteria, severity, action and tracking.">
+            <figcaption>The shape a PoV policy should grow into: monitor rules gathering evidence (logins, attachments, risky-app usage) sitting above the small number of high-confidence block rules they justify.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Review the match report with the data owners</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>After one to two weeks of monitor-mode traffic, filter Events to the Data Control rules
+          and export — the Events page exports up to 250,000 events to a file
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a>).
+          Sit with the data owners and mark each match true or false positive. Tune by raising the
+          occurrence threshold on noisy data types, switching a profile from Any&nbsp;(OR) to
+          All&nbsp;(AND) where two types must co-occur, and validating fixes with the KB's test-file
+          upload check before re-running. The agreed false-positive rate on this report is the number
+          that decides which rule gets promoted.</p>
+          <!-- capture-wanted: «Events page filtered to Data Control events with the export dialog — the match report as the customer sees it» -->
+        </li>
+        <li>
+          <h4>Promote one rule to block — with the user told why</h4>
+          <p><span class="path">Security → App &amp; Data Inline</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Pick the single highest-confidence rule from the review (blocking card numbers to personal
+          storage is the usual winner) and flip it to Block. Before it goes live, enable security-policy
+          user notifications for the pilot group and attach a notification template written with the
+          customer — users who are told <em>what</em> was blocked and <em>why</em> file tickets;
+          users who see a silent failure file complaints. Have a pilot user (Marcus) trigger it with a
+          seeded test file and screenshot the Client notification as evidence.</p>
+          <!-- capture-wanted: «Cato Client block notification pop-up from a DLP Data Control rule, showing a customised notification template» -->
+        </li>
+        <li>
+          <h4>Walk one incident end to end</h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>Close the PoV loop the way their SOC would: start at the Data Protection dashboard
+          (Inline Protection tab — top violating rules, events by action, violations by data profile,
+          over a range of up to 90 days;
+          <a href="https://knowledge.catonetworks.com/docs/using-the-data-protection-inline-dashboard" target="_blank" rel="noopener">Using the Data Protection Inline Dashboard</a>),
+          drill from the seeded block into the event, and walk the attribution chain: rule fired →
+          matched data types → named user and device → file name and destination → secured evidence.
+          The incident anatomy is the screenshot in the demo runbook above; the full investigation
+          workflow is <a href="security-dlp-forensics.html">Data Breach Investigation with DLP
+          Forensics</a>.</p>
+          <!-- capture-wanted: «Data Protection Inline dashboard on pilot traffic — Top Violating Rules and Violations by Data Profile widgets» -->
+        </li>
+      </ol>
+
+      <h3>Troubleshooting — when the evidence doesn't land</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Matches not firing at all</h4><p>Almost always TLS inspection scope: app rules only see traffic TLSi actually inspects. Check the pilot user's traffic is in the inspect scope and not caught by a bypass/exclusion rule, then re-test.</p></div></div>
+        <div class="benefit"><div class="b-icon">📦</div><div><h4>Matches missing on some files</h4><p>DLP scans files up to 50&nbsp;MB, and the Data Control policy fails open by default — oversized or unscannable files pass without a match. Check file size and type in the event detail; only move to fail-closed with the customer's eyes open.</p></div></div>
+        <div class="benefit"><div class="b-icon">📢</div><div><h4>Over-matching / noisy rules</h4><p>Raise the data type's occurrence threshold, require co-occurrence with All&nbsp;(AND) profiles, or step up to Exact Data Matching for their actual records. Validate each change with the test-file check before the next review.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>App shows as a URL category, not activities</h4><p>Granular activities (Upload, Login, Add Attachment…) exist only for applications classified in the App Catalog — a plain website resolves to a URL category with no activity control. Check the app's type in the catalogue before promising activity-level rules for it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔕</div><div><h4>Block works, no notification shown</h4><p>Check the Client version (Windows v5.10+ / macOS v5.7+), that security-policy user notifications are enabled for the pilot group, and that the template is attached to the rule that fired.</p></div></div>
+        <div class="benefit"><div class="b-icon">👤</div><div><h4>Events show IPs, not names</h4><p>Identity sync lag or an unsynced pilot user. Confirm the IdP integration is populating the pilot group before the match-report review — unattributed evidence persuades nobody.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout">
+        <div class="co-title">Say these out loud before the wrap-up, not after</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licence boundary:</strong> the app inventory and activity control are CASB-licence evidence; every Data Control result additionally depends on the DLP licence. Keep the wrap-up honest about which licence bought which slide.</li>
+          <li><strong>Windows of evidence:</strong> the Data Protection dashboard reads back at most 90 days — export the match report and dashboard views as you go rather than reconstructing at the end.</li>
+          <li><strong>Monitor mode needs traffic time:</strong> a credible false-positive review wants one to two weeks of real pilot traffic. Don't book the data-owner session for day three.</li>
+          <li><strong>ML classifiers have edges:</strong> OCR image scanning does not apply to ML Classifier data types — if screenshots-of-spreadsheets are the customer's fear, prove that path with OCR on pattern-based types instead.</li>
+          <li><strong>Clean exit:</strong> disable or delete the PoV Data Control and Application Control rules, remove the notification template, revert the TLS-inspection scope added for the pilot, and hand over the evidence exports. Sanctioned/unsanctioned tags on the app inventory are worth leaving — they are the start of the production policy.</li>
+        </ul>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

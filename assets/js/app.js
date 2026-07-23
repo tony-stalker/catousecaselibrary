@@ -159,6 +159,52 @@
     }
   }
 
+  /* ---------- runbook tabs: Demo / PoV ---------- */
+  function initRunbookTabs() {
+    var demo = $("section#demo"), pov = $("section#pov");
+    if (!demo || !pov) return;
+    var bar = document.createElement("div");
+    bar.className = "rb-tabs";
+    bar.setAttribute("role", "tablist");
+    bar.setAttribute("aria-label", "Runbooks");
+    var tabs = [
+      { id: "demo", label: "🎬 Demo runbook", sec: demo },
+      { id: "pov", label: "🧪 PoV runbook", sec: pov }
+    ];
+    var btns = {};
+    function activate(id) {
+      tabs.forEach(function (t) {
+        var on = t.id === id;
+        t.sec.classList.toggle("rb-hidden", !on);
+        if (on) t.sec.classList.add("in"); // reveal-on-scroll never fires for a hidden panel
+        btns[t.id].classList.toggle("active", on);
+        btns[t.id].setAttribute("aria-selected", on ? "true" : "false");
+        btns[t.id].setAttribute("tabindex", on ? "0" : "-1");
+      });
+    }
+    tabs.forEach(function (t) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "rb-tab";
+      b.setAttribute("role", "tab");
+      b.textContent = t.label;
+      b.addEventListener("click", function () { activate(t.id); });
+      bar.appendChild(b);
+      btns[t.id] = b;
+    });
+    demo.parentNode.insertBefore(bar, demo);
+    // TOC links and in-page anchors switch to the right tab before the browser scrolls
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest('a[href="#demo"], a[href="#pov"]');
+      if (a) activate(a.getAttribute("href").slice(1));
+    });
+    window.addEventListener("hashchange", function () {
+      if (location.hash === "#pov") activate("pov");
+      else if (location.hash === "#demo") activate("demo");
+    });
+    activate(location.hash === "#pov" ? "pov" : "demo");
+  }
+
   /* ---------- lightbox for screenshots and diagrams ---------- */
   function initLightbox() {
     var shots = $$("figure.shot img");
@@ -320,6 +366,7 @@
     initTheme();
     initIndex();
     initPage();
+    initRunbookTabs();
     initLightbox();
     initReveal();
     initPhasePlayers();

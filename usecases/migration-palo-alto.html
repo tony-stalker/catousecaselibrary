@@ -437,6 +437,199 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The displacement PoV is deliberately small: <strong>one branch, one parallel socket, the PA
+        estate untouched</strong>. The only Palo Alto-side change in the whole engagement is a
+        single route (a static or one eBGP neighbour) — the rulebase, Panorama and GlobalProtect
+        all stay exactly as found, which is also what makes rollback a routing change rather than
+        a project. Everything else happens in the customer's Cato tenant: a bounded slice of the
+        App-ID rulebase translated monitor-first, a pilot cohort moved from GlobalProtect to the
+        Cato Client, and threat prevention proven on real traffic. Agree the success criteria
+        <em>before</em> configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a> — and book the decision
+        meeting at the same workshop.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>#</th><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Co-existence holds — the socket carries the migrated pilot subnet in parallel while the PA remains default gateway, with no user-visible disruption</td>
+              <td>Dated day-one screenshots: tunnels up, handoff routes exchanged, first traffic flowing</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Network → Sites</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Policy parity on a representative slice — the 15–20 highest-hit App-ID rules translated and firing with the same intent (same flows allowed and blocked)</td>
+              <td>Per-rule events compared against the Panorama rule-usage baseline exported in week zero</td>
+              <td><span class="path">Monitor → Events</span> <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>The GlobalProtect pilot cohort works a full week on the Cato Client — always-on enforced, posture checks passing, no fallback to GP</td>
+              <td>Experience Monitoring scores for the cohort; connected-client inventory; helpdesk ticket count from the group</td>
+              <td><span class="path">Monitor → Experience Monitoring</span></td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Threat-prevention verdicts demonstrated — IPS and Anti-Malware run monitor-first on pilot traffic, then block, with a harmless test detection stopped and attributed</td>
+              <td>Threat events attributed to user, device and site; block-page screenshot after the flip</td>
+              <td><span class="path">Monitor → Threats Dashboard</span></td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Rollback shown to be a routing change — withdraw the handoff route in a change window and traffic reverts to the PA, timed and evidenced</td>
+              <td>Before/after Topology views with timestamps; the reversion window measured in minutes</td>
+              <td><span class="path">Monitor → Topology</span> <span class="path">Administration → Audit Trail</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree these before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Trial licences</strong> confirmed for every capability under test — Cato Client (SDP) seats for the pilot cohort, IPS, Anti-Malware and TLS inspection.</li>
+          <li><strong>TLS inspection staged first</strong> where content-level verdicts matter (Anti-Malware file verdicts, full-path URL matching) — follow the phased approach in <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, with the root certificate deployed to the pilot cohort only.</li>
+          <li><strong>Identity in place</strong> — the pilot cohort exists as a SCIM/LDAP-provisioned group in CMA and is syncing <em>before</em> any user-scoped rule is written.</li>
+          <li><strong>The Panorama baseline</strong> — a read-only export of the branch's device group with rule-usage data. This is the yardstick criterion 2 is measured against, and the only thing the PoV ever asks of the PA estate besides the handoff route.</li>
+          <li><strong>Scope</strong> — one branch socket (shipped and staged), a transit VLAN agreed with the network team, and a change window for the handoff route and for the rollback rehearsal.</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Week zero — capture the PA baseline before touching anything</h4>
+          <p>Export the pilot branch's rulebase with usage data from Panorama (CSV from the
+          Policies tab, plus rule-usage columns) and pick the representative slice: the 15–20
+          highest-hit rules, deliberately including at least one custom App-ID, one URL-category
+          control and one User-ID-scoped rule — the three shapes that stress the translation.
+          Dead rules stay dead: zero-hit rules are out of PoV scope by design.</p>
+          <pre class="code"><span class="cmt"># Panorama CLI — hit counts for the pilot branch's device group (PAN-OS 8.1+)</span>
+show rule-hit-count device-group &lt;pilot-dg&gt; pre-rulebase security rules all
+<span class="cmt"># Plus: Policies tab → export CSV with rule-usage columns for the same device group</span></pre>
+        </li>
+        <li>
+          <h4>Stand up the parallel socket at the pilot branch</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site, connect the socket on the transit VLAN and let it tunnel out through
+          the existing internet path — the PA remains L3 default gateway and nothing changes for
+          users. Confirm in <span class="path">Monitor → Topology</span> that the site is up
+          against its nearest PoP, and take the dated day-one screenshots: this is evidence item
+          zero for criterion 1.</p>
+        </li>
+        <li>
+          <h4>Configure the handoff — default-gateway statics or eBGP</h4>
+          <p><span class="path">Network → Sites → Site Settings → BGP</span></p>
+          <p>Per the co-existence pattern above, either point statics for the pilot subnet at the
+          socket from the L3 switch/PA, or bring up an eBGP neighbour: set the peer and Cato ASNs
+          in <em>ASN Settings</em>, the peer IP, and advertise <em>Summary routes</em> towards the
+          PA with the metric set so the PA still prefers its own default; verify with <em>Show BGP
+          Status</em> (<a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-a-cato-socket" target="_blank" rel="noopener">Configuring BGP Neighbors on a Cato Socket</a>).
+          Either way, the pilot subnet now reaches Cato per prefix — and the rollback lever for
+          criterion 5 already exists.</p>
+        </li>
+        <li>
+          <h4>Translate the App-ID slice — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → WAN Firewall</span></p>
+          <p>Rebuild the slice with ports re-pinned wherever the original said
+          <em>application-default</em>, and re-create custom App-IDs as Cato custom apps —
+          protocol, ports, destination IP and domain/FQDN criteria, placed <em>above</em> broader
+          catalogue apps because the rulebase is first-match
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-custom-apps" target="_blank" rel="noopener">Working with Custom Apps</a>).
+          Every translated rule gets <em>Event</em> tracking; nothing blocks that the PA did not
+          already block. The full four-domain method, clean-up discipline and a worked
+          before/after example live on
+          <a href="migration-palo-alto-policy.html">Palo Alto Policy Migration</a> — the PoV runs
+          that method on the slice only.</p>
+        </li>
+        <li>
+          <h4>Move the pilot cohort from GlobalProtect to the Cato Client</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Map the cohort's HIP objects to Device Posture profiles (anti-malware running, disk
+          encryption, patch level, device certificate) and reference them from Client Connectivity
+          rules, with continuous posture checks at the recommended 10-minute interval
+          (<a href="https://knowledge.catonetworks.com/docs/client-connectivity-policy-continuous-posture-checks-check-policy" target="_blank" rel="noopener">continuous posture checks</a>).
+          Scope an always-on rule to the cohort — Client Connectivity and Device Authentication
+          settings take precedence over it
+          (<a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting Users with Always-On Security</a>).
+          Then switch each machine scripted and short: install Cato Client → validate app access →
+          uninstall GlobalProtect. Do not leave both clients resident — see co-existence above.</p>
+        </li>
+        <li>
+          <h4>Threat prevention — monitor, then block, on the pilot scope</h4>
+          <p><span class="path">Security → IPS</span> <span class="path">Security → Anti-Malware</span></p>
+          <p>Enable IPS in monitor mode — verdicts generate events while traffic continues
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Configuring the IPS Policy</a>) —
+          and Anti-Malware with NG Anti-Malware on top of it
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-anti-malware-policy" target="_blank" rel="noopener">Configuring the Anti-Malware Policy</a>).
+          Review a week of verdicts with the customer, then flip the pilot scope to block and
+          demonstrate a harmless test detection stopped, block page shown, event attributed to
+          user, device and site — criterion 4 evidenced in one screen.</p>
+        </li>
+        <li>
+          <h4>Build the evidence pack — and rehearse the rollback</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events per translated rule and set the counts against the week-zero Panorama
+          baseline: same flows, same intent, now with user and device attribution. Capture the
+          cohort's Experience Monitoring week and the threat events. Then close the loop on
+          criterion 5 in a change window: withdraw the handoff route (remove the static or
+          disable the BGP neighbour), watch traffic revert to the PA, time it, screenshot it,
+          restore it. A rollback that has been <em>rehearsed and measured</em> is the strongest
+          slide in the wrap-up deck.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with app and category objects, user and device scopes, Block and Allow actions, event tracking and live hit-count bars" loading="lazy">
+        <figcaption>Criterion 2 in one screen: the translated slice as an ordered, first-match rulebase with live hit counts — app-aware rules firing on real pilot traffic. Read the hit-count bars against the Panorama rule-usage baseline to show the same intent enforced on the new platform.</figcaption>
+      </figure>
+      <!-- capture-wanted: Access → Device Posture profile with checks mapped from GlobalProtect HIP objects (AV, disk encryption, patch level) -->
+      <!-- capture-wanted: Monitor → Threats Dashboard showing IPS monitor-mode events for a pilot site, then a blocked test detection -->
+      <!-- capture-wanted: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–firewall eBGP handoff -->
+      <figure class="shot">
+        <img src="../assets/img/em-remote-user.png" alt="Experience Monitoring drill-down for a remote user on the Cato Client: application experience scores, per-app TTFB and flows, device details with Client version, and security events on the score timeline" loading="lazy">
+        <figcaption>Criterion 3 evidenced: a pilot-cohort user's week on the Cato Client — per-app experience scores, the device and Client version in inventory, and security events on the same timeline. This is the view that answers "how do we know the cohort isn't suffering in silence?"</figcaption>
+      </figure>
+
+      <h3 style="margin-top:26px">Troubleshooting the PoV</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Asymmetric routing through the PA</h4><p>Migrated-subnet sessions stall or reset: traffic egressed via Cato but returned via the stateful PA, which drops the unseen flow. Check the PA session table for half-open sessions to the pilot subnet; fix by advertising the pilot prefix consistently in both directions and never splitting a flow's egress and return between the two edges.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>App-ID vs Cato classification — compare fairly</h4><p>The same flow can be <em>web-browsing + ssl</em> on the PA and a named catalogue app on Cato, so rule names will never line up. Compare on flow outcomes — source, user, destination, allow/block — not on labels; re-pin <em>application-default</em> ports; and give every custom App-ID a custom app, or its traffic silently matches a broader category.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>HIP vs Device Posture mapping</h4><p>A device that passed HIP at gateway login can fail Cato posture, because checks re-run continuously (10-minute interval) rather than at connect. Validate every mapped check on a reference machine before scoping Client Connectivity rules to the profile — and stage posture in monitor so a failed check is an event, not a locked-out pilot user.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>TLSi exclusions — and double inspection</h4><p>Pinned apps failing, certificate warnings doubling up: PA decryption is still active on a path Cato now also inspects. Disable PA decryption for Cato-routed pilot traffic, carry the <em>intent</em> of the PA SSL exclusion list into Cato bypass rules (the wizard's Sensitive Categories and Embedded OS bypasses are the starting point), and block QUIC so traffic stays inspectable.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔄</div><div><h4>User-scoped rules that never match</h4><p>A translated User-ID rule shows zero events: the SCIM/LDAP group is empty or stale in CMA, so the rule cannot match. Check the group's membership under Access before touching the rule — identity provisioning lag, not translation, is the usual culprit.</p></div></div>
+        <div class="benefit"><div class="b-icon">📴</div><div><h4>Cohort machine sends no traffic via Cato</h4><p>GlobalProtect was left installed alongside the Cato Client, and its driver is overriding Client settings — the documented dual-VPN conflict. Uninstall GP from the machine, reboot, reconnect. Keep the per-machine switch scripted so the two clients never cohabit longer than the validation takes.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Boundaries to state up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Each capability under test needs its trial licence live for the whole PoV window — a licence lapsing mid-pilot reads as a product failure.</li>
+          <li>TLS inspection is not supported for Android devices — keep them out of the pilot cohort or scope the criterion around them.</li>
+          <li>DC east-west micro-segmentation and API-based SaaS scanning are out of PoV scope by design — park them in the next-steps register, per the framework page.</li>
+          <li>Export the evidence pack weekly, not at the end — screenshots and event exports dated as they land, so the wrap-up reads a register rather than excavating history.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit has two doors, both clean.</strong> If the criteria pass, nothing is thrown
+        away: the pilot branch, handoff and cohort become Phase 2 of the migration path above, and
+        the parked asks become the rollout scope. If the customer stops, the unwind is the
+        rollback rehearsal run once more without the restore: withdraw the handoff route, re-enable
+        GlobalProtect for the cohort (the portal stayed warm throughout), uninstall the Cato
+        Client, and export the evidence pack and <span class="path">Administration → Audit
+        Trail</span> before trial licences lapse. The PA estate ends the engagement exactly as it
+        started — one route removed, nothing else ever changed.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

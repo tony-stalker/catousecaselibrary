@@ -278,6 +278,202 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows the motion; the PoV proves it on the customer's own links, calls and file
+        transfers. Run it inside the frame from
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: success criteria agreed at the
+        scope workshop <strong>before anything is configured</strong>, a baseline week before any
+        staged failure, and every result captured as a dated artefact against its criterion. This is a
+        network-layer PoV — resilience and performance are proven by observing, breaking and measuring,
+        never by blocking, so nothing here disrupts production traffic outside the agreed test windows.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <p>Four criteria cover the resilience-and-performance story. Agree the exact wording, the pilot
+      site and the test windows at the workshop, then put each row on the test-case register:</p>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Link-failure continuity</strong></td>
+              <td>Pull the broadband last mile at the pilot branch while Priya is on a live voice call — the call survives on the second link with no redial</td>
+              <td>Connectivity event (<em>Failover</em> sub-type) plus the Transport graphs showing throughput shifting between links, timestamped either side of the pull</td>
+              <td>Home → Events&nbsp;· Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Packet-loss mitigation</strong></td>
+              <td>The same voice flow across a lossy last mile with Packet Loss Mitigation off, then on, in the matching network rule — an A/B the customer can hear</td>
+              <td>Per-link loss on the Transport tab against in-tunnel quality and MOS on the QoS tab, captured for both runs</td>
+              <td>Network → Network Rules&nbsp;· Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Bandwidth priority under congestion</strong></td>
+              <td>Saturate the pilot link with a bulk transfer during a live call — P10 voice holds steady while the bulk traffic queues in the default class</td>
+              <td>QoS tab showing per-profile throughput and Queue Size climbing on the default class only</td>
+              <td>Network → Bandwidth Management&nbsp;· Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Long-haul latency vs public internet</strong></td>
+              <td>A timed transfer on a representative long-haul path — London DC to the Sydney IPsec site over the backbone, against the same transfer over today's internet/VPN path</td>
+              <td>Side-by-side transfer times and round-trip figures, plus the application's experience score trend across the PoV</td>
+              <td>Monitor → Topology&nbsp;· Home → Experience Monitoring</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot branch socket (an X1600 with broadband + LTE is the ideal harness) and, for the long-haul criterion, a datacentre socket or IPsec site at each end of the path.</li>
+          <li><strong>Two last miles at the pilot branch</strong> — the resilience story needs something to fail over to. Any commodity pair will do; that is the point.</li>
+          <li><strong>Firewall ports</strong> where the socket sits behind an existing edge firewall: outbound UDP 53, UDP 443 and TCP 443, ICMP for last-mile monitoring, and DNS resolution of the Cato service domains (<a href="https://knowledge.catonetworks.com/docs/cato-socket-connection-prerequisites-and-known-limitations" target="_blank" rel="noopener">Socket connection prerequisites</a>).</li>
+          <li><strong>Licences:</strong> SD-WAN site licences for the pilot sites. ILMM (managed ISP escalation) and DEM (application-specific UCaaS metrics in Experience Monitoring) are separate add-ons — see gotchas below before promising either.</li>
+          <li><strong>Test harness:</strong> a softphone or UCaaS call for the voice tests, a repeatable bulk transfer (large file or iperf) for congestion, and booked change windows for every staged failure.</li>
+          <li><strong>Not needed:</strong> TLS inspection — this PoV proves transport, not content inspection, which keeps privacy sign-off out of the critical path (stage it later via the <a href="security-tls-inspection.html">TLS inspection playbook</a> if a security PoV follows). Identity integration is only required if identity-aware QoS rules are on the register.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Onboard the pilot sites</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the pilot branch and the far-end site exactly as in the demo runbook — the same
+          Terraform definition works unchanged — and ship the socket for zero-touch install. Connect
+          both last miles and confirm two tunnels up in <span class="path">Monitor → Topology</span>.
+          If the socket lands behind an existing firewall, apply the port allowances from the
+          prerequisites callout first; it is the single most common cause of a dead-on-arrival
+          install.</p>
+        </li>
+        <li>
+          <h4>Set real link bandwidth, then baseline</h4>
+          <p><span class="path">Network → Sites → Site Configuration</span></p>
+          <p>Configure each link's upstream and downstream to what the ISP actually delivers — not the
+          licence figure — and validate with a speed test run from the CMA rather than a third-party
+          site, per Cato's
+          <a href="https://knowledge.catonetworks.com/docs/best-practices-to-measure-last-mile-performance" target="_blank" rel="noopener">last-mile measurement guidance</a>.
+          QoS maths is only as honest as these numbers. Then leave the site to run for the baseline
+          week: no staged failures until you have normal-week graphs to compare against.</p>
+        </li>
+        <li>
+          <h4>Build the network rules</h4>
+          <p><span class="path">Network → Network Rules</span></p>
+          <p>Network Rules are an <strong>ordered policy, evaluated top to bottom</strong> — first
+          match wins, so the voice rule sits above anything broad. Build one rule per criterion: a
+          voice/UCaaS rule at bandwidth priority P10 with the <em>Packet Loss Mitigation</em> toggle
+          (off for the baseline run, on for the comparison), and a WAN rule for the long-haul path with
+          <em>Active TCP Acceleration</em> enabled. Keep sources specific — a rule matching
+          <em>Any</em> near the top will silently swallow traffic meant for rules below it
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-network-rules" target="_blank" rel="noopener">Configuring Network Rules</a>).
+          Packet Loss Mitigation works by duplicating packets across both DTLS tunnels, so reserve it
+          for loss-sensitive traffic such as voice and video — never bulk transfers
+          (<a href="https://knowledge.catonetworks.com/docs/packet-loss-mitigation-for-multi-tunnel-links" target="_blank" rel="noopener">Packet Loss Mitigation</a>).</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-network-rules.png" alt="Cato Management Application Network Rules page showing an ordered rulebase with app-aware match chips, bandwidth priority column, routing methods, Active TCP Acceleration ticks and per-rule hit counts">
+            <figcaption>The rulebase the PoV runs on: app-aware matches, a BW Priority column tying each rule to its QoS tier, Active TCP Acceleration per rule — and per-rule hit counts, which are your first check when a rule doesn't seem to fire.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Review the bandwidth management profiles</h4>
+          <p><span class="path">Network → Bandwidth Management</span></p>
+          <p>Cato ships sensible defaults — P10 voice and video, P20 RDP, P30 SMB, P40 remaining WAN
+          traffic, and a default class for everything else; the lower the number, the higher the
+          priority. Limits can be a fixed rate or a percentage of the link, and throttling only bites
+          when the line is actually congested — which is exactly what the congestion criterion
+          demonstrates
+          (<a href="https://knowledge.catonetworks.com/docs/what-are-the-cato-bandwidth-management-profiles" target="_blank" rel="noopener">Bandwidth Management profiles</a>).
+          For the PoV, defaults plus your voice rule at P10 are usually enough; resist tuning tiers
+          before the baseline week has shown you where congestion really lands.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-bandwidth-management.png" alt="Cato Management Application Bandwidth Management page showing priority tiers P10 to P255 with per-tier upload and download limits, limit-only-when-congested behaviour and assigned classes of traffic">
+            <figcaption>The priority tiers behind the congestion test: voice and critical apps at P10, bulk in the default class — limits that only engage when the line is congested, so the A/B is visible the moment you saturate the link.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Set last-mile monitoring thresholds</h4>
+          <p><span class="path">Network → Link Health Rules</span></p>
+          <p>Create quality rules for the pilot site's links so threshold breaches generate evidence
+          on their own: <em>Packet Loss</em> (percentage of transmitted packets), <em>Distance</em>
+          (round-trip to the PoP in milliseconds), <em>Jitter</em>, and <em>Congestion</em> (more than
+          1&nbsp;% discarded packets over the configured duration). Set notification frequency to
+          Immediate for the PoV — a second notification confirms when quality recovers, which
+          book-ends each staged failure neatly
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-link-health-rules" target="_blank" rel="noopener">Link Health Rules</a>).</p>
+        </li>
+        <li>
+          <h4>Run the evidence days</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span></p>
+          <p>Script each test in advance and capture as you go. <strong>Link pull:</strong> call up,
+          cable out, watch the Transport tab as throughput shifts to the surviving link; the Failover
+          event lands in <span class="path">Home → Events</span>. <strong>PLM A/B:</strong> same call,
+          same lossy link, toggle the rule between runs. <strong>Congestion:</strong> start the bulk
+          transfer mid-call and watch the QoS tab — per-profile throughput, MOS, and Queue Size
+          climbing on the default class only
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-data-for-a-site-in-real-time" target="_blank" rel="noopener">real-time site analytics</a>).
+          <strong>Long-haul:</strong> the same timed transfer over both paths, back to back, same file,
+          same hour. Every capture goes into the evidence register dated, against its criterion, on
+          the day it happens.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">What good output looks like</h3>
+      <p>
+        By the wrap-up meeting the register should hold four artefact sets: the Failover event with
+        its before/after Transport graphs; the PLM on/off pair showing last-mile loss unchanged but
+        in-tunnel quality transformed; the congestion capture with P10 flat and the default class
+        queueing; and the long-haul comparison table. Experience Monitoring
+        (Home → Experience Monitoring) wraps the lot in a trend line — site
+        and application experience scores across the whole PoV, drillable from account level down to
+        the pilot site
+        (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Experience Monitoring</a>).
+        Connectivity events give the timeline backbone: <em>Connected</em>, <em>Disconnected</em>,
+        <em>Failover</em> and <em>Reconnected</em> sub-types, one per staged failure
+        (<a href="https://knowledge.catonetworks.com/docs/monitoring-your-site-with-connectivity-events" target="_blank" rel="noopener">connectivity events</a>).
+      </p>
+      <!-- capture-wanted: Network → Sites → Site Monitoring → Real Time — Transport tab during a link pull, throughput shifting to the surviving link -->
+      <!-- capture-wanted: Home → Events filtered to Connectivity / Failover sub-type for a pilot site -->
+      <!-- capture-wanted: Site Monitoring → Real Time — QoS tab under congestion: P10 steady, default class Queue Size climbing -->
+      <!-- capture-wanted: Home → Experience Monitoring — Sites tab drill-down for a branch site over a multi-week window -->
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Socket won't connect</h4><p>Nearly always the upstream firewall. Check outbound UDP 53, UDP 443 and TCP 443, ICMP, and that the socket can resolve the Cato service domains (vpn.catonetworks.net and the cc2 controllers). Fix the allowlist, not the socket.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Second tunnel won't form</h4><p>A known limitation: with multiple WAN links behind a NAT device, source-port rewriting between socket and PoP can break tunnel formation. Give the socket public-facing paths or NAT rules that preserve source ports per the prerequisites doc.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>"Is it the ISP or Cato?"</h4><p>The question every lossy-link finding triggers. The Transport tab separates last-mile loss from in-tunnel loss per link; if loss starts at the first ISP hop and the PoP is clean, it is the last mile — evidence the customer can take to their carrier (or that ILMM escalates for them, if licensed).</p></div></div>
+        <div class="benefit"><div class="b-icon">🥇</div><div><h4>Rule doesn't seem to fire</h4><p>Network Rules are first-match: a broader rule above is eating the traffic. Read the hit counts in the rulebase — a zero-hit rule below a fat-hit generic one tells the story instantly. Reorder so specific rules sit on top.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>PLM made things worse</h4><p>Duplication doubles throughput across both tunnels. On badly asymmetric links the weaker link saturates and the cure hurts more than the loss. Scope PLM to voice/video rules only, never bulk traffic.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>No Disconnected event after a pull</h4><p>By design: the Disconnected event fires when an active tunnel is down for over 2½ minutes, so a fast failover shows as Failover/Reconnected instead. For sub-minute evidence use the Real Time graphs — the throughput handover is the proof.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The 99.999&nbsp;% SLA is PoP-to-PoP.</strong> The last mile is still the customer's ISP — that is precisely why the PoV proves dual-link resilience rather than promising an end-to-end SLA. Frame the criteria that way from day one.</li>
+          <li><strong>ILMM is a separate managed service</strong>, licensed per socket, monitoring the active socket only, and it needs a signed Letter of Authorisation before Cato's NOC can open ISP tickets. Demonstrate the evidence trail in the PoV; sell the escalation service alongside, not inside, it.</li>
+          <li><strong>Application-specific UCaaS metrics need a DEM licence.</strong> Base Experience Monitoring works without it, but Teams/Zoom-level drill-downs do not — check before a criterion depends on them.</li>
+          <li><strong>Capture weekly, not at the end.</strong> Experience Monitoring holds a maximum three-month window and near-real-time data can lag by up to 30 minutes — dated screenshots at each weekly sync beat an end-of-PoV archaeology dig.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>Delete the PoV network rules and any bandwidth-profile changes (or confirm defaults were
+        never altered), remove the Link Health Rules and their notification recipients, revoke any API
+        key created for the Terraform deployment under
+        Administration → API &amp; Integrations, and decommission or convert
+        the pilot sites per the commercial agreement. The evidence register is the one artefact that
+        survives — it walks straight into the decision meeting, and the parked asks become the
+        expansion roadmap.</p>
+      </div>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

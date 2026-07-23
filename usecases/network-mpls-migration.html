@@ -295,6 +295,242 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The MPLS-exit PoV proves exactly one thing: the co-existence pattern works on
+        <em>their</em> network, with <em>their</em> applications, while the MPLS estate runs
+        untouched. The scope is deliberately small — a socket at the datacentre and a socket at
+        one pilot branch. Everything else stays exactly as it is, which is itself part of the
+        proof: if the PoV needed changes to the legacy network, so would the migration. Frame the
+        engagement with <a href="management-pov-framework.html">Running a Cato PoV</a> — agree the
+        success criteria below <strong>before</strong> configuring anything, book the weekly sync
+        and the decision meeting up front, and file evidence the day it lands.
+      </p>
+
+      <h3>Success criteria</h3>
+      <p>Four criteria, agreed at the scope workshop — each one a measurable statement with a
+      named evidence artefact:</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Success criterion</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td><strong>Co-existence routing works — both directions.</strong> The DC socket
+              advertises the MPLS-site prefixes into Cato, and the migrated pilot site reaches
+              every un-migrated site via the DC bridge, for sessions initiated from either side.</td>
+              <td>Completed reachability matrix (template below) with dated Topology screenshots</td>
+              <td>Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td><strong>Application performance parity or better.</strong> The pilot site's
+              agreed key applications perform at least as well over Cato as they did over MPLS —
+              measured, not felt.</td>
+              <td>EM site score for the pilot site; before/after latency table per application</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td><strong>Voice quality maintained on broadband last miles.</strong> Test calls
+              between the pilot site and an un-migrated site pass the customer's own quality bar,
+              with packet loss mitigation demonstrably active on the voice rule.</td>
+              <td>Call-test log with user verdicts; screenshot of the voice network rule with
+              packet loss mitigation enabled; last-mile loss statistics</td>
+              <td>Network → Network Rules · Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td><strong>Rollback is a route withdrawal.</strong> The pilot site can be returned
+              to MPLS by reversing the route changes alone — timed during the PoV, with no site
+              visit and no change to the legacy network.</td>
+              <td>Timed rollback exercise write-up; Audit Trail entries for the route changes</td>
+              <td>Network → Sites · Administration → Audit Trail</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout" style="margin-top:16px">
+        <div class="co-title">Prerequisites — agree before week 1</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Two socket sites licensed for the PoV: the DC socket and the pilot branch socket.
+          No TLS inspection is required — this is a routing and performance PoV, not a content
+          inspection one.</li>
+          <li>An IP plan on the table: the pilot site's range, the DC range, and the prefix of
+          every site staying on MPLS — checked for overlaps (including any remote-access pools
+          and DC service VLANs) before anything is configured.</li>
+          <li>The routing-decision choice made per
+          <a href="migration-methodology.html">Migration Methodology &amp; Co-existence
+          Patterns</a>: static routed ranges at the DC socket, or a BGP handoff if the CE or DC
+          L3 switch can peer.</li>
+          <li>Carrier engaged early: the return route for the pilot prefix lives on the managed
+          MPLS CE, so a change ticket — with the carrier's lead time — is on the critical path
+          (see troubleshooting below).</li>
+          <li>Broadband (and ideally 4G/LTE) last miles ordered and live at the pilot branch,
+          and a change window agreed for its cutover day.</li>
+          <li>The key-application list and the voice test plan written into criteria 2 and 3 —
+          named apps, named test callers, an agreed quality bar.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:28px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Baseline MPLS before touching anything</h4>
+          <p>Capture the “before” for criterion 2 while the pilot site is still on MPLS: latency,
+          jitter and loss from the pilot site to each agreed key application (and a timed voice
+          call to another site), from the customer's own tooling or simple repeated tests. Without
+          this table, “parity or better” has nothing to be better than.</p>
+        </li>
+        <li>
+          <h4>Connect the DC socket</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the DC site with its LAN range as the native range and bring the socket up on
+          the DC LAN, alongside the existing firewall and the MPLS CE router. Nothing routes
+          through it yet — connecting the DC socket changes nothing for any user, which is worth
+          saying out loud in the weekly sync.</p>
+        </li>
+        <li>
+          <h4>Advertise the MPLS estate as routed ranges</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>In the DC site's <strong>Site Configuration → Networks</strong>, expand the LAN
+          interface and add one <strong>Routed</strong> range per site staying on MPLS, with the
+          <strong>Gateway</strong> set to the MPLS CE's LAN IP — the next hop for the neighbouring
+          router (<a href="https://knowledge.catonetworks.com/docs/configuring-network-ranges-for-a-site" target="_blank" rel="noopener">Configuring Network Ranges for a Site</a>).
+          This is the entire Cato side of the bridge:</p>
+<pre class="code"><span class="cmt"># London DC site — Site Configuration → Networks → LAN → New (Type: Routed)</span>
+<span class="kw">Routed range</span>  192.168.3.0/24   Gateway 192.168.2.254   <span class="cmt"># Leeds — next hop = MPLS CE on the DC LAN</span>
+<span class="cmt"># …one line per site still on MPLS; delete each one as its site migrates</span>
+
+<span class="cmt"># MPLS CE router (carrier-managed) — return route for the migrated pilot prefix</span>
+ip route 192.168.1.0 255.255.255.0 192.168.2.1    <span class="cmt"># next hop = DC socket LAN IP</span>
+<span class="cmt"># must be redistributed into the carrier VPN so remote CEs learn it — raise the ticket early</span></pre>
+        </li>
+        <li>
+          <h4>Or let BGP do the advertising</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>If the MPLS CE or a DC L3 switch can peer, configure an eBGP neighbour on the DC
+          socket instead of static ranges (<a href="https://knowledge.catonetworks.com/docs/using-bgp-in-the-cato-cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud</a> — Cato's
+          default ASN is 64515). Accepted routes propagate to the whole account automatically, and
+          withdrawal is automatic too. To keep learned legacy routes local to the DC site rather
+          than account-wide, tag them with the reserved community
+          <strong>&lt;Cato ASN&gt;:32768</strong> — socket v15 or later
+          (<a href="https://knowledge.catonetworks.com/docs/cato-reserved-bgp-communities" target="_blank" rel="noopener">Cato Reserved BGP Communities</a>). The trade-off table is on the
+          <a href="migration-methodology.html">methodology page</a>; for a single-DC PoV, static
+          routed ranges are usually the simpler, lower-risk choice.</p>
+        </li>
+        <li>
+          <h4>Cut the pilot branch over</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the pilot site with its range as the native range, connect the socket on
+          broadband plus 4G/LTE, and — in the agreed window — move the branch LAN behind it. The
+          pilot prefix now lives behind its own socket in the Cato routing table; the carrier's
+          return route (previous step) carries traffic from un-migrated sites back via the DC.
+          The un-migrated estate is not touched.</p>
+          <!-- capture-wanted: Network → Sites → Site Configuration → Networks showing a Routed range with the MPLS CE LAN IP as Gateway -->
+        </li>
+        <li>
+          <h4>Protect voice with priority and packet loss mitigation</h4>
+          <p><span class="path">Network → Bandwidth Management</span> <span class="path">Network → Network Rules</span></p>
+          <p>Assign the voice application to the top bandwidth priority profile (e.g. P10 —
+          profiles carry a priority value and optional upload/download limits;
+          <a href="https://knowledge.catonetworks.com/docs/configuring-bandwidth-management-profiles" target="_blank" rel="noopener">Configuring Bandwidth Management Profiles</a>), then enable
+          <strong>packet loss mitigation</strong> on that voice network rule. On active/active
+          last miles Cato duplicates the packets across both DTLS tunnels; on active/passive,
+          UDP traffic is duplicated with a small delay
+          (<a href="https://knowledge.catonetworks.com/docs/packet-loss-mitigation-for-multi-tunnel-links" target="_blank" rel="noopener">Packet Loss Mitigation for Multi-Tunnel Links</a>).
+          Scope it to the voice rule only — duplication costs bandwidth.</p>
+          <!-- capture-wanted: Network → Network Rules showing a voice rule with Packet Loss Mitigation enabled and a P10 bandwidth priority -->
+        </li>
+        <li>
+          <h4>Prove it, both directions, and file the evidence</h4>
+          <p><span class="path">Monitor → Topology</span> <span class="path">Home → Experience Monitoring</span></p>
+          <p>Work the reachability matrix below: generate real flows initiated at the pilot site
+          <em>and</em> initiated at an un-migrated site, and tick each row with a dated screenshot.
+          Then let Experience Monitoring accumulate: the pilot site's score, per-application TTFB
+          and last-mile statistics are the ongoing evidence for criteria 2 and 3
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>). Walk the matrix and
+          the score at every weekly sync.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:28px">What good output looks like</h3>
+      <p>The routing evidence for criterion 1 is a filled-in matrix — every row proven by a real
+      session and a dated screenshot, not by an architecture slide:</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Flow</th><th>Initiated from</th><th>Path taken</th><th>Proven</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Pilot branch → DC applications</td><td>Pilot branch</td><td>Cato backbone → DC socket</td><td>☐ date / evidence ref</td></tr>
+            <tr><td>DC → pilot branch (management, backup)</td><td>DC</td><td>DC socket → Cato backbone</td><td>☐ date / evidence ref</td></tr>
+            <tr><td>Pilot branch → un-migrated site</td><td>Pilot branch</td><td>Cato → DC socket → MPLS CE → MPLS</td><td>☐ date / evidence ref</td></tr>
+            <tr><td>Un-migrated site → pilot branch</td><td>Un-migrated site</td><td>MPLS → MPLS CE → DC socket → Cato</td><td>☐ date / evidence ref</td></tr>
+            <tr><td>Voice call, pilot ↔ un-migrated site</td><td>Both ends</td><td>Full bridge path, both directions</td><td>☐ date / quality verdict</td></tr>
+            <tr><td>Pilot branch → internet</td><td>Pilot branch</td><td>Breakout at the Cato PoP (or via DC firewall — per the agreed interim pattern)</td><td>☐ date / evidence ref</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- capture-wanted: Monitor → Topology showing an MPLS-site prefix reachable behind the DC socket during co-existence -->
+
+      <figure class="shot" style="margin-top:18px">
+        <img src="../assets/img/em-home-sites.png" alt="CMA Experience Monitoring page, Sites tab: a summary bar of connected, degraded and disconnected sites, an account experience score graph over green, amber and red bands, and a per-site table with experience scores of Good or Poor, application counts, flows and average TTFB per site.">
+        <figcaption>Criterion 2's ongoing artefact: the Experience Monitoring Sites tab scores every connected site Good/Fair/Poor with per-site TTFB — the pilot site holding a Good score week after week, next to the baseline table from step 1, is the performance-parity evidence.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-bandwidth-management.png" alt="CMA Network → Bandwidth Management: ordered bandwidth priority profiles with priority values and upload/download limit settings.">
+        <figcaption>Criterion 3's configuration half: the bandwidth priority profiles the voice rule lands in. Pair this with the voice network rule showing packet loss mitigation enabled, and the call-test log.</figcaption>
+      </figure>
+
+      <h3 style="margin-top:28px">Troubleshooting — what actually goes wrong</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Asymmetric routing — the classic</h4><p>Pings work but TCP sessions from the MPLS side stall: the forward path enters the DC via the socket while the return leaves via the DC firewall (or vice versa), and a stateful device sees half the conversation. <strong>Check:</strong> traceroute the pilot ↔ legacy flow from both ends and compare paths. <strong>Fix:</strong> keep the socket and the MPLS CE on the same L3 segment and make sure the CE's return route for the pilot prefix points at the socket — not through the firewall.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Overlapping ranges</h4><p>A routed range that overlaps a DC service VLAN, a remote-access pool or another site's prefix sends traffic to the wrong place — or nowhere. <strong>Check:</strong> Monitor → Topology for the full range list before adding each routed range. <strong>Fix:</strong> resolve the overlap in the IP plan; at scale, use the dummy-range pre-staging pattern (CGN space) from the <a href="migration-methodology.html">methodology page</a>.</p></div></div>
+        <div class="benefit"><div class="b-icon">📏</div><div><h4>MTU on the last mile</h4><p>Broadband and PPPoE last miles often sit below 1500 bytes, and DTLS overhead reduces the effective tunnel MTU to 1383 — so pings and small requests work while large transfers and TLS handshakes hang. <strong>Check:</strong> test with large don't-fragment packets across the tunnel. <strong>Fix:</strong> set the per-WAN-link MTU in the Socket WebUI — the socket reconnects to apply it, so use a window (<a href="https://knowledge.catonetworks.com/docs/socket-mtu-and-dtls-tunnels" target="_blank" rel="noopener">Socket MTU and DTLS Tunnels</a>). Note PMTUD probes can register as apparent loss on quiet passive links — check before blaming the carrier.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎫</div><div><h4>CE static routes belong to the carrier</h4><p>The return route for the pilot prefix lives on a carrier-managed CE — which means a change ticket, redistribution into the MPLS VPN, and a lead time measured in days or weeks, not hours. <strong>Check:</strong> before cutover day, confirm from an un-migrated site that its CE has learned a route for the pilot prefix towards the DC. <strong>Fix:</strong> raise the ticket at PoV kick-off, and make the carrier's confirmation a named prerequisite for the pilot cutover window.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:28px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these up front — they cost nothing then</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Hairpin latency is real.</strong> Pilot ↔ un-migrated flows transit the DC
+          during co-existence — a longer path than MPLS's direct mesh for pure site-to-site
+          traffic. Most traffic goes to the DC anyway, but measure pilot ↔ DC and pilot ↔ legacy
+          site as separate rows in criterion 2 so this is understood, not discovered.</li>
+          <li><strong>Packet loss mitigation costs bandwidth.</strong> Duplication doubles the
+          voice stream across links, and on active/passive deployments only UDP is duplicated.
+          Scope it to the voice rule — applied broadly it can throttle throughput towards the
+          slower link.</li>
+          <li><strong>Bandwidth profiles shape site traffic.</strong> QoS priorities apply to
+          socket-site traffic, not to remote Cato Client users — set that expectation if remote
+          users join the demo.</li>
+          <li><strong>EM scores need traffic and time.</strong> Connect the pilot early in week 1
+          — a site connected the day before the wrap-up has no score worth showing.</li>
+          <li><strong>Size the DC socket for transit.</strong> During co-existence it carries
+          pilot ↔ legacy traffic on top of the DC's own — count that in before adding more pilot
+          sites.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit is criterion 4 rehearsed for real.</strong> Because the legacy network was
+        never modified, unwinding the PoV is a deletion exercise on the Cato side: remove the
+        routed ranges (or BGP neighbour) from the DC site, remove the voice rule and any PoV
+        bandwidth profile, revert the carrier's return-route ticket, and return the pilot branch
+        to its MPLS CE — a route withdrawal, exactly as timed during the PoV. And if the verdict
+        is yes, nothing is thrown away: the DC socket <em>is</em> phase 1 of the migration — the
+        <a href="migration-journey-mpls.html">animated phased journey</a> shows the same bridge
+        carrying the estate, site by site, to the end state.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

@@ -34,8 +34,11 @@ opened from `file://` — no CDNs, no webfonts, no fetch(). All shared CSS/JS al
      + `.grid-2` of `.benefit` blocks (icon = a single emoji in `.b-icon`).
   4. `id="demo"` — Demo runbook: `<ol class="steps">`, each `<li>` with `h4`, optional
      `<span class="path">Menu → Path</span>` CMA navigation chip, brief body. 4–8 steps.
-  5. Optional `id="talk-track"` — narrative card (only if source notes have one).
-  6. `id="resources"` — `.grid-2` cards: "Documentation" (allowed URLs only, below) and
+  5. Optional `id="pov"` — PoV runbook section directly after the demo section; when both
+     exist app.js renders them as Demo/PoV tabs. Contract and content anatomy:
+     `_extract/POV-GUIDE.md`.
+  6. Optional `id="talk-track"` — narrative card (only if source notes have one).
+  7. `id="resources"` — `.grid-2` cards: "Documentation" (allowed URLs only, below) and
      "In this library" (2–3 related pages from catalog.js, relative hrefs like `security-ai.html`).
 - `<nav class="pager" id="pager">` (empty — JS fills), footer, then:
   `<script src="../assets/js/catalog.js"></script><script src="../assets/js/app.js"></script>`

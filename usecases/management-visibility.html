@@ -331,6 +331,198 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows the single pane over <em>our</em> tenant; the PoV proves it over <em>their</em>
+        traffic, within days of connecting a pilot. This is the easiest PoV in the library to run
+        cleanly, because it is observe-only by construction — nothing in this runbook blocks or
+        enforces anything. Agree the success criteria below <strong>before configuring anything</strong>,
+        per the frame in <a href="management-pov-framework.html">Running a Cato PoV</a>: each one has
+        a measurement, an evidence artefact and a place in the CMA where it is read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Time-to-answer, in minutes</td>
+              <td>"Who used which application, from where, this week?" answered live at a weekly sync — one console, no exports, no correlation</td>
+              <td>The App Analytics view filtered to the pilot scope, screenshotted with the time it took noted against the criterion</td>
+              <td>Monitor → App Analytics</td>
+            </tr>
+            <tr>
+              <td>Executive report, delivered</td>
+              <td>A recurring PDF report built from the pilot's own traffic arrives in the sponsor's inbox on schedule — unattended</td>
+              <td>The emailed PDF plus its entry on the Generated PDFs tab</td>
+              <td>Home → Reports</td>
+            </tr>
+            <tr>
+              <td>A real detection, told as a story</td>
+              <td>The Stories Workbench surfaces at least one correlated story from pilot traffic, walked end to end with the customer's analyst</td>
+              <td>The story detail — criticality, source, events and timeline on one screen</td>
+              <td>Home → Stories Workbench</td>
+            </tr>
+            <tr>
+              <td>Complaint to fault domain</td>
+              <td>One real "the app is slow" report isolated to device, Wi-Fi, LAN, last mile, backbone or application — from the console, no truck roll</td>
+              <td>The Path Analysis connection-details view with exactly one segment off-green</td>
+              <td>Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>Identity on every row</td>
+              <td>Analytics and events name pilot users — not IP addresses — from the office and from home alike (the foundation the other four stand on)</td>
+              <td>Events and App Analytics rows carrying usernames for both connection paths</td>
+              <td>Monitor → Events · Access → Users</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot branch socket plus a named remote cohort (5–20 users)
+          on the Cato Client. The single pane shows what is connected to it — an estate outside the
+          pilot stays outside the picture, so write the scope into the criteria.</li>
+          <li><strong>Identity:</strong> users provisioned from the IdP via Directory Services, the
+          Client's Identity Agent on pilot devices, and — for attribution behind the socket — a
+          Real-Time Domain Controller. Without this, every view answers "an IP did it". See
+          <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>Licences:</strong> Topology, App Analytics, Events and Reports are base-platform
+          visibility. For the Stories Workbench, Cato's documentation notes additional licences may be
+          required for some detection sources — confirm the trial entitlement before the XDR criterion
+          is written down.</li>
+          <li><strong>Socket versions:</strong> Experience Monitoring probe protocols have minimums —
+          ICMP needs Socket v20+, TCP/HTTP and DNS v21+, Traceroute v25+. Check the pilot socket
+          before promising a probe type.</li>
+          <li><strong>TLS inspection:</strong> not required — every criterion above works on
+          uninspected traffic. Stage it per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a> only if
+          content-level evidence is added to scope later.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the scope and take the day-zero baseline</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Confirm the pilot socket is up and the cohort is enrolled on the Client, then screenshot
+          the live topology — tunnels up, link quality to the nearest PoP, first traffic flowing.
+          Dated, into the evidence doc: item zero. Every later artefact is measured against this
+          "empty console" starting point.</p>
+        </li>
+        <li>
+          <h4>Prove identity attribution before anything else</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → User Awareness</span></p>
+          <p>Open a pilot user and confirm sessions and events carry their name. The Identity Agent
+          reports identity to the PoP roughly every 30 seconds; socket-side traffic needs the
+          Real-Time Domain Controller connected (test it from the User Awareness page). Fix this
+          first — all four remaining criteria inherit it.</p>
+        </li>
+        <li>
+          <h4>Build the "who used what from where" view</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p>On the Users and Applications tabs, stack filters — pilot site → user → application —
+          until the question of criterion one is answered on a single screen, and practise the pivot
+          you will run live at the sync. Data appears within about five minutes of traffic flowing
+          (occasionally up to thirty), so the view is demonstrable on day one, not week three.</p>
+        </li>
+        <li>
+          <h4>Schedule the executive report</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>On the Saved Reports tab, create a recurring report scoped to the pilot, weekly, with the
+          sponsor on the mailing list. Recurring report time ranges start at 00:00 in the time zone
+          you select — and Cato's documentation recommends UTC for ranges longer than a week, because
+          time-series graphs can render inaccurately when the selected zone differs significantly
+          from UTC. Delivery is PDF, by email, unattended — which is the point being proven.</p>
+        </li>
+        <li>
+          <h4>Open the Stories Workbench on their traffic</h4>
+          <p><span class="path">Home → Stories Workbench</span></p>
+          <p>Apply the Security Operations preset filter and sort by criticality. Widen the window
+          from the default two days as the PoV accumulates history (maximum 90 days). When a story
+          lands, walk it with the customer's analyst: source, indication, correlated events, timeline
+          — the consolidation claim, demonstrated on their own flows.</p>
+        </li>
+        <li>
+          <h4>Switch on Experience Monitoring — then wait for a real complaint</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span></p>
+          <p>Enable the Experience Monitoring Policy toggle, define probes for the applications the
+          pilot actually uses (destination, protocol, interval), and add two rules: a Site rule for
+          the pilot socket and a User rule for the cohort — up to 20 probes per rule. Then resist the
+          urge to stage anything: the most convincing DEM evidence of the PoV is the first
+          unscripted "it's slow" ticket, resolved from the console at the next sync.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        This PoV is unusual: the evidence is not a side-effect of the product, it <em>is</em> the
+        product. The dashboards, the report PDF and the story detail are the artefacts themselves —
+        capture them dated, as they land.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/em-home-sites.png" alt="CMA Experience Monitoring landing page on the Sites tab: account experience score graph, a feed of SLA stories, and a sites table with one site scored Poor at the top">
+        <figcaption>The weekly-sync opener: the whole pilot estate scored on one screen, worst first — a Poor site at the top of the queue and SLA-threshold stories in the feed. This is what "one console" looks like when it is the customer's own estate rather than a demo tenant.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-connection-details.png" alt="CMA Path Analysis connection details for one user: a node chain from device through Wi-Fi, LAN gateway, last mile and PoP to the application, with the Wi-Fi segment scored Fair and every other segment Good">
+        <figcaption>Criterion four's money shot — a real complaint decomposed into device → Wi-Fi → LAN gateway → last mile → PoP → application, with exactly one segment off-green (Wi-Fi, Fair at −67 dBm). Read it left to right and the finger-pointing meeting is over before it starts.</figcaption>
+      </figure>
+      <!-- capture-wanted: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen -->
+      <!-- capture-wanted: Home → Reports, Saved Reports tab showing a recurring report's schedule and mailing list -->
+      <!-- capture-wanted: the delivered executive report PDF opened at its usage-trends page -->
+      <!-- capture-wanted: Home → Stories Workbench with a story generated from pilot traffic — criticality, source and timeline visible -->
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Analytics show IPs, not names</h4><p>Attribution isn't wired up: check the Identity Agent is enabled and, for socket-side traffic, that the Real-Time Domain Controller passes its connection test under Access → User Awareness. Note that disabled directory users are never identified.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Directory sync fails during coexistence</h4><p>If an incumbent firewall still sits between Cato and the domain controllers, it must allow the fixed User Awareness sync address — 10.254.254.12 on the default range. Until it does, socket-side identity stays dark and it looks like a Cato fault.</p></div></div>
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>The scheduled report didn't arrive</h4><p>Reports can take a few hours after their scheduled time to generate and send — check the Generated PDFs tab before diagnosing, then the mailing-list recipients. Remember the range starts at 00:00 in the report's selected time zone, not the sponsor's inbox time.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Long-report graphs look wrong</h4><p>Time ranges over one week can render inaccurate time-series graphs when the report's time zone differs significantly from UTC. Set the executive report to UTC and note the convention in the evidence doc so nobody "corrects" it mid-PoV.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>An expected event is missing</h4><p>Policy rules generate events only when their tracking option is set — check Track on the rule before doubting the pipeline. And the console runs slightly behind live traffic: events and analytics typically land within five minutes, occasionally up to thirty.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Experience Monitoring shows "No score"</h4><p>Three usual causes: the Experience Monitoring Policy toggle is off, no Site or User rule matches the source, or the probe protocol needs a newer Socket than the pilot runs (ICMP v20+, TCP/HTTP/DNS v21+, Traceroute v25+). Check in that order.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>90-day windows:</strong> App Analytics and the Stories Workbench each cap their
+          date range at 90 days — capture dated artefacts weekly, per the PoV framework, rather than
+          reconstructing history at wrap-up.</li>
+          <li><strong>Stories need traffic and time:</strong> a quiet ten-user pilot may take days to
+          produce a compelling correlated story. Don't demo the workbench on day two — let the
+          criterion say "during the PoV", not "in week one".</li>
+          <li><strong>XDR scope follows licence:</strong> which detection sources feed stories depends
+          on entitlements — agree what the trial includes before the criterion is written, not when
+          the workbench looks quieter than expected.</li>
+          <li><strong>Reports are PDF, by email:</strong> if the sponsor wants raw data rather than a
+          formatted report, plan a screenshotted App Analytics view or an Events filter alongside —
+          don't promise export formats the report engine doesn't produce.</li>
+          <li><strong>Visibility covers what's connected:</strong> the single pane is honest about the
+          pilot estate and silent about everything else. Saying that out loud protects credibility —
+          and sets up the expansion conversation.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> unwinding this PoV is deliberately trivial — delete the recurring
+        report schedule (stopping the emails), remove the Experience Monitoring probes and policy
+        rules or disable the policy toggle, and offboard the pilot cohort per the agreed exit plan.
+        Nothing else was changed, because nothing was enforced. Export the Generated PDFs and the
+        dated screenshots before tenant access ends — the evidence pack outlives the trial — and note
+        that <span class="path">Administration → Audit Trail</span> holds the complete record of what
+        the PoV added and removed: itself a closing exhibit for the governance row of the
+        objectives table.
+      </p>
+    </section>
+
     <section id="talk-track" class="reveal">
       <div class="section-kicker">Talk track</div>
       <h2>Narrative for the architecture slide</h2>

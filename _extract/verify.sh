@@ -36,7 +36,7 @@ print("OK")
 EOF
 
 echo "== 3/7 external resource loads (CDN) + theme snippet"
-if grep -rn -E 'src="http|link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
+if grep -rn -E 'src="http|<link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
   echo "OK — file:// safe"
@@ -68,6 +68,8 @@ with sync_playwright() as p:
     for page in ["index.html"] + ["usecases/" + f.name for f in sorted(pathlib.Path("usecases").glob("*.html"))]:
         pg.goto(BASE + page); pg.wait_for_timeout(200)
         pg.evaluate("document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'))")
+        # runbook tabs hide the inactive panel — reveal it so its width is measured too
+        pg.evaluate("document.querySelectorAll('.rb-hidden').forEach(el => el.classList.remove('rb-hidden'))")
         if pg.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth + 1"):
             bad.append(page)
     b.close()

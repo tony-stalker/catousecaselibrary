@@ -278,6 +278,206 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows one policy following one user around; the PoV proves it with a <strong>pilot
+        cohort of real users</strong> — typically 20–30 people who genuinely split their week between
+        the office and home — living on the Cato Client for a fortnight. Agree the success criteria
+        below <em>before</em> configuring anything, per the frame in
+        <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact, reviewed at the weekly sync.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>One policy, both chairs</td>
+              <td>The same WAN Firewall rule allows Priya's app access from her office desk and from home — no parallel VPN ACL anywhere</td>
+              <td>Two dated event records, identical rule name, different connection origin</td>
+              <td>Monitor → Events · Security → WAN Firewall</td>
+            </tr>
+            <tr>
+              <td>Always-on enforced</td>
+              <td>A cohort user cannot casually disconnect the client; any bypass is admin-governed and time-boxed</td>
+              <td>Screenshot of the client refusing disconnect; record of the one-time passcode issued for the sanctioned test</td>
+              <td>Cato Client · Access → Always-On Policy</td>
+            </tr>
+            <tr>
+              <td>Posture gates access</td>
+              <td>A device missing the agreed endpoint agent is blocked at connect, with the failed check named to the user and logged</td>
+              <td>Client error with Details naming the failed check; Client Connectivity block event</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Remote experience quantified</td>
+              <td>Every cohort member has an Experience Monitoring baseline: score, connected PoP, apps and average TTFB across the pilot</td>
+              <td>Remote Users tab view plus per-user drill-downs, captured weekly</td>
+              <td>Home → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>The cohort lives on it</td>
+              <td>Two full working weeks through the client with no showstopper tickets from the pilot group</td>
+              <td>Helpdesk ticket count for the cohort beside the EM trend</td>
+              <td>Customer helpdesk · Home → Experience Monitoring</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Licences</strong> — ZTNA/SDP user licences covering the cohort size for the PoV period.</li>
+          <li><strong>Identity first</strong> — IdP connected and the pilot group provisioning via SCIM
+          before any policy is written; the design choices are covered in
+          <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>Client deployment path</strong> — MDM push or a documented manual install for
+          cohort devices. Check minimum client versions against the features in scope (the
+          version-gated items are flagged in the steps below).</li>
+          <li><strong>One socket site in scope</strong> — the office-mode leg of the "one policy" proof
+          needs a real office behind a Cato Socket, not just remote users.</li>
+          <li><strong>TLS inspection only if claimed</strong> — the core proofs here need no content
+          inspection; if the customer adds content-level criteria, stage TLSi first per
+          <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the cohort in identity</h4>
+          <p><span class="path">Access → Directory Services</span></p>
+          <p>Scope SCIM provisioning to a dedicated pilot group (e.g. <em>ZTNA-Pilot</em>) in the IdP
+          and confirm its members appear under <span class="path">Access → Users</span>. Every policy
+          in this PoV references the synced group, so joiners and leavers maintain themselves — which
+          is itself a talking point at the wrap-up
+          (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
+        </li>
+        <li>
+          <h4>Author the posture checks and profile</h4>
+          <p><span class="path">Access → Device Posture</span></p>
+          <p>Create two device checks: an <strong>anti-malware check</strong> — start with "any
+          supported anti-malware", tightening later to the customer's named vendor/product with a
+          minimum version — and a <strong>disk encryption check</strong> on the system drive. Bundle
+          both into a profile (e.g. <em>Pilot-Managed-Device</em>); checks inside a profile combine
+          with AND, so the device must satisfy every one
+          (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>).</p>
+          <!-- capture-wanted: «CMA Access → Device Posture — profile with anti-malware + disk-encryption checks» -->
+        </li>
+        <li>
+          <h4>Gate the connection — monitor-first</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Week-one rule: source <em>ZTNA-Pilot</em>, platforms in scope, Device Posture Profile
+          <em>Any</em>, action <strong>Allow WAN and Internet</strong>. The policy is first-match and
+          ends in an implicit any-any block, so order matters. Nothing is enforced against posture yet
+          — a clean week of connection events for the cohort is the baseline that makes the block
+          test in step 4 meaningful
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+          <!-- capture-wanted: «CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile» -->
+        </li>
+        <li>
+          <h4>Turn the posture key</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Monitor → Events</span></p>
+          <p>After the clean week, edit the rule to require <em>Pilot-Managed-Device</em>. Continuous
+          posture checks re-validate connected devices on an interval (10 minutes is the recommended
+          setting), so a device that falls out of compliance mid-session is caught — not just at
+          sign-in. Prove the gate with a sacrificial device: Marcus's spare laptop, which lacks the
+          named endpoint agent, fails at connect — the client shows an error whose
+          <strong>Details</strong> names the failed check, and a matching block event lands in Events
+          (<a href="https://knowledge.catonetworks.com/docs/client-connectivity-policy-continuous-posture-checks-check-policy" target="_blank" rel="noopener">Continuous Posture Checks</a>).</p>
+          <!-- capture-wanted: «Cato Client blocked dialog — Details naming the failed device check» -->
+        </li>
+        <li>
+          <h4>Enforce always-on</h4>
+          <p><span class="path">Access → Always-On Policy</span></p>
+          <p>Add a rule for <em>ZTNA-Pilot</em> so the cohort is always connected to the Cato Cloud —
+          the client cannot be casually switched off. Governed bypass exists and is the point to
+          demonstrate, not hide: an admin-issued one-time passcode valid for up to 15 minutes, and
+          (on Windows Client 5.9+, macOS 5.5+, iOS 5.6+) a user-initiated bypass that requires a
+          recorded reason. Have a cohort member try to disconnect without one — that screenshot is the
+          success-criterion artefact
+          (<a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting Users with Always-On Security</a>).</p>
+          <!-- capture-wanted: «CMA Access → Always-On Policy — pilot rule with bypass settings» -->
+        </li>
+        <li>
+          <h4>Decide egress — and keep the default</h4>
+          <p><span class="path">Access → Split Tunnel Policy</span></p>
+          <p>By default all Client traffic rides the tunnel to the Cato Cloud for full inspection —
+          keep it that way for the PoV, because every proof above depends on traffic actually
+          traversing the policy. If the customer insists on an exclusion (real-time UC media is the
+          usual ask), record it in the test-case register as a scoped exception: excluded traffic
+          bypasses inspection and visibility by design
+          (<a href="https://knowledge.catonetworks.com/docs/split-tunnel-policy" target="_blank" rel="noopener">Split Tunnel Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Run the two-chair test, then baseline the cohort</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Home → Experience Monitoring</span></p>
+          <p>Priya opens the same internal app from home on Tuesday and from her office desk on
+          Wednesday — behind the socket the client is in office mode, yet
+          <span class="path">Monitor → Events</span> filtered to her shows the <strong>same WAN
+          Firewall rule</strong> firing with a different connection origin. Screenshot both events
+          side by side. Then open the <strong>Remote Users</strong> tab of Experience Monitoring for
+          the cohort baseline — score, connected PoP, flows and average TTFB per user — and drill
+          into one user for the per-application view
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>,
+          <a href="https://knowledge.catonetworks.com/docs/the-user-experience-monitoring-drill-down-page-remote-and-office-users" target="_blank" rel="noopener">the user drill-down page</a>).</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one user, same WAN rule hit from office and remote origins» -->
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase showing twelve allowlist rules whose sources mix sites, user groups and individual SDP users, with direction, service and port pairs, and live hit counts over an implicit deny" loading="lazy">
+        <figcaption>The artefact behind "one policy, both chairs": a single WAN Firewall rulebase whose sources mix sites and SDP users (demo tenant, fictional identities) — the rule your pilot user hits is the same row whether the event's origin says office or remote. There is no second rulebase to drift.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-remote-user.png" alt="Experience Monitoring drill-down for a remote user: per-application experience scores, Microsoft 365 selected showing average TTFB, upload and download volumes and flow count, plus the device panel with client version and IPs" loading="lazy">
+        <figcaption>Per-user evidence for the experience criterion (demo tenant, fictional identities): one cohort member's drill-down — per-application scores, Office 365 TTFB, and the exact device and client version behind the numbers. Capture one of these per pilot user, weekly, dated.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⏳</div><div><h4>SCIM sync lag</h4><p>A new cohort member cannot connect or misses every rule. Check membership under <span class="path">Access → Users</span> and the IdP's provisioning log — IdP push cycles are not instant (Entra ID provisions on its own schedule, and re-enables a user only at the next cycle). Trigger on-demand provisioning from the IdP rather than re-editing Cato policy.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Posture false-negatives on AV naming</h4><p>A compliant device fails the anti-malware check because the installed product string does not match the vendor/product selected in the check. Read the failed check named in the client's Details, then loosen to "any supported anti-malware" to confirm, and re-tighten with the correct vendor/product and a minimum-version operator.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏢</div><div><h4>Office mode doesn't engage</h4><p>At the office the client still tunnels like a remote user. Confirm the laptop's VLAN actually egresses via the site socket (guest Wi-Fi straight to the internet never counts), and check client versions — office-based posture checks need Windows 5.7+, macOS 5.8+ or Linux 5.3+.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>MFA loops at sign-in</h4><p>A cohort user is prompted repeatedly at client sign-in. Usual suspects: an aggressive IdP conditional-access or session-lifetime policy on the Cato SSO app, or clock skew on the device. Align the session lifetime with the working day and fix the clock before touching Cato config.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚫</div><div><h4>Pilot user hits the implicit block</h4><p>The client connects to sign-in but access is refused and Events shows no rule matched. The Client Connectivity Policy is first-match and ends in an implicit any-any block — check the user is in the synced pilot group and the pilot rule sits above any narrower rule that steals the match.</p></div></div>
+        <div class="benefit"><div class="b-icon">💽</div><div><h4>Disk-encryption check fails on encrypted disks</h4><p>A device with hardware-based drive encryption reads as non-compliant: the check validates software-based encryption only, per drive path. Either standardise the cohort on software encryption or scope the profile so the criterion is provable on the devices you actually have.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Always-On covers Windows, macOS, Android and iOS — not Linux.</strong> A developer
+          cohort on Linux still connects, but the "cannot casually disable" criterion cannot be
+          evidenced on those devices; scope the criterion to the platforms it applies to.</li>
+          <li><strong>Bypass passcodes are time-boxed</strong> — each one-time code is valid for up to
+          15 minutes (longer disconnect durations are configurable on Windows Client 5.9+). Plan
+          maintenance windows accordingly rather than promising indefinite overrides.</li>
+          <li><strong>Experience Monitoring has edges</strong> — application metrics are calculated for
+          outbound TCP traffic, and data can take up to 30 minutes to appear; the anomaly-story feed
+          depends on licensing. Do not promise a baseline from minute one.</li>
+          <li><strong>Block on a sacrificial device, not a person's daily driver.</strong> The posture
+          block is the most memorable evidence in the PoV — and the worst possible surprise for a
+          real user mid-meeting. Marcus's spare laptop exists for a reason.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> relax the Client Connectivity rule's posture requirement
+        back to <em>Any</em> before removing anything; disable the Always-On rule; remove profile
+        references from policies before deleting the checks themselves; and de-scope the pilot group
+        from SCIM only if it was created purely for the PoV. If the decision is a yes, do none of it —
+        the pilot policy set is the production starting point, which is rather the point.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

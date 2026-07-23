@@ -471,6 +471,201 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The PoV is the migration plan in miniature: one regional hub gets a parallel socket and an
+        eBGP handoff, one branch cuts over behind it, one bounded FortiOS policy slice is translated
+        at parity, and one FortiClient cohort moves to the Cato Client — all alongside the live
+        FortiGate fabric, with rollback demonstrated on purpose before anyone asks. Run it inside the
+        frame from <a href="management-pov-framework.html">Running a Cato PoV</a>: agree the success
+        criteria below with the customer <em>before</em> anything is configured, and book the
+        decision meeting at the same workshop.
+      </p>
+
+      <h3>Success criteria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Criterion — what we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>The eBGP hub handoff is established and exchanging routes: legacy prefixes learned by Cato, Cato prefixes learned by the FortiGate hub</td>
+              <td>BGP neighbour state and learned routes on both sides — Show BGP Status plus <code>get router info bgp summary</code> output, captured side by side</td>
+              <td><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>The pilot branch, cut to a Cato Socket, reaches un-migrated FortiGate sites via the hub handoff — and they reach it back</td>
+              <td>Bidirectional reachability tests, the branch prefix visible as a BGP route on the FortiGate, and the legacy prefixes visible in Cato's routing table with AS path and communities</td>
+              <td><span class="path">Monitor → Topology</span> and <span class="path">Network → Routing Table</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>A bounded FortiOS policy slice — the pilot site's firewall policies and one webfilter profile — runs at parity on Cato, monitor-first</td>
+              <td>Rule-hit events for each translated rule, compared against the FortiAnalyzer baseline for the same flows; deltas triaged and explained</td>
+              <td><span class="path">Monitor → Events</span>, <span class="path">Security → WAN Firewall</span>, <span class="path">Security → Internet Firewall</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>The SSL-VPN / FortiClient pilot cohort works a full week on the Cato Client, including access to apps behind un-migrated sites</td>
+              <td>Experience Monitoring scores for the cohort across the week; no unresolved helpdesk tickets from the group</td>
+              <td><span class="path">Monitor → Experience Monitoring</span> (Remote Users)</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Rollback is real: the branch advertisement is withdrawn, the FortiGate spoke re-enabled, and traffic reverts — timed, then cut forward again</td>
+              <td>Timestamped routing tables before / during / after, and a continuous ping across the reversion showing convergence time</td>
+              <td><span class="path">Network → Routing Table</span> and the FortiGate routing table</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li>Two sockets shipped: one for the regional hub (parallel, alongside the FortiGate), one for the pilot branch. Socket firmware matters: the community-32768 isolated-route option needs Socket v15+, and BGP filtering on socket sites needs v21.1+.</li>
+          <li>A spare routed interface (or 802.1Q sub-interface) on the FortiGate hub and an agreed transit VLAN and /29 for the eBGP handoff; private ASNs agreed (Cato's default is 64515 — the FortiGate side must differ, as Cato is eBGP-only).</li>
+          <li>Trial licences for every capability under test — threat prevention for the policy slice, and note that Experience Monitoring's DEM pages need a separate DEM licence.</li>
+          <li>IdP/SCIM sync live for the pilot cohort, and EMS access to disable FortiClient VPN/ZTNA per cohort.</li>
+          <li>If web-filtering parity is to be judged beyond domain/SNI, stage TLS inspection first — certificates deployed to the cohort in advance (see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>).</li>
+          <li>Change windows for the branch cutover and the deliberate rollback test, plus the FortiAnalyzer reports for the pilot site as the parity baseline.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Stand up the hub handoff — transit VLAN and eBGP</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>Cable the parallel socket's LAN port to the hub switch, carry the transit VLAN to the
+          FortiGate, and create the BGP neighbour on the Cato site: Cato ASN 64515 (default), the
+          FortiGate's private ASN as peer, the FortiGate's transit-VLAN IP as peer IP. Leave the
+          defaults unless design says otherwise — metric 100, hold time 60 s, keep-alive 20 s — and
+          enable MD5 authentication. Advertise <em>summary routes</em> for the Cato side rather than
+          the full table: Cato does not aggregate for you, so define the summaries explicitly.</p>
+          <pre class="code"><span class="cmt"># FortiGate hub — the other end of the handoff (illustrative)</span>
+<span class="kw">config router bgp</span>
+    set as 65010
+    config neighbor
+        edit "10.255.99.1"        <span class="cmt"># Socket IP on the transit VLAN</span>
+            set remote-as 64515   <span class="cmt"># Cato default ASN</span>
+            set soft-reconfiguration enable
+        next
+    end
+<span class="kw">end</span>
+<span class="cmt"># Verify:  get router info bgp summary   ·   get router info routing-table bgp</span></pre>
+        </li>
+        <li>
+          <h4>Filter the exchange before it can hurt anyone</h4>
+          <p><span class="path">Network → Sites → «hub-site» → Site Settings → BGP</span></p>
+          <p>On the neighbour, add inbound BGP filtering (accept or drop lists, matched on route or
+          community): drop the default route and the prefixes of any site that has parallel
+          connectivity, so a half-migrated site is never reachable via two paths at once. Two
+          behaviours to know: editing BGP filters resets the BGP session immediately (do it in the
+          build window, not mid-test), and legacy prefixes the FortiGate tags with the community
+          <strong>&lt;Cato ASN&gt;:32768</strong> are installed only in the hub socket's routing
+          table and are <em>not</em> propagated to the PoP — deliberately local. For this pilot the
+          branch must reach legacy sites across the backbone, so the pilot prefixes must
+          <em>not</em> carry that community.</p>
+        </li>
+        <li>
+          <h4>Validate routing on both sides — before anything moves</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>Use Show BGP Status on the neighbour to confirm the session is Established and inspect
+          learned routes, then open the account routing table: filter to the exchanged prefixes and
+          check next hop, AS path and received BGP communities for each. Mirror the check on the
+          FortiGate (<code>get router info routing-table bgp</code>). Advertise a test prefix first
+          and watch it appear on both sides before any production subnet is at stake.</p>
+        </li>
+        <li>
+          <h4>Cut the pilot branch to a Socket</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>The standard spoke moves: disable the branch's FortiGate SD-WAN spoke (its prefixes are
+          withdrawn from the overlay and, via the hub, from the eBGP exchange), bring up the Cato
+          socket site, and let routes propagate to both domains. Then prove criterion 2 both ways:
+          from the migrated branch to a host behind an un-migrated FortiGate site, and from that
+          legacy site back — traffic crossing the backbone to the hub socket, the eBGP handoff, and
+          the FortiGate fabric.</p>
+        </li>
+        <li>
+          <h4>Translate the policy slice — monitor first</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>Keep the slice bounded: the pilot site's firewall policies plus one webfilter profile,
+          rationalised on hit counts before translation, categories mapped by intent — the full
+          per-domain method, worked example included, is
+          <a href="migration-fortinet-policy.html">Fortinet Policy Migration</a>. Every translated
+          rule lands with Track = Event and block actions deferred; nothing blocks until events prove
+          the rule matches what its FortiOS ancestor matched.</p>
+        </li>
+        <li>
+          <h4>Move the client cohort</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Per the wave pattern: disable FortiClient VPN/ZTNA for the cohort via EMS, enrol the
+          Cato Client, and keep exactly one VPN/ZTNA data path active per endpoint. Verify the cohort
+          reaches apps behind un-migrated sites (the hub handoff again, from the user side), then let
+          them work a normal week while Experience Monitoring accumulates the evidence for
+          criterion 4.</p>
+        </li>
+        <li>
+          <h4>Demonstrate rollback — deliberately, on camera</h4>
+          <p><span class="path">Network → Routing Table</span></p>
+          <p>In a change window, run the reversion as a rehearsed drill: withdraw the branch prefix
+          from the Cato side and re-enable the FortiGate spoke, with a continuous ping running from a
+          legacy site. Capture the routing table before, during and after, note the convergence time,
+          then cut forward again the same way. This is the criterion that de-risks every later wave —
+          the customer watches BGP do the work in minutes, with no rebuild.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <!-- capture-wanted: «Network → Routing Table filtered to the pilot prefixes, showing BGP-learned legacy routes with AS path and received communities» -->
+      <!-- capture-wanted: «Site Settings → BGP — Show BGP Status with the neighbour Established and learned routes listed» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Internet Firewall rulebase in the CMA with ordered rules, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>Policy-slice evidence surface: the translated webfilter intent as ordered Internet Firewall rules, with live hit-count bars per rule. In the PoV these hits — and the events behind them — are compared against the FortiAnalyzer baseline for the same flows before anything flips from monitor to block.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato WAN Firewall allowlist rulebase with site, user and host-scoped rules, direction, services and hit counts" loading="lazy">
+        <figcaption>The WAN Firewall slice: site-to-site intent from the pilot branch's FortiOS policies re-expressed as allowlist rules over an implicit deny — no interface pairs, no per-policy UTM attachments, hit counts accumulating as parity evidence.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab, with per-user experience scores, connected PoPs, flows and average TTFB" loading="lazy">
+        <figcaption>Criterion 4's evidence: the pilot cohort's week on the Cato Client, scored per user with PoP, flows and TTFB. A quiet, green week here — plus an empty helpdesk queue — is what "SSL-VPN re-engineered" looks like when it lands well.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Session up, routes missing</h4><p>Check received communities in <span class="path">Network → Routing Table</span>: prefixes tagged &lt;Cato ASN&gt;:32768 stay local to the hub socket and never reach the PoP (Socket v15+ behaviour) — remove the tag on the FortiGate if the pilot needs them account-wide. Then check the neighbour's accept/drop lists, and remember every filter edit resets the BGP session.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>SD-WAN rules steering around the pilot</h4><p>Traffic to the migrated branch takes the old overlay instead of the handoff: an SD-WAN rule or ADVPN shortcut on an un-migrated FortiGate still matches the branch prefix. Check with <code>diagnose sys sdwan service</code> — SD-WAN rules are policy routes that beat the routing table — and retire the stale rule members and static entries for migrated prefixes.</p></div></div>
+        <div class="benefit"><div class="b-icon">⚖️</div><div><h4>Keep the UTM comparison fair</h4><p>FortiOS inspected only where a profile was attached; Cato's single-pass engine inspects everything it sees — so new detections in monitor mode are coverage gained, not false positives, and the FortiAnalyzer baseline only exists for flows a profile actually touched. Compare per category, and stage TLS inspection before judging web filtering beyond domain/SNI on either platform.</p></div></div>
+        <div class="benefit"><div class="b-icon">💻</div><div><h4>FortiClient ordering on the endpoint</h4><p>Sequence per cohort: disable FortiClient's VPN/ZTNA function via EMS first, enrol and verify the Cato Client, and only then uninstall — an EMS-managed FortiClient typically must be disconnected from EMS before it will uninstall cleanly. If FortiClient is also the endpoint AV, keep its EPP function until the replacement is live; never leave two VPN data paths active on one endpoint.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries of this PoV</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>One hub proves the pattern, not the estate.</strong> Multi-region AS-path symmetry, inbound VIP services and VDOM tenancy are design work for the project, not the pilot — park them on the next-steps register.</li>
+          <li><strong>Licence edges:</strong> Experience Monitoring's DEM drill-downs need the DEM licence; the policy slice needs the threat-prevention trial active before monitor-mode evidence can accumulate.</li>
+          <li><strong>Evidence outlives retention:</strong> export events, routing-table captures and EM views into the evidence doc weekly — do not rely on tenant retention windows at wrap-up.</li>
+          <li><strong>Summaries are yours to define:</strong> Cato advertises the summary routes you configure but does not aggregate learned routes for you — sloppy summaries at the handoff become the project's routing debt.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the PoV ends without a project, reverse in order —
+        re-enable the branch's FortiGate spoke and confirm reachability (the rollback drill, one last
+        time); re-enable FortiClient for the cohort via EMS, then remove the Cato Client; disable or
+        delete the translated monitor-mode rules (they blocked nothing, so removal is invisible);
+        delete the BGP neighbour and its filters, remove the transit VLAN, and recover both sockets.
+        The FortiGate fabric never depended on any of it — that is the point of the pattern.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

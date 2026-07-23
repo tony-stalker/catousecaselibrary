@@ -301,6 +301,180 @@
       </ol>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo shows consistency in <em>our</em> tenant; the PoV proves it in <em>theirs</em> — the
+        same policy and the same inspection verdicts on a pilot site, a remote-user cohort and, where
+        scoped, a cloud workload. Agree the success criteria below <strong>before configuring
+        anything</strong>, per the frame in <a href="management-pov-framework.html">Running a Cato
+        PoV</a>: every criterion has a measurement, an evidence artefact and a place in the CMA where
+        it will be read out.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>One rule, both paths</td>
+              <td>A single Internet Firewall block rule fires for traffic from the pilot site <em>and</em> from a Cato Client user — no second rulebase anywhere</td>
+              <td>Events filtered by the rule name showing a site source and an SDP-user source side by side</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Identical threat verdicts</td>
+              <td>An EICAR-style safe test file is blocked by Anti-Malware with the same verdict on the site path and the client path</td>
+              <td>Two Anti-Malware block events (same file, different sources); Threats Dashboard entry</td>
+              <td>Monitor → Events · Monitor → Threats Dashboard</td>
+            </tr>
+            <tr>
+              <td>Global change in minutes</td>
+              <td>A published policy change reaches every PoP without a push job or a maintenance window</td>
+              <td>My Policy Changes showing 100% propagation, timestamped against the publish (Cato's stated average is under a minute)</td>
+              <td>Notifications (bell) → My Policy Changes</td>
+            </tr>
+            <tr>
+              <td>Identity on both paths</td>
+              <td>Events behind the site socket name the user — not just an IP — matching the attribution the Client gives remote users</td>
+              <td>Events for the same person from office and home, both carrying the user identity</td>
+              <td>Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Cloud workload parity <em>(if in scope)</em></td>
+              <td>Egress from a vSocket site (e.g. an Azure hub) matches the same Internet Firewall rule as the branch and the client</td>
+              <td>A third event row for the same rule with the cloud site as source</td>
+              <td>Monitor → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one pilot branch socket plus a named client cohort (5–20 users). Add one vSocket site only if cloud parity is a written criterion.</li>
+          <li><strong>Licences:</strong> IPS and Anti-Malware active for the trial account; NG Anti-Malware if next-generation verdicts are in scope (it requires the base Anti-Malware service to be enabled).</li>
+          <li><strong>Identity:</strong> users provisioned from the IdP via Directory Services, and the Cato Client (with the Identity Agent) on pilot devices — this is what turns "an IP did this" into "Priya did this" behind the socket. See <a href="access-identity-design.html">Identity Integration Design</a>.</li>
+          <li><strong>TLS inspection:</strong> staged for the pilot cohort first, with the Cato root certificate deployed — HTTPS content verdicts (including the EICAR-over-HTTPS test) depend on it. Follow <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>, and clear the inspection scope with whoever owns privacy.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Pin the pilot scope and take the baseline</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Access → Users</span></p>
+          <p>Confirm the pilot socket is up, the cohort is enrolled on the Client, and the IdP sync is
+          populating the pilot group. Screenshot the topology and the group membership — dated — as
+          evidence item zero.</p>
+        </li>
+        <li>
+          <h4>Build the proof rule — monitor before block</h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p>Add one rule scoped to the pilot user group against a visible, low-risk application
+          category (gambling is the classic). Start it as <strong>Allow with Track = Event</strong> so a
+          week of events proves who would be affected; flip the action to <strong>Block</strong> only
+          once the hit pattern is understood. Rules match top-down and the rulebase ends in an
+          <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">implicit
+          any-any <em>allow</em></a> — so place the rule above any broader allows, and remember that
+          unmatched traffic passes.</p>
+        </li>
+        <li>
+          <h4>Enable IPS — monitor first, per direction</h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p>On the <a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Protection
+          Policy tab</a>, set <strong>Outbound</strong> (and WAN if scoped) to
+          <strong>Monitor</strong> — events are generated and traffic continues. Review a few days of
+          events with the customer, then move to <strong>Block</strong>. Cato maintains the signatures;
+          there is nothing to update at the site or on the client.</p>
+        </li>
+        <li>
+          <h4>Enable Anti-Malware for the file verdicts</h4>
+          <p><span class="path">Security → Anti-Malware</span></p>
+          <p>Switch on Anti-Malware (and NG Anti-Malware where licensed). The engines scan HTTP, HTTPS
+          and FTP transfers up to 100 MB — the same scan whichever path the file arrives on, which is
+          exactly the property this PoV measures.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection where content verdicts matter</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Add an inspect rule scoped to the pilot cohort, keep the bypass rules for sensitive
+          categories and <a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">certificate-pinned
+          applications</a> above it, and confirm the root certificate is
+          on the pilot devices. Without inspection, the HTTPS variant of the EICAR test will download
+          successfully — a useful before/after exhibit in itself.</p>
+        </li>
+        <li>
+          <h4>Publish — and time the propagation</h4>
+          <p><span class="path">Notifications (bell) → My Policy Changes</span></p>
+          <p>Publish the revision and open My Policy Changes: it tracks the change until it has reached
+          every relevant PoP, percentage by percentage.
+          <a href="https://knowledge.catonetworks.com/docs/visibility-for-publishing-cma-policies" target="_blank" rel="noopener">Cato's
+          documentation</a> states policy changes
+          propagate on average in under a minute — screenshot the completed status with its timestamp
+          against your publish time. That artefact <em>is</em> the "global change in minutes" criterion.</p>
+        </li>
+        <li>
+          <h4>Run the two-path (or three-path) test</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>From a machine behind the pilot socket: hit the blocked category, then fetch the EICAR test
+          file (<a href="https://knowledge.catonetworks.com/docs/testing-threat-prevention-for-anti-malware-and-ips" target="_blank" rel="noopener">Cato's
+          KB documents both HTTP and HTTPS sources</a>). Repeat both as a cohort user on the
+          Client from home, and — if scoped — generate matching egress from the vSocket site. Filter
+          Events by the rule name and by the user: every path shows the same rule, the same verdict and
+          the same identity attribution.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase showing thirteen ordered rules with sources of user groups, individual users and devices, Block, Allow and Prompt actions, and live hit-count bars.">
+        <figcaption>The single rulebase the whole PoV runs against — user-scoped and device-scoped rules with live hit counts, and no per-site or per-appliance variant anywhere. In the PoV, your proof rule sits in this list and its hit counter climbs from both paths.</figcaption>
+      </figure>
+      <!-- capture-wanted: Monitor → Events filtered by one Internet Firewall rule name, showing a site-sourced event and an SDP-user event side by side with identity attribution -->
+      <!-- capture-wanted: Monitor → Threats Dashboard after the EICAR tests, showing the Anti-Malware detections for both paths -->
+      <!-- capture-wanted: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp -->
+      <p>
+        In Events, the money shot is one filter — the proof rule's name — returning rows whose sources
+        differ (site, SDP user, vSocket site) while rule, action and verdict are identical. Pair it
+        with the Threats Dashboard view of the EICAR detections and the My Policy Changes propagation
+        record, and each success criterion has a dated artefact.
+      </p>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>HTTPS test file downloads fine</h4><p>The flow wasn't inspected. Check the TLS Inspection policy order (a bypass rule may catch it), confirm the root certificate is installed, and remember inspection is automatically bypassed for Android, Linux and unidentified operating systems.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>An app broke after enabling TLSi</h4><p>Certificate-pinned applications don't work when TLS inspection is active — that is expected, not a fault. Add a bypass rule for the pinned app and note it in the evidence doc as a scoped exclusion, not a failure.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Site events show an IP, not a name</h4><p>User Awareness isn't attributing. Confirm users are provisioned via Directory Services and the Client's Identity Agent is enabled on office devices — it reports identity to the PoP roughly every 30 seconds. Until then, socket-side events stay anonymous.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧮</div><div><h4>The proof rule never fires</h4><p>First match wins: an earlier, broader rule is swallowing the traffic — and browsers on QUIC can slip past TLS-based verdicts entirely, which is why the demo rulebase blocks QUIC apps and services so traffic falls back to inspectable TLS. Check rule order, then check for QUIC.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>Geo rules look inconsistent</h4><p>IPS Geo Restriction rules are not applied to traffic from Cato SDP Clients — so never use a geo rule as your consistency evidence. Prove parity with Internet Firewall, IPS protection and Anti-Malware verdicts instead.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>A new IPS rule seems ignored</h4><p>Cato's KB notes an IPS rule can take up to 10 minutes to become effective. Wait, retest, and only then start diagnosing — timing is the usual culprit in a live workshop.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Publishing is one-way:</strong> a published revision can't be un-published — record the before-state of any rulebase you touch, because unwinding means editing forward, not rolling back.</li>
+          <li><strong>Licence edges:</strong> NG Anti-Malware needs the base Anti-Malware service enabled, and disabling Anti-Malware disables NG with it — check the trial entitlements cover every engine on the criteria list.</li>
+          <li><strong>TLSi coverage is not universal:</strong> auto-bypassed operating systems and pinned-app exclusions mean "inspected everywhere" really means "inspected everywhere in the agreed inspect scope" — write the scope into the success criterion.</li>
+          <li><strong>Use safe test files only:</strong> EICAR-style samples from the KB-documented sources — never live malware — and clear the test with the customer's security team before running it on their estate.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> at wrap-up, delete the proof rule, return IPS/Anti-Malware actions to
+        their agreed end-state (block, if the PoV converts — that decision is the point), remove or
+        re-scope the pilot TLS inspect rule, and publish once. The change history in
+        <span class="path">Administration → Audit Trail</span> remains as the record of everything the
+        PoV added and removed — which is itself a closing exhibit: one console, one audit trail, one
+        answer.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

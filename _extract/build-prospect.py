@@ -7,7 +7,9 @@ Single-source model: the SE library is the master. This script regenerates
 Prospect-specific wording lives in the RULES below so it survives rebuilds.
 
 Transforms:
-  - removes <section id="demo"> and <section id="talk-track"> from every page
+  - removes <section id="demo">, <section id="talk-track"> and <section id="pov"> from every
+    page (figures are salvaged into a gallery; the runbook tab bar is JS-injected only when
+    both #demo and #pov exist, so stripped pages render tabless automatically)
   - removes deck download buttons; ships NO PowerPoint files
   - excludes whatsnew.html and its nav link (internal change history)
   - rewords SE-facing phrases to prospect-facing (rules below)
@@ -55,7 +57,7 @@ PHRASES = [
 ]
 
 SECTION_RE = re.compile(
-    r'\n?[ \t]*<section id="(?:demo|talk-track)"[^>]*>.*?</section>\n?', re.DOTALL)
+    r'\n?[ \t]*<section id="(?:demo|talk-track|pov)"[^>]*>.*?</section>\n?', re.DOTALL)
 DECK_BTN_RE = re.compile(
     r'\n?[ \t]*<a class="btn btn-ghost" href="[^"]*\.pptx"[^>]*>[^<]*</a>')
 WHATSNEW_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="whatsnew.html">[^<]*</a>')

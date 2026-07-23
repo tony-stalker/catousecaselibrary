@@ -511,6 +511,267 @@
       </div>
     </section>
 
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The pitch above is "keep Sophos endpoint, replace the network stack" — so the PoV proves
+        exactly that, in a small bounded pilot: one SD-RED-served branch moved to a Socket with the
+        XGS hub handoff carrying cross-estate traffic, a pilot cohort running the Cato Client
+        <em>alongside</em> the Sophos endpoint agent, one bounded SFOS policy slice at parity in
+        monitor mode, and a rollback that is literally re-plugging the SD-RED. The headline
+        criterion is the one this page flags as unproven either way: agent coexistence. No vendor
+        statement validates the Sophos endpoint agent and the Cato Client on one machine — the PoV
+        is where that gets proven, on the customer's own build, with the evidence written down.
+        Agree the criteria below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>, and run the register to a
+        fixed end date.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>Sophos endpoint agent and Cato Client coexist — no conflicts observed</strong></td>
+              <td>Both agents run together on every pilot device for the full PoV window: tunnel up, protection active, no adapter/route conflicts, no TLS breakage, no material performance hit</td>
+              <td>Completed coexistence test matrix (below) + per-device experience stats</td>
+              <td>Evidence doc · Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>SD-RED branch runs on a Socket</td>
+              <td>The pilot branch, previously SD-RED-served, passes all traffic via its nearest PoP and still reaches un-migrated resources through the XGS hub handoff</td>
+              <td>Topology screenshot (site up, tunnels green) + eBGP routes received at the hub</td>
+              <td>Monitor → Topology · Network → Sites</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Policy slice at parity in monitor mode</td>
+              <td>A bounded SFOS rule slice runs as Cato rules with Track = Event; hits over a business week reconcile against the SFOS per-rule counters</td>
+              <td>Rule-hit event export + hit counts vs the SFOS baseline in the mapping workbook</td>
+              <td>Monitor → Events · Security → Internet Firewall</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Pilot cohort works a normal week</td>
+              <td>Pilot users on the Cato Client (Sophos endpoint still installed) work a full week — experience baselined Good, no coexistence-related tickets</td>
+              <td>Experience Monitoring baseline (per-user scores, TTFB) + helpdesk ticket check</td>
+              <td>Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Rollback drill passes</td>
+              <td>Re-plug the SD-RED: its tunnel re-establishes to the hub and the branch reverts inside the agreed window — then swap forward again</td>
+              <td>Timed drill record + hub tunnel status before/after</td>
+              <td>Evidence doc · XGS hub console</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope, bounded:</strong> one SD-RED-served branch, the hub handoff at the XGS, a pilot cohort of 5–10 users, and one SFOS policy slice (a handful of egress/web rules with real traffic behind them). Everything else is out of scope, in writing.</li>
+          <li><strong>Licences:</strong> PoV/trial licences for the pilot Socket site and the SDP user seats. Nothing lapses on the Sophos side — the SD-RED stays racked, the hub keeps its config, and the endpoint licences are untouched.</li>
+          <li><strong>Identity first:</strong> Entra ID SSO connected and SCIM syncing the pilot group — group-scoped rules and per-user evidence depend on it.</li>
+          <li><strong>TLS inspection staged where content parity is tested:</strong> Cato root certificate deployed to pilot devices in advance, TLSi scoped to the pilot cohort — see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>. This is also a coexistence test surface (Sophos endpoint SSL scanning layers under it), so stage it deliberately.</li>
+          <li><strong>The Sophos baseline captured:</strong> SFOS slice exported with per-rule traffic counters, and the pilot branch's RED operating mode recorded (bridged REDs need re-addressing before the swap).</li>
+          <li><strong>The MSP briefed:</strong> they run the Sophos estate — the PoV touches nothing they cannot re-plug, and they should be in the weekly sync.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Stand up the XGS hub handoff — IPsec IKEv2 site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the hub as an IPsec IKEv2 site: Connection Type <strong>IPsec IKEv2</strong>,
+          Connection Mode <strong>Bidirectional</strong>, primary tunnel between a Cato public IP
+          (allocated in the CMA) and the XGS WAN IP with a pre-shared key (up to 64 characters),
+          and a secondary tunnel to a different Cato public IP for resilience. Set the last-mile
+          bandwidth to the hub's real figures; for 100&nbsp;Mbps+ links use AES 128 GCM-16 or
+          AES&nbsp;256 GCM-16, and leave the IKE Init/Auth parameters on Automatic unless the XGS
+          IPsec profile demands otherwise. On the Sophos side this is a standard site-to-site
+          IPsec policy — no RED, no Central Orchestration involvement.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 sites</a>.)</p>
+        </li>
+        <li>
+          <h4>Add the eBGP neighbour over the tunnel — and filter it</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>In the site's IPsec settings define the BGP private IPs (Cato PoP side and site side),
+          then add the BGP neighbour under Site Settings → BGP — one neighbour per tunnel, two
+          maximum per IPsec site. The route policy is the co-existence design from the diagram
+          above, made concrete:</p>
+          <pre class="code"><span class="cmt"># eBGP handoff at the hub XGS — pilot design</span>
+<span class="kw">ASN Settings:</span>   Cato ASN 65001 · Peer ASN (XGS) 65002   <span class="cmt"># private ASNs — agree with the customer</span>
+<span class="kw">Advertise:</span>      Summary routes                          <span class="cmt"># migrated (Cato-side) prefixes only</span>
+<span class="kw">Accept:</span>         un-migrated site prefixes from the XGS  <span class="cmt"># never 0.0.0.0/0 — drop default routes</span>
+<span class="kw">Additional:</span>     Hold Time 60 · Keepalive 20 (defaults)  <span class="cmt"># match timers on the SFOS side</span></pre>
+          <p>The Sophos overlay stays authoritative for every un-migrated site: the handoff carries
+          pilot-branch ↔ legacy-estate traffic and nothing else.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-an-ipsec-connection" target="_blank" rel="noopener">Configuring BGP neighbors for an IPsec connection</a>.)</p>
+        </li>
+        <li>
+          <h4>Swap the pilot branch: SD-RED out, Socket in</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Create the branch site with its native range, ship the Socket, and let it self-provision
+          — the swap is an unmanaged tunnel device for a zero-touch one. In the change window: plug
+          the Socket into the branch WAN, move the LAN, confirm the site comes up in Topology and
+          that the branch reaches an un-migrated resource across the handoff. <strong>Do not delete
+          the RED interface on the hub firewall</strong> — for the PoV the SD-RED goes on a shelf at
+          the branch, powered off, config intact. That shelf is the rollback (criterion 5). If the
+          RED ran in a transparent/bridged mode, the re-addressing agreed in prerequisites happens
+          before this window, not during it.</p>
+          <!-- capture-wanted: «Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured» -->
+        </li>
+        <li>
+          <h4>Enrol the pilot cohort — Cato Client alongside the Sophos endpoint agent</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Device Posture</span></p>
+          <p>Push the Cato Client to the 5–10 pilot devices via Intune/MDM, split-tunnel first. The
+          Sophos endpoint agent (Intercept X) stays installed and fully enabled — that is the point.
+          Remove the Sophos Connect VPN profile from pilot devices so exactly one VPN/ZTNA data path
+          is active per endpoint. Then create an Anti-Malware device check: the check runs on an
+          OPSWAT engine with a third-party vendor list, so confirm the Sophos endpoint product is
+          selectable in the Vendor drop-down and build a Device Posture profile from it — this is
+          the live demonstration that posture checks can see the Sophos agent, the foundation of the
+          Security Heartbeat replacement story.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture profiles and device checks</a>.)</p>
+          <!-- capture-wanted: «Access → Device Posture — Anti-Malware device check with a third-party (Sophos) vendor selected in the OPSWAT vendor list» -->
+        </li>
+        <li>
+          <h4>Run the endpoint-coexistence test matrix</h4>
+          <p>Work through the matrix below on every pilot device build — it is the evidence behind
+          criterion 1, so record results per device, dated, including anything that <em>did</em>
+          conflict and what resolved it. A pass is "no conflicts observed on these builds over the
+          PoV window", not a vendor certification.</p>
+        </li>
+        <li>
+          <h4>Translate the policy slice — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → TLS Inspection</span> <span class="path">Monitor → Events</span></p>
+          <p>Map the agreed SFOS slice to Cato Internet Firewall rules scoped to the pilot site and
+          cohort — categories mapped by intent per the companion
+          <a href="migration-sophos-policy.html">Sophos Policy Migration</a> page, would-be blocks
+          deployed as <strong>Allow with Track = Event</strong> so every hit lands as an event and
+          nothing blocks until the evidence says it should. Flag any slice rule that carried a
+          Security Heartbeat condition in the workbook — its translation needs the Device Posture
+          profile from step 4, not a silent broadening. Where the slice includes content-level
+          controls, add a TLS Inspection rule scoped to the pilot cohort (Inspect, untrusted
+          certificates on the default Allow while piloting) — after the coexistence matrix has
+          cleared the TLS layering tests.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Managing the Internet Firewall policy</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring TLS Inspection policy</a>.)</p>
+          <!-- capture-wanted: «Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules» -->
+        </li>
+        <li>
+          <h4>Run the rollback drill — then swap forward again</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Mid-PoV, in a booked window: unplug the Socket, re-plug the SD-RED, and time how long
+          the branch takes to revert to the hub (the RED re-establishes its tunnel on power-up;
+          nothing to configure). Verify branch traffic on the Sophos path, record the drill, then
+          swap forward to the Socket again. Doing this <em>during</em> the PoV — not promising it —
+          is what makes the phased-cutover story credible for the remaining SD-RED estate.</p>
+        </li>
+      </ol>
+
+      <h3>The endpoint-coexistence test matrix</h3>
+      <p>
+        This is the artefact criterion 1 stands on. The page above is explicit that no vendor
+        statement covers this pairing either way — so the matrix documents exactly what was tested,
+        on what build, with what result:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Test area</th><th>What to test</th><th>Pass looks like</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tunnel adapters &amp; routing</td>
+              <td>Enumerate network adapters and the routing table with both agents installed; connect/disconnect the Cato Client repeatedly; sleep/resume and reboot cycles</td>
+              <td>One virtual adapter owning the tunnel, no leftover Sophos Connect/SSL-VPN adapters, no route flapping or DNS hijack after resume</td>
+            </tr>
+            <tr>
+              <td>TLS interception layering</td>
+              <td>With Sophos endpoint web protection/SSL scanning enabled <em>and</em> Cato TLSi inspecting pilot traffic, browse a test set: standard HTTPS, certificate-pinned apps, the customer's core SaaS</td>
+              <td>No certificate errors; the browser shows the expected chain; TLSi events land in CMA; Sophos endpoint web protection still functions — record which layer saw what</td>
+            </tr>
+            <tr>
+              <td>Detection integrity</td>
+              <td>EICAR test file downloaded through the Cato tunnel with both agents live</td>
+              <td>The expected engine(s) respond, and neither agent's detection is broken by the other's presence — record which engine caught it, without promising both</td>
+            </tr>
+            <tr>
+              <td>Performance</td>
+              <td>Boot-to-connected time, a throughput transfer, and CPU/RAM of both agents at idle and under load — before and after Client install</td>
+              <td>No material regression; per-device experience score and TTFB in Experience Monitoring stay Good through the pilot week</td>
+            </tr>
+            <tr>
+              <td>Update &amp; tamper behaviour</td>
+              <td>Sophos tamper protection stays on; upgrade the Cato Client mid-pilot; let the Sophos agent take its normal updates</td>
+              <td>Both agents update independently; neither disables or quarantines the other; tunnel and protection survive both update paths</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Two CMA surfaces carry most of the evidence register — rule-hit events for the parity
+        criterion, and the Experience Monitoring baseline for the cohort and coexistence criteria:
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with sources, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>The parity evidence surface: each translated slice rule shows live hit counts,
+        and with Track = Event every hit is an exportable event. Over a business week, these
+        numbers reconcile against the SFOS per-rule counters captured in the baseline — that
+        reconciliation, not a demo, is what closes criterion 3.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab: account experience score graph and a per-user table with device names, experience chips, connected PoP, flows and average TTFB" loading="lazy">
+        <figcaption>The coexistence and cohort evidence surface: per-user experience scores, device
+        names, connected PoP and average TTFB for the pilot cohort — every device here is also
+        running the Sophos endpoint agent. A week of Good scores with no coexistence tickets is
+        the quantified half of criterion 1; the test matrix is the qualitative half.</figcaption>
+      </figure>
+      <!-- capture-wanted: «Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence» -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>Sophos Connect remnants</h4><p>Cato Client won't connect, or routes vanish after resume: leftover Connect or legacy SSL-VPN virtual adapters and services still claim routes. Audit installed software and adapters on every pilot device, uninstall Connect (never the endpoint agent), reboot, and re-run the adapter test.</p></div></div>
+        <div class="benefit"><div class="b-icon">💓</div><div><h4>Heartbeat rules lose their condition</h4><p>A slice rule that was conditioned on Security Heartbeat translates into something broader than the customer ever ran. The workbook should flag every heartbeat condition; re-express each as the Device Posture profile from step 4 (anti-malware check seeing the Sophos agent) in Client Connectivity Policy or rule criteria — same framing as the policy page's mapping table.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Double TLS interception</h4><p>Certificate errors on pilot devices usually mean layering: Sophos endpoint SSL scanning under Cato TLSi. Check who signed the chain the browser sees. Fix by staging — Cato root cert deployed first, TLSi enabled for the pilot scope only after the matrix layering test passes, and app bypasses for anything certificate-pinned.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Handoff routes wrong</h4><p>Branch can't reach un-migrated subnets, or worse, internet traffic starts crossing the handoff: route policy. Check the BGP neighbour's Advertise/Accept settings — summary routes out, un-migrated prefixes in, default routes dropped in both directions. The Sophos overlay stays authoritative for everything un-migrated.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌉</div><div><h4>The RED was bridged</h4><p>The swapped branch loses DHCP or L2-adjacent kit stops working: the SD-RED ran in a transparent/bridged mode and the LAN was really the hub's network. This is a discovery miss, not a Socket fault — fall back (re-plug the RED), complete the re-addressing and local DHCP plan, and re-run the window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Pilot users not matching rules</h4><p>Slice rules or posture-gated access behave inconsistently across the cohort: SCIM sync lag or group-name drift, not policy error. Confirm the pilot group has synced in Access → Users and the users resolve in events before judging any rule behaviour.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries — say these up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Coexistence is proven for these builds, not certified.</strong> The evidence says "no conflicts observed on the pilot fleet over the PoV window". If a conflict does appear, it goes in the register as a finding with its mitigation — that honesty is worth more than a clean-looking matrix.</li>
+          <li><strong>The heartbeat replacement is a design, not a like-for-like.</strong> Device Posture gates access continuously; it does not trigger Sophos-side endpoint isolation. The MDR/endpoint response path stays in Sophos tooling — keep that boundary clean in the wrap-up.</li>
+          <li><strong>Monitor mode means monitor.</strong> The parity slice must not block anything during the PoV — the single-pass engine will also inspect traffic the SFOS slice never saw, so expect new detections and triage them as findings, not incidents.</li>
+          <li><strong>Evidence outlives retention.</strong> Export events and screenshots weekly into the evidence doc rather than assuming they can be reconstructed at wrap-up.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the decision is no (or paused), reverse in order —
+        re-plug the SD-RED at the branch (already drilled), remove the Cato Client from pilot
+        devices via Intune and re-push the Sophos Connect profile where users reverted, delete the
+        eBGP neighbour and then the IPsec site at the hub, and disable the pilot rules and TLSi
+        scope in the CMA. The Sophos estate is exactly as it was — nothing was decommissioned during
+        the PoV. If the decision is yes, the pilot <em>is</em> wave one: the mapping workbook, the
+        coexistence matrix and the drilled rollback become the phased-cutover plan in
+        <a href="#solution">the migration path above</a>.
+      </p>
+    </section>
+
     <section id="resources" class="reveal">
       <div class="section-kicker">Go deeper</div>
       <h2>Resources</h2>

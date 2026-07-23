@@ -39,6 +39,8 @@ build time (July 2026) from the sources cited on each page.
 | Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
 | CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
 | Cato Data Lake default retention 3 months (extendable) — hedged on-page, support page login-gated | ai-eu-ai-act | Quarterly vs KB/SKU — firm up if a public source appears |
+| PoV-runbook KB parameters across the 11 pilot #pov sections (client version gates, EM 90-day/3-month windows, 250k-event/31-day export caps, MTU 1383, BGP defaults, DLP 50 MB / 20-type limits, TLSi bypass behaviour, sub-minute policy propagation) — all fetched 23 Jul 2026 | network-sdwan, security-consistent, management-visibility, access-hybrid-workforce, security-tls-inspection, security-data-casb-dlp, network-mpls-migration, migration-{zscaler,palo-alto,fortinet,sophos} | Quarterly vs KB — parameters move with releases |
+| CMA nav naming drift: current KB shows "Home → Experience Monitoring" and "Resources → Device Posture"; library chips use the Monitor →/Access → conventions | all pages with path chips | Confirm against the live CMA, then align the convention library-wide in one sweep |
 
 Rendering note: as of 19 Jul 2026 measure_svg.py runs completely silent — all label
 bleeds fixed, and the script now ignores rects wider than 250 user-units (band/container
