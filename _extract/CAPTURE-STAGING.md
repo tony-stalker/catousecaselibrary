@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-125 of the 189 still-wanted captures need setup a clean tenant can't provide by navigation.
+120 of the 183 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -70,7 +70,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (31)
+## Other staged state (a specific rule/profile/filter that must exist first)  (27)
 
 - access-byod-clientless: CMA Applications Portal configuration — named internal apps published to a pilot group
 - access-hybrid-workforce: CMA Access → Always-On Policy — pilot rule with bypass settings
@@ -79,13 +79,9 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - access-remote-worker: CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list
 - ai-eu-ai-act: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
-- ai-homegrown-apps: Guard Logging — expanded session showing a prompt-injection detection against a pilot guard, with invocations and detections columns
-- ai-legal-genai: CMA AI Security → Discovery — shadow-AI inventory filtered to one pilot user group, showing apps, users and risk posture
-- ai-legal-genai: CMA AI Security → Monitoring → Overview — AI Violation Rate and violation-by-rule widgets over a multi-week pilot window
 - ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
-- management-visibility: Home → Stories Workbench with a story generated from pilot traffic — criticality, source and timeline visible
 - management-visibility: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
 - migration-anyconnect: Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap
 - migration-checkpoint: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
@@ -142,12 +138,11 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible
 - security-ransomware: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
 
-## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (11)
+## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (10)
 
 - access-offshore-bpo: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 - access-remote-worker: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
 - ai-eu-ai-act: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week
-- ai-homegrown-apps: Guards Interaction Policy rulebase — monitor rules plus one promoted Block rule scoped to a pilot guard
 - migration-anyconnect: CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing
 - migration-sophos: Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules
 - migration-symantec: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact

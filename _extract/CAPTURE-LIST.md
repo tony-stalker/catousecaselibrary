@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 189 live `capture-wanted` items across 57 pages
+Regenerated 183 live `capture-wanted` items across 57 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -9,21 +9,16 @@ Regenerated 189 live `capture-wanted` items across 57 pages
 3. Tell Claude which files map to which pages — it crops chrome, catalogues, embeds and ships.
 Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependent shots are in `CAPTURE-STAGING.md`.
 
-## AI Security (16)
+## AI Security (11)
 
 - **access-offshore-bpo**: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - **ai-agentic-security**: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session
-- **ai-agentic-security**: AI Security → Agents Policy rulebase with a rule scoped to one agent in an alert/log action
 - **ai-agentic-security**: AI Security → Local Agents inventory with one instance drilled into (MCP servers, tools, licence type)
 - **ai-agentic-security**: AI Security → Managed Agents inventory after a platform API integration
 - **ai-eu-ai-act**: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week
 - **ai-eu-ai-act**: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
 - **ai-eu-ai-act**: Monitor → Events filtered to AI Security events with the CSV export action visible
 - **ai-homegrown-apps**: AI Security → Guards — guard details page showing endpoint, headers, guard API keys and sample integration code
-- **ai-homegrown-apps**: Guard Logging — expanded session showing a prompt-injection detection against a pilot guard, with invocations and detections columns
-- **ai-homegrown-apps**: Guards Interaction Policy rulebase — monitor rules plus one promoted Block rule scoped to a pilot guard
-- **ai-legal-genai**: CMA AI Security → Discovery — shadow-AI inventory filtered to one pilot user group, showing apps, users and risk posture
-- **ai-legal-genai**: CMA AI Security → Monitoring → Overview — AI Violation Rate and violation-by-rule widgets over a multi-week pilot window
 - **security-ai**: AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count
 - **security-ai-visibility**: CMA AI Security → User Interaction Policy — a monitor-mode rule scoped to an assessment cohort
 - **security-ai-visibility**: CMA Home → Reports — GenAI Report generation scoped to an assessment cohort
@@ -135,10 +130,9 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-sdwan**: Network → Sites → Site Monitoring → Real Time — Transport tab during a link pull, throughput shifting to the surviving link
 - **network-sdwan**: Site Monitoring → Real Time — QoS tab under congestion: P10 steady, default class Queue Size climbing
 
-## Monitoring — Threats & stories (6)
+## Monitoring — Threats & stories (5)
 
 - **management-soc-xdr**: Home → Stories Workbench, Security Operations preset grouped by Indication — group headers showing high/medium/low criticality counts
-- **management-visibility**: Home → Stories Workbench with a story generated from pilot traffic — criticality, source and timeline visible
 - **migration-checkpoint**: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - **security-consistent**: Monitor → Threats Dashboard after the EICAR tests, showing the Anti-Malware detections for both paths
 - **security-firewall-refresh**: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page

@@ -531,7 +531,10 @@ done</pre>
           the detection with its timestamp. Never aim any test at a third-party service, and never
           escalate beyond benign payloads: the point is that the detector fired, not that you are a
           red team.</p>
-          <!-- capture-wanted: «Guard Logging — expanded session showing a prompt-injection detection against a pilot guard, with invocations and detections columns» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-interaction-explorer.png" alt="CMA AI Security Interaction Explorer: a per-invocation guard log with message counts, violated-rule chips including jailbreak and PII detections, the guard that caught each, and timestamps" loading="lazy">
+            <figcaption>Interaction Explorer logs every guard invocation with the rules it violated &mdash; jailbreak and PII detections attributed to the exact guard and moment. Open a row to read the offending prompt and the engine's verdict.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Promote one agreed enforcement — and re-test</h4>
@@ -543,7 +546,10 @@ done</pre>
           app's normal smoke tests: the injection now shows the enforced action in the session
           record, and legitimate prompts still flow. One enforcement, demonstrably clean, beats five
           enforcements nobody reviewed.</p>
-          <!-- capture-wanted: «Guards Interaction Policy rulebase — monitor rules plus one promoted Block rule scoped to a pilot guard» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-guards-policy.png" alt="CMA AI Security Guards Policy rulebase, published, with per-guard rules pairing an engine profile with a Block or Anonymize and Block action, each showing an accumulated violation count" loading="lazy">
+            <figcaption>The published Guards Policy: per-guard rules pairing an engine profile with Block or Anonymize &amp; Block, each carrying the violation count that justified enforcement &mdash; the pilot starts these in Monitor and promotes one guard at a time.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Record the Outpost verdict and the developer-experience verdict</h4>
