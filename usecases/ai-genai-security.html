@@ -182,6 +182,11 @@
         category as the file-and-upload backstop.
       </p>
 
+      <figure class="shot">
+        <img src="../assets/img/genai-anonymised-prompt.png" alt="ChatGPT conversation where the submitted prompt reads 'Redraft this notice for [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]' — the name, email address and bank account number replaced by anonymisation tokens before reaching the model, with ChatGPT replying normally" loading="lazy">
+        <figcaption>Anonymize in the wild, from the user's side of the glass: the fee-earner's real prompt contained a name, an email address and a bank account number — the User Interaction Policy masked each value in-flight, the tokens are what ChatGPT actually received, and the conversation carries on. Work continues; the data never left.</figcaption>
+      </figure>
+
       <div class="diagram-card">
         <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
           <title id="dg1-title">Prompt-level GenAI governance through the Cato PoP</title>
