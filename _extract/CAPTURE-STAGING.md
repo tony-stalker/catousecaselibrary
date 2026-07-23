@@ -1,8 +1,11 @@
-# Capture staging list — wanted screenshots needing tenant config or a live action
+# Capture staging list — wanted screenshots that need tenant config or a live action
 
-129 of the 199 wanted captures need setup a clean demo tenant can't provide by navigation.
-Set up per bucket in one session; tell Claude when ready and it captures them on a follow-up pass.
-The other ~70 are page-level views captured 23 Jul (see the embed batch).
+125 of the 189 still-wanted captures need setup a clean tenant can't provide by navigation.
+You're working these in your own tenant — each bucket's heading says what to set up first.
+
+**How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
+and tell Claude the file→page mapping. It crops, catalogues, embeds and ships. Avoid real names on screen.
+Auto-regenerated from live capture-wanted comments (embedded ones drop off). Full list: `CAPTURE-LIST.md`.
 
 ## BGP / Interconnect — bring up an eBGP handoff (or Cross-Connect site) so Show BGP Status is Established and the routing table shows learned routes  (14)
 
@@ -21,7 +24,7 @@ The other ~70 are page-level views captured 23 Jul (see the embed batch).
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — trigger the block/anonymise/SCIM-disabled experience and screenshot the Cato Client or browser  (11)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (10)
 
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
 - access-offshore-bpo: Portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state
@@ -30,12 +33,11 @@ The other ~70 are page-level views captured 23 Jul (see the embed batch).
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
 - network-agility-mna: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation
-- security-ai-visibility: CMA AI Security → Session Explorer — monitor-mode detections on GenAI prompts, sensitive content masked
 - security-data-casb-dlp: Cato Client block notification pop-up from a DLP Data Control rule, showing a customised notification template
 - security-data-casb-dlp: Events page filtered to Data Control events with the export dialog — the match report as the customer sees it
 - security-finance-dora: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
 
-## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor->Events (allow beside attempted-access block, by user)  (30)
+## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (30)
 
 - access-byod-clientless: CMA Monitor → Events — Apps Security block event for an upload from a Browser Extension session
 - access-identity-design: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
@@ -68,57 +70,54 @@ The other ~70 are page-level views captured 23 Jul (see the embed batch).
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Other staged state  (39)
+## Other staged state (a specific rule/profile/filter that must exist first)  (31)
 
 - access-byod-clientless: CMA Applications Portal configuration — named internal apps published to a pilot group
 - access-hybrid-workforce: CMA Access → Always-On Policy — pilot rule with bypass settings
-- access-identity-design: CMA Access → Directory Services — SCIM tab with Base URL and bearer token (token redacted)
 - access-identity-design: CMA Access → Users — pilot user showing Disabled after IdP unassignment, beside the IdP provisioning log
 - access-identity-design: CMA Access → Users — pilot users with the IdP shown as directory source
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - access-remote-worker: CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list
 - ai-eu-ai-act: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
-- ai-genai-security: User Interaction Policy rulebase showing a pilot rule with source group, engine profile, action and notification template
 - ai-homegrown-apps: Guard Logging — expanded session showing a prompt-injection detection against a pilot guard, with invocations and detections columns
+- ai-legal-genai: CMA AI Security → Discovery — shadow-AI inventory filtered to one pilot user group, showing apps, users and risk posture
 - ai-legal-genai: CMA AI Security → Monitoring → Overview — AI Violation Rate and violation-by-rule widgets over a multi-week pilot window
 - ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
-- management-asset-discovery: Device Dashboard summary bar — total, newly seen, identified IoT and identified OT counts for the pilot window
-- management-dem: Home → Experience Monitoring Probes — the policy page showing one Site rule and one User rule scoped to a pilot, with probes mapped to applications
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - management-visibility: Home → Stories Workbench with a story generated from pilot traffic — criticality, source and timeline visible
 - management-visibility: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
 - migration-anyconnect: Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap
 - migration-checkpoint: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - migration-directaccess: CMA Access → Always-On Policy — DA-Pilot rule with bypass settings
-- migration-forcepoint: Access → Client Connectivity / Always-On policy rule scoped to a pilot user group
-- migration-netskope: Access → Users showing a SCIM-provisioned pilot group with connected Cato Clients and versions
 - migration-netskope: Security → WAN Firewall rule scoped to a pilot user group allowing a named private app behind a DC Socket — the NPA-replacement rule
-- migration-symantec: Access → Client Connectivity Policy / Always-On rule scoped to a pilot user group
 - migration-versa: Monitor → Data Protection Dashboard — monitor-mode DLP matches attributed to user, app and data type
 - network-agility-mna: Administration → Audit Trail filtered to the pilot window — site create, socket assign, policy publish, bandwidth edit and site delete attributed to one named admin with previous/new values
 - network-agility-mna: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - network-global-app-performance: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them
 - security-compliance: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
-- security-compliance: Security → Data Protection → Inline Protection dashboard — top violating rules and violations by data profile over the pilot window
 - security-consistent: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - security-data-casb-dlp: Cloud Apps / Applications Dashboard on pilot traffic — sanctioned vs unsanctioned counts and App Risk widget
-- security-data-casb-dlp: Data Protection Inline dashboard on pilot traffic — Top Violating Rules and Violations by Data Profile widgets
 - security-dlp-forensics: Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values
 - security-dlp-forensics: Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident
 - security-finance-dora: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
 - security-firewall-refresh: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - security-healthcare-nhs: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems
 
-## Posture — Device Posture profile (AV + disk-encryption) + a Client Connectivity rule requiring it; connect a device that fails a check for the failure event/dialog  (7)
+## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (12)
 
 - access-hybrid-workforce: CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile
+- access-hybrid-workforce: CMA Access → Device Posture — profile with anti-malware + disk-encryption checks
 - access-hybrid-workforce: Cato Client blocked dialog — Details naming the failed device check
-- ai-legal-genai: CMA AI Security → Discovery — shadow-AI inventory filtered to one pilot user group, showing apps, users and risk posture
+- migration-anyconnect: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet
 - migration-anyconnect: Monitor → Events — Client Connectivity block event naming the failed posture check for a wave device
+- migration-cisco: Access → Device Posture — a profile recreating ISE posture checks (anti-malware + disk encryption + OS version)
 - migration-cloudflare: Access → Client Connectivity Policy rule referencing a Device Posture profile, with the Client-side posture-failure message
 - migration-directaccess: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - migration-directaccess: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
+- migration-palo-alto: Access → Device Posture profile with checks mapped from GlobalProtect HIP objects (AV, disk encryption, patch level)
+- migration-sophos: Access → Device Posture — Anti-Malware device check with a third-party (Sophos) vendor selected in the OPSWAT vendor list
+- security-uk-public-sector: Access → Device Posture — a posture profile showing anti-malware, disk-encryption and minimum-OS device checks
 
 ## Reports — generate/schedule the specific report and open the delivered PDF  (8)
 
