@@ -233,3 +233,45 @@ Note: `cato-sase-platform-ai-security-pov_s09_9.png` and `cato-sase-platform-vis
 - **Shows:** ChatGPT conversation where the submitted prompt reads "Redraft this notice for [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]." — the name, email and bank account number replaced in-flight by the User Interaction Policy's Anonymize action before reaching the model (DOB left as-is: not in the detector set; the value is fictional). ChatGPT replies normally ("Please paste the notice you'd like redrafted") with its guided input sheet below — the conversation continues, the data never left.
 - **Quality:** good (clean, minimal, tells the whole story in one frame)
 - **Recommend:** USED — ai-genai-security.html Govern section (the Anonymize money shot from the user's side). Strong candidate anywhere the Interaction Policy's user experience needs showing (ai-legal-genai, security-ai).
+
+---
+
+## Batch: demo-tenant CMA captures (23 Jul 2026, generic demo-mode — no tenant name, fictional data)
+
+Captured by browser-driving the demo tenant for the PoV runbook capture-wanted list. All cropped
+(top global bar removed). 10 embedded (below); the rest are catalogued and available for reuse.
+Naming: `cma-<area>-<page>.png`. Regenerate embeds map: grep `capture-wanted` for what still wants a shot.
+
+**Embedded 23 Jul:** cma-home-devices (management-asset-discovery) · cma-ai-uip (ai-genai-security) ·
+cma-acc-client-conn (migration-forcepoint, migration-symantec) · cma-sec-dp-dash
+(security-data-casb-dlp, security-compliance) · cma-acc-users (migration-netskope) ·
+cma-acc-directory (access-identity-design) · cma-home-em-probes (management-dem) ·
+cma-ai-session-explorer (security-ai-visibility).
+
+**AI Security area:** cma-ai-overview (violation rate + rule-name breakdown donuts) · cma-ai-discovery
+(shadow-AI inventory, risk grades) · cma-ai-users-monitoring (per-user AI accountability) ·
+cma-ai-session-explorer *(embedded)* · cma-ai-local-agents (coding-agent inventory) · cma-ai-agent-sessions
+(session telemetry list) · cma-ai-agents-overview (interceptor funnel) · cma-ai-agents-policy (monitor-mode
+coding-agent guardrails) · cma-ai-guards (guard estate across Proxy/API/AI-Gateway modes) · cma-ai-guards-policy
+(per-guard Block/Anonymize rules + violation counts) · cma-ai-homegrown-agents (gateway virtual keys as agents)
+· cma-ai-engine-profiles (detector configuration) · cma-ai-playground (test detections before enforcing) ·
+cma-ai-interaction-explorer (per-invocation guard detection log) · cma-ai-uip *(embedded)*.
+
+**Security area (7 first-time subjects):** cma-sec-lan-fw (LAN Firewall, site/VLAN-scoped rule + AI insights band)
+· cma-sec-ips (IPS per-scope Block actions, Socket-LAN monitor option) · cma-sec-anti-malware (AM + NG-AM + Sandbox
+toggles, default rules) · cma-sec-data-types (DLP Profiles tab, predefined vs user-defined) · cma-sec-threats-dash
+(all engines blocking, per-signature breakdown, timeline) · cma-sec-dp-dash *(embedded)* · cma-sec-genai-apps-dash
+(sanctioned/unsanctioned classification, events-by-action). NOTE: cma-sec-internet/wan/tls re-shoots were NOT kept —
+they opened the rule Edit panel and are inferior to the existing cma-*-rulebase embeds.
+
+**Network / Access / Monitoring:** cma-net-sites (estate, connectivity + socket-version widgets) · cma-net-ip-alloc
+(allocated egress IPs vs licence pool) · cma-net-routing (routing table, static/directly-connected) · cma-acc-users
+*(embedded)* · cma-acc-posture (Device Posture profiles — Resources → Objects → Device Posture) · cma-acc-client-conn
+*(embedded)* · cma-acc-directory *(embedded)* · cma-acc-split-tunnel (one exclusion rule) · cma-home-events (4M events,
+identity-attributed) · cma-home-app-analytics (bandwidth, top users/apps) · cma-home-em-probes *(embedded)* ·
+cma-home-reports (Reports catalogue + PDF preview) · cma-home-devices *(embedded)* · cma-home-stories (Stories
+Workbench, criticality banding) · cma-home-topology (radial PoP topology).
+
+Removed as unusable: audit-trail (real-employee email — hygiene), acc-app-portal (misnavigated to Access Overview),
+home-em (modal overlay), net-bw + net-rules (duplicates of existing), always-on (empty), ai-gateway/browser-plugin/scout
+(empty/placeholder). These + the state-specific wants are in `_extract/CAPTURE-STAGING.md`.

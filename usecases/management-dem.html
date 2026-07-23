@@ -601,7 +601,10 @@ hop 2  84.65.0.1     Preston, GB     loss 24.3%   avg 269 ms   wrst 327 ms
 hop 9  Cato PoP      London, GB      loss 0.0%    avg 6 ms
 <span class="cmt"># Verdict: loss begins at the first hop inside the ISP and clears before the PoP.</span>
 <span class="cmt"># Source: drill-down → Path Analysis → Command Line → "Show Full Traceroute Data"</span></pre>
-      <!-- capture-wanted: Home → Experience Monitoring Probes — the policy page showing one Site rule and one User rule scoped to a pilot, with probes mapped to applications -->
+      <figure class="shot">
+        <img src="../assets/img/cma-home-em-probes.png" alt="CMA Home Experience Monitoring Probes policy tab with both enablement toggles on, one User rule (remote connection origin) and one Site rule, each carrying reachability, path-trace and per-application probes including ChatGPT on ports 443 and 80" loading="lazy">
+        <figcaption>Experience Monitoring Probes policy: a User rule (remote origin) and a Site rule, each carrying reachability, path-trace and per-application probes &mdash; here a ChatGPT probe on 443/80 and a traceroute. Scope these rules to the pilot group for the PoV.</figcaption>
+      </figure>
       <!-- capture-wanted: an application drill-down where the app scores Poor on TTFB while the Connection Details chain is green end to end — the "not the network" verdict -->
       <!-- capture-wanted: the Show Full Traceroute Data panel open, with the copy control visible -->
       <!-- capture-wanted: Home → Reports — a recurring Site and User Experience report schedule with a customer mailing list -->

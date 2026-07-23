@@ -514,7 +514,10 @@
           lands as an event (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
           Note the rules take precedence over TLS inspection bypass rules — but the traffic still
           has to reach a PoP, which is exactly why the off-net cohort gets the plugin instead.</p>
-          <!-- capture-wanted: «User Interaction Policy rulebase showing a pilot rule with source group, engine profile, action and notification template» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-uip.png" alt="CMA AI Security User Interaction Policy rulebase, published revision, with five rules pairing IdP source groups (Finance Users, Health Care Users, Engineering Users, Human Resources) and app scopes with engine profiles and an Anonymize and Block action, each showing a violation count" loading="lazy">
+            <figcaption>The published User Interaction Policy rulebase: each rule pairs an IdP source group and app scope with an engine profile and an action &mdash; here Anonymize &amp; Block &mdash; with violation counts accruing per rule. (The notification template is set inside the rule editor.)</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Week 1 — the DLP backstop, in monitor</h4>

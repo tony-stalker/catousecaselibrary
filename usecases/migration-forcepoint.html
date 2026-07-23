@@ -535,7 +535,10 @@
       </figure>
       <!-- capture-wanted: Monitor → Events filtered to pilot Internet-firewall and Data Control rules, Block/Prompt and DLP monitor events attributed to a named pilot user -->
       <!-- capture-wanted: Access → Proxy Configuration Policy rulebase serving a transitional PAC to a straggler group -->
-      <!-- capture-wanted: Access → Client Connectivity / Always-On policy rule scoped to a pilot user group -->
+      <figure class="shot">
+        <img src="../assets/img/cma-acc-client-conn.png" alt="CMA Access Client Connectivity Policy, published and enabled, with a cohort rule above the default allow: the rule is scoped to named users with connection origin pinned to the Cato Client and Browser Extension" loading="lazy">
+        <figcaption>Client Connectivity Policy with a cohort rule above the default allow: the pilot group is enumerated as named users and connection origin is pinned to the Cato Client &mdash; so migration-cohort enforcement lands only on the pilot.</figcaption>
+      </figure>
 
       <h3>Troubleshooting the pilot</h3>
       <div class="grid-2">
