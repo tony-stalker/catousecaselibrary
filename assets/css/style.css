@@ -284,6 +284,7 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .lane-limit { stroke: var(--lane-limit); animation: lane-march 1.4s linear infinite; }
 .lane-block { stroke: var(--lane-block); animation: lane-march 2s linear infinite; }
 .lane-static { stroke: var(--ink-3); stroke-dasharray: none; stroke-width: 1.6; }
+.lane-info { stroke: #1d4f8f; animation: lane-march 1.4s linear infinite; }  /* telemetry/alert flows — dark blue */
 .lane-alt { stroke-dasharray: 16 6; }   /* identity variant A: long dashes */
 .lane-dot { stroke-dasharray: 3 8; }    /* identity variant B: dotted */
 @keyframes lane-march { to { stroke-dashoffset: -16; } }
@@ -325,6 +326,7 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-legend .swatch.limit { border-color: var(--lane-limit); }
 .dg-legend .swatch.block { border-color: var(--lane-block); }
 .dg-legend .swatch.standby { border-color: var(--ink-3); border-top-style: dotted; }
+.dg-legend .swatch.info { border-color: #1d4f8f; }
 .lane-standby { fill: none; stroke: var(--ink-3); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }
 
 /* ---------- Runbook tabs (Demo / PoV) — bar is injected by app.js when a page
@@ -508,6 +510,8 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
   :root[data-theme="dark"] .lane-static { stroke: #8ea7b3; }
   :root[data-theme="dark"] .lane-standby { stroke: #8ea7b3; }
   :root[data-theme="dark"] .dg-legend .swatch.standby { border-color: #8ea7b3; }
+  :root[data-theme="dark"] .lane-info { stroke: #5b9be2; }
+  :root[data-theme="dark"] .dg-legend .swatch.info { border-color: #5b9be2; }
 
   /* Screenshots keep a white background so UI captures stay readable */
   :root[data-theme="dark"] figure.shot img { background: #fff; border-color: #33566a; }

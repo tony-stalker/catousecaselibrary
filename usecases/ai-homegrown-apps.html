@@ -182,7 +182,7 @@
           <g aria-label="blocked at the guard">
             <path class="lane-x" d="M 628 250 L 652 274"/><path class="lane-x" d="M 652 250 L 628 274"/>
           </g>
-          <path class="lane lane-block" d="M 655 282 C 690 306, 712 328, 724 348"/>
+          <path class="lane lane-info" d="M 655 282 C 690 306, 712 328, 724 348"/>
 
           <!-- Guard → Interaction Explorer telemetry -->
           <path class="lane-static" fill="none" d="M 496 214 C 445 255, 430 300, 425 350"/>
@@ -206,7 +206,8 @@
         </svg>
         <div class="dg-legend">
           <span class="key"><span class="swatch allow"></span> Benign prompt — PII redacted, then forwarded</span>
-          <span class="key"><span class="swatch block"></span> Injection / jailbreak — blocked at the Guard, alerted to SOC</span>
+          <span class="key"><span class="swatch block"></span> Injection / jailbreak — blocked at the Guard</span>
+          <span class="key"><span class="swatch info"></span> Alert to SOC / XDR</span>
         </div>
         <div class="diagram-caption">Every prompt and response passes the Guard before it reaches a model. The AI Security Engine's detectors decide the outcome — redact and forward, or block and alert — and the full session lands in the Interaction Explorer.</div>
       </div>

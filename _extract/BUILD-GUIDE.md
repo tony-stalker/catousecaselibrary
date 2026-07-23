@@ -69,8 +69,9 @@ Inline `<svg viewBox="0 0 960 4xx" role="img" aria-labelledby="dg1-title dg1-des
   produce no EDGE lines and no BOX overflow > 4px.
 - Cato PoP: `circle.dg-pop` (r≈30) + optional `circle.pulse-ring` behind it; backbone as
   `ellipse.dg-backbone` or a chain of PoP circles.
-- Flows: `path.lane.lane-allow|lane-limit|lane-block` (animated marching dashes;
-  green=allowed, amber=restricted, red=blocked/attack) and `.lane-static` for neutral links.
+- Flows: `path.lane.lane-allow|lane-limit|lane-block|lane-info` (animated marching dashes;
+  green=allowed, amber=restricted, red=blocked/attack, dark blue=telemetry/alert flows to
+  SOC/monitoring — legend swatch `.swatch.info`) and `.lane-static` for neutral links.
   Blocked flows terminate at an X: two crossed `path.lane-x` strokes ~24px.
 - Keep it uncluttered: ≤ 12 nodes, generous spacing, no text overlapping shapes. Text labels
   go OUTSIDE circles/next to nodes (see exemplar's PoP labels above the ring).
