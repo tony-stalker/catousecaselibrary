@@ -275,3 +275,30 @@ Workbench, criticality banding) · cma-home-topology (radial PoP topology).
 Removed as unusable: audit-trail (real-employee email — hygiene), acc-app-portal (misnavigated to Access Overview),
 home-em (modal overlay), net-bw + net-rules (duplicates of existing), always-on (empty), ai-gateway/browser-plugin/scout
 (empty/placeholder). These + the state-specific wants are in `_extract/CAPTURE-STAGING.md`.
+
+## Batch: personal-tenant staging captures (29–30 Jul 2026, Tony's lab tenant + Entra sandbox)
+
+First hand-back from the CAPTURE-STAGING self-serve workflow: 15 HEIC drops in the library root,
+13 kept (converted, cropped, redacted where needed), 10 embedded across 9 want-slots on 5 pages.
+Provenance: Tony's personal lab tenant ("The Lab", fictional identities incl. Bruce Banner persona)
+plus a wt0hx.onmicrosoft.com Entra developer sandbox (fictional users Grady Archie / Isaiah Langer);
+one demo-tenant shot. Redactions: real email/IPs boxed out of the upload-block event pair, tenant slug
+boxed out of the extension URL, personal account ID boxed out of the SCIM event; Azure top bar and
+client-window surroundings cropped.
+
+**Embedded 30 Jul:** cma-alwayson-pilot-rule (access-hybrid-workforce) · app-portal-enduser
+(access-third-party) · cma-user-scim-disabled (access-third-party, access-identity-design,
+access-offshore-bpo) · portal-signin-refused (access-third-party, access-offshore-bpo) ·
+cma-browser-access-policy (access-byod-clientless — demo tenant) · cma-events-ext-upload-filter +
+cma-events-ext-upload-detail (access-byod-clientless, redacted) · browser-ext-connected
+(access-byod-clientless, tenant slug redacted) · cma-user-scim-pilot (access-identity-design) ·
+azure-scim-deprovision (access-identity-design, Entra provisioning log, top bar cropped).
+
+**Catalogued for reuse:** cma-acc-overview (Access Overview dashboard — remote users per day/country/PoP,
+licence usage, policy + posture match widgets; no live want matched) · client-login-refused (Cato Client
+V6.8.3 "Login Error — incorrect username" for a SCIM-disabled user; portal variant was embedded instead) ·
+cma-events-scim-disabled (CMA System event, Sub-Type SCIM Provisioning, "Current status: disabled",
+account ID redacted — pairs with the leaver drills if a CMA-side event shot is ever wanted).
+
+Not kept: upload-block3 (82px fragment) · browser-extension shot without the Connected popup (inferior
+duplicate). Source HEICs removed from the library root after processing.

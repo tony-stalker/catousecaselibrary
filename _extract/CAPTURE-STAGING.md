@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-120 of the 183 still-wanted captures need setup a clean tenant can't provide by navigation.
+113 of the 174 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -24,11 +24,9 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (10)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (8)
 
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
-- access-offshore-bpo: Portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state
-- access-third-party: Cato Client / portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state
 - ai-genai-security: Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
@@ -37,9 +35,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-data-casb-dlp: Events page filtered to Data Control events with the export dialog — the match report as the customer sees it
 - security-finance-dora: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
 
-## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (30)
+## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (29)
 
-- access-byod-clientless: CMA Monitor → Events — Apps Security block event for an upload from a Browser Extension session
 - access-identity-design: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
 - access-offshore-bpo: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - access-third-party: CMA Monitor → Events — one contractor identity, named-rule allows beside an attempted-access WAN block
@@ -70,12 +67,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (27)
+## Other staged state (a specific rule/profile/filter that must exist first)  (23)
 
-- access-byod-clientless: CMA Applications Portal configuration — named internal apps published to a pilot group
-- access-hybrid-workforce: CMA Access → Always-On Policy — pilot rule with bypass settings
-- access-identity-design: CMA Access → Users — pilot user showing Disabled after IdP unassignment, beside the IdP provisioning log
-- access-identity-design: CMA Access → Users — pilot users with the IdP shown as directory source
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - access-remote-worker: CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list
 - ai-eu-ai-act: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template

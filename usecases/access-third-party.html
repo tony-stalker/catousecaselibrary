@@ -387,7 +387,10 @@
           (<a href="https://knowledge.catonetworks.com/docs/controlling-access-to-private-apps-through-rbi" target="_blank" rel="noopener">Controlling Access to Private Apps Through RBI</a>).
           For SaaS-only suppliers the Browser Extension is the faster route — the decision table is
           on <a href="access-byod-clientless.html">the BYOD page</a>; don't duplicate it, use it.</p>
-          <!-- capture-wanted: «CMA Applications Portal — named internal apps published to a supplier group» -->
+          <figure class="shot">
+            <img src="../assets/img/app-portal-enduser.png" alt="The Applications Portal as a signed-in supplier user sees it: nine published applications as tiles — Windows and Ubuntu hosts, an intranet site and a Guacamole jump target — with search and sort, and nothing else reachable" loading="lazy">
+            <figcaption>What the unmanaged-laptop supplier actually gets (lab tenant, fictional identities): a branded portal of exactly the applications published to their group — web apps and RDP/SSH hosts as tiles in a browser. No client, no network membership, and nothing beyond these tiles to discover.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Gate the front door</h4>
@@ -432,7 +435,14 @@
           timestamps — IdP change, refused attempt, last event seen — because the success criterion
           is a measured window, not an assurance
           (<a href="https://knowledge.catonetworks.com/docs/scim-user-provisioning" target="_blank" rel="noopener">SCIM User Provisioning</a>).</p>
-          <!-- capture-wanted: «Cato Client / portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-user-scim-disabled.png" alt="CMA Access → Users detail page for a SCIM-provisioned user showing User Status Disabled, origin SCIM with the IdP directory named as source, and the greyed-out Save confirming the record is directory-managed" loading="lazy">
+            <figcaption>The Cato end of the leaver drill (lab tenant, fictional identities): the contractor's user record flipped to <strong>Disabled</strong> by the next SCIM sync after the IdP change — origin SCIM, directory-managed, nothing edited by hand in Cato.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/portal-signin-refused.png" alt="Microsoft sign-in dialogue for the disabled contractor account showing the message that the account has been locked and to contact a support person to unlock it" loading="lazy">
+            <figcaption>The user-facing half of the same proof: the leaver's next portal sign-in refused at the IdP. Screenshot both, with the IdP-change timestamp, and the measured window is documented at both ends.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Assemble the per-contractor evidence pack</h4>

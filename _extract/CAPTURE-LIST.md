@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 183 live `capture-wanted` items across 57 pages
+Regenerated 174 live `capture-wanted` items across 57 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -30,25 +30,16 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **management-api-automation**: terminal output of terraform plan/apply for a cato_wf_rule with parallelism=1
 - **management-soc-xdr**: Home → Detection & Response Policy, a Response Policy rule with the Event response, beside the resulting Detection and Response event in a SIEM
 
-## Access — Identity (5)
+## Access — Identity (1)
 
-- **access-identity-design**: CMA Access → Users — pilot user showing Disabled after IdP unassignment, beside the IdP provisioning log
-- **access-identity-design**: CMA Access → Users — pilot users with the IdP shown as directory source
-- **access-offshore-bpo**: Portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state
-- **access-third-party**: Cato Client / portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state
 - **migration-anyconnect**: Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap
 
-## Access — Portal & clientless (5)
+## Access — Portal & clientless (1)
 
-- **access-byod-clientless**: CMA Applications Portal configuration — named internal apps published to a pilot group
-- **access-byod-clientless**: CMA Monitor → Events — Apps Security block event for an upload from a Browser Extension session
-- **access-byod-clientless**: Cato Browser Extension enabled in a personal Chrome profile, session routed via the PoP
 - **access-offshore-bpo**: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
-- **access-third-party**: CMA Applications Portal — named internal apps published to a supplier group
 
-## Access — Posture & Client policies (14)
+## Access — Posture & Client policies (13)
 
-- **access-hybrid-workforce**: CMA Access → Always-On Policy — pilot rule with bypass settings
 - **access-hybrid-workforce**: CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile
 - **access-hybrid-workforce**: CMA Access → Device Posture — profile with anti-malware + disk-encryption checks
 - **migration-anyconnect**: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet

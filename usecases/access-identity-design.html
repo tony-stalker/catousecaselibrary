@@ -559,7 +559,10 @@
           note the time, and watch the Members tab until the change lands. Entra's on-demand
           provisioning can push a single user faster — but it does not support assigning users to a
           group, so group-membership timings must be taken against the automatic cycle.</p>
-          <!-- capture-wanted: «CMA Access → Users — pilot users with the IdP shown as directory source» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-user-scim-pilot.png" alt="CMA Access → Users detail for a pilot user with status Configured, origin SCIM, the IdP directory shown as directory name, e-mail and UPN synced from the IdP and the Save button greyed out because the record is directory-managed" loading="lazy">
+            <figcaption>What a correctly synced pilot user looks like (lab tenant, fictional identities): origin <strong>SCIM</strong>, the IdP named as directory source, identity fields populated from the directory and read-only in Cato — the record exists here because the IdP says so, which is the whole design.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Set the authentication policy to SSO</h4>
@@ -607,7 +610,14 @@
           SLA actually is — for most, "provably dead within the hour, with an audit trail at both
           ends" beats their current deprovisioning process by days. A disabled user is also no longer
           identified by the Identity Agent, so attribution stops with access.</p>
-          <!-- capture-wanted: «CMA Access → Users — pilot user showing Disabled after IdP unassignment, beside the IdP provisioning log» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-user-scim-disabled.png" alt="CMA Access → Users detail page for the leaver-drill user showing User Status Disabled, origin SCIM with the IdP directory as source, the record read-only in Cato" loading="lazy">
+            <figcaption>The Cato end of the leaver drill (lab tenant, fictional identities): the pilot user flipped to <strong>Disabled</strong> by the SCIM sync — not deleted, licence returned, attribution stopped.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/azure-scim-deprovision.png" alt="Entra provisioning log Perform action panel for the Cato Networks enterprise application: the user was updated in CatoNetworks with target attribute active set to False via the Not IsSoftDeleted expression" loading="lazy">
+            <figcaption>The IdP end of the same drill (IdP sandbox, fictional identities): Entra's provisioning log recording <em>active → False</em> pushed to Cato. This plus the screenshot above is "an audit trail at both ends" — pair them with the two timestamps and the measured window is closed.</figcaption>
+          </figure>
         </li>
       </ol>
 

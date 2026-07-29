@@ -561,7 +561,14 @@
           timestamps — IdP change, refused connection, last event seen — because the leaver
           criterion is a measured window, not an assurance.</p>
           <!-- capture-wanted: «CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block» -->
-          <!-- capture-wanted: «Portal sign-in refused for a SCIM-disabled user, beside Access → Users showing the disabled state» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-user-scim-disabled.png" alt="CMA Access → Users detail page for a SCIM-provisioned agent showing User Status Disabled, origin SCIM with the IdP directory as source, the record read-only in Cato" loading="lazy">
+            <figcaption>Sipho's record after the IdP change lands (lab tenant, fictional identities): <strong>Disabled</strong> by the next SCIM sync, origin SCIM, directory-managed — nobody touched the Cato side, which is the point.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/portal-signin-refused.png" alt="Microsoft sign-in dialogue for the disabled agent account showing the message that the account has been locked and to contact a support person" loading="lazy">
+            <figcaption>And his next sign-in attempt refused at the IdP — the second of the three timestamps the leaver criterion asks you to record.</figcaption>
+          </figure>
         </li>
       </ol>
 
