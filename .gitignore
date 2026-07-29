@@ -1,3 +1,5 @@
 .DS_Store
 dist/
 __pycache__/
+ubuntu.txt
+feedback-log.txt

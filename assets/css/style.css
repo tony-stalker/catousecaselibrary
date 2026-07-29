@@ -329,6 +329,35 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-legend .swatch.info { border-color: #1d4f8f; }
 .lane-standby { fill: none; stroke: var(--ink-3); stroke-width: 2.5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }
 
+/* ---------- Feedback buttons + dialog (hosted mode only — injected by app.js) ---------- */
+.fb-btn {
+  font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer;
+  color: #d9efe7; background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 8px;
+  padding: 5px 11px; white-space: nowrap;
+}
+.fb-btn:hover { background: rgba(255,255,255,.15); }
+.fb-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(5,24,32,.6); display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.fb-dialog {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 24px; width: min(480px, 94vw);
+}
+.fb-dialog h3 { margin: 0 0 12px; }
+.fb-dialog label { display: block; font-size: .9rem; font-weight: 600; color: var(--ink-2); margin: 10px 0 2px; }
+.fb-dialog .fb-req { color: var(--status-critical); }
+.fb-dialog input, .fb-dialog textarea {
+  width: 100%; font: inherit; font-size: .93rem; color: var(--ink);
+  background: var(--page); border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 8px 10px; margin-top: 4px; resize: vertical;
+}
+.fb-dialog input:focus, .fb-dialog textarea:focus { outline: 2px solid var(--green-300); border-color: var(--green-500); }
+.fb-dialog .fb-note { font-size: .78rem; color: var(--ink-3); margin-top: 10px; }
+.fb-dialog .fb-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.fb-dialog .fb-status { font-size: .85rem; color: var(--green-700); min-height: 1.3em; margin-top: 8px; }
+
 /* ---------- Runbook tabs (Demo / PoV) — bar is injected by app.js when a page
    has both section#demo and section#pov; no-JS and print stack both sections ---------- */
 .rb-tabs { display: flex; gap: 6px; margin: 0 0 20px; border-bottom: 2px solid var(--hairline); }

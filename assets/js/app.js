@@ -264,6 +264,85 @@
   }
 
   /* ---------- dark-mode toggle (head snippet applies the saved theme pre-paint) ---------- */
+  /* ---------- feedback: report bug / feedback buttons (hosted mode only) ----------
+     Buttons appear only when the library is served over http(s) — a server-side
+     endpoint (/api/feedback, see _extract/server.py) records submissions to
+     feedback-log.txt in the web root. Name is mandatory so reports are traceable. */
+  function initFeedback() {
+    if (!/^https?:$/.test(location.protocol)) return;
+    var inner = $(".topnav-inner");
+    if (!inner) return;
+    var spacer = $(".spacer", inner);
+    function makeBtn(label, type) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "fb-btn";
+      b.textContent = label;
+      b.addEventListener("click", function () { openDialog(type); });
+      return b;
+    }
+    var bugBtn = makeBtn("🐞 Report bug", "bug");
+    var fbBtn = makeBtn("💬 Feedback", "feedback");
+    if (spacer && spacer.nextSibling) {
+      inner.insertBefore(bugBtn, spacer.nextSibling);
+      inner.insertBefore(fbBtn, bugBtn.nextSibling);
+    } else {
+      inner.appendChild(bugBtn);
+      inner.appendChild(fbBtn);
+    }
+    var overlay = null;
+    function openDialog(type) {
+      closeDialog();
+      overlay = document.createElement("div");
+      overlay.className = "fb-overlay";
+      var title = type === "bug" ? "Report a bug" : "Send feedback";
+      overlay.innerHTML =
+        '<form class="fb-dialog" novalidate>' +
+        "<h3>" + title + "</h3>" +
+        '<label>Your name <span class="fb-req">*</span><br>' +
+        '<input class="fb-name" type="text" maxlength="80" autocomplete="name" required></label>' +
+        '<label>' + (type === "bug" ? "What went wrong? Include the page and what you expected." : "What should we improve?") +
+        ' <span class="fb-req">*</span><br>' +
+        '<textarea class="fb-msg" rows="5" maxlength="4000" required></textarea></label>' +
+        '<div class="fb-note">Logged with your name, this page (' + location.pathname + ") and a timestamp.</div>" +
+        '<div class="fb-actions"><button type="button" class="btn btn-ghost fb-cancel">Cancel</button>' +
+        '<button type="submit" class="btn btn-primary">Submit</button></div>' +
+        '<div class="fb-status" aria-live="polite"></div>' +
+        "</form>";
+      document.body.appendChild(overlay);
+      var form = $(".fb-dialog", overlay);
+      var status = $(".fb-status", overlay);
+      $(".fb-cancel", overlay).addEventListener("click", closeDialog);
+      overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDialog(); });
+      document.addEventListener("keydown", escClose);
+      $(".fb-name", overlay).focus();
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = $(".fb-name", overlay).value.trim();
+        var msg = $(".fb-msg", overlay).value.trim();
+        if (!name) { status.textContent = "Your name is required."; $(".fb-name", overlay).focus(); return; }
+        if (!msg) { status.textContent = "Please describe the " + (type === "bug" ? "bug." : "feedback."); $(".fb-msg", overlay).focus(); return; }
+        status.textContent = "Sending…";
+        fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: type, name: name, message: msg, page: location.pathname })
+        }).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          status.textContent = "Thanks " + name + " — logged.";
+          setTimeout(closeDialog, 1200);
+        }).catch(function () {
+          status.textContent = "Couldn't reach the server — try again, or tell Tony directly.";
+        });
+      });
+    }
+    function escClose(e) { if (e.key === "Escape") closeDialog(); }
+    function closeDialog() {
+      if (overlay) { overlay.remove(); overlay = null; }
+      document.removeEventListener("keydown", escClose);
+    }
+  }
+
   function initTheme() {
     var inner = $(".topnav-inner");
     if (!inner) return;
@@ -364,6 +443,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
+    initFeedback();
     initIndex();
     initPage();
     initRunbookTabs();
