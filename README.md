@@ -43,7 +43,22 @@ git push                             # master tracks origin/main
 bash _extract/package.sh             # shareable zip in dist/ (clean decks only, ~58M)
 bash _extract/package.sh lite        # deck-free lite zip (~12M, deck buttons stripped)
 python3 _extract/build-prospect.py   # regenerate ../catoprospectlibrary (prospect edition; commit+push there)
+bash _extract/deploy.sh              # publish live to the Azure Ubuntu host (see Hosting below)
 ```
+
+### Hosting
+
+The library is served live at **http://10.7.0.4:8080/** (Azure Ubuntu VM, reachable over the
+Cato tunnel). `bash _extract/deploy.sh` stages the full edition, rsyncs it to
+`/srv/usecaselibrary` and restarts the systemd unit `usecaselibrary`
+(`_extract/server.py`, stdlib-only — static files + `POST /api/feedback`). Port 80 on that
+host belongs to Apache (SASE-Experts contractor portal), so the library sits on 8080.
+
+- SSH credentials come from `ubuntu.txt` in the library root — **git-ignored, never commit it**.
+- The in-page **Report bug / Feedback** buttons (top-right, only shown when served over
+  http/https) append to `feedback-log.txt` in the web root with a mandatory name field.
+  That file is excluded from rsync `--delete`, blocked from being served (403), and
+  git-ignored. Read it with: `ssh tonylab@10.7.0.4 cat /srv/usecaselibrary/feedback-log.txt`.
 
 Conventions and gotchas:
 
