@@ -302,3 +302,47 @@ account ID redacted — pairs with the leaver drills if a CMA-side event shot is
 
 Not kept: upload-block3 (82px fragment) · browser-extension shot without the Connected popup (inferior
 duplicate). Source HEICs removed from the library root after processing.
+
+## Batch: browser-driven personal-tenant captures (30 Jul 2026, live session)
+
+Claude drove Tony's browser against the personal lab tenant (Tony logged in; nothing was saved to
+the tenant — the ISE-baseline profile and Sophos check were captured in their unsaved New dialogs
+and cancelled). Top global bar cropped from all shots. 8 files, 10 embeds across 9 pages.
+
+**Embedded 30 Jul (pm):** cma-posture-profile-corp (access-hybrid-workforce, migration-palo-alto —
+7-check Windows corp profile incl. AM/disk-encryption/patch) · cma-posture-profile-baseline
+(migration-cisco, security-uk-public-sector — unsaved AM+DE+registry-OS profile) ·
+cma-posture-check-sophos (migration-sophos — OPSWAT vendor Sophos Limited + product list) ·
+cma-ccp-rule-posture (access-hybrid-workforce — rule editor, posture profile + Allow WAN and
+Internet) · cma-policy-changes (security-consistent, network-agility-mna — My Policy Changes,
+publish completed + timestamp + Audit Trail link) · cma-em-probes-policy (access-remote-worker —
+probes policy, user rule with probe list) · cma-sdp-users-overview (migration-anyconnect —
+two connected wave users, per-user throughput).
+
+**Catalogued for reuse:** cma-ccp-rulebase-wide (full Client Connectivity rulebase, 14 rules with
+Device Posture Profiles + Action columns — candidate for the anyconnect/directaccess "wave-group
+rule, posture Any" wants if a wave-named rule is ever staged) · cma-posture-checks-catalog
+(Device Checks tab — check catalogue with categories, vendors and criteria incl. CrowdStrike
+version-gate and real-time-protection flags).
+
+## Batch: browser-driven personal-tenant captures (30 Jul 2026, live session)
+
+Claude drove Tony's browser against the personal lab tenant (Tony logged in; nothing was saved to
+the tenant — the ISE-baseline profile and Sophos check were captured in their unsaved New dialogs
+and cancelled). Top global bar cropped from all shots. 9 files, 10 embeds across 9 pages.
+
+**Embedded 30 Jul (pm):** cma-posture-profile-corp (access-hybrid-workforce, migration-palo-alto —
+7-check Windows corp profile incl. AM/disk-encryption/patch) · cma-posture-profile-baseline
+(migration-cisco, security-uk-public-sector — unsaved AM+DE+registry-OS profile) ·
+cma-posture-check-sophos (migration-sophos — OPSWAT vendor Sophos Limited + product list) ·
+cma-ccp-rule-posture (access-hybrid-workforce — rule editor, posture profile + Allow WAN and
+Internet) · cma-policy-changes (security-consistent, network-agility-mna — My Policy Changes,
+publish completed + timestamp + Audit Trail link) · cma-em-probes-policy (access-remote-worker —
+probes policy, user rule with probe list) · cma-sdp-users-overview (migration-anyconnect —
+two connected wave users, per-user throughput).
+
+**Catalogued for reuse:** cma-ccp-rulebase-wide (full Client Connectivity rulebase, 14 rules with
+Device Posture Profiles + Action columns — candidate for the anyconnect/directaccess "wave-group
+rule, posture Any" wants if a wave-named rule is ever staged) · cma-posture-checks-catalog
+(Device Checks tab — check catalogue with categories, vendors and criteria incl. CrowdStrike
+version-gate and real-time-protection flags).

@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-113 of the 174 still-wanted captures need setup a clean tenant can't provide by navigation.
+103 of the 164 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -67,25 +67,21 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (23)
+## Other staged state (a specific rule/profile/filter that must exist first)  (19)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
-- access-remote-worker: CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list
 - ai-eu-ai-act: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
 - ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - management-visibility: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
-- migration-anyconnect: Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap
 - migration-checkpoint: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - migration-directaccess: CMA Access → Always-On Policy — DA-Pilot rule with bypass settings
 - migration-netskope: Security → WAN Firewall rule scoped to a pilot user group allowing a named private app behind a DC Socket — the NPA-replacement rule
 - migration-versa: Monitor → Data Protection Dashboard — monitor-mode DLP matches attributed to user, app and data type
 - network-agility-mna: Administration → Audit Trail filtered to the pilot window — site create, socket assign, policy publish, bandwidth edit and site delete attributed to one named admin with previous/new values
-- network-agility-mna: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - network-global-app-performance: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them
 - security-compliance: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
-- security-consistent: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - security-data-casb-dlp: Cloud Apps / Applications Dashboard on pilot traffic — sanctioned vs unsanctioned counts and App Risk widget
 - security-dlp-forensics: Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values
 - security-dlp-forensics: Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident
@@ -93,20 +89,14 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-firewall-refresh: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - security-healthcare-nhs: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems
 
-## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (12)
+## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (6)
 
-- access-hybrid-workforce: CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile
-- access-hybrid-workforce: CMA Access → Device Posture — profile with anti-malware + disk-encryption checks
 - access-hybrid-workforce: Cato Client blocked dialog — Details naming the failed device check
 - migration-anyconnect: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet
 - migration-anyconnect: Monitor → Events — Client Connectivity block event naming the failed posture check for a wave device
-- migration-cisco: Access → Device Posture — a profile recreating ISE posture checks (anti-malware + disk encryption + OS version)
 - migration-cloudflare: Access → Client Connectivity Policy rule referencing a Device Posture profile, with the Client-side posture-failure message
 - migration-directaccess: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - migration-directaccess: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
-- migration-palo-alto: Access → Device Posture profile with checks mapped from GlobalProtect HIP objects (AV, disk encryption, patch level)
-- migration-sophos: Access → Device Posture — Anti-Malware device check with a third-party (Sophos) vendor selected in the OPSWAT vendor list
-- security-uk-public-sector: Access → Device Posture — a posture profile showing anti-malware, disk-encryption and minimum-OS device checks
 
 ## Reports — generate/schedule the specific report and open the delivered PDF  (8)
 

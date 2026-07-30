@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 174 live `capture-wanted` items across 57 pages
+Regenerated 164 live `capture-wanted` items across 57 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -30,29 +30,22 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **management-api-automation**: terminal output of terraform plan/apply for a cato_wf_rule with parallelism=1
 - **management-soc-xdr**: Home → Detection & Response Policy, a Response Policy rule with the Event response, beside the resulting Detection and Response event in a SIEM
 
-## Access — Identity (1)
+## Access — Identity (0)
 
-- **migration-anyconnect**: Access → SDP Users Overview — wave users' Client traffic and connectivity after the swap
 
 ## Access — Portal & clientless (1)
 
 - **access-offshore-bpo**: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 
-## Access — Posture & Client policies (13)
+## Access — Posture & Client policies (7)
 
-- **access-hybrid-workforce**: CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile
-- **access-hybrid-workforce**: CMA Access → Device Posture — profile with anti-malware + disk-encryption checks
 - **migration-anyconnect**: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet
 - **migration-anyconnect**: Monitor → Events — Client Connectivity block event naming the failed posture check for a wave device
 - **migration-cisco**: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
-- **migration-cisco**: Access → Device Posture — a profile recreating ISE posture checks (anti-malware + disk encryption + OS version)
 - **migration-cloudflare**: Access → Client Connectivity Policy rule referencing a Device Posture profile, with the Client-side posture-failure message
 - **migration-directaccess**: CMA Access → Always-On Policy — DA-Pilot rule with bypass settings
 - **migration-directaccess**: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - **migration-directaccess**: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
-- **migration-palo-alto**: Access → Device Posture profile with checks mapped from GlobalProtect HIP objects (AV, disk encryption, patch level)
-- **migration-sophos**: Access → Device Posture — Anti-Malware device check with a third-party (Sophos) vendor selected in the OPSWAT vendor list
-- **security-uk-public-sector**: Access → Device Posture — a posture profile showing anti-malware, disk-encryption and minimum-OS device checks
 
 ## Assets — Device Inventory (4)
 
@@ -96,11 +89,10 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-tls-inspection**: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - **security-uk-public-sector**: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Monitoring — Experience (9)
+## Monitoring — Experience (8)
 
 - **access-offshore-bpo**: CMA Experience Monitoring user drill-down — cohort user on the Johannesburg PoP with the VDI application selected
 - **access-remote-worker**: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
-- **access-remote-worker**: CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list
 - **access-remote-worker**: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
 - **management-dem**: an application drill-down where the app scores Poor on TTFB while the Connection Details chain is green end to end — the "not the network" verdict
 - **migration-directaccess**: Cato Client connected on macOS beside the same user's row in Experience Monitoring
@@ -197,17 +189,15 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-retail-pci**: Network → Sites → Networks for a store site showing POS/CDE, guest, staff and cameras/IoT ranges
 - **security-tls-inspection**: Security → Certificate Management — active certificate with expiry and PEM/DER download options
 
-## Reports & Audit (12)
+## Reports & Audit (10)
 
 - **management-api-automation**: Administration → Audit Trail entry for an API-key change showing previous and new values
 - **management-dem**: Home → Reports — a recurring Site and User Experience report schedule with a customer mailing list
 - **management-vendor-consolidation**: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - **management-vendor-consolidation**: Home → Reports catalogue with the rule hit count report template selected, and a generated PDF in the Generated PDFs tab
 - **management-visibility**: Home → Reports, Saved Reports tab showing a recurring report's schedule and mailing list
-- **network-agility-mna**: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - **security-compliance**: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
 - **security-compliance**: Home → Reports — Catalog tab with the rule hit count report template, and a generated PDF in the Generated PDFs tab
-- **security-consistent**: Notifications → My Policy Changes showing a published change at 100% propagation with timestamp
 - **security-finance-dora**: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
 - **security-firewall-refresh**: Home → Reports generated rule hit count PDF (Top Matched / Least Matched / full priority list)
 - **security-uk-public-sector**: Home → Reports — a generated rule hit count PDF from the Generated PDFs tab

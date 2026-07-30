@@ -620,7 +620,10 @@
       <h3>What good output looks like</h3>
       <!-- capture-wanted: «Security → DNS Protection — the eight protections with actions set to Allow (monitor) for the PoV» -->
       <!-- capture-wanted: «Network → Routing Table filtered to the pilot prefixes, showing BGP-learned overlay routes via the hub handoff» -->
-      <!-- capture-wanted: «Access → Device Posture — a profile recreating ISE posture checks (anti-malware + disk encryption + OS version)» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-posture-profile-baseline.png" alt="CMA New Device Profile panel named Pilot Baseline Posture with three device checks staged: CrowdStrike anti-malware, Windows disk encryption and a Windows registry check on the CurrentVersion key for minimum OS build" loading="lazy">
+        <figcaption>The ISE posture set rebuilt as one Cato profile (lab tenant): anti-malware, disk encryption and an OS-build check (a registry check on <code>CurrentVersion</code> — the same trick ISE compound conditions use). Checks AND together, so the profile is the compound condition.</figcaption>
+      </figure>
       <!-- capture-wanted: «Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog» -->
       <figure class="shot">
         <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Internet Firewall rulebase in the CMA with ordered rules, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">

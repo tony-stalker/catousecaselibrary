@@ -368,7 +368,10 @@
           both into a profile (e.g. <em>Pilot-Managed-Device</em>); checks inside a profile combine
           with AND, so the device must satisfy every one
           (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>).</p>
-          <!-- capture-wanted: «CMA Access → Device Posture — profile with anti-malware + disk-encryption checks» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-posture-profile-corp.png" alt="CMA Edit Device Profile panel for a Windows corporate posture profile, enabled, with seven device checks listed: CrowdStrike anti-malware, Windows Firewall, Intune patch management, device certificate, McAfee DLP, Cato Client version and disk encryption" loading="lazy">
+            <figcaption>A production-shaped posture profile (lab tenant): anti-malware and disk-encryption checks — the two this step creates — sitting alongside firewall, patch-management, certificate and client-version checks. Every check combines with AND, so the pilot device must satisfy the lot to count as managed.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Gate the connection — monitor-first</h4>
@@ -379,7 +382,10 @@
           — a clean week of connection events for the cohort is the baseline that makes the block
           test in step 4 meaningful
           (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
-          <!-- capture-wanted: «CMA Access → Client Connectivity Policy — pilot rule requiring the posture profile» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ccp-rule-posture.png" alt="CMA Client Connectivity Policy rule editor over the rulebase: the pilot rule's Device Posture Profiles section holds a corporate Windows device profile and the action is Allow WAN and Internet" loading="lazy">
+            <figcaption>The step-4 end state, one panel (lab tenant, fictional identities): the pilot rule with a Device Posture Profile attached and action <strong>Allow WAN and Internet</strong> — once this replaces the posture-Any week-one rule, a failed check means no tunnel at all.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Turn the posture key</h4>

@@ -590,7 +590,10 @@ show rule-hit-count device-group &lt;pilot-dg&gt; pre-rulebase security rules al
         <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with app and category objects, user and device scopes, Block and Allow actions, event tracking and live hit-count bars" loading="lazy">
         <figcaption>Criterion 2 in one screen: the translated slice as an ordered, first-match rulebase with live hit counts — app-aware rules firing on real pilot traffic. Read the hit-count bars against the Panorama rule-usage baseline to show the same intent enforced on the new platform.</figcaption>
       </figure>
-      <!-- capture-wanted: Access → Device Posture profile with checks mapped from GlobalProtect HIP objects (AV, disk encryption, patch level) -->
+      <figure class="shot">
+        <img src="../assets/img/cma-posture-profile-corp.png" alt="CMA Edit Device Profile panel showing a Windows posture profile whose checks cover anti-malware, firewall, Intune patch management, device certificate, DLP agent, Cato Client version and disk encryption" loading="lazy">
+        <figcaption>The HIP-object mapping landed (lab tenant): one Cato posture profile carrying the classic GlobalProtect HIP trio — anti-malware, disk encryption and patch level (here an Intune check) — plus certificate and client-version checks. Attach it to the pilot's Client Connectivity rule and the HIP-profile gate is reproduced.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Threats Dashboard showing IPS monitor-mode events for a pilot site, then a blocked test detection -->
       <!-- capture-wanted: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–firewall eBGP handoff -->
       <figure class="shot">

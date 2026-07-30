@@ -487,7 +487,10 @@
           scope by platform and country, and the rulebase is ordered, first match wins. Each rule
           takes between one and 20 probes; user probes run at a default 300-second interval
           (<a href="https://knowledge.catonetworks.com/docs/configuring-the-experience-monitoring-probes-and-policy" target="_blank" rel="noopener">Configuring the Experience Monitoring Probes and Policy</a>).</p>
-          <!-- capture-wanted: «CMA Home → Experience Monitoring Probes — User rule scoped to the pilot group with its probe list» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-em-probes-policy.png" alt="CMA Experience Monitoring Probes policy with both enablement toggles on and two ordered rules: an all-sites rule and an all-users rule with connection origin Remote, each carrying a list of a dozen probes spanning SaaS logins, internal hosts and ping targets" loading="lazy">
+            <figcaption>The probes policy shape this step builds (lab tenant): policy toggles on, an ordered rulebase, and a user rule (origin Remote) carrying its probe list — SaaS logins, internal hosts, TCP and ping targets. Swap the predefined all-users source for your pilot group and the cohort baseline starts accruing at the default 300-second interval.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Define probes for the apps they would actually complain about</h4>
