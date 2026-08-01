@@ -13,7 +13,7 @@ build time (July 2026) from the sources cited on each page.
 | CVE-2024-3400, CVE-2024-47575 (FortiJump), CVE-2024-39717 (Versa), 2025 Concerto CVEs | palo-alto, fortinet, versa pages | Stable as history; add newer CVEs quarterly |
 | CISA KEV counts (26 Fortinet CVEs / 13 ransomware-linked) | migration-fortinet | Quarterly — counts grow |
 | FortiOS 7.6.3 removes SSL-VPN tunnel mode | migration-fortinet | Stable |
-| 2025 Gartner MQ (Cato Leader, Cloudflare Visionary, ~400 via Gartner) | migration-cloudflare | On next MQ publication (~annual) |
+| 2026 Gartner MQ for SASE Platforms published ~28 Jul 2026 — Cato reconfirmed Leader (3rd consecutive year); page also cites the 2025 MQ (Cato Leader, Cloudflare Visionary, ~400 via Gartner) for the Cloudflare comparison — **Cloudflare's category in the 2026 MQ is unconfirmed** (Gartner report paywalled, press coverage so far only covers Leaders/Challengers); re-check before citing a 2026 Cloudflare placement | migration-cloudflare | Next visit: confirm Cloudflare's 2026 MQ category; otherwise on next MQ publication (~annual) |
 | Cloudflare One Appliance limits (no fail-open, ~30s failover, no QoS) | migration-cloudflare(-policy) | Quarterly — vendor docs move |
 | Client OS list NOW includes "Android and Chromebook" (KB verified 23 Jul 2026 — iboss caveat softened accordingly); Google Workspace SCIM still not in documented lists | access-byod-clientless, migration-iboss | Quarterly — support lists grow |
 | AI Security: End Users and Apps are separate per-user licences; Enterprise Browser included in ZTNA licence | AI Security pages, access-byod-clientless | On licensing announcements |
@@ -35,7 +35,7 @@ build time (July 2026) from the sources cited on each page.
 | NCSC CAF v4.0 (Aug 2025) vs NHS still on v3.4 | security-healthcare-nhs | On next DSPT edition |
 | NHS Supply Chain requires CE+ from in-scope suppliers (Sep 2025); NHS England MFA policy (Aug 2023); HSCN operational, no announced successor | security-healthcare-nhs | Annually |
 | Always-On bypass minimum Client versions (Win 5.9+ / macOS 5.5+ / iOS 5.6+); EM Connection Details scoring thresholds | access-remote-worker | Quarterly vs KB — versions move with releases |
-| Digital Omnibus "publication still pending" wording (agreed May–Jun 2026; delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028) — in the Read-this-first callout AND objective | ai-eu-ai-act | On OJ publication (~weeks) — cite the amending regulation, drop "pending" |
+| Digital Omnibus published as **Regulation (EU) 2026/1744** in the Official Journal on 24 Jul 2026, in force 27 Jul 2026 (delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028, confirmed) — page updated 1 Aug 2026 to cite the regulation and drop "pending" wording, in the Read-this-first callout AND objective | ai-eu-ai-act | Stable as history — re-verify the two deferred dates land on schedule (Dec 2027 / Aug 2028) |
 | AI Act general applicability "from 2 Aug 2026" phrasing; Art 50 marking grace to 2 Dec 2026 for pre-market systems | ai-eu-ai-act | Sep 2026 — confirm "from" reads naturally as past; Dec 2026 for the grace row |
 | Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
 | CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
