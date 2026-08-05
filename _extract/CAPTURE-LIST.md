@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 164 live `capture-wanted` items across 57 pages
+Regenerated 157 live `capture-wanted` items across 57 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -9,7 +9,7 @@ Regenerated 164 live `capture-wanted` items across 57 pages
 3. Tell Claude which files map to which pages — it crops chrome, catalogues, embeds and ships.
 Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependent shots are in `CAPTURE-STAGING.md`.
 
-## AI Security (11)
+## AI Security (10)
 
 - **access-offshore-bpo**: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - **ai-agentic-security**: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session
@@ -21,7 +21,6 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **ai-homegrown-apps**: AI Security → Guards — guard details page showing endpoint, headers, guard API keys and sample integration code
 - **security-ai**: AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count
 - **security-ai-visibility**: CMA AI Security → User Interaction Policy — a monitor-mode rule scoped to an assessment cohort
-- **security-ai-visibility**: CMA Home → Reports — GenAI Report generation scoped to an assessment cohort
 
 ## API & automation (4)
 
@@ -160,7 +159,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **network-ipsec-asa**: Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet
 
-## Other (26)
+## Other (25)
 
 - **access-byod-clientless**: RBI-isolated portal session — download/copy attempt refused in the browser
 - **ai-genai-security**: Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome
@@ -169,7 +168,6 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **management-soc-xdr**: Security → Connectors showing the Microsoft Defender for Endpoint connector connected alongside Cato sources
 - **management-soc-xdr**: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - **management-visibility**: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
-- **management-visibility**: the delivered executive report PDF opened at its usage-trends page
 - **migration-anyconnect**: CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing
 - **migration-cisco**: Security → DNS Protection — the eight protections with actions set to Allow (monitor) for the PoV
 - **migration-forcepoint**: Access → Proxy Configuration Policy rulebase serving a transitional PAC to a straggler group
@@ -189,18 +187,14 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-retail-pci**: Network → Sites → Networks for a store site showing POS/CDE, guest, staff and cameras/IoT ranges
 - **security-tls-inspection**: Security → Certificate Management — active certificate with expiry and PEM/DER download options
 
-## Reports & Audit (10)
+## Reports & Audit (6)
 
 - **management-api-automation**: Administration → Audit Trail entry for an API-key change showing previous and new values
 - **management-dem**: Home → Reports — a recurring Site and User Experience report schedule with a customer mailing list
 - **management-vendor-consolidation**: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
-- **management-vendor-consolidation**: Home → Reports catalogue with the rule hit count report template selected, and a generated PDF in the Generated PDFs tab
 - **management-visibility**: Home → Reports, Saved Reports tab showing a recurring report's schedule and mailing list
 - **security-compliance**: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
-- **security-compliance**: Home → Reports — Catalog tab with the rule hit count report template, and a generated PDF in the Generated PDFs tab
 - **security-finance-dora**: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
-- **security-firewall-refresh**: Home → Reports generated rule hit count PDF (Top Matched / Least Matched / full priority list)
-- **security-uk-public-sector**: Home → Reports — a generated rule hit count PDF from the Generated PDFs tab
 
 ## Security — DLP & Data Protection (9)
 
@@ -227,8 +221,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-retail-pci**: Monitor → Events filtered to LAN Firewall block events — a guest Wi-Fi client stopped from reaching a POS/CDE address
 - **security-retail-pci**: Security → LAN Firewall rulebase with a LAN Network rule scoped to a store's VLANs — catch-all Allow · Event rule above the default ANY-ANY Block
 
-## Security — TLS Inspection (3)
+## Security — TLS Inspection (2)
 
 - **migration-checkpoint**: Monitor → Events filtered to TLSi-decrypted pilot traffic showing first-time detections surfaced after staging
 - **migration-sophos**: Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules
-- **security-tls-inspection**: Home → Reports TLS Inspection report — inspected vs. bypassed charts per OS, filtered to a pilot group

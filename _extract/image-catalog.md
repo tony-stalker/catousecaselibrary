@@ -346,3 +346,30 @@ Device Posture Profiles + Action columns — candidate for the anyconnect/direct
 rule, posture Any" wants if a wave-named rule is ever staged) · cma-posture-checks-catalog
 (Device Checks tab — check catalogue with categories, vendors and criteria incl. CrowdStrike
 version-gate and real-time-protection flags).
+
+## Batch: Reports session — generated report PDFs + Reports UI (5 Aug, browser-driven, personal tenant)
+
+Claude drove Tony's browser against the personal lab tenant (Tony logged in). Two benign report
+PDFs were generated in the tenant ("Internet Firewall Rule Hit Count - Pilot" and "TLS Inspection -
+Pilot Group", both Last Week / London — delete the rows from Home → Reports → Generated PDFs if
+unwanted); the GenAI Report was staged in its Generate now drawer and cancelled, nothing else
+touched. PDF pages rendered via PyMuPDF at 2x; UI shots cropped 56px (1920w). PII pass: report
+cover pages carry the account name so only inner pages were used; exec p3 site name
+`tony-sa-hub-azure-vsocket` redacted #555; TLS p5 (real lab hostnames) not used. 7 files,
+9 embeds across 7 pages.
+
+**Embedded 5 Aug:** cma-reports-catalog-hitcount (management-vendor-consolidation,
+security-compliance — Catalog tab, IFW Hit Count template selected with live Top/Least preview) ·
+cma-reports-generated-pdfs (management-vendor-consolidation, security-compliance — Generated PDFs
+tab, both new reports Ready atop scheduled-report history) · cma-report-ifw-hitcount-top-least
+(security-uk-public-sector, security-firewall-refresh — PDF p3, Top/Least Matched Rules 2.51M→13) ·
+cma-report-ifw-hitcount-table (security-firewall-refresh — PDF p4, full rules table with event
+counts + last-used) · cma-report-tls-inspected-bypassed (security-tls-inspection — PDF p3,
+inspected vs bypassed donuts overall + per OS) · cma-genai-report-generate-cohort
+(security-ai-visibility — Generate now drawer, "GenAI Usage - Assessment Cohort", SDP User In
+Adele Vance/Alex Wilber, GenAI Usage preview behind) · cma-report-exec-usage-trends
+(management-visibility — Executive Report PDF p3 Sites Overview, month of traffic over time +
+top sites, one site name redacted).
+
+**Source PDFs kept out of the repo** (scratchpad only): exec-report.pdf pp5/12/14 (users overview,
+applications usage, GenAI apps tables) are clean candidates if future wants need them.
