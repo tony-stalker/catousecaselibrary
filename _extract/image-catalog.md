@@ -373,3 +373,26 @@ top sites, one site name redacted).
 
 **Source PDFs kept out of the repo** (scratchpad only): exec-report.pdf pp5/12/14 (users overview,
 applications usage, GenAI apps tables) are clean candidates if future wants need them.
+
+## Batch: AI DLP match report — events, incident, forensics (26 Aug, hand-back from personal lab tenant)
+
+Tony ran the `~/Documents/claude/dlp-test-kit/` payloads as file uploads to ChatGPT from the lab
+tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 54–57) fired.
+
+- **cma-genai-dlp-events-grid.png** — `Monitor → Events` grid, nine ChatGPT upload events, columns
+  Time / User / Application / Application Activity / File Name / Rule / DLP Profiles / Action.
+  Eight rows on the four recommended rules, one on the tenant's pre-existing GenAI monitor rule.
+  All actions Allow. No redaction needed: user is the Bruce Banner persona, all filenames are kit
+  payloads, no email/tenant slug/account ID on screen. **Embedded** → ai-genai-security.
+- **cma-genai-dlp-forensics.png** — composite of two captures: the evidence-access consent dialog
+  ("all access and activity are logged and monitored") and the Forensics panel at match 2/3 with
+  `AKIAIOSFODNN7EXAMPLE` highlighted. **Embedded** → ai-genai-security.
+- **NOT used — Data Incident detail pane** (shot1): leaks `tony.stalker@catonetworks.com`
+  (Logged In User), `bruce.banner@sase-experts.co.uk` (real domain), device name `TonyStal-LM-UK`
+  ×2 and host MAC `64:4b:f0:24:d4:05`. The page already carries a Data Incident pane at
+  `dlp-incident-cma.png` from the demo tenant, so the redaction wasn't worth spending. Kept in
+  scratch if a monitor-mode (Allow) incident pane is ever wanted — redact those four fields.
+- **Not used — forensics matches 1/3 and 3/3** (GitHub PAT, GitLab PAT): same panel, redundant with
+  the AWS one. 3/3 also shows a truncated "Owners: Bruce Bann" line.
+- Note for a re-shoot: the tenant's pre-existing rule is spelled "DLP - Genrative AI Monitor Up…"
+  and that typo is legible in the grid.

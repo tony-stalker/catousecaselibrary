@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-96 of the 157 still-wanted captures need setup a clean tenant can't provide by navigation.
+95 of the 156 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -98,9 +98,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-directaccess: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - migration-directaccess: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
 
-## Reports — generate/schedule the specific report and open the delivered PDF  (1)
+## Reports — generate/schedule the specific report and open the delivered PDF  (0)
 
-- ai-genai-security: Events filtered to the four recommended AI DLP rules — the match report as the data owners review it
 
 ## Resilience drill — perform the timed drill (link pull / HA failover) and capture the mid-drill Real-Time / Events state  (9)
 
