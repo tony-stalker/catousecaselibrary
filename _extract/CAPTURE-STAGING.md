@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-95 of the 156 still-wanted captures need setup a clean tenant can't provide by navigation.
+94 of the 155 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -24,9 +24,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (8)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (7)
 
-- ai-genai-security: Browser plugin blocking or anonymising on an off-net device — the block or mask notice, to pair with the engage-user notice already embedded
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog

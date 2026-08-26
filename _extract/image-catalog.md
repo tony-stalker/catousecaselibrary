@@ -405,3 +405,9 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   bottom trimmed to remove an "Activate Windows" watermark, and the toolbar profile avatar
   pixelated (real photo). **Embedded** → ai-genai-security. The block/anonymise variant is still
   wanted so the pair can be shown.
+- **cma-ai-plugin-block.png** (26 Aug) — same plugin, **block** outcome: Edge at
+  `gemini.google.com/app`, page never renders, Cato card reads "Access restricted — Access to Gemini
+  is restricted by your organization." Cropped to the browser window, toolbar avatar pixelated.
+  **Embedded** → ai-genai-security, paired with the engage-user notice. This closes the
+  browser-plugin want; the anonymise/mask variant was never captured separately and is no longer
+  tracked as a want.

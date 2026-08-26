@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 156 live `capture-wanted` items across 57 pages
+Regenerated 155 live `capture-wanted` items across 56 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -53,9 +53,8 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-ot-iot**: Assets → Device Inventory Segmentation Flows Sankey for an OT VLAN, protocols and destinations visible
 - **security-retail-pci**: Home → Devices → Segmentation tab — Segmentation Flows Sankey for a store site (device type → application → protocol → destination)
 
-## Client-side (end-user view) (3)
+## Client-side (end-user view) (2)
 
-- **ai-genai-security**: Browser plugin blocking or anonymising on an off-net device — the block or mask notice, to pair with the engage-user notice already embedded
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
 
