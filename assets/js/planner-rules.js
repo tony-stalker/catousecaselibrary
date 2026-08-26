@@ -31,6 +31,59 @@ window.PLANNER_RULES = {
   ],
   dimensions: [
     {
+      dimension: "common",
+      options: [
+        {
+          key: "always", label: "Every migration",
+          pages: ["migration-methodology", "management-pov-framework", "management-api-automation"],
+          phases: [
+            { phase: "discover", steps: [
+            "Run the kick-off and write measurable success criteria: sponsor, timeline, and today's latency, experience and ticket baselines."
+            ] },
+            { phase: "design", steps: [
+            "Order the last mile and hardware against carrier lead times: broadband, LTE, socket sizing, shipping and spares."
+            ] },
+            { phase: "foundation", steps: [
+            "Build the Cato account first: admin roles and RBAC, admin SSO with MFA, scoped API keys, Audit Trail on.",
+            "Feed CMA events to the SIEM from day one, write down retention, and export incumbent logs before licences lapse."
+            ] },
+            { phase: "pilot", steps: [
+            "Walk a site acceptance list: voice and QoS, printers and scan-to-folder, badge and CCTV, hardcoded-gateway legacy apps."
+            ] },
+            { phase: "network-waves", steps: [
+            "Gate every wave: CAB approval, booked window, service-desk briefing, user comms, and a written go/no-go with a named rollback owner.",
+            "Update name resolution and directory after re-addressing: forwarders, split-horizon zones, DHCP scopes, AD subnets and PTR records.",
+            "Re-home published inbound services to Remote Port Forwarding or an allocated static IP, lowering public DNS TTLs first."
+            ] },
+            { phase: "handover", steps: [
+            "Hand over the operating contract: ticket severities, firmware upgrade windows, escalation paths, and hypercare with dated exit criteria."
+            ] },
+            { phase: "decommission", steps: [
+            "Close each retired vendor: serve written notice, confirm non-renewal dates, cancel support, wipe appliances, clear the asset register."
+            ] },
+          ],
+          prereqs: [
+            "Kick-off, design workshop and account-setup sessions booked, with the sponsor and a named customer owner per workstream.",
+            "Structured discovery complete: traffic flows, site interdependencies, LAN L2 versus L3, routing strategy, DMZ, internet and voice integration.",
+            "Success criteria agreed at one workshop before anything is built — each testable, with a measurement and a named owner.",
+            "Trial licences confirmed, TLS inspection scope approved by whoever owns privacy, IdP syncing the pilot group, change windows booked."
+          ],
+          risks: [
+            "Asymmetric routing during co-existence: stateful hub firewalls see half the conversation, so sessions fail and traffic drops.",
+            "Parallel connectivity stops scaling beyond roughly twenty socket sites — rework, repeat site visits and extra PS hours follow.",
+            "Unscoped drift: every \"can it also…?\" stretches the timeline until the sponsor has forgotten why the evaluation started.",
+            "No decision meeting on the calendar — the trial licence expires and nobody is ever asked to decide."
+          ],
+          evidence: [
+            "Monitor → Topology on connection day: tunnels up, link quality to the nearest PoP, first traffic flowing, dated.",
+            "Monitor → App Analytics for the pilot site — the customer's own applications and users named on screen by day five.",
+            "The test-case register: every criterion with its priority, measurement and status, read out against findings at the wrap-up.",
+            "Administration → Audit Trail: each change attributed to an admin or API key, with previous and new values recorded."
+          ],
+        },
+      ]
+    },
+    {
       dimension: "wan",
       options: [
         {
@@ -38,22 +91,26 @@ window.PLANNER_RULES = {
           pages: ["network-mpls-migration", "migration-journey-mpls", "migration-methodology", "network-resilient-site-design"],
           phases: [
             { phase: "discover", steps: [
-            "Map every site's MPLS contract end date and the prefixes each site must still reach."
+            "Map every MPLS circuit to its site, contract end date, notice period and the prefixes that site must still reach."
             ] },
             { phase: "design", steps: [
-            "Pin the routing decision point per site — L3 switch, legacy firewall, or Cato socket."
+            "Choose big-bang or phased, then pin the routing decision point per site — L3 switch, legacy firewall or Cato Socket.",
+            "State whether rollback at each site is a route change or a site visit."
             ] },
             { phase: "foundation", steps: [
-            "Connect the DC socket beside the CE router and add one routed range per MPLS site."
+            "Connect the DC interconnect socket beside the CE router and add one routed range per MPLS site.",
+            "Prove reachability both ways between migrated ranges and the sites still on MPLS."
             ] },
             { phase: "pilot", steps: [
             "Cut one branch over on broadband plus LTE and work the reachability matrix both directions."
             ] },
             { phase: "network-waves", steps: [
-            "Migrate sites as circuits expire, deleting each routed range as its prefix moves."
+            "Migrate sites in contract-expiry order, deleting each routed range as its prefix moves.",
+            "Fill in the reachability matrix wave by wave, both directions, before starting the next."
             ] },
             { phase: "decommission", steps: [
-            "Withdraw the last routed range, remove the CE static route, then cancel the contract."
+            "Withdraw the last routed range, remove the CE static route and decommission the MPLS router.",
+            "Serve notice within the notice period, then cancel the MPLS contract."
             ] },
           ],
           prereqs: [
@@ -83,7 +140,8 @@ window.PLANNER_RULES = {
             "Inventory overlay hubs, spoke counts per region, and where each fabric terminates."
             ] },
             { phase: "design", steps: [
-            "Choose parallel sockets at each regional hub with an eBGP handoff anchoring symmetry by AS-path."
+            "Fix the regional eBGP hub handoff and anchor cross-region symmetry with AS-path length.",
+            "Agree route filtering both ways: the default route and any parallel-connected site's prefixes."
             ] },
             { phase: "foundation", steps: [
             "Stand the hub socket up beside the legacy hub and bring eBGP neighbours Established."
@@ -166,14 +224,12 @@ window.PLANNER_RULES = {
             { phase: "discover", steps: [
             "List each firewall's software version, IKE version support, public IP and real link bandwidth."
             ] },
-            { phase: "design", steps: [
-            "Allocate two Cato IPs at different PoPs and prefer a route-based VTI over crypto maps."
-            ] },
             { phase: "foundation", steps: [
-            "Build primary and secondary tunnels with Initiate Connection by Cato enabled."
+            "Build primary and secondary tunnels bidirectionally with Initiate Connection by Cato enabled.",
+            "Add one BGP neighbour per tunnel, two maximum; Cato prepends the secondary so the primary wins."
             ] },
             { phase: "pilot", steps: [
-            "Peer BGP on both tunnels, drop the primary, and time the failover to the alternate PoP."
+            "Drop the primary tunnel and time the failover to the alternate PoP."
             ] },
             { phase: "network-waves", steps: [
             "Join remaining sites over IPsec first, then swap sockets in waves as hardware lands."
@@ -254,10 +310,12 @@ window.PLANNER_RULES = {
             "Assign a resilience tier per site class — single socket, dual ISP, or HA pair."
             ] },
             { phase: "foundation", steps: [
-            "Define the sites as code with Terraform or the GraphQL API, then apply."
+            "Define the sites as code with Terraform or the GraphQL API, then apply.",
+            "Create each site and assign its licence weeks before the hardware arrives."
             ] },
             { phase: "pilot", steps: [
-            "Ship one socket, plug it into any live link, and confirm zero-touch registration and both tunnels."
+            "Ship one socket and let local hands plug it into any live link.",
+            "Confirm zero-touch registration and both tunnels, clocking power-on to first flows."
             ] },
             { phase: "network-waves", steps: [
             "Roll out remaining sites in batches, checking each on Topology as it comes on-net."
@@ -299,10 +357,12 @@ window.PLANNER_RULES = {
             "Rebuild the effective per-site policy and rank every rule on Versa Analytics hit counts."
             ] },
             { phase: "design", steps: [
-            "Fix the eBGP hub handoff, AS numbering (Cato side eBGP-only, ASN 64515) and route filtering."
+            "Fix the regional eBGP hub handoff: Cato is eBGP-only (ASN 64515), route filtering agreed, symmetry anchored by AS-path."
+            ] },
+            { phase: "foundation", steps: [
+            "Deploy a parallel Socket at each Versa hub and validate eBGP symmetry before any branch moves."
             ] },
             { phase: "network-waves", steps: [
-            "Stand parallel Sockets at each Versa hub and validate eBGP symmetry before any branch moves.",
             "Disable the Versa spoke, bring up the Socket site, and let BGP propagate to both domains."
             ] },
             { phase: "security-cutover", steps: [
@@ -337,10 +397,13 @@ window.PLANNER_RULES = {
             "Build a Boost-dependency inventory from data-reduction reports, separating dedup-bound from latency-bound workloads."
             ] },
             { phase: "design", steps: [
-            "Collapse the Business Intent Overlays into genuine intents, expressed as network rules and bandwidth profiles."
+            "Collapse the Business Intent Overlays into genuine intents, expressed as network rules and bandwidth profiles.",
+            "Confirm peer typing at each hub so Cato-learned prefixes propagate into subnet sharing; BGP-PE-learned routes are not shared."
+            ] },
+            { phase: "foundation", steps: [
+            "Deploy a parallel Socket at each EdgeConnect hub and confirm Cato prefixes propagate into subnet sharing."
             ] },
             { phase: "network-waves", steps: [
-            "Place parallel Sockets at each EC hub and confirm Cato prefixes propagate into subnet sharing.",
             "Disable the EC spoke in Orchestrator; its subnets withdraw from subnet sharing and the eBGP exchange."
             ] },
             { phase: "security-cutover", steps: [
@@ -372,17 +435,14 @@ window.PLANNER_RULES = {
           phases: [
             { phase: "discover", steps: [
             "Capture vManage centralised policy, app-route SLA templates, and Meraki Auto-VPN hubs with their spoke modes.",
-            "Map Cisco EA, Meraki co-term and Umbrella renewal dates onto the migration calendar."
+            "Map Cisco EA, Meraki co-term and Umbrella renewal/EOL dates onto the migration calendar alongside the ASA and vEdge milestones."
+            ] },
+            { phase: "foundation", steps: [
+            "Stand up regional interconnect hubs with an eBGP handoff and OMP-to-BGP redistribution, validated with test prefixes."
             ] },
             { phase: "network-waves", steps: [
-            "Build regional interconnect hubs with an eBGP handoff and OMP-to-BGP redistribution at each Viptela hub.",
-            "Disable the legacy spoke so OMP withdraws its routes, then propagate Cato prefixes at the interconnect."
-            ] },
-            { phase: "security-cutover", steps: [
-            "Move each site's Umbrella web and DNS policy in the same change window as the socket swap."
-            ] },
-            { phase: "remote-access", steps: [
-            "Migrate AnyConnect cohorts split-tunnel first, then enforce Device Posture profiles recreating the ISE posture rules."
+            "Disable the legacy spoke so OMP withdraws its routes, then propagate Cato prefixes at the interconnect.",
+            "Move each site's Umbrella web and DNS policy inside the same socket cutover window."
             ] },
           ],
           prereqs: [
@@ -409,18 +469,20 @@ window.PLANNER_RULES = {
           pages: ["migration-fortinet", "migration-fortinet-policy", "migration-methodology"],
           phases: [
             { phase: "discover", steps: [
-            "Export full FortiGate configs or FortiManager policy packages, and mine FortiAnalyzer for the ADVPN traffic matrix.",
-            "Retire zero-hit rules and collapse duplicate address objects before a single rule is translated."
+            "Export every FortiGate config or the FortiManager policy packages, and mine FortiAnalyzer for the real ADVPN traffic matrix.",
+            "Retire zero-hit rules and collapse duplicate address objects before a single rule or UTM profile pair is translated."
+            ] },
+            { phase: "foundation", steps: [
+            "Deploy parallel Sockets at each FortiGate regional hub and validate eBGP symmetry with test prefixes first."
             ] },
             { phase: "network-waves", steps: [
-            "Deploy parallel Sockets at each FortiGate regional hub and validate eBGP symmetry with test prefixes first.",
-            "Disable the FortiGate spoke, bring up the Socket site, and let routes propagate to both domains."
+            "Disable the FortiGate spoke, bring up the Socket site, and let BGP propagate to both domains."
             ] },
             { phase: "security-cutover", steps: [
             "Decompose each policy and its UTM profile pair into a firewall rule, IPS/NGAM layers and TLS rules."
             ] },
             { phase: "remote-access", steps: [
-            "Swap FortiClient cohorts via EMS to the Cato Client and re-point posture enforcement per wave."
+            "Per wave: disable FortiClient VPN and ZTNA in EMS, enrol the Cato Client, re-point posture enforcement, then uninstall."
             ] },
           ],
           prereqs: [
@@ -455,11 +517,11 @@ window.PLANNER_RULES = {
             { phase: "pilot", steps: [
             "Deploy a Socket at one representative branch and validate paths while Magic WAN stays up untouched."
             ] },
-            { phase: "remote-access", steps: [
-            "Per cohort, remove the WARP profile via MDM, then deploy the Cato Client — never both."
-            ] },
             { phase: "network-waves", steps: [
             "Re-terminate Magic WAN sites one at a time, with primary and secondary tunnels to different PoPs."
+            ] },
+            { phase: "remote-access", steps: [
+            "Per cohort, remove the WARP profile via MDM, then deploy the Cato Client — never both."
             ] },
             { phase: "decommission", steps: [
             "Retire connectors, then tunnels, Gateway policies and Access apps; reduce Zero Trust seats, keep the tenant."
@@ -492,8 +554,8 @@ window.PLANNER_RULES = {
             "Run structured discovery: traffic flows, site interdependencies, LAN L2 versus L3, routing, DMZ and voice."
             ] },
             { phase: "design", steps: [
-            "Choose big-bang or phased, then name the device that owns the legacy-versus-Cato routing decision.",
-            "Pick the multi-region pattern — Option F regional eBGP handoffs where the legacy hubs speak BGP."
+            "Choose big-bang or phased, then pin the routing decision point per site: L3 switch, legacy firewall or Socket.",
+            "Fix the regional eBGP hub handoff: Cato is eBGP-only (ASN 64515), route filtering agreed, symmetry anchored by AS-path."
             ] },
             { phase: "network-waves", steps: [
             "Stand up an interconnect hub holding legacy CPE and a Socket, with the L3 switch routing between them.",
@@ -536,16 +598,17 @@ window.PLANNER_RULES = {
             "Choose an interim architecture per site: PoP-to-ZIA IKEv2 tunnels or existing firewall backhaul."
             ] },
             { phase: "foundation", steps: [
-            "Build up to six active load-balanced IKEv2 tunnels from the closest PoP to ZIA."
+            "Build up to six active tunnels per HA role to ZIA, AES-GCM above 100 Mbps."
             ] },
             { phase: "pilot", steps: [
-            "Swap 10-25 users off ZCC, clearing the ZIA PAC in the same GPO change."
+            "Move the pilot cohort's private-app access onto Cato rules before touching its ZCC install.",
+            "Then swap that same cohort off ZCC, clearing the ZIA PAC in one GPO change."
             ] },
             { phase: "security-cutover", steps: [
             "Recreate ZIA rules monitor-first: Caution becomes Prompt, Track = Event on every rule."
             ] },
             { phase: "decommission", steps: [
-            "Remove ZCC per endpoint once Cato SWG verdicts match ZIA on the test list."
+            "Retire ZPA App Connectors, then remove ZCC per endpoint once Cato SWG verdicts match ZIA on the agreed test list."
             ] },
           ],
           prereqs: [
@@ -578,13 +641,14 @@ window.PLANNER_RULES = {
             "Start EDM rebuilds from the source systems now; Netskope hashes can never be exported."
             ] },
             { phase: "foundation", steps: [
-            "Deploy datacentre and cloud vSockets so private apps are on-net before any user moves."
+            "Deploy datacentre and cloud vSockets so private apps are on-net before any user moves.",
+            "Seed the Cato TLS bypass list from Netskope's SSL do-not-decrypt list before inspecting."
             ] },
             { phase: "pilot", steps: [
             "Swap one client-steered cohort in a single window: uninstall Netskope Client, install Cato Client."
             ] },
             { phase: "security-cutover", steps: [
-            "Seed TLS bypasses from the SSL do-not-decrypt list, then stage inspection cohort by cohort."
+            "Stage TLS inspection cohort by cohort, once the bypass baseline is already in place."
             ] },
             { phase: "decommission", steps: [
             "Retire NPA per app group, Publishers next, and API Data Protection last of all."
@@ -620,13 +684,16 @@ window.PLANNER_RULES = {
             "Decide the DLP hybrid now: retain the Forcepoint endpoint agent for USB, print, clipboard."
             ] },
             { phase: "foundation", steps: [
-            "Push the Cato CA fleet-wide and block QUIC before inspecting a single flow."
-            ] },
-            { phase: "security-cutover", steps: [
-            "Remove the PAC per cohort via GPO and enable the Cato Client Always-On."
+            "Push the Cato CA fleet-wide alongside the Forcepoint CA and block QUIC before inspecting."
             ] },
             { phase: "network-waves", steps: [
             "Cut each site's breakout to the Socket, then retire NGFW and Content Gateway."
+            ] },
+            { phase: "security-cutover", steps: [
+            "Remove the PAC per cohort via GPO and steer that cohort's web traffic to Cato."
+            ] },
+            { phase: "remote-access", steps: [
+            "Enable Client Always-On per cohort, only once it is off the legacy VPN client."
             ] },
             { phase: "decommission", steps: [
             "Time non-renewal to the last wave; Forcepoint licences are non-cancellable with reinstatement fees."
@@ -704,13 +771,16 @@ window.PLANNER_RULES = {
             "Classify every CPL layer as business intent, proxy plumbing or dead before mapping."
             ] },
             { phase: "foundation", steps: [
-            "Wire CMA to the SIEM from day one; that is the Reporter replacement."
-            ] },
-            { phase: "security-cutover", steps: [
-            "Uninstall WSS Agent, neutralise the PAC by GPO, then enable the Client Always-On."
+            "Wire CMA to the SIEM from day one for long-term retention, after archiving historic Reporter data."
             ] },
             { phase: "network-waves", steps: [
             "Unwind WCCP service groups per site and retire inline appliances after sampled parity checks."
+            ] },
+            { phase: "security-cutover", steps: [
+            "Uninstall the WSS Agent and neutralise the PAC by GPO, cohort by cohort."
+            ] },
+            { phase: "remote-access", steps: [
+            "Enable the Cato Client Always-On per cohort once it is off legacy VPN clients."
             ] },
             { phase: "decommission", steps: [
             "Align licence non-renewal to the final wave and the published appliance EOL backstops."
@@ -740,21 +810,24 @@ window.PLANNER_RULES = {
           pages: ["migration-cisco", "migration-cisco-policy", "migration-methodology", "security-tls-inspection"],
           phases: [
             { phase: "discover", steps: [
-            "Map Umbrella renewal and EOL dates against the ASA, vEdge and Meraki milestones."
+            "Map Cisco EA, Meraki co-term and Umbrella renewal/EOL dates against ASA and vEdge milestones."
             ] },
             { phase: "design", steps: [
             "Export destination lists to CSV and dedupe them against Cato system categories."
             ] },
             { phase: "foundation", steps: [
-            "Stand up regional interconnect hubs with an eBGP handoff to each Viptela or Meraki hub."
+            "Stand up regional interconnect hubs with an eBGP handoff to each Viptela or Meraki hub.",
+            "Push the Cato certificate via MDM alongside the Umbrella CA before any decryption moves.",
+            "Rebuild Umbrella selective-decryption lists as Cato TLS bypasses before the first inspected flow."
             ] },
             { phase: "network-waves", steps: [
             "Move each site's Umbrella web and DNS policy inside the same socket cutover window."
             ] },
             { phase: "security-cutover", steps: [
-            "Rebuild selective-decryption lists as TLS bypasses and replace the Umbrella CA via MDM."
+            "Decide per app whether Cato blocks it or restricts activities, replacing Umbrella's domain blocks."
             ] },
             { phase: "decommission", steps: [
+            "Remove the Umbrella root CA via MDM once no cohort is steered to Umbrella.",
             "Retire the Umbrella virtual appliances last, after the final internal DNS forwarder repoint."
             ] },
           ],
@@ -785,10 +858,10 @@ window.PLANNER_RULES = {
             "Baseline today's breakout: which sites break out locally, which backhaul, what filters anything."
             ] },
             { phase: "design", steps: [
-            "Adopt Cato's recommended Internet firewall block baseline rather than authoring a rulebase from scratch."
+            "Design a minimal category-based rulebase, proving each rule in monitor before it blocks."
             ] },
             { phase: "foundation", steps: [
-            "Deploy the Cato root certificate fleet-wide and verify the issuer reads Cato Networks."
+            "Run the TLS Inspection Configuration Wizard and keep its sensitive-category bypass rules as the baseline."
             ] },
             { phase: "pilot", steps: [
             "Inspect one pilot cohort monitor-first, with QUIC blocked so browsers fall back to TCP."
@@ -832,15 +905,15 @@ window.PLANNER_RULES = {
             "Export Panorama pre-/post-rules, NAT, decryption and GlobalProtect config with rule-usage hit counts.",
             "Cull zero-hit, disabled and shadowed rules, then assign each survivor to a Cato firewall."
             ] },
-            { phase: "pilot", steps: [
-            "Install the socket in parallel on a transit VLAN, the PA staying L3 default gateway.",
+            { phase: "foundation", steps: [
+            "Deploy a parallel Socket on a transit VLAN, the PA staying L3 default gateway.",
             "Raise the eBGP neighbour, advertise summary routes, and keep the PA preferring its own default."
             ] },
-            { phase: "security-cutover", steps: [
-            "Rebuild the highest-hit App-ID rules monitor-first, re-pinning ports that relied on application-default."
+            { phase: "pilot", steps: [
+            "Move the first pilot prefix to Cato, then withdraw the handoff route and time the revert."
             ] },
-            { phase: "remote-access", steps: [
-            "Swap GlobalProtect cohorts scripted: install Cato Client, validate app access, uninstall GlobalProtect."
+            { phase: "security-cutover", steps: [
+            "Re-pin explicit ports for every rule that relied on application-default, or enforcement silently broadens."
             ] },
           ],
           prereqs: [
@@ -870,15 +943,18 @@ window.PLANNER_RULES = {
             "Pull each access layer with mgmt_cli show access-rulebase, hits shown, paginating past the 500 limit.",
             "Model the effective policy across ordered and inline layers before mapping anything into CMA."
             ] },
-            { phase: "pilot", steps: [
+            { phase: "foundation", steps: [
             "Stand up the parallel socket and an eBGP neighbour to Gaia over the transit VLAN.",
-            "Tag legacy-learned routes with the Cato ASN and community 32768 to keep them site-local."
+            "Filter Cato-advertised routes at the Gaia neighbour on the Cato ASN and community 32768 tag."
             ] },
-            { phase: "security-cutover", steps: [
-            "Flatten the slice into WAN and Internet rules, writing the blocks inline cleanups never spelled out."
+            { phase: "pilot", steps: [
+            "Move the pilot branch's first prefix to Cato, then time a withdrawal reverting to Quantum."
             ] },
             { phase: "network-waves", steps: [
             "Re-home DNAT-published services to Remote Port Forwarding and update external DNS before gateway retirement."
+            ] },
+            { phase: "security-cutover", steps: [
+            "Flatten the slice into WAN and Internet rules, writing the blocks inline cleanups never spelled out."
             ] },
           ],
           prereqs: [
@@ -905,15 +981,15 @@ window.PLANNER_RULES = {
           pages: ["migration-fortinet", "migration-fortinet-policy", "security-firewall-refresh", "migration-journey-firewall", "migration-methodology"],
           phases: [
             { phase: "discover", steps: [
-            "Back up every FortiGate config and mine FortiAnalyzer for the real ADVPN traffic matrix.",
-            "Retire zero-hit rules and collapse duplicate address objects before mapping the UTM profile pairs."
+            "Export every FortiGate config or the FortiManager policy packages, and mine FortiAnalyzer for the real ADVPN traffic matrix.",
+            "Retire zero-hit rules and collapse duplicate address objects before a single rule or UTM profile pair is translated."
             ] },
             { phase: "foundation", steps: [
             "Deploy a parallel socket at each regional hub and peer eBGP over the transit VLAN.",
             "Filter the default route and any parallel-connected site's prefixes inbound on that neighbour."
             ] },
             { phase: "network-waves", steps: [
-            "Cut each spoke by disabling the FortiGate spoke, raising the Cato site, letting BGP propagate."
+            "Disable the FortiGate spoke, bring up the Socket site, and let BGP propagate to both domains."
             ] },
             { phase: "security-cutover", steps: [
             "Re-publish FortiGate VIPs as remote port forwarding, each on its own change window."
@@ -954,7 +1030,7 @@ window.PLANNER_RULES = {
             "Swap SD-RED sites first: ship a Socket, move the LAN, shelve the RED for rollback."
             ] },
             { phase: "security-cutover", steps: [
-            "Re-express heartbeat conditions as Device Posture anti-malware checks inside Client Connectivity Policy."
+            "Agree the replacement runbook: Device Posture gates Client users, on-LAN heartbeat conditions have no equivalent."
             ] },
           ],
           prereqs: [
@@ -965,7 +1041,7 @@ window.PLANNER_RULES = {
           ],
           risks: [
             "Bridged or transparent RED sites carry L2 semantics; Cato sites are routed, so plan re-addressing early.",
-            "Heartbeat-conditioned rules translate into something broader unless a posture profile replaces the condition.",
+            "Heartbeat-conditioned rules translate into something broader unless the agreed replacement runbook covers them.",
             "Sophos endpoint SSL scanning layered under Cato TLSi throws certificate errors — stage the root certificate first.",
             "Audit DNAT server-access rules before retirement; forgotten published services go dark at cutover."
           ],
@@ -986,13 +1062,16 @@ window.PLANNER_RULES = {
             ] },
             { phase: "foundation", steps: [
             "Build primary and secondary tunnels bidirectionally with Initiate Connection by Cato enabled.",
-            "Add one BGP neighbour per tunnel; Cato prepends the secondary so the primary wins."
+            "Add one BGP neighbour per tunnel, maximum two per site; Cato prepends the secondary."
             ] },
-            { phase: "security-cutover", steps: [
-            "Translate the branch's highest-hit ACLs into Internet and WAN firewall rules with tracking only."
+            { phase: "pilot", steps: [
+            "Drop the primary tunnel and time the failover to the alternate PoP."
             ] },
             { phase: "network-waves", steps: [
             "Replace interim IPsec sites with Sockets in waves once the ASA joins the retirement list."
+            ] },
+            { phase: "security-cutover", steps: [
+            "Work the ACL disposition list: translate what survives, retire the rest before the appliance goes."
             ] },
           ],
           prereqs: [
@@ -1020,14 +1099,14 @@ window.PLANNER_RULES = {
           phases: [
             { phase: "discover", steps: [
             "Inventory every bezel: models, end-of-support dates, enabled inspection features and whether TLS decryption actually runs.",
-            "Export each vendor's rulebase with hit counts — every mainstream NGFW exposes rule usage somewhere."
+            "Export each vendor's rulebase with per-rule usage evidence — the source differs per platform, so plan each export."
             ] },
             { phase: "design", steps: [
-            "Pick parallel connectivity below roughly twenty sites, an interconnect hub above that.",
-            "Anchor cross-region traffic with AS-path length so each region's flows stay symmetric."
+            "Pick parallel connectivity below roughly twenty sites, an interconnect hub above that."
             ] },
             { phase: "security-cutover", steps: [
-            "Translate each vendor's highest-hit rules into one CMA rulebase, monitor-first, judging parity on outcomes."
+            "Translate each vendor's highest-hit rules into one CMA rulebase, monitor-first with tracking on, judging parity on outcomes.",
+            "Flip only the agreed rules to block once the monitor evidence supports it."
             ] },
             { phase: "decommission", steps: [
             "Retire bezel by bezel, management platforms last, once log retention and archive export are satisfied."
@@ -1065,14 +1144,17 @@ window.PLANNER_RULES = {
             "Export tunnel-groups, split-tunnel ACLs, HostScan posture rules and peak concurrent sessions per headend."
             ] },
             { phase: "foundation", steps: [
-            "Connect the IdP with SSO and SCIM, then build posture profiles in monitor."
+            "Enable SSO and SCIM, connect the IdP provisioning app and build flat, purpose-named groups.",
+            "Confirm the pilot group syncs and stage posture profiles in monitor before user-scoped rules."
             ] },
             { phase: "pilot", steps: [
-            "Swap a five-to-twenty user cohort in one MDM window and walk its acceptance checklist."
+            "Swap the 5-25 user pilot cohort in one MDM or GPO window.",
+            "Uninstall every incumbent agent and clear its PAC or forwarding profile, then install the Cato Client.",
+            "Walk the cohort's acceptance checklist; never two SWG agents inspecting one flow."
             ] },
             { phase: "remote-access", steps: [
-            "Roll departmental waves with the same MDM uninstall-install job and per-cohort rollback.",
-            "After a clean baseline week, require the posture profile and add an always-on rule."
+            "Roll departmental waves with the same MDM uninstall-install job and per-cohort rollback, split-tunnel first.",
+            "After a clean baseline week, require the posture profile that recreates the ISE posture rules and add an always-on rule."
             ] },
             { phase: "decommission", steps: [
             "Drain sessions, disable tunnel-groups, retire the headends and cancel support renewals."
@@ -1108,13 +1190,14 @@ window.PLANNER_RULES = {
             "Map each HIP object to device posture checks: anti-malware, disk encryption, patch level, certificate."
             ] },
             { phase: "foundation", steps: [
-            "Bring SCIM or LDAP identity live and confirm the pilot group syncs before user-scoped rules."
+            "Enable SSO and SCIM, connect the IdP provisioning app and build flat, purpose-named groups.",
+            "Confirm the pilot group syncs and stage posture profiles in monitor before user-scoped rules."
             ] },
             { phase: "pilot", steps: [
             "Run Client Connectivity and Device Posture in monitor for the pilot cohort on Cato Client."
             ] },
             { phase: "remote-access", steps: [
-            "Switch each machine scripted and short: install Cato Client, validate apps, uninstall GlobalProtect."
+            "Switch each machine scripted and short: install the Cato Client, validate app access, uninstall GlobalProtect."
             ] },
             { phase: "decommission", steps: [
             "Retire the GlobalProtect portals and gateways once the last cohort has moved across."
@@ -1196,7 +1279,7 @@ window.PLANNER_RULES = {
             "Put one cohort on the Cato Client with Client Connectivity Policy running in monitor."
             ] },
             { phase: "remote-access", steps: [
-            "Per wave: disable FortiClient VPN and ZTNA in EMS, enrol Cato Client, then uninstall."
+            "Per wave: disable FortiClient VPN and ZTNA in EMS, enrol the Cato Client, re-point posture enforcement, then uninstall."
             ] },
             { phase: "decommission", steps: [
             "Retire EMS and the SSL-VPN configuration once log-retention obligations have been met."
@@ -1234,12 +1317,16 @@ window.PLANNER_RULES = {
             { phase: "foundation", steps: [
             "Roll the Cato Client split-tunnelled for RFC 1918 while ZCC keeps internet on ZIA."
             ] },
+            { phase: "pilot", steps: [
+            "For the pilot cohort only, move private-app access onto Cato WAN firewall rules.",
+            "Swap that cohort off ZCC, clearing the ZIA PAC in the same GPO change."
+            ] },
             { phase: "remote-access", steps: [
-            "Move the cohort's private-app access onto Cato rules, then switch SDP to always-on.",
-            "Remove the split tunnel so the Cato Client becomes the cohort's default internet route."
+            "Switch the cohort's SDP client to always-on once it is off ZCC.",
+            "Remove the cohort's split tunnel so Cato becomes its default internet route."
             ] },
             { phase: "decommission", steps: [
-            "Retire App Connectors and remove ZCC per endpoint once parity events line up."
+            "Retire ZPA App Connectors, then remove ZCC per endpoint once Cato SWG verdicts match ZIA on the agreed test list."
             ] },
           ],
           prereqs: [
@@ -1272,7 +1359,9 @@ window.PLANNER_RULES = {
             "Put private apps behind a Socket, connect the IdP and stage posture profiles in monitor."
             ] },
             { phase: "pilot", steps: [
-            "Swap a pilot cohort in one change window and walk its acceptance checklist."
+            "Swap the 5-25 user pilot cohort in one MDM or GPO window.",
+            "Uninstall every incumbent agent and clear its PAC or forwarding profile, then install the Cato Client.",
+            "Walk the cohort's acceptance checklist; never two SWG agents inspecting one flow."
             ] },
             { phase: "remote-access", steps: [
             "Roll departmental waves, replacing network-wide tunnel grants with per-app least-privilege rules.",
@@ -1309,8 +1398,9 @@ window.PLANNER_RULES = {
             "List the populations needing access — employees, contractors, BYOD — and the applications each touches."
             ] },
             { phase: "foundation", steps: [
-            "Enable SCIM, connect the IdP provisioning app and build flat, purpose-named policy groups.",
-            "Set account-wide authentication to SSO so MFA and conditional access stay in the IdP."
+            "Enable SSO and SCIM, connect the IdP provisioning app and build flat, purpose-named groups.",
+            "Set account-wide authentication to SSO so MFA and conditional access stay in the IdP.",
+            "Confirm the pilot group syncs before any user-scoped rule is written against it."
             ] },
             { phase: "pilot", steps: [
             "Run a twenty-to-thirty user cohort with posture profiles in monitor for a clean week."
@@ -1349,16 +1439,16 @@ window.PLANNER_RULES = {
           pages: ["security-data-casb-dlp", "security-tls-inspection", "migration-netskope-policy", "security-consistent"],
           phases: [
             { phase: "discover", steps: [
-            "Export the incumbent CASB app, activity and instance matrix with per-rule hit counts.",
-            "Run the Cloud Apps Dashboard for two weeks and mark confirmed sanctioned apps."
+            "Export the incumbent CASB app, activity and instance matrix with per-rule hit counts."
             ] },
             { phase: "design", steps: [
-            "Map each incumbent rule to app plus activity; translate instance conditions into Tenant Restrictions."
+            "Map each incumbent rule to app plus activity; translate instance conditions into Tenant Restrictions only for documented apps."
             ] },
             { phase: "foundation", steps: [
-            "Stage TLS inspection on the pilot group — Application Control sees nothing without it."
+            "Stage TLS inspection scoped to the pilot group — CASB, DLP and compliance evidence see nothing without it."
             ] },
             { phase: "pilot", steps: [
+            "Run the Cloud Apps Dashboard for two weeks once the pilot cohort is on-net and inspected.",
             "Run every translated Application Control rule in monitor posture and review hit counts weekly."
             ] },
             { phase: "security-cutover", steps: [
@@ -1395,7 +1485,7 @@ window.PLANNER_RULES = {
             "Build Content Profiles from regional data types and record each type's occurrence threshold."
             ] },
             { phase: "foundation", steps: [
-            "Stage TLS inspection over the pilot scope — no decryption means no content inspection."
+            "Stage TLS inspection scoped to the pilot group — CASB, DLP and compliance evidence see nothing without it."
             ] },
             { phase: "pilot", steps: [
             "Add Data Control rules in non-blocking posture with event tracking, scoped to the pilot.",
@@ -1439,7 +1529,7 @@ window.PLANNER_RULES = {
             "Enable Suspicious Activity Monitoring, monitor-only by design, and let real pilot traffic accumulate."
             ] },
             { phase: "security-cutover", steps: [
-            "Flip the reviewed directions to Block, allowing ten minutes for the rule to take effect."
+            "Flip the reviewed directions to Block, then judge the change on fresh events, not assumptions."
             ] },
             { phase: "handover", steps: [
             "Walk Rapid CVE Mitigation so virtual patching replaces their signature-update change windows."
@@ -1555,10 +1645,11 @@ window.PLANNER_RULES = {
             "Run the Configuration Wizard and keep its sensitive-category and embedded-OS bypasses as the baseline."
             ] },
             { phase: "foundation", steps: [
-            "Deploy the root certificate fleet-wide, then verify the padlock issuer on every operating system."
+            "Deploy the Cato root certificate fleet-wide alongside the incumbent CA, removed only at decommission.",
+            "Verify the padlock issuer reads Cato Networks on every operating system, and block QUIC first."
             ] },
             { phase: "pilot", steps: [
-            "Inspect a 5–20 user cohort with downstream engines in monitor so breakage surfaces as events."
+            "Inspect the 5–20 user cohort monitor-first, downstream engines in monitor so breakage surfaces as events."
             ] },
             { phase: "network-waves", steps: [
             "Add one category wave, watch it settle, then bypass deliberately with a named owner."
@@ -1637,22 +1728,24 @@ window.PLANNER_RULES = {
           pages: ["network-mpls-migration", "migration-journey-mpls", "migration-methodology", "network-sdwan", "network-resilient-site-design", "management-vendor-consolidation", "management-pov-framework"],
           phases: [
             { phase: "discover", steps: [
-            "Map every MPLS circuit to its site, contract end date and notice period."
+            "Map every MPLS circuit to its site, contract end date, notice period and the prefixes it must still reach."
             ] },
             { phase: "design", steps: [
             "Choose the co-existence pattern: routed ranges at a static hub or eBGP handoff."
             ] },
             { phase: "foundation", steps: [
-            "Stand up the datacentre interconnect socket and prove reachability both ways to un-migrated sites."
+            "Connect the DC interconnect socket beside the CE router and add one routed range per site.",
+            "Prove reachability both ways between migrated and un-migrated sites before the first wave."
             ] },
             { phase: "network-waves", steps: [
-            "Migrate sites in contract-expiry order, filling in the reachability matrix wave by wave."
+            "Migrate sites in contract-expiry order, deleting each routed range as its prefix moves and filling the reachability matrix."
             ] },
             { phase: "decommission", steps: [
-            "Delete the static route, decommission the MPLS router and switch the last circuit off."
+            "Withdraw the last routed range, remove the CE static route and decommission the MPLS router.",
+            "Serve notice against the notice period, then confirm the circuit contract is cancelled."
             ] },
             { phase: "handover", steps: [
-            "Hand procurement the renewal overlay with each circuit marked absorb, re-pilot or retain."
+            "Hand over the completed reachability matrix with dated Topology screenshots for every wave."
             ] },
           ],
           prereqs: [
@@ -1679,7 +1772,7 @@ window.PLANNER_RULES = {
           pages: ["security-firewall-refresh", "migration-journey-firewall", "security-consistent", "security-inbound-ips", "security-tls-inspection", "migration-methodology", "management-vendor-consolidation"],
           phases: [
             { phase: "discover", steps: [
-            "Export the pilot branch rulebase with hit counts and list inspection features actually enabled."
+            "Capture the renewal quote, EOL dates and which inspection features the appliance actually has enabled."
             ] },
             { phase: "design", steps: [
             "Rationalise on hit counts: take the 15–20 highest-hit rules as the parity slice."
@@ -1687,14 +1780,17 @@ window.PLANNER_RULES = {
             { phase: "foundation", steps: [
             "Connect the pilot site socket and take dated day-one screenshots as evidence item zero."
             ] },
-            { phase: "security-cutover", steps: [
-            "Rebuild the slice at parity in monitor mode, then flip agreed rules to block."
-            ] },
-            { phase: "decommission", steps: [
+            { phase: "pilot", steps: [
             "Withdraw the handoff route in a change window and time the revert to the appliance."
             ] },
+            { phase: "security-cutover", steps: [
+            "Hold the slice in monitor until outcomes match, then flip the agreed rules to block."
+            ] },
+            { phase: "decommission", steps: [
+            "Withdraw the handoff route permanently and power the appliance down."
+            ] },
             { phase: "handover", steps: [
-            "File the renewal-decision pack stating plainly what the appliance does that Cato does not."
+            "Assemble the renewal-decision pack: appliance capabilities beside dated Cato evidence, gaps conceded in writing."
             ] },
           ],
           prereqs: [
@@ -1726,16 +1822,11 @@ window.PLANNER_RULES = {
             { phase: "design", steps: [
             "Map each control to a named CMA artefact and a written shared-responsibility line."
             ] },
-            { phase: "foundation", steps: [
-            "Stage TLS inspection and identity sync so evidence reads content and names people."
-            ] },
             { phase: "security-cutover", steps: [
             "Enable CASB and DLP rules in monitor, with tracking on for every in-scope rule."
             ] },
-            { phase: "pilot", steps: [
-            "Generate policy CSV exports, rule hit count PDFs and an Audit Trail extract."
-            ] },
             { phase: "handover", steps: [
+            "With tracking on for every in-scope rule, generate policy CSV exports, hit-count PDFs and Audit Trail extracts.",
             "Assemble the indexed pack: control text, dated artefacts and responsibility note per section."
             ] },
           ],
@@ -1769,10 +1860,10 @@ window.PLANNER_RULES = {
             "Agree the stopwatches: exact start and stop event for every timed run."
             ] },
             { phase: "foundation", steps: [
-            "Define the acquired sites as code in Terraform and create them via the API."
+            "Define the acquired sites as code in Terraform and create them via the GraphQL API."
             ] },
             { phase: "pilot", steps: [
-            "Ship a socket, let local hands power it on, clock power-on to first flows."
+            "Ship one socket, let local hands plug it in, and clock power-on to first flows."
             ] },
             { phase: "remote-access", steps: [
             "Connect the acquired Entra ID tenant and name its groups in a WAN firewall rule."
@@ -1847,15 +1938,16 @@ window.PLANNER_RULES = {
           pages: ["ai-genai-security", "security-ai", "security-ai-visibility", "ai-agentic-security", "ai-homegrown-apps", "ai-legal-genai", "security-tls-inspection", "security-data-casb-dlp", "access-identity-design"],
           phases: [
             { phase: "discover", steps: [
-            "Build the shadow-AI inventory passively from Internet Firewall events, blocking nothing and reading no prompts."
+            "Build the shadow-AI inventory from the incumbent proxy or firewall logs and the AI owner's list."
             ] },
             { phase: "design", steps: [
             "Fix the action ladder: pilot group, data classes, and which week each rung starts."
             ] },
             { phase: "foundation", steps: [
-            "Enable TLS inspection at account level and sync identity for the pilot group."
+            "Stage TLS inspection with the Inspect rule scoped to the AI pilot group."
             ] },
             { phase: "pilot", steps: [
+            "Re-run the inventory passively from Cato Internet Firewall events for the pilot cohort, blocking nothing.",
             "Move one User Interaction Policy rule from Monitor to Anonymize and Monitor."
             ] },
             { phase: "security-cutover", steps: [
@@ -1901,7 +1993,8 @@ window.PLANNER_RULES = {
             "Sequence dual-running windows against notice periods before any appliance or circuit is switched off."
             ] },
             { phase: "handover", steps: [
-            "Overlay the renewal dates, mark each absorb, re-pilot or retain, then read out."
+            "Overlay every circuit and product renewal date, marking each absorb, re-pilot or retain.",
+            "State plainly what any retained appliance does that Cato does not, then read out."
             ] },
           ],
           prereqs: [
@@ -1933,14 +2026,11 @@ window.PLANNER_RULES = {
             { phase: "design", steps: [
             "Read the nearest PoP from the production PoP guide and write it into the register."
             ] },
-            { phase: "foundation", steps: [
-            "Create the site and assign its licence weeks before the hardware exists."
+            { phase: "network-waves", steps: [
+            "Prove Internet and SaaS traffic leaves at the in-region PoP instead of hairpinning home."
             ] },
             { phase: "remote-access", steps: [
             "Bridge the landing team on the Cato Client or IPsec while the socket ships."
-            ] },
-            { phase: "network-waves", steps: [
-            "Let local hands power the socket on; clock power-on to first in-region flows."
             ] },
             { phase: "handover", steps: [
             "Evidence day-one policy inheritance: rule hits with no policy edits in the Audit Trail."

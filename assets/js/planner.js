@@ -235,7 +235,19 @@
         + grouped(plan.prereqs) + "</div>";
     }
 
+    var scenes = window.PlannerTopology ? window.PlannerTopology.scenes(picks) : [];
+
     h += '<div class="pl-doc" id="pl-doc">';
+    if (scenes.length) {
+      h += '<div class="card" style="margin-bottom:18px"><div class="section-kicker">'
+        + "Topology &mdash; before, during, after</div>"
+        + scenes.map(function (sc) {
+            return '<figure class="pl-topo"><h4>' + esc(sc.title) + "</h4>" + sc.svg
+              + "<figcaption>" + esc(sc.caption) + "</figcaption></figure>";
+          }).join("")
+        + '<div class="pl-actions"><button type="button" class="btn btn-ghost" id="pl-drawio">'
+        + "Download .drawio</button></div></div>";
+    }
     h += '<div class="card" style="margin-bottom:18px">';
     plan.phases.forEach(function (p, i) {
       h += '<div class="pl-phase"><h3><span class="pl-num">' + (i + 1) + ".</span>"
@@ -282,6 +294,13 @@
         if (window.console) console.error(err);
       }
       setTimeout(function () { btn.textContent = "PowerPoint"; }, 1800);
+    });
+    var dio = $("#pl-drawio");
+    if (dio) dio.addEventListener("click", function () {
+      window.PlannerExport.drawio(window.PlannerTopology.drawio(picks),
+        ($("#f-name").value.trim() || "Migration plan") + " topology");
+      dio.textContent = "Downloaded";
+      setTimeout(function () { dio.textContent = "Download .drawio"; }, 1800);
     });
     $("#pl-prev").addEventListener("click", function () { showSlide(deck.i - 1); });
     $("#pl-next").addEventListener("click", function () { showSlide(deck.i + 1); });
@@ -344,6 +363,10 @@
       sub: summary(picks).replace(/<[^>]+>/g, "")
     }];
 
+    (window.PlannerTopology ? window.PlannerTopology.scenes(picks) : []).forEach(function (sc) {
+      slides.push({ kicker: "Topology", title: sc.title, sub: sc.caption, svg: sc.svg });
+    });
+
     groupChunks(plan.prereqs).forEach(function (groups, i) {
       slides.push({ kicker: "Before phase one", title: i ? "Prerequisites (cont.)" : "Prerequisites",
         groups: groups });
@@ -382,6 +405,7 @@
     if (s.kicker) h += '<div class="sl-kicker">' + esc(s.kicker) + "</div>";
     h += "<h2>" + esc(s.title) + "</h2>";
     if (s.sub) h += '<p class="sl-sub">' + esc(s.sub) + "</p>";
+    if (s.svg) h += '<figure class="pl-topo">' + s.svg + "</figure>";
     if (s.bullets) h += "<ul>" + s.bullets.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>";
     if (s.groups) {
       h += "<ul>" + s.groups.map(function (g) {
