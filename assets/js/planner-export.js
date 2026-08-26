@@ -1,0 +1,290 @@
+/* Cato Use Case Library — Migration Planner exports (internal).
+
+   Produces a real .pptx with no third-party library: a .pptx is a ZIP of OOXML parts,
+   and a ZIP with no compression is a header format we can write by hand. That keeps the
+   library dependency-free and file:// safe, which a CDN-loaded deck builder would not be.
+
+   Also emits .drawio XML, which is likewise just XML — open it in diagrams.net to edit. */
+(function () {
+  "use strict";
+
+  /* ---------- store-only ZIP ---------- */
+
+  var CRC = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = CRC[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function utf8(str) { return new TextEncoder().encode(str); }
+
+  function zip(files) {
+    var enc = files.map(function (f) {
+      return { name: utf8(f.name), data: typeof f.data === "string" ? utf8(f.data) : f.data };
+    });
+    var parts = [], central = [], offset = 0;
+
+    function u16(n) { return [n & 0xFF, (n >>> 8) & 0xFF]; }
+    function u32(n) { return [n & 0xFF, (n >>> 8) & 0xFF, (n >>> 16) & 0xFF, (n >>> 24) & 0xFF]; }
+
+    enc.forEach(function (f) {
+      var crc = crc32(f.data), len = f.data.length;
+      var local = [].concat(
+        u32(0x04034B50), u16(20), u16(0), u16(0), u16(0), u16(0),
+        u32(crc), u32(len), u32(len), u16(f.name.length), u16(0)
+      );
+      parts.push(new Uint8Array(local), f.name, f.data);
+      central.push([].concat(
+        u32(0x02014B50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0),
+        u32(crc), u32(len), u32(len), u16(f.name.length),
+        u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset)
+      ));
+      offset += local.length + f.name.length + len;
+    });
+
+    var cdStart = offset, cd = [];
+    central.forEach(function (c, i) {
+      cd.push(new Uint8Array(c), enc[i].name);
+      offset += c.length + enc[i].name.length;
+    });
+    var end = new Uint8Array([].concat(
+      u32(0x06054B50), u16(0), u16(0), u16(enc.length), u16(enc.length),
+      u32(offset - cdStart), u32(cdStart), u16(0)
+    ));
+    return new Blob(parts.concat(cd, [end]), { type: "application/octet-stream" });
+  }
+
+  /* ---------- OOXML ---------- */
+
+  function xesc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/—/g, "-").replace(/’/g, "'");
+  }
+
+  var W = 12192000, H = 6858000;          /* 16:9 in EMU */
+  var XMLNS = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+    + 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
+    + 'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"';
+
+  function tx(id, name, x, y, cx, cy, paras) {
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="' + xesc(name) + '"/>'
+      + "<p:cNvSpPr><a:spLocks noGrp=\"1\"/></p:cNvSpPr><p:nvPr/></p:nvSpPr>"
+      + '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/>'
+      + '<a:ext cx="' + cx + '" cy="' + cy + '"/></a:xfrm>'
+      + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr>'
+      + "<p:txBody><a:bodyPr wrap=\"square\"><a:normAutofit/></a:bodyPr><a:lstStyle/>"
+      + paras + "</p:txBody></p:sp>";
+  }
+
+  function para(text, opts) {
+    opts = opts || {};
+    var pPr = '<a:pPr' + (opts.lvl ? ' lvl="' + opts.lvl + '"' : "")
+      + (opts.bullet === false ? '><a:buNone/>' : ' marL="228600" indent="-228600"><a:buChar char="•"/>')
+      + "</a:pPr>";
+    var rPr = '<a:rPr lang="en-GB" sz="' + (opts.sz || 1400) + '"'
+      + (opts.b ? ' b="1"' : "") + ' dirty="0">'
+      + '<a:solidFill><a:srgbClr val="' + (opts.color || "1F2A30") + '"/></a:solidFill></a:rPr>';
+    return "<a:p>" + pPr + "<a:r>" + rPr + "<a:t>" + xesc(text) + "</a:t></a:r></a:p>";
+  }
+
+  function slideXml(s) {
+    var body = "";
+    var y = 1500000;
+
+    if (s.kicker) {
+      body += tx(2, "Kicker", 838200, 700000, W - 1676400, 400000,
+        para(s.kicker.toUpperCase(), { sz: 1100, b: true, color: "0E8A6D", bullet: false }));
+    }
+    body += tx(3, "Title", 838200, s.cls === "sl-title" ? 2300000 : 1050000, W - 1676400, 900000,
+      para(s.title, { sz: s.cls === "sl-title" ? 3600 : 2600, b: true, bullet: false }));
+
+    if (s.sub) {
+      body += tx(4, "Subtitle", 838200, s.cls === "sl-title" ? 3300000 : 1900000, W - 1676400, 900000,
+        para(s.sub, { sz: 1400, color: "51606A", bullet: false }));
+      y = s.cls === "sl-title" ? y : 2500000;
+    } else {
+      y = 2000000;
+    }
+
+    var paras = [];
+    if (s.bullets) s.bullets.forEach(function (b) { paras.push(para(b, { sz: 1400 })); });
+    if (s.groups) {
+      s.groups.forEach(function (g) {
+        paras.push(para(g.group, { sz: 1300, b: true, bullet: false, color: "51606A" }));
+        g.items.forEach(function (t) { paras.push(para(t, { sz: 1300, lvl: 1 })); });
+      });
+    }
+    if (paras.length) body += tx(5, "Body", 838200, y, W - 1676400, H - y - 700000, paras.join(""));
+
+    if (s.foot) {
+      body += tx(6, "Footer", 838200, H - 600000, W - 1676400, 350000,
+        para(s.foot, { sz: 900, color: "8A97A0", bullet: false }));
+    }
+
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      + "<p:sld " + XMLNS + "><p:cSld><p:spTree>"
+      + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+      + "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>"
+      + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
+      + body
+      + "</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>";
+  }
+
+  var THEME = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Cato">'
+    + "<a:themeElements><a:clrScheme name=\"Cato\">"
+    + '<a:dk1><a:sysClr val="windowText" lastClr="000000"/></a:dk1>'
+    + '<a:lt1><a:sysClr val="window" lastClr="FFFFFF"/></a:lt1>'
+    + '<a:dk2><a:srgbClr val="1F2A30"/></a:dk2><a:lt2><a:srgbClr val="F2F5F4"/></a:lt2>'
+    + '<a:accent1><a:srgbClr val="0E8A6D"/></a:accent1><a:accent2><a:srgbClr val="12A380"/></a:accent2>'
+    + '<a:accent3><a:srgbClr val="51606A"/></a:accent3><a:accent4><a:srgbClr val="8A97A0"/></a:accent4>'
+    + '<a:accent5><a:srgbClr val="E05252"/></a:accent5><a:accent6><a:srgbClr val="FAB219"/></a:accent6>'
+    + '<a:hlink><a:srgbClr val="0E8A6D"/></a:hlink><a:folHlink><a:srgbClr val="51606A"/></a:folHlink>'
+    + "</a:clrScheme>"
+    + '<a:fontScheme name="Cato"><a:majorFont><a:latin typeface="Calibri Light"/><a:ea typeface=""/>'
+    + '<a:cs typeface=""/></a:majorFont><a:minorFont><a:latin typeface="Calibri"/><a:ea typeface=""/>'
+    + '<a:cs typeface=""/></a:minorFont></a:fontScheme>'
+    + '<a:fmtScheme name="Cato">'
+    + "<a:fillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill>"
+    + '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>'
+    + '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst>'
+    + '<a:lnStyleLst><a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln>'
+    + '<a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln>'
+    + '<a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst>'
+    + "<a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle>"
+    + "<a:effectStyle><a:effectLst/></a:effectStyle>"
+    + "<a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst>"
+    + "<a:bgFillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill>"
+    + '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>'
+    + '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst>'
+    + "</a:fmtScheme></a:themeElements></a:theme>";
+
+  var MASTER = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + "<p:sldMaster " + XMLNS + "><p:cSld><p:bg><p:bgPr>"
+    + '<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree>'
+    + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+    + "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>"
+    + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
+    + "</p:spTree></p:cSld><p:clrMap bg1=\"lt1\" tx1=\"dk1\" bg2=\"lt2\" tx2=\"dk2\" accent1=\"accent1\" "
+    + 'accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" '
+    + 'hlink="hlink" folHlink="folHlink"/>'
+    + '<p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst>'
+    + "</p:sldMaster>";
+
+  var LAYOUT = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + "<p:sldLayout " + XMLNS + ' type="blank" preserve="1"><p:cSld name="Blank"><p:spTree>'
+    + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+    + "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>"
+    + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
+    + "</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>";
+
+  function pptx(slides, title) {
+    var n = slides.length;
+    var ids = [], rels = [];
+    for (var i = 1; i <= n; i++) {
+      ids.push('<p:sldId id="' + (255 + i) + '" r:id="rId' + (i + 1) + '"/>');
+      rels.push('<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/'
+        + 'officeDocument/2006/relationships/slide" Target="slides/slide' + i + '.xml"/>');
+    }
+
+    var files = [
+      { name: "[Content_Types].xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+        + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+        + '<Default Extension="xml" ContentType="application/xml"/>'
+        + '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-'
+        + 'officedocument.presentationml.presentation.main+xml"/>'
+        + '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.'
+        + 'openxmlformats-officedocument.presentationml.slideMaster+xml"/>'
+        + '<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.'
+        + 'openxmlformats-officedocument.presentationml.slideLayout+xml"/>'
+        + '<Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-'
+        + 'officedocument.theme+xml"/>'
+        + slides.map(function (s, i) {
+            return '<Override PartName="/ppt/slides/slide' + (i + 1) + '.xml" ContentType="application/'
+              + 'vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+          }).join("")
+        + "</Types>" },
+
+      { name: "_rels/.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        + 'relationships/officeDocument" Target="ppt/presentation.xml"/></Relationships>' },
+
+      { name: "ppt/presentation.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + "<p:presentation " + XMLNS + ' saveSubsetFonts="1">'
+        + '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>'
+        + "<p:sldIdLst>" + ids.join("") + "</p:sldIdLst>"
+        + '<p:sldSz cx="' + W + '" cy="' + H + '"/><p:notesSz cx="' + H + '" cy="' + W + '"/>'
+        + "</p:presentation>" },
+
+      { name: "ppt/_rels/presentation.xml.rels", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        + 'relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>'
+        + rels.join("")
+        + '<Relationship Id="rId' + (n + 2) + '" Type="http://schemas.openxmlformats.org/'
+        + 'officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/></Relationships>' },
+
+      { name: "ppt/slideMasters/slideMaster1.xml", data: MASTER },
+      { name: "ppt/slideMasters/_rels/slideMaster1.xml.rels",
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        + 'relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
+        + '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        + 'relationships/theme" Target="../theme/theme1.xml"/></Relationships>' },
+
+      { name: "ppt/slideLayouts/slideLayout1.xml", data: LAYOUT },
+      { name: "ppt/slideLayouts/_rels/slideLayout1.xml.rels",
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        + 'relationships/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>' },
+
+      { name: "ppt/theme/theme1.xml", data: THEME }
+    ];
+
+    slides.forEach(function (s, i) {
+      files.push({ name: "ppt/slides/slide" + (i + 1) + ".xml", data: slideXml(s) });
+      files.push({ name: "ppt/slides/_rels/slide" + (i + 1) + ".xml.rels",
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+          + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+          + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+          + 'relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>' });
+    });
+
+    return zip(files);
+  }
+
+  function download(blob, name) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 400);
+  }
+
+  function safeName(s) {
+    return (s || "migration-plan").replace(/[^A-Za-z0-9 _-]+/g, "").trim().replace(/\s+/g, "-") || "migration-plan";
+  }
+
+  window.PlannerExport = {
+    pptx: function (slides, title) { download(pptx(slides, title), safeName(title) + ".pptx"); },
+    drawio: function (xml, title) {
+      download(new Blob([xml], { type: "application/xml" }), safeName(title) + ".drawio");
+    },
+    _pptxBlob: pptx      /* exposed for the verify harness */
+  };
+})();

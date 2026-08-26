@@ -103,7 +103,7 @@ def main():
 
     # assets (css/js/img) — catalog.js gets the wording pass too
     shutil.copytree(SRC / "assets", OUT / "assets")
-    for internal in ("planner.js", "planner-rules.js"):
+    for internal in ("planner.js", "planner-rules.js", "planner-export.js"):
         f = OUT / "assets" / "js" / internal
         if f.exists():
             f.unlink()  # planner is an internal SE tool; never ships to prospects

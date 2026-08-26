@@ -40,10 +40,43 @@
 .pl-grp ul { margin: 0; padding-left: 19px; }
 .pl-grp li { margin: 2px 0; font-size: .9rem; }
 .pl-num { display: inline-block; min-width: 1.6em; padding-right: 4px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+/* ---- deck mode: one slide at a time, 16:9, same ink as the document view ---- */
+.pl-deck { display: none; }
+.pl-deck.on { display: block; }
+.pl-doc.off { display: none; }
+.pl-stage { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--hairline);
+  border-radius: var(--radius); background: var(--surface); box-shadow: var(--card-shadow);
+  overflow: hidden; }
+.pl-slide { position: absolute; inset: 0; padding: 4.2% 5%; display: none; flex-direction: column; }
+.pl-slide.active { display: flex; }
+.pl-slide .sl-kicker { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--green-700); font-weight: 700; margin-bottom: 6px; }
+.pl-slide h2 { margin: 0 0 4px; font-size: clamp(1.05rem, 2.5vw, 1.9rem); line-height: 1.18; }
+.pl-slide .sl-sub { margin: 0 0 10px; color: var(--ink-2); font-size: clamp(.72rem, 1.15vw, .96rem);
+  line-height: 1.4; }
+.pl-slide ul { margin: 0; padding-left: 1.15em; }
+.pl-slide li { margin: .42em 0; font-size: clamp(.68rem, 1.12vw, .95rem); line-height: 1.38; }
+.pl-slide li .sl-grp { display: block; font-weight: 700; color: var(--ink-2); margin-top: .7em; }
+.pl-slide .sl-foot { margin-top: auto; padding-top: 8px; font-size: clamp(.6rem, .85vw, .76rem);
+  color: var(--ink-3); display: flex; gap: 10px; }
+.pl-slide.sl-title { justify-content: center; }
+.pl-slide.sl-title h2 { font-size: clamp(1.4rem, 3.6vw, 2.6rem); }
+.pl-rail { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;
+  flex-wrap: wrap; }
+.pl-rail .pl-count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums;
+  min-width: 4.5em; text-align: center; }
 @media print {
-  .topnav, .hero, .footer, .pl-form, .pl-actions, .theme-toggle, .fb-btn { display: none !important; }
+  .topnav, .hero, .footer, .pl-form, .pl-actions, .theme-toggle, .fb-btn, .pl-rail,
+  .callout:first-of-type { display: none !important; }
   .pl-wrap { grid-template-columns: 1fr; } .pl-phase { break-inside: avoid; }
+  /* deck prints as a deck: landscape, one slide per page, all of them visible */
+  .pl-deck.on .pl-stage { aspect-ratio: auto; height: 100vh; border: 0; box-shadow: none;
+    border-radius: 0; overflow: visible; }
+  .pl-deck.on .pl-slide { position: static; display: flex !important; height: 100vh;
+    break-after: page; padding: 6% 7%; }
+  .pl-deck.on .pl-slide:last-child { break-after: auto; }
 }
+@page { size: landscape; margin: 10mm; }
 </style>
 </head>
 <body>
@@ -139,6 +172,7 @@
 </div></footer>
 <script src="assets/js/catalog.js"></script>
 <script src="assets/js/planner-rules.js"></script>
+<script src="assets/js/planner-export.js"></script>
 <script src="assets/js/planner.js"></script>
 </body>
 </html>
