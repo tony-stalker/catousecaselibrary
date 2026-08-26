@@ -587,8 +587,11 @@
         <img src="../assets/img/genai-report-data-protection.png" alt="GenAI report data-protection page showing events by action with six blocked, violations by data profile split across PII, finance and credit cards, a rules hit count table dominated by monitor rules, and a data violations over time chart">
         <figcaption>A page from the evidence pack: the recurring GenAI report's data-protection view — events by action, violations by data profile, per-rule hit counts, trend over time — a dated, vendor-generated PDF rather than a screenshot, showing monitor-mode findings against GenAI apps.</figcaption>
       </figure>
-      <!-- capture-wanted: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template -->
-      <!-- capture-wanted: Monitor → Events filtered to AI Security events with the CSV export action visible -->
+      <figure class="shot">
+        <img src="../assets/img/cma-uip-rule-anonymize-monitor.png" alt="CMA User Interaction Policy rule editor for a rule named AI Safety, showing selected applications ChatGPT Personal, Gemini and Claude Enterprise, an AI Safety engine profile, and the Action dropdown open on Block, Monitor, Anonymize and Block, and Anonymize and Monitor with the last selected" loading="lazy">
+        <figcaption>The Art&nbsp;26 decision in one control (lab tenant): the four actions a User Interaction Policy rule can take, with <strong>Anonymize &amp; Monitor</strong> chosen &mdash; sensitive values masked in-flight while the prompt is still answered and the interaction still logged. Note the two things the dialog tells you: selected applications are added to TLS inspection automatically, and edits land in an <em>unpublished revision</em>, so the rule can be drafted and reviewed before it touches live traffic.</figcaption>
+      </figure>
+      <!-- capture-wanted: Stories Workbench — a story raised from prompt-level User Interaction Policy detections (lab finding 26 Aug: prompt-level detects surface as XDR stories, not as exportable Monitor→Events rows) -->
       <!-- capture-wanted: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week -->
 
       <h3>Troubleshooting — where this pilot actually goes wrong</h3>

@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-92 of the 153 still-wanted captures need setup a clean tenant can't provide by navigation.
+89 of the 150 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -24,22 +24,20 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (7)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (6)
 
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
 - network-agility-mna: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation
 - security-data-casb-dlp: Cato Client block notification pop-up from a DLP Data Control rule, showing a customised notification template
-- security-data-casb-dlp: Events page filtered to Data Control events with the export dialog — the match report as the customer sees it
 - security-finance-dora: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
 
-## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (29)
+## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (27)
 
 - access-identity-design: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
 - access-offshore-bpo: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - access-third-party: CMA Monitor → Events — one contractor identity, named-rule allows beside an attempted-access WAN block
-- ai-eu-ai-act: Monitor → Events filtered to AI Security events with the CSV export action visible
 - migration-checkpoint: Monitor → Events filtered to TLSi-decrypted pilot traffic showing first-time detections surfaced after staging
 - migration-cloudflare: Monitor → Events filtered to pilot rules showing Internet-firewall Block and DNS Protection verdicts attributed to a named pilot user
 - migration-edgeconnect: Monitor → Events filtered to the pilot site — firewall and IPS events attributed to named users, no SSE service chain in path
@@ -53,7 +51,6 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-datacenter: Home → Events filtered to one WAN Firewall rule showing site and SDP-user sources to a cloud-site destination
 - network-global-expansion: Home → Events filtered to a single new site's first hour — Internet Firewall events hitting pre-existing global rules
 - security-consistent: Monitor → Threats Dashboard after the EICAR tests, showing the Anti-Malware detections for both paths
-- security-finance-dora: a correlated Detection & Response story generated from a staged benign incident — timeline and related events on one screen
 - security-healthcare-nhs: Monitor → Events — LAN Firewall events for an IoMT VLAN showing east-west flows to clinical and corporate VLANs in monitor mode
 - security-inbound-ips: Monitor → Events filtered to the allocated IP — allowed inbound flows alongside IPS/scanner block events against the same address
 - security-legal-confidentiality: CMA Monitor → Events — cross-wall WAN Firewall block event attributed to a named user, beside the same user's own-matter allow
@@ -69,7 +66,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 ## Other staged state (a specific rule/profile/filter that must exist first)  (19)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
-- ai-eu-ai-act: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
+- ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections (prompt-level detects surface as XDR stories, not as exportable Monitor→Events rows)
 - ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log

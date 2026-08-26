@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 153 live `capture-wanted` items across 54 pages
+Regenerated 150 live `capture-wanted` items across 54 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -9,15 +9,14 @@ Regenerated 153 live `capture-wanted` items across 54 pages
 3. Tell Claude which files map to which pages — it crops chrome, catalogues, embeds and ships.
 Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependent shots are in `CAPTURE-STAGING.md`.
 
-## AI Security (8)
+## AI Security (7)
 
+- **ai-eu-ai-act**: Stories Workbench — a story raised from prompt-level User Interaction Policy detections (prompt-level detects surface as XDR stories, not as exportable Monitor→Events rows)
 - **access-offshore-bpo**: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - **ai-agentic-security**: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session
 - **ai-agentic-security**: AI Security → Local Agents inventory with one instance drilled into (MCP servers, tools, licence type)
 - **ai-agentic-security**: AI Security → Managed Agents inventory after a platform API integration
 - **ai-eu-ai-act**: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week
-- **ai-eu-ai-act**: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template
-- **ai-eu-ai-act**: Monitor → Events filtered to AI Security events with the CSV export action visible
 - **ai-homegrown-apps**: AI Security → Guards — guard details page showing endpoint, headers, guard API keys and sample integration code
 
 ## API & automation (4)
@@ -56,7 +55,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
 
-## Monitoring — Events (27)
+## Monitoring — Events (25)
 
 - **access-hybrid-workforce**: CMA Monitor → Events — one user, same WAN rule hit from office and remote origins
 - **access-identity-design**: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
@@ -75,9 +74,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-resilient-site-design**: Home → Events filtered to Connectivity sub-types for one site across a drill window (Connected, Reconnected, Passive Connected, Socket Fail-Over)
 - **network-sdwan**: Home → Events filtered to Connectivity / Failover sub-type for a pilot site
 - **security-consistent**: Monitor → Events filtered by one Internet Firewall rule name, showing a site-sourced event and an SDP-user event side by side with identity attribution
-- **security-data-casb-dlp**: Events page filtered to Data Control events with the export dialog — the match report as the customer sees it
 - **security-finance-dora**: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
-- **security-finance-dora**: a correlated Detection & Response story generated from a staged benign incident — timeline and related events on one screen
 - **security-inbound-ips**: Monitor → Events filtered to the allocated IP — allowed inbound flows alongside IPS/scanner block events against the same address
 - **security-legal-confidentiality**: CMA Monitor → Events — cross-wall WAN Firewall block event attributed to a named user, beside the same user's own-matter allow
 - **security-legal-confidentiality**: CMA Monitor → Events — one identity, the same wall-rule block from office, remote and public Wi-Fi source contexts

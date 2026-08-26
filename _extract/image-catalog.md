@@ -428,3 +428,23 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   **PENDING REFRESH:** Tony is generating more detections; UIP violation counts take ~24h to
   surface, so a higher-count re-shoot is expected. Swap in place at the same filename and update
   the figcaption's "first detection" sentence when it arrives.
+- **cma-uip-rule-anonymize-monitor.png** (26 Aug, lab) — UIP rule editor for "AI Safety", Action
+  dropdown open on all four options with **Anonymize & Monitor** selected; also captures the
+  "applications will be added to TLS inspection" notice and the unpublished-revision footnote.
+  Cropped to the drawer (drops a HOW IT WORKS banner behind it). **Embedded** → ai-eu-ai-act.
+  The want also asked for a notification template, which is not in shot.
+- **cma-events-export-dialog.png** (26 Aug) — Events filtered to Sub-Type = Apps Security, 640K
+  events over a fortnight, Export Events dialog open over the grid. Top global bar trimmed (avatar
+  and Demo chip). **Embedded** → security-data-casb-dlp.
+- **cma-story-ai-upload-anomaly.png** (26 Aug) — Stories Workbench detail, "Abnormal Data Upload to
+  AI Application by a User", criticality High (7), Producer = Usage Anomaly, 7-step timeline,
+  14-day anomaly distribution, entities/top apps/destinations. **Embedded** → security-finance-dora
+  (closest want: correlated D&R story with timeline; captioned honestly as a usage anomaly, not a
+  staged incident). **Source user name redacted at #555 pending confirmation the persona is
+  synthetic** — un-redact from `scratchpad/genai/n3.png` if it is.
+- Still wanted for management-soc-xdr: a story with **MITRE ATT&CK mapping and an evidences table**
+  — a Usage Anomaly story like the one above carries neither.
+- **Product finding (26 Aug, Tony's lab):** prompt-level User Interaction Policy detections do
+  **not** produce exportable Monitor → Events rows; they surface as XDR stories instead. The
+  ai-eu-ai-act page asserts AI-related events are filterable and CSV-exportable in several places —
+  needs verifying against the KB before those claims are trusted in front of a customer.
