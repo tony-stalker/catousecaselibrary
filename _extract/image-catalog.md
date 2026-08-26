@@ -346,3 +346,55 @@ Device Posture Profiles + Action columns — candidate for the anyconnect/direct
 rule, posture Any" wants if a wave-named rule is ever staged) · cma-posture-checks-catalog
 (Device Checks tab — check catalogue with categories, vendors and criteria incl. CrowdStrike
 version-gate and real-time-protection flags).
+
+## Batch: Reports session — generated report PDFs + Reports UI (5 Aug, browser-driven, personal tenant)
+
+Claude drove Tony's browser against the personal lab tenant (Tony logged in). Two benign report
+PDFs were generated in the tenant ("Internet Firewall Rule Hit Count - Pilot" and "TLS Inspection -
+Pilot Group", both Last Week / London — delete the rows from Home → Reports → Generated PDFs if
+unwanted); the GenAI Report was staged in its Generate now drawer and cancelled, nothing else
+touched. PDF pages rendered via PyMuPDF at 2x; UI shots cropped 56px (1920w). PII pass: report
+cover pages carry the account name so only inner pages were used; exec p3 site name
+`tony-sa-hub-azure-vsocket` redacted #555; TLS p5 (real lab hostnames) not used. 7 files,
+9 embeds across 7 pages.
+
+**Embedded 5 Aug:** cma-reports-catalog-hitcount (management-vendor-consolidation,
+security-compliance — Catalog tab, IFW Hit Count template selected with live Top/Least preview) ·
+cma-reports-generated-pdfs (management-vendor-consolidation, security-compliance — Generated PDFs
+tab, both new reports Ready atop scheduled-report history) · cma-report-ifw-hitcount-top-least
+(security-uk-public-sector, security-firewall-refresh — PDF p3, Top/Least Matched Rules 2.51M→13) ·
+cma-report-ifw-hitcount-table (security-firewall-refresh — PDF p4, full rules table with event
+counts + last-used) · cma-report-tls-inspected-bypassed (security-tls-inspection — PDF p3,
+inspected vs bypassed donuts overall + per OS) · cma-genai-report-generate-cohort
+(security-ai-visibility — Generate now drawer, "GenAI Usage - Assessment Cohort", SDP User In
+Adele Vance/Alex Wilber, GenAI Usage preview behind) · cma-report-exec-usage-trends
+(management-visibility — Executive Report PDF p3 Sites Overview, month of traffic over time +
+top sites, one site name redacted).
+
+**Source PDFs kept out of the repo** (scratchpad only): exec-report.pdf pp5/12/14 (users overview,
+applications usage, GenAI apps tables) are clean candidates if future wants need them.
+
+## Batch: AI DLP match report — events, incident, forensics (26 Aug, hand-back from personal lab tenant)
+
+Tony ran the `~/Documents/claude/dlp-test-kit/` payloads as file uploads to ChatGPT from the lab
+tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 54–57) fired.
+
+- **cma-genai-dlp-events-grid.png** — `Monitor → Events` grid, eight ChatGPT upload events, columns
+  Time / User / Application / Application Activity / File Name / Rule / DLP Profiles / Action.
+  All four recommended rules represented; all actions Allow. (Re-shot with the tenant's typo'd
+  pre-existing rule filtered out of the view — see the note below.) No redaction needed: user is the Bruce Banner persona, all filenames are kit
+  payloads, no email/tenant slug/account ID on screen. **Embedded** → ai-genai-security.
+- **cma-genai-dlp-forensics.png** — composite of two captures: the evidence-access consent dialog
+  ("all access and activity are logged and monitored") and the Forensics panel at match 2/3 with
+  `AKIAIOSFODNN7EXAMPLE` highlighted. **Embedded** → ai-genai-security.
+- **NOT used — Data Incident detail pane** (shot1): leaks `tony.stalker@catonetworks.com`
+  (Logged In User), `bruce.banner@sase-experts.co.uk` (real domain), device name `TonyStal-LM-UK`
+  ×2 and host MAC `64:4b:f0:24:d4:05`. The page already carries a Data Incident pane at
+  `dlp-incident-cma.png` from the demo tenant, so the redaction wasn't worth spending. Kept in
+  scratch if a monitor-mode (Allow) incident pane is ever wanted — redact those four fields.
+- **Not used — forensics matches 1/3 and 3/3** (GitHub PAT, GitLab PAT): same panel, redundant with
+  the AWS one. 3/3 also shows a truncated "Owners: Bruce Bann" line.
+- The tenant's pre-existing rule is spelled "DLP - Genrative AI Monitor Up…" and can't be renamed
+  or disabled — DLP rules now require a DLP profile, so editing it trips a validation error. Tony
+  added a replica File Control rule above it to absorb the match, and filtered the row out of the
+  events view for the published capture. If that grid is ever re-shot, keep the filter on.

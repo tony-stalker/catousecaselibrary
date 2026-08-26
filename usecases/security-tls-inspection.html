@@ -524,7 +524,10 @@
         <img src="../assets/img/cma-tls-inspection-policy.png" alt="CMA TLS Inspection policy showing ordered bypass rules for sensitive categories, embedded operating systems, devices and source networks, followed by phased Inspect rules scoped to test networks and a finance user group, then broad inspect rules for popular cloud apps and business categories" loading="lazy">
         <figcaption>The end-of-PoV rule base, live in a demo tenant: the exclusion baseline (sensitive categories, platforms, named app and source bypasses) ordered first, then phased Inspect rules scoped to test networks and a pilot user group — the exact shape week one of this runbook builds. Every bypass row on screen is a line in the exclusion register; every Inspect rule carries its Untrusted Server Certificates decision.</figcaption>
       </figure>
-      <!-- capture-wanted: Home → Reports TLS Inspection report — inspected vs. bypassed charts per OS, filtered to a pilot group -->
+      <figure class="shot">
+        <img src="../assets/img/cma-report-tls-inspected-bypassed.png" alt="Generated TLS Inspection Report PDF page with Inspected VS Bypassed donut charts overall and per OS — 51% inspected account-wide, Windows 41%, macOS 69%, Linux fully bypassed, iOS 24%" loading="lazy">
+        <figcaption>The inspection-ratio criterion read straight off the generated report (lab tenant, one week): 51% of TLS inspected overall, decomposed per OS — macOS at 69%, Windows at 41%, Linux entirely bypassed by the platform exclusions. The per-OS split is the honest wrap-up: it shows exactly where the exclusion register, not appetite, sets the ceiling.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user -->
       <!-- capture-wanted: Security → Certificate Management — active certificate with expiry and PEM/DER download options -->
       <p>

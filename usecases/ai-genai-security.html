@@ -530,7 +530,18 @@
           accounts add them manually. This is the file-and-upload backstop beneath the prompt
           layer — leave every rule in monitor for the whole PoV unless the match report argues
           otherwise.</p>
-          <!-- capture-wanted: «Events filtered to the four recommended AI DLP rules — the match report as the data owners review it» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-genai-dlp-events-grid.png" alt="CMA events grid filtered to the AI DLP monitor rules: eight ChatGPT upload events for one pilot user, each row naming the file, the matching rule and DLP profile across PII, financial data, access keys and legal data, every action Allow" loading="lazy">
+            <figcaption>The match report the data owners actually review (lab tenant, fictional identities and synthetic test files): eight uploads to ChatGPT across all four recommended rules, each attributed to a user, a file, a rule and a profile &mdash; and every action <strong>Allow</strong>. Monitor mode is the whole point in week one; the grid tells you which data classes travel to AI apps before anyone argues about blocking them.</figcaption>
+          </figure>
+          <p>Each row opens into the incident, and the incident opens into the evidence &mdash; the
+          snippet that actually matched, with the matched value highlighted and a match counter for
+          the rest of the file. Access to it is gated and logged, which is the answer to the
+          reasonable objection that a match report is itself a data-exposure risk.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-genai-dlp-forensics.png" alt="Two CMA panels: a confirmation dialog warning that evidence may contain sensitive information and that access is logged, and a Forensics panel showing match 2 of 3 with an AWS access key highlighted in the file snippet" loading="lazy">
+            <figcaption>Opening the forensics on an access-key match: the viewer must first confirm the access is logged and monitored (left), and the snippet then shows the matched value in context with a 2-of-3 match counter (right). The key shown is AWS&#39;s own documented example value in a synthetic test file.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Week 1 — deploy the plugin to the off-net cohort</h4>

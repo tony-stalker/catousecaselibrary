@@ -481,7 +481,14 @@
         <figcaption>The east-west grammar for criterion 3: rules matching devices by category, type and manufacturer with live hit counts — the inter-VLAN control a branch appliance does today, expressed as policy. In the LAN Firewall the same rule shapes are scoped per site and VLAN and enforced on the Socket (device-attribute criteria from Socket v26).</figcaption>
       </figure>
       <!-- capture-wanted: Security → LAN Firewall global rulebase with rules scoped per site/VLAN and a block rule between VLANs -->
-      <!-- capture-wanted: Home → Reports generated rule hit count PDF (Top Matched / Least Matched / full priority list) -->
+      <figure class="shot">
+        <img src="../assets/img/cma-report-ifw-hitcount-top-least.png" alt="Generated Internet Firewall Rule Hit Count PDF page with Top Matched Rules and Least Matched Rules bar charts, spanning a 2.51 million-hit permit-any rule down to a 13-hit category block" loading="lazy">
+        <figcaption>The renewal artefact, generated not screenshotted (lab tenant, one week): the hit count PDF's Top/Least Matched page — the same bars as the rulebase view, but dated, branded and attachable to the business case beside the appliance's own rule-usage export.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-report-ifw-hitcount-table.png" alt="Generated Internet Firewall Rule Hit Count PDF page listing every rule with its event count and last-used timestamp, from 2.51 million events on permit-any down to 13 on a category block" loading="lazy">
+        <figcaption>The same PDF's full priority list: every rule with its event count and a last-used timestamp — the page that answers "which rules never fire?" during the refresh conversation, and the direct analogue of the appliance vendor's rule-cleanup report.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page -->
       <!-- capture-wanted: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff -->
 

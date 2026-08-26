@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-103 of the 164 still-wanted captures need setup a clean tenant can't provide by navigation.
+95 of the 156 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -98,16 +98,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-directaccess: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - migration-directaccess: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
 
-## Reports — generate/schedule the specific report and open the delivered PDF  (8)
+## Reports — generate/schedule the specific report and open the delivered PDF  (0)
 
-- ai-genai-security: Events filtered to the four recommended AI DLP rules — the match report as the data owners review it
-- management-vendor-consolidation: Home → Reports catalogue with the rule hit count report template selected, and a generated PDF in the Generated PDFs tab
-- management-visibility: the delivered executive report PDF opened at its usage-trends page
-- security-ai-visibility: CMA Home → Reports — GenAI Report generation scoped to an assessment cohort
-- security-compliance: Home → Reports — Catalog tab with the rule hit count report template, and a generated PDF in the Generated PDFs tab
-- security-firewall-refresh: Home → Reports generated rule hit count PDF (Top Matched / Least Matched / full priority list)
-- security-tls-inspection: Home → Reports TLS Inspection report — inspected vs. bypassed charts per OS, filtered to a pilot group
-- security-uk-public-sector: Home → Reports — a generated rule hit count PDF from the Generated PDFs tab
 
 ## Resilience drill — perform the timed drill (link pull / HA failover) and capture the mid-drill Real-Time / Events state  (9)
 
