@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 155 live `capture-wanted` items across 56 pages
+Regenerated 154 live `capture-wanted` items across 55 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -9,7 +9,7 @@ Regenerated 155 live `capture-wanted` items across 56 pages
 3. Tell Claude which files map to which pages — it crops chrome, catalogues, embeds and ships.
 Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependent shots are in `CAPTURE-STAGING.md`.
 
-## AI Security (10)
+## AI Security (9)
 
 - **access-offshore-bpo**: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
 - **ai-agentic-security**: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session
@@ -20,7 +20,6 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **ai-eu-ai-act**: Monitor → Events filtered to AI Security events with the CSV export action visible
 - **ai-homegrown-apps**: AI Security → Guards — guard details page showing endpoint, headers, guard API keys and sample integration code
 - **security-ai**: AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count
-- **security-ai-visibility**: CMA AI Security → User Interaction Policy — a monitor-mode rule scoped to an assessment cohort
 
 ## API & automation (4)
 

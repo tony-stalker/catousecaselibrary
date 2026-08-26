@@ -411,3 +411,14 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   **Embedded** → ai-genai-security, paired with the engage-user notice. This closes the
   browser-plugin want; the anonymise/mask variant was never captured separately and is no longer
   tracked as a want.
+- **cma-uip-monitor-interceptors.png** (26 Aug, reference-architecture account) — UIP rulebase
+  cropped to the top three rules: same *Remote Access* cohort intercepted three ways (Network /
+  Browser Plugin / API Integration), actions Anonymize & Monitor ×2 and Monitor, violation count 12
+  on the first. **Embedded** → security-ai-visibility. Rows 4–8 cropped out deliberately: two
+  reference groups shown as "(deleted)" and a joke rule name ("Block Queen conversations").
+- **NOT used — demo-mode UIP rulebase** (Screenshot 14.21): seven rules with large violation counts
+  (1.07K, 1.1K, 310) but every action is **Block** except one Monitor rule sitting at 0, so it
+  cannot serve the `security-ai` want, whose page text prescribes a Monitor rule with an accruing
+  detection count. Embedding it there would contradict the runbook. Kept in scratch; it is a
+  candidate upgrade for `cma-ai-uip.png` on ai-genai-security if a wider rulebase is ever wanted
+  (adds the Interception Type column). Note it shows a "Catodemomode.com Users" source group.
