@@ -422,3 +422,9 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   detection count. Embedding it there would contradict the runbook. Kept in scratch; it is a
   candidate upgrade for `cma-ai-uip.png` on ai-genai-security if a wider rulebase is ever wanted
   (adds the Interception Type column). Note it shows a "Catodemomode.com Users" source group.
+- **cma-uip-monitor-detection-count.png** (26 Aug, personal lab tenant) — UIP rulebase, seven rules,
+  mixed actions (Engage User / Anonymize & Block / Monitor ×3 / Block ×2) each with a named engine
+  profile; *Code Sharing* Monitor rule at violation count 1. **Embedded** → security-ai.
+  **PENDING REFRESH:** Tony is generating more detections; UIP violation counts take ~24h to
+  surface, so a higher-count re-shoot is expected. Swap in place at the same filename and update
+  the figcaption's "first detection" sentence when it arrives.

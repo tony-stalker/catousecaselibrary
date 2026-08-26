@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-93 of the 154 still-wanted captures need setup a clean tenant can't provide by navigation.
+92 of the 153 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -112,7 +112,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible
 - security-ransomware: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
 
-## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (9)
+## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (8)
 
 - access-offshore-bpo: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 - access-remote-worker: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
@@ -121,5 +121,4 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-sophos: Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules
 - migration-symantec: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact
 - migration-versa: Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort
-- security-ai: AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count
 - security-ransomware: Security → LAN Firewall — a LAN Network rule with nested LAN Firewall rules and hit counts on a pilot Socket site
