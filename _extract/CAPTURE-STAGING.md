@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-95 of the 156 still-wanted captures need setup a clean tenant can't provide by navigation.
+93 of the 154 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -24,10 +24,9 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (8)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (7)
 
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
-- ai-genai-security: Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
 - network-agility-mna: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation
@@ -113,7 +112,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible
 - security-ransomware: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
 
-## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (10)
+## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (9)
 
 - access-offshore-bpo: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 - access-remote-worker: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
@@ -122,6 +121,5 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-sophos: Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules
 - migration-symantec: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact
 - migration-versa: Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort
-- security-ai-visibility: CMA AI Security → User Interaction Policy — a monitor-mode rule scoped to an assessment cohort
 - security-ai: AI Security → User Interaction Policy rulebase with a monitor-mode rule showing its Detection Count
 - security-ransomware: Security → LAN Firewall — a LAN Network rule with nested LAN Firewall rules and hit counts on a pilot Socket site

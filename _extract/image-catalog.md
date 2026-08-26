@@ -398,3 +398,27 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   or disabled — DLP rules now require a DLP profile, so editing it trips a validation error. Tony
   added a replica File Control rule above it to absorb the match, and filtered the row out of the
   events view for the published capture. If that grid is ever re-shot, keep the filter on.
+- **cma-ai-plugin-engage-user.png** (26 Aug) — AI Security Browser Plugin enforcing in Edge on
+  `deepseek.com`: Cato-branded modal "Please use AI applications responsibly" with a single PROCEED
+  button. This is the **engage-user** outcome, not block or anonymise — captioned as such. Cropped
+  to the browser window (drops an adjacent window's contents on the right and the desktop below),
+  bottom trimmed to remove an "Activate Windows" watermark, and the toolbar profile avatar
+  pixelated (real photo). **Embedded** → ai-genai-security. The block/anonymise variant is still
+  wanted so the pair can be shown.
+- **cma-ai-plugin-block.png** (26 Aug) — same plugin, **block** outcome: Edge at
+  `gemini.google.com/app`, page never renders, Cato card reads "Access restricted — Access to Gemini
+  is restricted by your organization." Cropped to the browser window, toolbar avatar pixelated.
+  **Embedded** → ai-genai-security, paired with the engage-user notice. This closes the
+  browser-plugin want; the anonymise/mask variant was never captured separately and is no longer
+  tracked as a want.
+- **cma-uip-monitor-interceptors.png** (26 Aug, reference-architecture account) — UIP rulebase
+  cropped to the top three rules: same *Remote Access* cohort intercepted three ways (Network /
+  Browser Plugin / API Integration), actions Anonymize & Monitor ×2 and Monitor, violation count 12
+  on the first. **Embedded** → security-ai-visibility. Rows 4–8 cropped out deliberately: two
+  reference groups shown as "(deleted)" and a joke rule name ("Block Queen conversations").
+- **NOT used — demo-mode UIP rulebase** (Screenshot 14.21): seven rules with large violation counts
+  (1.07K, 1.1K, 310) but every action is **Block** except one Monitor rule sitting at 0, so it
+  cannot serve the `security-ai` want, whose page text prescribes a Monitor rule with an accruing
+  detection count. Embedding it there would contradict the runbook. Kept in scratch; it is a
+  candidate upgrade for `cma-ai-uip.png` on ai-genai-security if a wider rulebase is ever wanted
+  (adds the Interception Type column). Note it shows a "Catodemomode.com Users" source group.

@@ -553,7 +553,14 @@
           LLM — which is what makes a contractor estate on another vendor's SASE provable at all.
           Verify one cohort device end to end on day one: plugin installed, reaching the Cato
           service, its interactions visible in the inventory.</p>
-          <!-- capture-wanted: «Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-plugin-engage-user.png" alt="Edge browser on DeepSeek with a Cato-branded modal over the page reading &#39;Please use AI applications responsibly&#39;, warning about data leakage, unverified outputs and copyright infringement, with a single PROCEED button" loading="lazy">
+            <figcaption>The plugin&#39;s engage-user outcome on an off-net device (lab device, Edge): the user reaches DeepSeek, the plugin names the application and the risks, and the session continues only on a deliberate <strong>Proceed</strong>. No Cato tunnel is involved &mdash; this is the browser enforcing, which is why the off-net cohort is provable at all.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-plugin-block.png" alt="Edge browser at gemini.google.com/app showing a blank page with a Cato-branded card reading &#39;Access restricted — Access to Gemini is restricted by your organization&#39;" loading="lazy">
+            <figcaption>The same plugin, the other outcome (lab device, Edge): Gemini never renders &mdash; the card names the application and attributes the decision to the organisation rather than to the browser or the network. Pair this with the engage-user notice above when you present the cohort: one policy, two proportionate answers, neither of them requiring the device to be on the tunnel.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Week 2 — Anonymize and Monitor, with the user told why</h4>
