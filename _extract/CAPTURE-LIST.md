@@ -53,8 +53,9 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-ot-iot**: Assets → Device Inventory Segmentation Flows Sankey for an OT VLAN, protocols and destinations visible
 - **security-retail-pci**: Home → Devices → Segmentation tab — Segmentation Flows Sankey for a store site (device type → application → protocol → destination)
 
-## Client-side (end-user view) (2)
+## Client-side (end-user view) (3)
 
+- **ai-genai-security**: Browser plugin blocking or anonymising on an off-net device — the block or mask notice, to pair with the engage-user notice already embedded
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
 
@@ -159,10 +160,9 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **network-ipsec-asa**: Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet
 
-## Other (25)
+## Other (24)
 
 - **access-byod-clientless**: RBI-isolated portal session — download/copy attempt refused in the browser
-- **ai-genai-security**: Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome
 - **management-dem**: the Show Full Traceroute Data panel open, with the copy control visible
 - **management-soc-xdr**: Detection & Response story detail — criticality score, MITRE ATT&CK mapping and evidences table on one screen
 - **management-soc-xdr**: Security → Connectors showing the Microsoft Defender for Endpoint connector connected alongside Cato sources

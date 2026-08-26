@@ -26,8 +26,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 
 ## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (8)
 
+- ai-genai-security: Browser plugin blocking or anonymising on an off-net device — the block or mask notice, to pair with the engage-user notice already embedded
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
-- ai-genai-security: Browser plugin enforcing on an off-net device — the in-browser anonymise or block notice in Chrome
 - management-soc-xdr: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
 - network-agility-mna: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation

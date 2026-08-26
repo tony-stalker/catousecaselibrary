@@ -398,3 +398,10 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   or disabled — DLP rules now require a DLP profile, so editing it trips a validation error. Tony
   added a replica File Control rule above it to absorb the match, and filtered the row out of the
   events view for the published capture. If that grid is ever re-shot, keep the filter on.
+- **cma-ai-plugin-engage-user.png** (26 Aug) — AI Security Browser Plugin enforcing in Edge on
+  `deepseek.com`: Cato-branded modal "Please use AI applications responsibly" with a single PROCEED
+  button. This is the **engage-user** outcome, not block or anonymise — captioned as such. Cropped
+  to the browser window (drops an adjacent window's contents on the right and the desktop below),
+  bottom trimmed to remove an "Activate Windows" watermark, and the toolbar profile avatar
+  pixelated (real photo). **Embedded** → ai-genai-security. The block/anonymise variant is still
+  wanted so the pair can be shown.
