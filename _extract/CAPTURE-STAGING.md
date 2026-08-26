@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-88 of the 148 still-wanted captures need setup a clean tenant can't provide by navigation.
+87 of the 147 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -62,11 +62,10 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (19)
+## Other staged state (a specific rule/profile/filter that must exist first)  (18)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
-- ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - management-visibility: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen

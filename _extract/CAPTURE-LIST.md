@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 148 live `capture-wanted` items across 54 pages
+Regenerated 147 live `capture-wanted` items across 53 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -188,9 +188,8 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-compliance**: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
 - **security-finance-dora**: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
 
-## Security — DLP & Data Protection  (8)
+## Security — DLP & Data Protection  (7)
 
-- **ai-legal-genai**: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - **migration-forcepoint**: Monitor → Events filtered to pilot Internet-firewall and Data Control rules, Block/Prompt and DLP monitor events attributed to a named pilot user
 - **migration-netskope**: Monitor → Events filtered to pilot App Control and Data Control rules, showing CASB and DLP verdicts attributed to a pilot cohort user by name
 - **migration-versa**: Monitor → Data Protection Dashboard — monitor-mode DLP matches attributed to user, app and data type

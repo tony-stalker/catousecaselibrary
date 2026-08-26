@@ -467,3 +467,13 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   the committed outcome is the better artefact. Redacted: device name `TonyStal-LM-UK` at #555.
   Left visible: `10.103.0.10` (RFC1918), site "Mobile Office" (Cato built-in), "LL" initials on the
   timeline avatars.
+- **cma-dp-dashboard-genai-rules.png** (26 Aug, lab) — Security → Data Protection Dashboard, Inline
+  Protection tab, filtered `Threat Verdict Is Matched`, Last 2 Days: Top Violating Rules led by
+  "DLP - Block PII Upload to Gen AI" (4) then the four AI Monitor rules (3/2/2/1, Legal Data at 1);
+  Events by Actions 79.2K Allow vs 4 Block; violations over time; violations by country (UK 12).
+  **Embedded** → ai-legal-genai. Cropped at 818px to drop three bottom panels clipped mid-value
+  (Top Hosts, Top Violation by Data Profile, by File Type) — that crop also removes host 10.103.0.10.
+  Caveat carried in the figcaption: the page's bullet says nothing blocks at week one, but the lab
+  has since promoted a PII rule to Block, so the caption names the difference rather than hiding it.
+  The Legal ML classifier has only ONE match — a richer legal-specific capture is still worth having
+  if the pilot ever accrues more.
