@@ -12,6 +12,7 @@ Transforms:
     both #demo and #pov exist, so stripped pages render tabless automatically)
   - removes deck download buttons; ships NO PowerPoint files
   - excludes whatsnew.html and its nav link (internal change history)
+  - excludes planner.html, its nav link and its JS (internal SE tool)
   - rewords SE-facing phrases to prospect-facing (rules below)
   - prospect footer + README
 """
@@ -61,6 +62,7 @@ SECTION_RE = re.compile(
 DECK_BTN_RE = re.compile(
     r'\n?[ \t]*<a class="btn btn-ghost" href="[^"]*\.pptx"[^>]*>[^<]*</a>')
 WHATSNEW_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="whatsnew.html">[^<]*</a>')
+PLANNER_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="planner.html">[^<]*</a>')
 
 FIGURE_RE = re.compile(r'<figure class="shot">.*?</figure>', re.DOTALL)
 
@@ -78,6 +80,7 @@ def transform(text: str) -> str:
     text = SECTION_RE.sub(_strip_section, text)
     text = DECK_BTN_RE.sub("", text)
     text = WHATSNEW_LINK_RE.sub("", text)
+    text = PLANNER_LINK_RE.sub("", text)
     for old, new in PHRASES:
         text = text.replace(old, new)
     return text
@@ -100,6 +103,10 @@ def main():
 
     # assets (css/js/img) — catalog.js gets the wording pass too
     shutil.copytree(SRC / "assets", OUT / "assets")
+    for internal in ("planner.js", "planner-rules.js"):
+        f = OUT / "assets" / "js" / internal
+        if f.exists():
+            f.unlink()  # planner is an internal SE tool; never ships to prospects
     cat = OUT / "assets" / "js" / "catalog.js"
     cat_src = re.sub(r'deck: "[^"]*"', "deck: null", transform(cat.read_text()))
     cat.write_text(cat_src)

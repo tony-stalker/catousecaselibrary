@@ -8,10 +8,10 @@ set -u
 cd "$(dirname "$0")/.." || exit 1
 FAIL=0
 
-echo "== 1/7 link check"
+echo "== 1/8 link check"
 python3 _extract/checklinks.py index.html usecases/*.html || FAIL=1
 
-echo "== 2/7 catalog consistency + hygiene"
+echo "== 2/8 catalog consistency + hygiene"
 python3 - <<'EOF' || FAIL=1
 import re, subprocess, sys
 from pathlib import Path
@@ -35,7 +35,7 @@ if errs:
 print("OK")
 EOF
 
-echo "== 3/7 external resource loads (CDN) + theme snippet"
+echo "== 3/8 external resource loads (CDN) + theme snippet"
 if grep -rn -E 'src="http|<link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
@@ -49,13 +49,13 @@ for f in index.html whatsnew.html usecases/*.html; do
 done
 [ "$SNIPMISS" = 0 ] && echo "OK — theme snippet on all pages" || FAIL=1
 
-echo "== 4/7 SVG text measurement (must be silent — any output is a regression)"
+echo "== 4/8 SVG text measurement (must be silent — any output is a regression)"
 python3 _extract/measure_svg.py || FAIL=1
 
-echo "== 5/7 render + console errors (index)"
+echo "== 5/8 render + console errors (index)"
 python3 _extract/shoot.py index.html /tmp/verify-index.png | tail -1 | grep -q "no console errors" && echo "OK" || { echo "FAIL: console errors"; FAIL=1; }
 
-echo "== 6/7 mobile fit (390px, all pages)"
+echo "== 6/8 mobile fit (390px, all pages)"
 python3 - <<'EOF' || FAIL=1
 from playwright.sync_api import sync_playwright
 import pathlib, sys
@@ -65,7 +65,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(executable_path=EXE)
     pg = b.new_page(viewport={"width": 390, "height": 844})
     bad = []
-    for page in ["index.html"] + ["usecases/" + f.name for f in sorted(pathlib.Path("usecases").glob("*.html"))]:
+    for page in ["index.html", "planner.html", "whatsnew.html"] + ["usecases/" + f.name for f in sorted(pathlib.Path("usecases").glob("*.html"))]:
         pg.goto(BASE + page); pg.wait_for_timeout(200)
         pg.evaluate("document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'))")
         # runbook tabs hide the inactive panel — reveal it so its width is measured too
@@ -78,11 +78,60 @@ if bad:
 print("OK — all pages fit")
 EOF
 
-echo "== 7/7 search index freshness (full-text search)"
+echo "== 7/8 search index freshness (full-text search)"
 python3 _extract/build-search.py --check || FAIL=1
 
+echo "== 8/8 planner rules integrity"
+python3 - <<'EOF' || FAIL=1
+import re, sys
+from pathlib import Path
+cat = Path("assets/js/catalog.js").read_text()
+ids = set(re.findall(r'id: "([^"]+)"', cat))
+src = Path("assets/js/planner-rules.js").read_text()
+phase_keys = set(re.findall(r'key:\s*"([^"]+)",\s*\n?\s*title:', src))
+errs = []
+# every page id referenced by a rule must exist in the catalog
+for pid in re.findall(r'pages:\s*\[([^\]]*)\]', src):
+    for one in re.findall(r'"([^"]+)"', pid):
+        if one not in ids:
+            errs.append("planner rule references unknown page id: " + one)
+# every phase key used by a rule must exist in the phase spine
+for ph in re.findall(r'phase:\s*"([^"]+)"', src):
+    if ph not in phase_keys:
+        errs.append("planner rule uses unknown phase key: " + ph)
+n_opts = len(re.findall(r'\bkey:\s*"', src)) - len(phase_keys)
+print("%d catalog ids / %d phases / %d rule options" % (len(ids), len(phase_keys), n_opts))
+if errs:
+    print("\n".join(sorted(set(errs)))); sys.exit(1)
+EOF
+python3 - <<'EOF' || FAIL=1
+from playwright.sync_api import sync_playwright
+import pathlib, sys
+EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
+BASE = "file://" + str(pathlib.Path.cwd()) + "/"
+errs = []
+with sync_playwright() as p:
+    b = p.chromium.launch(executable_path=EXE)
+    pg = b.new_page(viewport={"width": 1280, "height": 900})
+    pg.on("console", lambda m: errs.append(m.text) if m.type == "error" else None)
+    pg.on("pageerror", lambda e: errs.append(str(e)))
+    pg.goto(BASE + "planner.html"); pg.wait_for_timeout(300)
+    pg.select_option("#f-wan", "mpls"); pg.select_option("#f-proxy", "zscaler")
+    pg.select_option("#f-ra", "anyconnect")
+    pg.click("#pl-go"); pg.wait_for_timeout(300)
+    n_ph = pg.eval_on_selector_all(".pl-phase", "e=>e.length")
+    n_st = pg.eval_on_selector_all(".pl-phase li", "e=>e.length")
+    hrefs = pg.eval_on_selector_all(".pl-links a", "els=>els.map(e=>e.getAttribute('href'))")
+    b.close()
+bad = [h for h in set(hrefs) if not (pathlib.Path.cwd() / h).exists()]
+if errs: print("console errors:", errs[:3]); sys.exit(1)
+if n_ph < 5 or n_st < 15: print("planner composed too little: %d phases / %d steps" % (n_ph, n_st)); sys.exit(1)
+if bad: print("broken plan links:", bad); sys.exit(1)
+print("OK — composes %d phases / %d steps / %d page links" % (n_ph, n_st, len(hrefs)))
+EOF
+
 if [ "${1:-}" = "--external" ]; then
-  echo "== 8/8 external links (optional, network-dependent)"
+  echo "== 9/9 external links (optional, network-dependent)"
   python3 _extract/checkexternal.py || FAIL=1
 fi
 

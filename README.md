@@ -31,10 +31,14 @@ Education · BPO · Legal.
 Start at `index.html` → the **Start here** journeys, search box, or clickable tags.
 `whatsnew.html` lists every change.
 
+`planner.html` is an internal SE tool: describe an opportunity's existing estate and it composes
+a sequenced migration methodology from these pages. It is deterministic — the rules in
+`assets/js/planner-rules.js` are its whole judgement — and it is excluded from the prospect build.
+
 ## Maintaining it
 
 ```bash
-bash _extract/verify.sh              # 7-check health pass (links, catalogue, SVG, console, mobile, search index)
+bash _extract/verify.sh              # 8-check health pass (links, catalogue, SVG, console, mobile, search index, planner)
 python3 _extract/build-search.py     # regenerate the full-text search index after page edits
 bash _extract/verify.sh --external   # + probe all external URLs (curl-based; see note)
 git add -A && git commit             # after a clean verify
@@ -80,6 +84,7 @@ Conventions and gotchas:
 ```
 index.html            landing page (journeys, search, category grid)
 whatsnew.html         change log (generated from git history)
+planner.html          migration planner (internal only; excluded from the prospect build)
 usecases/*.html       the 76 use-case pages
 assets/               shared CSS/JS, images (CMA screenshots, diagrams)
 _extract/             tooling, source-deck digests, research briefs, verification scripts

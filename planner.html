@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migration Planner — Cato Use Case Library</title>
+<meta name="description" content="Compose a phased Cato migration methodology from an opportunity's existing estate, using the library's use cases and best practices.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+<style>
+.pl-wrap { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .pl-wrap { grid-template-columns: minmax(0, 1fr); } .pl-form { position: static !important; } }
+.pl-form { position: sticky; top: 16px; }
+.pl-form fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+.pl-form legend { font-weight: 700; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; padding: 0; }
+.pl-form label.f { display: block; font-size: .86rem; color: var(--ink-2); margin: 8px 0 3px; }
+.pl-form select, .pl-form input[type=text], .pl-form input[type=number] {
+  width: 100%; padding: 7px 9px; font: inherit; font-size: .9rem; color: var(--ink);
+  background: var(--page); border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+  max-width: 100%; box-sizing: border-box; }
+.pl-form .cb { display: flex; align-items: flex-start; gap: 7px; font-size: .88rem; color: var(--ink-2); margin: 5px 0; }
+.pl-form .cb input { margin-top: 3px; flex: none; }
+.pl-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pl-empty { text-align: center; padding: 48px 20px; color: var(--ink-3); }
+.pl-sum { font-size: 1.02rem; line-height: 1.55; }
+.pl-sum strong { color: var(--ink); }
+.pl-phase { border-left: 3px solid var(--green-500); padding: 2px 0 2px 14px; margin: 0 0 20px; }
+.pl-phase h3 { margin: 0 0 2px; font-size: 1.06rem; }
+.pl-phase .pl-obj { color: var(--ink-2); font-size: .92rem; margin: 0 0 8px; }
+.pl-phase ul { margin: 0 0 8px; padding-left: 19px; }
+.pl-phase li { margin: 3px 0; font-size: .93rem; }
+.pl-mini { font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; margin: 10px 0 3px; }
+.pl-src { font-size: .8rem; color: var(--ink-3); }
+.pl-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.pl-links a { font-size: .88rem; }
+.pl-grp { margin: 0 0 10px; }
+.pl-grp:last-child { margin-bottom: 0; }
+.pl-grp h4 { margin: 0 0 2px; font-size: .84rem; font-weight: 700; color: var(--ink-2); }
+.pl-grp ul { margin: 0; padding-left: 19px; }
+.pl-grp li { margin: 2px 0; font-size: .9rem; }
+.pl-num { display: inline-block; min-width: 1.6em; padding-right: 4px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+@media print {
+  .topnav, .hero, .footer, .pl-form, .pl-actions, .theme-toggle, .fb-btn { display: none !important; }
+  .pl-wrap { grid-template-columns: 1fr; } .pl-phase { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ Migration Planner</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="index.html">← All use cases</a>
+  </div>
+</nav>
+<header class="hero">
+  <div class="hero-inner">
+    <h1>Migration Planner</h1>
+    <p class="lede">Describe the estate you are displacing and get a sequenced migration
+    methodology assembled from this library &mdash; phases in dependency order, the prerequisites
+    each one needs, the risks worth naming early, and the pages that carry the detail.</p>
+  </div>
+</header>
+<main class="main">
+  <div class="callout" style="margin-bottom:18px">
+    <div class="co-title">Internal tool &mdash; a starting point, not a deliverable</div>
+    <p>The plan is composed by fixed rules from the pages in this library, so two people entering
+    the same estate get the same answer. It knows nothing about the customer beyond what you type,
+    and nothing is saved anywhere but this browser. Read it, cut what does not apply, then own the
+    result &mdash; it is a first draft of your thinking, not a substitute for it.</p>
+  </div>
+
+  <div class="pl-wrap">
+    <form class="card pl-form" id="pl-form" autocomplete="off">
+      <fieldset>
+        <legend>Opportunity</legend>
+        <label class="f" for="f-name">Reference (optional)</label>
+        <input type="text" id="f-name" placeholder="e.g. Manufacturing, EMEA">
+        <label class="f" for="f-sites">Sites in scope</label>
+        <input type="number" id="f-sites" min="1" max="10000" placeholder="e.g. 120">
+        <label class="f" for="f-spread">Geographic spread</label>
+        <select id="f-spread">
+          <option value="">&mdash;</option>
+          <option value="single-country">Single country</option>
+          <option value="multi-country">Multi-country, one region</option>
+          <option value="global">Global</option>
+          <option value="global-china">Global, including mainland China</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Existing estate</legend>
+        <label class="f" for="f-wan">WAN transport</label>
+        <select id="f-wan"><option value="">&mdash;</option></select>
+        <div id="f-sdwan-wrap" hidden>
+          <label class="f" for="f-sdwan">SD-WAN vendor</label>
+          <select id="f-sdwan"><option value="">&mdash;</option></select>
+        </div>
+        <label class="f" for="f-proxy">Web proxy / SSE</label>
+        <select id="f-proxy"><option value="">&mdash;</option></select>
+        <label class="f" for="f-fw">Perimeter firewall</label>
+        <select id="f-fw"><option value="">&mdash;</option></select>
+        <label class="f" for="f-ra">Remote access</label>
+        <select id="f-ra"><option value="">&mdash;</option></select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Controls to match</legend>
+        <div id="f-sec"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Drivers</legend>
+        <div id="f-drivers"></div>
+      </fieldset>
+
+      <div class="pl-actions">
+        <button type="button" class="btn btn-primary" id="pl-go">Build plan</button>
+        <button type="button" class="btn btn-ghost" id="pl-reset">Reset</button>
+      </div>
+    </form>
+
+    <section id="pl-out" aria-live="polite">
+      <div class="card pl-empty">
+        <p>Describe the estate on the left, then <strong>Build plan</strong>.</p>
+      </div>
+    </section>
+  </div>
+</main>
+<footer class="footer"><div class="footer-inner">
+  <span>Cato SASE Use Case Library</span>
+  <span class="spacer"></span>
+  <a href="index.html">All use cases</a>
+</div></footer>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/planner-rules.js"></script>
+<script src="assets/js/planner.js"></script>
+</body>
+</html>
