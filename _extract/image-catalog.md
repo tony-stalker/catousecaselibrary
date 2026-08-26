@@ -440,8 +440,7 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   AI Application by a User", criticality High (7), Producer = Usage Anomaly, 7-step timeline,
   14-day anomaly distribution, entities/top apps/destinations. **Embedded** → security-finance-dora
   (closest want: correlated D&R story with timeline; captioned honestly as a usage anomaly, not a
-  staged incident). **Source user name redacted at #555 pending confirmation the persona is
-  synthetic** — un-redact from `scratchpad/genai/n3.png` if it is.
+  staged incident). Source user name "Joshua Turner" left visible — Tony confirmed it is a demo persona.
 - Still wanted for management-soc-xdr: a story with **MITRE ATT&CK mapping and an evidences table**
   — a Usage Anomaly story like the one above carries neither.
 - **Product finding (26 Aug, Tony's lab):** prompt-level User Interaction Policy detections do
