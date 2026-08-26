@@ -66,7 +66,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 ## Other staged state (a specific rule/profile/filter that must exist first)  (19)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
-- ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections (prompt-level detects surface as XDR stories, not as exportable Monitor→Events rows)
+- ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
 - ai-legal-genai: CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period
 - management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log

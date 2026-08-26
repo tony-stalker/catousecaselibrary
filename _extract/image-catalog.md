@@ -443,7 +443,16 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   staged incident). Source user name "Joshua Turner" left visible — Tony confirmed it is a demo persona.
 - Still wanted for management-soc-xdr: a story with **MITRE ATT&CK mapping and an evidences table**
   — a Usage Anomaly story like the one above carries neither.
-- **Product finding (26 Aug, Tony's lab):** prompt-level User Interaction Policy detections do
-  **not** produce exportable Monitor → Events rows; they surface as XDR stories instead. The
-  ai-eu-ai-act page asserts AI-related events are filterable and CSV-exportable in several places —
-  needs verifying against the KB before those claims are trusted in front of a customer.
+- **Product finding (26 Aug, Tony's lab, corrected):** AI Security events **do** appear in
+  Monitor → Events and are exportable, but they are sparse compared with Data Control events — the
+  richer picture of prompt-level activity comes from XDR stories. So the ai-eu-ai-act claims about
+  filterable, CSV-exportable AI events stand; just don't expect DLP-scale volumes to demo from.
+- **cma-ai-security-events.png / cma-ai-security-event-detail.png** (26 Aug, lab) — Monitor → Events
+  filtered to Event Type = AI Security, Sub-Type = AI User Interaction: ~12 rows across Claude,
+  ChatGPT For Business, Perplexity and Gemini with AI App Risk Level, application risk score and the
+  matching rule (Keywords monitor / Code Sharing / Block Gemini); plus one event expanded to its
+  full field list. **Embedded** → ai-eu-ai-act. **12 + 2 redactions** of the `@sase-experts.co.uk`
+  domain (Tony's real domain) at #555, located by normalised-correlation template match rather than
+  by eye — two instances render in a different weight and needed manual boxes. Bottom row trimmed
+  (clipped mid-line). Note the event carries **no prompt text and no matched value**, which is why
+  the stories view is the richer artefact.
