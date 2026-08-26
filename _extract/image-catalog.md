@@ -456,3 +456,14 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   by eye — two instances render in a different weight and needed manual boxes. Bottom row trimmed
   (clipped mid-line). Note the event carries **no prompt text and no matched value**, which is why
   the stories view is the richer artefact.
+- **cma-story-closed-analyst-verdict.png** (26 Aug, lab) — Stories Workbench detail, "Sensitive Data
+  Transfer via Generative AI Application", Status **Closed**: criticality 6 Medium, Mitre Tags
+  Exfiltration, Analyst Review fully set (Verdict Malicious / Severity High / Story Type
+  Exfiltration / Classification AI Data Leak), 5-step timeline ending in the three closure actions,
+  entities, attack geolocation, and Target Actions whose Related Events are the four
+  "DLP - Monitor … Upload to Gen AI" rules. **Embedded** → management-soc-xdr, closing **two** wants
+  at once (story detail with criticality/MITRE/evidences, and analyst verdict + timeline after
+  closure). The Manage Story *dialog* itself is not in shot and is no longer tracked separately —
+  the committed outcome is the better artefact. Redacted: device name `TonyStal-LM-UK` at #555.
+  Left visible: `10.103.0.10` (RFC1918), site "Mobile Office" (Cato built-in), "LL" initials on the
+  timeline avatars.

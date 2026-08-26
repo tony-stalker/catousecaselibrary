@@ -449,8 +449,10 @@
         reconstructed at wrap-up.
       </p>
       <!-- capture-wanted: Home → Stories Workbench, Security Operations preset grouped by Indication — group headers showing high/medium/low criticality counts -->
-      <!-- capture-wanted: Detection & Response story detail — criticality score, MITRE ATT&CK mapping and evidences table on one screen -->
-      <!-- capture-wanted: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure -->
+      <figure class="shot">
+        <img src="../assets/img/cma-story-closed-analyst-verdict.png" alt="CMA Stories Workbench detail for a closed story, Sensitive Data Transfer via Generative AI Application: criticality Medium six, analyst verdict Malicious, severity High, story type Exfiltration, classification AI Data Leak, a five-step timeline ending in the closure actions, a MITRE tag of Exfiltration, an entities table and a target actions table linking back to the DLP monitor rules that fired" loading="lazy">
+        <figcaption>A story worked to closure (lab tenant, fictional identities, device name redacted): criticality and MITRE tag on the left, the entities and the target&rsquo;s related events on the right, and across the top the four fields an analyst actually owns &mdash; <strong>Verdict: Malicious</strong>, <strong>Severity: High</strong>, <strong>Story Type: Exfiltration</strong>, <strong>Classification: AI Data Leak</strong>. The timeline records each of those decisions with its author and timestamp, which is what turns an analyst&rsquo;s judgement into auditable evidence. Note the loop closing on the right: the related events are the DLP monitor rules that fired, so 15 signals over the story&rsquo;s life resolve to one reviewable object rather than 15 alerts.</figcaption>
+      </figure>
       <!-- capture-wanted: Security → Connectors showing the Microsoft Defender for Endpoint connector connected alongside Cato sources -->
       <!-- capture-wanted: Home → Detection & Response Policy, a Response Policy rule with the Event response, beside the resulting Detection and Response event in a SIEM -->
 

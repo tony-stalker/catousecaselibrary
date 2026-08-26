@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 150 live `capture-wanted` items across 54 pages
+Regenerated 148 live `capture-wanted` items across 54 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -154,13 +154,11 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **network-ipsec-asa**: Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet
 
-## Other  (24)
+## Other  (22)
 
 - **access-byod-clientless**: RBI-isolated portal session — download/copy attempt refused in the browser
 - **management-dem**: the Show Full Traceroute Data panel open, with the copy control visible
-- **management-soc-xdr**: Detection & Response story detail — criticality score, MITRE ATT&CK mapping and evidences table on one screen
 - **management-soc-xdr**: Security → Connectors showing the Microsoft Defender for Endpoint connector connected alongside Cato sources
-- **management-soc-xdr**: the Manage Story dialog with Analyst Verdict, Analyst Severity, Status and Classification set, plus the story timeline widget after closure
 - **management-visibility**: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
 - **migration-anyconnect**: CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing
 - **migration-cisco**: Security → DNS Protection — the eight protections with actions set to Allow (monitor) for the PoV
