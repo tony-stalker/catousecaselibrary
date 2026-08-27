@@ -588,8 +588,19 @@
         <img src="../assets/img/genai-report-data-protection.png" alt="GenAI report data-protection page showing events by action with six blocked, violations by data profile split across PII, finance and credit cards, a rules hit count table dominated by monitor rules, and a data violations over time chart">
         <figcaption>A page from the evidence pack: the recurring GenAI report's data-protection view — events by action, violations by data profile, per-rule hit counts, trend over time — a dated, vendor-generated PDF rather than a screenshot, showing monitor-mode findings against GenAI apps.</figcaption>
       </figure>
-      <!-- capture-wanted: AI Security → User Interaction Policy — rule editor showing a pilot-group rule with the Anonymize and Monitor action and a user notification template -->
-      <!-- capture-wanted: Monitor → Events filtered to AI Security events with the CSV export action visible -->
+      <figure class="shot">
+        <img src="../assets/img/cma-uip-rule-anonymize-monitor.png" alt="CMA User Interaction Policy rule editor for a rule named AI Safety, showing selected applications ChatGPT Personal, Gemini and Claude Enterprise, an AI Safety engine profile, and the Action dropdown open on Block, Monitor, Anonymize and Block, and Anonymize and Monitor with the last selected" loading="lazy">
+        <figcaption>The Art&nbsp;26 decision in one control (lab tenant): the four actions a User Interaction Policy rule can take, with <strong>Anonymize &amp; Monitor</strong> chosen &mdash; sensitive values masked in-flight while the prompt is still answered and the interaction still logged. Note the two things the dialog tells you: selected applications are added to TLS inspection automatically, and edits land in an <em>unpublished revision</em>, so the rule can be drafted and reviewed before it touches live traffic.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-security-events.png" alt="CMA Events filtered to AI Security, a dozen AI User Interaction rows attributed to named pilot users across Claude, ChatGPT For Business, Perplexity and Gemini, each carrying an AI app risk level, application risk score, category and the rule that matched" loading="lazy">
+        <figcaption>Attributed AI interactions in the events stream (lab tenant, fictional identities, mail domains redacted): each row is one prompt-level interaction with the user, the application, an <strong>AI App Risk Level</strong> and the rule that evaluated it &mdash; <em>Keywords monitor</em>, <em>Code Sharing</em>, <em>Block Gemini</em>. This is the Art&nbsp;26 supporting-evidence layer: who used which AI system, when, and what the policy decided.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-security-event-detail.png" alt="A single AI Security event expanded to its full field list: action Monitor, user display name, AI app risk level, application, application risk, category, Cato app, event ID, sub-type AI User Interaction, event type AI Security, sanctioned flag, rule ID, rule name, time, user name and user email" loading="lazy">
+        <figcaption>One event, every field it carries. Be precise with a customer about what this is and is not: it attributes the interaction, names the rule and scores the application&#39;s risk, but it holds no prompt text and no matched value. That is a deliberate privacy boundary, not a gap &mdash; and it is why the richer investigative picture comes from the correlated stories rather than from the event rows.</figcaption>
+      </figure>
+      <!-- capture-wanted: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse -->
       <!-- capture-wanted: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week -->
 
       <h3>Troubleshooting — where this pilot actually goes wrong</h3>

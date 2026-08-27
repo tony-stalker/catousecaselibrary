@@ -422,3 +422,58 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   detection count. Embedding it there would contradict the runbook. Kept in scratch; it is a
   candidate upgrade for `cma-ai-uip.png` on ai-genai-security if a wider rulebase is ever wanted
   (adds the Interception Type column). Note it shows a "Catodemomode.com Users" source group.
+- **cma-uip-monitor-detection-count.png** (26 Aug, personal lab tenant) — UIP rulebase, seven rules,
+  mixed actions (Engage User / Anonymize & Block / Monitor ×3 / Block ×2) each with a named engine
+  profile; *Code Sharing* Monitor rule at violation count 1. **Embedded** → security-ai.
+  **PENDING REFRESH:** Tony is generating more detections; UIP violation counts take ~24h to
+  surface, so a higher-count re-shoot is expected. Swap in place at the same filename and update
+  the figcaption's "first detection" sentence when it arrives.
+- **cma-uip-rule-anonymize-monitor.png** (26 Aug, lab) — UIP rule editor for "AI Safety", Action
+  dropdown open on all four options with **Anonymize & Monitor** selected; also captures the
+  "applications will be added to TLS inspection" notice and the unpublished-revision footnote.
+  Cropped to the drawer (drops a HOW IT WORKS banner behind it). **Embedded** → ai-eu-ai-act.
+  The want also asked for a notification template, which is not in shot.
+- **cma-events-export-dialog.png** (26 Aug) — Events filtered to Sub-Type = Apps Security, 640K
+  events over a fortnight, Export Events dialog open over the grid. Top global bar trimmed (avatar
+  and Demo chip). **Embedded** → security-data-casb-dlp.
+- **cma-story-ai-upload-anomaly.png** (26 Aug) — Stories Workbench detail, "Abnormal Data Upload to
+  AI Application by a User", criticality High (7), Producer = Usage Anomaly, 7-step timeline,
+  14-day anomaly distribution, entities/top apps/destinations. **Embedded** → security-finance-dora
+  (closest want: correlated D&R story with timeline; captioned honestly as a usage anomaly, not a
+  staged incident). Source user name "Joshua Turner" left visible — Tony confirmed it is a demo persona.
+- Still wanted for management-soc-xdr: a story with **MITRE ATT&CK mapping and an evidences table**
+  — a Usage Anomaly story like the one above carries neither.
+- **Product finding (26 Aug, Tony's lab, corrected):** AI Security events **do** appear in
+  Monitor → Events and are exportable, but they are sparse compared with Data Control events — the
+  richer picture of prompt-level activity comes from XDR stories. So the ai-eu-ai-act claims about
+  filterable, CSV-exportable AI events stand; just don't expect DLP-scale volumes to demo from.
+- **cma-ai-security-events.png / cma-ai-security-event-detail.png** (26 Aug, lab) — Monitor → Events
+  filtered to Event Type = AI Security, Sub-Type = AI User Interaction: ~12 rows across Claude,
+  ChatGPT For Business, Perplexity and Gemini with AI App Risk Level, application risk score and the
+  matching rule (Keywords monitor / Code Sharing / Block Gemini); plus one event expanded to its
+  full field list. **Embedded** → ai-eu-ai-act. **12 + 2 redactions** of the `@sase-experts.co.uk`
+  domain (Tony's real domain) at #555, located by normalised-correlation template match rather than
+  by eye — two instances render in a different weight and needed manual boxes. Bottom row trimmed
+  (clipped mid-line). Note the event carries **no prompt text and no matched value**, which is why
+  the stories view is the richer artefact.
+- **cma-story-closed-analyst-verdict.png** (26 Aug, lab) — Stories Workbench detail, "Sensitive Data
+  Transfer via Generative AI Application", Status **Closed**: criticality 6 Medium, Mitre Tags
+  Exfiltration, Analyst Review fully set (Verdict Malicious / Severity High / Story Type
+  Exfiltration / Classification AI Data Leak), 5-step timeline ending in the three closure actions,
+  entities, attack geolocation, and Target Actions whose Related Events are the four
+  "DLP - Monitor … Upload to Gen AI" rules. **Embedded** → management-soc-xdr, closing **two** wants
+  at once (story detail with criticality/MITRE/evidences, and analyst verdict + timeline after
+  closure). The Manage Story *dialog* itself is not in shot and is no longer tracked separately —
+  the committed outcome is the better artefact. Redacted: device name `TonyStal-LM-UK` at #555.
+  Left visible: `10.103.0.10` (RFC1918), site "Mobile Office" (Cato built-in), "LL" initials on the
+  timeline avatars.
+- **cma-dp-dashboard-genai-rules.png** (26 Aug, lab) — Security → Data Protection Dashboard, Inline
+  Protection tab, filtered `Threat Verdict Is Matched`, Last 2 Days: Top Violating Rules led by
+  "DLP - Block PII Upload to Gen AI" (4) then the four AI Monitor rules (3/2/2/1, Legal Data at 1);
+  Events by Actions 79.2K Allow vs 4 Block; violations over time; violations by country (UK 12).
+  **Embedded** → ai-legal-genai. Cropped at 818px to drop three bottom panels clipped mid-value
+  (Top Hosts, Top Violation by Data Profile, by File Type) — that crop also removes host 10.103.0.10.
+  Caveat carried in the figcaption: the page's bullet says nothing blocks at week one, but the lab
+  has since promoted a PII rule to Block, so the caption names the difference rather than hiding it.
+  The Legal ML classifier has only ONE match — a richer legal-specific capture is still worth having
+  if the pilot ever accrues more.

@@ -503,7 +503,10 @@
           what privileged-class material headed for GenAI, from whom — reviewed by the risk team,
           exactly as the <a href="security-legal-confidentiality.html#pov">ethical-walls pilot</a>
           reviews the same profile on the personal-storage path.</p>
-          <!-- capture-wanted: «CMA Monitor → Data Protection Dashboard — Legal ML classifier matches on Generative AI Tools traffic over a pilot period» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-dp-dashboard-genai-rules.png" alt="CMA Data Protection Dashboard filtered to threat verdict matched, showing top violating rules led by a block PII rule with four events and the four monitor rules for access keys, PII, financial data and legal data beneath it, a violations-over-time spike, events by action showing 79.2 thousand allowed against four blocked, and violations by country" loading="lazy">
+            <figcaption>The match report as a dashboard (lab tenant): the recommended AI DLP rules ranked by matches, with the <strong>Legal</strong> profile registering its first classifier hit alongside PII, financial data and access keys. Read the <em>Events by Actions</em> ring rather than the headline number &mdash; 79.2&nbsp;thousand allowed against a handful acted on is what monitor mode looks like, and it is the ratio the weekly sync argues about. (This lab has already promoted one rule to Block; at the week-one state described above every rule still tracks and none blocks.)</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Add the Anonymize rule for client identifiers</h4>
