@@ -31,6 +31,16 @@
 <main class="main">
     <div class="card" style="margin-bottom:16px">
       <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Planner rules: drop trial-licence prerequisites and the Socket v15 route-community line</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>A migration plan is post-sale — trial licences are PoV framing and do not</li><li>gate any phase. Removed from the common option (clause trimmed), Zscaler,</li><li>Palo Alto and greenfield-security options. Also removed the hybrid-MPLS</li><li>prerequisite about Socket v15 keeping learned legacy routes local with</li><li>community 32768, per Tony&#x27;s review.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
+      
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
       <h3 style="margin:4px 0 0">Planner once-over: 31 verified fixes before first deploy</h3>
       <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Content (planner-rules.js): 22 near-duplicate steps/risks/prereqs across</li><li>combinable options aligned to one verbatim string each so dedupe collapses</li><li>them; Forcepoint no longer retires the Content Gateway while cohorts are</li><li>still PAC-steered to it; HostScan/ISE posture naming reconciled; dashes,</li><li>en dashes and kick-off made consistent.</li><li>Engine (planner.js): summary() gains a plain-text mode ending the</li><li>entity-double-escape on the title slide, in Markdown and in the .pptx;</li><li>proper nouns and acronyms keep their capitals; per-slide reflow guard</li><li>(the shared 800 budget starved the tail of big full-detail decks); the</li><li>rebalance pass can actually run (it measured a display:none slide) and</li><li>verifies each move; grouped continuations always open with a &#x27;(cont.)&#x27;</li><li>heading clone so the deck and the PowerPoint keep attribution; slides</li><li>measure with footer placeholders (they were packed one line too tall);</li><li>deck repacks on window resize; keyboard nav survives the rail buttons;</li><li>@page follows the live view so the document prints portrait.</li><li>Exports: the .pptx now draws the three topology diagrams as native</li><li>PowerPoint shapes; xesc stops rewriting em dashes and curly quotes;</li><li>.drawio labels keep their line breaks.</li><li>Integration: deploy.sh and package.sh now actually ship planner.html</li><li>(the nav link 404&#x27;d on the deployed site); build-prospect.py rebuilds</li><li>the search index from the transformed output; verify.sh checks 1 and 3</li><li>cover planner.html, and check 8 measures a maximal estate at full</li><li>detail; the Playwright path is resolved portably (chromium.py) instead</li><li>of a hardcoded home path; planner.html and whatsnew.html load app.js so</li><li>they get the theme toggle and feedback buttons; .claude/ untracked.</li></ul>
     </div>
