@@ -101,14 +101,26 @@
   /* Topology diagrams as native DrawingML. The on-screen deck draws them as SVG; a slide
      model can carry the same shapes (rect / line / text, extracted from the live SVG DOM)
      and they render here as real PowerPoint shapes rather than a caption with no picture. */
+  /* [fill, stroke, dash?, strokeWidthPx?] — null fill means noFill */
   var DG_FILL = {
     "dg-node": ["FFFFFF", "DDE6E2"], "dg-node-dark": ["0C2936", "123849"],
-    "dg-node-green": ["E9F7F2", "6CC9AE"]
+    "dg-node-green": ["E9F7F2", "6CC9AE"],
+    "pt-green": ["E9F7F2", "6CC9AE"], "pt-cloud": ["EEF8F4", "0E8A6D", 0, 2],
+    "pt-navy": ["0C2936", "123849"], "pt-plain": ["FBFDFC", "B9C6C1"],
+    "pt-amber": ["FDF6E9", "D99A2B"], "pt-purple": ["F5F1FA", "8661C5"],
+    "pt-bluedash": ["FFFFFF", "2F6FB2", 1, 1.5], "pt-chip": ["FFFFFF", "6CC9AE", 0, 1.2],
+    "pt-pop": [null, "0E8A6D", 0, 4.5]
   };
+  /* [colour, bold, fontPx] */
   var DG_INK = {
     "dg-label": ["0D1A16", 1, 14.5], "dg-sub": ["45524D", 0, 12.5],
     "dg-tiny": ["6F7D77", 0, 11], "dg-label-inv": ["EAF6F1", 1, 14.5],
-    "dg-sub-inv": ["B9D2C9", 0, 12.5]
+    "dg-sub-inv": ["B9D2C9", 0, 12.5],
+    "pt-t-green": ["0B6E57", 1, 13.5], "pt-t-ink": ["0D1A16", 1, 13.5],
+    "pt-t-inv": ["EAF6F1", 1, 13.5], "pt-t-amber": ["9A6A12", 1, 13.5],
+    "pt-t-purple": ["5B3F94", 1, 13.5], "pt-t-blue": ["2F6FB2", 1, 13.5],
+    "pt-t-big": ["0B6E57", 1, 16], "pt-sub": ["45524D", 0, 11.5],
+    "pt-sub-inv": ["B9D2C9", 0, 11.5], "pt-chip-t": ["0B6E57", 1, 10]
   };
 
   function diagramXml(d) {
@@ -123,19 +135,23 @@
     d.shapes.forEach(function (sh) {
       id++;
       var alpha = sh.faded ? '<a:alpha val="38000"/>' : "";
-      if (sh.t === "rect") {
+      if (sh.t === "rect" || sh.t === "circle") {
         var f = DG_FILL[sh.cls] || DG_FILL["dg-node"];
+        var rx0 = sh.t === "circle" ? sh.cx - sh.r : sh.x, ry0 = sh.t === "circle" ? sh.cy - sh.r : sh.y;
+        var rw = sh.t === "circle" ? sh.r * 2 : sh.w, rh = sh.t === "circle" ? sh.r * 2 : sh.h;
         out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-r' + id + '"/>'
           + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
-          + '<a:xfrm><a:off x="' + X(sh.x) + '" y="' + Y(sh.y) + '"/>'
-          + '<a:ext cx="' + E(sh.w) + '" cy="' + E(sh.h) + '"/></a:xfrm>'
-          + '<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 14000"/></a:avLst></a:prstGeom>'
-          + '<a:solidFill><a:srgbClr val="' + f[0] + '">' + alpha + "</a:srgbClr></a:solidFill>"
-          + '<a:ln w="' + Math.max(9525, E(1.5)) + '"><a:solidFill><a:srgbClr val="' + f[1] + '">' + alpha
-          + "</a:srgbClr></a:solidFill></a:ln></p:spPr>"
+          + '<a:xfrm><a:off x="' + X(rx0) + '" y="' + Y(ry0) + '"/>'
+          + '<a:ext cx="' + E(rw) + '" cy="' + E(rh) + '"/></a:xfrm>'
+          + (sh.t === "circle"
+            ? '<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
+            : '<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 14000"/></a:avLst></a:prstGeom>')
+          + (f[0] ? '<a:solidFill><a:srgbClr val="' + f[0] + '">' + alpha + "</a:srgbClr></a:solidFill>" : "<a:noFill/>")
+          + '<a:ln w="' + Math.max(9525, E(f[3] || 1.5)) + '"><a:solidFill><a:srgbClr val="' + f[1] + '">' + alpha
+          + "</a:srgbClr></a:solidFill>" + (f[2] ? '<a:prstDash val="dash"/>' : "") + "</a:ln></p:spPr>"
           + "<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
       } else if (sh.t === "line") {
-        var col = sh.green ? "0E8A6D" : "6F7D77";
+        var col = sh.green ? "0E8A6D" : (sh.blue ? "2F6FB2" : "6F7D77");
         var fl = (sh.x1 > sh.x2 ? ' flipH="1"' : "") + (sh.y1 > sh.y2 ? ' flipV="1"' : "");
         out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-l' + id + '"/>'
           + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
