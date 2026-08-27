@@ -91,8 +91,8 @@
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: the pilot cohort, the wave cohorts and the contractors all full-tunnel down amber lanes to the VPN headend concentrators in the lower band, which forward to private apps on the right. One tunnel grants the whole network; no Cato yet.">
                 <!-- LOWER BAND: VPN concentrator estate -->
                 <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
+                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
                 <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- everyone full-tunnels to the headends -->
                 <path class="lane lane-limit" d="M 194 90 C 300 150, 356 250, 412 300"/>
@@ -101,19 +101,19 @@
                 <!-- headends forward on to the apps -->
                 <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
                 <!-- User cohorts (left column, fixed) -->
-                <rect class="dg-node" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="dg-node" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
+                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
                 <!-- Private apps (right, fixed) -->
-                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">reached via VPN</text>
+                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">Private apps</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">reached via VPN</text>
               </svg>
               <figcaption>Every laptop — employees and contractors alike — full-tunnels to the datacentre concentrators, and one tunnel grants reach to the whole network.</figcaption>
             </figure>
@@ -123,8 +123,8 @@
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; the private apps go behind a Cato Socket and the pilot cohort turns green, swapping to the Cato Client with a green lane to the PoP. Its VPN tunnel falls dormant; waves and contractors still ride the headends.">
                 <!-- LOWER BAND: VPN concentrator estate -->
                 <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
+                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
                 <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
@@ -132,7 +132,7 @@
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="pulse-ring" cx="468" cy="96" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <!-- pilot's VPN tunnel now dormant -->
                 <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
@@ -146,19 +146,19 @@
                 <!-- pilot swings up to Cato -->
                 <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
                 <!-- User cohorts -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
+                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
                 <!-- Private apps (behind a Socket) -->
-                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
               </svg>
               <figcaption>The Cato side goes up first: apps behind a datacentre Socket, IdP SSO and posture profiles ready. The pilot cohort swaps to the Cato Client; its VPN tunnel falls dormant while the headends stay live.</figcaption>
             </figure>
@@ -168,15 +168,15 @@
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: the wave cohorts turn green and swing up to the Cato PoP, now labelled per-app least-privilege policy; their VPN tunnel falls dormant. Only the contractors remain on an amber lane to the VPN headends.">
                 <!-- LOWER BAND: VPN concentrator estate -->
                 <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="dg-label-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
+                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
                 <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">per-app policy · least privilege</text>
                 <!-- pilot + waves VPN tunnels dormant -->
                 <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
@@ -192,19 +192,19 @@
                 <!-- waves swing up to Cato (new) -->
                 <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
                 <!-- User cohorts -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
                 <!-- Private apps -->
-                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
                 <!-- pulse-ring on the just-migrated cohort -->
                 <circle class="pulse-ring" cx="110" cy="210" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
@@ -217,15 +217,15 @@
                 <!-- LOWER BAND: VPN concentrator estate, draining -->
                 <g opacity="0.55">
                   <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="dg-label-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                  <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">draining · standby</text>
+                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
+                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">draining · standby</text>
                 </g>
                 <!-- UPPER BAND: Cato backbone + PoP -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">per-app policy · least privilege</text>
                 <!-- all VPN tunnels dormant -->
                 <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
@@ -241,19 +241,19 @@
                 <!-- contractors: clientless browser lane (dotted, new) -->
                 <path class="lane lane-allow lane-dot" d="M 194 338 C 320 300, 400 200, 452 118"/>
                 <!-- User cohorts -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
                 <!-- Private apps -->
-                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
                 <!-- pulse-ring on the just-migrated cohort -->
                 <circle class="pulse-ring" cx="110" cy="346" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
@@ -266,8 +266,8 @@
                 <!-- LOWER BAND: VPN concentrator estate, retired -->
                 <g opacity="0.4">
                   <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="dg-label-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                  <text class="dg-sub-inv" x="468" y="353" text-anchor="middle">switched off</text>
+                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
+                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">switched off</text>
                 </g>
                 <path class="lane-x" d="M 430 312 L 506 360"/>
                 <path class="lane-x" d="M 506 312 L 430 360"/>
@@ -277,7 +277,7 @@
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">always-on ZTNA · posture-checked</text>
                 <!-- everyone on Cato -->
                 <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
@@ -285,19 +285,19 @@
                 <path class="lane lane-allow lane-dot" d="M 194 338 C 320 300, 400 200, 452 118"/>
                 <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
                 <!-- User cohorts -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
                 <!-- Private apps -->
-                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
                 <!-- pulse-ring on the retiring headends -->
                 <circle class="pulse-ring" cx="468" cy="336" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>

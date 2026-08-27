@@ -278,6 +278,27 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .dg-pop { fill: none; stroke: var(--green-600); stroke-width: 10; }
 .dg-backbone { fill: none; stroke: var(--green-300); stroke-width: 1.6; stroke-dasharray: 2 5; }
 
+/* Topology palette (planner + journey diagrams) — the HLD design language:
+   green = Cato/migrated, navy = incumbent, amber = being displaced,
+   purple = internet/SaaS, dashed blue = identity & telemetry */
+.pt-green { fill: #e9f7f2; stroke: #6cc9ae; stroke-width: 1.6; }
+.pt-cloud { fill: #eef8f4; stroke: #0e8a6d; stroke-width: 2; }
+.pt-navy { fill: #0c2936; stroke: #123849; stroke-width: 1.6; }
+.pt-plain { fill: var(--surface); stroke: #b9c6c1; stroke-width: 1.6; }
+.pt-amber { fill: #fdf6e9; stroke: #d99a2b; stroke-width: 1.6; }
+.pt-purple { fill: #f5f1fa; stroke: #8661c5; stroke-width: 1.6; }
+.pt-bluedash { fill: var(--surface); stroke: #2f6fb2; stroke-width: 1.5; stroke-dasharray: 6 4; }
+.pt-chip { fill: #ffffff; stroke: #6cc9ae; stroke-width: 1.2; }
+.pt-pop { fill: none; stroke: var(--green-600); stroke-width: 4.5; }
+.pt-t-green, .pt-t-ink, .pt-t-inv, .pt-t-amber, .pt-t-purple, .pt-t-blue, .pt-t-big
+  { font-family: var(--font); font-size: 13.5px; font-weight: 700; }
+.pt-t-green { fill: #0b6e57; } .pt-t-ink { fill: var(--ink); } .pt-t-inv { fill: #eaf6f1; }
+.pt-t-amber { fill: #9a6a12; } .pt-t-purple { fill: #5b3f94; } .pt-t-blue { fill: #2f6fb2; }
+.pt-t-big { font-size: 16px; fill: #0b6e57; }
+.pt-sub { font-family: var(--font); font-size: 11.5px; fill: var(--ink-2); }
+.pt-sub-inv { font-family: var(--font); font-size: 11.5px; fill: #b9d2c9; }
+.pt-chip-t { font-family: var(--font); font-size: 10px; font-weight: 700; fill: #0b6e57; }
+
 /* Animated flow lanes — dashes march along the path */
 .lane { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 9 7; }
 .lane-allow { stroke: var(--lane-allow); animation: lane-march 1.1s linear infinite; }
@@ -530,6 +551,20 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
 
   /* Diagrams: light nodes darken; hardcoded fills get attribute overrides */
   :root[data-theme="dark"] .dg-node { fill: #123240; stroke: #2a4d5d; }
+  /* Topology palette on dark */
+  :root[data-theme="dark"] .pt-green { fill: #10312a; stroke: #2e6b58; }
+  :root[data-theme="dark"] .pt-cloud { fill: #0f2f28; stroke: #12a380; }
+  :root[data-theme="dark"] .pt-navy { fill: #123240; stroke: #2a4d5d; }
+  :root[data-theme="dark"] .pt-plain { stroke: #3a4b46; }
+  :root[data-theme="dark"] .pt-amber { fill: #33270f; stroke: #a87b22; }
+  :root[data-theme="dark"] .pt-purple { fill: #251d33; stroke: #7a5fc0; }
+  :root[data-theme="dark"] .pt-bluedash { stroke: #5b9be2; }
+  :root[data-theme="dark"] .pt-chip { fill: #0c2b24; stroke: #2e6b58; }
+  :root[data-theme="dark"] .pt-t-green, :root[data-theme="dark"] .pt-t-big,
+  :root[data-theme="dark"] .pt-chip-t { fill: #58c0a4; }
+  :root[data-theme="dark"] .pt-t-amber { fill: #d9a84e; }
+  :root[data-theme="dark"] .pt-t-purple { fill: #a78ce0; }
+  :root[data-theme="dark"] .pt-t-blue { fill: #6da7e8; }
   :root[data-theme="dark"] svg rect[fill="#fdf6e3"] { fill: #3a2f10; }
   /* Navy-filled shapes (journey clouds/cores, dg-node-dark) sit at ~surface
      luminance on dark — lift them so they read as objects again */

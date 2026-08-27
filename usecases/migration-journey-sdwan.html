@@ -93,28 +93,28 @@
             <figure class="phase" data-title="Overlay">
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: Bristol, Leeds and Glasgow spokes and the London datacentre all ride the legacy SD-WAN overlay hub-and-spoke down to a central legacy hub in the lower band. No Cato yet.">
                 <!-- LOWER BAND: legacy SD-WAN hub -->
-                <rect class="dg-node-dark" x="372" y="300" width="192" height="64" rx="10"/>
-                <text class="dg-label-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
-                <text class="dg-sub-inv" x="468" y="348" text-anchor="middle">incumbent overlay</text>
+                <rect class="pt-navy" x="372" y="300" width="192" height="64" rx="10"/>
+                <text class="pt-t-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="pt-sub-inv" x="468" y="348" text-anchor="middle">incumbent overlay</text>
                 <!-- overlay links: every spoke + DC down to the legacy hub -->
                 <path class="lane lane-static" d="M 194 90 C 300 150, 322 262, 380 306"/>
                 <path class="lane lane-static" d="M 194 210 C 282 252, 320 306, 372 324"/>
                 <path class="lane lane-static" d="M 194 342 C 282 356, 330 356, 380 350"/>
                 <path class="lane lane-static" d="M 752 232 C 700 272, 648 314, 564 320"/>
                 <!-- Spokes (left column, fixed) -->
-                <rect class="dg-node" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">on overlay</text>
-                <rect class="dg-node" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">on overlay</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">on overlay</text>
                 <!-- London DC (right, fixed) -->
-                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">London DC / cloud</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
+                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC / cloud</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
               </svg>
               <figcaption>Every branch rides the incumbent SD-WAN overlay back to a central legacy hub — no Cato in the path yet.</figcaption>
             </figure>
@@ -123,20 +123,20 @@
             <figure class="phase" data-title="Parallel hub">
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; a Cato Socket is stood up in parallel at the hub with an amber eBGP handoff bridging the legacy hub up to the Cato backbone. Spokes still ride the overlay.">
                 <!-- LOWER BAND: legacy SD-WAN hub -->
-                <rect class="dg-node-dark" x="372" y="300" width="192" height="64" rx="10"/>
-                <text class="dg-label-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
-                <text class="dg-sub-inv" x="468" y="348" text-anchor="middle">incumbent overlay</text>
+                <rect class="pt-amber" x="372" y="300" width="192" height="64" rx="10"/>
+                <text class="pt-t-amber" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="pt-sub" x="468" y="348" text-anchor="middle">incumbent overlay</text>
                 <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <!-- Cato Socket parallel at the hub (new this phase) -->
-                <rect class="dg-node-green" x="372" y="196" width="192" height="52" rx="10"/>
-                <text class="dg-label" x="468" y="220" text-anchor="middle">Cato Socket</text>
-                <text class="dg-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
+                <rect class="pt-green" x="372" y="196" width="192" height="52" rx="10"/>
+                <text class="pt-t-green" x="468" y="220" text-anchor="middle">Cato Socket</text>
+                <text class="pt-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
                 <!-- eBGP handoff: legacy hub <-> Cato socket (amber) -->
                 <path class="lane lane-limit" d="M 468 300 L 468 248"/>
                 <text class="dg-tiny" x="456" y="282" text-anchor="end">eBGP handoff</text>
@@ -148,19 +148,19 @@
                 <path class="lane lane-static" d="M 194 342 C 282 356, 330 356, 380 350"/>
                 <path class="lane lane-static" d="M 752 232 C 700 272, 648 314, 564 320"/>
                 <!-- Spokes -->
-                <rect class="dg-node" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">on overlay</text>
-                <rect class="dg-node" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">on overlay</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">on overlay</text>
                 <!-- London DC -->
-                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">London DC / cloud</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
+                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC / cloud</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
                 <!-- pulse-ring on the new Cato Socket -->
                 <circle class="pulse-ring" cx="468" cy="222" r="44" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
@@ -171,20 +171,20 @@
             <figure class="phase" data-title="First spoke">
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: Bristol turns green and its link swings up to the Cato backbone; its legacy overlay link falls dormant. The eBGP handoff at the hub keeps it reaching the still-legacy spokes. Leeds and Glasgow remain on the overlay.">
                 <!-- LOWER BAND: legacy SD-WAN hub -->
-                <rect class="dg-node-dark" x="372" y="300" width="192" height="64" rx="10"/>
-                <text class="dg-label-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
-                <text class="dg-sub-inv" x="468" y="348" text-anchor="middle">incumbent overlay</text>
+                <rect class="pt-amber" x="372" y="300" width="192" height="64" rx="10"/>
+                <text class="pt-t-amber" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
+                <text class="pt-sub" x="468" y="348" text-anchor="middle">incumbent overlay</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <!-- Cato Socket -->
-                <rect class="dg-node-green" x="372" y="196" width="192" height="52" rx="10"/>
-                <text class="dg-label" x="468" y="220" text-anchor="middle">Cato Socket</text>
-                <text class="dg-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
+                <rect class="pt-green" x="372" y="196" width="192" height="52" rx="10"/>
+                <text class="pt-t-green" x="468" y="220" text-anchor="middle">Cato Socket</text>
+                <text class="pt-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
                 <!-- eBGP handoff (amber) still live -->
                 <path class="lane lane-limit" d="M 468 300 L 468 248"/>
                 <text class="dg-tiny" x="456" y="282" text-anchor="end">eBGP handoff</text>
@@ -200,19 +200,19 @@
                 <!-- Bristol swings up to Cato -->
                 <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
                 <!-- Spokes -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
-                <rect class="dg-node" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">on overlay</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">on overlay</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">on overlay</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">on overlay</text>
                 <!-- London DC -->
-                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">London DC / cloud</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
+                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC / cloud</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
                 <!-- pulse-ring on the just-migrated spoke -->
                 <circle class="pulse-ring" cx="110" cy="74" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
@@ -224,21 +224,21 @@
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: Leeds also turns green and swings up to Cato; only Glasgow remains on the dimming legacy hub. The eBGP handoff still bridges the two fabrics while the overlay empties out.">
                 <!-- LOWER BAND: legacy SD-WAN hub, dimming -->
                 <g opacity="0.55">
-                  <rect class="dg-node-dark" x="372" y="300" width="192" height="64" rx="10"/>
-                  <text class="dg-label-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
-                  <text class="dg-sub-inv" x="468" y="348" text-anchor="middle">emptying out</text>
+                  <rect class="pt-amber" x="372" y="300" width="192" height="64" rx="10"/>
+                  <text class="pt-t-amber" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
+                  <text class="pt-sub" x="468" y="348" text-anchor="middle">emptying out</text>
                 </g>
                 <!-- UPPER BAND: Cato backbone + PoP -->
                 <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
                 <!-- Cato Socket -->
-                <rect class="dg-node-green" x="372" y="196" width="192" height="52" rx="10"/>
-                <text class="dg-label" x="468" y="220" text-anchor="middle">Cato Socket</text>
-                <text class="dg-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
+                <rect class="pt-green" x="372" y="196" width="192" height="52" rx="10"/>
+                <text class="pt-t-green" x="468" y="220" text-anchor="middle">Cato Socket</text>
+                <text class="pt-sub" x="468" y="238" text-anchor="middle">parallel at the hub</text>
                 <!-- eBGP handoff (amber) still live for Glasgow -->
                 <path class="lane lane-limit" d="M 468 300 L 468 248"/>
                 <text class="dg-tiny" x="456" y="282" text-anchor="end">eBGP handoff</text>
@@ -255,19 +255,19 @@
                 <!-- Leeds swings up to Cato (new) -->
                 <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
                 <!-- Spokes -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
-                <rect class="dg-node-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">migrated · Cato</text>
-                <rect class="dg-node" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">on overlay</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">on overlay</text>
                 <!-- London DC -->
-                <rect class="dg-node" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">London DC / cloud</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
+                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC / cloud</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">at the hub site</text>
                 <!-- pulse-ring on the just-migrated spoke -->
                 <circle class="pulse-ring" cx="110" cy="210" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
@@ -279,9 +279,9 @@
               <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: Glasgow turns green; every spoke and the datacentre ride the Cato backbone in the upper band. The legacy hub is dimmed, struck through with a red cross and decommissioned; the eBGP handoff is gone.">
                 <!-- LOWER BAND: legacy SD-WAN hub, retired -->
                 <g opacity="0.4">
-                  <rect class="dg-node-dark" x="372" y="300" width="192" height="64" rx="10"/>
-                  <text class="dg-label-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
-                  <text class="dg-sub-inv" x="468" y="348" text-anchor="middle">decommissioned</text>
+                  <rect class="pt-navy" x="372" y="300" width="192" height="64" rx="10"/>
+                  <text class="pt-t-inv" x="468" y="327" text-anchor="middle">Legacy SD-WAN hub</text>
+                  <text class="pt-sub-inv" x="468" y="348" text-anchor="middle">decommissioned</text>
                 </g>
                 <path class="lane-x" d="M 420 308 L 516 356"/>
                 <path class="lane-x" d="M 516 308 L 420 356"/>
@@ -291,12 +291,12 @@
                 <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
                 <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="dg-label" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
                 <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">every site any-to-any · one fabric</text>
                 <!-- Cato Socket, now the only hub -->
-                <rect class="dg-node-green" x="372" y="196" width="192" height="52" rx="10"/>
-                <text class="dg-label" x="468" y="220" text-anchor="middle">Cato Socket</text>
-                <text class="dg-sub" x="468" y="238" text-anchor="middle">the only hub now</text>
+                <rect class="pt-green" x="372" y="196" width="192" height="52" rx="10"/>
+                <text class="pt-t-green" x="468" y="220" text-anchor="middle">Cato Socket</text>
+                <text class="pt-sub" x="468" y="238" text-anchor="middle">the only hub now</text>
                 <!-- socket up to the Cato backbone -->
                 <path class="lane lane-allow" d="M 512 200 C 574 172, 556 130, 496 116"/>
                 <!-- all spokes on Cato -->
@@ -306,19 +306,19 @@
                 <!-- DC now on Cato -->
                 <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
                 <!-- Spokes -->
-                <rect class="dg-node-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="dg-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
-                <rect class="dg-node-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="dg-sub" x="110" y="227" text-anchor="middle">migrated · Cato</text>
-                <rect class="dg-node-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="dg-label" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="dg-sub" x="110" y="363" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="227" text-anchor="middle">migrated · Cato</text>
+                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="363" text-anchor="middle">migrated · Cato</text>
                 <!-- London DC -->
-                <rect class="dg-node-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="dg-label" x="841" y="204" text-anchor="middle">London DC / cloud</text>
-                <text class="dg-sub" x="841" y="226" text-anchor="middle">on Cato backbone</text>
+                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
+                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC / cloud</text>
+                <text class="pt-sub" x="841" y="226" text-anchor="middle">on Cato backbone</text>
                 <!-- pulse-ring on the retiring hub -->
                 <circle class="pulse-ring" cx="468" cy="332" r="58" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>

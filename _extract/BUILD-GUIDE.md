@@ -63,6 +63,13 @@ Inline `<svg viewBox="0 0 960 4xx" role="img" aria-labelledby="dg1-title dg1-des
 - Nodes: `rect.dg-node` (light) / `.dg-node-dark` / `.dg-node-green`, rx="10".
 - Text: `.dg-label` (14.5px bold), `.dg-sub` (12.5px), `.dg-tiny` (11px) — never fill text with
   lane colors. For text inside dark nodes use `.dg-label-inv`/`.dg-sub-inv`.
+- Topology-style diagrams (the planner and the animated journey pages) use the newer HLD
+  palette instead: `rect.pt-plain/.pt-green/.pt-navy/.pt-amber/.pt-purple/.pt-bluedash`
+  (green = Cato/migrated, navy = incumbent, amber = being displaced, purple = internet/SaaS,
+  dashed blue = identity & telemetry), coloured bold titles `.pt-t-ink/.pt-t-green/.pt-t-amber/
+  .pt-t-purple/.pt-t-blue` (`.pt-t-inv` inside navy), subs `.pt-sub`/`.pt-sub-inv`, chips
+  `.pt-chip` + `.pt-chip-t`, PoP rings `.pt-pop`. Dark overrides live beside the dg- ones in
+  style.css. Ordinary use-case architecture diagrams may keep the dg- classes.
 - LABELS MUST FIT: keep node labels ≤ ~22 chars for a 170-wide rect (sub ≤ ~24, tiny ≤ ~28);
   shorten the words, never shrink the font. Keep centred text ≥ half its width away from the
   viewBox edges. After shooting, also run `python3 _extract/measure_svg.py` — your page must
