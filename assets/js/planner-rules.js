@@ -66,7 +66,7 @@ window.PLANNER_RULES = {
             "Kick-off, design workshop and account-setup sessions booked, with the sponsor and a named customer owner per workstream.",
             "Structured discovery complete: traffic flows, site interdependencies, LAN L2 versus L3, routing strategy, DMZ, internet and voice integration.",
             "Success criteria agreed at one workshop before anything is built — each testable, with a measurement and a named owner.",
-            "Trial licences confirmed, TLS inspection scope approved by whoever owns privacy, IdP syncing the pilot group, change windows booked."
+            "TLS inspection scope approved by whoever owns privacy, IdP syncing the pilot group, change windows booked."
           ],
           risks: [
             "Asymmetric routing during co-existence: stateful hub firewalls see half the conversation, so sessions fail and traffic drops.",
@@ -282,7 +282,6 @@ window.PLANNER_RULES = {
           ],
           prereqs: [
             "A BGP-capable core or a transit VLAN between the socket LAN and the existing firewall.",
-            "Socket v15 or later where learned legacy routes must be kept local with community 32768.",
             "Broadband and LTE last miles ordered per site, with a change window on cutover day.",
             "An agreed interim internet-egress pattern per site — DC firewall or breakout at the PoP."
           ],
@@ -615,7 +614,6 @@ window.PLANNER_RULES = {
             "ZIA and ZPA policy export in hand, with hit counts from ZIA reporting for rationalisation.",
             "IdP connected and the pilot group provisioned over SCIM, visibly syncing before any rule references it.",
             "Cato root certificate deployable via GPO/MDM, plus the same channel that can remove ZCC.",
-            "Trial licences confirmed for CASB and TLS Inspection wherever verdict parity is in scope."
           ],
           risks: [
             "SDP users landing in the All Unidentified Users bucket silently stop matching group-scoped SWG rules.",
@@ -921,7 +919,6 @@ window.PLANNER_RULES = {
             "Read-only Panorama export of the pilot device group with rule-usage columns.",
             "Transit VLAN and change windows agreed for the handoff route and rollback rehearsal.",
             "SCIM or LDAP groups syncing into CMA before any user-scoped rule is written.",
-            "Trial licences live for Client seats, IPS, Anti-Malware and TLS inspection."
           ],
           risks: [
             "Egress via Cato with return through the stateful PA drops flows — keep regional symmetry.",
@@ -1701,7 +1698,6 @@ window.PLANNER_RULES = {
             ] },
           ],
           prereqs: [
-            "IPS and Anti-Malware trial licences live for the whole evaluation window, not part of it.",
             "Pilot socket up and a 5–20 user cohort enrolled on the Cato Client.",
             "Users provisioned from the IdP so events name people rather than IP addresses.",
             "Privacy sign-off on the inspect scope before the first flow is decrypted."
