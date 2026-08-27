@@ -31,6 +31,36 @@
 <main class="main">
     <div class="card" style="margin-bottom:16px">
       <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Planner once-over: 31 verified fixes before first deploy</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Content (planner-rules.js): 22 near-duplicate steps/risks/prereqs across</li><li>combinable options aligned to one verbatim string each so dedupe collapses</li><li>them; Forcepoint no longer retires the Content Gateway while cohorts are</li><li>still PAC-steered to it; HostScan/ISE posture naming reconciled; dashes,</li><li>en dashes and kick-off made consistent.</li><li>Engine (planner.js): summary() gains a plain-text mode ending the</li><li>entity-double-escape on the title slide, in Markdown and in the .pptx;</li><li>proper nouns and acronyms keep their capitals; per-slide reflow guard</li><li>(the shared 800 budget starved the tail of big full-detail decks); the</li><li>rebalance pass can actually run (it measured a display:none slide) and</li><li>verifies each move; grouped continuations always open with a &#x27;(cont.)&#x27;</li><li>heading clone so the deck and the PowerPoint keep attribution; slides</li><li>measure with footer placeholders (they were packed one line too tall);</li><li>deck repacks on window resize; keyboard nav survives the rail buttons;</li><li>@page follows the live view so the document prints portrait.</li><li>Exports: the .pptx now draws the three topology diagrams as native</li><li>PowerPoint shapes; xesc stops rewriting em dashes and curly quotes;</li><li>.drawio labels keep their line breaks.</li><li>Integration: deploy.sh and package.sh now actually ship planner.html</li><li>(the nav link 404&#x27;d on the deployed site); build-prospect.py rebuilds</li><li>the search index from the transformed output; verify.sh checks 1 and 3</li><li>cover planner.html, and check 8 measures a maximal estate at full</li><li>detail; the Playwright path is resolved portably (chromium.py) instead</li><li>of a hardcoded home path; planner.html and whatsnew.html load app.js so</li><li>they get the theme toggle and feedback buttons; .claude/ untracked.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Planner: Excel export, and a deck that packs to the space it has</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Excel export writes a real .xlsx (same store-only ZIP as the .pptx): a tab</li><li>per heading — Summary, Plan, Prerequisites, Risks, Evidence, Use cases —</li><li>with Status, Owner, dates, mitigation and notes columns left empty so the</li><li>plan can leave the planner and become the tracker the migration is run</li><li>from. Frozen header row and autofilter on every tab.</li><li>The deck was 40+ slides because it chunked at a fixed six bullets and</li><li>half of every slide went to waste. Slides are now packed by measurement:</li><li>each section is emitted whole, then fitted against the real stage height</li><li>one column, then two, and only split when two will not hold it. Splits</li><li>are balanced so a full slide is not followed by a stub. A Summary/Full</li><li>control decides depth: Summary caps phase steps and renders</li><li>prerequisites, risks and evidence as where they concentrate rather than</li><li>listing every item — the document and workbook carry the record.</li><li>A worked estate goes from 40 slides to 16 with no continuations and no</li><li>overflow. verify.sh now measures overflow the way reflow does and fails</li><li>if the summary deck grows past 24 slides.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Planner: before/during/after topology, plus corrected and completed rules</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Diagrams are generated client-side as inline SVG from the same selections</li><li>that drive the plan, using the library&#x27;s dg-* classes so they inherit the</li><li>theme. The during state draws the routed handoff explicitly, since</li><li>co-existence is the state the wave plan actually lives in. Also exports</li><li>.drawio XML (three pages) so the diagram can be edited, not just viewed.</li><li>Rules corrected against a cross-dimension review: nine claims that the</li><li>pages did not support are fixed or removed, twelve ordering violations</li><li>resolved (notably Always-On being enabled a phase before users leave the</li><li>legacy VPN client), duplicates collapsed, and a new always-applied</li><li>&quot;common&quot; dimension carries the ten steps every migration needs that no</li><li>single dimension owned.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Planner: deck mode, PDF-as-deck printing and a real .pptx export</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>48 steps in one column is a document, not something you present. Adds a</li><li>Present toggle that renders the plan as 16:9 slides with keyboard</li><li>navigation, chunking long phases so nothing overflows its stage, and a</li><li>landscape print stylesheet that pages one slide at a time for PDF.</li><li>PowerPoint export writes a genuine .pptx with no third-party library: a</li><li>.pptx is a ZIP of OOXML, and a store-only ZIP is a header format we can</li><li>write directly. Keeps the library dependency-free and file:// safe.</li><li>Validated structurally and with python-pptx.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Add the Migration Planner: opportunity estate -&gt; sequenced methodology</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>An internal, deterministic tool. Describe what is being displaced (WAN</li><li>transport, SD-WAN vendor, proxy/SSE, firewall, remote access, controls to</li><li>match, drivers) and it composes a nine-phase plan in dependency order,</li><li>with prerequisites, risks and evidence grouped by where they came from,</li><li>plus links into the pages that carry the detail.</li><li>The rules in assets/js/planner-rules.js were extracted from the library&#x27;s</li><li>own pages and are its whole judgement; the engine only merges, dedupes</li><li>and orders. verify.sh gains an eighth check that every page id and phase</li><li>key a rule references still exists, and that the planner actually</li><li>composes a plan with resolvable links.</li><li>Excluded from the prospect build: page, JS and nav link all stripped.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
+      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
+      
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">27 August 2026</div>
       <h3 style="margin:4px 0 0">Embed the Data Protection Dashboard on ai-legal-genai</h3>
       <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The recommended AI DLP rules ranked by matches with the Legal profile</li><li>registering its first classifier hit. Caption names the one place the</li><li>lab has moved ahead of the runbook: a PII rule promoted to Block.</li></ul>
     </div>
@@ -436,5 +466,6 @@
     <span><a href="index.html">Use case library</a></span>
   </div>
 </footer>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
