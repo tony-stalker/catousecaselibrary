@@ -34,8 +34,9 @@
       A VPN replacement moves people, not circuits — so it stalls the same way every WAN migration
       does: in the middle, with some users on the new client, some on the old, and contractors
       nobody wants to touch. This page is the animated companion to the full remote-access
-      playbooks: press play and watch a concentrator estate retire one cohort at a time, from
-      full-tunnel backhaul to always-on ZTNA with the headends switched off.
+      playbooks: press play and watch a concentrator estate at London DC retire one
+      cohort at a time — private apps in the datacentre, more in Azure, full-tunnel backhaul
+      giving way to always-on ZTNA with the headends switched off.
     </p>
     <div class="meta-row">
       <span class="tag">VPN Replacement</span><span class="tag">ZTNA</span>
@@ -61,7 +62,9 @@
         Site migrations co-exist by routing; client migrations co-exist by <strong>cohort</strong>.
         At any moment mid-rollout some users run the legacy VPN agent and some run the Cato Client —
         but no machine runs both full-tunnel, and the headends stay warm as the rollback path until
-        the last wave clears its soak window. That is the pattern the animation below plays out.
+        the last wave clears its soak window. The one piece of routing this journey does need —
+        a Socket at London DC and a vSocket in Azure, putting both app estates on Cato before
+        any cohort moves — goes in first. That is the pattern the animation below plays out.
         For the full playbooks — discovery, posture mapping, MDM mechanics — see
         <a href="migration-anyconnect.html">AnyConnect to Cato Client</a> and
         <a href="migration-directaccess.html">DirectAccess to Cato SDP</a>; for why per-app ZTNA
@@ -75,233 +78,258 @@
       <h2>The VPN retirement, phase by phase</h2>
       <p>
         Three groups of users — a pilot cohort, the departmental waves behind them, and the
-        contractors and BYOD devices sharing the same VPN — start out full-tunnelling to a pair of
-        datacentre concentrators in the lower band. The upper band is the Cato backbone. Watch each
-        cohort's lane swing up to the nearest PoP, access tighten from network-wide to per-app, and
-        the headends drain to standby before the final switch-off. Autoplay steps every few
-        seconds; use the dots or arrows to move at your own pace.
+        contractors and BYOD devices sharing the same VPN — start out full-tunnelling to the VPN
+        headends at London DC, where the private apps live; traffic for the apps in Azure hairpins
+        through the same datacentre. The upper band is the Cato backbone. Watch the rail go in
+        first — a Socket at London DC, a vSocket in Azure — then each cohort's lane swing up to
+        the nearest PoP, access tighten from network-wide to per-app, and the headends drain to
+        standby before the final switch-off. Autoplay steps every few seconds; use the dots or
+        arrows to move at your own pace.
       </p>
 
       <div class="diagram-card">
         <div class="phase-player" data-autoplay="4500">
           <div class="phase-stage">
 
-            <!-- ============ PHASE 0 — Full-tunnel VPN ============ -->
-            <figure class="phase" data-title="Full tunnel">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: the pilot cohort, the wave cohorts and the contractors all full-tunnel down amber lanes to the VPN headend concentrators in the lower band, which forward to private apps on the right. One tunnel grants the whole network; no Cato yet.">
-                <!-- LOWER BAND: VPN concentrator estate -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
-                <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
+            <!-- ============ PHASE 0 — Legacy ============ -->
+            <figure class="phase" data-title="Legacy">
+              <svg viewBox="0 0 960 440" role="img" aria-label="Phase 0: the pilot cohort, the wave cohorts and the contractors all full-tunnel down grey lanes to the VPN headends terminating at London DC, which hand off to the private apps in the datacentre; a grey lane hairpins on from the DC to the apps in Azure. One tunnel grants the whole network; no Cato yet.">
+                <!-- LOWER BAND: headends terminating at London DC -->
+                <path d="M 360 404 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="352" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="373" text-anchor="middle">terminate at London DC</text>
+                <text class="dg-tiny" x="468" y="290" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- everyone full-tunnels to the headends -->
-                <path class="lane lane-limit" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane lane-limit" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-limit" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- headends forward on to the apps -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <path class="lane lane-static" d="M 194 84 C 300 160, 360 262, 416 320"/>
+                <path class="lane lane-static" d="M 194 222 C 285 262, 336 306, 390 332"/>
+                <path class="lane lane-static" d="M 194 358 C 288 370, 348 376, 408 378"/>
+                <!-- headends hand off to the apps in London DC -->
+                <path class="lane lane-static" d="M 560 352 C 626 346, 686 344, 744 350"/>
+                <!-- Azure apps hairpin through the DC -->
+                <path class="lane lane-static" d="M 856 316 C 892 262, 892 182, 856 128"/>
+                <text class="dg-tiny" x="798" y="226" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">hairpin via the DC</text>
                 <!-- User cohorts (left column, fixed) -->
-                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
-                <!-- Private apps (right, fixed) -->
-                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">reached via VPN</text>
+                <rect class="pt-plain" x="26" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="74" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="95" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="186" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="212" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="233" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="324" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="350" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="371" text-anchor="middle">BYOD · same VPN</text>
+                <!-- App estates (right column, fixed) -->
+                <rect class="pt-plain" x="744" y="316" width="190" height="72" rx="10"/>
+                <text class="pt-t-ink" x="839" y="344" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="839" y="366" text-anchor="middle">private apps · on-prem</text>
+                <rect class="pt-plain" x="764" y="64" width="170" height="64" rx="10"/>
+                <text class="pt-t-ink" x="849" y="90" text-anchor="middle">Azure</text>
+                <image href="../assets/img/icon-cloud-azure.png" x="907" y="68" width="22" height="14"/>
+                <text class="pt-sub" x="849" y="112" text-anchor="middle">cloud apps · via DC</text>
               </svg>
-              <figcaption>Every laptop — employees and contractors alike — full-tunnels to the datacentre concentrators, and one tunnel grants reach to the whole network.</figcaption>
+              <figcaption>Every laptop — employees and contractors alike — full-tunnels to the headends at London DC. One tunnel grants the whole network, and traffic for the Azure apps hairpins through the same datacentre.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 1 — Pilot on Cato ============ -->
-            <figure class="phase" data-title="Pilot cohort">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; the private apps go behind a Cato Socket and the pilot cohort turns green, swapping to the Cato Client with a green lane to the PoP. Its VPN tunnel falls dormant; waves and contractors still ride the headends.">
-                <!-- LOWER BAND: VPN concentrator estate -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
-                <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
+            <!-- ============ PHASE 1 — Cato rail ============ -->
+            <figure class="phase" data-title="Cato rail">
+              <svg viewBox="0 0 960 440" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; London DC gets a Socket and Azure a vSocket, both boxes turning green with green lanes onto the backbone, so both app estates are reachable over Cato and the hairpin disappears. All three cohorts still ride amber lanes to the live headends.">
+                <!-- LOWER BAND: headends terminating at London DC -->
+                <path d="M 360 404 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="352" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="373" text-anchor="middle">terminate at London DC</text>
+                <text class="dg-tiny" x="468" y="290" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="pulse-ring" cx="468" cy="96" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
-                <!-- pilot's VPN tunnel now dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <!-- waves + contractors still on the VPN -->
-                <path class="lane lane-limit" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-limit" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- headends forward on to the apps -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- apps behind a Cato Socket, on the backbone -->
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
-                <!-- pilot swings up to Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <ellipse class="dg-backbone" cx="440" cy="92" rx="150" ry="42"/>
+                <circle cx="304" cy="106" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="576" cy="78" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="440" cy="92" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="440" cy="92" r="28"/>
+                <text class="pt-t-green" x="440" y="40" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="440" y="156" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- everyone still full-tunnels to the headends -->
+                <path class="lane lane-limit" d="M 194 84 C 300 160, 360 262, 416 320"/>
+                <path class="lane lane-limit" d="M 194 222 C 285 262, 336 306, 390 332"/>
+                <path class="lane lane-limit" d="M 194 358 C 288 370, 348 376, 408 378"/>
+                <!-- headends hand off to the apps in London DC -->
+                <path class="lane lane-static" d="M 560 352 C 626 346, 686 344, 744 350"/>
+                <!-- the rail: London DC Socket and Azure vSocket join the backbone -->
+                <path class="lane lane-allow" d="M 744 340 C 620 300, 510 180, 464 118"/>
+                <path class="lane lane-allow" d="M 764 104 C 660 118, 560 110, 470 96"/>
                 <!-- User cohorts -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">full-tunnel VPN</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
-                <!-- Private apps (behind a Socket) -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-plain" x="26" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="74" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="95" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="186" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="212" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="233" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="324" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="350" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="371" text-anchor="middle">BYOD · same VPN</text>
+                <!-- App estates on Cato -->
+                <rect class="pt-green" x="744" y="316" width="190" height="72" rx="10"/>
+                <text class="pt-t-green" x="839" y="344" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="839" y="366" text-anchor="middle">Socket · private apps</text>
+                <rect class="pt-green" x="764" y="64" width="170" height="64" rx="10"/>
+                <text class="pt-t-green" x="849" y="90" text-anchor="middle">Azure</text>
+                <image href="../assets/img/icon-cloud-azure.png" x="907" y="68" width="22" height="14"/>
+                <text class="pt-sub" x="849" y="112" text-anchor="middle">vSocket · cloud apps</text>
               </svg>
-              <figcaption>The Cato side goes up first: apps behind a datacentre Socket, IdP SSO and posture profiles ready. The pilot cohort swaps to the Cato Client; its VPN tunnel falls dormant while the headends stay live.</figcaption>
+              <figcaption>The rail goes in before anyone moves: a Socket at London DC and a vSocket in Azure put both app estates on the Cato backbone, and the Azure hairpin collapses to a one-hop Cato path. Every user is still on the VPN.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 2 — Cohort waves ============ -->
-            <figure class="phase" data-title="Cohort waves">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: the wave cohorts turn green and swing up to the Cato PoP, now labelled per-app least-privilege policy; their VPN tunnel falls dormant. Only the contractors remain on an amber lane to the VPN headends.">
-                <!-- LOWER BAND: VPN concentrator estate -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">DC concentrators</text>
-                <text class="dg-tiny" x="468" y="272" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
+            <!-- ============ PHASE 2 — Pilot cohort ============ -->
+            <figure class="phase" data-title="Pilot cohort">
+              <svg viewBox="0 0 960 440" role="img" aria-label="Phase 2: the pilot cohort turns green and swaps to the Cato Client with a green lane up to the PoP — ZTNA to named apps at London DC and in Azure. Its VPN lane falls dormant; the wave cohorts and contractors still ride amber lanes to the live headends.">
+                <!-- LOWER BAND: headends terminating at London DC -->
+                <path d="M 360 404 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="352" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="373" text-anchor="middle">terminate at London DC</text>
+                <text class="dg-tiny" x="468" y="290" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one tunnel = whole network</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">per-app policy · least privilege</text>
-                <!-- pilot + waves VPN tunnels dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane-standby" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <!-- contractors still on the VPN -->
-                <path class="lane lane-limit" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- headends forward on to the apps -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- apps on the backbone -->
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
-                <!-- pilot on Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <!-- waves swing up to Cato (new) -->
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
+                <ellipse class="dg-backbone" cx="440" cy="92" rx="150" ry="42"/>
+                <circle cx="304" cy="106" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="576" cy="78" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="440" cy="92" r="28"/>
+                <text class="pt-t-green" x="440" y="40" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="440" y="156" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">ZTNA · per-app policy</text>
+                <!-- pilot's VPN tunnel now dormant -->
+                <path class="lane-standby" d="M 194 84 C 300 160, 360 262, 416 320"/>
+                <!-- waves + contractors still on the VPN -->
+                <path class="lane lane-limit" d="M 194 222 C 285 262, 336 306, 390 332"/>
+                <path class="lane lane-limit" d="M 194 358 C 288 370, 348 376, 408 378"/>
+                <!-- headends hand off to the apps in London DC -->
+                <path class="lane lane-static" d="M 560 352 C 626 346, 686 344, 744 350"/>
+                <!-- the rail -->
+                <path class="lane lane-allow" d="M 744 340 C 620 300, 510 180, 464 118"/>
+                <path class="lane lane-allow" d="M 764 104 C 660 118, 560 110, 470 96"/>
+                <!-- pilot swings up to Cato -->
+                <path class="lane lane-allow" d="M 194 64 C 290 34, 372 58, 414 82"/>
                 <!-- User cohorts -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">BYOD · same VPN</text>
-                <!-- Private apps -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="26" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="74" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="95" text-anchor="middle">Cato Client</text>
+                <rect class="pt-plain" x="26" y="186" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="212" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="233" text-anchor="middle">full-tunnel VPN</text>
+                <rect class="pt-plain" x="26" y="324" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="350" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="371" text-anchor="middle">BYOD · same VPN</text>
+                <!-- App estates on Cato -->
+                <rect class="pt-green" x="744" y="316" width="190" height="72" rx="10"/>
+                <text class="pt-t-green" x="839" y="344" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="839" y="366" text-anchor="middle">Socket · private apps</text>
+                <rect class="pt-green" x="764" y="64" width="170" height="64" rx="10"/>
+                <text class="pt-t-green" x="849" y="90" text-anchor="middle">Azure</text>
+                <image href="../assets/img/icon-cloud-azure.png" x="907" y="68" width="22" height="14"/>
+                <text class="pt-sub" x="849" y="112" text-anchor="middle">vSocket · cloud apps</text>
                 <!-- pulse-ring on the just-migrated cohort -->
-                <circle class="pulse-ring" cx="110" cy="210" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="110" cy="78" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Departmental waves swap clients on the pilot's checklist — and network-wide VPN grants are replaced by per-app least-privilege rules enforced at the PoP.</figcaption>
+              <figcaption>The pilot cohort swaps to the Cato Client — ZTNA to named apps at London DC and in Azure — while its VPN tunnel falls dormant and the headends stay live for everyone else.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 3 — Clientless access ============ -->
-            <figure class="phase" data-title="Clientless access">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: the contractors turn green with a dotted clientless browser lane up to the Cato PoP — no agent installed. Every VPN tunnel is now dormant and the headend cloud dims to draining standby.">
-                <!-- LOWER BAND: VPN concentrator estate, draining -->
+            <!-- ============ PHASE 3 — Cohort waves ============ -->
+            <figure class="phase" data-title="Cohort waves">
+              <svg viewBox="0 0 960 440" role="img" aria-label="Phase 3: the wave cohorts turn green on the Cato Client and the contractors turn green with a dotted clientless browser lane to the PoP — no agent installed. Every VPN lane is now dormant, the headend hand-off to London DC goes quiet, and the headend cloud dims to draining standby.">
+                <!-- LOWER BAND: headend estate, draining -->
                 <g opacity="0.55">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">draining · standby</text>
+                  <path d="M 360 404 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="352" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="373" text-anchor="middle">draining · standby</text>
                 </g>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">per-app policy · least privilege</text>
+                <ellipse class="dg-backbone" cx="440" cy="92" rx="150" ry="42"/>
+                <circle cx="304" cy="106" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="576" cy="78" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="440" cy="92" r="28"/>
+                <text class="pt-t-green" x="440" y="40" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="440" y="156" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">per-app policy · least privilege</text>
                 <!-- all VPN tunnels dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane-standby" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane-standby" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- headend link to apps now dormant too -->
-                <path class="lane-standby" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- apps on the backbone -->
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <path class="lane-standby" d="M 194 84 C 300 160, 360 262, 416 320"/>
+                <path class="lane-standby" d="M 194 222 C 285 262, 336 306, 390 332"/>
+                <path class="lane-standby" d="M 194 358 C 288 370, 348 376, 408 378"/>
+                <!-- headend hand-off to the DC apps now dormant too -->
+                <path class="lane-standby" d="M 560 352 C 626 346, 686 344, 744 350"/>
+                <!-- the rail -->
+                <path class="lane lane-allow" d="M 744 340 C 620 300, 510 180, 464 118"/>
+                <path class="lane lane-allow" d="M 764 104 C 660 118, 560 110, 470 96"/>
                 <!-- pilot + waves on Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
+                <path class="lane lane-allow" d="M 194 64 C 290 34, 372 58, 414 82"/>
+                <path class="lane lane-allow" d="M 194 208 C 300 156, 380 124, 416 104"/>
                 <!-- contractors: clientless browser lane (dotted, new) -->
-                <path class="lane lane-allow lane-dot" d="M 194 338 C 320 300, 400 200, 452 118"/>
+                <path class="lane lane-allow lane-dot" d="M 194 344 C 310 300, 392 202, 428 122"/>
                 <!-- User cohorts -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
-                <!-- Private apps -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
-                <!-- pulse-ring on the just-migrated cohort -->
-                <circle class="pulse-ring" cx="110" cy="346" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <rect class="pt-green" x="26" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="74" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="95" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="186" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="212" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="233" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="324" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="350" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="371" text-anchor="middle">clientless · browser</text>
+                <!-- App estates on Cato -->
+                <rect class="pt-green" x="744" y="316" width="190" height="72" rx="10"/>
+                <text class="pt-t-green" x="839" y="344" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="839" y="366" text-anchor="middle">Socket · private apps</text>
+                <rect class="pt-green" x="764" y="64" width="170" height="64" rx="10"/>
+                <text class="pt-t-green" x="849" y="90" text-anchor="middle">Azure</text>
+                <image href="../assets/img/icon-cloud-azure.png" x="907" y="68" width="22" height="14"/>
+                <text class="pt-sub" x="849" y="112" text-anchor="middle">vSocket · cloud apps</text>
+                <!-- pulse-rings on the just-migrated cohorts -->
+                <circle class="pulse-ring" cx="110" cy="216" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="110" cy="354" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Contractors and BYOD move to clientless browser access — no agent, no network address, just their named apps — and the concentrators drain to standby as the rollback path.</figcaption>
+              <figcaption>Departmental waves swap clients on the pilot's checklist; contractors and BYOD go clientless in the browser — no agent, no network address, just their named apps. Nobody is left on the VPN, and the headends drain to standby as the rollback path.</figcaption>
             </figure>
 
             <!-- ============ PHASE 4 — Headends off ============ -->
             <figure class="phase" data-title="Headends off">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: the VPN headends are dimmed, struck through with a red cross and decommissioned. Pilot, waves and contractors all ride green lanes to the Cato PoP — always-on ZTNA with continuous posture checks, and nothing left listening on the internet.">
-                <!-- LOWER BAND: VPN concentrator estate, retired -->
+              <svg viewBox="0 0 960 440" role="img" aria-label="Phase 4: the VPN headends at London DC are dimmed, struck through with a red cross and decommissioned. Pilot, waves and contractors all ride green lanes to the Cato PoP, with the London DC Socket and Azure vSocket carrying both app estates — always-on ZTNA with continuous posture checks, and nothing left listening on the internet.">
+                <!-- LOWER BAND: headend estate, retired -->
                 <g opacity="0.4">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">VPN headends</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">switched off</text>
+                  <path d="M 360 404 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="352" text-anchor="middle">VPN headends</text>
+                <text class="pt-sub-inv" x="468" y="373" text-anchor="middle">switched off</text>
                 </g>
-                <path class="lane-x" d="M 430 312 L 506 360"/>
-                <path class="lane-x" d="M 506 312 L 430 360"/>
-                <text class="dg-tiny" x="468" y="278" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">decommissioned</text>
+                <path class="lane-x" d="M 430 332 L 506 380"/>
+                <path class="lane-x" d="M 506 332 L 430 380"/>
+                <text class="dg-tiny" x="468" y="298" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">decommissioned</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">always-on ZTNA · posture-checked</text>
+                <ellipse class="dg-backbone" cx="440" cy="92" rx="150" ry="42"/>
+                <circle cx="304" cy="106" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="576" cy="78" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="440" cy="92" r="28"/>
+                <text class="pt-t-green" x="440" y="40" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="440" y="156" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">always-on ZTNA · posture-checked</text>
                 <!-- everyone on Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
-                <path class="lane lane-allow lane-dot" d="M 194 338 C 320 300, 400 200, 452 118"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <path class="lane lane-allow" d="M 194 64 C 290 34, 372 58, 414 82"/>
+                <path class="lane lane-allow" d="M 194 208 C 300 156, 380 124, 416 104"/>
+                <path class="lane lane-allow lane-dot" d="M 194 344 C 310 300, 392 202, 428 122"/>
+                <path class="lane lane-allow" d="M 744 340 C 620 300, 510 180, 464 118"/>
+                <path class="lane lane-allow" d="M 764 104 C 660 118, 560 110, 470 96"/>
                 <!-- User cohorts -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Pilot cohort</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">Cato Client</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Wave cohorts</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">Cato Client</text>
-                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Contractors</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">clientless · browser</text>
-                <!-- Private apps -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">Private apps</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">behind Cato Socket</text>
+                <rect class="pt-green" x="26" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="74" text-anchor="middle">Pilot cohort</text>
+                <text class="pt-sub" x="110" y="95" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="186" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="212" text-anchor="middle">Wave cohorts</text>
+                <text class="pt-sub" x="110" y="233" text-anchor="middle">Cato Client</text>
+                <rect class="pt-green" x="26" y="324" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="350" text-anchor="middle">Contractors</text>
+                <text class="pt-sub" x="110" y="371" text-anchor="middle">clientless · browser</text>
+                <!-- App estates on Cato -->
+                <rect class="pt-green" x="744" y="316" width="190" height="72" rx="10"/>
+                <text class="pt-t-green" x="839" y="344" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="839" y="366" text-anchor="middle">Socket · private apps</text>
+                <rect class="pt-green" x="764" y="64" width="170" height="64" rx="10"/>
+                <text class="pt-t-green" x="849" y="90" text-anchor="middle">Azure</text>
+                <image href="../assets/img/icon-cloud-azure.png" x="907" y="68" width="22" height="14"/>
+                <text class="pt-sub" x="849" y="112" text-anchor="middle">vSocket · cloud apps</text>
                 <!-- pulse-ring on the retiring headends -->
-                <circle class="pulse-ring" cx="468" cy="336" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="468" cy="356" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>
-              <figcaption>The tunnel-groups are disabled and the concentrators decommissioned. Every user rides always-on ZTNA with continuous posture checks — and nothing is left listening on the public internet.</figcaption>
+              <figcaption>The tunnel-groups are disabled and the concentrators at London DC decommissioned. Every user rides always-on ZTNA to both app estates — and nothing is left listening on the public internet.</figcaption>
             </figure>
 
           </div>
@@ -314,13 +342,14 @@
           <div class="phase-caption" aria-live="polite"></div>
         </div>
         <div class="dg-legend">
-          <span class="key"><span class="swatch allow"></span> Cato Client — ZTNA to named apps</span>
+          <span class="key"><span class="swatch allow"></span> On Cato — Client ZTNA &amp; Socket rail</span>
           <span class="key"><span class="swatch allow-dot"></span> Clientless browser access</span>
-          <span class="key"><span class="swatch limit"></span> On the VPN — network-wide access</span>
+          <span class="key"><span class="swatch limit"></span> Interim — still on the VPN, Cato rail live</span>
+          <span class="key"><span class="swatch" style="border-color:var(--ink-3);border-top-style:solid"></span> Legacy full-tunnel VPN, hand-off &amp; hairpin</span>
           <span class="key"><span class="swatch standby"></span> VPN tunnel dormant (rollback)</span>
           <span class="key"><span class="swatch block"></span> Retired &amp; decommissioned</span>
         </div>
-        <div class="diagram-caption">The cast never moves — cohorts on the left, the concentrator estate in the lower band, the Cato backbone above; each phase changes only the lanes and fills. The cohort-wave pattern from the <a href="migration-anyconnect.html">AnyConnect</a> and <a href="migration-directaccess.html">DirectAccess</a> playbooks, watched as a progression.</div>
+        <div class="diagram-caption">The cast never moves — cohorts on the left, the headend estate and London DC in the lower band, Azure and the Cato backbone above; each phase changes only the lanes and fills. The cohort-wave pattern from the <a href="migration-anyconnect.html">AnyConnect</a> and <a href="migration-directaccess.html">DirectAccess</a> playbooks, watched as a progression.</div>
       </div>
     </section>
 
@@ -334,29 +363,29 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>0 · Full tunnel</strong></td>
-              <td>Baseline — every employee and contractor full-tunnels to the datacentre concentrators, which must be sized for peak, patched on the vendor's schedule and left listening on the internet.</td>
-              <td>Everyone on the VPN; one tunnel grants the whole network, and cloud-bound traffic hairpins via the DC.</td>
+              <td><strong>0 · Legacy</strong></td>
+              <td>Baseline — every employee and contractor full-tunnels to the headends at London DC, which must be sized for peak, patched on the vendor's schedule and left listening on the internet. Apps in Azure are reached by hairpinning through the same DC.</td>
+              <td>Everyone on the VPN; one tunnel grants the whole network, and Azure-bound traffic rides the DC hairpin.</td>
             </tr>
             <tr>
-              <td><strong>1 · Pilot cohort</strong></td>
-              <td>The Cato side goes up: apps behind a datacentre Socket, IdP SSO + MFA connected, posture profiles in monitor. MDM swaps the pilot cohort — remove the VPN profile, install the Cato Client — in one change window.</td>
-              <td>Pilot on ZTNA via the nearest PoP; everyone else still on the live headends.</td>
+              <td><strong>1 · Cato rail</strong></td>
+              <td>The app side goes on Cato before any user moves: a Socket at London DC, a vSocket in the Azure vNet, IdP SSO + MFA connected, posture profiles in monitor. Both app estates are now reachable over the backbone — and the Azure hairpin collapses to a one-hop Cato path.</td>
+              <td>Everyone still on the live headends; only the apps have moved.</td>
             </tr>
             <tr>
-              <td><strong>2 · Cohort waves</strong></td>
-              <td>Departmental waves repeat the pilot's swap and acceptance checklist. Network-wide VPN grants are replaced by per-app least-privilege rules; rollback stays per-cohort and mechanical.</td>
-              <td>Employees on Cato; contractors still on the VPN.</td>
+              <td><strong>2 · Pilot cohort</strong></td>
+              <td>MDM swaps the pilot cohort — remove the VPN profile, install the Cato Client — in one change window. Pilot users get ZTNA to named apps in both locations; their VPN tunnel falls dormant as the rollback path.</td>
+              <td>Pilot on ZTNA via the nearest PoP to apps at London DC and in Azure; everyone else still on the headends.</td>
             </tr>
             <tr>
-              <td><strong>3 · Clientless access</strong></td>
-              <td>Contractors and BYOD move to clientless browser access — no agent to install on devices you don't manage, and no network address issued. The concentrators drain to standby, kept warm only as the rollback path.</td>
+              <td><strong>3 · Cohort waves</strong></td>
+              <td>Departmental waves repeat the pilot's swap and acceptance checklist, and contractors and BYOD move to clientless browser access — no agent on devices you don't manage, no network address issued. Network-wide grants give way to per-app least-privilege rules; the headends drain to standby, kept warm only as the rollback path.</td>
               <td>Everyone on Cato; headends idle through the final soak window.</td>
             </tr>
             <tr>
               <td><strong>4 · Headends off</strong></td>
-              <td>Tunnel-groups disabled, concentrators decommissioned, support renewals and client licences cancelled. Posture flips from monitor to enforce and always-on protects users before they think about connecting.</td>
-              <td>Always-on ZTNA with continuous posture checks — and no internet-exposed headend left to patch.</td>
+              <td>Tunnel-groups disabled, the concentrators at London DC decommissioned, support renewals and client licences cancelled. Posture flips from monitor to enforce and always-on protects users before they think about connecting.</td>
+              <td>Always-on ZTNA to both app estates — and no internet-exposed headend left to patch.</td>
             </tr>
           </tbody>
         </table>

@@ -298,6 +298,9 @@ figure.shot figcaption { font-size: .84rem; color: var(--ink-3); margin-top: 8px
 .pt-sub { font-family: var(--font); font-size: 11.5px; fill: var(--ink-2); }
 .pt-sub-inv { font-family: var(--font); font-size: 11.5px; fill: #b9d2c9; }
 .pt-chip-t { font-family: var(--font); font-size: 10px; font-weight: 700; fill: #0b6e57; }
+/* branded incumbent cloud (Zscaler journeys): light cloud in both themes so the logo reads */
+.ptc-zscaler { fill: #ffffff; stroke: #00a3e0; stroke-width: 2; }
+.pt-t-zs { font-family: var(--font); font-size: 13.5px; font-weight: 700; fill: #005b85; }
 
 /* Animated flow lanes — dashes march along the path */
 .lane { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 9 7; }
@@ -565,6 +568,8 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
   :root[data-theme="dark"] .pt-t-amber { fill: #d9a84e; }
   :root[data-theme="dark"] .pt-t-purple { fill: #a78ce0; }
   :root[data-theme="dark"] .pt-t-blue { fill: #6da7e8; }
+  :root[data-theme="dark"] .ptc-zscaler { fill: #0e2430; }
+  :root[data-theme="dark"] .pt-t-zs { fill: #3fc1f0; }
   :root[data-theme="dark"] svg rect[fill="#fdf6e3"] { fill: #3a2f10; }
   /* Navy-filled shapes (journey clouds/cores, dg-node-dark) sit at ~surface
      luminance on dark — lift them so they read as objects again */

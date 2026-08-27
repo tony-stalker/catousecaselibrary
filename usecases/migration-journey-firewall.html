@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Firewall Refresh to FWaaS: Animated Phased Journey — Cato Use Case Library</title>
-<meta name="description" content="See an appliance refresh become an exit — branch firewalls absorbed into FWaaS site by site, policy converging in the CMA, and the renewal cancelled. The last hardware refresh, animated.">
+<meta name="description" content="See an appliance refresh become an exit — hub, datacentre, cloud and branch firewalls absorbed into FWaaS phase by phase, policy converging into one CMA rulebase, and the renewal cancelled. The last hardware refresh, animated.">
 <script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
@@ -34,8 +34,9 @@
       A firewall refresh usually buys the same posture on newer tin — and puts the next end-of-life
       date straight back on the calendar. This page is the animated companion to the full
       firewall-refresh use case: press play and watch a hardware renewal become an exit, from the
-      first branch socket running FWaaS in monitor mode, through wave-by-wave cutover and policy
-      convergence, to the day the renewal quote is cancelled.
+      first Socket at the Frankfurt interconnect hub running FWaaS in monitor mode, through the
+      datacentre and AWS joining one CMA rulebase and wave-by-wave branch cutover, to the day the
+      renewal quote is cancelled.
     </p>
     <div class="meta-row">
       <span class="tag">FWaaS</span><span class="tag">Firewall Refresh</span>
@@ -71,12 +72,14 @@
       <div class="section-kicker">The walkthrough</div>
       <h2>The last refresh, phase by phase</h2>
       <p>
-        Three branches — Bristol, Glasgow and Madrid — plus the London DC each run their own ageing
-        firewall, every box tied down to the vendor's support and renewal cycle in the lower band.
-        The upper band is the Cato backbone, where FWaaS lives. Watch each site's enforcement swing
-        up to the cloud — amber while FWaaS only observes, green once it enforces — until the
-        renewal is cancelled. Autoplay steps every few seconds; use the dots or arrows to move at
-        your own pace.
+        Three branches — Bristol, Glasgow and Madrid — plus the Frankfurt hub (the regional
+        interconnect), the London DC and an AWS VPC each run their own ageing firewall, every box
+        tied down to the vendor's support and renewal cycle in the lower band. The upper band is
+        the Cato backbone, where FWaaS lives; the Frankfurt hub sits between the two — it takes the
+        first Socket and its eBGP handoff becomes the co-existence bridge. Watch each edge's
+        enforcement swing up to the cloud — amber while FWaaS only observes, green once it
+        enforces — until the renewal is cancelled. Autoplay steps every few seconds; use the dots
+        or arrows to move at your own pace.
       </p>
 
       <div class="diagram-card">
@@ -85,209 +88,263 @@
 
             <!-- ============ PHASE 0 — Ageing appliance estate ============ -->
             <figure class="phase" data-title="Appliance estate">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: Bristol, Glasgow, Madrid and the London datacentre each run their own ageing firewall appliance, all tied down to the NGFW vendor's support and renewal cycle in the lower band. No Cato yet.">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 0: Bristol, Glasgow and Madrid branches on the left, the Frankfurt hub in the centre, and the London DC and AWS eu-west-2 on the right each run their own NGFW appliance, all tied down to the NGFW vendor's support and renewal cycle in the lower band. No Cato yet.">
                 <!-- LOWER BAND: vendor support & renewal -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">NGFW vendor</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">renewal quote due</text>
+                <path d="M 360 468 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="416" text-anchor="middle">NGFW vendor</text>
+                <text class="pt-sub-inv" x="468" y="437" text-anchor="middle">renewal quote due</text>
                 <!-- support ties: every appliance down to the vendor lifecycle -->
-                <path class="lane lane-static" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane lane-static" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <path class="lane lane-static" d="M 194 90 C 300 180, 360 300, 408 384"/>
+                <path class="lane lane-static" d="M 194 226 C 280 280, 330 330, 398 390"/>
+                <path class="lane lane-static" d="M 194 372 C 280 400, 330 412, 376 416"/>
+                <path class="lane lane-static" d="M 468 264 L 468 372"/>
+                <path class="lane lane-static" d="M 766 152 C 680 230, 620 320, 538 390"/>
+                <path class="lane lane-static" d="M 766 308 C 700 350, 630 384, 552 404"/>
                 <!-- Branch nodes (left column, fixed) -->
                 <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
                 <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
                 <text class="pt-sub" x="110" y="91" text-anchor="middle">NGFW · local rules</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">NGFW · local rules</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Madrid</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">NGFW · rules drifted</text>
-                <!-- London DC (right, fixed) -->
-                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">HA firewall pair</text>
+                <rect class="pt-plain" x="26" y="190" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="216" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="237" text-anchor="middle">NGFW · local rules</text>
+                <rect class="pt-plain" x="26" y="336" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="362" text-anchor="middle">Madrid</text>
+                <text class="pt-sub" x="110" y="383" text-anchor="middle">NGFW · rules drifted</text>
+                <!-- Frankfurt hub (centre, fixed) -->
+                <rect class="pt-plain" x="374" y="200" width="188" height="64" rx="10"/>
+                <text class="pt-t-ink" x="468" y="226" text-anchor="middle">Frankfurt hub</text>
+                <text class="pt-sub" x="468" y="248" text-anchor="middle">NGFW · regional interconnect</text>
+                <!-- London DC + AWS (right column, fixed) -->
+                <rect class="pt-plain" x="766" y="96" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="122" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="144" text-anchor="middle">HA firewall pair</text>
+                <rect class="pt-plain" x="766" y="252" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="278" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="256" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="300" text-anchor="middle">virtual NGFW · own rules</text>
               </svg>
-              <figcaption>The estate is approaching end-of-support: four sites, four separately-managed rulebases quietly drifting apart, and a renewal quote on the table.</figcaption>
+              <figcaption>Six edges, six rulebases: branches, the Frankfurt interconnect hub, the London DC and the AWS VPC each enforce on their own NGFW, quietly drifting apart — and a renewal quote is on the table.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 1 — First socket, monitor-first ============ -->
-            <figure class="phase" data-title="First socket">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; Bristol gains a socket and an amber monitor-mode link up to FWaaS while its appliance still enforces. All support ties to the vendor remain.">
+            <!-- ============ PHASE 1 — Hub bridges, monitor-first ============ -->
+            <figure class="phase" data-title="Hub bridges">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band. The Frankfurt hub turns amber with a Socket and a monitor-mode link up to FWaaS while its appliance still enforces; the hub's eBGP handoff bridges the two estates. All vendor support ties remain.">
                 <!-- LOWER BAND: vendor support & renewal -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">NGFW vendor</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">renewal quote due</text>
+                <path d="M 360 468 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="416" text-anchor="middle">NGFW vendor</text>
+                <text class="pt-sub-inv" x="468" y="437" text-anchor="middle">renewal quote due</text>
                 <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="pulse-ring" cx="468" cy="96" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">FWaaS · single-pass engine</text>
+                <ellipse class="dg-backbone" cx="468" cy="88" rx="150" ry="40"/>
+                <circle cx="332" cy="102" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="74" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="468" cy="88" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="468" cy="88" r="28"/>
+                <text class="pt-t-green" x="468" y="36" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="170" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">FWaaS · monitor-first</text>
                 <!-- support ties unchanged -->
-                <path class="lane lane-static" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane lane-static" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- Bristol: FWaaS observing in monitor mode -->
-                <path class="lane lane-limit" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <path class="lane lane-static" d="M 194 90 C 300 180, 360 300, 408 384"/>
+                <path class="lane lane-static" d="M 194 226 C 280 280, 330 330, 398 390"/>
+                <path class="lane lane-static" d="M 194 372 C 280 400, 330 412, 376 416"/>
+                <path class="lane lane-static" d="M 468 264 L 468 372"/>
+                <path class="lane lane-static" d="M 766 152 C 680 230, 620 320, 538 390"/>
+                <path class="lane lane-static" d="M 766 308 C 700 350, 630 384, 552 404"/>
+                <!-- Frankfurt hub: FWaaS observing in monitor mode -->
+                <path class="lane lane-limit" d="M 522 200 C 538 172, 530 142, 502 120"/>
                 <!-- Branch nodes -->
-                <rect class="pt-amber" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-amber" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">Socket · FWaaS monitor</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">NGFW · local rules</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Madrid</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">NGFW · rules drifted</text>
-                <!-- London DC -->
-                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">HA firewall pair</text>
+                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">NGFW · local rules</text>
+                <rect class="pt-plain" x="26" y="190" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="216" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="237" text-anchor="middle">NGFW · local rules</text>
+                <rect class="pt-plain" x="26" y="336" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="362" text-anchor="middle">Madrid</text>
+                <text class="pt-sub" x="110" y="383" text-anchor="middle">NGFW · rules drifted</text>
+                <!-- Frankfurt hub: first socket -->
+                <rect class="pt-amber" x="374" y="200" width="188" height="64" rx="10"/>
+                <text class="pt-t-amber" x="468" y="226" text-anchor="middle">Frankfurt hub</text>
+                <text class="pt-sub" x="468" y="248" text-anchor="middle">Socket · FWaaS monitor</text>
+                <!-- London DC + AWS -->
+                <rect class="pt-plain" x="766" y="96" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="122" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="144" text-anchor="middle">HA firewall pair</text>
+                <rect class="pt-plain" x="766" y="252" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="278" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="256" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="300" text-anchor="middle">virtual NGFW · own rules</text>
                 <!-- pulse-ring on the first socketed site -->
-                <circle class="pulse-ring" cx="110" cy="74" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="468" cy="232" r="46" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Bristol gets a socket and its imported rules run in FWaaS in monitor mode — the appliance still enforces while the cloud policy is validated against live traffic.</figcaption>
+              <figcaption>The Frankfurt hub — the regional interconnect, not the DC — takes the first Socket. Its imported rules run in FWaaS in monitor mode while the appliance still enforces, and the hub's eBGP handoff becomes the co-existence bridge between the two estates.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 2 — Branch waves cut over ============ -->
-            <figure class="phase" data-title="Branch waves">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: Bristol and Glasgow turn green with enforcing links up to FWaaS and their vendor support ties fall dormant; Madrid now runs amber monitor-first. Policy converges into one CMA rulebase.">
+            <!-- ============ PHASE 2 — DC and cloud join the rulebase ============ -->
+            <figure class="phase" data-title="DC &amp; cloud">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 2: Frankfurt turns green and enforces in FWaaS — the bridge is live. The London DC runs amber with an HA Socket monitoring beside its firewall pair, and AWS eu-west-2 turns green with a vSocket, its egress enforced by the forming CMA rulebase. Frankfurt's and AWS's support ties fall dormant.">
                 <!-- LOWER BAND: vendor support & renewal -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">NGFW vendor</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">renewal quote due</text>
+                <path d="M 360 468 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="468" y="416" text-anchor="middle">NGFW vendor</text>
+                <text class="pt-sub-inv" x="468" y="437" text-anchor="middle">renewal quote due</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one CMA rulebase forming</text>
-                <!-- Bristol + Glasgow support ties now dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane-standby" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <!-- Madrid + DC still under vendor support -->
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- Bristol + Glasgow enforcing in FWaaS -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
-                <!-- Madrid: monitor-first -->
-                <path class="lane lane-limit" d="M 194 338 C 320 300, 400 200, 452 118"/>
+                <ellipse class="dg-backbone" cx="468" cy="88" rx="150" ry="40"/>
+                <circle cx="332" cy="102" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="74" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="88" r="28"/>
+                <text class="pt-t-green" x="468" y="36" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="170" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one CMA rulebase forming</text>
+                <!-- Frankfurt + AWS support ties now dormant -->
+                <path class="lane-standby" d="M 468 264 L 468 372"/>
+                <path class="lane-standby" d="M 766 308 C 700 350, 630 384, 552 404"/>
+                <!-- branches + London DC still under vendor support -->
+                <path class="lane lane-static" d="M 194 90 C 300 180, 360 300, 408 384"/>
+                <path class="lane lane-static" d="M 194 226 C 280 280, 330 330, 398 390"/>
+                <path class="lane lane-static" d="M 194 372 C 280 400, 330 412, 376 416"/>
+                <path class="lane lane-static" d="M 766 152 C 680 230, 620 320, 538 390"/>
+                <!-- Frankfurt enforcing, AWS enforcing, London DC monitor-first -->
+                <path class="lane lane-allow" d="M 522 200 C 538 172, 530 142, 502 120"/>
+                <path class="lane lane-allow" d="M 766 280 C 690 220, 610 160, 512 122"/>
+                <path class="lane lane-limit" d="M 766 124 C 690 104, 600 94, 508 90"/>
                 <!-- Branch nodes -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-amber" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-amber" x="110" y="342" text-anchor="middle">Madrid</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">Socket · FWaaS monitor</text>
-                <!-- London DC -->
-                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">HA firewall pair</text>
-                <!-- pulse-ring on the just-cut-over site -->
-                <circle class="pulse-ring" cx="110" cy="210" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="91" text-anchor="middle">NGFW · local rules</text>
+                <rect class="pt-plain" x="26" y="190" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="216" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="237" text-anchor="middle">NGFW · local rules</text>
+                <rect class="pt-plain" x="26" y="336" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="362" text-anchor="middle">Madrid</text>
+                <text class="pt-sub" x="110" y="383" text-anchor="middle">NGFW · rules drifted</text>
+                <!-- Frankfurt hub: bridge live -->
+                <rect class="pt-green" x="374" y="200" width="188" height="64" rx="10"/>
+                <text class="pt-t-green" x="468" y="226" text-anchor="middle">Frankfurt hub</text>
+                <text class="pt-sub" x="468" y="248" text-anchor="middle">on FWaaS · eBGP bridge</text>
+                <!-- London DC monitor-first, AWS on vSocket -->
+                <rect class="pt-amber" x="766" y="96" width="168" height="64" rx="10"/>
+                <text class="pt-t-amber" x="850" y="122" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="144" text-anchor="middle">Socket HA · FWaaS monitor</text>
+                <rect class="pt-green" x="766" y="252" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="278" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="256" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="300" text-anchor="middle">vSocket · same rulebase</text>
+                <!-- pulse-rings on the joining DC and cloud -->
+                <circle class="pulse-ring" cx="850" cy="128" r="44" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="850" cy="284" r="44" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>The first wave cuts over: Bristol and Glasgow enforce in FWaaS, their drifted per-box rules converged into the single CMA rulebase, while Madrid starts monitor-first.</figcaption>
+              <figcaption>Frankfurt cuts over and the bridge is live. The London DC's HA Socket starts its monitor run beside the firewall pair, and AWS eu-west-2 lands a vSocket — cloud egress now enforced by the same forming CMA rulebase.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 3 — DC functions absorbed ============ -->
-            <figure class="phase" data-title="DC absorbed">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: Madrid and the London datacentre turn green — internet and WAN enforcement move to FWaaS and east-west segmentation to LAN Firewall. Every vendor support tie is dormant and the last appliances sit on standby.">
+            <!-- ============ PHASE 3 — Branch waves; DC absorbed ============ -->
+            <figure class="phase" data-title="Branch waves">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 3: Bristol, Glasgow and the London DC turn green — the DC splitting internet and WAN policy into FWaaS and east-west segmentation into LAN Firewall — while Madrid runs amber monitor-first. The vendor cloud dims and signed-off appliances sit on standby.">
                 <!-- LOWER BAND: vendor support, dimming -->
                 <g opacity="0.55">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">NGFW vendor</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">appliances standby</text>
+                  <path d="M 360 468 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                  <text class="pt-t-inv" x="468" y="416" text-anchor="middle">NGFW vendor</text>
+                  <text class="pt-sub-inv" x="468" y="437" text-anchor="middle">appliances standby</text>
                 </g>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one CMA rulebase</text>
-                <!-- all support ties dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane-standby" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane-standby" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <path class="lane-standby" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <!-- everyone enforcing in FWaaS -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
-                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <ellipse class="dg-backbone" cx="468" cy="88" rx="150" ry="40"/>
+                <circle cx="332" cy="102" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="74" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="88" r="28"/>
+                <text class="pt-t-green" x="468" y="36" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="170" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one CMA rulebase</text>
+                <!-- signed-off support ties dormant; Madrid still live -->
+                <path class="lane-standby" d="M 194 90 C 300 180, 360 300, 408 384"/>
+                <path class="lane-standby" d="M 194 226 C 280 280, 330 330, 398 390"/>
+                <path class="lane-standby" d="M 468 264 L 468 372"/>
+                <path class="lane-standby" d="M 766 152 C 680 230, 620 320, 538 390"/>
+                <path class="lane-standby" d="M 766 308 C 700 350, 630 384, 552 404"/>
+                <path class="lane lane-static" d="M 194 372 C 280 400, 330 412, 376 416"/>
+                <!-- enforcing lanes -->
+                <path class="lane lane-allow" d="M 522 200 C 538 172, 530 142, 502 120"/>
+                <path class="lane lane-allow" d="M 766 280 C 690 220, 610 160, 512 122"/>
+                <path class="lane lane-allow" d="M 766 124 C 690 104, 600 94, 508 90"/>
+                <path class="lane lane-allow" d="M 194 74 C 290 52, 380 62, 438 78"/>
+                <path class="lane lane-allow" d="M 194 210 C 290 160, 380 122, 446 102"/>
+                <!-- Madrid: monitor-first -->
+                <path class="lane lane-limit" d="M 194 350 C 250 260, 300 150, 440 110"/>
                 <!-- Branch nodes -->
                 <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
                 <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
                 <text class="pt-sub" x="110" y="91" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Madrid</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on FWaaS</text>
-                <!-- London DC absorbed -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">FWaaS + LAN Firewall</text>
-                <!-- pulse-ring on the just-absorbed DC -->
-                <circle class="pulse-ring" cx="841" cy="210" r="46" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <rect class="pt-green" x="26" y="190" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="216" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="237" text-anchor="middle">on FWaaS</text>
+                <rect class="pt-amber" x="26" y="336" width="168" height="60" rx="10"/>
+                <text class="pt-t-amber" x="110" y="362" text-anchor="middle">Madrid</text>
+                <text class="pt-sub" x="110" y="383" text-anchor="middle">Socket · FWaaS monitor</text>
+                <!-- Frankfurt hub -->
+                <rect class="pt-green" x="374" y="200" width="188" height="64" rx="10"/>
+                <text class="pt-t-green" x="468" y="226" text-anchor="middle">Frankfurt hub</text>
+                <text class="pt-sub" x="468" y="248" text-anchor="middle">on FWaaS · eBGP bridge</text>
+                <!-- London DC absorbed, AWS on vSocket -->
+                <rect class="pt-green" x="766" y="96" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="122" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="144" text-anchor="middle">FWaaS + LAN Firewall</text>
+                <rect class="pt-green" x="766" y="252" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="278" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="256" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="300" text-anchor="middle">vSocket · same rulebase</text>
+                <!-- pulse-rings on the latest wave and the absorbed DC -->
+                <circle class="pulse-ring" cx="110" cy="220" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="850" cy="128" r="44" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>The DC firewall pair's jobs are absorbed — internet and WAN enforcement in FWaaS, east-west segmentation in LAN Firewall on the socket — and the last appliances drop to powered-on standby.</figcaption>
+              <figcaption>Waves now: Bristol and Glasgow cut over, the DC pair's jobs split — internet and WAN policy to FWaaS, east-west segmentation to LAN Firewall on the Socket — and Madrid starts its monitor run. Signed-off appliances drop to powered-on standby.</figcaption>
             </figure>
 
             <!-- ============ PHASE 4 — Renewal cancelled ============ -->
             <figure class="phase" data-title="Renewal cancelled">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: every site rides green enforcing links to FWaaS under one global policy. The NGFW vendor's support cloud is dimmed and struck through with a red cross — the renewal is cancelled and the appliances removed.">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 4: every site — branches, Frankfurt hub, London DC and AWS eu-west-2 — rides green enforcing links to FWaaS under one global policy. The NGFW vendor cloud is dimmed and struck through with a red cross: the renewal is cancelled and the appliances removed.">
                 <!-- LOWER BAND: vendor support, retired -->
                 <g opacity="0.4">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">NGFW vendor</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">support contract</text>
+                  <path d="M 360 468 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                  <text class="pt-t-inv" x="468" y="416" text-anchor="middle">NGFW vendor</text>
+                  <text class="pt-sub-inv" x="468" y="437" text-anchor="middle">support contract</text>
                 </g>
-                <path class="lane-x" d="M 430 312 L 506 360"/>
-                <path class="lane-x" d="M 506 312 L 430 360"/>
-                <text class="dg-tiny" x="468" y="278" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">renewal cancelled</text>
+                <path class="lane-x" d="M 430 396 L 506 444"/>
+                <path class="lane-x" d="M 506 396 L 430 444"/>
+                <text class="dg-tiny" x="468" y="356" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">renewal cancelled</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one global policy · no boxes to size, patch or EOL</text>
-                <!-- everyone enforcing in FWaaS -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
-                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <ellipse class="dg-backbone" cx="468" cy="88" rx="150" ry="40"/>
+                <circle cx="332" cy="102" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="604" cy="74" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="468" cy="88" r="28"/>
+                <text class="pt-t-green" x="468" y="36" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="170" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">one global policy</text>
+                <!-- every edge, DC and cloud enforcing in FWaaS -->
+                <path class="lane lane-allow" d="M 522 200 C 538 172, 530 142, 502 120"/>
+                <path class="lane lane-allow" d="M 766 280 C 690 220, 610 160, 512 122"/>
+                <path class="lane lane-allow" d="M 766 124 C 690 104, 600 94, 508 90"/>
+                <path class="lane lane-allow" d="M 194 74 C 290 52, 380 62, 438 78"/>
+                <path class="lane lane-allow" d="M 194 210 C 290 160, 380 122, 446 102"/>
+                <path class="lane lane-allow" d="M 194 350 C 250 260, 300 150, 440 110"/>
                 <!-- Branch nodes -->
                 <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
                 <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
                 <text class="pt-sub" x="110" y="91" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on FWaaS</text>
-                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Madrid</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on FWaaS</text>
-                <!-- London DC -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">FWaaS + LAN Firewall</text>
+                <rect class="pt-green" x="26" y="190" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="216" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="237" text-anchor="middle">on FWaaS</text>
+                <rect class="pt-green" x="26" y="336" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="362" text-anchor="middle">Madrid</text>
+                <text class="pt-sub" x="110" y="383" text-anchor="middle">on FWaaS</text>
+                <!-- Frankfurt hub -->
+                <rect class="pt-green" x="374" y="200" width="188" height="64" rx="10"/>
+                <text class="pt-t-green" x="468" y="226" text-anchor="middle">Frankfurt hub</text>
+                <text class="pt-sub" x="468" y="248" text-anchor="middle">on FWaaS · eBGP bridge</text>
+                <!-- London DC + AWS -->
+                <rect class="pt-green" x="766" y="96" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="122" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="144" text-anchor="middle">FWaaS + LAN Firewall</text>
+                <rect class="pt-green" x="766" y="252" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="278" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="256" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="300" text-anchor="middle">vSocket · same rulebase</text>
                 <!-- pulse-ring on the retiring contract -->
-                <circle class="pulse-ring" cx="468" cy="336" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="468" cy="420" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>
-              <figcaption>The renewal is cancelled and the appliances come off the shelves. Every site enforces one global policy in the cloud — and there is no next refresh.</figcaption>
+              <figcaption>Madrid's monitor run signs off and the last appliance goes quiet. Every edge, DC and cloud enforces the one rulebase in the PoP — the renewal is cancelled, and there is no next refresh.</figcaption>
             </figure>
 
           </div>
@@ -305,7 +362,7 @@
           <span class="key"><span class="swatch standby"></span> Vendor support tie (live / dormant)</span>
           <span class="key"><span class="swatch block"></span> Retired — renewal cancelled</span>
         </div>
-        <div class="diagram-caption">The topology is fixed across all five phases — sites on the left, the appliance vendor's support-and-renewal cycle in the lower band, the Cato backbone above; only the element each phase changes moves. The refresh-to-FWaaS story from the <a href="security-firewall-refresh.html">full firewall-refresh page</a>, watched as a progression.</div>
+        <div class="diagram-caption">The topology is fixed across all five phases — branches on the left, the Frankfurt hub bridging the middle, the London DC and AWS eu-west-2 on the right, the appliance vendor's support-and-renewal cycle in the lower band and the Cato backbone above; only the element each phase changes moves. The refresh-to-FWaaS story from the <a href="security-firewall-refresh.html">full firewall-refresh page</a>, watched as a progression.</div>
       </div>
     </section>
 
@@ -320,28 +377,28 @@
           <tbody>
             <tr>
               <td><strong>0 · Appliance estate</strong></td>
-              <td>Baseline — every site runs its own ageing firewall, all tied to the vendor's support and renewal cycle.</td>
-              <td>Four separately-managed rulebases have drifted apart; the renewal quote forces a decision either way.</td>
+              <td>Baseline — branches, the Frankfurt interconnect hub, the London DC and the AWS VPC each enforce on their own NGFW (a virtual appliance in the cloud), all tied to the vendor's support and renewal cycle.</td>
+              <td>Six separately-managed rulebases have drifted apart; the renewal quote forces a decision either way.</td>
             </tr>
             <tr>
-              <td><strong>1 · First socket</strong></td>
-              <td>Bristol gets a socket; its rules are imported and FWaaS runs in monitor mode alongside the appliance.</td>
-              <td>Nothing is enforced from the cloud yet — the amber lane is FWaaS watching live traffic to validate the policy.</td>
+              <td><strong>1 · Hub bridges</strong></td>
+              <td>The Frankfurt hub gets the first Socket; its rules are imported and FWaaS runs in monitor mode alongside the appliance, while the hub's eBGP handoff bridges legacy and Cato routing.</td>
+              <td>The bridge site is the regional interconnect, not the DC — it already sees cross-estate traffic, so co-existence routing needs only the one eBGP handoff. Nothing is enforced from the cloud yet.</td>
             </tr>
             <tr>
-              <td><strong>2 · Branch waves</strong></td>
-              <td>Bristol and Glasgow cut enforcement over to FWaaS; Madrid starts its monitor run.</td>
-              <td>Per-box policies converge into one CMA rulebase as each wave lands; dormant support ties are the rollback path.</td>
+              <td><strong>2 · DC &amp; cloud</strong></td>
+              <td>Frankfurt cuts over. The London DC's HA Socket starts its monitor run beside the firewall pair, and AWS eu-west-2 gets a vSocket — cloud egress moves onto the same rulebase.</td>
+              <td>The cloud DC is the early, low-risk win — no rack visit, no downtime window — and the CMA rulebase now spans hub and cloud while it forms.</td>
             </tr>
             <tr>
-              <td><strong>3 · DC absorbed</strong></td>
-              <td>Madrid cuts over and the DC pair's functions move — internet/WAN policy to FWaaS, east-west segmentation to LAN Firewall.</td>
-              <td>The last appliances sit powered-on but idle: a standby safety net, no longer in the traffic path.</td>
+              <td><strong>3 · Branch waves</strong></td>
+              <td>Bristol and Glasgow cut enforcement over to FWaaS; the DC pair's functions split — internet/WAN policy to FWaaS, east-west segmentation to LAN Firewall; Madrid starts its monitor run.</td>
+              <td>Per-box policies converge into one CMA rulebase as each wave lands; signed-off appliances drop to powered-on standby — the dormant ties are the rollback path.</td>
             </tr>
             <tr>
               <td><strong>4 · Renewal cancelled</strong></td>
-              <td>The soak period ends; the support renewal is cancelled and the hardware is removed.</td>
-              <td>One global policy for every site, enforced in the PoP — nothing left to size, patch or EOL.</td>
+              <td>Madrid's soak period ends and it cuts over; the support renewal is cancelled and the hardware is removed.</td>
+              <td>One global policy for every edge, DC and cloud, enforced in the PoP — nothing left to size, patch or EOL.</td>
             </tr>
           </tbody>
         </table>
@@ -354,8 +411,8 @@
           traffic — the events tell you exactly what the cloud rulebase <em>would</em> have allowed
           or blocked before it decides anything. Cutover is then a policy change, and rollback is
           the same change in reverse; the appliance is still racked and licensed until the wave is
-          signed off. The choreography of waves, co-existence and rollback design is the
-          <a href="migration-methodology.html">Migration Methodology</a> page; the appliance
+          signed off. The choreography of the hub bridge, waves, co-existence and rollback design is
+          the <a href="migration-methodology.html">Migration Methodology</a> page; the appliance
           economics and the demo runbook are on
           <a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a>.
         </p>

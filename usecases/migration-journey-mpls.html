@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MPLS to Cato: Animated Phased Journey — Cato Use Case Library</title>
-<meta name="description" content="Watch an MPLS exit unfold phase by phase — DC socket first, sites migrating over the backbone while legacy sites stay reachable, then the circuit switched off. An animated walkthrough of the co-existence pattern.">
+<meta name="description" content="Watch an MPLS exit unfold phase by phase — the first Socket and eBGP handoff at a colo hub, the on-prem DC and AWS on-net next, branches migrating in waves, then the circuit switched off. An animated walkthrough of the co-existence pattern.">
 <script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
@@ -34,7 +34,7 @@
       Nobody stalls at the start of an MPLS migration, or at the end — they stall in the middle,
       unsure whether migrated and un-migrated sites can still reach each other. This page is the
       animated companion to the full co-existence use case: press play and watch the exit unfold
-      one phase at a time, from the first datacentre socket to the day the last circuit is switched off.
+      one phase at a time, from the first Socket in the Manchester colo to the day the last circuit is switched off.
     </p>
     <div class="meta-row">
       <span class="tag">MPLS</span><span class="tag">Phased Migration</span>
@@ -69,224 +69,268 @@
       <div class="section-kicker">The walkthrough</div>
       <h2>The MPLS exit, phase by phase</h2>
       <p>
-        Three branches — Bristol, Leeds and Glasgow — plus the London DC start hub-and-spoke on MPLS.
-        The lower band is the legacy MPLS core; the upper band is the Cato backbone. Watch the
-        datacentre become the bridge, each site's link swing up to the backbone one at a time, and
-        the legacy cloud finally retire. Autoplay steps every few seconds; use the dots or arrows to
-        move at your own pace.
+        Three branches — Bristol, Leeds and Glasgow — sit on the left. On the right is the estate
+        they reach: a Manchester colo interconnect, the London DC and AWS eu-west-2. The lower band
+        is the legacy MPLS core; the upper band is the Cato backbone. Watch Manchester become the
+        bridge, the datacentres come on-net, and the branches swing up in waves before the legacy
+        cloud finally retires. Autoplay steps every few seconds; use the dots or arrows to move at
+        your own pace.
       </p>
 
       <div class="diagram-card">
         <div class="phase-player" data-autoplay="4500">
           <div class="phase-stage">
 
-            <!-- ============ PHASE 0 — Legacy MPLS ============ -->
             <figure class="phase" data-title="Legacy">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 0: Bristol, Leeds and Glasgow branches and the London datacentre all backhaul hub-and-spoke down to a central MPLS cloud in the lower band. No Cato yet.">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 0: Bristol, Leeds and Glasgow branches, the Manchester colo interconnect and the London DC all hub-and-spoke down to a central MPLS cloud in the lower band; AWS eu-west-2 is reached the long way, through the London DC. No Cato yet.">
                 <!-- LOWER BAND: legacy MPLS core -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">MPLS</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">carrier core</text>
-                <!-- static spokes: every site + DC down to MPLS -->
-                <path class="lane lane-static" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane lane-static" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
+                <path d="M 322 444 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="430" y="392" text-anchor="middle">MPLS</text>
+                <text class="pt-sub-inv" x="430" y="413" text-anchor="middle">carrier core</text>
+                <!-- static spokes: branches, hub, DC all down to MPLS; AWS hangs off the DC -->
+                <path class="lane lane-static" d="M 194 92 C 290 170, 340 280, 380 356"/>
+                <path class="lane lane-static" d="M 194 250 C 270 285, 320 330, 360 360"/>
+                <path class="lane lane-static" d="M 194 402 C 250 402, 300 400, 336 398"/>
+                <path class="lane lane-static" d="M 766 386 C 690 390, 600 392, 524 392"/>
+                <path class="lane lane-static" d="M 766 242 C 670 290, 570 340, 506 364"/>
+                <path class="lane lane-static" d="M 850 196 C 850 168, 850 138, 850 108"/>
                 <!-- Branch nodes (left column, fixed) -->
-                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on MPLS</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on MPLS</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on MPLS</text>
-                <!-- London DC (right, fixed) -->
-                <rect class="pt-plain" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-ink" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="54" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="80" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="101" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="214" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="240" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="261" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="374" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="400" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="421" text-anchor="middle">on MPLS</text>
+                <!-- Right column: cloud DC, on-prem DC, hub (fixed) -->
+                <rect class="pt-plain" x="766" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="850" y="74" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="52" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="95" text-anchor="middle">via London DC</text>
+                <rect class="pt-plain" x="766" y="196" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="222" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="244" text-anchor="middle">private apps · on MPLS</text>
+                <rect class="pt-plain" x="766" y="356" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="382" text-anchor="middle">Manchester hub</text>
+                <text class="pt-sub" x="850" y="404" text-anchor="middle">colo interconnect</text>
               </svg>
-              <figcaption>Everything hub-and-spokes over MPLS — three branches and the London datacentre all backhaul down to the carrier core.</figcaption>
+              <figcaption>Everything reaches its apps over MPLS — three branches, the Manchester colo interconnect and the London DC all spoke into the carrier core, and AWS eu-west-2 is reached the long way, through the DC.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 1 — DC socket in ============ -->
-            <figure class="phase" data-title="DC socket">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band; the London datacentre gains a Cato Socket with a green link up to the PoP. Branches still ride MPLS in the lower band.">
+            <figure class="phase" data-title="Hub bridge">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 1: a Cato PoP and green backbone appear in the upper band. The Manchester hub turns green with the first Cato Socket, dual-homed — a green link up to the PoP and its eBGP handoff link kept down into MPLS. Branches, the London DC and AWS are unchanged on their legacy paths.">
                 <!-- LOWER BAND: legacy MPLS core -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">MPLS</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">carrier core</text>
+                <path d="M 322 444 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="430" y="392" text-anchor="middle">MPLS</text>
+                <text class="pt-sub-inv" x="430" y="413" text-anchor="middle">carrier core</text>
                 <!-- UPPER BAND: Cato backbone + PoP (new this phase) -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="pulse-ring" cx="468" cy="96" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
-                <!-- static spokes: branches still on MPLS -->
-                <path class="lane lane-static" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <path class="lane lane-static" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- DC dual-homed: MPLS link stays, new Cato socket link up -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <ellipse class="dg-backbone" cx="430" cy="100" rx="150" ry="42"/>
+                <circle cx="296" cy="114" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="566" cy="86" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="pulse-ring" cx="430" cy="100" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="dg-pop" cx="430" cy="100" r="28"/>
+                <text class="pt-t-green" x="430" y="48" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="164" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- branches, DC and AWS unchanged on legacy paths -->
+                <path class="lane lane-static" d="M 194 92 C 290 170, 340 280, 380 356"/>
+                <path class="lane lane-static" d="M 194 250 C 270 285, 320 330, 360 360"/>
+                <path class="lane lane-static" d="M 194 402 C 250 402, 300 400, 336 398"/>
+                <path class="lane lane-static" d="M 766 242 C 670 290, 570 340, 506 364"/>
+                <path class="lane lane-static" d="M 850 196 C 850 168, 850 138, 850 108"/>
+                <!-- Manchester hub dual-homed: eBGP handoff into MPLS stays live, first Socket up to the PoP -->
+                <path class="lane lane-static" d="M 766 386 C 690 390, 600 392, 524 392"/>
+                <path class="lane lane-allow" d="M 802 356 C 700 290, 556 176, 458 120"/>
+                <text class="dg-tiny" x="648" y="374" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">eBGP handoff</text>
                 <!-- Branch nodes -->
-                <rect class="pt-plain" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on MPLS</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on MPLS</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on MPLS</text>
-                <!-- London DC (green socket) -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">+ Cato Socket</text>
+                <rect class="pt-plain" x="26" y="54" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="80" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="101" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="214" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="240" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="261" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="374" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="400" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="421" text-anchor="middle">on MPLS</text>
+                <!-- Right column -->
+                <rect class="pt-plain" x="766" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="850" y="74" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="52" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="95" text-anchor="middle">via London DC</text>
+                <rect class="pt-plain" x="766" y="196" width="168" height="64" rx="10"/>
+                <text class="pt-t-ink" x="850" y="222" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="244" text-anchor="middle">private apps · on MPLS</text>
+                <rect class="pt-green" x="766" y="356" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="382" text-anchor="middle">Manchester hub</text>
+                <text class="pt-sub" x="850" y="404" text-anchor="middle">Socket + eBGP handoff</text>
+                <circle class="pulse-ring" cx="850" cy="388" r="46" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>The datacentre becomes the bridge: a Cato Socket goes in alongside MPLS and advertises the branch prefixes into the Cato backbone. Branches still ride MPLS.</figcaption>
+              <figcaption>Manchester becomes the bridge: the first Socket goes in at the colo, beside the MPLS CE, and peers eBGP with it. The hub is dual-homed — green up to the PoP, grey down into MPLS — and both paths run live.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 2 — First site migrates ============ -->
-            <figure class="phase" data-title="First site">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 2: Bristol turns green and its link swings up to the Cato PoP; its MPLS link is dormant. An amber path shows Bristol still reaching the legacy sites the long way, over Cato to the datacentre and down into MPLS.">
+            <figure class="phase" data-title="DCs on-net">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 2: London DC and AWS eu-west-2 turn green — an HA Socket pair and a vSocket — each with a green link to the PoP while their legacy links fall dormant. An amber path shows branches still on MPLS reaching the DCs across the Manchester eBGP handoff.">
                 <!-- LOWER BAND: legacy MPLS core -->
-                <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                <text class="pt-t-inv" x="468" y="332" text-anchor="middle">MPLS</text>
-                <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">carrier core</text>
+                <path d="M 322 444 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                <text class="pt-t-inv" x="430" y="392" text-anchor="middle">MPLS</text>
+                <text class="pt-sub-inv" x="430" y="413" text-anchor="middle">carrier core</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
-                <!-- Bristol MPLS link now dormant -->
-                <path class="lane-standby" d="M 194 90 C 300 150, 356 250, 412 300"/>
-                <!-- Leeds + Glasgow still on MPLS -->
-                <path class="lane lane-static" d="M 194 210 C 282 250, 332 296, 384 318"/>
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- DC dual-homed bridge -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
-                <!-- amber transit: Bristol -> Cato -> DC -> MPLS (grey lanes carry the last hop to Leeds/Glasgow) -->
-                <path class="lane lane-limit" d="M 194 82 C 430 48, 690 118, 724 200 C 744 262, 650 316, 556 322"/>
-                <!-- Bristol swings up to Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
+                <ellipse class="dg-backbone" cx="430" cy="100" rx="150" ry="42"/>
+                <circle cx="296" cy="114" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="566" cy="86" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="430" cy="100" r="28"/>
+                <text class="pt-t-green" x="430" y="48" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="164" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- branches still on MPLS -->
+                <path class="lane lane-static" d="M 194 92 C 290 170, 340 280, 380 356"/>
+                <path class="lane lane-static" d="M 194 250 C 270 285, 320 330, 360 360"/>
+                <path class="lane lane-static" d="M 194 402 C 250 402, 300 400, 336 398"/>
+                <!-- hub dual-homed bridge -->
+                <path class="lane lane-static" d="M 766 386 C 690 390, 600 392, 524 392"/>
+                <path class="lane lane-allow" d="M 802 356 C 700 290, 556 176, 458 120"/>
+                <text class="dg-tiny" x="648" y="374" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">eBGP handoff</text>
+                <!-- DCs come on-net; their legacy links fall dormant -->
+                <path class="lane-standby" d="M 766 242 C 670 290, 570 340, 506 364"/>
+                <path class="lane-standby" d="M 850 196 C 850 168, 850 138, 850 108"/>
+                <path class="lane lane-allow" d="M 766 214 C 670 172, 556 128, 464 102"/>
+                <path class="lane lane-allow" d="M 766 76 C 670 62, 556 66, 460 86"/>
+                <!-- amber interim: MPLS branches -> Manchester handoff -> PoP -> DCs -->
+                <path class="lane lane-limit" d="M 520 406 C 620 410, 724 402, 794 362 C 856 322, 640 196, 478 128"/>
                 <!-- Branch nodes -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on Cato</text>
-                <rect class="pt-plain" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on MPLS</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on MPLS</text>
-                <!-- London DC (bridge) -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">bridge · both</text>
-                <!-- pulse-ring on the just-migrated site -->
-                <circle class="pulse-ring" cx="110" cy="74" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <rect class="pt-plain" x="26" y="54" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="80" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="101" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="214" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="240" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="261" text-anchor="middle">on MPLS</text>
+                <rect class="pt-plain" x="26" y="374" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="400" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="421" text-anchor="middle">on MPLS</text>
+                <!-- Right column -->
+                <rect class="pt-green" x="766" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="850" y="74" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="52" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="95" text-anchor="middle">vSocket</text>
+                <rect class="pt-green" x="766" y="196" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="222" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="244" text-anchor="middle">Socket HA · private apps</text>
+                <rect class="pt-green" x="766" y="356" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="382" text-anchor="middle">Manchester hub</text>
+                <text class="pt-sub" x="850" y="404" text-anchor="middle">Socket + eBGP handoff</text>
+                <circle class="pulse-ring" cx="850" cy="78" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="850" cy="228" r="46" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Bristol is on-net over the backbone and its MPLS circuit falls dormant. It still reaches the MPLS-only sites the long way round — up to Cato, across to the datacentre, then into MPLS.</figcaption>
+              <figcaption>The datacentres come on-net: London DC gets an HA Socket pair and AWS eu-west-2 a vSocket. Branches still on MPLS reach both across the Manchester handoff — the amber interim path.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 3 — Most sites moved ============ -->
-            <figure class="phase" data-title="Most sites">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 3: Leeds also turns green and swings up to Cato; only Glasgow remains on the dimming MPLS cloud. An amber path shows Glasgow reaching the migrated sites via MPLS and the datacentre.">
+            <figure class="phase" data-title="Waves">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 3: Bristol and Leeds turn green and swing up to the Cato PoP; their MPLS links are dormant. Glasgow remains on the dimming MPLS cloud, still reaching the on-net estate over the amber path through the Manchester handoff.">
                 <!-- LOWER BAND: legacy MPLS core, dimming -->
                 <g opacity="0.55">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">MPLS</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">emptying out</text>
+                  <path d="M 322 444 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                  <text class="pt-t-inv" x="430" y="392" text-anchor="middle">MPLS</text>
+                  <text class="pt-sub-inv" x="430" y="413" text-anchor="middle">emptying out</text>
                 </g>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
-                <!-- Leeds MPLS link now dormant -->
-                <path class="lane-standby" d="M 194 210 C 282 250, 332 296, 384 318"/>
+                <ellipse class="dg-backbone" cx="430" cy="100" rx="150" ry="42"/>
+                <circle cx="296" cy="114" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="566" cy="86" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="430" cy="100" r="28"/>
+                <text class="pt-t-green" x="430" y="48" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="164" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato Global Backbone</text>
+                <!-- Bristol and Leeds swing up; their MPLS links fall dormant -->
+                <path class="lane-standby" d="M 194 92 C 290 170, 340 280, 380 356"/>
+                <path class="lane-standby" d="M 194 250 C 270 285, 320 330, 360 360"/>
+                <path class="lane lane-allow" d="M 194 70 C 290 42, 360 62, 402 82"/>
+                <path class="lane lane-allow" d="M 194 232 C 290 185, 356 140, 402 112"/>
                 <!-- Glasgow still on MPLS -->
-                <path class="lane lane-static" d="M 194 342 C 290 356, 350 362, 404 358"/>
-                <!-- DC dual-homed bridge -->
-                <path class="lane lane-static" d="M 556 322 C 652 300, 704 250, 748 220"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
-                <!-- amber transit: Glasgow -> MPLS -> DC -> Cato backbone -->
-                <path class="lane lane-limit" d="M 194 348 C 430 392, 690 320, 724 214 C 744 150, 600 108, 484 100"/>
-                <!-- Bristol on Cato -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <!-- Leeds swings up to Cato (new) -->
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
+                <path class="lane lane-static" d="M 194 402 C 250 402, 300 400, 336 398"/>
+                <!-- hub dual-homed bridge -->
+                <path class="lane lane-static" d="M 766 386 C 690 390, 600 392, 524 392"/>
+                <path class="lane lane-allow" d="M 802 356 C 700 290, 556 176, 458 120"/>
+                <text class="dg-tiny" x="648" y="374" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">eBGP handoff</text>
+                <!-- DCs on-net -->
+                <path class="lane lane-allow" d="M 766 214 C 670 172, 556 128, 464 102"/>
+                <path class="lane lane-allow" d="M 766 76 C 670 62, 556 66, 460 86"/>
+                <!-- amber interim: Glasgow -> Manchester handoff -> PoP -->
+                <path class="lane lane-limit" d="M 520 406 C 620 410, 724 402, 794 362 C 856 322, 640 196, 478 128"/>
                 <!-- Branch nodes -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on Cato</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on Cato</text>
-                <rect class="pt-plain" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-ink" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on MPLS</text>
-                <!-- London DC (bridge) -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">bridge · both</text>
-                <!-- pulse-ring on the just-migrated site -->
-                <circle class="pulse-ring" cx="110" cy="210" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <rect class="pt-green" x="26" y="54" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="80" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="101" text-anchor="middle">on Cato</text>
+                <rect class="pt-green" x="26" y="214" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="240" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="261" text-anchor="middle">on Cato</text>
+                <rect class="pt-plain" x="26" y="374" width="168" height="60" rx="10"/>
+                <text class="pt-t-ink" x="110" y="400" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="421" text-anchor="middle">on MPLS</text>
+                <!-- Right column -->
+                <rect class="pt-green" x="766" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="850" y="74" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="52" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="95" text-anchor="middle">vSocket</text>
+                <rect class="pt-green" x="766" y="196" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="222" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="244" text-anchor="middle">Socket HA · private apps</text>
+                <rect class="pt-green" x="766" y="356" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="382" text-anchor="middle">Manchester hub</text>
+                <text class="pt-sub" x="850" y="404" text-anchor="middle">Socket + eBGP handoff</text>
+                <circle class="pulse-ring" cx="110" cy="84" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+                <circle class="pulse-ring" cx="110" cy="244" r="42" fill="none" stroke="var(--green-300)" stroke-width="3"/>
               </svg>
-              <figcaption>Site by site, traffic shifts to the backbone. Leeds is on-net; only Glasgow stays on the shrinking MPLS, still reaching everyone via the datacentre bridge.</figcaption>
+              <figcaption>The branch waves begin: Bristol and Leeds swing up to the PoP. Glasgow rides the emptying MPLS cloud, still reaching everything through the Manchester handoff.</figcaption>
             </figure>
 
-            <!-- ============ PHASE 4 — MPLS retired ============ -->
             <figure class="phase" data-title="Retired">
-              <svg viewBox="0 0 960 420" role="img" aria-label="Phase 4: Glasgow turns green; every branch and the datacentre ride the Cato backbone in the upper band. The MPLS cloud is dimmed, struck through with a red cross and decommissioned.">
+              <svg viewBox="0 0 960 500" role="img" aria-label="Phase 4: Glasgow turns green; the three branches, the Manchester hub, London DC and AWS eu-west-2 all ride the Cato backbone in the upper band. The MPLS cloud is dimmed, struck through with a red cross and decommissioned.">
                 <!-- LOWER BAND: legacy MPLS core, retired -->
                 <g opacity="0.4">
-                  <ellipse cx="468" cy="336" rx="94" ry="48" fill="var(--navy-800)"/>
-                  <text class="pt-t-inv" x="468" y="332" text-anchor="middle">MPLS</text>
-                  <text class="pt-sub-inv" x="468" y="353" text-anchor="middle">carrier core</text>
+                  <path d="M 322 444 a 36 36 0 0 1 13 -66 a 45 45 0 0 1 65 -30 a 53 53 0 0 1 73 11 a 38 38 0 0 1 52 30 a 32 32 0 0 1 -4 55 z" fill="var(--navy-800)"/>
+                  <text class="pt-t-inv" x="430" y="392" text-anchor="middle">MPLS</text>
+                  <text class="pt-sub-inv" x="430" y="413" text-anchor="middle">carrier core</text>
                 </g>
-                <path class="lane-x" d="M 430 312 L 506 360"/>
-                <path class="lane-x" d="M 506 312 L 430 360"/>
-                <text class="dg-tiny" x="468" y="278" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">decommissioned</text>
+                <path class="lane-x" d="M 392 372 L 468 420"/>
+                <path class="lane-x" d="M 468 372 L 392 420"/>
+                <text class="dg-tiny" x="430" y="334" text-anchor="middle" style="fill:var(--status-critical);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">decommissioned</text>
                 <!-- UPPER BAND: Cato backbone + PoP -->
-                <ellipse class="dg-backbone" cx="468" cy="96" rx="150" ry="42"/>
-                <circle cx="332" cy="110" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle cx="604" cy="82" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-                <circle class="dg-pop" cx="468" cy="96" r="28"/>
-                <text class="pt-t-green" x="468" y="44" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
-                <text class="dg-tiny" x="468" y="160" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">every site any-to-any · one routing table</text>
-                <!-- all branches + DC on the Cato backbone -->
-                <path class="lane lane-allow" d="M 194 60 C 300 30, 388 66, 442 86"/>
-                <path class="lane lane-allow" d="M 194 202 C 300 150, 392 116, 444 104"/>
-                <path class="lane lane-allow" d="M 194 338 C 320 300, 400 200, 452 118"/>
-                <path class="lane lane-allow" d="M 770 178 C 690 120, 580 100, 498 96"/>
+                <ellipse class="dg-backbone" cx="430" cy="100" rx="150" ry="42"/>
+                <circle cx="296" cy="114" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle cx="566" cy="86" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+                <circle class="dg-pop" cx="430" cy="100" r="28"/>
+                <text class="pt-t-green" x="430" y="48" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">Cato PoP</text>
+                <text class="dg-tiny" x="430" y="164" text-anchor="middle" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round">every site, DC and cloud any-to-any · one routing table</text>
+                <!-- everything on the Cato backbone -->
+                <path class="lane lane-allow" d="M 194 70 C 290 42, 360 62, 402 82"/>
+                <path class="lane lane-allow" d="M 194 232 C 290 185, 356 140, 402 112"/>
+                <path class="lane lane-allow" d="M 194 390 C 300 330, 376 200, 410 130"/>
+                <path class="lane lane-allow" d="M 802 356 C 700 290, 556 176, 458 120"/>
+                <path class="lane lane-allow" d="M 766 214 C 670 172, 556 128, 464 102"/>
+                <path class="lane lane-allow" d="M 766 76 C 670 62, 556 66, 460 86"/>
                 <!-- Branch nodes -->
-                <rect class="pt-green" x="26" y="44" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="70" text-anchor="middle">Bristol</text>
-                <text class="pt-sub" x="110" y="91" text-anchor="middle">on Cato</text>
-                <rect class="pt-green" x="26" y="180" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="206" text-anchor="middle">Leeds</text>
-                <text class="pt-sub" x="110" y="227" text-anchor="middle">on Cato</text>
-                <rect class="pt-green" x="26" y="316" width="168" height="60" rx="10"/>
-                <text class="pt-t-green" x="110" y="342" text-anchor="middle">Glasgow</text>
-                <text class="pt-sub" x="110" y="363" text-anchor="middle">on Cato</text>
-                <!-- London DC -->
-                <rect class="pt-green" x="748" y="178" width="186" height="64" rx="10"/>
-                <text class="pt-t-green" x="841" y="204" text-anchor="middle">London DC</text>
-                <text class="pt-sub" x="841" y="226" text-anchor="middle">on Cato</text>
-                <!-- pulse-ring on the retiring core -->
-                <circle class="pulse-ring" cx="468" cy="336" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
+                <rect class="pt-green" x="26" y="54" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="80" text-anchor="middle">Bristol</text>
+                <text class="pt-sub" x="110" y="101" text-anchor="middle">on Cato</text>
+                <rect class="pt-green" x="26" y="214" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="240" text-anchor="middle">Leeds</text>
+                <text class="pt-sub" x="110" y="261" text-anchor="middle">on Cato</text>
+                <rect class="pt-green" x="26" y="374" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="110" y="400" text-anchor="middle">Glasgow</text>
+                <text class="pt-sub" x="110" y="421" text-anchor="middle">on Cato</text>
+                <!-- Right column -->
+                <rect class="pt-green" x="766" y="48" width="168" height="60" rx="10"/>
+                <text class="pt-t-green" x="850" y="74" text-anchor="middle">AWS eu-west-2</text>
+                <image href="../assets/img/icon-cloud-aws.png" x="907" y="52" width="22" height="14"/>
+                <text class="pt-sub" x="850" y="95" text-anchor="middle">vSocket</text>
+                <rect class="pt-green" x="766" y="196" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="222" text-anchor="middle">London DC</text>
+                <text class="pt-sub" x="850" y="244" text-anchor="middle">Socket HA · private apps</text>
+                <rect class="pt-green" x="766" y="356" width="168" height="64" rx="10"/>
+                <text class="pt-t-green" x="850" y="382" text-anchor="middle">Manchester hub</text>
+                <text class="pt-sub" x="850" y="404" text-anchor="middle">on Cato</text>
+                <circle class="pulse-ring" cx="430" cy="396" r="54" fill="none" stroke="var(--status-critical)" stroke-width="3"/>
               </svg>
-              <figcaption>The last circuit is switched off and the MPLS contract cancelled. Every branch and the datacentre now ride the Cato backbone — one network, one routing table.</figcaption>
+              <figcaption>The last circuit is switched off and the MPLS contract cancelled. Branches, the Manchester hub, the London DC and AWS eu-west-2 all ride the Cato backbone — one network, one routing table.</figcaption>
             </figure>
 
           </div>
@@ -300,11 +344,11 @@
         </div>
         <div class="dg-legend">
           <span class="key"><span class="swatch allow"></span> On the Cato backbone</span>
-          <span class="key"><span class="swatch limit"></span> Reaching a legacy site via the datacentre</span>
+          <span class="key"><span class="swatch limit"></span> Interim path via the Manchester handoff</span>
           <span class="key"><span class="swatch standby"></span> Legacy MPLS (live / dormant)</span>
           <span class="key"><span class="swatch block"></span> Retired &amp; decommissioned</span>
         </div>
-        <div class="diagram-caption">The topology is fixed across all five phases — sites on the left, the legacy MPLS core in the lower band, the Cato backbone above; only the element each phase changes moves. The MPLS-to-Cato co-existence pattern from the <a href="network-mpls-migration.html">full MPLS migration page</a>, watched as a progression.</div>
+        <div class="diagram-caption">The topology is fixed across all five phases — branches on the left, the legacy MPLS core in the lower band, the Cato backbone above, and the hub, DC and cloud estate on the right; only the element each phase changes moves. The MPLS-to-Cato co-existence pattern from the <a href="network-mpls-migration.html">full MPLS migration page</a>, watched as a progression.</div>
       </div>
     </section>
 
@@ -318,28 +362,28 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>0 · Legacy MPLS</strong></td>
-              <td>Baseline — every branch and the London DC backhaul hub-and-spoke through the MPLS cloud.</td>
-              <td>Full any-to-any over MPLS; nothing on Cato yet.</td>
+              <td><strong>0 · Legacy</strong></td>
+              <td>Baseline — branches, the Manchester colo interconnect and the London DC all hub-and-spoke through the MPLS cloud; AWS eu-west-2 hangs off the DC.</td>
+              <td>Full any-to-any over MPLS; cloud workloads reached via the DC; nothing on Cato yet.</td>
             </tr>
             <tr>
-              <td><strong>1 · DC socket in</strong></td>
-              <td>London DC gains a Cato Socket and the backbone appears. The socket advertises the branch prefixes into Cato.</td>
-              <td>Unchanged — branches still on MPLS; the DC is now reachable both ways.</td>
+              <td><strong>1 · Hub bridge</strong></td>
+              <td>The first Socket goes in at the Manchester colo, beside the MPLS CE, and peers eBGP with it. The hub is dual-homed — backbone up, MPLS down.</td>
+              <td>Unchanged for users — both paths live; the handoff advertises each side's prefixes to the other.</td>
             </tr>
             <tr>
-              <td><strong>2 · First site migrates</strong></td>
-              <td>Bristol cuts over to Cato; its MPLS last mile goes dormant.</td>
-              <td>Bristol reaches the DC on-net, and Leeds/Glasgow via the DC bridge.</td>
+              <td><strong>2 · DCs on-net</strong></td>
+              <td>London DC gains an HA Socket pair; AWS eu-west-2 gains a vSocket — the early, low-risk wins. Their legacy links fall dormant.</td>
+              <td>Branches still on MPLS reach the DC apps and AWS across the Manchester handoff.</td>
             </tr>
             <tr>
-              <td><strong>3 · Most sites moved</strong></td>
-              <td>Leeds cuts over too; the MPLS cloud dims to a single remaining site.</td>
-              <td>Migrated sites are on-net; Glasgow still reaches everyone via the DC.</td>
+              <td><strong>3 · Waves</strong></td>
+              <td>Bristol and Leeds cut over to the PoP in migration waves; the MPLS cloud dims to a single remaining site.</td>
+              <td>Migrated sites are on-net end to end; Glasgow still reaches everything via the handoff.</td>
             </tr>
             <tr>
-              <td><strong>4 · MPLS retired</strong></td>
-              <td>Glasgow cuts over; the MPLS CE router and the contract are decommissioned.</td>
+              <td><strong>4 · Retired</strong></td>
+              <td>Glasgow cuts over; the MPLS CE at the colo and the contract are decommissioned.</td>
               <td>Full any-to-any over the Cato backbone; one routing table.</td>
             </tr>
           </tbody>
@@ -349,10 +393,10 @@
       <div class="callout">
         <div class="co-title">Why reachability never breaks</div>
         <p>
-          The London DC socket advertises the prefixes of every site still on MPLS into the Cato
-          backbone — a static route pointed at the MPLS CE router on the DC LAN. So a migrated site
-          always has a route to an un-migrated one (via the DC), and vice-versa. No site is ever cut
-          off, at any point in the migration. The
+          The Manchester Socket peers eBGP with the MPLS CE router on the colo LAN, advertising the
+          prefixes of every site still on MPLS into the Cato backbone — and the Cato-side prefixes
+          back into MPLS. So a migrated site always has a route to an un-migrated one (across the
+          handoff), and vice versa. No site is ever cut off, at any point in the migration. The
           <a href="network-mpls-migration.html">full co-existence use case</a> walks the two routing
           tables that make this work, line by line.
         </p>
