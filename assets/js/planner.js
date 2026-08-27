@@ -225,6 +225,7 @@
       + '<div class="pl-actions">'
       + '<button type="button" class="btn btn-primary" id="pl-view">Present</button>'
       + '<button type="button" class="btn btn-ghost" id="pl-pptx">PowerPoint</button>'
+      + '<button type="button" class="btn btn-ghost" id="pl-xlsx">Excel</button>'
       + '<button type="button" class="btn btn-ghost" id="pl-print">Print / PDF</button>'
       + '<button type="button" class="btn btn-ghost" id="pl-copy">Copy as Markdown</button>'
       + "</div></div>";
@@ -279,6 +280,12 @@
     h += renderDeck(plan, picks);
 
     out.innerHTML = h;
+    /* the deck must be laid out (not display:none) to be measured, so reflow while it is on
+       screen, then hide it again */
+    var dw = $("#pl-deckwrap");
+    dw.classList.add("on");
+    reflow();
+    dw.classList.remove("on");
     showSlide(0);
 
     $("#pl-print").addEventListener("click", function () { window.print(); });
@@ -287,7 +294,7 @@
       var btn = e.currentTarget;
       var title = $("#f-name").value.trim() || "Migration plan";
       try {
-        window.PlannerExport.pptx(deck.slides, title);
+        window.PlannerExport.pptx(slidesFromDom(), title);
         btn.textContent = "Downloaded";
       } catch (err) {
         btn.textContent = "Failed";
@@ -295,6 +302,18 @@
       }
       setTimeout(function () { btn.textContent = "PowerPoint"; }, 1800);
     });
+    $("#pl-xlsx").addEventListener("click", function (e) {
+      var btn = e.currentTarget;
+      try {
+        window.PlannerExport.xlsx(workbook(plan, picks), $("#f-name").value.trim() || "Migration plan");
+        btn.textContent = "Downloaded";
+      } catch (err) {
+        btn.textContent = "Failed";
+        if (window.console) console.error(err);
+      }
+      setTimeout(function () { btn.textContent = "Excel"; }, 1800);
+    });
+
     var dio = $("#pl-drawio");
     if (dio) dio.addEventListener("click", function () {
       window.PlannerExport.drawio(window.PlannerTopology.drawio(picks),
@@ -302,8 +321,36 @@
       dio.textContent = "Downloaded";
       setTimeout(function () { dio.textContent = "Download .drawio"; }, 1800);
     });
-    $("#pl-prev").addEventListener("click", function () { showSlide(deck.i - 1); });
-    $("#pl-next").addEventListener("click", function () { showSlide(deck.i + 1); });
+    function onKey(e) {
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { showSlide(deck.i + 1); e.preventDefault(); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { showSlide(deck.i - 1); e.preventDefault(); }
+      else if (e.key === "Home") { showSlide(0); e.preventDefault(); }
+      else if (e.key === "End") { showSlide(deck.total - 1); e.preventDefault(); }
+    }
+
+    /* Changing depth rebuilds the deck from scratch — it has to be measured again. */
+    function onDepth() {
+      deck.depth = this.value;
+      var wasOn = $("#pl-deckwrap").classList.contains("on");
+      var host = $("#pl-deckwrap").parentNode, holder = document.createElement("div");
+      holder.innerHTML = renderDeck(plan, picks);
+      host.replaceChild(holder.firstChild, $("#pl-deckwrap"));
+      $("#pl-deckwrap").classList.add("on");
+      reflow();
+      if (!wasOn) $("#pl-deckwrap").classList.remove("on");
+      showSlide(0);
+      bindDeck();
+      if (wasOn) $("#pl-stage").focus();
+    }
+
+    function bindDeck() {
+      $("#pl-prev").addEventListener("click", function () { showSlide(deck.i - 1); });
+      $("#pl-next").addEventListener("click", function () { showSlide(deck.i + 1); });
+      $("#pl-depth").value = deck.depth;
+      $("#pl-depth").addEventListener("change", onDepth);
+      $("#pl-stage").addEventListener("keydown", onKey);
+    }
+    bindDeck();
 
     var vbtn = $("#pl-view");
     vbtn.addEventListener("click", function () {
@@ -313,112 +360,204 @@
       if (on) $("#pl-stage").focus();
     });
 
-    /* arrows only steer the deck while it is the thing on screen */
-    $("#pl-stage").addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { showSlide(deck.i + 1); e.preventDefault(); }
-      else if (e.key === "ArrowLeft" || e.key === "PageUp") { showSlide(deck.i - 1); e.preventDefault(); }
-      else if (e.key === "Home") { showSlide(0); e.preventDefault(); }
-      else if (e.key === "End") { showSlide(deck.slides.length - 1); e.preventDefault(); }
-    });
   }
 
   /* ---------- slides ----------
-     A phase with nine steps is not a slide. Chunk long lists and mark the overflow
-     so the deck stays readable rather than faithful. */
+     Slides pack to the space that exists, not to a fixed bullet count: each section is
+     emitted whole, then reflowed against the real stage height so a slide carries as much
+     as it can hold and no more. That is what keeps the deck short and dense rather than
+     long and half empty. */
 
-  var PER_SLIDE = 6;
+  var deck = { i: 0, total: 0, depth: "summary" };
 
-  function chunk(items, n) {
-    var out = [];
-    for (var i = 0; i < items.length; i += n) out.push(items.slice(i, i + n));
-    return out;
-  }
-
-  /* Grouped sections keep their headings, but a group must not be split across
-     slides unless it is longer than a slide on its own. */
-  function groupChunks(items) {
+  /* Flatten a grouped section into list items, its headings included. */
+  function groupItems(items, cap) {
     var order = [], g = {};
     items.forEach(function (i) {
       var k = i.from.length ? i.from[0] : "General";
       if (!g[k]) { g[k] = []; order.push(k); }
       g[k].push(i.text);
     });
-    var slides = [], cur = [], n = 0;
+    var out = [];
     order.forEach(function (k) {
-      chunk(g[k], PER_SLIDE).forEach(function (part, idx) {
-        var need = part.length + 1;
-        if (n && n + need > PER_SLIDE + 2) { slides.push(cur); cur = []; n = 0; }
-        cur.push({ group: k + (idx ? " (cont.)" : ""), items: part });
-        n += need;
-      });
+      if (cap === -1) {                       /* summary: where it concentrates, not what it says */
+        out.push({ t: k + " — " + g[k].length });
+        return;
+      }
+      var list = cap ? g[k].slice(0, cap) : g[k];
+      out.push({ t: k + (cap && g[k].length > cap ? " — " + list.length + " of " + g[k].length : ""),
+        head: true });
+      list.forEach(function (t) { out.push({ t: t }); });
     });
-    if (cur.length) slides.push(cur);
-    return slides;
+    return out;
   }
 
   function buildSlides(plan, picks) {
+    var isSummary = deck.depth === "summary";
+    var cap = isSummary ? -1 : 0;
     var name = $("#f-name").value.trim() || "Migration plan";
-    var slides = [{
-      kind: "title", cls: "sl-title", title: name,
-      sub: summary(picks).replace(/<[^>]+>/g, "")
-    }];
+
+    var slides = [{ cls: "sl-title", title: name, sub: summary(picks).replace(/<[^>]+>/g, "") }];
 
     (window.PlannerTopology ? window.PlannerTopology.scenes(picks) : []).forEach(function (sc) {
       slides.push({ kicker: "Topology", title: sc.title, sub: sc.caption, svg: sc.svg });
     });
 
-    groupChunks(plan.prereqs).forEach(function (groups, i) {
-      slides.push({ kicker: "Before phase one", title: i ? "Prerequisites (cont.)" : "Prerequisites",
-        groups: groups });
-    });
+    if (plan.prereqs.length) {
+      slides.push({ kicker: "Before phase one", title: "Prerequisites",
+        sub: isSummary ? plan.prereqs.length + " prerequisites, by where they come from. The full list is in the document and the workbook." : "",
+        items: groupItems(plan.prereqs, cap) });
+    }
 
+    var STEP_CAP = 5;
     plan.phases.forEach(function (p, i) {
-      chunk(p.steps.map(function (s) { return s.text; }), PER_SLIDE).forEach(function (part, j) {
-        slides.push({
-          kicker: "Phase " + (i + 1) + " of " + plan.phases.length,
-          title: p.def.title + (j ? " (cont.)" : ""),
-          sub: j ? "" : p.def.objective,
-          bullets: part
-        });
+      var steps = p.steps, shown = isSummary ? steps.slice(0, STEP_CAP) : steps;
+      var items = shown.map(function (s) { return { t: s.text }; });
+      if (steps.length > shown.length) {
+        items.push({ t: "+ " + (steps.length - shown.length) + " more in the full plan", muted: true });
+      }
+      slides.push({
+        kicker: "Phase " + (i + 1) + " of " + plan.phases.length,
+        title: p.def.title, sub: p.def.objective, items: items
       });
     });
 
-    groupChunks(plan.risks).forEach(function (groups, i) {
-      slides.push({ kicker: "Name these early", title: i ? "Risks (cont.)" : "Risks", groups: groups });
-    });
-    groupChunks(plan.evidence).forEach(function (groups, i) {
-      slides.push({ kicker: "Proof", title: i ? "Evidence (cont.)" : "Evidence that closes it",
-        groups: groups });
-    });
-
-    if (plan.pages.length) {
-      chunk(plan.pages.map(function (id) { return byId[id].title; }), 10).forEach(function (part, i) {
-        slides.push({ kicker: "Reference", title: i ? "Use cases (cont.)" : "Where the detail lives",
-          bullets: part });
-      });
+    if (plan.risks.length) {
+      slides.push({ kicker: "Name these early", title: "Risks",
+        sub: isSummary ? plan.risks.length + " risks, by where they concentrate." : "",
+        items: groupItems(plan.risks, cap) });
+    }
+    if (plan.evidence.length) {
+      slides.push({ kicker: "Proof", title: "Evidence that closes it",
+        sub: isSummary ? plan.evidence.length + " artefacts, by what they prove." : "",
+        items: groupItems(plan.evidence, cap) });
+    }
+    if (!isSummary && plan.pages.length) {
+      slides.push({ kicker: "Reference", title: "Where the detail lives",
+        items: plan.pages.map(function (id) { return { t: byId[id].title }; }) });
     }
     return slides;
   }
 
-  function slideHtml(s, n, total) {
+  function slideHtml(s) {
     var h = '<div class="pl-slide' + (s.cls ? " " + s.cls : "") + '">';
     if (s.kicker) h += '<div class="sl-kicker">' + esc(s.kicker) + "</div>";
     h += "<h2>" + esc(s.title) + "</h2>";
     if (s.sub) h += '<p class="sl-sub">' + esc(s.sub) + "</p>";
     if (s.svg) h += '<figure class="pl-topo">' + s.svg + "</figure>";
-    if (s.bullets) h += "<ul>" + s.bullets.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>";
-    if (s.groups) {
-      h += "<ul>" + s.groups.map(function (g) {
-        return '<li><span class="sl-grp">' + esc(g.group) + "</span></li>"
-          + g.items.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+    if (s.items && s.items.length) {
+      h += '<ul class="sl-list">' + s.items.map(function (i) {
+        var c = i.head ? "sl-h" : (i.muted ? "sl-more" : "");
+        return "<li" + (c ? ' class="' + c + '"' : "") + ">" + esc(i.t) + "</li>";
       }).join("") + "</ul>";
     }
-    h += '<div class="sl-foot"><span>' + esc($("#f-name").value.trim() || "Migration plan")
-      + "</span><span>" + n + " / " + total + "</span></div>";
-    return h + "</div>";
+    return h + '<div class="sl-foot"><span class="sl-name"></span>'
+      + '<span class="sl-no"></span></div></div>';
   }
 
-  var deck = { slides: [], i: 0 };
+  function contSlide(el) {
+    var d = document.createElement("div");
+    d.className = "pl-slide";
+    d.setAttribute("data-cont", "1");
+    var k = el.querySelector(".sl-kicker");
+    d.innerHTML = (k ? '<div class="sl-kicker">' + k.innerHTML + "</div>" : "")
+      + "<h2>" + esc(el.querySelector("h2").textContent.replace(/ \(cont\.\)$/, "")) + " (cont.)</h2>"
+      + '<ul class="sl-list"></ul>'
+      + '<div class="sl-foot"><span class="sl-name"></span><span class="sl-no"></span></div>';
+    return d;
+  }
+
+  /* How much vertical room the list actually has: the slide's content box less every
+     sibling that is not the list. scrollHeight is unreliable here — the slide is an
+     absolutely positioned flex column, so it reports no overflow even when there is some. */
+  function listRoom(el) {
+    var cs = window.getComputedStyle(el);
+    var room = el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    Array.prototype.forEach.call(el.children, function (c) {
+      if (!c.classList.contains("sl-list")) room -= c.getBoundingClientRect().height;
+    });
+    return room;
+  }
+
+  function listFits(el, ul) {
+    return ul.getBoundingClientRect().height <= listRoom(el) + 1;
+  }
+
+  /* Fit a slide's list in the least space: try one column, then two, and only split onto a
+     continuation when even two columns will not hold it. Splitting last is what keeps the
+     deck short; trying one column first is what stops short lists becoming two stubby ones. */
+  function reflow() {
+    var stage = $("#pl-stage");
+    if (!stage) return;
+    var guard = 0;
+    for (var n = 0; n < stage.children.length && guard < 800; n++) {
+      var el = stage.children[n];
+      el.classList.add("active");
+      var ul = el.querySelector(".sl-list");
+      if (ul) {
+        ul.classList.remove("sl-2col");
+        if (!listFits(el, ul) && ul.children.length > 3) ul.classList.add("sl-2col");
+
+        while (!listFits(el, ul) && ul.children.length > 1 && guard++ < 800) {
+          var next = stage.children[n + 1];
+          if (!next || !next.hasAttribute("data-cont")) {
+            next = contSlide(el);
+            stage.insertBefore(next, el.nextSibling);
+          }
+          var nul = next.querySelector(".sl-list");
+          nul.insertBefore(ul.lastElementChild, nul.firstChild);
+          if (ul.lastElementChild && ul.lastElementChild.classList.contains("sl-h")) {
+            nul.insertBefore(ul.lastElementChild, nul.firstChild);
+          }
+        }
+      }
+      el.classList.remove("active");
+    }
+
+    /* An overfilled slide followed by a stub reads worse than two even ones. */
+    for (var m = 0; m < stage.children.length - 1; m++) {
+      var a = stage.children[m], bcont = stage.children[m + 1];
+      if (!bcont.hasAttribute("data-cont")) continue;
+      var au = a.querySelector(".sl-list"), bu = bcont.querySelector(".sl-list");
+      if (!au || !bu) continue;
+      a.classList.add("active");
+      while (au.children.length - 1 > bu.children.length + 1
+             && bu.getBoundingClientRect().height < listRoom(bcont)) {
+        bu.insertBefore(au.lastElementChild, bu.firstChild);
+      }
+      a.classList.remove("active");
+    }
+
+    var name = $("#f-name").value.trim() || "Migration plan";
+    deck.total = stage.children.length;
+    Array.prototype.forEach.call(stage.children, function (el, i) {
+      var nm = el.querySelector(".sl-name"), no = el.querySelector(".sl-no");
+      if (nm) nm.textContent = name;
+      if (no) no.textContent = (i + 1) + " / " + deck.total;
+    });
+  }
+
+  function slidesFromDom() {
+    return Array.prototype.map.call(document.querySelectorAll("#pl-stage .pl-slide"), function (el) {
+      var k = el.querySelector(".sl-kicker"), sub = el.querySelector(".sl-sub");
+      var out = {
+        cls: el.classList.contains("sl-title") ? "sl-title" : "",
+        kicker: k ? k.textContent : "",
+        title: el.querySelector("h2").textContent,
+        sub: sub ? sub.textContent : "",
+        foot: (el.querySelector(".sl-name") || {}).textContent || ""
+      };
+      var groups = [], flat = [];
+      Array.prototype.forEach.call(el.querySelectorAll(".sl-list li"), function (li) {
+        if (li.classList.contains("sl-h")) groups.push({ group: li.textContent, items: [] });
+        else if (groups.length) groups[groups.length - 1].items.push(li.textContent);
+        else flat.push(li.textContent);
+      });
+      if (groups.length) out.groups = groups;
+      if (flat.length) out.bullets = flat;
+      return out;
+    });
+  }
 
   function showSlide(n) {
     var els = document.querySelectorAll("#pl-stage .pl-slide");
@@ -432,16 +571,132 @@
   }
 
   function renderDeck(plan, picks) {
-    deck.slides = buildSlides(plan, picks);
-    var total = deck.slides.length;
     return '<div class="pl-deck" id="pl-deckwrap"><div class="pl-stage" id="pl-stage" tabindex="0" '
       + 'role="group" aria-roledescription="slide deck">'
-      + deck.slides.map(function (s, i) { return slideHtml(s, i + 1, total); }).join("")
+      + buildSlides(plan, picks).map(slideHtml).join("")
       + '</div><div class="pl-rail">'
       + '<button type="button" class="btn btn-ghost" id="pl-prev" aria-label="Previous slide">←</button>'
-      + '<span class="pl-count" id="pl-count">1 / ' + total + "</span>"
+      + '<span class="pl-count" id="pl-count">1 / 1</span>'
       + '<button type="button" class="btn btn-ghost" id="pl-next" aria-label="Next slide">→</button>'
+      + '<select id="pl-depth" aria-label="Deck depth">'
+      + '<option value="summary">Summary deck</option>'
+      + '<option value="full">Full detail</option></select>'
       + "</div></div>";
+  }
+
+  /* ---------- workbook ----------
+     One tab per heading. The extra columns are deliberately empty: this is meant to
+     leave the planner and become the tracker the migration is actually run from. */
+
+  function fieldRows(picks) {
+    var f = [
+      ["Reference", $("#f-name").value.trim()],
+      ["Sites in scope", $("#f-sites").value.trim() ? Number($("#f-sites").value.trim()) : ""],
+      ["Geographic spread", $("#f-spread").value
+        ? $("#f-spread").options[$("#f-spread").selectedIndex].text : ""]
+    ];
+    var byDim = {};
+    picks.forEach(function (p) {
+      if (p.dimension === "common") return;
+      (byDim[p.dimension] = byDim[p.dimension] || []).push(p.option.label);
+    });
+    var names = {
+      "wan": "WAN transport", "sdwan-vendor": "SD-WAN vendor", "proxy-sse": "Web proxy / SSE",
+      "firewall": "Perimeter firewall", "remote-access": "Remote access",
+      "security-controls": "Controls to match", "drivers": "Drivers"
+    };
+    Object.keys(names).forEach(function (k) {
+      if (byDim[k]) f.push([names[k], byDim[k].join(", ")]);
+    });
+    return f.map(function (r) { return [r[0], r[1]]; });
+  }
+
+  function workbook(plan, picks) {
+    var sheets = [];
+
+    sheets.push({
+      name: "Summary",
+      columns: [{ title: "Field", width: 26 }, { title: "Value", width: 70 }],
+      rows: fieldRows(picks).concat([
+        ["", ""],
+        ["Phases", plan.phases.length],
+        ["Steps", plan.phases.reduce(function (n, p) { return n + p.steps.length; }, 0)],
+        ["Prerequisites", plan.prereqs.length],
+        ["Risks", plan.risks.length],
+        ["Evidence items", plan.evidence.length],
+        ["Use cases referenced", plan.pages.length]
+      ])
+    });
+
+    var planRows = [];
+    plan.phases.forEach(function (p, i) {
+      p.steps.forEach(function (st, j) {
+        planRows.push([i + 1, p.def.title, p.def.objective, j + 1, st.text,
+          st.from.join(", "), "Not started", "", "", "", ""]);
+      });
+    });
+    sheets.push({
+      name: "Plan",
+      columns: [
+        { title: "Phase #", width: 9 }, { title: "Phase", width: 24 },
+        { title: "Objective", width: 46 }, { title: "Step #", width: 8 },
+        { title: "Step", width: 62 }, { title: "Driven by", width: 30 },
+        { title: "Status", width: 14 }, { title: "Owner", width: 18 },
+        { title: "Start", width: 12 }, { title: "Due", width: 12 }, { title: "Notes", width: 40 }
+      ],
+      rows: planRows
+    });
+
+    sheets.push({
+      name: "Prerequisites",
+      columns: [
+        { title: "Driven by", width: 30 }, { title: "Prerequisite", width: 70 },
+        { title: "Status", width: 14 }, { title: "Owner", width: 18 },
+        { title: "Needed by", width: 13 }, { title: "Notes", width: 40 }
+      ],
+      rows: plan.prereqs.map(function (r) {
+        return [r.from.join(", "), r.text, "Outstanding", "", "", ""];
+      })
+    });
+
+    sheets.push({
+      name: "Risks",
+      columns: [
+        { title: "Driven by", width: 30 }, { title: "Risk", width: 70 },
+        { title: "Likelihood", width: 12 }, { title: "Impact", width: 12 },
+        { title: "Mitigation", width: 46 }, { title: "Owner", width: 18 },
+        { title: "Status", width: 14 }
+      ],
+      rows: plan.risks.map(function (r) {
+        return [r.from.join(", "), r.text, "", "", "", "", "Open"];
+      })
+    });
+
+    sheets.push({
+      name: "Evidence",
+      columns: [
+        { title: "Driven by", width: 30 }, { title: "Evidence artefact", width: 70 },
+        { title: "Captured", width: 11 }, { title: "Date", width: 12 },
+        { title: "Where it lives", width: 34 }, { title: "Notes", width: 40 }
+      ],
+      rows: plan.evidence.map(function (r) {
+        return [r.from.join(", "), r.text, "No", "", "", ""];
+      })
+    });
+
+    sheets.push({
+      name: "Use cases",
+      columns: [
+        { title: "Use case", width: 52 }, { title: "Category", width: 16 },
+        { title: "Page", width: 46 }, { title: "Tags", width: 44 }
+      ],
+      rows: plan.pages.map(function (id) {
+        var c = byId[id];
+        return [c.title, c.category, c.file, (c.tags || []).join(", ")];
+      })
+    });
+
+    return sheets;
   }
 
   /* ---------- markdown export ---------- */

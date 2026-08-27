@@ -118,16 +118,52 @@ with sync_playwright() as p:
     pg.goto(BASE + "planner.html"); pg.wait_for_timeout(300)
     pg.select_option("#f-wan", "mpls"); pg.select_option("#f-proxy", "zscaler")
     pg.select_option("#f-ra", "anyconnect")
-    pg.click("#pl-go"); pg.wait_for_timeout(300)
+    pg.click("#pl-go"); pg.wait_for_timeout(400)
+    pg.click("#pl-view"); pg.wait_for_timeout(300)
     n_ph = pg.eval_on_selector_all(".pl-phase", "e=>e.length")
     n_st = pg.eval_on_selector_all(".pl-phase li", "e=>e.length")
     hrefs = pg.eval_on_selector_all(".pl-links a", "els=>els.map(e=>e.getAttribute('href'))")
+    n_topo = pg.eval_on_selector_all(".pl-doc .pl-topo svg", "e=>e.length")
+    # every export must actually build, and no slide may overflow its stage
+    exports = pg.evaluate("""() => {
+      const r = {};
+      try { r.pptx = window.PlannerExport._pptxBlob([{title:'t',bullets:['a']}]).size > 0; }
+      catch (e) { r.pptx = 'ERR ' + e.message; }
+      try { r.xlsx = window.PlannerExport._xlsxBlob([{name:'S',columns:[{title:'A'}],rows:[['x']]}]).size > 0; }
+      catch (e) { r.xlsx = 'ERR ' + e.message; }
+      try { r.drawio = window.PlannerTopology.drawio([]).indexOf('<mxfile') === 0; }
+      catch (e) { r.drawio = 'ERR ' + e.message; }
+      return r;
+    }""")
+    # a slide whose list outgrows its room is unpresentable; measure it the way reflow does
+    over = pg.evaluate("""() => {
+      const out = [];
+      document.querySelectorAll('#pl-stage .pl-slide').forEach((el, i) => {
+        el.classList.add('active');
+        const ul = el.querySelector('.sl-list');
+        if (ul) {
+          const cs = getComputedStyle(el);
+          let room = el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+          [...el.children].forEach(c => { if (!c.classList.contains('sl-list')) room -= c.getBoundingClientRect().height; });
+          if (ul.getBoundingClientRect().height > room + 1) out.push(i);
+        }
+        el.classList.remove('active');
+      });
+      return out;
+    }""")
+    n_sum = pg.eval_on_selector_all("#pl-stage .pl-slide", "e=>e.length")
     b.close()
 bad = [h for h in set(hrefs) if not (pathlib.Path.cwd() / h).exists()]
 if errs: print("console errors:", errs[:3]); sys.exit(1)
 if n_ph < 5 or n_st < 15: print("planner composed too little: %d phases / %d steps" % (n_ph, n_st)); sys.exit(1)
 if bad: print("broken plan links:", bad); sys.exit(1)
-print("OK — composes %d phases / %d steps / %d page links" % (n_ph, n_st, len(hrefs)))
+if n_topo != 3: print("expected 3 topology diagrams, got %d" % n_topo); sys.exit(1)
+bad_exp = [k for k, v in exports.items() if v is not True]
+if bad_exp: print("export failures:", {k: exports[k] for k in bad_exp}); sys.exit(1)
+if over: print("slides overflowing their stage:", over); sys.exit(1)
+if n_sum > 24: print("summary deck too long: %d slides" % n_sum); sys.exit(1)
+print("OK — %d phases / %d steps / %d links / 3 diagrams / %d-slide summary deck / pptx+xlsx+drawio"
+      % (n_ph, n_st, len(hrefs), n_sum))
 EOF
 
 if [ "${1:-}" = "--external" ]; then
