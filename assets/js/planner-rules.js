@@ -140,11 +140,11 @@ window.PLANNER_RULES = {
             "Inventory overlay hubs, spoke counts per region, and where each fabric terminates."
             ] },
             { phase: "design", steps: [
-            "Fix the regional eBGP hub handoff and anchor cross-region symmetry with AS-path length.",
+            "Fix the regional eBGP hub handoff: Cato is eBGP-only (ASN 64515), route filtering agreed, symmetry anchored by AS-path.",
             "Agree route filtering both ways: the default route and any parallel-connected site's prefixes."
             ] },
             { phase: "foundation", steps: [
-            "Stand the hub socket up beside the legacy hub and bring eBGP neighbours Established."
+            "Stand up a parallel Socket beside each legacy hub and validate eBGP symmetry before any branch moves."
             ] },
             { phase: "pilot", steps: [
             "Exchange test prefixes across the handoff, migrate one spoke, then rehearse the rollback."
@@ -239,7 +239,7 @@ window.PLANNER_RULES = {
             ] },
           ],
           prereqs: [
-            "Two allocated IPs at two PoPs, with Support confirming separate maintenance schedules.",
+            "Two Cato allocated IPs at separate PoPs, with Support confirming separate maintenance schedules.",
             "Generated PSKs of up to 64 characters exchanged out of band, never by email.",
             "Firewall releases confirmed capable of IKEv2 on a tunnel interface, or the policy-based fallback agreed.",
             "Change windows booked for the failover drill and the deliberate device-reload drill."
@@ -288,7 +288,7 @@ window.PLANNER_RULES = {
           ],
           risks: [
             "Alt-WAN BGP needs local routing set to ANY-ANY, or traffic hairpins to the PoP and turns asymmetric.",
-            "An Alt-WAN failure does not trigger socket HA failover — use the LAN BGP handoff where HA sockets are required.",
+            "Alt-WAN failure does not trigger Socket HA failover — prefer a LAN BGP handoff where HA matters.",
             "The gradual deployment gateway policy covers RFC1918 only, and cannot be enabled for selected private ranges.",
             "Alt-WAN Recovery is not compatible with BGP-connected sites — pick one and document it per site class."
           ],
@@ -360,10 +360,10 @@ window.PLANNER_RULES = {
             "Fix the regional eBGP hub handoff: Cato is eBGP-only (ASN 64515), route filtering agreed, symmetry anchored by AS-path."
             ] },
             { phase: "foundation", steps: [
-            "Deploy a parallel Socket at each Versa hub and validate eBGP symmetry before any branch moves."
+            "Stand up a parallel Socket beside each legacy hub and validate eBGP symmetry before any branch moves."
             ] },
             { phase: "network-waves", steps: [
-            "Disable the Versa spoke, bring up the Socket site, and let BGP propagate to both domains."
+            "Disable the legacy spoke, turn up the Cato site, and let routes reconverge per wave."
             ] },
             { phase: "security-cutover", steps: [
             "Split rules by destination into WAN and Internet policies; run IPS and NGAM in monitor."
@@ -382,7 +382,7 @@ window.PLANNER_RULES = {
             "Per-rule UTM profiles do not survive: translate variance into scoped exceptions, never per-rule signature tuning."
           ],
           evidence: [
-            "Show BGP Status at the hub with neighbours Established and overlay prefixes in the Cato routing table.",
+            "Show BGP Status at the hub with neighbours Established and the expected prefixes learned.",
             "Bidirectional reachability between the pilot Socket branch and un-migrated VOS sites through the hub handoff.",
             "Rule-hit events for each translated rule compared against the Versa Analytics baseline, deltas triaged.",
             "A timed rollback: Versa spoke re-enabled, prefixes reconverged, recorded during the wave window."
@@ -601,7 +601,7 @@ window.PLANNER_RULES = {
             "Build up to six active tunnels per HA role to ZIA, AES-GCM above 100 Mbps."
             ] },
             { phase: "pilot", steps: [
-            "Move the pilot cohort's private-app access onto Cato rules before touching its ZCC install.",
+            "Move the pilot cohort's private-app access onto Cato WAN firewall rules before touching its ZCC install.",
             "Then swap that same cohort off ZCC, clearing the ZIA PAC in one GPO change."
             ] },
             { phase: "security-cutover", steps: [
@@ -620,8 +620,8 @@ window.PLANNER_RULES = {
           risks: [
             "SDP users landing in the All Unidentified Users bucket silently stop matching group-scoped SWG rules.",
             "SaaS tenants conditional-access-pinned to Zscaler egress ranges lock the cohort out the moment breakout moves to the PoP.",
-            "Apps ZIA quietly exempted break under TLSi - rebuild bypasses from observed events, never port the ZIA exemption list.",
-            "Narrow change windows, not the technology, set the pace; agree the cadence for every phase before kickoff."
+            "Apps ZIA quietly exempted break under TLSi — rebuild bypasses from observed events, never port the ZIA exemption list.",
+            "Narrow change windows, not the technology, set the pace; agree the cadence for every phase before kick-off."
           ],
           evidence: [
             "Side-by-side export: Cato Internet firewall events next to the matching ZIA log lines for the agreed test list.",
@@ -658,13 +658,13 @@ window.PLANNER_RULES = {
             "Steering inventory complete, with each mechanism's exception list and its named owner.",
             "The named private apps' site or VPC behind a Socket or vSocket before any user swaps.",
             "Cato SCIM standing alongside Netskope's, both provisioning independently from the same IdP.",
-            "Netskope Client MDM package and steering configuration kept live - that package is the rollback."
+            "Netskope Client MDM package and steering configuration kept live — that package is the rollback."
           ],
           risks: [
             "Never overlap the agents: on macOS the Cato Client cannot run beside another connected VPN profile.",
-            "Cato SaaS Security API connectors centre on M365 - verify Box, Salesforce or Workspace coverage before retiring API-CASB.",
+            "Cato SaaS Security API connectors centre on M365 — verify Box, Salesforce or Workspace coverage before retiring API-CASB.",
             "Netskope User Alert captures written justification; Cato Prompt only warns and continues, so do not claim parity.",
-            "Cloud Firewall only ever judged steered traffic - quiet rules wake up once Cato sees every egress flow."
+            "Cloud Firewall only ever judged steered traffic — quiet rules wake up once Cato sees every egress flow."
           ],
           evidence: [
             "Data Control monitor events matching the rebuilt DLP profile's hits on the agreed test payloads.",
@@ -687,7 +687,7 @@ window.PLANNER_RULES = {
             "Push the Cato CA fleet-wide alongside the Forcepoint CA and block QUIC before inspecting."
             ] },
             { phase: "network-waves", steps: [
-            "Cut each site's breakout to the Socket, then retire NGFW and Content Gateway."
+            "Cut each site's breakout to the Socket, leaving NGFW and Content Gateway reachable for PAC-steered cohorts."
             ] },
             { phase: "security-cutover", steps: [
             "Remove the PAC per cohort via GPO and steer that cohort's web traffic to Cato."
@@ -696,19 +696,20 @@ window.PLANNER_RULES = {
             "Enable Client Always-On per cohort, only once it is off the legacy VPN client."
             ] },
             { phase: "decommission", steps: [
+            "Retire NGFW and Content Gateway only after the last cohort's PAC is removed — it is the rollback path until then.",
             "Time non-renewal to the last wave; Forcepoint licences are non-cancellable with reinstatement fees."
             ] },
           ],
           prereqs: [
-            "The cohort's PAC and GPO distribution path documented before the flip - it is the rollback lever.",
+            "The cohort's PAC and GPO distribution path documented before the flip — it is the rollback lever.",
             "DLP estate rationalised to direct-map classifiers; fingerprints and ML classifiers scoped as a separate conversation.",
             "Egress-IP-pinned SaaS tenant restrictions and partner allowlists enumerated with owners named.",
             "Both platforms policy-frozen through each wave so the fallback stays a known-good state."
           ],
           risks: [
-            "Exactly one platform owns TLS inspection per cohort - scope Cato TLSi away from users still on the PAC.",
+            "Exactly one platform owns TLS inspection per cohort — scope Cato TLSi away from users still on the PAC.",
             "Proxy-embedded NTLM/Kerberos auth and X-Authenticated-User headers vanish with the proxy; downstream consumers need redesign, not mapping.",
-            "Websense time-quota browsing has no like-for-like action - Prompt covers Confirm, validate quota policies one by one.",
+            "Websense time-quota browsing has no like-for-like action — Prompt covers Confirm, validate quota policies one by one.",
             "Never claim a Forcepoint EOL you cannot cite; only a model-level NGFW notice the customer holds is concrete."
           ],
           evidence: [
@@ -748,9 +749,9 @@ window.PLANNER_RULES = {
             "The iboss PAC left hosted and change-frozen for the whole programme as the fallback rail."
           ],
           risks: [
-            "Never split one device between both clouds - two TLS-intercepting redirection agents create undiagnosable breakage.",
+            "Never split one device between both clouds — two TLS-intercepting redirection agents create undiagnosable breakage.",
             "Browsers using DNS-over-HTTPS bypass Content Restrictions; block DoH in the same change as SafeSearch.",
-            "Category names are not equivalence - prove parity with a test URL list per cohort, never by name-matching.",
+            "Category names are not equivalence — prove parity with a test URL list per cohort, never by name-matching.",
             "Education estates treat per-user reporting as statutory evidence; terminate the subscription only after archiving the retention window."
           ],
           evidence: [
@@ -765,7 +766,7 @@ window.PLANNER_RULES = {
           pages: ["migration-symantec", "migration-symantec-policy", "migration-methodology", "management-visibility"],
           phases: [
             { phase: "discover", steps: [
-            "Pull Reporter hit data and archive access logs in week one - Reporter is EOL."
+            "Pull Reporter hit data and archive access logs in week one — Reporter is EOL."
             ] },
             { phase: "design", steps: [
             "Classify every CPL layer as business intent, proxy plumbing or dead before mapping."
@@ -793,9 +794,9 @@ window.PLANNER_RULES = {
             "Endpoint-DLP hybrid decided up front, with Cato device posture requiring the agent to be running."
           ],
           risks: [
-            "No automated CPL-to-Cato converter exists - rationalise on hit data rather than promising a port.",
+            "No automated CPL-to-Cato converter exists — rationalise on hit data rather than promising a port.",
             "IWA realms, BCAAA, Kerberos SPNs and forwarded user headers all die with the proxy; inventory their consumers first.",
-            "WSS Agent conflicts with third-party tunnel clients - never run it alongside the Cato Client.",
+            "WSS Agent conflicts with third-party tunnel clients — never run it alongside the Cato Client.",
             "ProxySG local category databases and WSS custom categories will not transfer; rebuilding them is voluminous manual work."
           ],
           evidence: [
@@ -810,13 +811,13 @@ window.PLANNER_RULES = {
           pages: ["migration-cisco", "migration-cisco-policy", "migration-methodology", "security-tls-inspection"],
           phases: [
             { phase: "discover", steps: [
-            "Map Cisco EA, Meraki co-term and Umbrella renewal/EOL dates against ASA and vEdge milestones."
+            "Map Cisco EA, Meraki co-term and Umbrella renewal/EOL dates onto the migration calendar alongside the ASA and vEdge milestones."
             ] },
             { phase: "design", steps: [
             "Export destination lists to CSV and dedupe them against Cato system categories."
             ] },
             { phase: "foundation", steps: [
-            "Stand up regional interconnect hubs with an eBGP handoff to each Viptela or Meraki hub.",
+            "Stand up regional interconnect hubs with an eBGP handoff and OMP-to-BGP redistribution, validated with test prefixes.",
             "Push the Cato certificate via MDM alongside the Umbrella CA before any decryption moves.",
             "Rebuild Umbrella selective-decryption lists as Cato TLS bypasses before the first inspected flow."
             ] },
@@ -838,10 +839,10 @@ window.PLANNER_RULES = {
             "AnyConnect profiles retained in MDM so any user cohort rolls back with a single push."
           ],
           risks: [
-            "Umbrella network identities key on the site's public egress IP - policy stops matching the moment the Socket goes live.",
+            "Umbrella network identities key off the site egress IP — a live Socket stops matching that policy immediately.",
             "Two overlays joined in more than one place create asymmetric return paths that break stateful inspection.",
             "Umbrella blocks whole apps at domain level; decide per app whether Cato blocks it or restricts activities.",
-            "Legacy SKUs keep TAC support to 2030 - argue the customer's own calendar, never a fabricated end-of-life."
+            "Legacy SKUs keep TAC support to 2030 — argue the customer's own calendar, never a fabricated end-of-life."
           ],
           evidence: [
             "CMA events and rule hit counts compared with Umbrella and FMC reports per wave before decommissioning.",
@@ -851,7 +852,7 @@ window.PLANNER_RULES = {
           ],
         },
         {
-          key: "none-proxy", label: "No incumbent proxy or SSE - greenfield SWG on Cato",
+          key: "none-proxy", label: "No incumbent proxy or SSE — greenfield SWG on Cato",
           pages: ["migration-methodology", "security-tls-inspection", "security-consistent", "security-firewall-refresh", "management-pov-framework"],
           phases: [
             { phase: "discover", steps: [
@@ -882,7 +883,7 @@ window.PLANNER_RULES = {
           risks: [
             "There is no incumbent bypass list to mine, so pinned and mTLS apps surface only under live inspection.",
             "Skipping the per-OS padlock verification turns the first inspection wave into a fleet-wide outage.",
-            "First enforcement is the moment users notice security exists - brief the helpdesk before arming any block.",
+            "First enforcement is the moment users notice security exists — brief the helpdesk before arming any block.",
             "No hit-count history means no baseline; soak every rule in monitor before it blocks business traffic."
           ],
           evidence: [
@@ -985,7 +986,7 @@ window.PLANNER_RULES = {
             "Retire zero-hit rules and collapse duplicate address objects before a single rule or UTM profile pair is translated."
             ] },
             { phase: "foundation", steps: [
-            "Deploy a parallel socket at each regional hub and peer eBGP over the transit VLAN.",
+            "Deploy parallel Sockets at each FortiGate regional hub and validate eBGP symmetry with test prefixes first.",
             "Filter the default route and any parallel-connected site's prefixes inbound on that neighbour."
             ] },
             { phase: "network-waves", steps: [
@@ -1004,7 +1005,7 @@ window.PLANNER_RULES = {
           risks: [
             "Editing BGP filters resets the session immediately — make filter changes in the build window.",
             "Prefixes tagged community 32768 stay in the hub socket's table and never reach the PoP.",
-            "Traffic that escaped inspection with no UTM profile attached now gets inspected — triage before blocking.",
+            "Traffic that escaped inspection because no UTM profile was attached will now be inspected — triage in monitor.",
             "FortiLink-managed switches and APs lose their controller when the branch FortiGate is decommissioned."
           ],
           evidence: [
@@ -1062,7 +1063,7 @@ window.PLANNER_RULES = {
             ] },
             { phase: "foundation", steps: [
             "Build primary and secondary tunnels bidirectionally with Initiate Connection by Cato enabled.",
-            "Add one BGP neighbour per tunnel, maximum two per site; Cato prepends the secondary."
+            "Add one BGP neighbour per tunnel, two maximum; Cato prepends the secondary so the primary wins."
             ] },
             { phase: "pilot", steps: [
             "Drop the primary tunnel and time the failover to the alternate PoP."
@@ -1148,13 +1149,13 @@ window.PLANNER_RULES = {
             "Confirm the pilot group syncs and stage posture profiles in monitor before user-scoped rules."
             ] },
             { phase: "pilot", steps: [
-            "Swap the 5-25 user pilot cohort in one MDM or GPO window.",
+            "Swap the 5–25 user pilot cohort in one MDM or GPO window.",
             "Uninstall every incumbent agent and clear its PAC or forwarding profile, then install the Cato Client.",
             "Walk the cohort's acceptance checklist; never two SWG agents inspecting one flow."
             ] },
             { phase: "remote-access", steps: [
             "Roll departmental waves with the same MDM uninstall-install job and per-cohort rollback, split-tunnel first.",
-            "After a clean baseline week, require the posture profile that recreates the ISE posture rules and add an always-on rule."
+            "After a clean baseline week, require the posture profile that recreates the exported HostScan posture rules and add an always-on rule."
             ] },
             { phase: "decommission", steps: [
             "Drain sessions, disable tunnel-groups, retire the headends and cancel support renewals."
@@ -1318,8 +1319,8 @@ window.PLANNER_RULES = {
             "Roll the Cato Client split-tunnelled for RFC 1918 while ZCC keeps internet on ZIA."
             ] },
             { phase: "pilot", steps: [
-            "For the pilot cohort only, move private-app access onto Cato WAN firewall rules.",
-            "Swap that cohort off ZCC, clearing the ZIA PAC in the same GPO change."
+            "Move the pilot cohort's private-app access onto Cato WAN firewall rules before touching its ZCC install.",
+            "Then swap that same cohort off ZCC, clearing the ZIA PAC in one GPO change."
             ] },
             { phase: "remote-access", steps: [
             "Switch the cohort's SDP client to always-on once it is off ZCC.",
@@ -1330,7 +1331,7 @@ window.PLANNER_RULES = {
             ] },
           ],
           prereqs: [
-            "A dedicated pilot group provisioned over SCIM and visibly syncing before any rule references it.",
+            "IdP connected and the pilot group provisioned over SCIM, visibly syncing before any rule references it.",
             "ZIA stays authoritative outside the cohort; nothing in the pilot touches wider forwarding.",
             "The same GPO or MDM channel that deployed ZCC, able to remove it and its forwarding profile.",
             "A baseline week of Experience Monitoring scores captured in the dual-agent state."
@@ -1338,7 +1339,7 @@ window.PLANNER_RULES = {
           risks: [
             "Coexistence means ZCC riding inside the Cato tunnel — never two SWGs inspecting one flow.",
             "SDP users landing in All Unidentified Users silently break group-scoped rules; prove attribution first.",
-            "SaaS tenants pinned to Zscaler egress ranges lock the cohort out when egress moves.",
+            "SaaS tenants conditional-access-pinned to Zscaler egress ranges lock the cohort out the moment breakout moves to the PoP.",
             "GPO-pushed ZIA PAC files outlive ZCC removal and steer traffic around Cato entirely."
           ],
           evidence: [
@@ -1359,7 +1360,7 @@ window.PLANNER_RULES = {
             "Put private apps behind a Socket, connect the IdP and stage posture profiles in monitor."
             ] },
             { phase: "pilot", steps: [
-            "Swap the 5-25 user pilot cohort in one MDM or GPO window.",
+            "Swap the 5–25 user pilot cohort in one MDM or GPO window.",
             "Uninstall every incumbent agent and clear its PAC or forwarding profile, then install the Cato Client.",
             "Walk the cohort's acceptance checklist; never two SWG agents inspecting one flow."
             ] },
@@ -1728,21 +1729,22 @@ window.PLANNER_RULES = {
           pages: ["network-mpls-migration", "migration-journey-mpls", "migration-methodology", "network-sdwan", "network-resilient-site-design", "management-vendor-consolidation", "management-pov-framework"],
           phases: [
             { phase: "discover", steps: [
-            "Map every MPLS circuit to its site, contract end date, notice period and the prefixes it must still reach."
+            "Map every MPLS circuit to its site, contract end date, notice period and the prefixes that site must still reach."
             ] },
             { phase: "design", steps: [
             "Choose the co-existence pattern: routed ranges at a static hub or eBGP handoff."
             ] },
             { phase: "foundation", steps: [
-            "Connect the DC interconnect socket beside the CE router and add one routed range per site.",
+            "Connect the DC interconnect socket beside the CE router and add one routed range per MPLS site.",
             "Prove reachability both ways between migrated and un-migrated sites before the first wave."
             ] },
             { phase: "network-waves", steps: [
-            "Migrate sites in contract-expiry order, deleting each routed range as its prefix moves and filling the reachability matrix."
+            "Migrate sites in contract-expiry order, deleting each routed range as its prefix moves.",
+            "Fill in the reachability matrix wave by wave, both directions, before starting the next."
             ] },
             { phase: "decommission", steps: [
             "Withdraw the last routed range, remove the CE static route and decommission the MPLS router.",
-            "Serve notice against the notice period, then confirm the circuit contract is cancelled."
+            "Serve notice within the notice period, then cancel the MPLS contract."
             ] },
             { phase: "handover", steps: [
             "Hand over the completed reachability matrix with dated Topology screenshots for every wave."
@@ -1800,7 +1802,7 @@ window.PLANNER_RULES = {
             "A change window agreed with the appliance owner for both the handoff route and the rollback."
           ],
           risks: [
-            "Rule names never line up between vendors — judge parity on flow outcomes, not labels.",
+            "Rule names never line up between vendors — compare on flow outcomes, never on labels.",
             "Migrating the whole rulebase migrates the shadowed cruft; rationalise on hit counts first.",
             "LAN Firewall parity is evidenced from Socket-generated events, not PoP events — set that expectation.",
             "The refresh quote has a clock on it; a slipped pilot pushes the customer back to like-for-like."
@@ -2011,7 +2013,7 @@ window.PLANNER_RULES = {
           ],
           evidence: [
             "Inventory spreadsheet, dated and owned by a named person on the customer side.",
-            "Rule hit count report PDF covering Internet Firewall, WAN Firewall and Network Rules together.",
+            "Home → Reports rule hit count PDF covering Internet, WAN and Network Rules policies.",
             "Audit Trail screenshot for the PoV window — one attributed log across every policy.",
             "Renewal-timeline overlay with a verdict marked against each contract in the next 24 months."
           ],

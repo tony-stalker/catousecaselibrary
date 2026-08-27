@@ -2,10 +2,10 @@
 """Report SVG diagram texts that escape the viewBox or overflow their enclosing rect (user units)."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from chromium import launch
 
-EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
-BASE = "file:///Users/tonystalker/Documents/claude/usecaselibrary/"
-ROOT = Path("/Users/tonystalker/Documents/claude/usecaselibrary")
+ROOT = Path(__file__).resolve().parent.parent
+BASE = ROOT.as_uri() + "/"
 
 JS = """
 (() => {
@@ -39,7 +39,7 @@ JS = """
 """
 
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE)
+    b = launch(p)
     pg = b.new_page(viewport={"width": 1440, "height": 1000})
     for f in sorted((ROOT / "usecases").glob("*.html")):
         pg.goto(BASE + "usecases/" + f.name)

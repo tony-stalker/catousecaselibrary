@@ -18,6 +18,8 @@ Transforms:
 """
 import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parent.parent
@@ -119,6 +121,11 @@ def main():
         "> internal master library by `_extract/build-prospect.py`; all changes are made\n"
         "> there and regenerated. Wording rules live in the generator.\n")
     (OUT / ".gitignore").write_text(".DS_Store\n")
+    # the copied search index was built from the internal pages; rebuild it from
+    # the transformed output so prospects never search (or receive) internal wording
+    subprocess.run([sys.executable, str(Path(__file__).resolve().parent / "build-search.py"),
+                    "--root", str(OUT)], check=True)
+
     print(f"prospect edition generated: {n} pages + index + assets -> {OUT}")
 
 if __name__ == "__main__":

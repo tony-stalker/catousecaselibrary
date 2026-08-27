@@ -20,7 +20,7 @@ mkdir -p dist
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-cp index.html "$OUT/"
+cp index.html planner.html "$OUT/"
 [ -f whatsnew.html ] && cp whatsnew.html "$OUT/"
 cp -R usecases "$OUT/usecases"
 cp -R assets "$OUT/assets"
@@ -77,7 +77,9 @@ Everything works offline (file://) — no server, no internet required.
 
 Start with the "Start here" journeys on the index page, or use the
 search box (full page text) and clickable tags to find a use case.
-"What's new" lists recent changes. ${DECKNOTE}
+"What's new" lists recent changes. The Migration Planner in the top
+nav composes a phased migration methodology from an opportunity's
+existing estate. ${DECKNOTE}
 EOF
 
 STAMP=$(date +%Y-%m-%d)

@@ -157,25 +157,31 @@
     });
   }
 
-  function summary(picks) {
+  /* Sentence-case a label for use mid-sentence, leaving acronyms and names alone. */
+  function decap(s) { return /^[A-Z][a-z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+
+  /* asText: the same sentence with raw values and a real em dash — for the deck,
+     Markdown and PowerPoint, where an HTML round-trip would leave entities behind. */
+  function summary(picks, asText) {
+    var t = asText ? String : esc;
     var name = $("#f-name").value.trim();
     var sites = $("#f-sites").value.trim();
     var spread = $("#f-spread");
-    var spreadTxt = spread.value ? spread.options[spread.selectedIndex].text.toLowerCase() : "";
+    var spreadTxt = spread.value ? decap(spread.options[spread.selectedIndex].text) : "";
     var estate = picks.filter(function (p) {
       return p.dimension !== "drivers" && p.dimension !== "security-controls"
         && p.dimension !== "common";
     }).map(function (p) { return p.option.label; });
     var drivers = picks.filter(function (p) { return p.dimension === "drivers"; })
-      .map(function (p) { return p.option.label.toLowerCase(); });
+      .map(function (p) { return decap(p.option.label); });
 
     var bits = [];
-    if (name) bits.push("<strong>" + esc(name) + "</strong>");
-    if (sites) bits.push(esc(sites) + " site" + (sites === "1" ? "" : "s") + (spreadTxt ? ", " + esc(spreadTxt) : ""));
-    else if (spreadTxt) bits.push(esc(spreadTxt));
-    var s = bits.join(" &mdash; ");
-    if (estate.length) s += (s ? ". " : "") + "Displacing " + esc(estate.join(", ")) + ".";
-    if (drivers.length) s += " Driven by " + esc(drivers.join(", ")) + ".";
+    if (name) bits.push(asText ? name : "<strong>" + esc(name) + "</strong>");
+    if (sites) bits.push(t(sites) + " site" + (sites === "1" ? "" : "s") + (spreadTxt ? ", " + t(spreadTxt) : ""));
+    else if (spreadTxt) bits.push(t(spreadTxt));
+    var s = bits.join(asText ? " — " : " &mdash; ");
+    if (estate.length) s += (s ? ". " : "") + "Displacing " + t(estate.join(", ")) + ".";
+    if (drivers.length) s += (s ? (estate.length ? " " : ". ") : "") + "Driven by " + t(drivers.join(", ")) + ".";
     return s;
   }
 
@@ -230,15 +236,14 @@
       + '<button type="button" class="btn btn-ghost" id="pl-copy">Copy as Markdown</button>'
       + "</div></div>";
 
+    var scenes = window.PlannerTopology ? window.PlannerTopology.scenes(picks) : [];
+
+    h += '<div class="pl-doc" id="pl-doc">';
     if (plan.prereqs.length) {
       h += '<div class="callout warn" style="margin-bottom:18px"><div class="co-title">'
         + "Before phase one (" + plan.prereqs.length + ")</div>"
         + grouped(plan.prereqs) + "</div>";
     }
-
-    var scenes = window.PlannerTopology ? window.PlannerTopology.scenes(picks) : [];
-
-    h += '<div class="pl-doc" id="pl-doc">';
     if (scenes.length) {
       h += '<div class="card" style="margin-bottom:18px"><div class="section-kicker">'
         + "Topology &mdash; before, during, after</div>"
@@ -322,25 +327,34 @@
       setTimeout(function () { dio.textContent = "Download .drawio"; }, 1800);
     });
     function onKey(e) {
+      if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { showSlide(deck.i + 1); e.preventDefault(); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp") { showSlide(deck.i - 1); e.preventDefault(); }
       else if (e.key === "Home") { showSlide(0); e.preventDefault(); }
       else if (e.key === "End") { showSlide(deck.total - 1); e.preventDefault(); }
     }
 
-    /* Changing depth rebuilds the deck from scratch — it has to be measured again. */
-    function onDepth() {
-      deck.depth = this.value;
-      var wasOn = $("#pl-deckwrap").classList.contains("on");
-      var host = $("#pl-deckwrap").parentNode, holder = document.createElement("div");
+    /* Depth changes and window resizes both invalidate the packing — rebuild the deck
+       DOM and measure again. */
+    function rebuildDeck(keep) {
+      var wrap = $("#pl-deckwrap");
+      if (!wrap) return;
+      var wasOn = wrap.classList.contains("on");
+      var host = wrap.parentNode, holder = document.createElement("div");
       holder.innerHTML = renderDeck(plan, picks);
-      host.replaceChild(holder.firstChild, $("#pl-deckwrap"));
+      host.replaceChild(holder.firstChild, wrap);
       $("#pl-deckwrap").classList.add("on");
       reflow();
       if (!wasOn) $("#pl-deckwrap").classList.remove("on");
-      showSlide(0);
+      showSlide(keep ? Math.min(deck.i, deck.total - 1) : 0);
       bindDeck();
+      setPageSize();
       if (wasOn) $("#pl-stage").focus();
+    }
+
+    function onDepth() {
+      deck.depth = this.value;
+      rebuildDeck(false);
     }
 
     function bindDeck() {
@@ -348,18 +362,31 @@
       $("#pl-next").addEventListener("click", function () { showSlide(deck.i + 1); });
       $("#pl-depth").value = deck.depth;
       $("#pl-depth").addEventListener("change", onDepth);
-      $("#pl-stage").addEventListener("keydown", onKey);
+      $("#pl-deckwrap").addEventListener("keydown", onKey);
     }
     bindDeck();
+
+    if (winResize) window.removeEventListener("resize", winResize);
+    var rt = null;
+    winResize = function () {
+      if (!$("#pl-deckwrap")) return;
+      clearTimeout(rt);
+      rt = setTimeout(function () { rebuildDeck(true); }, 150);
+    };
+    window.addEventListener("resize", winResize);
 
     var vbtn = $("#pl-view");
     vbtn.addEventListener("click", function () {
       var on = $("#pl-deckwrap").classList.toggle("on");
       $("#pl-doc").classList.toggle("off", on);
+      out.classList.toggle("presenting", on);
       vbtn.textContent = on ? "Document" : "Present";
+      setPageSize();
       if (on) $("#pl-stage").focus();
     });
 
+    out.classList.remove("presenting");
+    setPageSize();
   }
 
   /* ---------- slides ----------
@@ -369,6 +396,16 @@
      long and half empty. */
 
   var deck = { i: 0, total: 0, depth: "summary" };
+  var winResize = null;
+
+  /* The deck prints landscape, the document portrait — one static @page rule cannot
+     serve both, so the rule follows whichever view is live (covers Cmd+P too). */
+  function setPageSize() {
+    var st = document.getElementById("pl-page");
+    if (!st) { st = document.createElement("style"); st.id = "pl-page"; document.head.appendChild(st); }
+    var on = document.querySelector("#pl-deckwrap.on");
+    st.textContent = "@page { size: " + (on ? "landscape" : "portrait") + "; margin: 10mm }";
+  }
 
   /* Flatten a grouped section into list items, its headings included. */
   function groupItems(items, cap) {
@@ -397,7 +434,7 @@
     var cap = isSummary ? -1 : 0;
     var name = $("#f-name").value.trim() || "Migration plan";
 
-    var slides = [{ cls: "sl-title", title: name, sub: summary(picks).replace(/<[^>]+>/g, "") }];
+    var slides = [{ cls: "sl-title", title: name, sub: summary(picks, true) }];
 
     (window.PlannerTopology ? window.PlannerTopology.scenes(picks) : []).forEach(function (sc) {
       slides.push({ kicker: "Topology", title: sc.title, sub: sc.caption, svg: sc.svg });
@@ -451,8 +488,8 @@
         return "<li" + (c ? ' class="' + c + '"' : "") + ">" + esc(i.t) + "</li>";
       }).join("") + "</ul>";
     }
-    return h + '<div class="sl-foot"><span class="sl-name"></span>'
-      + '<span class="sl-no"></span></div></div>';
+    return h + '<div class="sl-foot"><span class="sl-name">&nbsp;</span>'
+      + '<span class="sl-no">&nbsp;</span></div></div>';
   }
 
   function contSlide(el) {
@@ -463,7 +500,7 @@
     d.innerHTML = (k ? '<div class="sl-kicker">' + k.innerHTML + "</div>" : "")
       + "<h2>" + esc(el.querySelector("h2").textContent.replace(/ \(cont\.\)$/, "")) + " (cont.)</h2>"
       + '<ul class="sl-list"></ul>'
-      + '<div class="sl-foot"><span class="sl-name"></span><span class="sl-no"></span></div>';
+      + '<div class="sl-foot"><span class="sl-name">&nbsp;</span><span class="sl-no">&nbsp;</span></div>';
     return d;
   }
 
@@ -486,11 +523,49 @@
   /* Fit a slide's list in the least space: try one column, then two, and only split onto a
      continuation when even two columns will not hold it. Splitting last is what keeps the
      deck short; trying one column first is what stops short lists becoming two stubby ones. */
+  /* Move the donor list's last item onto the head of a continuation list, holding two
+     invariants: a heading is never stranded without its items, and a continuation never
+     opens with items whose heading sits on the previous slide — a "(cont.)" clone covers
+     the split. Returns what changed so a caller can undo the move. */
+  function moveTail(ul, nul) {
+    var act = { moved: [], added: [], removed: [] };
+    var lead = nul.firstElementChild && nul.firstElementChild.hasAttribute("data-clone")
+      ? nul.firstElementChild : null;
+    var mv = ul.lastElementChild;
+    nul.insertBefore(mv, lead ? lead.nextSibling : nul.firstChild);
+    act.moved.push(mv);
+    if (mv.classList.contains("sl-h")) {
+      if (lead) { nul.removeChild(lead); act.removed.push(lead); }
+    } else if (ul.lastElementChild && ul.lastElementChild.classList.contains("sl-h")) {
+      var h = ul.lastElementChild;
+      nul.insertBefore(h, lead ? lead.nextSibling : nul.firstChild);
+      act.moved.unshift(h);
+      if (lead) { nul.removeChild(lead); act.removed.push(lead); }
+    }
+    var first = nul.firstElementChild;
+    if (first && !first.classList.contains("sl-h")) {
+      var hs = ul.querySelectorAll("li.sl-h");
+      if (hs.length) {
+        var c = hs[hs.length - 1].cloneNode(true);
+        c.setAttribute("data-clone", "1");
+        if (!/\(cont\.\)$/.test(c.textContent)) c.textContent += " (cont.)";
+        nul.insertBefore(c, nul.firstChild);
+        act.added.push(c);
+      }
+    }
+    return act;
+  }
+
+  function undoMove(ul, nul, act) {
+    act.added.forEach(function (n) { nul.removeChild(n); });
+    act.moved.forEach(function (n) { ul.appendChild(n); });
+    act.removed.forEach(function (n) { nul.insertBefore(n, nul.firstChild); });
+  }
+
   function reflow() {
     var stage = $("#pl-stage");
     if (!stage) return;
-    var guard = 0;
-    for (var n = 0; n < stage.children.length && guard < 800; n++) {
+    for (var n = 0; n < stage.children.length; n++) {
       var el = stage.children[n];
       el.classList.add("active");
       var ul = el.querySelector(".sl-list");
@@ -498,34 +573,34 @@
         ul.classList.remove("sl-2col");
         if (!listFits(el, ul) && ul.children.length > 3) ul.classList.add("sl-2col");
 
-        while (!listFits(el, ul) && ul.children.length > 1 && guard++ < 800) {
+        var guard = 0;              /* per slide — a shared budget starves the tail */
+        while (!listFits(el, ul) && ul.children.length > 1 && guard++ < 400) {
           var next = stage.children[n + 1];
           if (!next || !next.hasAttribute("data-cont")) {
             next = contSlide(el);
             stage.insertBefore(next, el.nextSibling);
           }
-          var nul = next.querySelector(".sl-list");
-          nul.insertBefore(ul.lastElementChild, nul.firstChild);
-          if (ul.lastElementChild && ul.lastElementChild.classList.contains("sl-h")) {
-            nul.insertBefore(ul.lastElementChild, nul.firstChild);
-          }
+          moveTail(ul, next.querySelector(".sl-list"));
         }
       }
       el.classList.remove("active");
     }
 
-    /* An overfilled slide followed by a stub reads worse than two even ones. */
+    /* An overfilled slide followed by a stub reads worse than two even ones. Both slides
+       must be laid out to measure, and a move that overfills the continuation is undone
+       rather than shipped clipped. */
     for (var m = 0; m < stage.children.length - 1; m++) {
       var a = stage.children[m], bcont = stage.children[m + 1];
       if (!bcont.hasAttribute("data-cont")) continue;
       var au = a.querySelector(".sl-list"), bu = bcont.querySelector(".sl-list");
       if (!au || !bu) continue;
-      a.classList.add("active");
-      while (au.children.length - 1 > bu.children.length + 1
-             && bu.getBoundingClientRect().height < listRoom(bcont)) {
-        bu.insertBefore(au.lastElementChild, bu.firstChild);
+      a.classList.add("active"); bcont.classList.add("active");
+      var g2 = 0;
+      while (au.children.length - 1 > bu.children.length + 1 && g2++ < 400) {
+        var act = moveTail(au, bu);
+        if (!listFits(bcont, bu)) { undoMove(au, bu, act); break; }
       }
-      a.classList.remove("active");
+      a.classList.remove("active"); bcont.classList.remove("active");
     }
 
     var name = $("#f-name").value.trim() || "Migration plan";
@@ -535,6 +610,37 @@
       if (nm) nm.textContent = name;
       if (no) no.textContent = (i + 1) + " / " + deck.total;
     });
+  }
+
+  /* Read the topology SVG's shapes off the live DOM so the PowerPoint re-draws them as
+     native shapes. Only the vocabulary the topology builder emits: rect, line, text. */
+  function svgShapes(svg) {
+    var vb = (svg.getAttribute("viewBox") || "0 0 800 400").split(/\s+/);
+    var d = { w: parseFloat(vb[2]) || 800, h: parseFloat(vb[3]) || 400, shapes: [] };
+    Array.prototype.forEach.call(svg.querySelectorAll("rect, line, text"), function (el) {
+      var p = el.parentNode, faded = false;
+      while (p && p !== svg) {
+        if (p.tagName === "defs" || p.tagName === "marker") return;
+        if (p.getAttribute && parseFloat(p.getAttribute("opacity") || 1) < 1) faded = true;
+        p = p.parentNode;
+      }
+      var t = el.tagName.toLowerCase();
+      if (t === "rect") d.shapes.push({ t: "rect", cls: el.getAttribute("class") || "",
+        x: +el.getAttribute("x"), y: +el.getAttribute("y"),
+        w: +el.getAttribute("width"), h: +el.getAttribute("height"), faded: faded });
+      else if (t === "line") d.shapes.push({ t: "line",
+        x1: +el.getAttribute("x1"), y1: +el.getAttribute("y1"),
+        x2: +el.getAttribute("x2"), y2: +el.getAttribute("y2"),
+        green: /green/.test(el.getAttribute("stroke") || "") || /arg\)/.test(el.getAttribute("marker-end") || ""),
+        dash: !!el.getAttribute("stroke-dasharray"),
+        arrow: !!el.getAttribute("marker-end"),
+        sw: parseFloat(el.getAttribute("stroke-width")) || 1.6, faded: faded });
+      else d.shapes.push({ t: "text", cls: el.getAttribute("class") || "",
+        x: +el.getAttribute("x"), y: +el.getAttribute("y"),
+        anchor: el.getAttribute("text-anchor") || "start",
+        text: el.textContent, faded: faded });
+    });
+    return d;
   }
 
   function slidesFromDom() {
@@ -547,6 +653,8 @@
         sub: sub ? sub.textContent : "",
         foot: (el.querySelector(".sl-name") || {}).textContent || ""
       };
+      var fig = el.querySelector(".pl-topo svg");
+      if (fig) out.diagram = svgShapes(fig);
       var groups = [], flat = [];
       Array.prototype.forEach.call(el.querySelectorAll(".sl-list li"), function (li) {
         if (li.classList.contains("sl-h")) groups.push({ group: li.textContent, items: [] });
@@ -704,8 +812,7 @@
   function markdown(plan, picks) {
     var name = $("#f-name").value.trim() || "Migration plan";
     var lines = ["# " + name, ""];
-    var strip = function (s) { return s.replace(/<[^>]+>/g, "").replace(/&mdash;/g, "—").replace(/&amp;/g, "&"); };
-    lines.push(strip(summary(picks)), "");
+    lines.push(summary(picks, true), "");
     var mdGroups = function (items) {
       var order = [], g = {};
       items.forEach(function (i) {
@@ -747,7 +854,7 @@
   function copyMd(plan, picks, btn) {
     var txt = markdown(plan, picks);
     var done = function (ok) {
-      btn.textContent = ok ? "Copied" : "Press ⌘C";
+      btn.textContent = ok ? "Copied" : (/Mac/.test(navigator.platform || "") ? "Press ⌘C" : "Press Ctrl+C");
       setTimeout(function () { btn.textContent = "Copy as Markdown"; }, 1600);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {

@@ -84,18 +84,24 @@
   flex-wrap: wrap; }
 .pl-rail .pl-count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums;
   min-width: 4.5em; text-align: center; }
+/* presenting on a phone: the stage is ~200px tall — subtitles cannot fit and the
+   document view is the phone view anyway */
+@media (max-width: 640px) { .pl-slide .sl-sub { display: none; } }
 @media print {
   .topnav, .hero, .footer, .pl-form, .pl-actions, .theme-toggle, .fb-btn, .pl-rail,
-  .callout:first-of-type { display: none !important; }
+  .main > .callout { display: none !important; }
+  /* printing while presenting: the deck alone, not the summary card above it */
+  #pl-out.presenting > .card { display: none !important; }
   .pl-wrap { grid-template-columns: 1fr; } .pl-phase { break-inside: avoid; }
-  /* deck prints as a deck: landscape, one slide per page, all of them visible */
+  /* deck prints as a deck: landscape, one slide per page, all of them visible
+     (@page itself is a JS-managed <style id="pl-page"> — landscape only when the
+     deck is the live view, portrait for the document) */
   .pl-deck.on .pl-stage { aspect-ratio: auto; height: 100vh; border: 0; box-shadow: none;
     border-radius: 0; overflow: visible; }
   .pl-deck.on .pl-slide { position: static; display: flex !important; height: 100vh;
     break-after: page; padding: 6% 7%; }
   .pl-deck.on .pl-slide:last-child { break-after: auto; }
 }
-@page { size: landscape; margin: 10mm; }
 </style>
 </head>
 <body>
@@ -190,6 +196,7 @@
   <a href="index.html">All use cases</a>
 </div></footer>
 <script src="assets/js/catalog.js"></script>
+<script src="assets/js/app.js"></script>
 <script src="assets/js/planner-rules.js"></script>
 <script src="assets/js/planner-topology.js"></script>
 <script src="assets/js/planner-export.js"></script>

@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """Screenshot library pages with the cached Chromium. Usage: shoot.py [--dark] <page.html> <out.png> [...]"""
 import sys
+from pathlib import Path
 from playwright.sync_api import sync_playwright
+from chromium import launch
 
-EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
-BASE = "file:///Users/tonystalker/Documents/claude/usecaselibrary/"
+BASE = (Path(__file__).resolve().parent.parent).as_uri() + "/"
 
 args = [a for a in sys.argv[1:] if a != "--dark"]
 dark = "--dark" in sys.argv[1:]
 pairs = list(zip(args[0::2], args[1::2]))
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE)
+    b = launch(p)
     pg = b.new_page(viewport={"width": 1440, "height": 1000})
     if dark:
         # set the saved theme before any page script runs; head snippet picks it up

@@ -45,7 +45,7 @@ EOF
 echo "== 1/4 staging"
 STAGE=dist/deploy-stage
 rm -rf "$STAGE" && mkdir -p "$STAGE"
-cp index.html whatsnew.html "$STAGE/"
+cp index.html whatsnew.html planner.html "$STAGE/"
 cp -R usecases "$STAGE/usecases"
 cp -R assets "$STAGE/assets"
 python3 - "$STAGE" <<'EOF'

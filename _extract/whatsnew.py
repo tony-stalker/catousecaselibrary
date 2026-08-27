@@ -73,6 +73,7 @@ page = f'''<!DOCTYPE html>
     <span><a href="index.html">Use case library</a></span>
   </div>
 </footer>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
 '''

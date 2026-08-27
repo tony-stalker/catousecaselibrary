@@ -69,7 +69,7 @@
   function xesc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;").replace(/—/g, "-").replace(/’/g, "'");
+      .replace(/"/g, "&quot;");
   }
 
   var W = 12192000, H = 6858000;          /* 16:9 in EMU */
@@ -96,6 +96,78 @@
       + (opts.b ? ' b="1"' : "") + ' dirty="0">'
       + '<a:solidFill><a:srgbClr val="' + (opts.color || "1F2A30") + '"/></a:solidFill></a:rPr>';
     return "<a:p>" + pPr + "<a:r>" + rPr + "<a:t>" + xesc(text) + "</a:t></a:r></a:p>";
+  }
+
+  /* Topology diagrams as native DrawingML. The on-screen deck draws them as SVG; a slide
+     model can carry the same shapes (rect / line / text, extracted from the live SVG DOM)
+     and they render here as real PowerPoint shapes rather than a caption with no picture. */
+  var DG_FILL = {
+    "dg-node": ["FFFFFF", "DDE6E2"], "dg-node-dark": ["0C2936", "123849"],
+    "dg-node-green": ["E9F7F2", "6CC9AE"]
+  };
+  var DG_INK = {
+    "dg-label": ["0D1A16", 1, 14.5], "dg-sub": ["45524D", 0, 12.5],
+    "dg-tiny": ["6F7D77", 0, 11], "dg-label-inv": ["EAF6F1", 1, 14.5],
+    "dg-sub-inv": ["B9D2C9", 0, 12.5]
+  };
+
+  function diagramXml(d) {
+    var ax = 838200, ay = 2350000, aw = W - 1676400, ah = H - ay - 750000;
+    var sc = Math.min(aw / d.w, ah / d.h);
+    var ox = ax + (aw - d.w * sc) / 2, oy = ay + (ah - d.h * sc) / 2;
+    function X(v) { return Math.round(ox + v * sc); }
+    function Y(v) { return Math.round(oy + v * sc); }
+    function E(v) { return Math.max(1, Math.round(v * sc)); }
+    var out = "", id = 100;
+
+    d.shapes.forEach(function (sh) {
+      id++;
+      var alpha = sh.faded ? '<a:alpha val="38000"/>' : "";
+      if (sh.t === "rect") {
+        var f = DG_FILL[sh.cls] || DG_FILL["dg-node"];
+        out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-r' + id + '"/>'
+          + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
+          + '<a:xfrm><a:off x="' + X(sh.x) + '" y="' + Y(sh.y) + '"/>'
+          + '<a:ext cx="' + E(sh.w) + '" cy="' + E(sh.h) + '"/></a:xfrm>'
+          + '<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 14000"/></a:avLst></a:prstGeom>'
+          + '<a:solidFill><a:srgbClr val="' + f[0] + '">' + alpha + "</a:srgbClr></a:solidFill>"
+          + '<a:ln w="' + Math.max(9525, E(1.5)) + '"><a:solidFill><a:srgbClr val="' + f[1] + '">' + alpha
+          + "</a:srgbClr></a:solidFill></a:ln></p:spPr>"
+          + "<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
+      } else if (sh.t === "line") {
+        var col = sh.green ? "0E8A6D" : "6F7D77";
+        var fl = (sh.x1 > sh.x2 ? ' flipH="1"' : "") + (sh.y1 > sh.y2 ? ' flipV="1"' : "");
+        out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-l' + id + '"/>'
+          + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
+          + "<a:xfrm" + fl + '><a:off x="' + Math.min(X(sh.x1), X(sh.x2)) + '" y="' + Math.min(Y(sh.y1), Y(sh.y2)) + '"/>'
+          + '<a:ext cx="' + Math.abs(X(sh.x2) - X(sh.x1)) + '" cy="' + Math.abs(Y(sh.y2) - Y(sh.y1)) + '"/></a:xfrm>'
+          + '<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+          + '<a:ln w="' + Math.max(9525, E(sh.sw || 1.6)) + '">'
+          + '<a:solidFill><a:srgbClr val="' + col + '">' + alpha + "</a:srgbClr></a:solidFill>"
+          + (sh.dash ? '<a:prstDash val="dash"/>' : "")
+          + (sh.arrow ? '<a:tailEnd type="triangle" w="med" len="med"/>' : "")
+          + "</a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
+      } else if (sh.t === "text") {
+        if (!sh.text) return;
+        var k = DG_INK[sh.cls] || DG_INK["dg-sub"];
+        var px = k[2];
+        var sz = Math.max(600, Math.round(px * sc / 12700 * 100));
+        var bw = Math.round(Math.max(sh.text.length * px * 0.62, 20) * sc) + 200000;
+        var bh = Math.round(px * 1.6 * sc);
+        var bx = Math.round(sh.anchor === "middle" ? X(sh.x) - bw / 2 : X(sh.x));
+        var by = Y(sh.y) - Math.round(px * 1.05 * sc);
+        out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-t' + id + '"/>'
+          + '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr>'
+          + '<a:xfrm><a:off x="' + bx + '" y="' + by + '"/><a:ext cx="' + bw + '" cy="' + bh + '"/></a:xfrm>'
+          + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
+          + '<p:txBody><a:bodyPr wrap="none" anchor="ctr" lIns="0" tIns="0" rIns="0" bIns="0"/><a:lstStyle/>'
+          + '<a:p><a:pPr algn="' + (sh.anchor === "middle" ? "ctr" : "l") + '"><a:buNone/></a:pPr>'
+          + '<a:r><a:rPr lang="en-GB" sz="' + sz + '"' + (k[1] ? ' b="1"' : "") + ' dirty="0">'
+          + '<a:solidFill><a:srgbClr val="' + k[0] + '">' + alpha + "</a:srgbClr></a:solidFill></a:rPr>"
+          + "<a:t>" + xesc(sh.text) + "</a:t></a:r></a:p></p:txBody></p:sp>";
+      }
+    });
+    return out;
   }
 
   function slideXml(s) {
@@ -126,6 +198,8 @@
       });
     }
     if (paras.length) body += tx(5, "Body", 838200, y, W - 1676400, H - y - 700000, paras.join(""));
+
+    if (s.diagram) body += diagramXml(s.diagram);
 
     if (s.foot) {
       body += tx(6, "Footer", 838200, H - 600000, W - 1676400, 350000,

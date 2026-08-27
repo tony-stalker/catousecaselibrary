@@ -4,17 +4,17 @@ Outputs to _extract/vdiag/<page>-d<i>.png plus lightbox-test.png."""
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from chromium import launch
 
-EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
-BASE = "file:///Users/tonystalker/Documents/claude/usecaselibrary/"
-ROOT = Path("/Users/tonystalker/Documents/claude/usecaselibrary")
+ROOT = Path(__file__).resolve().parent.parent
+BASE = ROOT.as_uri() + "/"
 OUT = ROOT / "_extract" / "vdiag"
 OUT.mkdir(exist_ok=True)
 
 pages = sorted(p.name for p in (ROOT / "usecases").glob("*.html"))
 errors = []
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE)
+    b = launch(p)
     pg = b.new_page(viewport={"width": 1440, "height": 1000})
     pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
     pg.on("pageerror", lambda e: errors.append(str(e)))

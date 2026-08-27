@@ -3,3 +3,4 @@ dist/
 __pycache__/
 ubuntu.txt
 feedback-log.txt
+.claude/

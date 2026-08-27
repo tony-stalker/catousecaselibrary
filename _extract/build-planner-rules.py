@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "assets" / "js" / "planner-rules.js"
 CATALOG = ROOT / "assets" / "js" / "catalog.js"
 
-ORDER = ["wan", "sdwan-vendor", "proxy-sse", "firewall",
+ORDER = ["common", "wan", "sdwan-vendor", "proxy-sse", "firewall",
          "remote-access", "security-controls", "drivers"]
 
 

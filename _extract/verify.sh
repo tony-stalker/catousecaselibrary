@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.." || exit 1
 FAIL=0
 
 echo "== 1/8 link check"
-python3 _extract/checklinks.py index.html usecases/*.html || FAIL=1
+python3 _extract/checklinks.py index.html planner.html whatsnew.html usecases/*.html || FAIL=1
 
 echo "== 2/8 catalog consistency + hygiene"
 python3 - <<'EOF' || FAIL=1
@@ -36,7 +36,7 @@ print("OK")
 EOF
 
 echo "== 3/8 external resource loads (CDN) + theme snippet"
-if grep -rn -E 'src="http|<link[^>]*href="http|@import|url\(http' index.html usecases/*.html assets/css/style.css; then
+if grep -rn -E 'src="http|<link[^>]*href="http|@import|url\(http' index.html planner.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
   echo "OK — file:// safe"
@@ -44,7 +44,7 @@ fi
 # every page must carry the dark-mode bootstrap snippet (pages authored in
 # parallel with the snippet sweep have missed it — migration-journey-vpn, Jul 2026)
 SNIPMISS=0
-for f in index.html whatsnew.html usecases/*.html; do
+for f in index.html planner.html whatsnew.html usecases/*.html; do
   grep -q 'uc-theme' "$f" || { echo "FAIL: theme snippet missing in $f"; SNIPMISS=1; }
 done
 [ "$SNIPMISS" = 0 ] && echo "OK — theme snippet on all pages" || FAIL=1
@@ -59,10 +59,11 @@ echo "== 6/8 mobile fit (390px, all pages)"
 python3 - <<'EOF' || FAIL=1
 from playwright.sync_api import sync_playwright
 import pathlib, sys
-EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
+sys.path.insert(0, "_extract")
+from chromium import launch
 BASE = "file://" + str(pathlib.Path.cwd()) + "/"
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE)
+    b = launch(p)
     pg = b.new_page(viewport={"width": 390, "height": 844})
     bad = []
     for page in ["index.html", "planner.html", "whatsnew.html"] + ["usecases/" + f.name for f in sorted(pathlib.Path("usecases").glob("*.html"))]:
@@ -107,11 +108,12 @@ EOF
 python3 - <<'EOF' || FAIL=1
 from playwright.sync_api import sync_playwright
 import pathlib, sys
-EXE = "/Users/tonystalker/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell"
+sys.path.insert(0, "_extract")
+from chromium import launch
 BASE = "file://" + str(pathlib.Path.cwd()) + "/"
 errs = []
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE)
+    b = launch(p)
     pg = b.new_page(viewport={"width": 1280, "height": 900})
     pg.on("console", lambda m: errs.append(m.text) if m.type == "error" else None)
     pg.on("pageerror", lambda e: errs.append(str(e)))
@@ -136,7 +138,7 @@ with sync_playwright() as p:
       return r;
     }""")
     # a slide whose list outgrows its room is unpresentable; measure it the way reflow does
-    over = pg.evaluate("""() => {
+    MEASURE = """() => {
       const out = [];
       document.querySelectorAll('#pl-stage .pl-slide').forEach((el, i) => {
         el.classList.add('active');
@@ -150,8 +152,24 @@ with sync_playwright() as p:
         el.classList.remove('active');
       });
       return out;
-    }""")
+    }"""
+    over = pg.evaluate(MEASURE)
     n_sum = pg.eval_on_selector_all("#pl-stage .pl-slide", "e=>e.length")
+
+    # the small estate passing is not enough: a maximal estate at full detail is what
+    # exhausted the old packing logic, so measure that too
+    pg.select_option("#f-wan", "hybrid-mpls-internet")
+    pg.wait_for_timeout(100)
+    for sel in ("#f-sdwan", "#f-proxy", "#f-fw", "#f-ra", "#f-spread"):
+        vals = pg.eval_on_selector_all(sel + " option", "els=>els.map(e=>e.value).filter(Boolean)")
+        if vals: pg.select_option(sel, vals[0])
+    pg.fill("#f-name", "Verify estate"); pg.fill("#f-sites", "120")
+    pg.evaluate("document.querySelectorAll('input[type=checkbox][data-dim]').forEach(cb => cb.checked = true)")
+    pg.click("#pl-go"); pg.wait_for_timeout(500)
+    pg.click("#pl-view"); pg.wait_for_timeout(200)
+    pg.select_option("#pl-depth", "full"); pg.wait_for_timeout(1000)
+    over_full = pg.evaluate(MEASURE)
+    n_full = pg.eval_on_selector_all("#pl-stage .pl-slide", "e=>e.length")
     b.close()
 bad = [h for h in set(hrefs) if not (pathlib.Path.cwd() / h).exists()]
 if errs: print("console errors:", errs[:3]); sys.exit(1)
@@ -162,8 +180,9 @@ bad_exp = [k for k, v in exports.items() if v is not True]
 if bad_exp: print("export failures:", {k: exports[k] for k in bad_exp}); sys.exit(1)
 if over: print("slides overflowing their stage:", over); sys.exit(1)
 if n_sum > 24: print("summary deck too long: %d slides" % n_sum); sys.exit(1)
-print("OK — %d phases / %d steps / %d links / 3 diagrams / %d-slide summary deck / pptx+xlsx+drawio"
-      % (n_ph, n_st, len(hrefs), n_sum))
+if over_full: print("full-detail slides overflowing (maximal estate):", over_full); sys.exit(1)
+print("OK — %d phases / %d steps / %d links / 3 diagrams / %d-slide summary deck / %d-slide maximal full deck / pptx+xlsx+drawio"
+      % (n_ph, n_st, len(hrefs), n_sum, n_full))
 EOF
 
 if [ "${1:-}" = "--external" ]; then
