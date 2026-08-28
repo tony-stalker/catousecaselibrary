@@ -617,7 +617,7 @@
   function svgShapes(svg) {
     var vb = (svg.getAttribute("viewBox") || "0 0 800 400").split(/\s+/);
     var d = { w: parseFloat(vb[2]) || 800, h: parseFloat(vb[3]) || 400, shapes: [] };
-    Array.prototype.forEach.call(svg.querySelectorAll("rect, line, text, circle"), function (el) {
+    Array.prototype.forEach.call(svg.querySelectorAll("rect, line, text, circle, image"), function (el) {
       var p = el.parentNode, faded = false;
       while (p && p !== svg) {
         if (p.tagName === "defs" || p.tagName === "marker") return;
@@ -639,6 +639,12 @@
       else if (t === "circle") d.shapes.push({ t: "circle", cls: el.getAttribute("class") || "",
         cx: +el.getAttribute("cx"), cy: +el.getAttribute("cy"), r: +el.getAttribute("r"),
         faded: faded });
+      else if (t === "image") {
+        if (el.getAttribute("data-brand")) d.shapes.push({ t: "img",
+          brand: el.getAttribute("data-brand"),
+          x: +el.getAttribute("x"), y: +el.getAttribute("y"),
+          w: +el.getAttribute("width"), h: +el.getAttribute("height"), faded: faded });
+      }
       else d.shapes.push({ t: "text", cls: el.getAttribute("class") || "",
         x: +el.getAttribute("x"), y: +el.getAttribute("y"),
         anchor: el.getAttribute("text-anchor") || "start",

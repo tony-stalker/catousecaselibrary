@@ -32,6 +32,21 @@
   /* Vendor labels carry a parenthetical the diagram has no room for. */
   function short(s) { return String(s || "").replace(/\s*\(.*$/, ""); }
 
+  /* option key -> brand slug in window.PLANNER_LOGOS (missing brands draw nothing) */
+  var BRAND = { versa: "versa", "edgeconnect-silverpeak": "hpe-aruba", "cisco-viptela": "cisco",
+    "fortinet-sdwan": "fortinet", "cloudflare-magic-wan": "cloudflare",
+    zscaler: "zscaler", netskope: "netskope", forcepoint: "forcepoint", iboss: "iboss",
+    "symantec-broadcom": "symantec", "cisco-umbrella": "cisco",
+    "palo-alto": "palo-alto", checkpoint: "checkpoint", fortigate: "fortinet",
+    sophos: "sophos", "cisco-asa": "cisco",
+    anyconnect: "cisco", globalprotect: "palo-alto", forticlient: "fortinet",
+    "zscaler-zpa": "zscaler" };
+
+  function logo(key) {
+    var b = BRAND[key || ""];
+    return b && (window.PLANNER_LOGOS || {})[b] ? b : null;
+  }
+
   var TITLE = { "pt-green": "pt-t-green", "pt-cloud": "pt-t-green", "pt-navy": "pt-t-inv",
     "pt-plain": "pt-t-ink", "pt-amber": "pt-t-amber", "pt-purple": "pt-t-purple",
     "pt-bluedash": "pt-t-blue" };
@@ -45,6 +60,35 @@
     var o = n.faded ? ' opacity="0.45"' : "";
     var s = "<g" + o + '><rect class="' + cls + '" x="' + n.x + '" y="' + n.y + '" width="' + n.w
       + '" height="' + h + '" rx="10"/>';
+    var b = n.mark ? logo(n.mark) : null;
+    if (b) {
+      /* vendor mark on the left, text left-aligned beside it — the HLD box layout */
+      var L = window.PLANNER_LOGOS[b];
+      var asp = L.w / L.h, mh, mw;
+      if (asp > 2.4) { mw = Math.min(56, Math.round(14 * asp)); mh = Math.round(mw / asp); }
+      else { mh = 17; mw = Math.round(mh * asp); if (mw > 34) { mw = 34; mh = Math.round(34 / asp); } }
+      var tx = n.x + 10 + mw + 8;
+      var tm = Math.floor((n.w - mw - 26) / 7), sm = Math.floor((n.w - mw - 22) / 5.9);
+      var my = n.y + Math.round((h - mh) / 2);
+      if (cls === "pt-navy") {
+        /* dark-text wordmarks vanish on navy — give every mark a white plaque there */
+        s += '<rect x="' + (n.x + 7) + '" y="' + (my - 3) + '" width="' + (mw + 6)
+          + '" height="' + (mh + 6) + '" rx="4" fill="#ffffff"/>';
+      }
+      s += '<image data-brand="' + b + '" href="data:image/png;base64,' + L.png
+        + '" x="' + (n.x + 10) + '" y="' + my + '" width="' + mw
+        + '" height="' + mh + '"/>';
+      if (n.sub) {
+        s += '<text class="' + tc + '" x="' + tx + '" y="' + (n.y + h / 2 - 4) + '">'
+          + esc(fit(n.title, tm)) + "</text>";
+        s += '<text class="' + sc + '" x="' + tx + '" y="' + (n.y + h / 2 + 14) + '">'
+          + esc(fit(n.sub, sm)) + "</text>";
+      } else {
+        s += '<text class="' + tc + '" x="' + tx + '" y="' + (n.y + h / 2 + 5) + '">'
+          + esc(fit(n.title, tm)) + "</text>";
+      }
+      return s + "</g>";
+    }
     if (n.sub) {
       s += '<text class="' + tc + '" x="' + cx + '" y="' + (n.y + h / 2 - 4)
         + '" text-anchor="middle">' + esc(fit(n.title, tmax)) + "</text>";
@@ -123,14 +167,15 @@
   /* ---------- the model ---------- */
 
   function model(picks) {
-    var m = { wan: null, sdwan: null, proxy: null, fw: null, ra: null, caps: [] };
+    var m = { wan: null, sdwan: null, proxy: null, fw: null, ra: null, caps: [],
+      sdwanKey: null, proxyKey: null, fwKey: null, raKey: null };
     var sec = {};
     picks.forEach(function (p) {
       if (p.dimension === "wan") m.wan = p.option.label;
-      if (p.dimension === "sdwan-vendor") m.sdwan = p.option.label;
-      if (p.dimension === "proxy-sse" && p.option.key.indexOf("none") !== 0) m.proxy = p.option.label;
-      if (p.dimension === "firewall") m.fw = p.option.label;
-      if (p.dimension === "remote-access" && p.option.key.indexOf("none") !== 0) m.ra = p.option.label;
+      if (p.dimension === "sdwan-vendor") { m.sdwan = p.option.label; m.sdwanKey = p.option.key; }
+      if (p.dimension === "proxy-sse" && p.option.key.indexOf("none") !== 0) { m.proxy = p.option.label; m.proxyKey = p.option.key; }
+      if (p.dimension === "firewall") { m.fw = p.option.label; m.fwKey = p.option.key; }
+      if (p.dimension === "remote-access" && p.option.key.indexOf("none") !== 0) { m.ra = p.option.label; m.raKey = p.option.key; }
       if (p.dimension === "security-controls") sec[p.option.key] = true;
     });
     m.transport = short(m.sdwan || m.wan || "Existing WAN");
@@ -159,17 +204,17 @@
       sub: short(m.ra) });
 
     g += box({ x: 288, y: y + 44, w: 204, cls: "pt-navy", title: m.transport,
-      sub: "hub-and-spoke backhaul" });
-    if (m.ra) g += box({ x: 288, y: y + 176, w: 204, cls: "pt-navy", title: "VPN concentrator",
-      sub: "at the perimeter" });
+      sub: "hub-and-spoke backhaul", mark: m.sdwanKey });
+    if (m.ra) g += box({ x: 288, y: y + 176, w: 204, cls: "pt-navy", title: short(m.ra),
+      sub: "VPN / ZTNA concentrator", mark: m.raKey });
 
     var stack = [];
-    if (m.proxy) stack.push({ t: short(m.proxy), s: "web proxy / SSE" });
-    if (m.fw) stack.push({ t: short(m.fw), s: "perimeter firewall" });
+    if (m.proxy) stack.push({ t: short(m.proxy), s: "web proxy / SSE", k: m.proxyKey });
+    if (m.fw) stack.push({ t: short(m.fw), s: "perimeter firewall", k: m.fwKey });
     if (!stack.length) stack.push({ t: "Perimeter security", s: "at the data centre" });
     var secY = y + (stack.length > 1 ? 14 : 44);
     stack.forEach(function (s, i) {
-      g += box({ x: 560, y: secY + i * 76, w: 194, cls: "pt-amber", title: s.t, sub: s.s });
+      g += box({ x: 560, y: secY + i * 76, w: 194, cls: "pt-amber", title: s.t, sub: s.s, mark: s.k });
     });
     var secMid = secY + ((stack.length - 1) * 76 + 56) / 2;
 
@@ -207,14 +252,14 @@
       + '" text-anchor="middle">inspection at the PoP</text>'
       + pops(288 + 122, y + 66, 3, 44);
     g += box({ x: 288, y: y + 154, w: 244, cls: "pt-navy", title: m.transport,
-      sub: "carrying the rest" });
+      sub: "carrying the rest", mark: m.sdwanKey });
 
     var stack = [];
-    if (m.proxy) stack.push({ t: short(m.proxy), s: "being displaced" });
-    if (m.fw) stack.push({ t: short(m.fw), s: "being displaced" });
+    if (m.proxy) stack.push({ t: short(m.proxy), s: "being displaced", k: m.proxyKey });
+    if (m.fw) stack.push({ t: short(m.fw), s: "being displaced", k: m.fwKey });
     if (!stack.length) stack.push({ t: "Perimeter stack", s: "being displaced" });
     stack.forEach(function (s, i) {
-      g += box({ x: 600, y: y + 128 + i * 76, w: 188, cls: "pt-amber", title: s.t, sub: s.s });
+      g += box({ x: 600, y: y + 128 + i * 76, w: 188, cls: "pt-amber", title: s.t, sub: s.s, mark: s.k });
     });
 
     g += box({ x: 826, y: y + 8, w: 96, cls: "pt-purple", title: "Internet", sub: "and SaaS" });
@@ -318,6 +363,18 @@
       + '" height="' + h + '" as="geometry"/></mxCell>';
   }
 
+  function logoCell(id, key, x, y) {
+    var b = logo(key);
+    if (!b) return "";
+    var L = window.PLANNER_LOGOS[b];
+    var h = 16, w = Math.min(Math.round(h * L.w / L.h), 52);
+    if (w === 52) h = Math.round(52 * L.h / L.w);
+    return '<mxCell id="' + esc(id) + '" value="" style="shape=image;imageAspect=0;'
+      + 'image=data:image/png,' + L.png + ';" vertex="1" parent="1">'
+      + '<mxGeometry x="' + x + '" y="' + y + '" width="' + w + '" height="' + h
+      + '" as="geometry"/></mxCell>';
+  }
+
   function edge(id, src, tgt, label, style) {
     return '<mxCell id="' + esc(id) + '" value="' + esc(label || "") + '" style="edgeStyle='
       + 'orthogonalEdgeStyle;rounded=1;html=1;' + (style || "") + '" edge="1" parent="1" source="'
@@ -354,11 +411,14 @@
       + cell("b6", "Internet\nand SaaS", 850, 110, 150, 60, S_PURPLE)
       + edge("be1", "b1", "b3", "site traffic", E_GREY) + edge("be2", "b2", "b3", "", E_GREY)
       + edge("be3", "b3", "b4", "hairpin to the stack", E_GREY) + edge("be4", "b3", "b5", "", E_GREY)
-      + edge("be5", "b4", "b6", "egress", E_GREY) + edge("be6", "b5", "b6", "", E_GREY);
+      + edge("be5", "b4", "b6", "egress", E_GREY) + edge("be6", "b5", "b6", "", E_GREY)
+      + logoCell("bl1", m.proxyKey, 586, 66) + logoCell("bl2", m.fwKey, 586, 166)
+      + logoCell("bl3", m.sdwanKey, 306, 106);
     if (m.ra) {
       b += cell("b7", "Remote users\n" + short(m.ra), 40, 260, 180, 60, S_PLAIN)
         + cell("b8", "VPN concentrator\nat the perimeter", 300, 260, 200, 60, S_NAVY)
-        + edge("be7", "b7", "b8", "client VPN", E_GREY) + edge("be8", "b8", "b5", "", E_GREY);
+        + edge("be7", "b7", "b8", "client VPN", E_GREY) + edge("be8", "b8", "b5", "", E_GREY)
+        + logoCell("bl4", m.raKey, 306, 266);
     }
     p.push(page("Before", b));
 
@@ -375,7 +435,9 @@
       + edge("de4", "d4", "d7", "inspected egress at the PoP", E_CATO)
       + edge("de5", "d5", "d6", "PAC / policy still steers", E_GREY)
       + edge("de7", "d6", "d7", "legacy egress", E_GREY)
-      + edge("de6", "d4", "d5", "eBGP handoff — both paths live", E_CATO + "dashed=1;");
+      + edge("de6", "d4", "d5", "eBGP handoff — both paths live", E_CATO + "dashed=1;")
+      + logoCell("dl1", m.sdwanKey, 326, 206)
+      + logoCell("dl2", m.proxyKey || m.fwKey, 626, 206);
     p.push(page("During", d));
 
     var a = cell("a1", "Sites — branch & DC\nSocket / vSocket edges", 40, 80, 190, 60, S_GREEN)

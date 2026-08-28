@@ -28,6 +28,12 @@
 
   function utf8(str) { return new TextEncoder().encode(str); }
 
+  function b64bytes(b64) {
+    var bin = atob(b64), u = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return u;
+  }
+
   function zip(files) {
     var enc = files.map(function (f) {
       return { name: utf8(f.name), data: typeof f.data === "string" ? utf8(f.data) : f.data };
@@ -123,7 +129,7 @@
     "pt-sub-inv": ["B9D2C9", 0, 11.5], "pt-chip-t": ["0B6E57", 1, 10]
   };
 
-  function diagramXml(d) {
+  function diagramXml(d, picRels) {
     var ax = 838200, ay = 2350000, aw = W - 1676400, ah = H - ay - 750000;
     var sc = Math.min(aw / d.w, ah / d.h);
     var ox = ax + (aw - d.w * sc) / 2, oy = ay + (ah - d.h * sc) / 2;
@@ -163,6 +169,15 @@
           + (sh.dash ? '<a:prstDash val="dash"/>' : "")
           + (sh.arrow ? '<a:tailEnd type="triangle" w="med" len="med"/>' : "")
           + "</a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
+      } else if (sh.t === "img") {
+        var rel = picRels && picRels[sh.brand];
+        if (!rel) return;                 /* no media for this brand — skip cleanly */
+        out += '<p:pic><p:nvPicPr><p:cNvPr id="' + id + '" name="logo-' + xesc(sh.brand) + '"/>'
+          + "<p:cNvPicPr/><p:nvPr/></p:nvPicPr>"
+          + '<p:blipFill><a:blip r:embed="' + rel + '"/><a:stretch><a:fillRect/></a:stretch></p:blipFill>'
+          + '<p:spPr><a:xfrm><a:off x="' + X(sh.x) + '" y="' + Y(sh.y) + '"/>'
+          + '<a:ext cx="' + E(sh.w) + '" cy="' + E(sh.h) + '"/></a:xfrm>'
+          + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>';
       } else if (sh.t === "text") {
         if (!sh.text) return;
         var k = DG_INK[sh.cls] || DG_INK["dg-sub"];
@@ -186,7 +201,7 @@
     return out;
   }
 
-  function slideXml(s) {
+  function slideXml(s, picRels) {
     var body = "";
     var y = 1500000;
 
@@ -215,7 +230,7 @@
     }
     if (paras.length) body += tx(5, "Body", 838200, y, W - 1676400, H - y - 700000, paras.join(""));
 
-    if (s.diagram) body += diagramXml(s.diagram);
+    if (s.diagram) body += diagramXml(s.diagram, picRels);
 
     if (s.foot) {
       body += tx(6, "Footer", 838200, H - 600000, W - 1676400, 350000,
@@ -293,6 +308,7 @@
         + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
         + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
         + '<Default Extension="xml" ContentType="application/xml"/>'
+        + '<Default Extension="png" ContentType="image/png"/>'
         + '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-'
         + 'officedocument.presentationml.presentation.main+xml"/>'
         + '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.'
@@ -346,13 +362,32 @@
       { name: "ppt/theme/theme1.xml", data: THEME }
     ];
 
+    /* vendor logos referenced by diagrams become media parts, one per brand */
+    var LOGOS = window.PLANNER_LOGOS || {};
+    var mediaAdded = {};
     slides.forEach(function (s, i) {
-      files.push({ name: "ppt/slides/slide" + (i + 1) + ".xml", data: slideXml(s) });
+      var picRels = {}, extra = "";
+      var brands = [];
+      if (s.diagram) s.diagram.shapes.forEach(function (sh) {
+        if (sh.t === "img" && LOGOS[sh.brand] && brands.indexOf(sh.brand) < 0) brands.push(sh.brand);
+      });
+      brands.forEach(function (b, k) {
+        var rid = "rId" + (2 + k);
+        picRels[b] = rid;
+        extra += '<Relationship Id="' + rid + '" Type="http://schemas.openxmlformats.org/'
+          + 'officeDocument/2006/relationships/image" Target="../media/logo-' + b + '.png"/>';
+        if (!mediaAdded[b]) {
+          mediaAdded[b] = true;
+          files.push({ name: "ppt/media/logo-" + b + ".png", data: b64bytes(LOGOS[b].png) });
+        }
+      });
+      files.push({ name: "ppt/slides/slide" + (i + 1) + ".xml", data: slideXml(s, picRels) });
       files.push({ name: "ppt/slides/_rels/slide" + (i + 1) + ".xml.rels",
         data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
           + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
           + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
-          + 'relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>' });
+          + 'relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
+          + extra + "</Relationships>" });
     });
 
     return zip(files);
