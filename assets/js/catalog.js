@@ -670,6 +670,26 @@ window.UC_CATALOG = [
     status: "new",
     deck: null
   },
+  {
+    id: "migration-cisco-asa",
+    file: "usecases/migration-cisco-asa.html",
+    category: "Migration",
+    title: "Cisco ASA (5500-X Perimeter) to Cato",
+    summary: "Retire the end-of-support ASA 5500-X perimeter — HA pairs, the IPsec site mesh and AnyConnect remote access moved to the Cato platform in phased, rollback-friendly waves that spend the forced refresh once.",
+    tags: ["Cisco ASA", "5500-X", "AnyConnect", "IPsec", "End-of-Support"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-sonicwall",
+    file: "usecases/migration-sonicwall.html",
+    category: "Migration",
+    title: "SonicWall (TZ/NSa & SonicOS) to Cato",
+    summary: "Displace the TZ/NSa estate after the SSL-VPN campaigns — remote-access cohorts to ZTNA first, branch waves to Sockets behind them, policy rebuilt clean and the MSP brought along, sized for UK mid-market estates.",
+    tags: ["SonicWall", "TZ/NSa", "SonicOS", "SSL-VPN", "UK Mid-Market"],
+    status: "new",
+    deck: null
+  },
 
   {
     id: "migration-zscaler-policy",
@@ -799,6 +819,26 @@ window.UC_CATALOG = [
     title: "Sophos Policy Migration",
     summary: "Translate Sophos Firewall policy to Cato — firewall and NAT rules, web policy, application control and SSL/TLS inspection re-expressed in the CMA model, with greenfield CASB and DLP.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-cisco-asa-policy",
+    file: "usecases/migration-cisco-asa-policy.html",
+    category: "Migration",
+    title: "Cisco ASA Policy Migration",
+    summary: "Translate ASA policy to Cato — interface ACLs rationalised on hit counts and split into WAN and Internet firewall bases, the NAT table dissolved deliberately, AnyConnect posture restated as Device Posture, and SWG, CASB and DLP built greenfield from Cato baselines.",
+    tags: ["Policy Migration", "FW Rules", "ACLs", "NAT", "Device Posture"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "migration-sonicwall-policy",
+    file: "usecases/migration-sonicwall-policy.html",
+    category: "Migration",
+    title: "SonicWall Policy Migration",
+    summary: "Translate SonicOS policy to Cato — zone-matrix access rules and NAT, CFS web filtering, App Control and DPI-SSL re-expressed in the CMA model, with exported configs treated as compromised: rotate secrets, never port them.",
+    tags: ["Policy Migration", "FW Rules", "CFS", "DPI-SSL", "App Control"],
     status: "new",
     deck: null
   }

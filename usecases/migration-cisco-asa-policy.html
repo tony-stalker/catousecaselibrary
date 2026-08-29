@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco ASA Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate ASA policy to Cato — interface ACLs rationalised on hit counts and split into WAN and Internet firewall bases, the NAT table dissolved deliberately, AnyConnect posture restated as Device Posture, and SWG, CASB and DLP built greenfield from Cato baselines.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cisco-asa-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / ASA Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cisco ASA Policy Migration</h1>
+    <p class="lede">
+      An ASA-only estate carries a decade of interface ACLs, nested object-groups and NAT
+      statements — and almost nothing above layer 4. That makes this policy project unusual:
+      the translation workload is smaller than a full NGFW estate, and the greenfield workload
+      is bigger. This page works through the ASA policy stack construct by construct — ACLs
+      rationalised on <code>hitcnt</code> evidence and split into Cato's WAN and Internet
+      firewall bases, the three-section NAT table dissolved deliberately rather than copied,
+      AnyConnect posture restated as Device Posture — and is honest about the rest: SWG, CASB,
+      DLP and TLS inspection have no ASA ancestor, so they are built greenfield from Cato
+      best-practice baselines. That is the uplift the customer is buying, not a gap.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">ACLs</span>
+      <span class="tag">NAT</span><span class="tag">Device Posture</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why the ASA rulebase deserves better than a copy</h2>
+      <p>
+        Swapping the appliance for a Socket is a routing exercise — the companion playbook,
+        <a href="migration-cisco-asa.html">Cisco ASA to Cato</a>, covers the estate, the EOL
+        calendar and the cutover waves. The policy side is where the project earns its keep: a
+        perimeter ASA typically carries years of accumulated ACEs, many of them dead, nested
+        object-groups hiding duplicate and unreferenced entries, and a NAT table whose real
+        dependencies are invisible in the ACL export. Copying all of it across &ldquo;to be
+        safe&rdquo; imports the technical debt into a brand-new platform and makes the Cato
+        rulebase unauditable on day one.
+      </p>
+      <p>
+        The Cato Professional Services approach is a four-phase pipeline, applied per policy
+        domain: <strong>EXPORT</strong> the configuration and its usage evidence →
+        <strong>REVIEW &amp; MAP</strong> — rationalise on per-ACE hit counts, discard dead
+        weight with sign-off, then map surviving intent to Cato constructs →
+        <strong>DEPLOY</strong> monitor-first, so every translated rule earns event evidence
+        before it can hurt anyone → <strong>OPTIMISE</strong> — tighten to block on that
+        evidence. Review-and-map, not lift-and-shift: per-interface rule bases collapse into one
+        global policy, and the clean-up is what makes the mapping tractable.
+      </p>
+      <p>
+        Scope note: this page assumes the <strong>ASA-only estate</strong> — no Umbrella, no
+        Cisco SD-WAN. If the account also runs Umbrella or Catalyst/Meraki SD-WAN, the policy
+        translation is a different, larger exercise: use
+        <a href="migration-cisco-policy.html">Cisco Policy Migration</a>, which maps the
+        Umbrella web, app-control and DLP estates alongside the ASA/FTD firewall.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;How many of your ACEs show <code>hitcnt=0</code> today — and when were the
+        counters last reset? And separately: what inspects an upload from a corporate laptop to
+        a personal cloud drive right now?&rdquo; The first answer sizes the clean-up; the second
+        is almost always &ldquo;nothing&rdquo;, and it frames the greenfield half of this
+        page.</p>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the mapping and sequencing with
+        Cato Professional Services before using it with a customer.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>Interface ACLs, object-groups &amp; hit-count rationalisation</h2>
+      <p>
+        <strong>The construct.</strong> ASA policy is L3/L4: ordered ACLs applied per interface
+        (inbound, with an implicit deny at the end), built from ACEs that reference nested
+        network, service and protocol object-groups, with interface security levels and
+        <code>same-security-traffic</code> doing the zone work. Managed through CLI and ASDM,
+        occasionally CDO. There is no separate web or application policy to export — everything
+        the firewall decides, it decides here.
+      </p>
+      <p>
+        <strong>Export.</strong> Everything needed lives in a handful of CLI artefacts —
+        capture them per device, at the start and end of a representative counting window:
+      </p>
+      <pre class="code"><span class="cmt"># The full configuration — objects, ACLs, NAT, crypto, tunnel-groups</span>
+<span class="kw">show running-config</span>
+<span class="cmt"># (more system:running-config additionally reveals masked secrets — capture under change control)</span>
+
+<span class="cmt"># The single most valuable artefact: object-groups pre-expanded into ACEs, with live hit counts</span>
+<span class="kw">show access-list</span>
+<span class="kw">show access-list | include hitcnt=0</span>   <span class="cmt"># the cull candidates</span>
+
+<span class="cmt"># Object inventory for the mapping workbook</span>
+<span class="kw">show object-group</span>
+<span class="kw">show names</span>
+
+<span class="cmt"># The golden-flow harness: simulate a flow through route lookup, ACL, NAT and VPN phases</span>
+<span class="kw">packet-tracer input inside tcp 10.20.4.20 12345 10.20.8.15 1433</span></pre>
+      <p>
+        <strong>The hit-count discipline.</strong> <code>show access-list</code> reports a live
+        <code>hitcnt=</code> per expanded ACE — the usage evidence the whole rationalisation
+        stage runs on. Two caveats must survive into the project plan. First, counters reset on
+        reload and on <code>clear access-list counters</code>, so a single snapshot proves
+        nothing: establish a counting window (30–90 days, spanning a month-end or quarter-end)
+        and diff the start and end captures. Second, <strong>zero-hit is not dead</strong> — DR
+        paths, annual jobs and break-glass rules legitimately show <code>hitcnt=0</code>. Culls
+        need change-control sign-off, not automation; park contested ACEs as a disabled,
+        documented rule group in CMA rather than silently dropping them. Where an FTD or an SFR
+        module is in the picture, FMC (6.4+) and CDO report the equivalent access-policy hit
+        counters.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>ASA construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Interface ACL — site-to-site and east-west ACEs</td>
+              <td>WAN Firewall rules (allowlist, implicit deny)</td>
+              <td>Matches the ASA's implicit-deny model — most surviving ACEs land here</td>
+            </tr>
+            <tr>
+              <td>Interface ACL — internal → internet ACEs</td>
+              <td>Internet Firewall rules (blocklist, implicit allow)</td>
+              <td>The opposite posture — an egress permit usually needs no rule at all; see the direction-inversion gotcha</td>
+            </tr>
+            <tr>
+              <td>ACE built from object-groups</td>
+              <td>One CMA rule referencing catalogue objects</td>
+              <td><code>show access-list</code> pre-expands groups — decide survival per expanded ACE, then re-group in Cato objects, not per line</td>
+            </tr>
+            <tr>
+              <td>Nested network object-groups</td>
+              <td>Flat hosts, ranges and groups</td>
+              <td>Flatten; delete unreferenced and duplicate objects at MAP — creation is scriptable via the GraphQL API or Terraform provider</td>
+            </tr>
+            <tr>
+              <td>Service / protocol object-groups</td>
+              <td>Cato services and custom services</td>
+              <td>Many collapse into the application catalogue — an L4 port rule for a known SaaS becomes an app rule; verify the signature covers all the old ports</td>
+            </tr>
+            <tr>
+              <td>Security levels / <code>same-security-traffic</code></td>
+              <td>Site, network-range and group scoping on rules</td>
+              <td>No zone construct in Cato — restate the intent (which segment reaches what), never transliterate</td>
+            </tr>
+            <tr>
+              <td>Crypto-map ACLs (&ldquo;interesting traffic&rdquo;)</td>
+              <td>Nothing — routing decides what enters Cato tunnels</td>
+              <td>The content is discovery data for the site/partner inventory; the construct itself dies</td>
+            </tr>
+            <tr>
+              <td>MPF service-policy tweaks (inspections, timeouts)</td>
+              <td>Mostly not applicable at the PoP</td>
+              <td>Catalogue deliberate inspection disables and timeout overrides — they often encode app quirks (SIP, legacy FTP) that need a Cato-side check</td>
+            </tr>
+            <tr>
+              <td>Threat-detection / shun / uRPF settings</td>
+              <td>Cato IPS and platform protections</td>
+              <td>No translation — note the intent, verify coverage in monitor mode</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> <em>Direction inversion</em> is the headline trap: an
+        interface ACL ends in an implicit deny, but Cato splits postures — WAN Firewall
+        allowlist, Internet Firewall blocklist — so a raw copy puts outbound exceptions into the
+        wrong base and inverts their meaning. <em>Shadowing on merge</em> is the one that
+        surfaces late: both models are first-match, but consolidating several per-interface ACLs
+        into one ordered base can make rules collide that never met on the ASA — re-order
+        deliberately and re-test after every re-order. The regression harness for both is a
+        <strong>golden flow list</strong>: the 20–50 flows the business actually depends on, each
+        with its expected verdict — proven with <code>packet-tracer</code> on the ASA side at
+        EXPORT, and against CMA events on the Cato side at DEPLOY.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Export with hit counts over the counting window → cull
+        zero-hit ACEs with sign-off, park the contested ones → flatten the object model and
+        push it via the API or Terraform → split survivors by direction into the two bases →
+        deploy allow-and-track / monitor first → tighten to block from event evidence.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase from a demo tenant: twelve ordered allowlist rules scoped by site, user, host and application, with direction, service/port pairs and live hit counts over the implicit deny" loading="lazy">
+        <figcaption>Where the surviving east-west ACEs land: the WAN Firewall is one global
+        allowlist over an implicit deny — site, user and host scoping replaces interface
+        direction, and the per-rule hit counts carry the same evidential job as the ASA's
+        <code>hitcnt</code>, on the new platform as on the old.</figcaption>
+      </figure>
+    </section>
+
+    <section id="nat" class="reveal">
+      <div class="section-kicker">Domain 2 — NAT</div>
+      <h2>The NAT table: dissolve it deliberately</h2>
+      <p>
+        <strong>The construct.</strong> ASA NAT is a three-section table evaluated in order —
+        Section 1 manual/twice NAT, Section 2 object NAT, Section 3 after-auto — carrying four
+        very different intents: dynamic PAT for egress, static NAT publishing a handful of
+        services, identity/no-NAT exempting VPN traffic, and the occasional destination-conditional
+        twice NAT, hairpin or DNS-doctoring rule papering over an addressing quirk. None of it
+        &ldquo;translates&rdquo;: each class is either dissolved by the platform, re-homed on its
+        own change window, or redesigned. Export the real table, not the config's intent:
+      </p>
+      <pre class="code"><span class="cmt"># The NAT table in evaluation order, with per-rule detail</span>
+<span class="kw">show nat detail</span>
+
+<span class="cmt"># Live translation volume — a sanity check on what is actually in use</span>
+<span class="kw">show xlate count</span></pre>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>ASA NAT class</th><th>Cato outcome</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Object NAT — dynamic PAT for egress</td>
+              <td>Nothing — PoP egress NAT is inherent</td>
+              <td>Delete, don't map. Record the old egress IPs: every SaaS tenant restriction and partner allowlist keyed to them needs updating at cutover</td>
+            </tr>
+            <tr>
+              <td>Static NAT / port-forward publishes</td>
+              <td>Remote Port Forwarding on Cato allocated IPs, or Local Port Forwarding</td>
+              <td>Better: anything only ever accessed by <em>users</em> moves behind ZTNA or clientless access instead of staying internet-exposed. Each publish carries DNS, partner and certificate dependencies — inventory it separately from the ACL work</td>
+            </tr>
+            <tr>
+              <td>Identity NAT / no-NAT for VPN traffic</td>
+              <td>Not needed — Cato WAN traffic is routed, not NATed</td>
+              <td>Its presence marks which flows were VPN-bound: useful discovery data, zero migration output</td>
+            </tr>
+            <tr>
+              <td>Twice NAT with destination logic · hairpin NAT · DNS doctoring</td>
+              <td>No equivalent — redesign, not translation</td>
+              <td>Split-horizon DNS replaces hairpins; destination-conditional NAT usually indicates an overlapping-subnet or partner quirk that needs an explicit design decision at MAP</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>The gotcha that breaks cutovers.</strong> Embedded NAT dependencies are invisible
+        in the ACL export: a partner VPN pointed at a NATed address, hairpin access to a
+        published service from inside, a SaaS allowlist keyed to the PAT address. Every one
+        breaks at cutover if it was not inventoried from <code>show nat detail</code> in
+        discovery — which is why NAT is its own domain on this page, not a footnote to the ACLs.
+      </p>
+    </section>
+
+    <section id="ra-posture" class="reveal">
+      <div class="section-kicker">Domain 3 — Remote access &amp; posture</div>
+      <h2>AnyConnect artefacts: summarise here, execute elsewhere</h2>
+      <p>
+        The remote-access play — AnyConnect end-of-life dates, the Secure Client 5.x forced
+        transition, cohort waves, helpdesk playbook — is owned end-to-end by
+        <a href="migration-anyconnect.html">AnyConnect to Cato Client</a>; do not re-plan it here.
+        What belongs in the <em>policy</em> workbook are the artefacts on the ASA itself, because
+        two of them have no export path at all:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>ASA artefact</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tunnel-groups, group-policies, split-tunnel ACLs</td>
+              <td>Client Connectivity Policy + app access rules</td>
+              <td>Config exports in <code>show running-config</code>, but the model changes — full walkthrough on the AnyConnect page</td>
+            </tr>
+            <tr>
+              <td>DAP rules / HostScan (Secure Firewall Posture) checks</td>
+              <td>Device Posture profiles + posture-gated connectivity</td>
+              <td><strong>No export path</strong> — recreate from written intent. Cato posture is continuously evaluated, not connect-time only; budget real workshop time, this was manual even ASA→FTD</td>
+            </tr>
+            <tr>
+              <td>Local users, AAA, LDAP attribute maps</td>
+              <td>IdP SSO (Entra ID / Okta) + SCIM group membership</td>
+              <td>Attribute-map logic becomes group design in the IdP — sequence identity before any user-scoped rule</td>
+            </tr>
+            <tr>
+              <td>WebVPN / clientless portal</td>
+              <td>Cato clientless browser access</td>
+              <td>Retires the internet-listening VPN web endpoints — the surface class exploited in the 2025 ASA zero-days (CVE-2025-20362)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Check the certificate estate now</div>
+        <p>AnyConnect machine certificates, internal CA chains and identity certs
+        (<code>show crypto ca certificates</code>) do not migrate by themselves — and an
+        expiring certificate mid-migration looks exactly like a Cato failure. Capture expiry
+        dates in discovery and plan renewals around the waves.</p>
+      </div>
+    </section>
+
+    <section id="greenfield" class="reveal">
+      <div class="section-kicker">Domain 4 — SWG · CASB · DLP · greenfield</div>
+      <h2>Nothing to export — and say so in the room</h2>
+      <p>
+        <strong>Be honest about this, because it changes the project plan.</strong> An ASA-only
+        estate typically has no SWG or URL filtering, no CASB, no DLP and no TLS inspection —
+        and where NGFW features exist they came from the ASA FirePOWER (SFR) service module,
+        which dies with the hardware and whose configuration even Cisco's own Secure Firewall
+        migration tool does not convert. There is no artefact to go hunting for: these domains
+        are <strong>greenfield builds from Cato best-practice baselines</strong>, not
+        translations — and that is most of the policy project by effort. Framed properly, it is
+        the upgrade the customer is buying, not a migration gap.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>In the ASA estate</th><th>Cato construct</th><th>What changes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nothing — no URL/web filtering</td>
+              <td>SWG categories in Internet Firewall rules</td>
+              <td>Category enforcement for every site and remote user, from a best-practice baseline in monitor mode</td>
+            </tr>
+            <tr>
+              <td>Syslog/NetFlow reporting only</td>
+              <td>App Analytics + Cloud Apps Dashboard</td>
+              <td>Continuous shadow-IT discovery with risk scores — visibility the estate has never had</td>
+            </tr>
+            <tr>
+              <td>Nothing — no CASB</td>
+              <td>CASB application rules with activity controls and tenant restrictions</td>
+              <td>Allow the app, govern the activity — upload, download, share — instead of a port-level yes/no</td>
+            </tr>
+            <tr>
+              <td>Nothing — no network DLP</td>
+              <td>DLP profiles with predefined data types (PCI, PII, credentials, source code)</td>
+              <td>The input is a data-protection workshop, not a config file — start from predefined types</td>
+            </tr>
+            <tr>
+              <td>Nothing — no TLS inspection</td>
+              <td>Cato TLS Inspection policy</td>
+              <td>The fidelity prerequisite for the other three — staged by category and pilot group, with no appliance headroom maths</td>
+            </tr>
+            <tr>
+              <td>SFR module IPS/AMP/URL (where licensed)</td>
+              <td>Cato IPS + Next-Gen Anti-Malware</td>
+              <td>Module config is not convertible even to FTD — rebuild from Cato baselines in monitor mode</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Build sequence (best practice).</strong> Switch the greenfield engines on from
+        <em>day one of co-existence</em>, in monitor/report mode — every week the project runs
+        then generates the event evidence the OPTIMISE phase tightens against. Stage TLS
+        inspection first, by category and pilot group, because CASB activity control and DLP
+        content inspection cannot see what is not decrypted. Run shadow-IT discovery over a
+        representative business cycle; classify the SaaS estate sanctioned / tolerated /
+        unsanctioned; write CASB and DLP rules in monitor mode; enforce highest-confidence
+        rules first. Day-one blocking is how greenfield security projects die — monitor-mode
+        evidence is how they succeed.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato Management Application TLS Inspection policy from a demo tenant: ordered rules with sensitive-category and platform bypasses first, followed by phased inspect rules scoped to test networks and pilot user groups" loading="lazy">
+        <figcaption>The staged TLS inspection pattern the greenfield build hangs off:
+        bypass-first ordering for sensitive categories and awkward platforms, then phased
+        inspect rules scoped to pilot networks and groups — scope decided by policy intent, not
+        by what an appliance could afford to decrypt.</figcaption>
+      </figure>
+      <div class="callout">
+        <div class="co-title">Position it as the uplift it is</div>
+        <p>&ldquo;Nothing on the ASA inspects an upload, classifies a SaaS app or reads a TLS
+        payload — so there is nothing to migrate in these domains, and nothing to get wrong.
+        Day one on Cato you will see every app in use, scored for risk, and we turn that into
+        control at your pace: monitor first, then enforce.&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: an ACL and a NAT table translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative only</div>
+        <p>The extract and tables below are composed to show the translation pattern —
+        documentation- and private-range example addresses and invented hit counts, not console exports; a real
+        rulebase runs to hundreds of lines — though the screenshot after the CMA table is the
+        real console from a live demo tenant. Every surviving row still travels the full
+        pipeline: rationalise on usage, map, deploy monitor-first, enforce on evidence.</p>
+      </div>
+
+      <h3>Before — ASA extract (illustrative)</h3>
+      <pre class="code"><span class="cmt"># show access-list INSIDE-IN — extract (hitcnt over a 60-day window)</span>
+access-list INSIDE-IN line 8  extended permit tcp object-group BRANCH-NETS object-group DC-APPS eq https (hitcnt=61204)
+access-list INSIDE-IN line 9  extended permit tcp object-group BRANCH-NETS host 10.20.8.15 eq 1433 (hitcnt=8830)
+access-list INSIDE-IN line 12 extended permit ip host 192.0.2.44 any (hitcnt=0)
+access-list INSIDE-IN line 15 extended permit tcp any any eq 8443 (hitcnt=3)
+
+<span class="cmt"># show running-config nat — the PAT and one publish</span>
+object network INSIDE-NET
+ subnet 10.20.0.0 255.255.0.0
+ nat (inside,outside) dynamic interface
+object network WEB-PORTAL
+ host 10.20.8.30
+ nat (dmz,outside) static 203.0.113.40 service tcp 443 443</pre>
+
+      <h3>After — Cato CMA (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>Destination / App</th><th>Service</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="7" style="background:var(--page);font-weight:600;color:var(--ink-2)">WAN Firewall — allowlist posture</td></tr>
+            <tr>
+              <td class="num">1</td>
+              <td>Branches → DC application servers</td>
+              <td>Sites: all branch sites</td>
+              <td>Host group: DC-Apps</td>
+              <td>HTTPS (TCP/443)</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Branches → finance SQL</td>
+              <td>Sites: all branch sites</td>
+              <td>Host: 10.20.8.15</td>
+              <td>TCP/1433</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>Parked — line 12 pending sign-off</td>
+              <td>Host: 192.0.2.44</td>
+              <td>Any</td>
+              <td>Any</td>
+              <td>Disabled</td>
+              <td>—</td>
+            </tr>
+            <tr><td colspan="7" style="color:var(--ink-3);font-size:.88rem">Line 15 (any-any on TCP/8443, three hits) is not recreated: as egress it needs no permit under the Internet Firewall's default allow, and its intent — if anyone still defends it — returns as a scoped rule, not an any-any.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The NAT table produces no rules at all. The <code>INSIDE-NET</code> dynamic PAT
+        dissolves — egress NAT is a property of the PoP — with the old egress IP recorded for
+        the allowlist-update checklist. The <code>WEB-PORTAL</code> publish is re-homed as
+        Remote Port Forwarding on a Cato allocated IP in its own change window (DNS TTLs
+        lowered first, rollback = DNS revert) — or, if only employees ever used it, it moves
+        behind ZTNA/clientless access and stops being internet-exposed at all.
+      </p>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The Internet Firewall base the ASA estate never had — category blocks,
+        Prompt coaching, user- and device-scoped rules, built from Cato best practice rather
+        than translated. The live hit-count bars (132.2K on one block, zeroes on stale rows)
+        are the same evidence discipline as <code>hitcnt</code>, running from day one.</figcaption>
+      </figure>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px">
+        <li><strong>Direction chose the base.</strong> The east-west ACEs became WAN Firewall
+        allowlist rules — the posture that matches the ASA's implicit deny. The egress ACE was
+        not copied into the Internet Firewall, where a permit means nothing under default
+        allow.</li>
+        <li><strong>Hit counts decided survival.</strong> Two ACEs translated, one parked as a
+        disabled rule pending change-control sign-off, one retired — the discard pile is an
+        output of the migration as much as the rules that survive.</li>
+        <li><strong>Object-groups flattened.</strong> <code>BRANCH-NETS</code> and
+        <code>DC-APPS</code> became global hosts, ranges and groups — expanded first by
+        <code>show access-list</code> so dead entries were visible before translation.</li>
+        <li><strong>The NAT table dissolved.</strong> PAT became a platform property; the one
+        real publish moved on its own change window; nothing NAT-shaped was
+        &ldquo;translated&rdquo;.</li>
+      </ul>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across the whole exercise</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Cato's WAN Firewall is an allowlist (implicit block); the Internet Firewall is a blocklist (implicit allow). Every ACE is sorted by direction before it is mapped — a raw copy inverts the meaning of outbound exceptions, and egress posture is a decision, not a translation.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱</div><div><h4>Count before you cull</h4><p>Hit counters reset on reload and on <code>clear access-list counters</code> — a single snapshot proves nothing. Diff captures across a 30–90 day window that includes a month-end, and remember zero-hit is not dead: DR and break-glass rules earn a parked group, not silent deletion.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every translated rule and every greenfield engine — IPS, anti-malware, SWG categories, CASB, DLP — starts in monitor. Enforcement is earned per rule with event evidence: the pipeline's amber-to-green transition, never a big-bang flip.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Sequence identity first</h4><p>LDAP attribute maps and AAA logic become IdP group membership — provision SSO and SCIM sync before mapping any user-scoped rule, and design the groups that DAP logic will be restated against. Name drift here breaks rules silently.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Objects before rules</h4><p>Flatten the nested object-groups, delete the unreferenced and duplicate entries, and push the clean object model through the GraphQL API or Terraform provider first — then build rules on top of it. Importing object sprawl recreates the debt you just paid down.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with the golden flows</h4><p>The regression harness is the agreed golden flow list: <code>packet-tracer</code> proves the ASA-side verdicts at EXPORT, CMA events prove the Cato-side verdicts at DEPLOY, and monitor-mode hits are compared against the <code>hitcnt</code> deltas for the same window before any wave cuts over.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE</h2>
+      <p>
+        One pipeline, two kinds of input. The ACLs, the NAT table and the remote-access
+        artefacts enter through EXPORT and are rationalised before anything is mapped — dead
+        ACEs and dissolved NAT leave at review and are never translated. The greenfield domains
+        have nothing to export: they enter at DEPLOY as Cato best-practice baselines, skipping
+        translation but not the monitor-first discipline. Everything that reaches DEPLOY earns
+        its promotion to enforcement from events and hit counts.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 528" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Cisco ASA to Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Three ASA policy domains — interface ACLs with object-groups, the NAT table, and AnyConnect posture artefacts — feed an export stage, then a review and map stage where zero-hit ACEs and dead objects are discarded, marked with a red X. Surviving intent deploys in monitor mode, shown amber, and is promoted to enforcement at optimise, shown green. A fourth source, the greenfield SWG, CASB and DLP domains absent on the ASA, skips export and enters deploy directly as Cato best-practice baselines. Telemetry from deploy and optimise flows to an events and hit-counts node that validates every stage.</desc>
+
+          <!-- Source domains (left column) -->
+          <text class="dg-tiny" x="126" y="26" text-anchor="middle">The ASA-only estate</text>
+
+          <rect class="pt-amber" x="28" y="40" width="196" height="56" rx="10"/>
+          <text class="pt-t-amber" x="126" y="63" text-anchor="middle">Interface ACLs</text>
+          <text class="pt-sub" x="126" y="81" text-anchor="middle">ACEs · object-groups</text>
+          <rect x="182" y="32" width="38" height="22" rx="4" fill="#ffffff"/>
+          <image href="../assets/img/logo-cisco.png" x="186" y="35" width="30" height="16"/>
+
+          <rect class="pt-amber" x="28" y="108" width="196" height="56" rx="10"/>
+          <text class="pt-t-amber" x="126" y="131" text-anchor="middle">NAT table</text>
+          <text class="pt-sub" x="126" y="149" text-anchor="middle">object · twice · identity</text>
+
+          <rect class="pt-amber" x="28" y="176" width="196" height="56" rx="10"/>
+          <text class="pt-t-amber" x="126" y="199" text-anchor="middle">AnyConnect · DAP</text>
+          <text class="pt-sub" x="126" y="217" text-anchor="middle">posture — no export</text>
+
+          <rect class="pt-plain" x="28" y="244" width="196" height="56" rx="10"/>
+          <text class="pt-t-ink" x="126" y="267" text-anchor="middle">SWG · CASB · DLP</text>
+          <text class="pt-sub" x="126" y="285" text-anchor="middle">absent on ASA</text>
+          <text class="dg-tiny" x="126" y="322" text-anchor="middle">greenfield — Cato baselines</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 224 68 C 260 68, 268 120, 300 132"/>
+          <path class="lane-static" fill="none" d="M 224 136 C 250 136, 262 145, 300 150"/>
+          <path class="lane-static" fill="none" d="M 224 204 C 260 204, 268 180, 300 168"/>
+
+          <!-- EXPORT -->
+          <rect class="pt-navy" x="300" y="118" width="150" height="64" rx="10"/>
+          <text class="pt-t-inv" x="375" y="144" text-anchor="middle">EXPORT</text>
+          <text class="pt-sub-inv" x="375" y="162" text-anchor="middle">show run · hitcnt</text>
+
+          <path class="lane-static" fill="none" d="M 450 150 L 520 150"/>
+
+          <!-- REVIEW & MAP -->
+          <rect class="pt-plain" x="520" y="118" width="210" height="64" rx="10"/>
+          <text class="pt-t-ink" x="625" y="144" text-anchor="middle">REVIEW &amp; MAP</text>
+          <text class="pt-sub" x="625" y="162" text-anchor="middle">cull on hitcnt · flatten</text>
+
+          <!-- Discard branch -->
+          <path class="lane lane-block" fill="none" d="M 668 182 C 710 210, 750 232, 786 250"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 790 248 L 814 272"/><path class="lane-x" d="M 814 248 L 790 272"/>
+          </g>
+          <text class="dg-tiny" x="802" y="296" text-anchor="middle">zero-hit ACEs · dead objects</text>
+
+          <!-- Survivors to DEPLOY -->
+          <path class="lane lane-limit" fill="none" d="M 566 182 C 510 250, 465 296, 438 348"/>
+
+          <!-- Greenfield direct to DEPLOY -->
+          <path class="lane lane-limit" fill="none" d="M 224 272 C 280 272, 330 306, 355 348"/>
+
+          <!-- DEPLOY (monitor) -->
+          <rect class="pt-amber" x="290" y="348" width="210" height="64" rx="10"/>
+          <text class="pt-t-amber" x="395" y="374" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="pt-sub" x="395" y="392" text-anchor="middle">allow-and-track · log only</text>
+
+          <path class="lane lane-allow" fill="none" d="M 500 380 L 640 380"/>
+
+          <!-- OPTIMISE (enforce) -->
+          <rect class="pt-green" x="640" y="348" width="200" height="64" rx="10"/>
+          <text class="pt-t-green" x="740" y="374" text-anchor="middle">OPTIMISE — enforce</text>
+          <text class="pt-sub" x="740" y="392" text-anchor="middle">block on event evidence</text>
+
+          <!-- Telemetry to events node -->
+          <path class="lane lane-info" fill="none" d="M 395 412 C 400 430, 430 442, 460 454"/>
+          <path class="lane lane-info" fill="none" d="M 740 412 C 730 438, 680 452, 640 462"/>
+
+          <rect class="pt-navy" x="430" y="452" width="230" height="56" rx="10"/>
+          <text class="pt-t-inv" x="545" y="476" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="pt-sub-inv" x="545" y="494" text-anchor="middle">Monitor → Events</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Monitor first — log, don't block</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Discarded — culled at review with sign-off</span>
+          <span class="key"><span class="swatch info"></span> Telemetry — validates every stage</span>
+        </div>
+        <div class="diagram-caption">
+          The ACLs, NAT table and posture artefacts are exported once and rationalised against
+          the hit-count window — zero-hit ACEs and dead objects exit at review, with sign-off,
+          and are never translated. The greenfield domains skip EXPORT entirely: SWG, CASB, DLP
+          and TLS inspection enter at DEPLOY as Cato best-practice baselines in monitor mode.
+          Both streams are promoted to enforcement only when events and hit counts prove the
+          behaviour is intended.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This runs best as a working session, not a show-and-tell: ask the customer to bring
+        <code>show access-list</code> and <code>show nat detail</code> output and translate a few
+        real lines live. Nothing sells the model like watching their own policy land in it — and
+        the answer to &ldquo;what do you run for SWG, CASB and DLP today?&rdquo; is almost
+        always &ldquo;nothing&rdquo;, which sets up the greenfield story before you open the
+        console.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline and agree the counting window</h4>
+          <p>Walk the EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE diagram. Agree scope and
+          owners: which ASAs, who signs off a cull, when the counters were last reset, and the
+          30–90 day window the <code>hitcnt</code> evidence will be read over.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>One global rulebase, no interfaces, no security levels. Point out the opposite
+          defaults — WAN allowlist, Internet blocklist — then translate one of their east-west
+          ACEs live and discuss where their egress posture should land.</p>
+        </li>
+        <li>
+          <h4>Walk the object model and the automation path</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show hosts, groups and custom services, then the API keys page — the expanded ACL
+          output is structured text, so object translation is scriptable end-to-end via the
+          GraphQL API or the Terraform provider rather than re-keyed by hand.</p>
+        </li>
+        <li>
+          <h4>Have the NAT conversation early</h4>
+          <p>Walk the four NAT classes against their <code>show nat detail</code>: the PAT that
+          dissolves, the publishes that move on their own change windows (or behind clientless
+          access), and the twice-NAT quirks that need a design decision — plus the checklist of
+          allowlists keyed to the old egress IPs.</p>
+        </li>
+        <li>
+          <h4>Show posture recreated from intent</h4>
+          <p><span class="path">Access → Device Posture</span> <span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Build a Device Posture profile live — AV/EDR presence, disk encryption — and gate a
+          connectivity rule on it. Be explicit that DAP/HostScan logic has no export path: this
+          is restated intent, evaluated continuously rather than at connect time.</p>
+        </li>
+        <li>
+          <h4>Show the greenfield destination state</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Shadow-IT discovery running with zero configuration, a CASB tenant-control rule,
+          and a DLP rule combining a predefined data type with a file-type condition — the
+          domains the ASA never had, on from day one in monitor mode.</p>
+        </li>
+        <li>
+          <h4>Stage the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged TLS inspection policy — bypasses first, then phased inspect rules
+          by category and pilot group — and note that CASB activity control and DLP content
+          inspection hang off this switch, with no appliance throughput deciding the scope.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a single monitor-mode rule and show the hit evidence that would
+          justify flipping it to block — the OPTIMISE phase they will live in for the first
+          months, and the audit trail for every promotion and every cull.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet &amp; WAN Firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">Allocating IP addresses for the account (Docs)</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/support/docs/security/adaptive-security-appliance-asa-software/217679-asa-access-control-list-configuration-ex.html" target="_blank" rel="noopener">Cisco: ASA ACL configuration and hit-count usage</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/td/docs/security/asa/asa920/configuration/firewall/asa-920-firewall-config/nat-basics.html" target="_blank" rel="noopener">Cisco: ASA NAT basics (the three-section table)</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/td/docs/security/firepower/migration-tool/migration-guide/ASA2FTD-with-FP-Migration-Tool/m-getting-started-with-the-secure-firewall-migration-tool.html" target="_blank" rel="noopener">Cisco: Secure Firewall migration tool — supported features</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-cisco-asa.html">Cisco ASA to Cato</a> — the companion playbook: estate, EOL calendar, waves and co-existence</li>
+            <li><a href="migration-cisco-policy.html">Cisco Policy Migration</a> — the full-estate page for accounts that also run Umbrella</li>
+            <li><a href="migration-anyconnect.html">AnyConnect to Cato Client</a> — the remote-access play, cohort by cohort</li>
+            <li><a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA</a> — tunnel mechanics for the co-existence interconnect</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

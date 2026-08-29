@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SonicWall Policy Migration — Cato Use Case Library</title>
+<meta name="description" content="Translate SonicOS policy to Cato — zone-matrix access rules and NAT, CFS web filtering, App Control and DPI-SSL re-expressed in the CMA model, with exported configs treated as compromised: rotate secrets, never port them.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-sonicwall-policy">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / SonicWall Policy Migration</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>SonicWall Policy Migration</h1>
+    <p class="lede">
+      Swapping a TZ for a Socket is a routing exercise — the SonicOS policy estate is where the
+      project earns its keep. This page works domain by domain through the SonicWall policy stack:
+      zone-matrix access rules and the NAT policies beside them, CFS web filtering, App Control and
+      DPI-SSL, and the security services behind them — showing what each construct becomes in the
+      Cato Management Application, the semantic traps in between, and the four-phase pipeline that
+      rationalises the rulebase on hit counters before anything is translated. It also carries a
+      rule the other policy pages don't need: after the 2024–25 SSL-VPN campaigns and the
+      MySonicWall cloud-backup breach, every credential in the export is treated as compromised —
+      rotated at migration, never ported.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Policy Migration</span><span class="tag">FW Rules</span><span class="tag">CFS</span>
+      <span class="tag">DPI-SSL</span><span class="tag">App Control</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why policy translation is the long pole</h2>
+      <p>
+        Sockets ship, subnets move, sites cut over — and then the project meets years of
+        accumulated SonicOS policy: a zone matrix per box across a TZ-heavy branch estate,
+        near-identical CFS policy variants per user population, a NAT table full of forgotten
+        port-forwards, and an SSLVPN zone whose rules terminate on the most attacked surface in
+        the estate. Translating that badly does more damage than translating it slowly:
+        lift-and-shift faithfully reproduces every dead rule, every any-any exception — and, on
+        this estate, every carried-over credential — on a brand-new platform. The operational
+        muscle memory the team brings (zone thinking, per-box rules) survives as
+        <em>intent</em>: same intent, one global policy, no boxes to patch.
+      </p>
+      <p>
+        The Cato Professional Services approach is a four-phase pipeline, applied per policy
+        domain: <strong>EXPORT</strong> the configuration and its usage evidence →
+        <strong>REVIEW &amp; MAP</strong> — rationalise on per-rule traffic counters, discard dead
+        weight, then map surviving intent to Cato constructs → <strong>DEPLOY</strong>
+        monitor-first, so every translated rule earns evidence before it can hurt anyone →
+        <strong>OPTIMISE</strong> against events and hit counts until the policy is demonstrably
+        right. Review-and-map, not lift-and-shift: per-box rule bases collapse into one global
+        policy, and the clean-up is what makes that mapping tractable.
+      </p>
+      <p>
+        This page covers the policy workstream only. The network side — parallel Sockets alongside
+        the TZs, the IPsec on-ramp for retained SonicWalls, remote-access cohorts off
+        NetExtender, and the EOS-driven wave plan — is the companion playbook,
+        <a href="migration-sonicwall.html">SonicWall to Cato</a>.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>&ldquo;How many of your access rules have passed no traffic since the counters were
+        last cleared — and after the MySonicWall backup notice, who rotated the credentials
+        embedded in your configuration exports?&rdquo;</p>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Read this first</div>
+        <p>This page is authored from sourced research and Cato Professional Services reference
+        material — it is not a delivery-verified runbook. Review the mapping and sequencing with
+        Cato Professional Services before using it with a customer.</p>
+      </div>
+    </section>
+
+    <section id="secrets" class="reveal">
+      <div class="section-kicker">Rule zero</div>
+      <h2>Treat the export as compromised — rotate, never port</h2>
+      <p>
+        On most estates the config export is just a mapping input. On a SonicWall estate it is
+        also potential breach material, and SonicWall's own advisories say so.
+        <strong>CVE-2024-40766</strong> (improper access control in SonicOS management access and
+        SSL-VPN, CVSS 9.3, advisory 22 August 2024, added to CISA's Known Exploited
+        Vulnerabilities catalogue on 9 September 2024) came with an instruction that matters here:
+        reset all local SSL-VPN account passwords — especially for configurations imported from
+        Gen 6 to Gen 7. A year later, SonicWall's notice on the Gen 7 SSL-VPN campaign
+        (published 4 August 2025, updated through 22 August) concluded with &ldquo;high confidence&rdquo; that the activity was not a zero-day
+        but correlated with that same CVE — fewer than 40 incidents under investigation, many tied
+        to <strong>Gen 6 → Gen 7 migrations where local user passwords were carried over and never
+        reset</strong>. NHS England issued cyber alert CC-4686 on the same activity. Then the
+        <strong>MySonicWall cloud-backup breach</strong>: SonicWall's 17 September 2025 notice
+        disclosed unauthorised access to firewall configuration backup files, and on
+        8 October 2025 SonicWall — investigating with Mandiant — concluded that <strong>every
+        customer who had used the cloud backup service was affected</strong>. The files contain
+        encrypted credentials plus full configuration data, and SonicWall's notice says possession
+        &ldquo;could increase the risk of targeted attacks&rdquo;. The prescribed remediation was
+        an &ldquo;Essential Credential Reset&rdquo; across local users, TOTP bindings and IPsec
+        VPN keys.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">9.3</div><div class="stat-label">CVSS — CVE-2024-40766, SonicOS management &amp; SSL-VPN; CISA KEV 9 Sep 2024</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">100<span class="unit">%</span></div><div class="stat-label">of MySonicWall cloud-backup users had firewall config files accessed — concluded with Mandiant, 8 Oct 2025</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">&lt;40</div><div class="stat-label">incidents in the Aug 2025 Gen 7 SSL-VPN campaign — many tied to Gen 6→7 password carry-over</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">3</div><div class="stat-label">secret classes in SonicWall's Essential Credential Reset: local users, TOTP bindings, IPsec keys</div></div>
+      </div>
+      <p>
+        The third-party reporting — attribute it as reporting, not as SonicWall statements —
+        completes the picture: Arctic Wolf reported roughly 30 Akira and Fog ransomware intrusions
+        from August 2024 with initial access via SonicWall SSL-VPN accounts, and a second wave
+        from 22 July 2025 against patched Gen 7 firewalls, largely on credentials carried over
+        from Gen 6 imports. The Hacker News and Rapid7 reported malicious logins that passed OTP
+        MFA challenges — consistent with seeds and credentials harvested earlier — with encryption
+        in under four hours. November 2025 press reporting said SonicWall had confirmed a
+        state-sponsored actor behind the backup incident; SonicWall's own notice says only
+        &ldquo;unauthorized party&rdquo;. The structural lesson for a <em>policy</em> page:
+        the exploitation mechanic was configuration carry-over — old secrets imported into new
+        boxes. This migration must not repeat it on a third platform.
+      </p>
+      <p><strong>What rule zero means for every domain below:</strong></p>
+      <ul style="padding-left:20px">
+        <li><strong>Enumerate the secrets in the export</strong> during discovery: local user
+        accounts (especially SSL-VPN-enabled), IPsec pre-shared keys, SNMP strings, admin
+        accounts, TOTP bindings.</li>
+        <li><strong>Rotate everything at migration.</strong> No credential, key or community
+        string from the SonicWall estate is re-used on the Cato side — or left live on retained
+        SonicWalls once its Cato replacement exists.</li>
+        <li><strong>Never recreate local VPN accounts.</strong> All Cato access is IdP-backed with
+        MFA and device posture; the SSLVPN-zone rulebase is re-authored against identity, not
+        translated.</li>
+        <li><strong>Handle the exports as sensitive artefacts.</strong> The TSR is the running
+        config in plain text — restrict where the mapping workbook lives, and destroy working
+        copies when the project closes.</li>
+        <li><strong>Log the rotation as evidence.</strong> Local accounts removed and PSKs retired
+        is an auditable outcome — measurable against SonicWall's own credential-reset guidance —
+        and delete the MySonicWall cloud backups once the appliances are retired.</li>
+      </ul>
+      <div class="callout">
+        <div class="co-title">Keep it fair</div>
+        <p>SonicWall published its advisories promptly, shipped SonicOS 7.3 hardening, and brought
+        in Mandiant. The argument is not vendor character assassination — it is that VPN
+        credentials, PSKs and full configs lived on and around WAN-facing appliances and the
+        vendor's cloud, and both were compromised classes in 2024–25. The migration's job is to
+        make that entire secret class disappear, not to move it.</p>
+      </div>
+    </section>
+
+    <section id="fw-rules" class="reveal">
+      <div class="section-kicker">Domain 1 — FW rules</div>
+      <h2>Zone-matrix access rules &amp; the NAT policies</h2>
+      <p>
+        <strong>The construct.</strong> SonicOS classic mode — the norm on TZ and NSa — is a
+        per-appliance zone matrix: ordered access rules per zone pair (LAN, WAN, DMZ, WLAN, VPN,
+        SSLVPN), built from address objects and groups, service objects and user/group
+        conditions, with App Rules layered beside them. NAT policies are their own table —
+        egress masquerading plus the inbound port-forwards that branch estates accumulate (local
+        servers, CCTV, building management). Gen 7 adds a wrinkle: NSsp and NSv can run
+        &ldquo;policy mode&rdquo; (unified policy) while TZ/NSa estates typically stay classic —
+        the mapping workbook has to parse both formats, but both collapse into the same CMA
+        target.
+      </p>
+      <p>
+        <strong>Export.</strong> Three complementary forms per firewall — and on NSM-managed
+        estates, one pass over the whole estate: export the device inventory to CSV/JSON, pull
+        per-firewall configs to templates, and collect TSRs centrally.
+      </p>
+      <pre class="code"><span class="cmt"># Per box — the authoritative archive (not human-readable): rollback/reference</span>
+<span class="kw">Device → Settings → Firmware &amp; Backups → Import/Export</span>   <span class="cmt"># .exp export (CLI: export current-config)</span>
+
+<span class="cmt"># The mapping inputs</span>
+<span class="kw">Tech Support Report (TSR)</span>                                <span class="cmt"># plain-text running config — workbook feed</span>
+<span class="kw">Device → Settings → Administration → Enable SonicOS API</span>  <span class="cmt"># JSON: objects · services · rules · NAT</span>
+
+<span class="cmt"># Usage evidence: per-rule Rx/Tx counters on Access Rules — clear, re-read after 30 days</span></pre>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SonicOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Internet-egress zone rules (LAN/WLAN → WAN)</td>
+              <td>Internet Firewall rules</td>
+              <td>Default-allow blocklist — the posture decision; see cross-domain practices</td>
+            </tr>
+            <tr>
+              <td>Site-to-site / VPN-zone rules</td>
+              <td>WAN Firewall rules</td>
+              <td>Default-deny allowlist — matches the inter-site intent of the zone matrix</td>
+            </tr>
+            <tr>
+              <td>SSLVPN-zone rules (Virtual Office users)</td>
+              <td>ZTNA — Client Connectivity Policy + identity-scoped WAN Firewall rules</td>
+              <td>Re-authored against IdP identity, never translated — the local accounts behind them are rule-zero material</td>
+            </tr>
+            <tr>
+              <td>Address objects, groups, FQDN objects</td>
+              <td>Hosts, IP ranges, subnets and groups</td>
+              <td>Global objects — dedupe per-box copies first; creation is scriptable via the GraphQL API or Terraform provider</td>
+            </tr>
+            <tr>
+              <td>Service objects / groups</td>
+              <td>Custom services</td>
+              <td>Protocol/port definitions translate almost mechanically</td>
+            </tr>
+            <tr>
+              <td>User/group conditions on rules</td>
+              <td>Identity-scoped rules via IdP + SCIM</td>
+              <td>Provision IdP SSO and SCIM groups before mapping — Entra ID in most UK mid-market estates</td>
+            </tr>
+            <tr>
+              <td>Egress NAT / masquerading policies</td>
+              <td>PoP egress NAT</td>
+              <td>Egress NAT is a platform property — most of the table simply dissolves</td>
+            </tr>
+            <tr>
+              <td>Inbound DNAT / port-forwards (servers, CCTV, BMS)</td>
+              <td>Remote port forwarding / allocated IPs</td>
+              <td>A different model — inventory per site in discovery and move each on its own change window, not on cutover night</td>
+            </tr>
+            <tr>
+              <td>The zone matrix itself</td>
+              <td>No equivalent — source/destination scopes in one global, ordered rulebase</td>
+              <td>Recover the intent (which segment reaches what) rather than transliterating zone pairs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> Zone semantics have no equivalent — and a matrix per
+        box multiplied across a branch estate hides enormous duplication, so dedupe objects before
+        translating rules or the sprawl is recreated on day one. The per-rule Rx/Tx counters are
+        the rationalisation evidence, but only if they are trustworthy: clear them at the start of
+        discovery and re-read after 30 days before declaring anything dead. The SSLVPN zone is the
+        exception to every mapping rule on this page — its rules describe the exploited surface,
+        so they are re-authored as identity-scoped ZTNA policy rather than mapped, and nothing
+        behind them (accounts, portal, bookmarks) survives. And the NAT table is its own
+        mini-workstream: most of it dissolves into PoP egress NAT, and what survives — the
+        published services — moves on scheduled change windows.
+      </p>
+      <p>
+        <strong>Strategy.</strong> Pull the API export per appliance (TSRs where the API is not
+        enabled); retire zero-traffic rules and collapse duplicate per-box objects against the
+        counters; push the cleaned object model through the GraphQL API or Terraform first, then
+        build rules on top of it; deploy new WAN and Internet Firewall rules monitor-first and let
+        events prove them before enforcement.
+      </p>
+    </section>
+
+    <section id="swg" class="reveal">
+      <div class="section-kicker">Domain 2 — SWG policy</div>
+      <h2>Content Filtering, App Control &amp; DPI-SSL</h2>
+      <p>
+        <strong>The construct.</strong> SonicWall web filtering is CFS 4.0: profiles and policies
+        matching users and groups against category actions, with allowed and forbidden URI lists
+        and keyword blocking, usually accumulated as near-identical variants per user population.
+        App Control is a separate layer: signature-based application categories with per-app
+        actions, including bandwidth-management actions. DPI-SSL provides client and server TLS
+        interception with a resigning CA and exclusion lists — sized against hard per-model
+        connection limits on TZ hardware, which is why many estates never fully enabled it.
+      </p>
+      <p>
+        <strong>Export.</strong> CFS profiles and policies, URI lists, App Rules and the DPI-SSL
+        exclusion lists all travel in the same config export as the access rules; AppFlow and
+        Analytics reports are the evidence base for what each category action actually affects.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SonicOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CFS category actions</td>
+              <td>Cato URL categories in Internet Firewall rules</td>
+              <td>Taxonomies differ in names and granularity — map by intent, review every blocked category individually</td>
+            </tr>
+            <tr>
+              <td>Allowed / forbidden URI lists</td>
+              <td>Custom categories</td>
+              <td>Consolidate per-box lists into custom categories referenced by rules</td>
+            </tr>
+            <tr>
+              <td>CFS keyword blocking</td>
+              <td>No direct equivalent</td>
+              <td>Validate whether the need still exists before promising parity — it is usually a policy relic</td>
+            </tr>
+            <tr>
+              <td>Per-user/group CFS policies</td>
+              <td>Identity-scoped Internet Firewall rules via SCIM groups</td>
+              <td>Collapse the policy variants into a small number of group-scoped rule tiers</td>
+            </tr>
+            <tr>
+              <td>App Control categories &amp; signatures</td>
+              <td>App and app-category rules in the Internet/WAN Firewall</td>
+              <td>Cato's application catalogue is maintained in-cloud — application awareness is native to the rule</td>
+            </tr>
+            <tr>
+              <td>App Rules bandwidth actions</td>
+              <td>Cato QoS / bandwidth priorities</td>
+              <td>Re-express throttling intent as bandwidth priorities, not as blocks</td>
+            </tr>
+            <tr>
+              <td>DPI-SSL client/server inspection + resigning CA</td>
+              <td>Cato TLS Inspection at the PoP</td>
+              <td>The same CA-trust deployment job — swap the resigning certificate for the Cato certificate in MDM; no connection-count sizing</td>
+            </tr>
+            <tr>
+              <td>DPI-SSL exclusion lists</td>
+              <td>TLS Inspection bypass rules</td>
+              <td>Re-review rather than copy — exclusions shaped by appliance limits, not intent, should not outlive the appliance</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> The taxonomy mismatch is the headline risk: a
+        SonicWall category and a similarly-named Cato category are not guaranteed to cover the
+        same sites, so a mechanical name-for-name mapping silently changes what is blocked —
+        build the translation sheet by intent and monitor it before enforcing. The bigger
+        SonicWall-specific reality cuts the other way: because DPI-SSL was gated by per-model
+        connection limits and CA-deployment pain, the Cato TLS inspection rollout may be the
+        customer's <em>first</em> full TLS inspection. Plan exclusions (banking, health) and user
+        communications accordingly rather than assuming like-for-like — and expect the
+        single-pass engine to inspect traffic the TZ never saw, which means new detections to
+        triage in the monitor phase, not incidents.
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato Management Application TLS Inspection policy from a demo tenant: ordered rules with sensitive-category and platform bypasses first, source-based exceptions, then phased Inspect rules scoped to test networks and finance users" loading="lazy">
+        <figcaption>The staged rollout DPI-SSL never had: bypass rules first (sensitive
+        categories, embedded operating systems, pinned-app exceptions), then phased Inspect rules
+        scoped to test groups — decryption scope set by policy intent, with no per-model
+        connection-count ceiling deciding who gets inspected.</figcaption>
+      </figure>
+      <p>
+        <strong>Strategy.</strong> Build a category translation sheet mapping each CFS
+        category-action to a Cato category and action by intent; consolidate the URI lists into
+        custom categories; re-express App Control blocks as app-aware rules and bandwidth actions
+        as QoS priorities; deploy the blocked set in monitor mode and compare events against the
+        AppFlow baseline; then stage TLS inspection by category and pilot group once the Cato
+        certificate is deployed through MDM.
+      </p>
+    </section>
+
+    <section id="threat" class="reveal">
+      <div class="section-kicker">Domain 3 — Threat prevention</div>
+      <h2>Gateway AV, IPS &amp; Capture ATP</h2>
+      <p>
+        <strong>The construct.</strong> The SonicOS security services — Gateway Anti-Virus,
+        Anti-Spyware and IPS, with the Botnet and Geo-IP filters beside them, and Capture ATP
+        cloud sandboxing (with RTDMI) on the boxes licensed for it. What is actually enforced per
+        box is a licensing question before it is a config question: Gen 6 bundles were CGSS
+        (no sandboxing) versus AGSS (adds Capture ATP); Gen 7 renamed them EPSS and APSS. Read
+        the renewal SKUs in MySonicWall per firewall — the bundle names are the reliable
+        discovery signal for what each site really runs today.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SonicOS construct</th><th>Cato construct</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gateway Anti-Virus + Anti-Spyware</td>
+              <td>Cato Anti-Malware in the single-pass engine</td>
+              <td>An account-level layer applied to all traffic — including sites whose box was never licensed for it</td>
+            </tr>
+            <tr>
+              <td>IPS service</td>
+              <td>Cato IPS</td>
+              <td>Account-level, cloud-maintained signatures; run in monitor first and triage new detections</td>
+            </tr>
+            <tr>
+              <td>Botnet Filter</td>
+              <td>Cato reputation-based protections</td>
+              <td>The control SonicWall's Aug 2025 guidance told customers to enable — mapped to the platform layer</td>
+            </tr>
+            <tr>
+              <td>Geo-IP Filter</td>
+              <td>Cato geo-based protections and rules</td>
+              <td>Re-express country blocks as policy; review the list against current business reality</td>
+            </tr>
+            <tr>
+              <td>Capture ATP + RTDMI (AGSS/APSS boxes)</td>
+              <td>Cato Anti-Malware / NG Anti-Malware (ML-based)</td>
+              <td>Match file-type scoping and block-until-verdict behaviour expectations in the pilot — agree them, don't assume them</td>
+            </tr>
+            <tr>
+              <td>Comprehensive Anti-Spam (EPSS bundles)</td>
+              <td>No Cato equivalent</td>
+              <td>Almost always redundant with M365/Google email security — verify MX records and any on-box smart-host arrangements before promising parity</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        <strong>Semantic gotchas.</strong> Per-box licensing variance is the trap: a branch TZ on
+        CGSS/EPSS has no sandboxing today, so the account-level Cato policy levels every site up
+        to the same protections — a selling point, but also a source of new detections that must
+        be triaged in monitor mode before anything blocks. Where Capture ATP ran with
+        block-until-verdict semantics, walk through how the customer expects unknown files to be
+        handled and validate the equivalent behaviour in the pilot rather than promising a
+        like-for-like. And the anti-spam line item is the one genuine subtraction in this domain —
+        surface it in discovery with the MX evidence, not at contract time.
+      </p>
+    </section>
+
+    <section id="casb-dlp" class="reveal">
+      <div class="section-kicker">Domain 4 — CASB &amp; DLP · greenfield</div>
+      <h2>Not a translation — the upgrade</h2>
+      <p>
+        <strong>There is nothing to export.</strong> The SonicOS config carries no CASB or
+        network-DLP rulebase: SaaS governance in a SonicWall estate — where it exists at all —
+        is App Control signatures and CFS categories doing a job they were never designed for.
+        Frame this honestly in the room: <strong>this is not a migration gap, it is the upgrade
+        the customer is buying</strong>. Both policies are built greenfield from Cato best
+        practice. What the estate does contribute: AppFlow/Analytics application reporting seeds
+        the sanctioned-app conversation, the CFS worksheet from Domain 2 flags informal SaaS
+        blocks worth preserving as proper CASB rules — and for DLP the input is not a config file
+        but a short data-protection workshop with the compliance owner on what data matters,
+        where it lives, and who legitimately moves it.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>In the SonicWall estate</th><th>Cato construct</th><th>What changes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AppFlow / Analytics app reporting</td>
+              <td>App Analytics + Cloud Apps Dashboard</td>
+              <td>Continuous shadow-IT discovery with risk scores, covering sites and remote users alike</td>
+            </tr>
+            <tr>
+              <td>CFS/App Control doubling as SaaS control</td>
+              <td>CASB application rules with granular activity controls</td>
+              <td>Allow the app but govern the activity — upload, download, share — instead of a binary block</td>
+            </tr>
+            <tr>
+              <td>Nothing — no tenant awareness</td>
+              <td>Tenant restrictions on sanctioned apps</td>
+              <td>Corporate tenant allowed, personal instances of the same app controlled</td>
+            </tr>
+            <tr>
+              <td>Nothing — no content awareness on the wire</td>
+              <td>DLP profiles with predefined data types (PCI, PII, credentials, source code)</td>
+              <td>Start from the predefined types — do not hand-build patterns on day one</td>
+            </tr>
+            <tr>
+              <td>Nothing — no evidence trail</td>
+              <td>Data Protection Dashboard + DLP events</td>
+              <td>Every match attributed to user, app and data type — the audit trail the estate never had</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Build sequence (best practice).</strong> Stage TLS inspection first — CASB
+        activity control and DLP content inspection both depend on it, and on this estate that
+        usually means enabling full inspection for the first time (Domain 2). Run shadow-IT
+        discovery over a representative business cycle; classify the estate into sanctioned /
+        tolerated / unsanctioned with the risk scores as evidence; write CASB and DLP rules in
+        <strong>monitor mode</strong>; review the matches with the business and data owners; then
+        enforce — strictest-risk apps and highest-confidence data types first. Day-one blocking
+        is how these projects die; monitor-mode evidence is how they succeed.
+      </p>
+      <div class="callout">
+        <div class="co-title">Position it as the upgrade it is</div>
+        <p>&ldquo;Day one on Cato you will see every SaaS app in use, scored for risk —
+        visibility the firewall estate has never had. We turn that into control at your pace:
+        monitor first, then enforce.&rdquo; That is a selling point, not a migration risk.</p>
+      </div>
+    </section>
+
+    <section id="worked-example" class="reveal">
+      <div class="section-kicker">Worked example</div>
+      <h2>Before → after: a zone matrix translated</h2>
+      <div class="callout">
+        <div class="co-title">Illustrative only</div>
+        <p>The tables below are composed to show the translation pattern — they are not console
+        exports, and a real estate runs to hundreds of rows per box — though the screenshot after
+        the CMA table is the real console from a live demo tenant. Every surviving row still
+        travels the full pipeline: rationalise on counters, map, deploy monitor-first, enforce on
+        evidence.</p>
+      </div>
+
+      <h3>Before — SonicOS access rules (illustrative, one branch TZ)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Zones</th><th>Source</th><th>Service</th><th>Action</th><th>Services &amp; evidence</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Corp-Web-Out</td>
+              <td>LAN → WAN</td>
+              <td>Corp-Subnets</td>
+              <td>Any</td>
+              <td>Allow</td>
+              <td>CFS &ldquo;Corp-Web&rdquo; profile · GAV · IPS</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Guest-WiFi-Web</td>
+              <td>WLAN → WAN</td>
+              <td>Guest-Net</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>Allow</td>
+              <td>CFS &ldquo;Guest-Strict&rdquo; profile</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Legacy-Vendor-SFTP</td>
+              <td>LAN → WAN</td>
+              <td>Old-App-Server</td>
+              <td>SFTP</td>
+              <td>Allow</td>
+              <td>Zero Rx/Tx since counters cleared — <em>flagged for discard</em></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>CCTV-DVR-Publish</td>
+              <td>WAN → LAN</td>
+              <td>Any</td>
+              <td>TCP 8443</td>
+              <td>Allow</td>
+              <td>Paired DNAT policy to the DVR — inbound port-forward</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>VPN-Users-to-LAN</td>
+              <td>SSLVPN → LAN</td>
+              <td>Virtual Office users</td>
+              <td>Any</td>
+              <td>Allow</td>
+              <td>Local SSL-VPN accounts — <em>rule-zero material, never migrated</em></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Alongside the access rules sits the NAT table: an egress masquerade policy and the DNAT
+        pair behind rule 4. Neither is &ldquo;translated&rdquo; in place — the masquerade
+        dissolves into PoP egress NAT, which is a platform property, and the published DVR moves
+        to remote port forwarding on an allocated IP in its own change window, after checking
+        anyone still uses it.
+      </p>
+
+      <h3>After — Cato Internet Firewall (illustrative)</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Source</th><th>App/Category</th><th>Service</th><th>Action</th><th>Track</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Guest Wi-Fi — allow web</td>
+              <td>Guest-Net</td>
+              <td>Any</td>
+              <td>HTTP · HTTPS · DNS</td>
+              <td>Allow</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Guest Wi-Fi — block everything else</td>
+              <td>Guest-Net</td>
+              <td>Any</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Corp — block restricted categories</td>
+              <td>Corp-Subnets</td>
+              <td>Categories mapped by intent from the Corp-Web CFS profile</td>
+              <td>Any</td>
+              <td>Monitor → Block</td>
+              <td>Event</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: thirteen ordered rules with sources, category chips, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+        <figcaption>The same surface live in a demo tenant — one ordered global rulebase where the
+        estate had a zone matrix per box. Note what is missing: no zone columns, no per-rule
+        security-service attachments — GAV/IPS equivalents run as account-level layers. The
+        hit-count bars (132.2K on one block, zeroes on stale rows) are the evidence the
+        rationalise stage runs on.</figcaption>
+      </figure>
+
+      <p style="margin-top:14px">
+        Several Before rows have no After row — deliberately. The GAV and IPS services behind
+        rule 1 are no longer per-box properties: they become the account-level Anti-Malware and
+        IPS layers of the single-pass engine, applied to everything — including the guest network
+        the TZ left uninspected. There is no &ldquo;Corp-Web-Out&rdquo; allow rule either — the
+        Internet Firewall's default-allow posture does that job, so what survives of rule 1 is
+        its CFS intent, as rule 3. Rule 3 of the old table exits the pipeline at REVIEW &amp; MAP
+        on its counter evidence. Rule 4 moves workstream (NAT, on its own change window). And
+        rule 5 — the SSLVPN zone — leaves the rulebase entirely: its users land in Client
+        Connectivity Policy and identity-scoped WAN Firewall rules, authenticated by the IdP with
+        MFA, and the local accounts behind the old rule are rotated out of existence, per rule
+        zero.
+      </p>
+
+      <h3>What changed in translation</h3>
+      <ul style="padding-left:20px">
+        <li><strong>The zone matrix became scopes and postures.</strong> LAN → WAN has no
+        equivalent construct — the intent (which segment reaches what, under what constraints) is
+        recovered as source scopes in one global rulebase, with the default-allow Internet
+        posture replacing the blanket egress-allow rule.</li>
+        <li><strong>Zone services became account-level layers.</strong> The CFS + GAV + IPS stack
+        attached per zone decomposed into Internet Firewall category rules plus account-level
+        Anti-Malware and IPS — global policy layers of the single-pass engine, with old per-box
+        licensing gaps levelled up rather than reproduced.</li>
+        <li><strong>The SSLVPN zone left the estate.</strong> Not translated, replaced: IdP-backed
+        ZTNA with MFA and device posture — and every local account, key and seed behind the old
+        zone rotated and deleted, never recreated.</li>
+        <li><strong>The NAT table dissolved.</strong> Masquerade policies are a platform property
+        at the PoP; only the published services survive, re-homed to remote port forwarding on
+        their own change windows.</li>
+        <li><strong>Usage evidence decided what never made the journey.</strong> The zero-traffic
+        vendor rule was discarded at review rather than translated — the discard pile, and the
+        rotation log, are outputs of the migration as much as the rules that survive.</li>
+      </ul>
+    </section>
+
+    <section id="best-practices" class="reveal">
+      <div class="section-kicker">Cross-domain practices</div>
+      <h2>Rules that hold across all four domains</h2>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Respect the default postures</h4><p>Cato's WAN Firewall is an allowlist (implicit deny); the Internet Firewall is a blocklist (implicit allow). The zone matrix spread that decision across every zone pair per box — so egress posture is a decision, not a translation. If the customer wants allowlist egress, add an explicit final block rule; don't discover the difference in production.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>Rule zero: rotate, never port</h4><p>Every secret in the export — local accounts, PSKs, SNMP strings, TOTP bindings — is treated as compromised, rotated at migration, and never recreated on the Cato side. Identity comes from the IdP. The rotation log is deliverable evidence, auditable against SonicWall's own credential-reset guidance.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Stage TLS inspection deliberately</h4><p>DPI-SSL was rationed by per-model connection limits, so Cato TLSi is often the customer's first full inspection. Certificates via MDM first, bypass rules for sensitive categories, pilot groups before populations — and expect new detections from traffic the TZ never saw.</p></div></div>
+        <div class="benefit"><div class="b-icon">🟠</div><div><h4>Monitor, then block</h4><p>Every translated rule, IPS/Anti-Malware protection, CASB control and DLP rule starts in monitor. Enforcement is earned with event evidence, per rule — the pipeline's amber-to-green transition, never a big-bang flip.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Objects before rules</h4><p>Translate and dedupe the address/service object model first — the SonicOS API export is structured JSON, scriptable straight into the GraphQL API or Terraform provider — then build rules on the clean object base. Per-box object copies recreate the sprawl you just removed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Validate with events &amp; hit counts</h4><p>Clear the SonicOS per-rule counters at discovery, re-read after 30 days, and close the loop in Monitor → Events: compare each translated rule's hits against its ancestor's Rx/Tx evidence, investigate the deltas, and keep deleting never-hit rules on the new platform as ruthlessly as on the old.</p></div></div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="reveal">
+      <div class="section-kicker">The policy pipeline</div>
+      <h2>EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE</h2>
+      <p>
+        The same pipeline runs for each domain, offset in time — firewall first, SWG behind it,
+        CASB and DLP once TLS inspection and discovery data are in place. On NSM-managed estates
+        the export stage is one pass over the whole estate; unmanaged estates export box by box.
+        Two things leave the pipeline early and never reach Cato: dead rules, discarded at review
+        on counter evidence — and every secret in the export, rotated and replaced by IdP
+        identity rather than mapped. The greenfield pair enters with discovery inputs instead of
+        rulebases, and skips translation, not the monitor-first discipline.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 520" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">SonicOS to Cato policy migration pipeline</title>
+          <desc id="dg1-desc">Four SonicOS policy domains — access rules with NAT, CFS and App Control with DPI-SSL, security services, and greenfield CASB and DLP inputs — feed an export stage using .exp files, tech support reports, the SonicOS API and NSM. A review and map stage rationalises on hit counters; dead rules leave the pipeline at a red X. Surviving intent is mapped to Cato Management Application constructs, where a second red X shows local accounts, pre-shared keys and TOTP seeds being rotated and never recreated. Mapped rules deploy in monitor mode, shown amber, then are enforced, shown green. Telemetry from deploy and enforce flows to an events and hit-counts node that validates every stage.</desc>
+
+          <!-- SonicOS source domains -->
+          <text class="dg-tiny" x="123" y="24" text-anchor="middle">SonicOS policy domains</text>
+          <rect class="pt-amber" x="28" y="36" width="190" height="52" rx="10"/>
+          <text class="pt-t-amber" x="123" y="57" text-anchor="middle">Access rules + NAT</text>
+          <text class="pt-sub" x="123" y="74" text-anchor="middle">zone matrix · per box</text>
+          <rect x="146" y="80" width="62" height="18" rx="4" fill="#ffffff"/>
+          <image href="../assets/img/logo-sonicwall.png" x="151" y="83" width="52" height="12"/>
+
+          <rect class="pt-amber" x="28" y="100" width="190" height="52" rx="10"/>
+          <text class="pt-t-amber" x="123" y="121" text-anchor="middle">CFS · App Control</text>
+          <text class="pt-sub" x="123" y="138" text-anchor="middle">web policy · DPI-SSL</text>
+
+          <rect class="pt-amber" x="28" y="164" width="190" height="52" rx="10"/>
+          <text class="pt-t-amber" x="123" y="185" text-anchor="middle">Security services</text>
+          <text class="pt-sub" x="123" y="202" text-anchor="middle">GAV · IPS · Capture ATP</text>
+
+          <rect class="pt-amber" x="28" y="228" width="190" height="52" rx="10"/>
+          <text class="pt-t-amber" x="123" y="249" text-anchor="middle">CASB / DLP — greenfield</text>
+          <text class="pt-sub" x="123" y="266" text-anchor="middle">nothing to export</text>
+
+          <!-- Feeds into EXPORT -->
+          <path class="lane-static" fill="none" d="M 218 62 C 255 62, 262 155, 300 158"/>
+          <path class="lane-static" fill="none" d="M 218 126 C 250 126, 258 162, 300 166"/>
+          <path class="lane-static" fill="none" d="M 218 190 C 250 190, 258 180, 300 178"/>
+          <path class="lane-static" fill="none" d="M 218 254 C 255 254, 262 190, 300 186"/>
+
+          <!-- EXPORT -->
+          <rect class="pt-navy" x="300" y="140" width="160" height="64" rx="10"/>
+          <text class="pt-t-inv" x="380" y="164" text-anchor="middle">EXPORT</text>
+          <text class="pt-sub-inv" x="380" y="182" text-anchor="middle">.exp · TSR · API · NSM</text>
+
+          <path class="lane-static" fill="none" d="M 460 172 L 556 172"/>
+
+          <!-- REVIEW & MAP -->
+          <rect class="pt-plain" x="556" y="140" width="200" height="64" rx="10"/>
+          <text class="pt-t-ink" x="656" y="164" text-anchor="middle">REVIEW &amp; MAP</text>
+          <text class="pt-sub" x="656" y="182" text-anchor="middle">rationalise on hit counts</text>
+
+          <!-- Dead rules discarded -->
+          <path class="lane lane-block" fill="none" d="M 700 204 C 740 224, 764 236, 786 250"/>
+          <g aria-label="dead rules discarded">
+            <path class="lane-x" d="M 786 250 L 810 274"/><path class="lane-x" d="M 810 250 L 786 274"/>
+          </g>
+          <text class="dg-tiny" x="798" y="296" text-anchor="middle">dead rules · zero-hit debt</text>
+
+          <!-- Survivors flow to MAP -->
+          <path class="lane-static" fill="none" d="M 606 204 C 540 268, 330 244, 213 312"/>
+
+          <!-- MAP -->
+          <rect class="pt-plain" x="90" y="316" width="190" height="64" rx="10"/>
+          <text class="pt-t-ink" x="185" y="340" text-anchor="middle">MAP TO CMA</text>
+          <text class="pt-sub" x="185" y="358" text-anchor="middle">FW · SWG · CASB · DLP</text>
+
+          <!-- Secrets rotated, never recreated -->
+          <path class="lane lane-block" fill="none" d="M 148 380 C 142 396, 138 408, 134 422"/>
+          <g aria-label="secrets rotated, never recreated">
+            <path class="lane-x" d="M 118 422 L 142 446"/><path class="lane-x" d="M 142 422 L 118 446"/>
+          </g>
+          <text class="dg-tiny" x="150" y="468" text-anchor="middle">local accounts · PSKs · TOTP seeds</text>
+          <text class="dg-tiny" x="150" y="484" text-anchor="middle">rotated at cutover — never recreated</text>
+
+          <path class="lane lane-limit" fill="none" d="M 280 348 L 400 348"/>
+
+          <!-- DEPLOY (monitor) -->
+          <rect class="pt-amber" x="400" y="316" width="190" height="64" rx="10"/>
+          <text class="pt-t-amber" x="495" y="340" text-anchor="middle">DEPLOY — monitor</text>
+          <text class="pt-sub" x="495" y="358" text-anchor="middle">log-only · no user impact</text>
+
+          <path class="lane lane-allow" fill="none" d="M 590 348 L 690 348"/>
+
+          <!-- ENFORCE -->
+          <rect class="pt-green" x="690" y="316" width="190" height="64" rx="10"/>
+          <text class="pt-t-green" x="785" y="340" text-anchor="middle">ENFORCE</text>
+          <text class="pt-sub" x="785" y="358" text-anchor="middle">flip to block per rule</text>
+
+          <!-- Telemetry to events -->
+          <path class="lane-static" fill="none" d="M 495 380 C 492 400, 494 414, 500 430"/>
+          <path class="lane-static" fill="none" d="M 780 380 C 762 414, 690 424, 624 444"/>
+
+          <rect class="pt-bluedash" x="400" y="432" width="220" height="56" rx="10"/>
+          <text class="pt-t-blue" x="510" y="456" text-anchor="middle">Events &amp; hit counts</text>
+          <text class="pt-sub" x="510" y="474" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-tiny" x="510" y="508" text-anchor="middle">telemetry validates every stage</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch limit"></span> Monitor first — log, don't block</span>
+          <span class="key"><span class="swatch allow"></span> Enforce — promoted on evidence</span>
+          <span class="key"><span class="swatch block"></span> Never migrates — dead rules and every secret</span>
+        </div>
+        <div class="diagram-caption">
+          The four SonicOS policy domains are exported once — via NSM in one pass where it exists
+          — then rationalised against per-rule counters, where dead rules exit the pipeline. At
+          the mapping stage the estate's secrets exit too: local accounts, pre-shared keys and
+          TOTP seeds are rotated and replaced by IdP identity, never recreated. Every mapped rule
+          deploys in monitor (amber) and is promoted to enforcement (green) when events and hit
+          counts prove it behaves as intended.
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Running the policy workshop</h2>
+      <div class="callout">
+        <div class="co-title">Format</div>
+        <p>This runs best as a working session, not a show-and-tell: ask the customer to bring a
+        TSR or SonicOS API export and 30 days of access-rule counters, and translate a few real
+        rules live. Ask early whether MySonicWall cloud backup was ever used — the answer scopes
+        rule zero — and treat their export as the sensitive artefact it is. The CASB/DLP answer
+        to &ldquo;what do you run today&rdquo; is almost always &ldquo;nothing&rdquo;, which sets
+        up the upgrade story before you open the console.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the pipeline — and rule zero</h4>
+          <p>Walk the EXPORT → REVIEW &amp; MAP → DEPLOY → OPTIMISE diagram. Agree scope: which
+          firewalls, classic versus policy mode, which domains are in use per the licence bundles
+          (CGSS/AGSS vs EPSS/APSS), who owns the decision to retire a dead rule — and state
+          plainly that no credential from the estate will be ported, per SonicWall's own
+          credential-reset guidance.</p>
+        </li>
+        <li>
+          <h4>Show the two firewall postures</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span></p>
+          <p>One global rulebase, no zones, no per-box tables. Point out the opposite defaults —
+          WAN allowlist, Internet blocklist — and translate one of their zone-matrix rules live,
+          discussing which egress posture they actually want.</p>
+        </li>
+        <li>
+          <h4>Walk the object model and automation path</h4>
+          <p><span class="path">Administration → API &amp; Integrations</span></p>
+          <p>Show hosts, groups and custom services, then the API keys page — the SonicOS API
+          export is structured JSON (address objects, services, access rules, NAT policies), so
+          object translation is scriptable end-to-end via the GraphQL API or the Terraform
+          provider rather than re-keyed by hand.</p>
+        </li>
+        <li>
+          <h4>Translate a CFS policy</h4>
+          <p>Open an Internet Firewall rule and walk the category picker against one of their CFS
+          profiles: map two or three categories by intent, show a custom category absorbing their
+          allowed/forbidden URI lists, and an app-aware rule doing what App Control did. Be
+          honest about keyword blocking — no direct equivalent; validate whether the need still
+          exists.</p>
+        </li>
+        <li>
+          <h4>Stage TLS inspection — the fidelity prerequisite</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>Walk the staged policy — bypasses first, then Inspect rules by category and pilot
+          group — and be explicit that for an estate that rationed DPI-SSL against TZ connection
+          limits, this is likely their first full TLS inspection: certificate via MDM, sensitive
+          categories bypassed, communications planned.</p>
+        </li>
+        <li>
+          <h4>Show CASB and DLP as the destination state</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Security → DLP Configuration</span></p>
+          <p>Show shadow-IT discovery running with zero configuration, a tenant-control rule, and
+          a DLP rule combining a predefined data type with a file-type condition — the greenfield
+          domains their firewall never had.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence loop</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter events to a single monitor-mode rule and show the hit evidence that would
+          justify flipping it to block — the OPTIMISE phase they will live in for the first
+          months. Close on the two auditable outcomes: the discard pile from rationalisation, and
+          the rotation log showing local accounts removed and PSKs retired.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/secure-web-gateway/" target="_blank" rel="noopener">Secure Web Gateway — platform page</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato GraphQL API documentation</a></li>
+            <li><a href="https://registry.terraform.io/providers/catonetworks/cato/latest" target="_blank" rel="noopener">Cato Terraform provider</a></li>
+            <li><a href="https://www.sonicwall.com/support/knowledge-base/export-the-address-objects-groups-using-sonicos-api-postman-and-curl/kA1VN0000000Gj70AE" target="_blank" rel="noopener">SonicWall: exporting objects and rules via the SonicOS API</a></li>
+            <li><a href="https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-0-0-0-rules_and_policies/Content/access-rules-display-traffic-statistics.htm/" target="_blank" rel="noopener">SonicWall: access-rule traffic statistics</a></li>
+            <li><a href="https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-1-content_filtering/Content/cfs-overview.htm" target="_blank" rel="noopener">SonicWall: Content Filtering Service overview</a></li>
+            <li><a href="https://www.sonicwall.com/support/notices/mysonicwall-cloud-backup-file-incident/kA1VN0000000RoD0AU" target="_blank" rel="noopener">SonicWall: MySonicWall cloud-backup incident notice</a></li>
+            <li><a href="https://www.sonicwall.com/support/notices/gen-7-and-newer-sonicwall-firewalls-sslvpn-recent-threat-activity/kA1VN0000000RDG0A2" target="_blank" rel="noopener">SonicWall: Gen 7 SSL-VPN threat-activity notice</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-sonicwall.html">SonicWall to Cato — the displacement playbook</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

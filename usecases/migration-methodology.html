@@ -644,6 +644,18 @@
               <td>Parallel Socket at the XGS hub with IPsec/eBGP handoff; SD-RED branches migrate in waves; endpoint estate stays on Sophos</td>
               <td>Re-plug the SD-RED / re-enable the XGS path — legacy hub stays policy-frozen until the final wave</td>
             </tr>
+            <tr>
+              <td><a href="migration-cisco-asa.html">Cisco ASA</a> · <a href="migration-cisco-asa-policy.html">policy</a></td>
+              <td>ASA 5500-X perimeter HA pairs + IPsec site mesh; AnyConnect terminating on the same boxes</td>
+              <td>Parallel Socket beside the ASA pair; ASA runs an interim IPsec IKEv2 site so un-migrated branches reach Cato-side resources</td>
+              <td>Restore the default gateway / static routes to the ASA — it stays racked and configured through the soak</td>
+            </tr>
+            <tr>
+              <td><a href="migration-sonicwall.html">SonicWall</a> · <a href="migration-sonicwall-policy.html">policy</a></td>
+              <td>TZ branches + NSa hub under NSM, firewall-terminated SSL-VPN (NetExtender) — often MSP-run</td>
+              <td>Parallel Socket at the NSa hub with L3 handoff and interim IPsec IKEv2 on-ramp; SSL-VPN cohorts move to ZTNA first</td>
+              <td>Re-plug the TZ — its site-to-site VPN re-establishes to the hub; re-enable a NetExtender profile per cohort</td>
+            </tr>
           </tbody>
         </table>
       </div>

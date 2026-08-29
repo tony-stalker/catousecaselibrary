@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SonicWall (TZ/NSa &amp; SonicOS) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Displace the TZ/NSa estate after the SSL-VPN campaigns — remote-access cohorts to ZTNA first, branch waves to Sockets behind them, policy rebuilt clean and the MSP brought along, sized for UK mid-market estates.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-sonicwall">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / SonicWall to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>SonicWall (TZ/NSa &amp; SonicOS) to Cato</h1>
+    <p class="lede">
+      The classic UK mid-market SonicWall estate is TZ desktop firewalls at every branch, an NSa at
+      HQ, NSM (or retired GMS) in the middle, and SSL-VPN remote access terminating on the firewalls
+      themselves — almost always bought and run through an MSP. That last part is the story:
+      firewall-terminated SSL-VPN was the reported entry point in two Akira ransomware waves, and the
+      MySonicWall cloud-backup breach means the estate's configurations and credentials must be
+      treated as adversary-held. This playbook maps the whole network stack to the Cato SASE Cloud —
+      SSL-VPN cohorts to ZTNA first, branch waves to Sockets behind them — and rebuilds policy clean
+      on Cato rather than re-importing compromised configuration.
+    </p>
+    <div class="meta-row">
+      <span class="tag">SonicWall</span><span class="tag">TZ/NSa</span><span class="tag">SSL-VPN</span>
+      <span class="tag">NSM</span><span class="tag">UK Mid-Market</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <p>
+        This is the most incident-driven displacement in the library. A Gen&nbsp;6 SonicWall estate
+        in 2026 is at or past end of support (Gen&nbsp;6 entered Limited Retirement Mode on
+        20&nbsp;April 2024 — critical fixes only), its legacy management platform GMS hit its last
+        order day on 1&nbsp;October 2025, and its dedicated remote-access line — the SMA&nbsp;100 —
+        was force-retired on 31&nbsp;October 2025 with barely two months' runway and no-charge
+        transition offers. Meanwhile the SSL-VPN service running on the firewalls themselves was the
+        initial-access vector incident responders reported across the 2024 and 2025 ransomware campaigns, and in September 2025
+        SonicWall disclosed that an unauthorised party had accessed firewall configuration backups in
+        MySonicWall cloud backup — an investigation concluded with Mandiant on 8&nbsp;October 2025,
+        confirming <strong>every customer who used the cloud backup service was affected</strong>.
+      </p>
+      <p>
+        SonicWall's proposed fix is another appliance generation — Gen&nbsp;8 hardware shipping from
+        2025, with Secure Upgrade Plus trade-ins pushed at every end-of-support notice — plus a
+        bolted-on SSE (Cloud Secure Edge, the former Banyan). The refresh money is being spent
+        either way; the honest question is whether it buys a third appliance cycle or removes the
+        appliance cycle. The objective: <strong>replace the TZ/NSa estate, the firewall-to-firewall
+        VPN mesh and the firewall-terminated SSL-VPN with Cato — the exploited surface first — and
+        rebuild policy clean on the platform rather than re-importing configuration that must be
+        presumed compromised.</strong>
+      </p>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The forcing functions</div>
+      <h2>The refresh cliff, the SSL-VPN campaigns and the backup breach</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">9.3</div><div class="stat-label">CVSS of CVE-2024-40766 — improper access control in SonicOS management access and SSL-VPN; CISA KEV 9 Sep 2024</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">All</div><div class="stat-label">Cloud-backup customers whose firewall config files were accessed in the MySonicWall breach — concluded with Mandiant, 8 Oct 2025</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2025</div><div class="stat-label">31 Oct: SMA 100 remote-access line force-retired — two months' runway, no-charge CSE or SSL-VPN licence offers</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">2026</div><div class="stat-label">1 Aug: TZ400/TZ600/NSA 3600/NSa 3650 end of support — the classic Gen 6 branch estate goes dark for fixes</div></div>
+      </div>
+
+      <p>
+        Map the customer's renewal dates against this calendar in discovery — every row below forces
+        spend on <em>something</em>, which is exactly why the waves in this playbook are sequenced
+        by it:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SonicWall milestone</th><th>Date</th><th>Consequence</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gen 6 firewalls enter Limited Retirement Mode — critical fixes only</td><td>20 Apr 2024</td><td>Gen 6 estates frozen; every later CVE response is best-effort</td></tr>
+            <tr><td>TZ400/TZ400W/TZ600/TZ600P/NSA 3600/NSa 3650: last order day for support renewals</td><td>31 Jul 2025</td><td>No more paid support extensions</td></tr>
+            <tr><td>GMS last order day — licences and renewals end; migrate to NSM 3.0</td><td>1 Oct 2025</td><td>Management-plane refresh forced on GMS estates</td></tr>
+            <tr><td><strong>SMA 100 series end of support brought forward; the appliance line retired</strong></td><td><strong>31 Oct 2025</strong></td><td>Remote-access line terminated mid-contract; no-charge moves to Cloud Secure Edge (24-month licence) or firewall SSL-VPN licences</td></tr>
+            <tr><td>SOHO/SOHOW/TZ 300P/NSa 9250/9450/9650 end of support — SonicWall's notice recommends Gen 8 replacements</td><td>16 Apr 2026</td><td>No technical support, firmware or RMA; first wave of the refresh cliff</td></tr>
+            <tr><td>TZ400/TZ600/NSA 3600/NSa 3650 end of support</td><td>1 Aug 2026</td><td>The bulk of the classic Gen 6 branch estate goes dark for fixes</td></tr>
+            <tr><td>Gen 8 hardware + SonicOS 8 shipping (NSa 2800/3800 from 1 May 2025; TZ80)</td><td>2025 onwards</td><td>Gen 7 buyers of 2021 are already being marketed the <em>next</em> refresh</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">What SonicWall itself confirmed <span class="tag">primary advisories</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)"><strong>CVE-2024-40766</strong> (SNWLID-2024-0015, CVSS 9.3, published 22 Aug 2024): improper access control in SonicOS management access <em>and</em> SSL-VPN across Gen 5, 6 and 7; flagged for potential active exploitation in early September 2024 and added to CISA's KEV catalogue on 9 Sep 2024 — with explicit guidance to reset all local SSL-VPN passwords, especially on configs imported from Gen 6 to Gen 7. <strong>Aug 2025 Gen 7 campaign</strong> (notice 4 Aug, updated 22 Aug 2025): SonicWall concluded with "high confidence" it was not a zero-day but correlated with CVE-2024-40766 — fewer than 40 incidents, many tied to Gen 6 → Gen 7 migrations where local passwords were carried over and never reset; guidance was SonicOS 7.3 (July 2025, with added brute-force and MFA protections) plus another full password reset. NHS England issued cyber alert CC-4686 on this activity. <strong>MySonicWall breach</strong> (17 Sep 2025): config backup files accessed; on 8 Oct 2025 SonicWall and Mandiant confirmed all cloud-backup customers were affected — the files hold encrypted credentials and full configuration, and SonicWall's own notice says possession "could increase the risk of targeted attacks". Remediation is an "Essential Credential Reset" across local users, TOTP bindings and IPsec keys.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What third parties reported <span class="tag">attribute as reporting</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Arctic Wolf reported roughly 30 Akira and Fog ransomware intrusions from August 2024 with initial access via SonicWall SSL-VPN accounts on devices unpatched for CVE-2024-40766 — logins typically from VPS infrastructure, encryption often same-day. Macnica's December 2024 leak-site analysis put about half of the organisations on Akira/Fog leak sites on SonicWall, with ~48,933 devices still exposed and unpatched. Arctic Wolf then reported the campaign resuming from 22 Jul 2025 against <em>patched</em> Gen 7 firewalls with SSL-VPN enabled — largely credentials carried over from Gen 6 imports — and The Hacker News/Rapid7 reported malicious logins that passed OTP MFA challenges (consistent with seeds harvested earlier), with encryption in under four hours; CISA/FBI reporting put Akira proceeds at ~$244M by late September 2025. Google Threat Intelligence separately documented UNC6148 planting the OVERSTEP backdoor on fully patched, end-of-life SMA 100 appliances in July 2025. The Hacker News reported in November 2025 that SonicWall attributed the backup breach to a state-sponsored actor — SonicWall's own notice says only "unauthorized party".</p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Treat the configuration as compromised — rebuild, don't re-import</div>
+        <p>Two structural lessons set the migration design. First, SSL-VPN terminating on the edge
+        firewall is the single most exploited entry point in this estate class — ZTNA from a cloud
+        PoP removes that surface entirely, so the SSL-VPN cohorts migrate <em>first</em>. Second,
+        the 2025 wave's mechanic was configuration carry-over: old local passwords imported into new
+        boxes. The same logic condemns any config re-import into the new platform — and after the
+        MySonicWall breach, every secret in the estate (local VPN accounts, IPsec PSKs, SNMP
+        strings, admin credentials) is potentially adversary-held regardless of patch level. This
+        migration is review-and-map with full secret rotation, never lift-and-shift.</p>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>&ldquo;How many of your firewalls are still Gen 6 — and who is patching them now they're
+        in Limited Retirement Mode? Did you use MySonicWall cloud backup, and has the Essential
+        Credential Reset actually been completed on every box? And where did your SMA 100 users
+        land after 31 October 2025?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="play" class="reveal">
+      <div class="section-kicker">The shape of the play</div>
+      <h2>A full network-stack displacement — bring the MSP with you</h2>
+      <p>
+        Concede honestly; it builds credibility. TZ boxes are cheap, familiar to UK MSPs, and bundle
+        a lot for the money — gateway anti-malware, IPS, App Control, content filtering and
+        anti-spam in the Gen 7 Essential Protection suite. SonicWall is a 100% channel vendor with
+        17,000+ partners, claiming roughly 500,000 business customers in 215 countries in its own
+        boilerplate — and Capture ATP with RTDMI was genuinely differentiated SMB sandboxing when it
+        launched, backed by real threat research in Capture Labs. Unlike a Sophos displacement,
+        though, there is no beloved endpoint suite to preserve here: this is a <strong>full
+        network-stack displacement</strong>. What you must bring along is the MSP relationship and
+        the operational muscle memory — zone thinking and per-box rules become one global policy;
+        the story is &ldquo;same intent, one rulebase, no boxes to patch&rdquo;.
+      </p>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;SonicWall has SASE too&rdquo; — Cloud Secure Edge</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Concede CSE exists — SonicWall acquired Banyan Security (announced 3 Jan 2024, completed 26 Dec 2023) and sells it as Cloud Secure Edge. The counters: it is an SSE bolted <em>beside</em> the firewall estate — the appliances, their firmware cycle and their refresh economics all remain; there is no private backbone; and most customers met CSE as the forced landing zone of the SMA 100 shutdown, not as a chosen platform. Cato replaces the appliance layer rather than supplementing it.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Use the security history architecturally</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">This is not &ldquo;SonicWall is uniquely bad&rdquo;. SonicWall published advisories promptly, shipped SonicOS 7.3 hardening, gave SMA users free transition licences, and brought in Mandiant. The argument is that the estate's crown jewels — VPN credentials, PSKs, full configs — live on and around WAN-facing appliances and the vendor's cloud, and both were compromised classes in 2024–2025. The same KEV-class story exists for Fortinet, Cisco and Ivanti; a cloud-delivered PoP removes the category, not the vendor.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">The MSP is the real buyer</div>
+        <p>100% channel: the box margin and the management fee are the partner's, and the MSP
+        relationship usually outlasts the hardware — in MSSP-run estates the firewalls are managed
+        from the <em>MSP's</em> NSM tenant. A rip-and-replace pitched to the end customer that
+        strands the MSP's margin will be resisted regardless of technical merit. Bring the MSP into
+        the deal on Cato's partner-delivered model: they keep the customer, swap box-patching for
+        platform operations, and their NSM inventory becomes the discovery source for the project.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        The whole estate collapses into one cloud platform and one global, ordered rulebase. Renewal
+        SKUs are a reliable discovery signal for what is actually enforced per box — CGSS/AGSS on
+        Gen 6, EPSS/APSS on Gen 7.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>SonicWall component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TZ/NSa/NSsp/NSv + zone-matrix access rules</td>
+              <td>Cato Socket + FWaaS (WAN and Internet Firewall)</td>
+              <td>Per-box zone matrices collapse into one global ordered rulebase; no per-box firmware or HA pairs</td>
+            </tr>
+            <tr>
+              <td>App Control / App Rules</td>
+              <td>Internet/WAN Firewall rules on applications and app categories</td>
+              <td>App catalogue maintained in-cloud; App Rules bandwidth actions map to Cato QoS/bandwidth priorities</td>
+            </tr>
+            <tr>
+              <td>Content Filtering Service (CFS profiles, allowed/forbidden URI lists)</td>
+              <td>Cato SWG — URL categories + custom categories</td>
+              <td>URI lists become custom categories; per-user/group CFS policies become identity-aware rules via SCIM groups; CFS keyword blocking has no direct equivalent — validate the need</td>
+            </tr>
+            <tr>
+              <td>DPI-SSL (client/server TLS interception, resigning CA)</td>
+              <td>Cato TLS Inspection at the PoP</td>
+              <td>Same CA-trust deployment job (swap the resigning cert for the Cato cert); removes the per-model DPI-SSL connection-count ceiling on TZs</td>
+            </tr>
+            <tr>
+              <td>Gateway Anti-Virus + Anti-Spyware + IPS · Botnet and Geo-IP filters</td>
+              <td>Cato IPS + Anti-Malware in the single-pass engine; reputation and geo protections</td>
+              <td>Account-level layers applied to everything the PoP sees — per-rule carve-outs become explicit exceptions</td>
+            </tr>
+            <tr>
+              <td>Capture ATP (+RTDMI) cloud sandboxing</td>
+              <td>Cato Anti-Malware / NG Anti-Malware (ML-based)</td>
+              <td>Match file-type scoping and block-until-verdict expectations in the pilot</td>
+            </tr>
+            <tr>
+              <td>Site-to-site IPsec VPN + SD-WAN groups/probes</td>
+              <td>Cato Socket sites on the global private backbone</td>
+              <td>SonicWall S2S is firewall-to-firewall over the public internet; Cato adds the private middle-mile. Retained SonicWalls can IPsec (IKEv2) into Cato as interim on-ramps</td>
+            </tr>
+            <tr>
+              <td>NetExtender / Mobile Connect / Virtual Office SSL-VPN</td>
+              <td>Cato Client (ZTNA) + clientless browser access</td>
+              <td>Removes the WAN-facing SSL-VPN portal — the exploited surface in every campaign above; Virtual Office bookmarks map to clientless access</td>
+            </tr>
+            <tr>
+              <td>Global VPN Client + GroupVPN (legacy IPsec)</td>
+              <td>Cato Client</td>
+              <td>GVC estates are old — treat as re-onboarding, not parity mapping</td>
+            </tr>
+            <tr>
+              <td>SMA 100/1000 (dedicated SSL-VPN appliance, bookmarks)</td>
+              <td>Cato ZTNA + clientless access</td>
+              <td>SMA 100 was retired 31 Oct 2025 — those users were force-migrated once (to CSE or firewall SSL-VPN) and can be moved once more, properly</td>
+            </tr>
+            <tr>
+              <td>NSM / GMS / Analytics</td>
+              <td>Cato Management Application (CMA)</td>
+              <td>NSM inventory export seeds discovery; GMS estates face a forced management migration anyway</td>
+            </tr>
+            <tr>
+              <td>Comprehensive Anti-Spam (EPSS bundle)</td>
+              <td><strong>No Cato equivalent</strong></td>
+              <td>Almost always redundant with M365/Google email security — verify MX records and smart-host arrangements, don't assume</td>
+            </tr>
+            <tr>
+              <td>SonicWave APs / SonicWall Switches (firewall/NSM-managed)</td>
+              <td><strong>Not replaced by Cato</strong></td>
+              <td>LAN gear stays or is refreshed separately — plan management continuity before the firewall goes (see gotchas)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Recommended migration path</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from SonicWall's primary advisories, vendor documentation and Cato
+        PS methodology research; it is <strong>not a delivery-verified runbook</strong>. Review the
+        design — especially the on-ramp, route filtering and rollback details, and anything
+        contract-dependent — with Cato Professional Services before committing it to a customer
+        plan.</p>
+      </div>
+
+      <p>
+        The arc follows the Cato PS methodology — Export → Review &amp; Map → Deploy → Optimise, run
+        as discovery → co-existence → pilot → phased cutover → decommission. TZ-heavy branch estates
+        use two co-existence patterns, often combined: a <strong>parallel Socket per site</strong>
+        (X1500/X1600 alongside the TZ, L3 handoff, subnets moved progressively — rollback is
+        re-plugging) and an <strong>IPsec IKEv2 on-ramp</strong>, where remaining SonicWalls tunnel
+        into the nearest Cato PoP as interim sites — for sites awaiting Socket delivery, short-lease
+        sites, or as the hub interconnect carrying un-migrated branch traffic to Cato-side resources
+        during the transition. The SonicWall S2S VPN stays authoritative for un-migrated sites, with
+        default routes filtered at the on-ramp. The one deliberate inversion from other playbooks:
+        <strong>remote access does not wait for the site waves</strong> — the SSL-VPN cohorts move
+        to ZTNA early, because that is the exploited surface.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 512" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Co-existence between a SonicWall TZ/NSa estate and Cato during phased migration</title>
+          <desc id="dg1-desc">A Cato PoP on the global private backbone serves a remote-access cohort moved from NetExtender to the Cato Client, and a migrated branch whose TZ has been replaced by a Cato Socket. At HQ a parallel Cato Socket sits alongside the NSa hub firewall with an L3 handoff, and the NSa also runs an interim IPsec IKEv2 on-ramp to the PoP carrying un-migrated traffic. A legacy TZ branch still tunnels to the NSa hub. An internet attacker probing for SSL-VPN portals is blocked with a red X because the WAN-facing portal has been retired. A dashed rollback arrow shows a migrated branch can revert by re-plugging its TZ, whose site-to-site VPN re-establishes to the hub.</desc>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="290" cy="150" rx="150" ry="48"/>
+          <circle cx="155" cy="170" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="425" cy="132" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="290" y="222" text-anchor="middle">Global private backbone</text>
+
+          <circle class="pulse-ring" cx="290" cy="150" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="290" cy="150" r="30"/>
+          <text class="dg-label" x="290" y="90" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="290" y="105" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">One global policy · full inspection</text>
+
+          <!-- Attacker -->
+          <rect class="pt-plain" x="730" y="48" width="180" height="54" rx="10"/>
+          <text class="pt-t-ink" x="820" y="71" text-anchor="middle">Internet attacker</text>
+          <text class="pt-sub" x="820" y="89" text-anchor="middle">scans for SSL-VPN portals</text>
+          <path class="lane lane-block" d="M 820 102 L 820 236"/>
+          <g aria-label="WAN-facing SSL-VPN portal retired">
+            <path class="lane-x" d="M 808 240 L 832 264"/><path class="lane-x" d="M 832 240 L 808 264"/>
+          </g>
+          <text class="dg-tiny" x="850" y="288" text-anchor="middle">SSL-VPN portal retired</text>
+
+          <!-- HQ container -->
+          <rect x="470" y="300" width="440" height="118" rx="12" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text class="dg-tiny" x="560" y="294" text-anchor="middle">HQ — parallel deployment</text>
+
+          <!-- Parallel Socket at HQ -->
+          <rect class="pt-green" x="490" y="326" width="170" height="58" rx="10"/>
+          <text class="pt-t-green" x="575" y="349" text-anchor="middle">Cato Socket</text>
+          <text class="pt-sub" x="575" y="367" text-anchor="middle">parallel at HQ</text>
+
+          <!-- NSa hub -->
+          <rect class="pt-navy" x="720" y="326" width="170" height="58" rx="10"/>
+          <text class="pt-t-inv" x="805" y="349" text-anchor="middle">NSa hub firewall</text>
+          <text class="pt-sub-inv" x="805" y="367" text-anchor="middle">NSM-managed</text>
+          <rect x="828" y="375" width="56" height="16" rx="4" fill="#ffffff"/><image href="../assets/img/logo-sonicwall.png" x="832" y="377" width="48" height="12"/>
+
+          <!-- L3 handoff -->
+          <path class="lane-static" d="M 660 355 L 720 355"/>
+          <text class="dg-tiny" x="690" y="345" text-anchor="middle">L3 handoff</text>
+
+          <!-- IPsec on-ramp from NSa to PoP -->
+          <path class="lane lane-limit" fill="none" d="M 805 326 C 780 250, 510 185, 330 162"/>
+          <text class="dg-tiny" x="596" y="246" text-anchor="middle">IPsec IKEv2 on-ramp (interim)</text>
+
+          <!-- Remote cohort -->
+          <rect class="pt-green" x="60" y="280" width="180" height="58" rx="10"/>
+          <text class="pt-t-green" x="150" y="303" text-anchor="middle">Remote cohort — ZTNA</text>
+          <text class="pt-sub" x="150" y="321" text-anchor="middle">Cato Client · IdP MFA</text>
+          <text class="dg-tiny" x="150" y="352" text-anchor="middle">was NetExtender / GVC / SMA</text>
+
+          <!-- Migrated branch -->
+          <rect class="pt-green" x="60" y="400" width="180" height="58" rx="10"/>
+          <text class="pt-t-green" x="150" y="423" text-anchor="middle">Branch A — migrated</text>
+          <text class="pt-sub" x="150" y="441" text-anchor="middle">Socket replaces TZ</text>
+
+          <!-- Legacy TZ branch -->
+          <rect class="pt-amber" x="720" y="428" width="170" height="58" rx="10"/>
+          <text class="pt-t-amber" x="805" y="451" text-anchor="middle">Branch B — legacy</text>
+          <text class="pt-sub" x="805" y="469" text-anchor="middle">TZ tunnels to hub</text>
+          <path class="lane lane-limit" d="M 805 428 L 805 384"/>
+          <text class="dg-tiny" x="818" y="410" text-anchor="start">S2S VPN</text>
+
+          <!-- Flows to PoP -->
+          <path class="lane lane-allow" fill="none" d="M 150 278 C 165 235, 210 200, 262 172"/>
+          <path class="lane lane-allow" fill="none" d="M 220 398 C 268 330, 272 240, 300 188"/>
+          <path class="lane lane-allow" fill="none" d="M 545 324 C 480 265, 400 205, 322 172"/>
+
+          <!-- Rollback -->
+          <path d="M 240 458 C 420 505, 580 500, 716 468" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 6"/>
+          <path d="M 716 468 L 702 465 M 716 468 L 705 477" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+          <text class="dg-tiny" x="460" y="504" text-anchor="middle">Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Sockets and ZTNA cohorts via the nearest PoP</span>
+          <span class="key"><span class="swatch limit"></span> Legacy / interim — SonicWall S2S VPN and IPsec on-ramp</span>
+          <span class="key"><span class="swatch block"></span> Attack path — removed with the SSL-VPN portal</span>
+        </div>
+        <div class="diagram-caption">
+          Interim co-existence for a TZ-heavy estate: the SSL-VPN cohorts move to ZTNA first,
+          retiring the exploited WAN-facing portal; TZ branches swap to parallel Sockets in waves
+          sequenced by the end-of-support calendar; and the NSa hub runs an interim IPsec IKEv2
+          on-ramp carrying un-migrated branch traffic to Cato-side resources, with default routes
+          filtered. Rollback at any point is re-plugging the TZ — its site-to-site VPN
+          re-establishes to the hub.
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 0 — Discovery and export (NSM is the discovery source)</h4>
+          <p>Inventory from the NSM device inventory export (CSV/JSON — one pass over the whole
+          estate; in MSSP-run estates this lives in the MSP's tenant): models and generations per
+          site (any Gen 6 is at or past end of support — lead with the calendar above), SonicOS
+          versions (anything pre-7.3 on Gen 7 signals patch-cadence risk), the bundle per box from
+          MySonicWall licensing (CGSS/AGSS vs EPSS/APSS — what is actually enforced), renewal
+          dates, NSM vs GMS vs unmanaged, MSP contract terms, SMA history (where did those users
+          land after 31 Oct 2025?), SonicWave/Switch dependencies, and USB LTE failover per TZ —
+          confirm the Cato-side equivalent per site design now, not on cutover night. Export each
+          firewall three ways: the <strong>.exp settings export</strong> (rollback/reference — not
+          human-readable), the <strong>Tech Support Report</strong> (plain-text running config —
+          the mapping-workbook input, exportable centrally via NSM), and the <strong>SonicOS
+          API</strong> (JSON objects, rules and NAT policies — the machine-readable feed for bulk
+          mapping). Capture per-access-rule Rx/Tx statistics to identify dead rules (clear
+          counters, re-read after 30 days) and AppFlow/Analytics baselines for the app-category
+          mapping. Finally the <strong>secrets audit — non-negotiable</strong>: enumerate local
+          users (especially SSL-VPN-enabled), IPsec PSKs, SNMP strings and admin accounts. Given
+          the backup breach and the password-carry-over history, everything gets rotated at
+          migration and local VPN accounts are never recreated on the Cato side — identity comes
+          from the IdP.</p>
+        </li>
+        <li>
+          <h4>Phase 1 — Co-existence foundation</h4>
+          <p>Stand up the Cato account: CMA admin model, IdP SSO and SCIM against Entra ID (the UK
+          mid-market default), base policy from Cato best-practice templates. Deploy the two
+          patterns: parallel Sockets (X1500/X1600) at the first-wave TZ sites, and IPsec IKEv2
+          on-ramps from retained SonicWalls — including the NSa hub interconnect that carries
+          un-migrated branch traffic to Cato-side resources. Keep the SonicWall S2S VPN
+          authoritative for un-migrated sites and filter default routes at the on-ramp. Sequence
+          the waves by the EOS calendar: the 16 Apr 2026 models and the Aug 2026 TZ400/600 wave
+          first — those boxes must be replaced with <em>something</em> regardless.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Pilot (map validated, deploy monitor-first)</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → TLS Inspection</span></p>
+          <p>Pick 1–3 representative sites: one TZ branch plus the HQ NSa with the densest rule
+          base. Map zone-matrix rules to Cato WAN/Internet Firewall; CFS profiles to URL categories
+          plus custom categories; App Rules to app-category rules; DPI-SSL exclusions to TLS
+          inspection bypass rules; Capture ATP scoping to Anti-Malware settings. Review-and-map,
+          not lift-and-shift: per-box rule bases collapse into one global policy and dead rules
+          (hit counters, Phase 0) are dropped, not migrated. Run IPS, Anti-Malware and new block
+          rules in monitor/log first; enable TLS inspection on a pilot group after swapping the
+          DPI-SSL resigning CA for the Cato certificate in MDM. Pilot users run the Cato Client
+          alongside the NetExtender/GVC cohorts — validate SSO, MFA at the IdP, posture checks,
+          and everything that lived as a Virtual Office bookmark (clientless browser access).</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Phased site cutover</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>TZ sites by wave: Socket in parallel → move VLANs → remove the site from the SonicWall
+          VPN topology → validate → leave the TZ racked through the soak window. Rollback is
+          re-enabling the tunnel. Inventory and re-create inbound NAT/port-forwards per site
+          <em>before</em> cutover — branch servers, CCTV, third-party maintenance access — because
+          Cato-side equivalents (remote port forwarding, allocated IPs) are a different model;
+          surface this in discovery, not on cutover night. Update anything keyed to site egress IPs
+          (SaaS allowlists, partner firewalls) per wave.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Remote access displacement (the de-risking moment)</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Device Posture</span></p>
+          <p>Cohort rollout of the Cato Client via MDM; NetExtender and GVC profiles removed per
+          cohort. <strong>Disable the SSL-VPN service and Virtual Office portal on each firewall as
+          its last cohort clears</strong> — this is the measurable de-risking moment; log it as
+          evidence. Never migrate firewall-local VPN accounts: all Cato access is IdP-backed with
+          MFA and device posture. SMA-refugee users already on CSE move in the same cohorts.</p>
+        </li>
+        <li>
+          <h4>Phase 5 — Optimise and decommission</h4>
+          <p>Tighten monitor-mode rules to block, widen TLS inspection scope, tune QoS; use CMA
+          analytics to retire never-hit rules quarter by quarter. Decommission in order: branch TZs
+          → hub NSa and its on-ramp → any SSL-VPN portals not already dark → lapse the
+          EPSS/APSS/CGSS renewals; cancel or repurpose NSM (keep it short-term if it still manages
+          SonicWave APs or Switches); and <strong>delete the MySonicWall cloud backups once
+          appliances are retired</strong> — they remain an exfiltration target even post-migration.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧯</div><div><h4>The exploited surface goes first</h4><p>WAN-facing SSL-VPN portals at project start versus zero at finish is the headline metric — the entry point in every campaign above leaves the estate before the site waves even finish.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>Secrets leave the edge</h4><p>Local VPN accounts are never recreated; PSKs are new and rotated; identity comes from the IdP with MFA and posture. The rotation log is auditable against SonicWall's own Essential Credential Reset guidance.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Rollback is designed in</h4><p>Re-plug the TZ and its site-to-site VPN re-establishes to the hub; re-enable a NetExtender profile per cohort. No rebuilds mid-window, and the TZ stays racked through the soak.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>The refresh cliff becomes the plan</h4><p>The EOS calendar already forces spend on the 2026 waves — the same dates sequence the Socket waves, so the budget that would have bought Gen 8 buys the appliance cycle's removal instead.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Cutover mechanics per estate element</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Element</th><th>Cutover</th><th>Rollback</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TZ branch</td>
+              <td>Parallel Socket, L3 handoff, move subnets/VLANs → remove the site from the SonicWall VPN topology → soak with the TZ still racked</td>
+              <td>Re-plug the TZ / re-enable its tunnel — the S2S VPN re-establishes to the hub</td>
+            </tr>
+            <tr>
+              <td>Site awaiting Socket (or short-lease)</td>
+              <td>IPsec IKEv2 on-ramp from the retained SonicWall to the nearest PoP as an interim site</td>
+              <td>Remove the tunnel — the SonicWall S2S VPN was never withdrawn</td>
+            </tr>
+            <tr>
+              <td>NSa hub</td>
+              <td>IPsec on-ramp carries un-migrated branch traffic to Cato-side resources throughout; the hub migrates last, once its spokes are clear</td>
+              <td>The on-ramp stays up until the final wave — nothing to unwind early</td>
+            </tr>
+            <tr>
+              <td>SSL-VPN users (NetExtender / Mobile Connect / GVC)</td>
+              <td>Cato Client per cohort via MDM; profiles removed per cohort; SSL-VPN service and Virtual Office disabled per firewall as its last cohort clears</td>
+              <td>Re-push the NetExtender profile and re-enable the service — with every local password reset per SonicWall's advisory guidance</td>
+            </tr>
+            <tr>
+              <td>SMA-refugee users (on CSE or firewall SSL-VPN since 31 Oct 2025)</td>
+              <td>Join the same ZTNA cohorts — they have already been re-onboarded once, so the motion is practised</td>
+              <td>CSE licences run to term — nothing lapses mid-PoV or mid-wave</td>
+            </tr>
+            <tr>
+              <td>NSM / GMS management plane</td>
+              <td>CMA takes sites, users, policy and analytics as they migrate; NSM retained short-term if it manages SonicWave/Switch LAN gear</td>
+              <td>NSM keeps managing whatever is still SonicWall — the planes coexist cleanly</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">Sequence waves by the EOS calendar</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The 16 Apr 2026 models (SOHO/SOHOW/TZ 300P/NSa 9250–9650) and the 1 Aug 2026 wave (TZ400/TZ600/NSA 3600/3650) must be replaced with something regardless — put them in the first Socket waves and the refresh budget converts directly. Gen 7 boxes with runway left migrate later, and their EPSS/APSS renewals simply lapse per wave.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Log the de-risking as you go</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Evidence to collect per wave: Gen 6 boxes past end of support at project start (NSM inventory export); WAN-facing SSL-VPN portals at start versus zero at finish; rule-base collapse (per-box rule counts summed vs the final global policy, with the percentage of dead rules identified by hit counters); secrets rotated — local accounts removed and PSKs retired, auditable against the MySonicWall remediation guidance; and firmware/emergency-advisory patch events no longer applicable per site per year.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What will come up in the room</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;We already patched CVE-2024-40766&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The 2025 wave hit <em>patched</em> Gen 7 boxes — SonicWall's own notice ties many incidents to imported credentials that were never reset, not to the bug. And the cloud-backup breach means config secrets may be adversary-held regardless of patch level. The exposure is the architecture — WAN-facing SSL-VPN plus secrets bound to appliances — not one CVE. Use the advisory citations verbatim; never embellish.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;We'll just move to CSE&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">CSE (the acquired Banyan) is an SSE beside the firewall estate: the TZ/NSa boxes, their firmware cycle and the Gen 8 refresh all remain, and there is no private backbone. Customers met it as the forced landing zone of the SMA 100 shutdown. If the customer is paying refresh money anyway, the comparison is appliance cycle + bolted-on SSE versus removing the appliance cycle.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The anti-spam gap</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">EPSS bundles Comprehensive Anti-Spam; Cato does not do email security. It is nearly always redundant with M365/Google email hygiene — but verify MX records and any on-box smart-host arrangements before promising parity, and price the replacement if one is genuinely needed.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">SonicWave APs and SonicWall Switches</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">They are managed from the firewall or NSM — removing the firewall orphans their management. Inventory them in Phase 0, keep NSM running for LAN gear short-term, or fold a LAN refresh into the project. Do not let this surface on cutover night.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Branch inbound NAT</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">TZ estates accumulate port-forwards — local servers, CCTV, BMS, third-party maintenance access. The Cato model (remote port forwarding, allocated IPs) is different, so inventory every DNAT in discovery and move published services on their own change windows.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">DPI-SSL practicalities cut both ways</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Many SonicWall estates never fully enabled DPI-SSL — per-model connection limits and CA-deployment pain saw to that. That means the Cato TLS inspection rollout may be the customer's <em>first</em> full TLS inspection: plan exclusions (banking, health) and user comms deliberately rather than assuming like-for-like.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Don't overclaim — and be fair</div>
+        <p>Reseller notices say SMA 100 devices &ldquo;cease to function&rdquo; after 31 Oct 2025;
+        SonicWall's own wording is end-of-support plus no-charge migration. Say
+        &ldquo;force-retired with two months' runway and no-charge migration offers&rdquo; — fully
+        supported — rather than &ldquo;bricked&rdquo;, unless the customer's own devices confirm
+        it. More broadly: SonicWall published advisories promptly, shipped SonicOS 7.3 hardening,
+        and brought in Mandiant. The argument is the appliance category and the secrets-on-the-edge
+        model — the same story as Fortinet, Cisco and Ivanti — not vendor character assassination.
+        The customer chose SonicWall; respect the choice and displace the architecture.</p>
+      </div>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The pitch above stands on two structural claims, so the PoV proves exactly those, in a
+        small bounded pilot: an SSL-VPN cohort moved to ZTNA with <em>zero</em> firewall-local
+        accounts on the Cato side (the exploited surface, removed), and one TZ branch on a Socket
+        reaching the un-migrated estate through an IPsec IKEv2 on-ramp at the NSa hub (the
+        co-existence pattern, working). The distinctive criterion is the secrets one: this estate's
+        migration is only credible if the PoV demonstrates rotation, not carry-over — new PSKs,
+        IdP-backed identity, and the pilot firewall's SSL-VPN portal dark by the end, verified from
+        outside. Agree the criteria below <strong>before configuring anything</strong>, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>, and run the register to a
+        fixed end date.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>SSL-VPN cohort runs on ZTNA — no local accounts</strong></td>
+              <td>The pilot cohort works a normal week on the Cato Client with IdP SSO, MFA and posture checks; no firewall-local credential exists anywhere on the Cato side</td>
+              <td>Connectivity events showing IdP-backed logins + a config review confirming zero local users created</td>
+              <td>Access → Users · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>TZ branch runs on a Socket</td>
+              <td>The pilot branch passes all traffic via its nearest PoP and still reaches un-migrated resources through the NSa on-ramp</td>
+              <td>Topology screenshot (site up, tunnels green) + BGP routes received at the hub</td>
+              <td>Monitor → Topology · Network → Sites</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Policy slice at parity in monitor mode</td>
+              <td>A bounded zone-matrix rule slice runs as Cato rules with Track = Event; hits over a business week reconcile against the SonicOS per-rule Rx/Tx counters</td>
+              <td>Rule-hit event export + hit counts vs the SonicOS baseline in the mapping workbook</td>
+              <td>Monitor → Events · Security → Internet Firewall</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>Pilot-scope secrets rotated, portal dark</strong></td>
+              <td>The on-ramp uses a newly generated PSK; pilot users' firewall-local SSL-VPN accounts are disabled as the cohort clears; the pilot firewall's SSL-VPN service and Virtual Office portal are disabled in a booked window and verified unreachable from outside</td>
+              <td>Before/after config export (TSR) + external port-check record + the rotation log</td>
+              <td>Evidence doc · pilot firewall console</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Rollback drill passes</td>
+              <td>Re-plug the TZ: its site-to-site VPN re-establishes to the hub and the branch reverts inside the agreed window — then swap forward again</td>
+              <td>Timed drill record + hub tunnel status before/after</td>
+              <td>Evidence doc · NSM / hub console</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope, bounded:</strong> one TZ-served branch, the on-ramp at the NSa hub, a pilot cohort of 5–10 SSL-VPN users, and one policy slice (a handful of zone-matrix egress rules with real traffic behind them). Everything else is out of scope, in writing.</li>
+          <li><strong>Licences:</strong> PoV/trial licences for the pilot Socket site and the SDP user seats. Nothing lapses on the SonicWall side — the TZ goes on a shelf with config intact, the hub keeps its config, and the estate's renewals are untouched.</li>
+          <li><strong>Identity first:</strong> Entra ID SSO connected and SCIM syncing the pilot group — criterion 1 and every group-scoped rule depend on it.</li>
+          <li><strong>TLS inspection staged where content parity is tested:</strong> Cato root certificate deployed to pilot devices in advance, inspection scoped to the pilot cohort — see <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>. If the estate ran DPI-SSL, note its exclusion list; if it never did, this is the customer's first full TLS inspection — stage it accordingly.</li>
+          <li><strong>The SonicOS baseline captured:</strong> TSR and SonicOS API export for the pilot firewalls, per-rule Rx/Tx counters recorded (cleared and re-read across the PoV window if possible), and the branch's inbound NAT/port-forwards inventoried before the swap.</li>
+          <li><strong>The MySonicWall question answered:</strong> establish in writing whether the estate used cloud backup. If it did, the PoV's rotation evidence (criterion 4) doubles as the start of the customer's own Essential Credential Reset — frame it that way.</li>
+          <li><strong>The MSP briefed:</strong> they run the estate (possibly from their own NSM tenant) — the PoV touches nothing they cannot re-plug, and they should be in the weekly sync.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Stand up the NSa hub on-ramp — IPsec IKEv2 site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the hub as an IPsec IKEv2 site: Connection Type <strong>IPsec IKEv2</strong>,
+          Connection Mode <strong>Bidirectional</strong>, primary tunnel between a Cato public IP
+          (allocated in the CMA) and the NSa WAN IP, and a secondary tunnel to a different Cato
+          public IP for resilience. Generate a <strong>new</strong> pre-shared key for this tunnel
+          — after the backup breach, no PSK that ever lived in a SonicWall config or MySonicWall
+          backup gets reused. Set the last-mile bandwidth to the hub's real figures and use AES 128
+          GCM-16 or AES 256 GCM-16 on 100&nbsp;Mbps+ links. On the SonicOS side this is a standard
+          site-to-site IPsec policy — separate from the GroupVPN policy that serves GVC clients.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 sites</a>.)</p>
+        </li>
+        <li>
+          <h4>Add the BGP neighbour over the tunnel — and filter it</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Define the BGP private IPs in the site's IPsec settings, then add the neighbour under
+          Site Settings → BGP. The route policy is the co-existence design made concrete:</p>
+          <pre class="code"><span class="cmt"># IPsec on-ramp at the NSa hub — pilot design</span>
+<span class="kw">ASN Settings:</span>   Cato ASN 65001 · Peer ASN (NSa) 65002    <span class="cmt"># private ASNs — agree with the customer</span>
+<span class="kw">Advertise:</span>      Summary routes                           <span class="cmt"># migrated (Cato-side) prefixes only</span>
+<span class="kw">Accept:</span>         un-migrated site prefixes from the NSa   <span class="cmt"># never 0.0.0.0/0 — drop default routes</span>
+<span class="kw">Additional:</span>     Hold Time 60 · Keepalive 20 (defaults)   <span class="cmt"># match timers on the SonicOS side</span></pre>
+          <p>The SonicWall S2S VPN stays authoritative for every un-migrated site: the on-ramp
+          carries pilot-branch ↔ legacy-estate traffic and nothing else.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/configuring-bgp-neighbors-for-an-ipsec-connection" target="_blank" rel="noopener">Configuring BGP neighbors for an IPsec connection</a>.)</p>
+        </li>
+        <li>
+          <h4>Swap the pilot branch: TZ out, Socket in</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Create the branch site with its native range, ship the Socket and let it
+          self-provision. Before the window: re-create the branch's inventoried port-forwards on
+          the Cato side (remote port forwarding on an allocated IP) and re-point anything that used
+          them. In the change window: plug the Socket into the branch WAN, move the LAN, confirm
+          the site comes up in Topology and that the branch reaches an un-migrated resource across
+          the on-ramp. <strong>Do not delete the branch from the SonicWall VPN topology</strong> —
+          for the PoV the TZ goes on a shelf at the branch, powered off, config intact. That shelf
+          is the rollback (criterion 5).</p>
+          <!-- capture-wanted: «Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured» -->
+        </li>
+        <li>
+          <h4>Enrol the SSL-VPN cohort — IdP-backed, no local accounts</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Device Posture</span></p>
+          <p>Push the Cato Client to the 5–10 pilot devices via MDM, split-tunnel first, and remove
+          the NetExtender (or GVC) profile per device so exactly one VPN data path is active per
+          endpoint. Authentication is IdP SSO with MFA — <strong>create no local users</strong>;
+          the absence itself is evidence for criterion 1, and it is the direct counter to the
+          password-carry-over mechanic in SonicWall's own advisory. Add a Device Posture
+          anti-malware check and gate the cohort's access on it via Client Connectivity Policy.
+          Anyone who lived off Virtual Office bookmarks gets the same apps through clientless
+          browser access — demonstrate one bookmark equivalent explicitly.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture profiles and device checks</a>.)</p>
+        </li>
+        <li>
+          <h4>Translate the policy slice — monitor-first</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Security → TLS Inspection</span> <span class="path">Monitor → Events</span></p>
+          <p>Map the agreed zone-matrix slice to Cato Internet Firewall rules scoped to the pilot
+          site and cohort: CFS category actions mapped by intent (never name-for-name — the
+          taxonomies differ), URI allow/forbid lists as custom categories, App Rules as app-aware
+          rules, and DPI-SSL exclusions as TLS inspection bypass rules. Would-be blocks deploy as
+          <strong>Allow with Track = Event</strong> so every hit lands as an event and nothing
+          blocks until the evidence says it should. Expect the single-pass engine to inspect
+          traffic the TZ never did — triage new detections as findings, not incidents.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Managing the Internet Firewall policy</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring TLS Inspection policy</a>.)</p>
+          <!-- capture-wanted: «Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence» -->
+        </li>
+        <li>
+          <h4>Rotate the pilot-scope secrets and darken the portal</h4>
+          <p>As the cohort clears NetExtender: disable (do not delete) the pilot users'
+          firewall-local SSL-VPN accounts, then — in a booked window with the re-enable path agreed
+          — disable the SSL-VPN service and Virtual Office portal on the pilot firewall. Verify
+          from outside that the portal no longer answers, and file the before/after TSR extract,
+          the external port-check and the rotation log as criterion 4's evidence. This is the
+          measurable de-risking moment of the whole playbook, demonstrated live on one box — and if
+          the estate used MySonicWall cloud backup, it is also the first instalment of the
+          customer's own Essential Credential Reset.</p>
+        </li>
+        <li>
+          <h4>Run the rollback drill — then swap forward again</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>Mid-PoV, in a booked window: unplug the Socket, re-plug the TZ, and time how long the
+          branch takes to revert — the site-to-site VPN re-establishes on power-up with nothing to
+          configure. Verify branch traffic on the SonicWall path, record the drill, then swap
+          forward to the Socket again. Doing this <em>during</em> the PoV — not promising it — is
+          what makes the phased-cutover story credible for the remaining TZ estate.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Two CMA surfaces carry most of the evidence register — rule-hit events for the parity
+        criterion, and the Experience Monitoring baseline for the cohort criterion:
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-internet-fw-rulebase.png" alt="Cato Management Application Internet Firewall rulebase from a demo tenant: ordered rules with sources, category chips, Block, Allow and Prompt actions, and live hit-count bars" loading="lazy">
+        <figcaption>The parity evidence surface: each translated slice rule shows live hit counts,
+        and with Track = Event every hit is an exportable event. Over a business week these numbers
+        reconcile against the SonicOS per-rule Rx/Tx counters captured in the baseline — that
+        reconciliation, not a demo, closes criterion 3. Note what is absent: no per-box rule
+        tables, and no zone matrix — one ordered global policy.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab: account experience score graph and a per-user table with device names, experience chips, connected PoP, flows and average TTFB" loading="lazy">
+        <figcaption>The cohort evidence surface: per-user experience scores, device names,
+        connected PoP and average TTFB for the pilot cohort — every user here authenticated
+        through the IdP with MFA, with no firewall-local account anywhere. A week of Good scores
+        with no tickets is the quantified half of criterion 1; the zero-local-accounts config
+        review is the other half.</figcaption>
+      </figure>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🧹</div><div><h4>NetExtender/GVC remnants</h4><p>Cato Client won't connect, or routes vanish after resume: leftover NetExtender or Global VPN Client virtual adapters and services still claim routes. Audit installed software and adapters on every pilot device, uninstall the old clients, reboot, and re-test connect/disconnect and sleep/resume cycles.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Double TLS interception</h4><p>Certificate errors on pilot devices usually mean layering: DPI-SSL still resigning under Cato TLS inspection. Check which CA signed the chain the browser sees; disable DPI-SSL for pilot traffic (or exclude the pilot scope on the SonicOS side), deploy the Cato root certificate via MDM, and re-test — including anything certificate-pinned.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>On-ramp routes wrong</h4><p>Branch can't reach un-migrated subnets — or worse, internet traffic starts crossing the on-ramp: route policy. Check the BGP neighbour's Advertise/Accept settings — summary routes out, un-migrated prefixes in, default routes dropped in both directions. The SonicWall S2S VPN stays authoritative for everything un-migrated.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚪</div><div><h4>Inbound NAT surprises</h4><p>Something at the branch stops answering after the swap: a port-forward (CCTV, BMS, a local server, third-party maintenance) that never made the discovery inventory. Pull the branch's DNAT rules from the API export, re-create what is genuinely used as remote port forwarding on an allocated IP, and record the rest as retired.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Pilot users not matching rules</h4><p>Slice rules or posture-gated access behave inconsistently across the cohort: SCIM sync lag or group-name drift, not policy error. Confirm the pilot group has synced in Access → Users and that users resolve in events before judging any rule's behaviour.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Hit counts don't reconcile</h4><p>Cato events and SonicOS counters diverge wildly: check when the SonicOS counters were last cleared (they accumulate since boot or last reset), whether AppFlow sampling skews the baseline, and whether the slice rule's scope on Cato is broader than its zone-matrix ancestor. Reconcile per rule, not in aggregate.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries — say these up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Monitor mode means monitor.</strong> The parity slice must not block anything during the PoV — and the single-pass engine will inspect traffic the TZ never saw (especially if DPI-SSL was never fully on), so expect new detections and triage them as findings, not incidents.</li>
+          <li><strong>The portal window is reversible by design.</strong> Criterion 4 disables SSL-VPN on one pilot firewall in a booked window with an agreed re-enable path. If the customer reverts, every re-enabled local account gets a password reset first — that is SonicWall's own advisory guidance, not a Cato requirement.</li>
+          <li><strong>Don't claim the SMA boxes were bricked.</strong> "Force-retired with two months' runway and no-charge migration offers" is fully supported; "cease to function" is reseller wording — let the customer's own devices settle it.</li>
+          <li><strong>Rotation evidence outlives the PoV.</strong> The rotation log and before/after configs are deliverables the customer keeps — auditable against the MySonicWall remediation guidance — whatever the commercial outcome. Export events and screenshots weekly rather than reconstructing at wrap-up.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the decision is no (or paused), reverse in order —
+        re-plug the TZ at the branch (already drilled), remove the Cato Client via MDM and re-push
+        NetExtender profiles where users reverted (with local passwords reset on re-enable), delete
+        the BGP neighbour and then the IPsec site at the hub, and disable the pilot rules and TLS
+        inspection scope in the CMA. The SonicWall estate is exactly as it was — nothing was
+        decommissioned during the PoV, and the customer keeps the rotation log. If the decision is
+        yes, the pilot <em>is</em> wave one: the mapping workbook, the on-ramp and the drilled
+        rollback become the phased-cutover plan in <a href="#solution">the migration path above</a>.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/30175650827677-What-are-Cato-Sockets" target="_blank" rel="noopener">What are Cato Sockets — zero-touch deployment (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413273486865-What-is-the-Cato-Internet-Firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7825408860573-Using-BGP-in-the-Cato-Cloud" target="_blank" rel="noopener">Using BGP in the Cato Cloud (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/13651160092701-Provisioning-Users-with-SCIM" target="_blank" rel="noopener">Provisioning users with SCIM (KB)</a></li>
+            <li><a href="https://www.sonicwall.com/support/notices/gen-7-and-newer-sonicwall-firewalls-sslvpn-recent-threat-activity/kA1VN0000000RDG0A2" target="_blank" rel="noopener">SonicWall: Gen 7 SSL-VPN threat activity notice</a></li>
+            <li><a href="https://www.sonicwall.com/support/notices/mysonicwall-cloud-backup-file-incident/kA1VN0000000RoD0AU" target="_blank" rel="noopener">SonicWall: MySonicWall cloud backup file incident</a></li>
+            <li><a href="https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2024-0015" target="_blank" rel="noopener">SonicWall PSIRT: SNWLID-2024-0015 (CVE-2024-40766)</a></li>
+            <li><a href="https://digital.nhs.uk/cyber-alerts/2025/cc-4686" target="_blank" rel="noopener">NHS England cyber alert CC-4686</a></li>
+            <li><a href="https://arcticwolf.com/resources/blog/arctic-wolf-observes-july-2025-uptick-in-akira-ransomware-activity-targeting-sonicwall-ssl-vpn/" target="_blank" rel="noopener">Arctic Wolf: July 2025 Akira campaign (reporting)</a></li>
+            <li><a href="https://www.sonicwallonline.co.uk/news/sma-end-of-support.html" target="_blank" rel="noopener">SMA 100 end-of-support notice (reseller)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-sonicwall-policy.html">SonicWall Policy Migration</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+            <li><a href="access-remote-worker.html">Secure Remote Worker Access</a></li>
+            <li><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

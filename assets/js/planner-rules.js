@@ -1051,8 +1051,46 @@ window.PLANNER_RULES = {
           ],
         },
         {
+          key: "sonicwall", label: "SonicWall TZ/NSa estate (SonicOS, NSM, SSL-VPN)",
+          pages: ["migration-sonicwall", "migration-sonicwall-policy", "migration-methodology", "security-firewall-refresh", "migration-journey-firewall"],
+          phases: [
+            { phase: "discover", steps: [
+            "Pull the whole estate out of NSM in one pass — inventory CSV, per-firewall TSRs, and the SonicOS API's JSON of access rules, objects and NAT policies.",
+            "Audit every secret the exports carry — local SSL-VPN users, IPsec PSKs, SNMP strings — and schedule rotation: the cloud-backup breach means they may already be adversary-held."
+            ] },
+            { phase: "foundation", steps: [
+            "Move SSL-VPN cohorts to ZTNA before any site work — the exploited surface goes first, and each firewall's Virtual Office portal goes dark as its last cohort clears.",
+            "Bring the hub NSa up as an interim IKEv2 on-ramp for un-migrated branch traffic, leaving the SonicWall S2S mesh authoritative and filtering default routes at the interconnect."
+            ] },
+            { phase: "network-waves", steps: [
+            "Swap TZ branches in waves sequenced by the end-of-support calendar, leaving each TZ racked through its soak window so rollback is re-plugging it."
+            ] },
+            { phase: "security-cutover", steps: [
+            "Rebuild policy clean from the zone matrix and hit-count evidence — never port exported credentials or PSKs; every identity comes from the IdP."
+            ] },
+          ],
+          prereqs: [
+            "NSM inventory export with per-model end-of-support dates driving the wave order.",
+            "Per-access-rule Rx/Tx counters re-read after a 30-day clean window as the dead-rule baseline.",
+            "Entra ID SSO and SCIM live for the pilot cohort before the first NetExtender user moves.",
+            "The MSP signed into the delivery model commercially — SonicWall is 100% channel and the estate is usually theirs to run."
+          ],
+          risks: [
+            "Patching is not the fix — the 2025 campaigns walked into patched boxes with imported credentials, so porting secrets re-creates the exposure.",
+            "Branch TZs accumulate inbound port-forwards for CCTV, BMS and local servers; Cato's remote port forwarding is a different model — inventory them in discovery, not on cutover night.",
+            "SonicWave APs and SonicWall Switches are managed from the firewall or NSM — retiring the firewall orphans them, so keep NSM for LAN gear or fold in a LAN refresh.",
+            "Estates that never fully enabled DPI-SSL meet full TLS inspection for the first time on Cato — stage exclusions and user comms rather than assuming like-for-like."
+          ],
+          evidence: [
+            "WAN-facing SSL-VPN portal count at project start against zero at finish — the headline de-risking metric.",
+            "Secrets-rotation register: local VPN accounts removed and PSKs retired, auditable against the MySonicWall remediation guidance.",
+            "Per-box rule counts summed against the final global policy, with the dead-rule percentage evidenced by hit counters.",
+            "Rollback drill on a pilot branch: the TZ re-plugged, its tunnel back to the hub timed and recorded."
+          ],
+        },
+        {
           key: "cisco-asa", label: "Cisco ASA perimeter (IPsec on-ramp, appliance retiring later)",
-          pages: ["network-ipsec-asa", "security-firewall-refresh", "migration-journey-firewall", "migration-methodology"],
+          pages: ["network-ipsec-asa", "security-firewall-refresh", "migration-journey-firewall", "migration-methodology", "migration-cisco-asa", "migration-cisco-asa-policy"],
           phases: [
             { phase: "design", steps: [
             "Choose IKEv2 with a route-based VTI over crypto maps; VTI needs ASA 9.7(1) upwards.",

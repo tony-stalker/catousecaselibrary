@@ -38,7 +38,7 @@
     zscaler: "zscaler", netskope: "netskope", forcepoint: "forcepoint", iboss: "iboss",
     "symantec-broadcom": "symantec", "cisco-umbrella": "cisco",
     "palo-alto": "palo-alto", checkpoint: "checkpoint", fortigate: "fortinet",
-    sophos: "sophos", "cisco-asa": "cisco",
+    sophos: "sophos", "cisco-asa": "cisco", sonicwall: "sonicwall",
     anyconnect: "cisco", globalprotect: "palo-alto", forticlient: "fortinet",
     "zscaler-zpa": "zscaler" };
 

@@ -85,7 +85,7 @@ Conventions and gotchas:
 index.html            landing page (journeys, search, category grid)
 whatsnew.html         change log (generated from git history)
 planner.html          migration planner (internal only; excluded from the prospect build)
-usecases/*.html       the 76 use-case pages
+usecases/*.html       the 81 use-case pages
 assets/               shared CSS/JS, images (CMA screenshots, diagrams)
 _extract/             tooling, source-deck digests, research briefs, verification scripts
 "1 - … " … "5 - …"    original PowerPoint decks (do not share raw — see privacy note)

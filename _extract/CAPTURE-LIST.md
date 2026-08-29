@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 147 live `capture-wanted` items across 53 pages
+Regenerated 151 live `capture-wanted` items across 55 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -55,7 +55,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
 
-## Monitoring — Events  (25)
+## Monitoring — Events  (26)
 
 - **access-hybrid-workforce**: CMA Monitor → Events — one user, same WAN rule hit from office and remote origins
 - **access-identity-design**: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
@@ -82,6 +82,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-ransomware**: Monitor → Events — the blocked WAN Firewall event for the agreed lateral-movement test flow
 - **security-tls-inspection**: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - **security-uk-public-sector**: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
+- **migration-sonicwall**: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
 ## Monitoring — Experience  (8)
 
@@ -107,13 +108,14 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-sdwan**: Network → Sites → Site Monitoring → Real Time — Transport tab during a link pull, throughput shifting to the surviving link
 - **network-sdwan**: Site Monitoring → Real Time — QoS tab under congestion: P10 steady, default class Queue Size climbing
 
-## Monitoring — Threats & stories  (5)
+## Monitoring — Threats & stories  (6)
 
 - **management-soc-xdr**: Home → Stories Workbench, Security Operations preset grouped by Indication — group headers showing high/medium/low criticality counts
 - **migration-checkpoint**: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - **security-consistent**: Monitor → Threats Dashboard after the EICAR tests, showing the Anti-Malware detections for both paths
 - **security-firewall-refresh**: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - **security-ransomware**: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
+- **migration-cisco-asa**: Monitor → Threats Dashboard — monitor-mode IPS and anti-malware verdicts on pilot traffic during co-existence (the greenfield-dividend evidence for criterion 4)
 
 ## Network — Egress & inbound  (3)
 
@@ -143,7 +145,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-global-app-performance**: Network → Network Rules — Route via PoP rule editor with an egress PoP location selected for a SaaS app
 - **network-mpls-migration**: Network → Network Rules showing a voice rule with Packet Loss Mitigation enabled and a P10 bandwidth priority
 
-## Network — Sites & tunnels  (8)
+## Network — Sites & tunnels  (10)
 
 - **migration-cloudflare**: Network → Sites IPsec IKEv2 site with primary and secondary tunnels up (a re-pointed Magic WAN edge)
 - **migration-zscaler**: Network → Sites IPsec IKEv2 site to a third-party SSE cloud with both tunnels up (interim ZIA bridge)
@@ -153,6 +155,8 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-cloud-interconnect**: Network → Sites — Cloud Interconnect site-creation flow showing connection type and primary/secondary PoP selection
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **network-ipsec-asa**: Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet
+- **migration-cisco-asa**: Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)
+- **migration-sonicwall**: Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured
 
 ## Other  (22)
 

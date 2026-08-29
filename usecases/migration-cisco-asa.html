@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco ASA (5500-X Perimeter) to Cato — Cato Use Case Library</title>
+<meta name="description" content="Retire the end-of-support ASA 5500-X perimeter — HA pairs, the IPsec site mesh and AnyConnect remote access moved to the Cato platform in phased, rollback-friendly waves that spend the forced refresh once.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="migration-cisco-asa">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-migration">Migration</a> / Cisco ASA to Cato</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-migration">Migration</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cisco ASA (5500-X Perimeter) to Cato</h1>
+    <p class="lede">
+      The classic mid-market Cisco estate is a perimeter ASA 5500-X — usually an HA pair — with an
+      IPsec mesh between sites, AnyConnect terminating on the same boxes, and very little above
+      Layer&nbsp;4. Every model in that family is now at or past its last date of support, the
+      surviving models have run a frozen software train since 2021, and CISA has ordered
+      end-of-support ASA hardware permanently disconnected from US federal networks. This playbook
+      is for the ASA-only estate: a phased, rollback-friendly move to the Cato SASE Cloud that
+      spends the forced refresh once — instead of buying the next appliance-and-EOL cycle from the
+      Firepower catalogue.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Cisco ASA</span><span class="tag">5500-X</span><span class="tag">IPsec</span>
+      <span class="tag">AnyConnect</span><span class="tag">FWaaS</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <p>
+        This estate has no console sprawl to consolidate and no SSE overlay to unpick — one or two
+        appliances do everything, and mostly do it at L3/L4. What puts the migration on the table
+        is that <strong>the hardware has run out of road</strong>: the ASA 5525-X/5545-X/5555-X
+        passed their last date of support on 30&nbsp;September&nbsp;2025, the 5506-X/5508-X/5516-X
+        follow on 31&nbsp;August&nbsp;2026, and those last-surviving models have been capped on the
+        ASA 9.16 software train since 2021 — ASA 9.17(1) and later removed 5500-X support
+        entirely. After the wall, nothing: no software fixes, no vulnerability response, no TAC.
+      </p>
+      <p>
+        Cisco's sanctioned answer is a re-platforming project onto Firepower / Secure Firewall
+        hardware. That is a real migration — new hardware, a different OS and console, partial
+        config conversion and operational retraining — and it ends in the same architecture: an
+        internet-exposed perimeter appliance the customer sizes, patches and eventually replaces
+        again. The objective of this play: <strong>spend the unavoidable migration effort once —
+        translate the L3/L4 policy, re-home IPsec and AnyConnect, build the security the ASA never
+        had (SWG, CASB, DLP, TLS inspection, IPS) greenfield on Cato, and remove the perimeter
+        appliance class from the estate entirely — with a rollback at every step.</strong>
+      </p>
+      <div class="callout">
+        <div class="co-title">Which Cisco play is this?</div>
+        <p>This page is the <strong>ASA-only</strong> play: a perimeter ASA or HA pair, IPsec
+        site-to-site, AnyConnect on the same boxes, little or no SWG/CASB above it. If the account
+        also runs Umbrella, Catalyst (Viptela) or Meraki SD-WAN, or ISE, use the full-estate
+        playbook — <a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to
+        Cato</a>. If the conversation is remote access only, go straight to
+        <a href="migration-anyconnect.html">AnyConnect to Cato Client</a>. For the interim
+        ASA-to-Cato tunnel mechanics used throughout this page, the reference design is
+        <a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)</a>.</p>
+      </div>
+    </section>
+
+    <section id="drivers" class="reveal">
+      <div class="section-kicker">The forcing functions</div>
+      <h2>The EOL wall, the directives — and how to use both fairly</h2>
+
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile stat-bad"><div class="stat-value">30 Sep<span class="unit">2025</span></div><div class="stat-label">Last date of support for the ASA 5525-X / 5545-X / 5555-X — already behind us</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">31 Aug<span class="unit">2026</span></div><div class="stat-label">Last date of support for the 5506-X / 5508-X / 5516-X — the end of the 5500-X family</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">9.16</div><div class="stat-label">Final ASA software release for the surviving models — 9.17(1)+ removed all 5500-X support</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">ED 25-03</div><div class="stat-label">CISA emergency directive: end-of-support ASA hardware "permanently disconnected" from federal networks</div></div>
+      </div>
+
+      <p>
+        Map the customer's serial numbers against this table in discovery — in most ASA-only
+        accounts the result is a slide where every device is red. Smart Net renewal dates and the
+        Secure Client subscription anniversary are the natural decision forcing-points:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Model</th><th>Last order</th><th>Last date of support</th><th>Cisco's named replacement</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ASA 5505</td><td>—</td><td>31 Aug 2022*</td><td>Firepower / Secure Firewall small models</td></tr>
+            <tr><td>ASA 5512-X / 5515-X</td><td>25 Aug 2017</td><td>31 Aug 2022</td><td>Firepower series</td></tr>
+            <tr><td>ASA 5585-X</td><td>—</td><td>31 May 2023*</td><td>Firepower 4100/9300 class</td></tr>
+            <tr><td>ASA 5525-X / 5545-X / 5555-X</td><td>4 Sep 2020</td><td><strong>30 Sep 2025</strong></td><td>Firepower 2100 — itself now end-of-sale; support ends 31 May 2030</td></tr>
+            <tr><td>ASA 5506-X (incl. variants)</td><td>2 Aug 2021</td><td><strong>31 Aug 2026</strong></td><td>Firepower 1010</td></tr>
+            <tr><td>ASA 5508-X / 5516-X</td><td>2 Aug 2021</td><td><strong>31 Aug 2026</strong></td><td>Firepower 1000 series</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-3)">
+        * 5505 and 5585-X dates per third-party lifecycle trackers; the remaining rows are read
+        from Cisco's end-of-life notices. Software is capped too: ASA 9.16 is the final release
+        for the 5506-X/5508-X/5516-X, and the ASA FirePOWER (SFR) module's last supported
+        combination on the 5508-X/5516-X is 9.16/7.0 — the module dies with the hardware.
+      </p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">ArcaneDoor → RayInitiator <span class="tag">2024–2025</span></h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">In April 2024, Cisco Talos documented
+          <strong>ArcaneDoor</strong> — a state-sponsored espionage campaign exploiting two ASA
+          zero-days (CVE-2024-20353, CVE-2024-20359) to implant the Line Dancer in-memory shellcode
+          interpreter and the Line Runner persistent backdoor, which survives reboots and upgrades;
+          both CVEs entered the CISA Known Exploited Vulnerabilities catalogue. In September 2025 a
+          new pair of exploited zero-days (CVE-2025-20333 remote code execution, CVE-2025-20362
+          unauthenticated access to restricted VPN web endpoints — critical, exploited in the wild,
+          in CISA KEV) delivered <strong>RayInitiator</strong>, a GRUB bootkit specifically
+          targeting ASA models that lack secure boot — "many approaching their end-of-life dates" —
+          plus the memory-resident LINE VIPER loader, which can harvest RADIUS/LDAP/TACACS
+          credentials. The UK <strong>NCSC published the malware analysis and national
+          guidance</strong> — the directly relevant hook for a UK audience.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">The directives — a government orders the category off the network</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)"><strong>CISA Emergency Directive ED 25-03
+          (25 Sep 2025)</strong> ordered US federal agencies to inventory <em>all</em> ASA and
+          Firepower devices, submit forensic core dumps from public-facing ASAs by 26 Sep 2025 —
+          and to <strong>"permanently disconnect" ASA hardware with an end-of-support date on or
+          before 30 Sep 2025</strong>, because those platforms "cannot meet current vendor support
+          and update requirements". The V1 revision (23 Apr 2026) went further: CISA assessed that
+          applying Cisco's patches "does not necessarily remove an existing threat actor from the
+          compromised device", documented the FIRESTARTER persistence mechanism on Firepower and
+          Secure Firewall devices surviving security updates, and — per its implementation
+          guidance — required a physical hard reset (power-unplug; a reboot is insufficient) no
+          later than 30 Apr 2026. CISA explicitly urged all organisations, not just federal
+          agencies, to act.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:14px">
+        Use this record architecturally, not as vendor-shaming: every WAN-facing appliance VPN
+        portal — any vendor — is attack surface the customer patches on their own timeline, and a
+        comparable KEV table exists for Fortinet, Palo Alto, Sophos and Ivanti. The argument is
+        that a cloud-delivered PoP removes that device class from the estate entirely: no
+        listening WebVPN or ASDM service, no bootkit-able flash, and patching becomes Cato's job.
+      </p>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>&ldquo;Which ASA models and serials are on your perimeter today — and where do they sit
+        against the 30 September 2025 and 31 August 2026 support walls? Who patches the 9.16 train
+        after that? And have you run the NCSC's RayInitiator malware-analysis checks against your
+        public-facing ASAs?&rdquo;</p>
+      </div>
+    </section>
+
+    <section id="play" class="reveal">
+      <div class="section-kicker">The shape of the play</div>
+      <h2>The customer runs a migration project either way</h2>
+      <p>
+        This is the honest frame, and it defuses the &ldquo;we'll just refresh&rdquo; reflex:
+        there is no renewal path that avoids a project. Cisco's sanctioned route is Firepower /
+        Secure Firewall hardware, in one of two modes. <strong>Re-platform to FTD</strong> means a
+        different OS and a different management plane (FMC/FDM/CDO instead of ASDM); moving an
+        appliance between ASA and FTD images is a <em>reimage, not an upgrade</em>, and the Cisco
+        Secure Firewall migration tool converts <em>supported</em> ASA features only — it ignores
+        configuration for unsupported features and does not convert ASA FirePOWER (SFR) module
+        configuration at all. <strong>Keeping the ASA image on new hardware</strong> avoids the
+        retraining — concede honestly that ASA-the-operating-system is not dead — but it is a pure
+        hardware-refresh spend that changes nothing architecturally: same interface ACLs, same NAT,
+        same internet-exposed VPN headend, still no SWG, CASB or DLP.
+      </p>
+      <p>
+        And the replacement targets keep moving underneath the customer: the Firepower 2100 — the
+        named replacement for the 5525/5545/5555-X — is itself end-of-sale with support ending
+        31&nbsp;May&nbsp;2030 and migration guidance pointing at the Secure Firewall 3100; the FMC
+        1600/2600/4600 management appliances received their own EOL announcement on
+        25&nbsp;Jul&nbsp;2025; the FTD/FMC 7.0/7.2/7.3 software trains had last-order dates of
+        18&nbsp;Nov&nbsp;2025; and Cisco's current small-site family is now the Secure Firewall
+        1200 series — the catalogue has moved on twice since the 5506-X was sold. A 5545-X customer
+        who followed Cisco's 2020 advice is already one EOL cycle deep in the replacement.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>The same migration effort…</th><th>…buys Firepower / Secure Firewall</th><th>…or buys Cato SASE</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hardware</td><td>New appliances — with the replacement families' own EOL treadmill already visible</td><td>No perimeter appliance; a Socket at the edge, inspection at the PoP</td></tr>
+            <tr><td>OS &amp; console</td><td>FTD is a reimage; ASDM skills → FMC/FDM/CDO retraining</td><td>One console (CMA) for network, security, access and analytics</td></tr>
+            <tr><td>Config conversion</td><td>Supported features only; unsupported config ignored; SFR module config rebuilt by hand</td><td>Review-and-map on hit-count evidence; most NAT dissolves at the PoP</td></tr>
+            <tr><td>Remote access</td><td>AnyConnect → Secure Client 5.x transition either way</td><td>The same client-swap effort lands on the Cato Client — and the headend disappears</td></tr>
+            <tr><td>SWG · CASB · DLP · ZTNA</td><td>Still missing without further subscriptions and consoles</td><td>Built greenfield from Cato best-practice baselines, monitor-first, on one platform</td></tr>
+            <tr><td>Attack surface</td><td>An internet-exposed appliance stays in the patch queue — ED 25-03 V1 names persistence on the replacement platform</td><td>No listening WebVPN/ASDM endpoints; PoP patching is Cato's job</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        One more Cisco calendar runs alongside the hardware: <strong>AnyConnect 4.x</strong> left
+        software maintenance on 31&nbsp;Mar&nbsp;2024 and reaches end of support on
+        31&nbsp;Mar&nbsp;2027; the sanctioned path is Cisco Secure Client 5.x — a full client
+        transition (Plus licences renamed Advantage, Apex renamed Premier, with stacking permitted
+        during the change). Worth noting as positioning analysis: Secure Client is also the agent
+        for Cisco's own SSE, so the client migration doubles as an on-ramp to another
+        subscription cloud. The customer is doing an agent swap either way — the Cato Client is
+        the same effort with a different end state. The full remote-access play, cohort mechanics
+        included, is <a href="migration-anyconnect.html">AnyConnect to Cato Client</a>.
+      </p>
+      <div class="callout">
+        <div class="co-title">Translation is small — greenfield is big. Say so.</div>
+        <p>Against a Palo Alto or Fortinet NGFW estate, the ASA translation workload is modest:
+        interface ACLs, object-groups and NAT. What is bigger is the greenfield build — SWG
+        categories, CASB, DLP, TLS inspection and IPS start from Cato best-practice baselines in
+        monitor mode, not from exported vendor policy, because an ASA-only estate has nothing to
+        export in those domains. Set that expectation in discovery: it shortens the mapping
+        workshop and reframes the &ldquo;missing config&rdquo; as the capability upgrade the
+        customer is buying.</p>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Component mapping</div>
+      <h2>What maps to what</h2>
+      <p>
+        The whole estate collapses into one cloud platform and one global rulebase. The table is
+        the translation sheet — note how many rows end in &ldquo;dissolves&rdquo; or
+        &ldquo;greenfield&rdquo; rather than &ldquo;translate&rdquo;.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>ASA estate component</th><th>Cato equivalent</th><th>Migration note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Perimeter ASA / HA pair — stateful L3/L4 firewall, NAT, routing</td>
+              <td>Socket site + Cato FWaaS (WAN + Internet firewall) at the PoP</td>
+              <td>Active/standby pair → Socket HA; no failover licences, no unit reimages</td>
+            </tr>
+            <tr>
+              <td>Interface ACLs (ACEs + object-groups)</td>
+              <td>Ordered WAN firewall (allowlist) + Internet firewall rules</td>
+              <td>Split by direction, not copied line-for-line — see the co-existence section and the policy companion page</td>
+            </tr>
+            <tr>
+              <td>Object-groups (network / service / protocol)</td>
+              <td>CMA hosts, ranges, groups, services and custom apps</td>
+              <td>Flatten nesting; cull unreferenced objects at the mapping stage</td>
+            </tr>
+            <tr>
+              <td>Object NAT / PAT egress; static NAT publishes; twice NAT</td>
+              <td>PoP egress NAT (inherent); Remote or Local Port Forwarding for true inbound</td>
+              <td>Egress PAT is deleted, not mapped; inventory inbound publishes separately — each carries DNS, partner and certificate dependencies</td>
+            </tr>
+            <tr>
+              <td>Site-to-site IPsec (crypto map or VTI)</td>
+              <td>Socket-to-Socket over the Cato backbone; IPsec IKEv2 sites for what remains</td>
+              <td>Partners, cloud VPNs and the interim hub ASA — tunnel mechanics on <a href="network-ipsec-asa.html">the ASA IPsec page</a></td>
+            </tr>
+            <tr>
+              <td>AnyConnect / Secure Client VPN on the ASA</td>
+              <td>Cato Client (SDP/ZTNA) + clientless browser access</td>
+              <td>Full cohort play on <a href="migration-anyconnect.html">the AnyConnect page</a></td>
+            </tr>
+            <tr>
+              <td>DAP / HostScan posture</td>
+              <td>Device Posture profiles + Client Connectivity Policy</td>
+              <td>No export path — recreate from written intent; evaluated continuously, not connect-time only</td>
+            </tr>
+            <tr>
+              <td>WebVPN / clientless portal</td>
+              <td>Cato clientless access via the browser portal</td>
+              <td>Removes the exact endpoint class exploited by CVE-2025-20362</td>
+            </tr>
+            <tr>
+              <td>SAML/LDAP auth, LDAP attribute maps</td>
+              <td>IdP SSO (Entra ID / Okta) + SCIM groups</td>
+              <td>Attribute-map logic becomes group membership in the IdP</td>
+            </tr>
+            <tr>
+              <td>ASA FirePOWER (SFR) module — IPS/AMP/URL where licensed</td>
+              <td>Cato IPS + Anti-Malware, SWG categories</td>
+              <td>Module config is not convertible even to FTD — rebuild from Cato baselines</td>
+            </tr>
+            <tr>
+              <td>ASDM / CDO management; syslog/NetFlow/SNMP telemetry</td>
+              <td>CMA + events/analytics; Event Feed integrations to SIEM</td>
+              <td>Re-home dashboards and alert rules before decommission</td>
+            </tr>
+            <tr>
+              <td>EIGRP/OSPF on the ASA or LAN core</td>
+              <td>BGP to the Socket, or statics + L3-core redistribution</td>
+              <td>Cato's dynamic routing is BGP — plan redistribution at the core for larger sites</td>
+            </tr>
+            <tr>
+              <td><strong>No ASA equivalent</strong> — SWG, CASB, DLP, TLS inspection at scale, XDR</td>
+              <td>Cato SWG, CASB, DLP, TLS inspection, XDR</td>
+              <td><strong>Greenfield build</strong> from best-practice policy, monitor-first — most of the policy project</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Recommended migration path</h2>
+
+      <div class="callout warn">
+        <div class="co-title">Provenance — read before you present</div>
+        <p>This page is authored from vendor documentation and Cato PS methodology research; it is
+        <strong>not a delivery-verified runbook</strong>. Review the design — especially the hub
+        interconnect, route filtering and rollback details, and anything contract-dependent — with
+        Cato Professional Services before committing it to a customer plan.</p>
+      </div>
+
+      <p>
+        The arc follows the Cato PS methodology — Export → Review &amp; Map → Deploy
+        (monitor-first) → Optimise — run as discovery → co-existence → pilot → site waves →
+        decommission. ASA-only estates are usually small enough for <strong>parallel connectivity
+        per site</strong>: a Socket beside the ASA with an L3 handoff, moving subnets
+        progressively, with rollback being a route change. Where branches still reach the estate
+        over the legacy ASA-to-ASA IPsec mesh, the hub ASA is brought up as a <strong>Cato IPsec
+        IKEv2 site</strong> so un-migrated branches and partner tunnels keep working against
+        familiar termination points until their wave — the tunnel build, HA design and drills are
+        on <a href="network-ipsec-asa.html">the ASA IPsec page</a>.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 520" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Co-existence between a perimeter ASA estate and Cato during phased migration</title>
+          <desc id="dg1-desc">A Cato PoP on the global private backbone serves a migrated branch whose ASA has been replaced by a Cato Socket, and a remote user who has moved from AnyConnect to the Cato Client. At the London DC a parallel Cato Socket sits alongside the ASA 5500-X HA pair, which is also brought up as an interim IPsec IKEv2 site into the PoP so un-migrated branches on the legacy ASA IPsec mesh can reach Cato-side resources. A dashed rollback arrow shows a migrated site can revert by restoring its default gateway and static routes to the ASA.</desc>
+
+          <!-- Backbone + PoP -->
+          <ellipse class="dg-backbone" cx="300" cy="145" rx="155" ry="50"/>
+          <circle cx="160" cy="166" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="440" cy="124" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="300" y="214" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global private backbone</text>
+
+          <circle class="pulse-ring" cx="300" cy="145" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="145" r="30"/>
+          <text class="pt-t-big" x="300" y="82" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="300" y="99" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">One global policy · greenfield engines in monitor</text>
+
+          <!-- London DC container -->
+          <rect x="425" y="262" width="470" height="118" rx="12" fill="none" stroke="var(--hairline)" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text class="dg-tiny" x="575" y="252" text-anchor="middle">London DC — parallel deployment</text>
+
+          <!-- Parallel socket at DC -->
+          <rect class="pt-green" x="445" y="288" width="170" height="58" rx="10"/>
+          <text class="pt-t-green" x="530" y="312" text-anchor="middle">Cato Socket</text>
+          <text class="pt-sub" x="530" y="330" text-anchor="middle">parallel at the DC</text>
+
+          <!-- ASA HA pair -->
+          <rect class="pt-amber" x="705" y="288" width="170" height="58" rx="10"/>
+          <text class="pt-t-amber" x="790" y="312" text-anchor="middle">ASA 5500-X HA pair</text>
+          <text class="pt-sub" x="790" y="330" text-anchor="middle">being displaced</text>
+          <rect x="822" y="338" width="40" height="22" rx="4" fill="#ffffff" stroke="var(--hairline)" stroke-width="1"/>
+          <image href="../assets/img/logo-cisco.png" x="827" y="341" width="30" height="16"/>
+
+          <!-- L3 handoff -->
+          <path class="lane-static" d="M 615 317 L 705 317"/>
+          <text class="dg-tiny" x="660" y="306" text-anchor="middle">L3 handoff</text>
+          <text class="dg-tiny" x="660" y="368" text-anchor="middle">default routes filtered</text>
+
+          <!-- ASA interim IPsec on-ramp to PoP -->
+          <path class="lane lane-limit" d="M 750 286 C 700 220, 520 180, 368 160"/>
+          <text class="dg-tiny" x="596" y="192" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">IPsec IKEv2 site — interim on-ramp</text>
+
+          <!-- Socket to PoP -->
+          <path class="lane lane-allow" d="M 512 286 C 470 240, 395 195, 333 168"/>
+
+          <!-- Remote user -->
+          <rect class="pt-green" x="60" y="262" width="170" height="58" rx="10"/>
+          <text class="pt-t-green" x="145" y="286" text-anchor="middle">Priya — remote</text>
+          <text class="pt-sub" x="145" y="304" text-anchor="middle">Client, was AnyConnect</text>
+          <path class="lane lane-allow" d="M 145 260 C 165 225, 210 192, 262 168"/>
+
+          <!-- Migrated branch -->
+          <rect class="pt-green" x="60" y="372" width="170" height="58" rx="10"/>
+          <text class="pt-t-green" x="145" y="396" text-anchor="middle">Bristol — migrated</text>
+          <text class="pt-sub" x="145" y="414" text-anchor="middle">Socket replaces the ASA</text>
+          <path class="lane lane-allow" d="M 230 395 C 315 340, 325 235, 293 179"/>
+
+          <!-- Legacy branch -->
+          <rect class="pt-navy" x="705" y="406" width="170" height="58" rx="10"/>
+          <text class="pt-t-inv" x="790" y="430" text-anchor="middle">Leeds — un-migrated</text>
+          <text class="pt-sub-inv" x="790" y="448" text-anchor="middle">ASA IPsec mesh to hub</text>
+          <rect x="822" y="456" width="40" height="22" rx="4" fill="#ffffff" stroke="var(--hairline)" stroke-width="1"/>
+          <image href="../assets/img/logo-cisco.png" x="827" y="459" width="30" height="16"/>
+          <path class="lane-static" d="M 758 404 C 758 386, 758 366, 758 348"/>
+          <text class="dg-tiny" x="766" y="398" text-anchor="start">crypto-map mesh</text>
+
+          <!-- Rollback -->
+          <path d="M 232 424 C 380 474, 555 470, 698 442" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="4 6"/>
+          <path d="M 698 442 L 684 439 M 698 442 L 689 452" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+          <text class="dg-tiny" x="452" y="496" text-anchor="middle">Rollback — restore the default gateway / static routes to the ASA</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Migrated — Socket / Client via the nearest PoP</span>
+          <span class="key"><span class="swatch limit"></span> Interim — hub ASA as an IPsec IKEv2 site</span>
+        </div>
+        <div class="diagram-caption">
+          Interim co-existence: a parallel Socket at the DC takes migrated subnets over an L3
+          handoff while the ASA HA pair keeps its legacy IPsec mesh and comes up as a Cato IPsec
+          IKEv2 site — so un-migrated branches like Leeds reach Cato-side resources, and partner
+          tunnels keep terminating somewhere familiar until they are re-homed. Rollback at any
+          point is restoring the default gateway and static routes to the ASA, which stays racked
+          and configured through the soak window.
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Phase 0 — Discovery and design</h4>
+          <p>Run the CLI capture across every ASA: <code>show running-config</code> (and
+          <code>more system:running-config</code> under change control — it reveals the pre-shared
+          keys the standard output masks), <code>show access-list</code> with its live
+          <code>hitcnt=</code> counters, <code>show object-group</code>, <code>show nat
+          detail</code> and <code>show xlate count</code>, the crypto and AnyConnect session
+          baselines, <code>show version</code>, <code>show failover</code> and the certificate
+          estate with expiry dates. Map models and serials against the EOL table — and map Smart
+          Net renewals and the Secure Client anniversary as decision forcing-points. Inventory the
+          four dependency classes that bite later: inbound NAT publishes, partner VPNs terminating
+          on the ASA, anything keyed to the site's egress IP, and cert/posture artefacts
+          (AnyConnect profiles, DAP rules, HostScan checks, machine certs). Agree the golden flow
+          list — the 20–50 flows the business actually depends on — and per-phase success criteria.</p>
+        </li>
+        <li>
+          <h4>Phase 1 — Co-existence foundation</h4>
+          <p>Stand up the Cato account: CMA admin model, IdP SSO and SCIM, and a base security
+          policy from Cato best-practice templates with the greenfield engines — IPS,
+          anti-malware, SWG, TLS inspection — in <strong>monitor mode from day one</strong>, so
+          every week of co-existence generates evidence for the optimise phase. Choose the
+          co-existence pattern: parallel connectivity per site (the mid-market default), plus the
+          hub ASA as an IPsec IKEv2 site where un-migrated branches or partners still need it.
+          Filter default routes at the interconnect, and design for path symmetry before the first
+          wave if both a Socket path and the ASA path can carry the same prefix.</p>
+        </li>
+        <li>
+          <h4>Phase 2 — Pilot</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Events</span></p>
+          <p>One representative branch on a Socket in parallel with its ASA, moving a subnet at a
+          time; validate the golden flows with <code>packet-tracer</code> on the ASA side and
+          events in the CMA on the Cato side. Run a pilot RA cohort on the Cato Client using the
+          cohort mechanics from <a href="migration-anyconnect.html">the AnyConnect page</a>. Pilot
+          the policy pipeline on the pilot site's ACE slice only: map, deploy as allow-and-track,
+          then compare a fortnight of Cato events against the ASA <code>hitcnt</code> deltas for
+          the same window.</p>
+        </li>
+        <li>
+          <h4>Phase 3 — Site waves and published services</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Per-site runbook: pre-stage the Socket → move VLANs and the default gateway →
+          validate golden flows → soak with the ASA racked and configured → decommission. Rollback
+          is restoring the default gateway and routes to the ASA. Re-home inbound publishes per
+          wave — Remote Port Forwarding on Cato allocated IPs or Local Port Forwarding for the few
+          true inbound services, and ZTNA/clientless access for anything that only ever needed
+          <em>user</em> access rather than internet exposure. Update external DNS, partner
+          allowlists and anything keyed to the old egress IPs in the same window.</p>
+        </li>
+        <li>
+          <h4>Phase 4 — Remote access cutover</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Access → Device Posture</span></p>
+          <p>Execute the AnyConnect page's wave plan — cohorts on the Cato Client, DAP/HostScan
+          intent recreated as Device Posture, the WebVPN portal retired as the last cohort clears.
+          Sequence deliberately: <strong>the perimeter ASA usually cannot be decommissioned until
+          the last RA cohort clears</strong>, so RA cutover comes before the final DC wave, not
+          after it.</p>
+        </li>
+        <li>
+          <h4>Phase 5 — Optimise and decommission</h4>
+          <p>Tighten monitor-mode rules to block on event evidence, widen TLS-inspection scope,
+          and retire the temporary co-existence tunnels. Decommission in order: branch ASAs →
+          published-service NAT → the RA headend function → the hub ASA and IPsec interconnect →
+          lapse Smart Net and Secure Client subscriptions at renewal. Final acts: an external scan
+          confirming the WebVPN/ASDM/IKE listeners are gone from the old egress IPs, and an
+          archive of the final configs and <code>hitcnt</code> exports for audit.</p>
+        </li>
+      </ol>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧯</div><div><h4>The portals leave the estate</h4><p>WebVPN, ASDM and the VPN headend — the surfaces behind the 2024–2025 exploit record — are retired with the appliance, not patched faster.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Rollback is a route change</h4><p>The ASA stays racked, powered and configured through every soak window; reverting a site is restoring its default gateway and statics — no rebuilds mid-window.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌱</div><div><h4>The greenfield dividend</h4><p>SWG, CASB, DLP, TLS inspection and IPS run in monitor from week one of co-existence — capabilities the ASA never had, generating evidence before they enforce.</p></div></div>
+        <div class="benefit"><div class="b-icon">📅</div><div><h4>The EOL treadmill ends</h4><p>No next appliance family, no reimage projects, no frozen software trains — the PoP is patched by Cato, and capacity is a subscription rather than a sizing exercise.</p></div></div>
+      </div>
+    </section>
+
+    <section id="coexist" class="reveal">
+      <div class="section-kicker">Co-existence &amp; rollback</div>
+      <h2>Cutover mechanics per estate element</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Element</th><th>Cutover</th><th>Rollback</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Branch site</td>
+              <td>Socket in parallel with the branch ASA, L3 handoff, subnets moved progressively; golden flows validated per move</td>
+              <td>Restore the default gateway / static routes to the ASA (or re-enable the crypto-map peer)</td>
+            </tr>
+            <tr>
+              <td>Hub / DC ASA pair</td>
+              <td>Parallel Socket takes migrated subnets; the ASA also runs as a Cato IPsec IKEv2 site carrying un-migrated branch and partner traffic; the hub migrates last</td>
+              <td>The interconnect stays up until the final wave — nothing to unwind early</td>
+            </tr>
+            <tr>
+              <td>Published services</td>
+              <td>Remote / Local Port Forwarding (or ZTNA for user-only access) per wave; external DNS updated in the window</td>
+              <td>Keep the old static NAT configured and DNS TTLs low until the new path has soaked; rollback is a DNS revert</td>
+            </tr>
+            <tr>
+              <td>Partner VPNs</td>
+              <td>Keep terminating on the hub ASA during transition; re-home to Cato IPsec sites on their own change windows</td>
+              <td>Partner tunnel config stays on the ASA until sign-off</td>
+            </tr>
+            <tr>
+              <td>Remote users</td>
+              <td>Cato Client per cohort via MDM; AnyConnect profiles removed per cohort; WebVPN retired last</td>
+              <td>Per-cohort MDM rollback exactly as the AnyConnect page prescribes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card">
+          <h3 style="margin-top:0">The TS_UNACCEPTABLE trap — know it before the tunnel build</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">When creating a child SA, Cato sends
+          multiple traffic selectors in one TS payload; an ASA supports a single traffic selector
+          per child SA and rejects the negotiation with <strong>TS_UNACCEPTABLE</strong>. The two
+          documented remedies, consistent with <a href="network-ipsec-asa.html">the ASA IPsec
+          page</a> and Cato's KB: <strong>(1)</strong> a route-based VTI with no Network Ranges
+          beyond native on the Cato site, so the tunnel negotiates a single 0.0.0.0/0 ↔ 0.0.0.0/0
+          selector pair (VTI needs ASA 9.7(1)+; IKEv2-on-VTI 9.8(1)+); or <strong>(2)</strong> the
+          CMA advanced setting <em>&ldquo;IKEv2 Send Single TS per Payload&rdquo;</em> (Site
+          Configuration → Advanced Configuration) for estates that must stay policy-based.
+          Wave-planning corollary: a pilot that validated remedy 1 does <em>not</em> validate
+          remedy 2 — if production ASAs run crypto maps, the single-TS setting needs its own
+          validation pass.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Prefer IKEv2 for the interim interconnect</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">IKEv1 sites are <strong>Cato-initiated</strong> —
+          the PoP builds the tunnel and a tunnel-group must exist per Cato allocated IP — and the
+          ASA's IKEv1 hash options are MD5/SHA1 only. Both are reasons to build the interim
+          interconnect as IKEv2 route-based VTI wherever the ASA release allows: dual tunnels to
+          two PoP allocated IPs, static or BGP routing, and AES-GCM at 100&nbsp;Mbps and above.
+          The full parameter set, ASA-side configuration and the failover/reload drills are on
+          <a href="network-ipsec-asa.html">the ASA IPsec page</a> — link it into the change
+          record rather than re-deriving the crypto.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gotchas" class="reveal">
+      <div class="section-kicker">Gotchas &amp; objections</div>
+      <h2>What will come up in the room</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;We'll just buy Firepower / Secure Firewall&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A valid path — counter it on the facts:
+          (1) it is itself a migration project (reimage, new console, partial config conversion,
+          retraining), not a renewal; (2) the replacement families run their own EOL treadmill —
+          the Firepower 2100 is already end-of-sale and the FMC appliances have their own EOL
+          notice; (3) ED 25-03 V1 documents FIRESTARTER persistence on Firepower / Secure Firewall
+          — the architecture keeps an internet-exposed appliance in the patch queue; (4) it still
+          buys none of the missing capability — SWG, CASB, DLP, ZTNA — without further
+          subscriptions and consoles.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">&ldquo;ASA software isn't dead&rdquo;</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Correct — concede it. ASA software
+          continues to be developed and runs on current Secure Firewall appliances. The dying
+          asset is the 5500-X appliance and the architecture around it. Overclaiming &ldquo;ASA is
+          EOL&rdquo; full-stop loses the network team the moment they read Cisco's compatibility
+          matrix — argue the architecture, and let the hardware dates speak for themselves.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Zero-hit is not dead</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">DR routes, annual jobs and break-glass
+          rules legitimately show <code>hitcnt=0</code> — and the counters reset on reload and on
+          <code>clear access-list counters</code>. Establish a counting window of 30–90 days
+          including a month-end or quarter-end rather than trusting a snapshot, cull only with
+          change-control sign-off, and keep contested ACEs in a &ldquo;parked&rdquo; rule group in
+          the CMA — disabled and documented — rather than silently dropping them.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Embedded NAT dependencies break cutovers</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Partner VPNs pointed at a NATed address,
+          hairpin access to a published service from inside, DNS doctoring, SaaS allowlists keyed
+          to the PAT address — every one is invisible in the ACL export and every one breaks at
+          cutover if not inventoried from <code>show nat detail</code> in Phase 0. Twice-NAT with
+          destination logic and hairpins are redesign items (split-horizon DNS, explicit design
+          decisions), not translations.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cert and posture recreation has no shortcut</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">AnyConnect machine certs, internal CA
+          chains and DAP/HostScan logic export nowhere — Cisco's own tool does not carry SFR
+          config, and DAP recreation was manual even going ASA→FTD. Budget real workshop time to
+          restate posture intent as Device Posture profiles, and check certificate expiry dates in
+          discovery — an expiring cert mid-migration looks like a Cato failure.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Shadowed ACEs and the ops long tail</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">First-match on the ASA and first-match in
+          the CMA do not compose when several per-interface ACLs merge into one ordered base —
+          rules that never collided on the ASA can shadow each other after the merge, so re-run
+          the golden-flow list after every re-order. And plan the unglamorous tail: EIGRP/OSPF
+          intent re-expressed as BGP or statics, and syslog parsers, NetFlow dashboards and SNMP
+          polls re-homed to CMA events and the SIEM feed before anything is switched off.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="co-title">Don't oversell the breach story</div>
+        <p>Use ArcaneDoor, RayInitiator and ED 25-03 to argue that the appliance <em>category</em>
+        is structurally exposed — and that governments now say so — not that this customer's
+        specific ASA is compromised. The same KEV-table argument exists for Fortinet, Palo Alto,
+        Sophos and Ivanti. A constructive UK move: offer the NCSC's published malware-analysis
+        checks as a goodwill diagnostic during discovery — it demonstrates competence and puts
+        the customer's real exposure, whatever it is, on the table.</p>
+      </div>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The pitch above is &ldquo;spend the forced migration once and remove the appliance
+        class&rdquo; — so the PoV proves the three things that make that credible in an ASA
+        estate: the interim interconnect actually negotiates (in the design production will use —
+        the traffic-selector trap is real), the business's golden flows behave identically on the
+        Cato path, and the greenfield engines produce evidence the ASA never could. It runs as a
+        bounded pilot: one branch on a Socket in parallel with its ASA, the hub ASA up as an
+        IPsec IKEv2 site, one ACE slice at parity in monitor mode, a small RA cohort, and a
+        rollback that is a route change. Agree the criteria below <strong>before configuring
+        anything</strong>, per <a href="management-pov-framework.html">Running a Cato PoV</a>,
+        and run the register to a fixed end date.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>#</th><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>Hub ASA up as an IPsec IKEv2 site — no TS_UNACCEPTABLE</strong></td>
+              <td>Dual tunnels to two Cato allocated IPs establish and stay up, using the traffic-selector remedy production will use (route-based VTI, or the single-TS setting for crypto-map estates)</td>
+              <td>Tunnel status + failover drill record from the IPsec page's runbook</td>
+              <td>Network → Sites · Monitor → Topology</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Golden flows pass on both paths</td>
+              <td>The agreed 20–50 business flows verify with <code>packet-tracer</code> on the ASA and as events on Cato — 100% pass before any wave is planned</td>
+              <td>Golden-flow register with per-flow verdicts, both sides</td>
+              <td>Monitor → Events · ASA CLI capture</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Pilot ACE slice at parity in monitor mode</td>
+              <td>The pilot site's ACE slice runs as Cato rules with Track = Event; hits over the window reconcile against the ASA <code>hitcnt</code> deltas for the same period</td>
+              <td>Rule-hit event export vs the hitcnt baseline in the mapping workbook</td>
+              <td>Security → WAN Firewall · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>The greenfield dividend is visible</td>
+              <td>IPS, anti-malware, SWG categories and TLS inspection — running in monitor mode — produce verdicts and category events on pilot traffic the ASA never inspected</td>
+              <td>Threats dashboard export + monitor-mode event summary</td>
+              <td>Monitor → Threats Dashboard · Events</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Pilot RA cohort works a normal week</td>
+              <td>A 5–10 user cohort on the Cato Client, with one DAP/HostScan intent recreated as a Device Posture check, works a full week — no backhaul, experience baselined</td>
+              <td>Experience Monitoring baseline + helpdesk ticket check</td>
+              <td>Monitor → Experience Monitoring</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Rollback drill passes</td>
+              <td>The pilot branch reverts to the ASA by restoring its default gateway/static routes inside the agreed window — then swaps forward again</td>
+              <td>Timed drill record + before/after route table</td>
+              <td>Evidence doc · Monitor → Topology</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope, bounded:</strong> one branch and its ASA, the hub ASA as an IPsec site, one ACE slice with real traffic behind it, and a 5–10 user RA cohort. Everything else is out of scope, in writing.</li>
+          <li><strong>The four ASA facts up front</strong> (from <a href="network-ipsec-asa.html">the IPsec page</a>): software version (VTI needs 9.7(1)+, IKEv2-on-VTI 9.8(1)+), who operates the ASA, static vs NATed public IP, and real link bandwidth — plus a change window for the cutover and drills.</li>
+          <li><strong>The counting window running early:</strong> criterion 3 needs an ASA <code>hitcnt</code> baseline over a representative window (30–90 days including a month-end) — start the capture at deal stage, not PoV week one, and record any reloads that reset the counters.</li>
+          <li><strong>Identity first:</strong> IdP SSO connected and SCIM syncing the pilot group — group-scoped rules and per-user evidence depend on it.</li>
+          <li><strong>Secrets under change control:</strong> <code>more system:running-config</code> exposes the pre-shared keys the tunnel build needs — capture it under the customer's change process, not informally.</li>
+          <li><strong>Golden flows agreed with app owners:</strong> 20–50 flows with expected verdicts, including at least one published service and one partner flow — and a check of certificate expiry dates so nothing expires mid-PoV and masquerades as a Cato failure.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Capture the ASA baseline — the EXPORT artefacts</h4>
+          <p>Everything the PoV measures against comes from a handful of CLI outputs, captured at
+          the start and end of the window:</p>
+          <pre class="code"><span class="cmt">! Per ASA — capture at window start and window end</span>
+<span class="kw">show access-list</span>                       <span class="cmt">! expands object-groups, live hitcnt= per ACE</span>
+<span class="kw">show access-list | include hitcnt=0</span>    <span class="cmt">! dead-rule candidates (sign-off, not automation)</span>
+<span class="kw">show nat detail</span>                        <span class="cmt">! the real NAT table in evaluation order</span>
+<span class="kw">show crypto ikev2 sa</span>                   <span class="cmt">! live tunnel baseline</span>
+<span class="kw">show vpn-sessiondb anyconnect</span>          <span class="cmt">! RA session baseline</span>
+<span class="kw">packet-tracer input inside tcp 10.1.20.15 51000 10.9.8.7 1433</span>
+                                       <span class="cmt">! golden flow: verdict per phase (route, ACL, NAT, VPN)</span></pre>
+          <p>Build the golden-flow register from <code>packet-tracer</code> runs — each flow with
+          its expected per-phase verdict — and file the <code>hitcnt</code> snapshot in the
+          mapping workbook as the parity baseline for criterion 3.</p>
+        </li>
+        <li>
+          <h4>Bring the hub ASA up as an IPsec IKEv2 site</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site per <a href="network-ipsec-asa.html">the ASA IPsec page</a>: two Cato
+          allocated IPs, dual tunnels, route-based VTI on the ASA (preferred), AES-GCM for
+          100&nbsp;Mbps+ links, static routes or BGP for the migration prefixes, and no default
+          routes across the interconnect. The full ASA-side configuration, parameter set and HA
+          design live on that page — do not re-derive them here.
+          (Docs: <a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 sites</a> ·
+          <a href="https://knowledge.catonetworks.com/docs/allocating-ip-addresses-for-the-account" target="_blank" rel="noopener">Allocating IP addresses</a>.)</p>
+          <!-- capture-wanted: «Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)» -->
+        </li>
+        <li>
+          <h4>Validate the traffic-selector remedy production will use</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>If production stays on the VTI design, criterion 1 is proven by the site coming up
+          with no Network Ranges beyond native — a single 0.0.0.0/0 ↔ 0.0.0.0/0 selector pair. If
+          production ASAs run policy-based crypto maps, prove the other remedy explicitly: enable
+          <strong>&ldquo;IKEv2 Send Single TS per Payload&rdquo;</strong> under Site Configuration
+          → Advanced Configuration and re-establish. A PoV that validated one remedy has not
+          validated the other — record which one the evidence covers.
+          (Docs: <a href="https://support.catonetworks.com/hc/en-us/articles/4413265663761-Working-with-Advanced-Configuration-for-the-Account" target="_blank" rel="noopener">Working with Advanced Configuration</a>.)</p>
+        </li>
+        <li>
+          <h4>Deploy the pilot branch Socket in parallel</h4>
+          <p><span class="path">Network → Sites</span> <span class="path">Monitor → Topology</span></p>
+          <p>Create the branch site with its native range, ship the Socket and let it
+          self-provision. In the change window: L3 handoff beside the branch ASA, move one subnet,
+          confirm the site is up in Topology, then run the golden-flow list — <code>packet-tracer</code>
+          verdicts on the ASA side, events on the Cato side, including a flow that crosses the hub
+          interconnect to an un-migrated resource. <strong>The ASA stays racked, powered and
+          configured</strong> — its routes are the rollback for criterion 6.
+          (Docs: <a href="https://support.catonetworks.com/hc/en-us/articles/30175650827677-What-are-Cato-Sockets" target="_blank" rel="noopener">What are Cato Sockets</a>.)</p>
+        </li>
+        <li>
+          <h4>Translate the ACE slice — direction split, monitor-first</h4>
+          <p><span class="path">Security → WAN Firewall</span> <span class="path">Security → Internet Firewall</span> <span class="path">Monitor → Events</span></p>
+          <p>Map the pilot slice with the direction split that defines ASA translation:
+          site-to-site and east-west ACEs into the WAN firewall (allowlist, implicit deny),
+          internal-to-internet ACEs into the Internet firewall (blocklist, implicit allow) — a raw
+          copy puts outbound exceptions into the wrong base and inverts their meaning. Deploy
+          would-be blocks as <strong>Allow with Track = Event</strong> so every hit lands as an
+          event and nothing blocks during the PoV. The greenfield engines are already in monitor
+          from account setup — their verdicts on pilot traffic are criterion 4's evidence, not
+          incidents. The full construct-by-construct mapping, NAT taxonomy and hit-count pipeline
+          are on the companion page,
+          <a href="migration-cisco-asa-policy.html">Cisco ASA Policy Migration</a>.
+          (Docs: <a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Firewall policy best practices</a>.)</p>
+        </li>
+        <li>
+          <h4>Enrol the pilot RA cohort with one posture check</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Device Posture</span></p>
+          <p>Push the Cato Client to the 5–10 pilot devices via MDM, remove their AnyConnect
+          profile so exactly one VPN data path is active per endpoint, and recreate <em>one</em>
+          DAP/HostScan intent — typically the anti-malware-present check — as a Device Posture
+          profile gating access via Client Connectivity Policy. This is the live demonstration
+          that posture intent survives without an export path, and the foundation for the full
+          cohort plan on <a href="migration-anyconnect.html">the AnyConnect page</a>.
+          (Docs: <a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks</a> ·
+          <a href="https://support.catonetworks.com/hc/en-us/articles/4415419573393-Configuring-the-Client-Connectivity-Policy" target="_blank" rel="noopener">Client Connectivity Policy</a>.)</p>
+        </li>
+        <li>
+          <h4>Run the drills — failover, then rollback, then forward again</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>In booked windows: run the IPsec page's failover and reload drills against the hub
+          site (criterion 1's resilience half), then the branch rollback — restore the default
+          gateway and static routes to the branch ASA, time the reversion, verify a golden flow on
+          the legacy path, and swap forward again. Doing the rollback <em>during</em> the PoV,
+          not promising it, is what makes the wave plan credible for the rest of the estate.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>
+        Two CMA surfaces carry most of the evidence register — the WAN firewall rulebase for the
+        parity criterion, and Experience Monitoring for the RA cohort:
+      </p>
+      <figure class="shot">
+        <img src="../assets/img/cma-wan-fw-rulebase.png" alt="Cato Management Application WAN Firewall rulebase from a demo tenant: twelve ordered allowlist rules scoped by site, user and host with direction, service/port pairs and live hit counts, over an implicit deny" loading="lazy">
+        <figcaption>The parity evidence surface for translated ACEs: an ordered allowlist over an
+        implicit deny — the same posture as the ASA's interface ACLs — with per-rule hit counts.
+        With Track = Event on every translated rule, these numbers reconcile against the ASA
+        <code>hitcnt</code> deltas for the same window; that reconciliation, not a demo, is what
+        closes criterion 3.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/em-home-users.png" alt="Experience Monitoring landing page, Remote Users tab: account experience score graph and a per-user table with device names, experience chips, connected PoP, flows and average TTFB" loading="lazy">
+        <figcaption>The RA cohort evidence: per-user experience scores, connected PoP and average
+        TTFB for the pilot cohort on the Cato Client — no concentrator hairpin in the path. A week
+        of Good scores with no coexistence tickets, alongside the posture check firing, is
+        criterion 5 closed with numbers rather than anecdotes.</figcaption>
+      </figure>
+      <!-- capture-wanted: «Monitor → Threats Dashboard — monitor-mode IPS and anti-malware verdicts on pilot traffic during co-existence (the greenfield-dividend evidence for criterion 4)» -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🚧</div><div><h4>Child SA fails with TS_UNACCEPTABLE</h4><p>The classic ASA negotiation failure: Cato offered multiple traffic selectors, the ASA accepts one per child SA. Check for Network Ranges beyond native on the Cato site (VTI design), or enable the single-TS advanced setting for crypto-map estates — and record which remedy the PoV has now validated.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔑</div><div><h4>IKEv1 fallback won't establish</h4><p>If a legacy ASA forces IKEv1: the site is Cato-initiated — the PoP builds the tunnel, so a tunnel-group must exist for each Cato allocated IP, and the ASA offers MD5/SHA1 hashes only. Check the tunnel-group names against the allocated IPs before debugging crypto parameters.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>A golden flow fails only on Cato</h4><p>Usually the direction split or a shadowing effect from the ACL merge, not a platform fault. Check which rulebase the flow hits (WAN vs Internet), then walk the ordered base for an earlier rule swallowing the match — and re-run the full golden-flow list after any re-order.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Asymmetry across the interconnect</h4><p>A prefix reachable via both the Socket path and the ASA path can return traffic asymmetrically. Keep migration prefixes tidy: filter default routes at the interconnect, advertise migrated prefixes from one place only, and design for symmetry before the first wave — not during an incident.</p></div></div>
+        <div class="benefit"><div class="b-icon">📛</div><div><h4>Hairpin or DNS-doctoring breakage</h4><p>An internal user can no longer reach a published service by its public name: the ASA was hairpinning or rewriting DNS. This is a redesign item from the NAT inventory — split-horizon DNS replaces the doctoring; log it as a finding against the Phase 0 checklist, not as a Cato defect.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Pilot users not matching rules</h4><p>Slice rules or posture-gated access behave inconsistently across the cohort: SCIM sync lag or group-name drift, not policy error. Confirm the pilot group has synced in Access → Users and users resolve in events before judging rule behaviour.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest boundaries — say these up front</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Monitor mode means monitor.</strong> The single-pass engine will inspect traffic the ASA never saw — expect new IPS, anti-malware and category detections during the PoV and triage them as findings, not incidents. That evidence is the point of criterion 4.</li>
+          <li><strong>Parity is a windowed comparison, not an identity.</strong> <code>hitcnt</code> counters reset on reload; zero-hit ACEs may be DR paths. The reconciliation says &ldquo;the translated slice behaves as the ASA did over this window&rdquo; — dead-rule culling decisions still need change-control sign-off after the PoV.</li>
+          <li><strong>One remedy validated is one remedy validated.</strong> If the PoV ran route-based VTI and production has crypto-map ASAs (or vice versa), say so in the wrap-up and schedule the other validation pass in wave one.</li>
+          <li><strong>Posture recreation is a design exercise.</strong> One DAP intent recreated proves the model; the full DAP/HostScan estate still needs the workshop the migration plan budgets for.</li>
+          <li><strong>Evidence outlives retention.</strong> Export events and screenshots weekly into the evidence doc rather than assuming they can be reconstructed at wrap-up.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> if the decision is no (or paused), reverse in order —
+        restore the branch default gateway/statics to the ASA (already drilled), remove the Cato
+        Client from pilot devices via MDM and re-enable their AnyConnect profile, delete the hub
+        site's routes and then the IPsec site itself, and disable the pilot rules in the CMA. The
+        ASA estate is exactly as it was — nothing was decommissioned during the PoV. If the
+        decision is yes, the pilot <em>is</em> wave one: the golden-flow register, the mapping
+        workbook, the validated traffic-selector remedy and the drilled rollback become the
+        phased-cutover plan in <a href="#solution">the migration path above</a>.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 sites (docs)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/recommendations-for-ipsec-connections" target="_blank" rel="noopener">Recommendations for IPsec connections (docs)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/4413265663761-Working-with-Advanced-Configuration-for-the-Account" target="_blank" rel="noopener">Advanced Configuration — incl. IKEv2 Single TS per Payload (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/30175650827677-What-are-Cato-Sockets" target="_blank" rel="noopener">What are Cato Sockets (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/360004274777-Recommendations-for-Internet-and-WAN-Firewall-Policies" target="_blank" rel="noopener">Internet and WAN firewall policy recommendations (KB)</a></li>
+            <li><a href="https://support.catonetworks.com/hc/en-us/articles/7387501459357-Creating-Device-Posture-Profiles-and-Device-Checks" target="_blank" rel="noopener">Device Posture profiles and checks (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/news/cisco-asa-next-gen-firewall-vs-cato-networks/" target="_blank" rel="noopener">Cato positioning vs Cisco ASA</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/products/collateral/security/asa-5500-series-next-generation-firewalls/eos-eol-notice-c51-744798.html" target="_blank" rel="noopener">Cisco: ASA 5508-X/5516-X end-of-life notice</a></li>
+            <li><a href="https://www.cisa.gov/news-events/directives/ed-25-03-identify-and-mitigate-potential-compromise-cisco-devices" target="_blank" rel="noopener">CISA ED 25-03 — Cisco device compromise directive</a></li>
+            <li><a href="https://www.ncsc.gov.uk/news/persistent-malicious-targeting-cisco-devices" target="_blank" rel="noopener">NCSC: RayInitiator / LINE VIPER malware analysis</a></li>
+            <li><a href="https://blog.talosintelligence.com/arcanedoor-new-espionage-focused-campaign-found-targeting-perimeter-network-devices/" target="_blank" rel="noopener">Cisco Talos: ArcaneDoor campaign report</a></li>
+            <li><a href="https://www.cisco.com/c/en/us/products/collateral/security/anyconnect-secure-mobility-client/anyconnect-secure-mobility-client-v4x-eol.html" target="_blank" rel="noopener">Cisco: AnyConnect 4.x end-of-life notice</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="migration-cisco-asa-policy.html">Cisco ASA Policy Migration</a></li>
+            <li><a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)</a></li>
+            <li><a href="migration-anyconnect.html">AnyConnect to Cato Client</a></li>
+            <li><a href="migration-cisco.html">Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato</a></li>
+            <li><a href="migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

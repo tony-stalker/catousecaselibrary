@@ -1,13 +1,13 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-87 of the 147 still-wanted captures need setup a clean tenant can't provide by navigation.
+91 of the 151 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
 and tell Claude the file→page mapping. It crops, catalogues, embeds and ships. Avoid real names on screen.
 Auto-regenerated from live capture-wanted comments (embedded ones drop off). Full list: `CAPTURE-LIST.md`.
 
-## BGP / Interconnect — bring up an eBGP handoff (or Cross-Connect site) so Show BGP Status is Established and the routing table shows learned routes  (14)
+## BGP / Interconnect — bring up an eBGP handoff (or Cross-Connect site) so Show BGP Status is Established and the routing table shows learned routes  (15)
 
 - migration-checkpoint: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–Gaia eBGP transit-VLAN handoff
 - migration-cisco: Network → Routing Table filtered to the pilot prefixes, showing BGP-learned overlay routes via the hub handoff
@@ -23,6 +23,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP peer definition showing MD5, metrics and primary/secondary PoP
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
+- migration-sonicwall: Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured
 
 ## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (5)
 
@@ -32,7 +33,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-data-casb-dlp: Cato Client block notification pop-up from a DLP Data Control rule, showing a customised notification template
 - security-finance-dora: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
 
-## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (27)
+## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (28)
 
 - access-identity-design: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
 - access-offshore-bpo: CMA Monitor → Events — one agent identity, named-rule allows beside an attempted-access WAN block
@@ -61,8 +62,9 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-retail-pci: Monitor → Events filtered to LAN Firewall block events — a guest Wi-Fi client stopped from reaching a POS/CDE address
 - security-tls-inspection: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
+- migration-sonicwall: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (18)
+## Other staged state (a specific rule/profile/filter that must exist first)  (19)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
@@ -82,6 +84,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
 - security-firewall-refresh: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - security-healthcare-nhs: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems
+- migration-cisco-asa: Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)
 
 ## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (6)
 
@@ -107,7 +110,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible
 - security-ransomware: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
 
-## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (8)
+## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (9)
 
 - access-offshore-bpo: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 - access-remote-worker: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
@@ -117,3 +120,4 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-symantec: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact
 - migration-versa: Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort
 - security-ransomware: Security → LAN Firewall — a LAN Network rule with nested LAN Firewall rules and hit counts on a pilot Socket site
+- migration-cisco-asa: Monitor → Threats Dashboard — monitor-mode IPS and anti-malware verdicts on pilot traffic during co-existence (the greenfield-dividend evidence for criterion 4)
