@@ -7,13 +7,13 @@ build time (July 2026) from the sources cited on each page.
 | Dated fact | Where it lives | Recheck when |
 |---|---|---|
 | AnyConnect 4.x support ends Mar 2027 (maintenance ended Mar 2024) | migration-anyconnect, migration-cisco | Mar 2027 — reframe as "ended" |
-| ASA 5506/5508/5516-X EOS Aug 2026; ASA 5500-X support ends 2026 | migration-anyconnect, migration-cisco | Sep 2026 — reframe as past |
+| ASA 5506/5508/5516-X EOS 31 Aug 2026 (confirmed via Cisco EOL notices); ASA 5500-X support ends 2026 — reframed past-tense Sep 2026 review | migration-anyconnect, migration-cisco | Stable as history |
 | Umbrella legacy SKUs EOS Sep 2025; vEdge support ends 2026 | migration-cisco | Quarterly |
 | PA-3200/5200 EOS (support to Aug 2028); Expedition EOL Dec 2024 | migration-palo-alto(-policy) | Aug 2028 / stable |
 | CVE-2024-3400, CVE-2024-47575 (FortiJump), CVE-2024-39717 (Versa), 2025 Concerto CVEs | palo-alto, fortinet, versa pages | Stable as history; add newer CVEs quarterly |
-| CISA KEV counts (26 Fortinet CVEs / 13 ransomware-linked) | migration-fortinet | Quarterly — counts grow |
+| CISA KEV counts (29 Fortinet CVEs / 13 ransomware-linked, as of Aug 2026 — grew from 26/13 in Jul 2026, incl. CVE-2025-68686 added 27 Jul 2026) | migration-fortinet | Quarterly — counts grow |
 | FortiOS 7.6.3 removes SSL-VPN tunnel mode | migration-fortinet | Stable |
-| 2025 Gartner MQ (Cato Leader, Cloudflare Visionary, ~400 via Gartner) | migration-cloudflare | On next MQ publication (~annual) |
+| 2026 Gartner MQ for SASE Platforms, published 28 Jul 2026 (Cato Leader — 3rd consecutive year, Cloudflare Visionary — 2nd consecutive year, ~400 SASE customers via Gartner's estimate) | migration-cloudflare | On next MQ publication (~annual) |
 | Cloudflare One Appliance limits (no fail-open, ~30s failover, no QoS) | migration-cloudflare(-policy) | Quarterly — vendor docs move |
 | Client OS list NOW includes "Android and Chromebook" (KB verified 23 Jul 2026 — iboss caveat softened accordingly); Google Workspace SCIM still not in documented lists | access-byod-clientless, migration-iboss | Quarterly — support lists grow |
 | AI Security: End Users and Apps are separate per-user licences; Enterprise Browser included in ZTNA licence | AI Security pages, access-byod-clientless | On licensing announcements |
@@ -35,8 +35,8 @@ build time (July 2026) from the sources cited on each page.
 | NCSC CAF v4.0 (Aug 2025) vs NHS still on v3.4 | security-healthcare-nhs | On next DSPT edition |
 | NHS Supply Chain requires CE+ from in-scope suppliers (Sep 2025); NHS England MFA policy (Aug 2023); HSCN operational, no announced successor | security-healthcare-nhs | Annually |
 | Always-On bypass minimum Client versions (Win 5.9+ / macOS 5.5+ / iOS 5.6+); EM Connection Details scoring thresholds | access-remote-worker | Quarterly vs KB — versions move with releases |
-| Digital Omnibus "publication still pending" wording (agreed May–Jun 2026; delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028) — in the Read-this-first callout AND objective | ai-eu-ai-act | On OJ publication (~weeks) — cite the amending regulation, drop "pending" |
-| AI Act general applicability "from 2 Aug 2026" phrasing; Art 50 marking grace to 2 Dec 2026 for pre-market systems | ai-eu-ai-act | Sep 2026 — confirm "from" reads naturally as past; Dec 2026 for the grace row |
+| Digital Omnibus published as Regulation (EU) 2026/1744 (OJ 24 Jul 2026, in force 27 Jul 2026); delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028 (both confirmed unchanged) — in the Read-this-first callout AND objective | ai-eu-ai-act | Stable as history |
+| AI Act general applicability reframed past-tense Sep 2026 review ("reached", "began", "switched on" from 2 Aug 2026); Art 50 marking grace to 2 Dec 2026 for pre-market systems | ai-eu-ai-act | Dec 2026 — reframe the marking-grace row past when it lapses |
 | Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
 | CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
 | Cato Data Lake default retention 3 months (extendable) — hedged on-page, support page login-gated | ai-eu-ai-act | Quarterly vs KB/SKU — firm up if a public source appears |
