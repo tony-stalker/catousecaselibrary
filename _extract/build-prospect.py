@@ -65,6 +65,10 @@ DECK_BTN_RE = re.compile(
     r'\n?[ \t]*<a class="btn btn-ghost" href="[^"]*\.pptx"[^>]*>[^<]*</a>')
 WHATSNEW_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="whatsnew.html">[^<]*</a>')
 PLANNER_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="planner.html">[^<]*</a>')
+# deck generator script tags (root and ../ forms) — the JS is deleted below, so the
+# tags must go too or every page would 404 three scripts
+DECK_SCRIPT_RE = re.compile(
+    r'\n?[ \t]*<script src="(?:\.\./)?assets/js/deck-(?:brand|content|export)\.js"></script>')
 
 FIGURE_RE = re.compile(r'<figure class="shot">.*?</figure>', re.DOTALL)
 
@@ -83,6 +87,7 @@ def transform(text: str) -> str:
     text = DECK_BTN_RE.sub("", text)
     text = WHATSNEW_LINK_RE.sub("", text)
     text = PLANNER_LINK_RE.sub("", text)
+    text = DECK_SCRIPT_RE.sub("", text)
     for old, new in PHRASES:
         text = text.replace(old, new)
     return text
@@ -105,7 +110,12 @@ def main():
 
     # assets (css/js/img) — catalog.js gets the wording pass too
     shutil.copytree(SRC / "assets", OUT / "assets")
-    for internal in ("planner.js", "planner-rules.js", "planner-export.js", "planner-topology.js", "planner-logos.js"):
+    for internal in ("planner.js", "planner-rules.js", "planner-export.js", "planner-topology.js", "planner-logos.js",
+                     # deck generator is an internal SE tool too: the decks it builds carry
+                     # demo-flow instructions (what to click in the CMA), which are not
+                     # prospect-facing. With the JS gone, the injected deck button and
+                     # index builder never appear; the <script> tags are stripped above.
+                     "deck-export.js", "deck-content.js", "deck-brand.js"):
         f = OUT / "assets" / "js" / internal
         if f.exists():
             f.unlink()  # planner is an internal SE tool; never ships to prospects
