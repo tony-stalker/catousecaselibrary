@@ -164,17 +164,43 @@ catocli mutation policy wanFirewall addRule \
 <span class="cmt"># or hand it any GraphQL document verbatim</span>
 catocli raw --json-file query.json</pre>
 
-      <p style="margin-bottom:6px"><strong>Terraform — the estate as declared state.</strong> A
-      branch site and a WAN firewall rule in the official <code>catonetworks/cato</code>
-      provider:</p>
-<pre class="code">resource "cato_socket_site" "bristol" {
+      <p style="margin-bottom:6px"><strong>Terraform — the estate as declared state.</strong> The
+      complete, generic <code>main.tf</code> to add a branch site — provider wiring included, so
+      this runs as-is once the two environment variables are set. It passes
+      <code>terraform validate</code> against provider v0.0.97:</p>
+<pre class="code"><span class="cmt"># main.tf — everything needed to add one site (and a first WAN rule)</span>
+terraform {
+  required_providers {
+    cato = {
+      source = "catonetworks/cato"
+    }
+  }
+}
+
+variable "account_id" {
+  description = "Cato account ID (Administration → General Info)"
+  type        = string
+}
+
+provider "cato" {
+  baseurl    = "https://api.catonetworks.com/api/v1/graphql2"
+  account_id = var.account_id
+  <span class="cmt"># API key is read from the CATO_TOKEN environment variable — never in code</span>
+}
+
+resource "cato_socket_site" "bristol" {
   name            = "Bristol Office"
-  site_type       = "BRANCH"
-  connection_type = "SOCKET_X1500"
+  description     = "Branch site — managed by Terraform"
+  site_type       = "BRANCH"          <span class="cmt"># or DATACENTER / CLOUD_DC</span>
+  connection_type = "SOCKET_X1500"    <span class="cmt"># or SOCKET_X1600 / X1700, SOCKET_AWS1500, SOCKET_AZ1500…</span>
 
   native_range = {
     native_network_range = "10.20.0.0/24"
     local_ip             = "10.20.0.1"
+    dhcp_settings = {
+      dhcp_type = "DHCP_RANGE"
+      ip_range  = "10.20.0.100-10.20.0.200"
+    }
   }
 
   site_location = {
@@ -192,10 +218,14 @@ resource "cato_wf_rule" "branch_to_dc" {
     direction = "TO"
     source      = { site = [{ name = "Bristol Office" }] }
     destination = { site = [{ name = "London DC" }] }
+    application = {}                  <span class="cmt"># required attribute — empty means any application</span>
     tracking    = { event = { enabled = true } }
   }
 }</pre>
-<pre class="code">terraform init
+<pre class="code">export CATO_TOKEN="&lt;api-key-from-the-vault&gt;"
+export TF_VAR_account_id="&lt;your-account-id&gt;"
+
+terraform init
 terraform plan                    <span class="cmt"># the reviewed diff — the governance moment</span>
 terraform apply -parallelism=1    <span class="cmt"># the API executes sequentially — Cato's recommendation</span></pre>
 
@@ -301,8 +331,9 @@ catocli query entityLookup '{"type":"site"}'</pre>
         <li>
           <h4>Create a site with Terraform</h4>
           <p>Run <code>terraform plan</code> on a <code>cato_socket_site</code> definition (the
-          full resource block is in the solution section above) and walk the diff, then apply.
-          Emphasise the plan step: the change is reviewed before anything touches production.</p>
+          complete ready-to-run <code>main.tf</code> is in the solution section above) and walk
+          the diff, then apply. Emphasise the plan step: the change is reviewed before anything
+          touches production.</p>
 <pre class="code">terraform plan                    <span class="cmt"># walk the diff with the customer</span>
 terraform apply -parallelism=1    <span class="cmt"># the site appears in the CMA in minutes</span></pre>
         </li>
@@ -453,7 +484,7 @@ catocli query entityLookup -accountID &lt;your-account-id&gt; '{"type":"vpnUser"
 provider "cato" {
   baseurl    = "https://api.catonetworks.com/api/v1/graphql2"
   account_id = "&lt;your-account-id&gt;"
-  <span class="cmt"># token via env var — never in code or state committed to Git</span>
+  <span class="cmt"># key via the CATO_TOKEN env var — never in code or state committed to Git</span>
 }</pre>
           <p>Known caveat, worth stating before the customer finds it: the API executes
           sequentially, so Cato recommends running Terraform with <code>parallelism=1</code>. The
