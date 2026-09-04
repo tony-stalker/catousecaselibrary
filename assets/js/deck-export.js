@@ -552,10 +552,162 @@
     return e;
   }
 
-  /* use-case page: deck button in the hero */
+  function trim(s) { return String(s == null ? "" : s).replace(/^\s+|\s+$/g, ""); }
+
+  /* ---------- selection model ----------
+     One ordered list of use-case ids + the deck title, persisted to
+     localStorage ("uc-deck-selection"). Selection order IS slide order.
+     Every UI below reads/writes this model; every mutation saves and
+     re-renders all registered selection UI. */
+
+  var STORE_KEY = "uc-deck-selection";
+  var sel = { ids: [], title: "" };
+  var renderers = [];
+
+  function loadSel() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (d && Object.prototype.toString.call(d.ids) === "[object Array]") {
+        var ids = [];
+        for (var i = 0; i < d.ids.length; i++) {
+          var id = d.ids[i];
+          if (typeof id === "string" && findUc(id) && ids.indexOf(id) < 0) ids.push(id);
+        }
+        sel.ids = ids;
+        if (typeof d.title === "string") sel.title = d.title;
+      }
+    } catch (e) { /* storage unavailable / corrupt — start empty */ }
+  }
+
+  function saveSel() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ ids: sel.ids, title: sel.title }));
+    } catch (e) { /* storage unavailable — selection lives for this page only */ }
+  }
+
+  function paintAll() { for (var i = 0; i < renderers.length; i++) renderers[i](); }
+  function notify() { saveSel(); paintAll(); }
+
+  function inSel(id) { return sel.ids.indexOf(id) >= 0; }
+
+  function addToSel(id) {
+    if (!inSel(id) && findUc(id)) { sel.ids.push(id); notify(); }
+  }
+
+  function addManyToSel(ids) {
+    var changed = false;
+    (ids || []).forEach(function (id) {
+      if (!inSel(id) && findUc(id)) { sel.ids.push(id); changed = true; }
+    });
+    if (changed) notify();
+  }
+
+  function removeFromSel(id) {
+    var i = sel.ids.indexOf(id);
+    if (i >= 0) { sel.ids.splice(i, 1); notify(); }
+  }
+
+  function toggleSel(id) { if (inSel(id)) removeFromSel(id); else addToSel(id); }
+
+  function moveSel(id, delta) {
+    var i = sel.ids.indexOf(id), j = i + delta;
+    if (i < 0 || j < 0 || j >= sel.ids.length) return;
+    sel.ids[i] = sel.ids[j];
+    sel.ids[j] = id;
+    notify();
+  }
+
+  /* drop id before (or after) another chip; beforeId null = append to end */
+  function reorderSel(id, beforeId, after) {
+    var from = sel.ids.indexOf(id);
+    if (from < 0) return;
+    sel.ids.splice(from, 1);
+    var to = beforeId ? sel.ids.indexOf(beforeId) : sel.ids.length;
+    if (to < 0) to = sel.ids.length;
+    if (after) to += 1;
+    sel.ids.splice(to, 0, id);
+    notify();
+  }
+
+  function clearSel() {
+    if (sel.ids.length) { sel.ids = []; notify(); }
+  }
+
+  function setSelTitle(t) { sel.title = t; saveSel(); }   /* no repaint — user is typing */
+
+  function generateFromSel() {
+    if (!sel.ids.length) return;
+    window.DeckExport.forSelection(sel.ids.slice(), trim(sel.title));
+  }
+
+  /* presets ADD (union): keep existing selection + order, append missing ids */
+  var PRESETS = [
+    { label: "Core platform story",
+      ids: ["network-sdwan", "security-consistent", "management-visibility", "access-hybrid-workforce"] },
+    { label: "Incumbent displacement",
+      ids: ["migration-methodology", "security-firewall-refresh", "management-vendor-consolidation"] },
+    { label: "Compliance",
+      ids: ["security-compliance", "security-finance-dora", "security-retail-pci", "security-uk-public-sector",
+            "security-healthcare-nhs", "security-legal-confidentiality", "ai-eu-ai-act"] },
+    { label: "AI security",
+      ids: ["security-ai", "security-ai-visibility", "ai-genai-security", "ai-agentic-security", "ai-homegrown-apps"] }
+  ];
+
+  /* ---------- index cards: round +/✓ toggle on every use-case card ---------- */
+
+  var FILE_TO_ID = null;
+  function fileToId(href) {
+    if (!FILE_TO_ID) {
+      FILE_TO_ID = {};
+      (window.UC_CATALOG || []).forEach(function (uc) { FILE_TO_ID[uc.file] = uc.id; });
+    }
+    return FILE_TO_ID[href] || null;
+  }
+
+  function paintCardBtn(btn, on) {
+    btn.textContent = on ? "✓" : "+";
+    btn.className = on ? "uc-add uc-add-on" : "uc-add";
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.setAttribute("aria-label", on ? "Remove from presentation" : "Add to presentation");
+    btn.title = btn.getAttribute("aria-label");
+  }
+
+  function onCardBtn(e) {
+    e.preventDefault();       /* the card is an <a> — never navigate */
+    e.stopPropagation();
+    toggleSel(this.getAttribute("data-id"));
+  }
+
+  /* idempotent: app.js render() rewrites the grid, so this runs after every
+     "uc:cards-rendered" and after every model change (cheap state repaint) */
+  function injectCardButtons() {
+    var grid = document.getElementById("uc-sections");
+    if (!grid) return;
+    var cards = grid.querySelectorAll("a.uc-card");
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var id = fileToId(card.getAttribute("href"));
+      if (!id) continue;
+      var btn = card.querySelector(".uc-add");
+      if (!btn) {
+        btn = el("button", { type: "button", "class": "uc-add", "data-id": id });
+        btn.addEventListener("click", onCardBtn);
+        card.appendChild(btn);
+      }
+      paintCardBtn(btn, inSel(id));
+    }
+  }
+
+  /* app.js dispatches this at the end of every render() */
+  document.addEventListener("uc:cards-rendered", injectCardButtons);
+
+  /* ---------- use-case page: hero buttons + floating tray ---------- */
+
   function wireUseCasePage() {
     var id = document.body.getAttribute("data-uc");
-    if (!id || !findUc(id) || !(window.UC_DECKS || {})[id]) return;
+    if (!id || !findUc(id)) return;
     var hero = document.querySelector(".hero .hero-inner");
     if (!hero) return;
     var rows = hero.querySelectorAll(".meta-row");
@@ -564,39 +716,222 @@
       row = el("div", { "class": "meta-row" });
       hero.appendChild(row);
     }
-    var btn = el("button", { type: "button", "class": "btn btn-ghost" }, "📽 Intro deck (.pptx)");
-    btn.addEventListener("click", function () { window.DeckExport.forUseCase(id); });
-    row.appendChild(btn);
+
+    if ((window.UC_DECKS || {})[id]) {
+      var btn = el("button", { type: "button", "class": "btn btn-ghost" }, "📽 Intro deck (.pptx)");
+      btn.addEventListener("click", function () { window.DeckExport.forUseCase(id); });
+      row.appendChild(btn);
+    }
+
+    /* add/remove this page's use case — same toggle semantics as the card buttons */
+    var tgl = el("button", { type: "button", "class": "btn btn-ghost deck-page-toggle" });
+    function paintTgl() {
+      var on = inSel(id);
+      tgl.textContent = on ? "✓ In presentation" : "➕ Add to presentation";
+      tgl.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    tgl.addEventListener("click", function () { toggleSel(id); });
+    row.appendChild(tgl);
+    renderers.push(paintTgl);
+    paintTgl();
+
+    wireTray();
   }
 
-  /* index page: deck builder card */
+  /* fixed bottom-right pill, shown while the selection is non-empty */
+  function wireTray() {
+    var tray = el("div", { "class": "deck-tray", role: "region", "aria-label": "Presentation selection" });
+    var count = el("span", { "class": "deck-tray-count", "aria-live": "polite" });
+    var gen = el("button", { type: "button", "class": "deck-tray-btn deck-tray-go" }, "Generate");
+    var edit = el("a", { "class": "deck-tray-btn", href: "../index.html#deck-builder" }, "Edit");
+    gen.addEventListener("click", generateFromSel);
+    tray.appendChild(count);
+    tray.appendChild(gen);
+    tray.appendChild(edit);
+    document.body.appendChild(tray);
+    function paintTray() {
+      tray.classList.toggle("open", sel.ids.length > 0);
+      count.textContent = "🎞 " + sel.ids.length + " in presentation";
+    }
+    renderers.push(paintTray);
+    paintTray();
+  }
+
+  /* ---------- index page: deck builder card ---------- */
+
   function wireIndexBuilder() {
-    var sections = document.getElementById("uc-sections");
     var cat = window.UC_CATALOG;
-    if (!sections || !cat || !cat.length) return;
+    if (!document.getElementById("uc-sections") || !cat || !cat.length) return;
     var grid = document.querySelector(".grid-2");
     if (!grid || !grid.parentNode) return;
 
-    var card = el("section", { "class": "card deck-builder", "aria-label": "Build a demo presentation" });
-    var h = el("h3", {}, "🎞 Build a demo presentation");
-    var lede = el("p", { "class": "deck-builder-lede" },
-      "Pick the use cases for this prospect — get one concise branded deck that walks the demo.");
-    card.appendChild(h);
-    card.appendChild(lede);
+    var card = el("section", {
+      "class": "card deck-builder", id: "deck-builder",
+      "aria-label": "Build a demo presentation"
+    });
+    card.appendChild(el("h3", {}, "🎞 Build a demo presentation"));
+    card.appendChild(el("p", { "class": "deck-builder-lede" },
+      "Pick the use cases for this prospect — use the + on any card below, start from a preset, "
+      + "or open the full list. You get one concise branded deck that walks the demo."));
 
+    /* preset chips (union-add) + Clear */
+    var presetRow = el("div", { "class": "deck-presets", role: "group", "aria-label": "Selection presets" });
+    PRESETS.forEach(function (p) {
+      var b = el("button", { type: "button", "class": "deck-preset" }, p.label);
+      b.addEventListener("click", function () { addManyToSel(p.ids); });
+      presetRow.appendChild(b);
+    });
+    var clearBtn = el("button", { type: "button", "class": "deck-preset deck-clear", disabled: "" }, "Clear");
+    clearBtn.addEventListener("click", clearSel);
+    presetRow.appendChild(clearBtn);
+    card.appendChild(presetRow);
+
+    /* the ordered selection — numbered chips, drag or arrows to reorder */
+    var selList = el("div", {
+      "class": "deck-selected-list", role: "list",
+      "aria-label": "Selected use cases in running order"
+    });
+    var selCaption = el("p", { "class": "deck-selected-caption" });
+    card.appendChild(selList);
+    card.appendChild(selCaption);
+
+    function chipFor(id, n, total) {
+      var uc = findUc(id);
+      var title = uc ? uc.title : id;
+      var chip = el("span", { "class": "deck-chip", draggable: "true", "data-id": id, role: "listitem" });
+      chip.appendChild(el("span", { "class": "deck-chip-n", "aria-hidden": "true" }, n + "."));
+      chip.appendChild(el("span", { "class": "deck-chip-t" }, title));
+      var up = el("button", {
+        type: "button", "class": "deck-chip-btn", "data-act": "up",
+        "aria-label": "Move " + title + " earlier"
+      }, "↑");
+      var down = el("button", {
+        type: "button", "class": "deck-chip-btn", "data-act": "down",
+        "aria-label": "Move " + title + " later"
+      }, "↓");
+      var rm = el("button", {
+        type: "button", "class": "deck-chip-btn deck-chip-x", "data-act": "x",
+        "aria-label": "Remove " + title + " from presentation"
+      }, "×");
+      if (n === 1) up.setAttribute("disabled", "");
+      if (n === total) down.setAttribute("disabled", "");
+      chip.appendChild(up);
+      chip.appendChild(down);
+      chip.appendChild(rm);
+      return chip;
+    }
+
+    function renderSelected() {
+      selList.innerHTML = "";
+      if (!sel.ids.length) {
+        selCaption.textContent =
+          "Nothing selected yet — use the + on any card below, a preset, or the list here.";
+        selCaption.className = "deck-selected-caption deck-empty";
+        return;
+      }
+      for (var i = 0; i < sel.ids.length; i++) {
+        selList.appendChild(chipFor(sel.ids[i], i + 1, sel.ids.length));
+      }
+      selCaption.textContent = "Slides follow this order — drag to match your demo flow.";
+      selCaption.className = "deck-selected-caption";
+    }
+
+    /* arrows + remove (chips are rebuilt on every change; refocus the moved control) */
+    selList.addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest("button.deck-chip-btn") : null;
+      if (!b) return;
+      var id = b.parentNode.getAttribute("data-id");
+      var act = b.getAttribute("data-act");
+      if (act === "x") { removeFromSel(id); return; }
+      moveSel(id, act === "up" ? -1 : 1);
+      var again = selList.querySelector('.deck-chip[data-id="' + id + '"] button[data-act="' + act + '"]');
+      if (again) {
+        if (again.disabled) {
+          var other = selList.querySelector(
+            '.deck-chip[data-id="' + id + '"] button[data-act="' + (act === "up" ? "down" : "up") + '"]');
+          if (other) other.focus();
+        } else again.focus();
+      }
+    });
+
+    /* drag-to-reorder with a drop indicator */
+    var dragId = null;
+    function clearDrop() {
+      var m = selList.querySelectorAll(".drop-before, .drop-after");
+      for (var i = 0; i < m.length; i++) m[i].classList.remove("drop-before", "drop-after");
+    }
+    selList.addEventListener("dragstart", function (e) {
+      var chip = e.target.closest ? e.target.closest(".deck-chip") : null;
+      if (!chip) return;
+      dragId = chip.getAttribute("data-id");
+      chip.classList.add("dragging");
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = "move";
+        try { e.dataTransfer.setData("text/plain", dragId); } catch (err) {}
+      }
+    });
+    selList.addEventListener("dragend", function () {
+      dragId = null;
+      clearDrop();
+      var d = selList.querySelector(".dragging");
+      if (d) d.classList.remove("dragging");
+    });
+    selList.addEventListener("dragover", function (e) {
+      if (!dragId) return;
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+      clearDrop();
+      var chip = e.target.closest ? e.target.closest(".deck-chip") : null;
+      if (!chip || chip.getAttribute("data-id") === dragId) return;
+      var rect = chip.getBoundingClientRect();
+      chip.classList.add(e.clientX < rect.left + rect.width / 2 ? "drop-before" : "drop-after");
+    });
+    selList.addEventListener("drop", function (e) {
+      if (!dragId) return;
+      e.preventDefault();
+      var target = selList.querySelector(".drop-before, .drop-after");
+      var over = e.target.closest ? e.target.closest(".deck-chip") : null;
+      var id = dragId;
+      dragId = null;
+      if (target) reorderSel(id, target.getAttribute("data-id"), target.classList.contains("drop-after"));
+      /* no indicator + released over the dragged chip itself = put it back, don't append to end */
+      else if (!over || over.getAttribute("data-id") !== id) reorderSel(id, null);
+      clearDrop();
+    });
+
+    /* secondary path: the full grouped list, now with filter + per-category Add all */
     var details = el("details", { "class": "deck-picker" });
-    var summary = el("summary", {}, "Choose use cases");
-    details.appendChild(summary);
+    details.appendChild(el("summary", {}, "Choose from the full list"));
+    var filterWrap = el("div", { "class": "deck-picker-filter" });
+    var filter = el("input", {
+      type: "search", "class": "deck-picker-search",
+      placeholder: "Filter use cases — e.g. ZTNA, PCI, firewall…",
+      "aria-label": "Filter the use-case list"
+    });
+    filterWrap.appendChild(filter);
+    details.appendChild(filterWrap);
     var listWrap = el("div", { "class": "deck-picker-list" });
 
     var CATS = [];
     cat.forEach(function (uc) { if (CATS.indexOf(uc.category) < 0) CATS.push(uc.category); });
     CATS.forEach(function (c) {
       var group = el("div", { "class": "deck-picker-group" });
-      group.appendChild(el("div", { "class": "deck-picker-cat" }, c));
+      var head = el("div", { "class": "deck-picker-cat" });
+      head.appendChild(el("span", {}, c));
+      var addAll = el("button", { type: "button", "class": "deck-addall" }, "Add all");
+      addAll.setAttribute("aria-label", "Add all " + c + " use cases");
+      addAll.addEventListener("click", function () {
+        var ids = [];
+        cat.forEach(function (uc) { if (uc.category === c) ids.push(uc.id); });
+        addManyToSel(ids);
+      });
+      head.appendChild(addAll);
+      group.appendChild(head);
       cat.forEach(function (uc) {
         if (uc.category !== c) return;
         var label = el("label", { "class": "deck-picker-item" });
+        label.setAttribute("data-search",
+          (uc.title + " " + uc.category + " " + (uc.tags || []).join(" ")).toLowerCase());
         var cb = el("input", { type: "checkbox", value: uc.id });
         label.appendChild(cb);
         label.appendChild(document.createTextNode(" " + uc.title));
@@ -607,47 +942,90 @@
     details.appendChild(listWrap);
     card.appendChild(details);
 
+    /* type-to-filter across title + category + tags (same matching style as app.js) */
+    filter.addEventListener("input", function () {
+      var terms = trim(filter.value).toLowerCase().split(/\s+/).filter(function (t) { return t; });
+      var groups = listWrap.querySelectorAll(".deck-picker-group");
+      for (var g = 0; g < groups.length; g++) {
+        var items = groups[g].querySelectorAll(".deck-picker-item");
+        var any = false;
+        for (var i = 0; i < items.length; i++) {
+          var hay = items[i].getAttribute("data-search") || "";
+          var ok = true;
+          for (var t = 0; t < terms.length; t++) {
+            if (hay.indexOf(terms[t]) < 0) { ok = false; break; }
+          }
+          items[i].style.display = ok ? "" : "none";
+          if (ok) any = true;
+        }
+        groups[g].style.display = any ? "" : "none";
+      }
+    });
+
+    /* checkboxes read/write the model (ticking appends to the running order) */
+    listWrap.addEventListener("change", function (e) {
+      var cb = e.target;
+      if (!cb || cb.type !== "checkbox") return;
+      if (cb.checked) addToSel(cb.value); else removeFromSel(cb.value);
+    });
+
+    function renderPicker() {
+      var boxes = listWrap.querySelectorAll("input[type=checkbox]");
+      for (var i = 0; i < boxes.length; i++) boxes[i].checked = inSel(boxes[i].value);
+    }
+
+    /* title + count + generate */
     var actions = el("div", { "class": "deck-builder-actions" });
     var input = el("input", {
       type: "text", id: "deck-title", "class": "deck-title-input",
       placeholder: "Cato SASE demonstration", "aria-label": "Deck title"
     });
+    input.value = sel.title;
+    input.addEventListener("input", function () { setSelTitle(input.value); });
     var count = el("span", { "class": "deck-count", "aria-live": "polite" }, "0 selected");
     var go = el("button", { type: "button", "class": "btn btn-primary", disabled: "" },
       "Generate presentation (.pptx)");
+    go.addEventListener("click", generateFromSel);
     actions.appendChild(input);
     actions.appendChild(count);
     actions.appendChild(go);
     card.appendChild(actions);
 
-    function selected() {
-      var ids = [];
-      var boxes = listWrap.querySelectorAll("input[type=checkbox]");
-      for (var i = 0; i < boxes.length; i++) if (boxes[i].checked) ids.push(boxes[i].value);
-      /* selection order = catalog order */
-      return cat.map(function (uc) { return uc.id; }).filter(function (id) {
-        return ids.indexOf(id) >= 0;
-      });
+    function renderActions() {
+      var n = sel.ids.length;
+      count.textContent = n + " selected";
+      if (n) {
+        go.removeAttribute("disabled");
+        clearBtn.removeAttribute("disabled");
+      } else {
+        go.setAttribute("disabled", "");
+        clearBtn.setAttribute("disabled", "");
+      }
+      if (document.activeElement !== input && input.value !== sel.title) input.value = sel.title;
     }
 
-    listWrap.addEventListener("change", function () {
-      var n = selected().length;
-      count.textContent = n + " selected";
-      if (n) go.removeAttribute("disabled"); else go.setAttribute("disabled", "");
-    });
-
-    go.addEventListener("click", function () {
-      var ids = selected();
-      if (!ids.length) return;
-      window.DeckExport.forSelection(ids, input.value.replace(/^\s+|\s+$/g, ""));
-    });
-
     grid.parentNode.insertBefore(card, grid.nextSibling);
+
+    renderers.push(renderSelected, renderPicker, renderActions);
+    renderSelected();
+    renderPicker();
+    renderActions();
+
+    /* "Edit" links from use-case pages land on ../index.html#deck-builder */
+    if (location.hash === "#deck-builder") {
+      setTimeout(function () { card.scrollIntoView({ block: "start" }); }, 0);
+    }
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!window.UC_CATALOG || !window.DECK_BRAND) return;
-    if (document.getElementById("uc-sections")) wireIndexBuilder();
-    else wireUseCasePage();
+    loadSel();
+    if (document.getElementById("uc-sections")) {
+      renderers.push(injectCardButtons);
+      wireIndexBuilder();
+      injectCardButtons();      /* app.js has already rendered the grid by now */
+    } else {
+      wireUseCasePage();
+    }
   });
 })();

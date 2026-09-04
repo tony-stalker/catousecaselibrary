@@ -67,6 +67,8 @@
       grid.innerHTML = html;
       var rc = $("#result-count");
       if (rc) rc.textContent = shown.length + " of " + CAT.length + " use cases";
+      // deck-export.js (stripped from the prospect build) re-injects its card buttons on this
+      document.dispatchEvent(new CustomEvent("uc:cards-rendered"));
     }
 
     if (searchBox) searchBox.addEventListener("input", function () { state.q = this.value.trim(); render(); });
