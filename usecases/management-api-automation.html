@@ -131,9 +131,92 @@
         </div>
       </div>
 
-      <h3>The specific commands</h3>
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Network as code: Git to CI to the Cato GraphQL API</title>
+          <desc id="dg1-desc">Site and policy definitions live in a Git repository. A CI runner executes Terraform and catocli against the Cato GraphQL API in the Cato cloud. The API fans out to create branch sites — Bristol Office, Glasgow, Madrid Office — and apply a tagged WAN policy update, while a separate events feed streams from the API into the SIEM.</desc>
+
+          <!-- Code side -->
+          <rect class="dg-node-dark" x="36" y="190" width="150" height="62" rx="10"/>
+          <text class="dg-label-inv" x="111" y="216" text-anchor="middle">Git repository</text>
+          <text class="dg-sub-inv" x="111" y="234" text-anchor="middle">sites.tf · policy as code</text>
+
+          <rect class="dg-node-dark" x="246" y="190" width="150" height="62" rx="10"/>
+          <text class="dg-label-inv" x="321" y="216" text-anchor="middle">CI runner</text>
+          <text class="dg-sub-inv" x="321" y="234" text-anchor="middle">terraform · catocli</text>
+
+          <path class="lane-static" d="M 186 221 L 246 221"/>
+          <text class="dg-tiny" x="216" y="212" text-anchor="middle">merge</text>
+
+          <!-- Cato cloud ring + API -->
+          <ellipse class="dg-backbone" cx="520" cy="221" rx="110" ry="48"/>
+          <circle cx="418" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="622" cy="202" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle class="pulse-ring" cx="520" cy="221" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="520" cy="221" r="30"/>
+          <text class="dg-label" x="520" y="128" text-anchor="middle">Cato GraphQL API</text>
+          <text class="dg-sub" x="520" y="146" text-anchor="middle">api.catonetworks.com</text>
+          <text class="dg-tiny" x="396" y="292" text-anchor="middle">Cato cloud · Global Private Backbone</text>
+
+          <!-- CI to API -->
+          <path class="lane lane-allow" d="M 396 221 C 428 221, 452 221, 482 221"/>
+
+          <!-- Fan-out: sites created -->
+          <path class="lane lane-allow" d="M 552 206 C 640 158, 700 88, 768 76"/>
+          <path class="lane lane-allow" d="M 554 216 C 640 200, 700 162, 768 155"/>
+          <path class="lane lane-allow" d="M 554 228 C 640 246, 700 236, 768 235"/>
+          <path class="lane lane-allow" d="M 550 238 C 630 282, 700 315, 768 315"/>
+
+          <rect class="dg-node" x="770" y="48" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="71" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="848" y="89" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node" x="770" y="128" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="151" text-anchor="middle">Glasgow</text>
+          <text class="dg-sub" x="848" y="169" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node" x="770" y="208" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="231" text-anchor="middle">Madrid Office</text>
+          <text class="dg-sub" x="848" y="249" text-anchor="middle">cato_socket_site</text>
+
+          <rect class="dg-node-green" x="770" y="288" width="156" height="54" rx="10"/>
+          <text class="dg-label" x="848" y="311" text-anchor="middle">WAN policy update</text>
+          <text class="dg-sub" x="848" y="329" text-anchor="middle">tagged · revertable</text>
+
+          <!-- Events feed to SIEM -->
+          <path class="lane lane-allow" d="M 520 256 C 520 288, 520 318, 520 350"/>
+          <text class="dg-tiny" x="534" y="312" text-anchor="start">events feed</text>
+          <rect class="dg-node-dark" x="440" y="352" width="160" height="56" rx="10"/>
+          <text class="dg-label-inv" x="520" y="376" text-anchor="middle">SIEM</text>
+          <text class="dg-sub-inv" x="520" y="394" text-anchor="middle">eventsFeed API</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> API-driven change / data flow</span>
+        </div>
+        <div class="diagram-caption">Site and policy definitions merge in Git; a CI runner drives the GraphQL API to create sites and apply policy, while the events feed streams continuously into the SIEM.</div>
+      </div>
+
+      <h3>What teams automate first</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🚀</div><div><h4>Zero-touch site rollout</h4><p>Template a branch once, then apply it per site — the M&amp;A play: an acquired estate becomes a Terraform module and lands on the WAN in days, not quarters.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Bulk policy with review &amp; rollback</h4><p>Firewall rules live in version control. A change is a pull request: diffed, reviewed, applied by pipeline — and reverted the same way if needed.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>Events into the SIEM</h4><p>The events feed streams security and connectivity events into Splunk, Sentinel or any collector — Cato telemetry alongside everything else the SOC watches.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗓️</div><div><h4>Scheduled reporting</h4><p>Pull analytics and entity data on a schedule and publish to whoever needs it — no more monthly screenshot-and-paste exercises.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Ask what they automate today — Terraform elsewhere? A SIEM in place? Anchor on their
+        toolchain: the message is that Cato joins it, not that they must adopt a new one.</p>
+      </div>
+
+      <h3>The commands you'll run</h3>
       <p>
-        The same three altitudes, concretely — each block below is real, current syntax against
+        The three routes from the solution above, concretely — each block below is real, current syntax against
         <code>api.catonetworks.com</code>, ready to adapt to the account in front of you.
       </p>
 
@@ -229,88 +312,6 @@ terraform init
 terraform plan                    <span class="cmt"># the reviewed diff — the governance moment</span>
 terraform apply -parallelism=1    <span class="cmt"># the API executes sequentially — Cato's recommendation</span></pre>
 
-      <div class="diagram-card">
-        <svg viewBox="0 0 960 430" role="img" aria-labelledby="dg1-title dg1-desc">
-          <title id="dg1-title">Network as code: Git to CI to the Cato GraphQL API</title>
-          <desc id="dg1-desc">Site and policy definitions live in a Git repository. A CI runner executes Terraform and catocli against the Cato GraphQL API in the Cato cloud. The API fans out to create branch sites — Bristol Office, Glasgow, Madrid Office — and apply a tagged WAN policy update, while a separate events feed streams from the API into the SIEM.</desc>
-
-          <!-- Code side -->
-          <rect class="dg-node-dark" x="36" y="190" width="150" height="62" rx="10"/>
-          <text class="dg-label-inv" x="111" y="216" text-anchor="middle">Git repository</text>
-          <text class="dg-sub-inv" x="111" y="234" text-anchor="middle">sites.tf · policy as code</text>
-
-          <rect class="dg-node-dark" x="246" y="190" width="150" height="62" rx="10"/>
-          <text class="dg-label-inv" x="321" y="216" text-anchor="middle">CI runner</text>
-          <text class="dg-sub-inv" x="321" y="234" text-anchor="middle">terraform · catocli</text>
-
-          <path class="lane-static" d="M 186 221 L 246 221"/>
-          <text class="dg-tiny" x="216" y="212" text-anchor="middle">merge</text>
-
-          <!-- Cato cloud ring + API -->
-          <ellipse class="dg-backbone" cx="520" cy="221" rx="110" ry="48"/>
-          <circle cx="418" cy="240" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-          <circle cx="622" cy="202" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
-          <circle class="pulse-ring" cx="520" cy="221" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
-          <circle class="dg-pop" cx="520" cy="221" r="30"/>
-          <text class="dg-label" x="520" y="128" text-anchor="middle">Cato GraphQL API</text>
-          <text class="dg-sub" x="520" y="146" text-anchor="middle">api.catonetworks.com</text>
-          <text class="dg-tiny" x="396" y="292" text-anchor="middle">Cato cloud · Global Private Backbone</text>
-
-          <!-- CI to API -->
-          <path class="lane lane-allow" d="M 396 221 C 428 221, 452 221, 482 221"/>
-
-          <!-- Fan-out: sites created -->
-          <path class="lane lane-allow" d="M 552 206 C 640 158, 700 88, 768 76"/>
-          <path class="lane lane-allow" d="M 554 216 C 640 200, 700 162, 768 155"/>
-          <path class="lane lane-allow" d="M 554 228 C 640 246, 700 236, 768 235"/>
-          <path class="lane lane-allow" d="M 550 238 C 630 282, 700 315, 768 315"/>
-
-          <rect class="dg-node" x="770" y="48" width="156" height="54" rx="10"/>
-          <text class="dg-label" x="848" y="71" text-anchor="middle">Bristol Office</text>
-          <text class="dg-sub" x="848" y="89" text-anchor="middle">cato_socket_site</text>
-
-          <rect class="dg-node" x="770" y="128" width="156" height="54" rx="10"/>
-          <text class="dg-label" x="848" y="151" text-anchor="middle">Glasgow</text>
-          <text class="dg-sub" x="848" y="169" text-anchor="middle">cato_socket_site</text>
-
-          <rect class="dg-node" x="770" y="208" width="156" height="54" rx="10"/>
-          <text class="dg-label" x="848" y="231" text-anchor="middle">Madrid Office</text>
-          <text class="dg-sub" x="848" y="249" text-anchor="middle">cato_socket_site</text>
-
-          <rect class="dg-node-green" x="770" y="288" width="156" height="54" rx="10"/>
-          <text class="dg-label" x="848" y="311" text-anchor="middle">WAN policy update</text>
-          <text class="dg-sub" x="848" y="329" text-anchor="middle">tagged · revertable</text>
-
-          <!-- Events feed to SIEM -->
-          <path class="lane lane-allow" d="M 520 256 C 520 288, 520 318, 520 350"/>
-          <text class="dg-tiny" x="534" y="312" text-anchor="start">events feed</text>
-          <rect class="dg-node-dark" x="440" y="352" width="160" height="56" rx="10"/>
-          <text class="dg-label-inv" x="520" y="376" text-anchor="middle">SIEM</text>
-          <text class="dg-sub-inv" x="520" y="394" text-anchor="middle">eventsFeed API</text>
-        </svg>
-        <div class="dg-legend">
-          <span class="key"><span class="swatch allow"></span> API-driven change / data flow</span>
-        </div>
-        <div class="diagram-caption">Site and policy definitions merge in Git; a CI runner drives the GraphQL API to create sites and apply policy, while the events feed streams continuously into the SIEM.</div>
-      </div>
-
-      <h3>What teams automate first</h3>
-      <div class="grid-2" style="margin-top:14px">
-        <div class="benefit"><div class="b-icon">🚀</div><div><h4>Zero-touch site rollout</h4><p>Template a branch once, then apply it per site — the M&amp;A play: an acquired estate becomes a Terraform module and lands on the WAN in days, not quarters.</p></div></div>
-        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Bulk policy with review &amp; rollback</h4><p>Firewall rules live in version control. A change is a pull request: diffed, reviewed, applied by pipeline — and reverted the same way if needed.</p></div></div>
-        <div class="benefit"><div class="b-icon">📡</div><div><h4>Events into the SIEM</h4><p>The events feed streams security and connectivity events into Splunk, Sentinel or any collector — Cato telemetry alongside everything else the SOC watches.</p></div></div>
-        <div class="benefit"><div class="b-icon">🗓️</div><div><h4>Scheduled reporting</h4><p>Pull analytics and entity data on a schedule and publish to whoever needs it — no more monthly screenshot-and-paste exercises.</p></div></div>
-      </div>
-    </section>
-
-    <section id="demo" class="reveal">
-      <div class="section-kicker">Demo runbook</div>
-      <h2>How to run the demo</h2>
-      <div class="callout">
-        <div class="co-title">Before you demo</div>
-        <p>Ask what they automate today — Terraform elsewhere? A SIEM in place? Anchor on their
-        toolchain: the message is that Cato joins it, not that they must adopt a new one.</p>
-      </div>
 
       <ol class="steps">
         <li>
@@ -331,7 +332,7 @@ catocli query entityLookup '{"type":"site"}'</pre>
         <li>
           <h4>Create a site with Terraform</h4>
           <p>Run <code>terraform plan</code> on a <code>cato_socket_site</code> definition (the
-          complete ready-to-run <code>main.tf</code> is in the solution section above) and walk
+          complete ready-to-run <code>main.tf</code> is just above) and walk
           the diff, then apply. Emphasise the plan step: the change is reviewed before anything
           touches production.</p>
 <pre class="code">terraform plan                    <span class="cmt"># walk the diff with the customer</span>
