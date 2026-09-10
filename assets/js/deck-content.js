@@ -1,4 +1,4 @@
-/* Cato Use Case Library — GENERATED per-use-case presentation content. One entry per catalog id: {pain, gain, demo, hook}. Authored from the pages themselves; regenerate by re-running the deck content authoring pass. */
+/* Cato Use Case Library — GENERATED per-use-case presentation content. One entry per catalog id: {pain, gain, demo, hook, notes} — notes holds speaker notes per slide: divider/why/demo. Authored from the pages themselves; regenerate by re-running the deck content authoring pass. */
 window.UC_DECKS = {
   "access-third-party": {
     "pain": [
@@ -33,7 +33,12 @@ window.UC_DECKS = {
         "show": "Every allow and block, attributed — the audit trail they lack"
       }
     ],
-    "hook": "How many suppliers can reach more than the one application they were onboarded for — and would you know?"
+    "hook": "How many suppliers can reach more than the one application they were onboarded for — and would you know?",
+    "notes": {
+      "divider": "Open on the people the business controls least — IT providers, logistics partners, offshore developers. They needed a handful of applications; the VPN handed them the whole network.\nLand the hook, then back it with the numbers on the page — recent third-party breaches running to hundreds of millions, one put at two billion pounds to the UK economy. Then bridge: here's what I'll show you — suppliers reaching exactly what they need, provably.",
+      "why": "Talk it as a trust problem, not a tooling one: legacy VPN was designed for connectivity, so it runs on implicit trust — no segmentation, free lateral movement, and no record of what a contractor did once inside. Every bolted-on appliance adds patching, cost and drift per supplier.\nThe contrast: access decided by who the person is plus the live state of their device, re-checked throughout the session rather than once at login, with every decision attributed to a name.\nAsk the discovery question — how would you know if one of those supplier accounts was compromised today? Then pivot: let's go and look at how that's built.",
+      "demo": "Start in the Client Connectivity Policy: geography and group rules are the first gate — who even gets a tunnel, from where, on which device.\nMove to the WAN Firewall: contractor groups reach only their named resources, and wider access demands a compliant posture profile. Then open Device Posture and show the criteria — EPP or EDR running, disk encryption, OS version — stressing they're evaluated continuously, not just at sign-in.\nMake it real: log in as a contractor, open the permitted portal, then watch the internal resource stay blocked — the contrast is the point.\nFinish in Events filtered to that identity: every allow and block with a name against it. Say it plainly — this is the audit trail you don't have today — then back to the slides."
+    }
   },
   "access-hybrid-workforce": {
     "pain": [
@@ -68,7 +73,12 @@ window.UC_DECKS = {
         "show": "Per-user connection history and experience — visibility VPN never gave"
       }
     ],
-    "hook": "Does a user at home get exactly the same policy as one at a desk — and which is the real one?"
+    "hook": "Does a user at home get exactly the same policy as one at a desk — and which is the real one?",
+    "notes": {
+      "divider": "Open with one employee's week — office Monday, home Tuesday, a customer site Wednesday, a hotel Thursday — and ask why the network they get should depend on which chair they're in.\nLand the hook, then frame it: this is about retiring the concentrator estate for one front door at the nearest of eighty-plus PoPs. Here's what I'll show you — the same user, the same policy, from the sofa and the desk.",
+      "why": "Today the concentrator backhauls everything — even Microsoft 365 — through HQ, appliances collapse when everyone connects at once, and the pain trains users to disconnect and lose protection entirely. Two rule sets drift apart — office firewall and VPN ACLs — while split tunnels go out of the home router uninspected.\nWith Cato the client is always on, traffic enters the nearest PoP for the full inspection stack, and there is exactly one rule base — in the office the same user simply rides the site socket.\nAsk the discovery question: does home get the same policy as the desk, and which one is real? Then pivot to the laptop.",
+      "demo": "Begin on the laptop at home: launch the client, sign in with MFA through their IdP, and point at the status — connected to the nearest PoP, nothing for the user to toggle.\nJump to the WAN Firewall: open the rule that just allowed an internal app and filter events to the user — the same rule fires from office and sofa, and behind a socket the client simply switches to office mode. Then the Internet Firewall: browse a blocked category from home — nothing is split-tunnelled out uninspected.\nZoom out on the Remote Users tab of Experience Monitoring — the whole remote workforce scored on one screen, the Monday-morning answer to is it just me.\nClose in Monitor, Users: connection history, PoP, device — the visibility the VPN never gave them. Back to the slides."
+    }
   },
   "access-offshore-bpo": {
     "pain": [
@@ -103,7 +113,12 @@ window.UC_DECKS = {
         "show": "One directory change kills a leaver's client and portal access"
       }
     ],
-    "hook": "When an agent leaves on Friday, how long before every credential and session they had is actually gone?"
+    "hook": "When an agent leaves on Friday, how long before every credential and session they had is actually gone?",
+    "notes": {
+      "divider": "Open at scale: thousands of developers and agents inside the repositories, CRM and VDI — on devices the outsourcer or the individual owns, with joiners and leavers every week — while regulators insist data stays in-country and off the endpoint.\nAsk who owns the laptops on their floors, then land the Friday-leaver hook. Bridge: here's what I'll show you — both device classes under one policy engine, with the lag taken out of VDI.",
+      "why": "Today's answer is a VPN granting network-level access to unmanaged devices, plus a VDI farm bolted on for every task — reached over long-haul public internet, so agents lag and developers are miserable. Offboarding runs on tickets, and leavers linger for weeks.\nWith Cato, managed builds take the client with a posture check; unmanaged seats get a clientless portal with RBI rendering pixels only; and DLP keeps source code and customer PII inside approved apps. Everything onramps at the nearest PoP and rides the private backbone to where the apps live — which is why the screen stops lagging.\nAsk the discovery question about the Friday leaver, then pivot into the console.",
+      "demo": "Start in the Client Connectivity Policy: one rule for the offshore group — delivery countries only, compliant posture only — and joiners inherit it all by group membership, no tickets. Then Device Posture: the outsourcer's managed build passes; a personal laptop fails — and that failure is exactly what routes the user to the clientless path.\nSwitch to a plain browser and sign in as an agent: only CRM and VDI appear, and with RBI the session renders remotely — pixels on screen, copy and download under policy.\nThen DLP: attempt a source-code upload to personal storage and walk the incident it raises — user, app, file, rule, verdict.\nFinish with the leaver in Access, Users: one change and both client and portal access are gone, with the full attributed history left in Events — the audit trail their end customers keep asking for. Back to the deck."
+    }
   },
   "access-byod-clientless": {
     "pain": [
@@ -138,7 +153,12 @@ window.UC_DECKS = {
         "show": "Browser Extension and Enterprise Browser: same policies, same events"
       }
     ],
-    "hook": "When a contractor starts on Monday, what has landed on their personal device by Friday?"
+    "hook": "When a contractor starts on Monday, what has landed on their personal device by Friday?",
+    "notes": {
+      "divider": "Open with the population nobody can manage: contractors on their own laptops, partner staff run by someone else's IT, auditors in for a fortnight. The old answers were ship a laptop, stand up VDI, or say no — and no is how data walks out through personal email.\nLand the Monday-to-Friday hook, then bridge: everything I'm about to show runs from a bare browser — there is no client on this machine at all.",
+      "why": "Today you can't install anything on a device you don't own — plenty of partner contracts forbid it — and VPN from a personal laptop leaves corporate data cached on a machine you will never see again. Shipping hardware is slow and costly; VDI is infrastructure nobody thanks you for.\nWith Cato the browser is the endpoint: users authenticate to a portal through the IdP with MFA and see only the apps their group entitles them to. Access is application-level, never network-level — no tunnel, no route, nothing to scan — and DLP and RBI keep files off the device.\nAsk what lands on a contractor's device by Friday, then pivot: an incognito window is all I need.",
+      "demo": "Open a private window and say why: bare browser, no client, no enrolment — exactly what a contractor's laptop looks like. Sign in through the IdP with MFA — identity policy stays theirs; Cato consumes it.\nLaunch a published app — streamed through the PoP, no address, no route — then try an unpublished resource by hostname. Land the line: it doesn't fail because a firewall said no; it fails because there is nothing to reach.\nAttempt a download and let DLP block it — same engine, same policy language, scoped by device state — then show Events: sign-in, launches and the block, all attributed to a named user.\nClose on the other on-ramps — the Browser Extension for SaaS at scale, the Enterprise Browser for private apps — same policies, same events, inside the same ZTNA licence. Then back to the slides."
+    }
   },
   "access-remote-worker": {
     "pain": [
@@ -173,7 +193,12 @@ window.UC_DECKS = {
         "show": "Always-on, posture, split tunnel — decided once, day one"
       }
     ],
-    "hook": "Pick one home worker who called last week — could you see their Microsoft 365 experience as a number?"
+    "hook": "Pick one home worker who called last week — could you see their Microsoft 365 experience as a number?",
+    "notes": {
+      "divider": "Open with the anecdote trap: one person's word against a green dashboard, a ticket closed as no fault found, a day that stays slow. Estate dashboards average that person away.\nFrame the zoom: this use case is one worker, one laptop, one home connection — the granularity tickets are actually raised at. Bridge: I'll take one remote worker's morning and turn it is slow into a named fault domain.",
+      "why": "Today the home Wi-Fi, ISP and laptop are invisible to corporate tooling, so the helpdesk falls back on ritual — reboot, speed test, is anyone else seeing this — and the ticket closes as no fault found. And slow is rarely uniform: one app crawling points at the app, everything degrading at the device or last mile — without per-app numbers the two escalate to the wrong teams.\nWith Cato the always-on client is the sensor, nothing extra deployed: every sanctioned app carries a continuous per-user score, and the path decomposes into independently scored segments.\nAsk about last week's caller, then pivot: pick one worker and stay with them.",
+      "demo": "In Experience Monitoring, sort Remote Users worst first, pick one person and open the drill-down — frame it as one employee's working day. Read the strip: PoP, ISP, the good-fair-poor split.\nIn Select Application choose the busiest degraded app — for instance Microsoft 365 sitting at Fair on 486 milliseconds average TTFB across five hundred flows while everything else scores Good. Then walk Connection Details left to right: the first non-green node names the fault by published thresholds, not opinion — Wi-Fi is Good at minus 67 dBm or stronger, the last mile under one per cent loss.\nShow the Devices panel and the block events on the score graph — sometimes the slow-app conversation is really a policy conversation.\nClose in the Client Connectivity Policy: always-on, posture, full tunnel — decided once, on day one. That experience is policy output, not heroics; back to the deck."
+    }
   },
   "access-identity-design": {
     "pain": [
@@ -208,7 +233,12 @@ window.UC_DECKS = {
         "show": "Same person named at the office and at home — one identity"
       }
     ],
-    "hook": "Pick any flow out of your firewall logs — can you name the person behind it, not the IP?"
+    "hook": "Pick any flow out of your firewall logs — can you name the person behind it, not the IP?",
+    "notes": {
+      "divider": "Open with the one dependency every deployment shares: before any identity-scoped rule can work, the platform must know who is behind every flow. When identity is wrong the failure is quiet — group rules match nothing, users fall through to defaults, and nobody can see why.\nFrame it as a design review as much as a demo — have the IdP admin in the room. Bridge: four decisions, made once; here's how each looks in the console.",
+      "why": "Today their events name IP addresses, so audits stall; rules scoped to groups silently miss whenever a user goes unidentified; and policy migrated before identity is stable breeds per-user emergency exceptions that never get removed.\nWith Cato there is a single user identity — a policy written once is enforced whether the person is behind a site or remote — and the IdP's groups handle joiners, movers and leavers without firewall tickets. Every event carries a name.\nAsk both halves of the discovery question: can you name the person behind any flow in your logs, and how many rules are per-user exceptions? Then pivot to where identity enters the platform.",
+      "demo": "Start in Directory Services on the SCIM tab: a base URL and a token are all the IdP needs — it pushes users and groups in near real time. Open a synced group under User Groups — this object is the contract between the IdP and every rule you'll write.\nWalk User Authentication: SSO with MFA staying in the IdP — the PoP validates the IdP's token before issuing its own. Then User Awareness: the Identity Agent reports the logged-in identity about every thirty seconds, so office traffic behind a socket carries a name too.\nFinish in Events with one user — same name behind the office socket in the morning, on the client from home in the afternoon.\nClose on All Unidentified Users as the burn-down list: when it trends to zero, policy means what it says — that's the state you migrate on top of."
+    }
   },
   "management-visibility": {
     "pain": [
@@ -243,7 +273,12 @@ window.UC_DECKS = {
         "show": "A slow-app ticket resolved to a segment — no war room"
       }
     ],
-    "hook": "When a user says an app is slow, how many consoles do you open before you can answer?"
+    "hook": "When a user says an app is slow, how many consoles do you open before you can answer?",
+    "notes": {
+      "divider": "Open with how the picture gets assembled today — firewall logs, SD-WAN portals, VPN concentrators, carrier reports — and the admission that by the time it's stitched together, it's out of date.\nLand the console-counting hook, then make the architecture point: one console because every flow is processed once, in the cloud, with full context. Bridge: I'll go from a live global map to a resolved incident without leaving the platform.",
+      "why": "The today side is four complaints you'll recognise: no idea what's going on in the network, too many overlapping point products with MSPs each owning a slice, performance finger-pointing where every team declares its own layer healthy, and policy drift no console can even show.\nWith Cato the visibility isn't integrated — it was never separate: network, security, user and application context land in one place, so correlation cuts time to detect and integrated tooling cuts time to fix. The same data serves the 2am engineer and the board report.\nAsk how many consoles the last slow-app call took, and how long. Then pivot to the map.",
+      "demo": "Open on Topology: the whole estate live on one map — hover a tunnel for real-time latency, loss and jitter. No probes, no collectors; the platform observing itself.\nMove to App Analytics: sanctioned apps beside shadow IT, cross-filtering user, site and application in a couple of clicks — the pivot that normally means opening another product. Then the Threats Dashboard — attackers, geography, MITRE mapping — and drop into Events for the single timeline with policy context: why traffic was allowed or blocked.\nShow the WAN Firewall's shared rule anatomy, then the Audit Trail: every change timestamped and attributable — the governance evidence auditors ask for.\nFinish in Experience Monitoring with the classic slow-app ticket resolved to one off-green segment, no war room. Wrap: correlation cuts detection, integration cuts repair, one rule base ends the drift."
+    }
   },
   "management-api-automation": {
     "pain": [
@@ -278,7 +313,12 @@ window.UC_DECKS = {
         "show": "API change attributed to its key, before and after values"
       }
     ],
-    "hook": "Your last multi-site change: how long, how many hands — and how would you have rolled it back?"
+    "hook": "Your last multi-site change: how long, how many hands — and how would you have rolled it back?",
+    "notes": {
+      "divider": "Open with the arithmetic: networks grow faster than network teams — an acquisition adds twenty sites overnight, a retail rollout a hundred in a quarter — and click-ops turns that into head-count or mistakes, usually both.\nAsk about their last multi-site change and let the rollback part hang. Bridge: everything the console does rides one GraphQL API, so I'll show the estate as code — inventory, a reviewed change, and the audit to prove it.",
+      "why": "Today every site is a snowflake, bulk change is hours of repetitive clicking, a typo goes straight to production, rollback is somebody's memory, and reporting is a person exporting screenshots monthly.\nAs code: sites are templated resources; policy lives in Git — diffed, peer-reviewed, applied by pipeline, reverted the same way — and because the console itself runs on this API, there is no automation subset.\nBefore pivoting, ask what they automate today — Terraform elsewhere, a SIEM in place — because the message is that Cato joins their toolchain, not replaces it. Then head for the terminal.",
+      "demo": "Start in API and Integrations: keys created and scoped here — and make the architectural point that the console is a client of this same API. Anything you can click, you can code.\nDrop to the terminal: install catocli and run one entity lookup — seconds from install to a live inventory of the estate, no SDK, no boilerplate. Then Terraform: plan first and walk the diff together — that review is the governance moment — then apply, noting the API executes sequentially, so parallelism one.\nSwitch to Topology and watch the code-built site land on the live map within minutes — code on one screen, the WAN on the other.\nFinish in the Audit Trail: the change attributed to its key, before and after values recorded. Close on the events feed into their SIEM — deployment, operations and detection from one API — then back to the slides."
+    }
   },
   "management-dem": {
     "pain": [
@@ -313,7 +353,12 @@ window.UC_DECKS = {
         "show": "Anomaly stories raised before anyone reported anything"
       }
     ],
-    "hook": "How many tools and teams does it take you to say whether it's the laptop, the Wi-Fi, the ISP or the app?"
+    "hook": "How many tools and teams does it take you to say whether it's the laptop, the Wi-Fi, the ISP or the app?",
+    "notes": {
+      "divider": "Open with where these tickets go to die: every segment of the user-to-app path has a different owner, a different tool and a different definition of fine — so mean time to innocence is fast, and mean time to resolution is not.\nAsk the tools-and-teams question and let them count. Bridge: the whole path in one view, per user, with the failing segment measured rather than inferred.",
+      "why": "Today's monitoring watches infrastructure the organisation owns — precisely the part a hybrid worker's traffic barely touches — so the war room convenes, each team declares its layer healthy, and IT learns about degradation from the helpdesk queue days late.\nBecause the client, the socket, the PoP and the backbone are one platform, every hop the traffic takes is observed: each node scored independently against published thresholds, and the anomaly engine baselines every site-and-app pair so degradation surfaces before the first call.\nAsk how many tools and teams the verdict takes today, then pivot to the triage screen.",
+      "demo": "Open Experience Monitoring and read the account score first — Good means no global problem, so anything degraded is local and findable. Sort worst first: this is the helpdesk queue before it happens.\nDrill into a struggling user and filter to the UC app — each call scored on audio, video and screen sharing from loss, jitter and latency; the console shows what every call actually got. Then Connection Details: one amber node in a green chain — expand it, and loss on both overlay and underlay means the circuit, not the tunnel.\nThen Path Analysis, Command Line: per-hop loss with history — the worked example shows twenty-four per cent loss at the first hop inside the ISP over a thousand probes while the PoP sits clean. That pastes straight into the circuit ticket.\nClose in the Stories Workbench filtered to experience anomalies — raised before anyone reported anything."
+    }
   },
   "management-vendor-consolidation": {
     "pain": [
@@ -348,7 +393,12 @@ window.UC_DECKS = {
         "show": "Every network and security change attributed in one place"
       }
     ],
-    "hook": "How many renewal dates does your network estate have in the next 24 months?"
+    "hook": "How many renewal dates does your network estate have in the next 24 months?",
+    "notes": {
+      "divider": "Open by asking the renewal question — almost nobody knows the number without going away to count, and that's the finding: the estate has grown past the point where anyone can see its whole cost.\nKeep the argument structural, not numeric — fewer boxes, fewer renewals, fewer consoles.\nThe bridge: here's what I'll show you — everything they run as separate products, as one system in one console.",
+      "why": "The invoices are only half the story — name the costs that hide: integration engineering to make the vendors coexist, patch windows multiplied across every appliance family, and outage triage where everyone's dashboard is green.\nThen the discovery question's second half: how many consoles does one investigation touch, end to end? Usually more uncomfortable than the renewal count.\nWith Cato, every flow is inspected once, in a single pass, at the nearest PoP — SWG, CASB, DLP and IPS stop being products you deploy and become policy you enable.\nLet me show you what one platform looks like in the console.",
+      "demo": "Keep the whiteboard of their stack visible — the whole walk is a running comparison against that drawing.\nStart in Network Rules, then straight into the Internet Firewall without changing tools: both rule bases share the same sites, users and groups — one policy model, not an integration.\nOver to Topology — the whole estate live in one view — then into IPS for the line: in their estate this capability is a purchase order, a box and a renewal; here it's a toggle on traffic already flowing.\nFinish in the Audit Trail, every change attributed in one place, and close on lifecycle: updates land PoP-side, Socket firmware pushes from the cloud on their schedule — no forklift refresh, no end-of-life notice. Back to the slides."
+    }
   },
   "management-soc-xdr": {
     "pain": [
@@ -379,7 +429,12 @@ window.UC_DECKS = {
         "show": "The ranked queue a shift works top-down"
       }
     ],
-    "hook": "Who covers your alert queue at 3 a.m. on a Sunday?"
+    "hook": "Who covers your alert queue at 3 a.m. on a Sunday?",
+    "notes": {
+      "divider": "The 3 a.m. Sunday question opens on the people problem — most teams cannot staff a credible rota.\nFrame it: every security purchase of the last decade arrived with its own console and its own blind spots, and the SOC inherited all of them.\nBridge: here's what I'll show you — one queue of correlated, ranked incidents, with the evidence and the fix in the same place.",
+      "why": "Today, analysts spend the day translating between tools rather than investigating — an endpoint alert here, a firewall log there, and deciding whether they're the same attack falls to a human with a dozen tabs open. Ask the floor-walk question: how many screens would a tier-1 analyst have open right now, and what's the honest mean time from alert to knowing whether it matters?\nThe difference is where XDR starts: most projects begin with a data-collection programme — agents, pipelines, parsers. Here every flow already traverses a PoP, so telemetry is complete on day one.\nLet me show you that as a working queue.",
+      "demo": "Open the Threats Dashboard and let it register that nothing was deployed to produce this — no collectors, no shipped logs.\nDrill into a story: one record per suspected incident, not a page of raw alerts — walk the criticality, indication, status, source and targets. The timeline and ATT&CK mapping are the manual correlation their analysts do today, done before anyone opened the ticket; pivot to the user and site without leaving the console.\nClose the loop in the Internet Firewall: the containing rule, same console, no hand-off.\nFinish on the Stories Dashboard sorted by criticality — how a shift starts its day — and if 24×7 came up, land MDR: Cato's analysts working this exact queue overnight. Back to the slides."
+    }
   },
   "management-pov-framework": {
     "pain": [
@@ -410,7 +465,12 @@ window.UC_DECKS = {
         "show": "Their apps and users on screen by day five"
       }
     ],
-    "hook": "What would you need to see proven, on your own traffic, to make a decision?"
+    "hook": "What would you need to see proven, on your own traffic, to make a decision?",
+    "notes": {
+      "divider": "Open with the question itself — what would they need to see proven, on their own traffic, for this to end in a decision — and the follow-up matters as much: who, besides them, has to see it?\nWithout agreed criteria, an evaluation drifts into a free trial that never produces a verdict.\nBridge: here's what I'll show you — a PoV shaped to end in a meeting where the question is asked.",
+      "why": "Talk through how evaluations really fail: nobody wrote down what proven means, so every session ends with interesting, can we also look at — and the goalposts move weekly. Or weeks pass between contacts and momentum dies just when the evidence was strongest.\nThe fix is a shape: one workshop where every ask is pushed until testable — we want to see our traffic becomes App Analytics shows top applications by user for the pilot site — a thirty-minute sync in the same slot weekly, and a decision meeting booked before anything is built.\nLet me walk you through week one as you'd run it.",
+      "demo": "Start with the workshop, homework done: shortlist use cases from the library and pre-draft a criterion for each, so the session edits a straw man. Close by booking two meetings on the spot — the weekly sync and the decision meeting with the economic buyer.\nThen the build: pilot branch connected, Client group enrolled, IdP populating users — identity-attributed evidence is the difference between an IP did this and a named person did this.\nIn Topology, capture evidence item zero — tunnels up, first traffic — dated, into the evidence doc.\nFinish in App Analytics: their apps and users named on screen makes it real on day five, not day thirty — and when the first can-it-also arrives, park it on screen, captured, not dismissed."
+    }
   },
   "management-asset-discovery": {
     "pain": [
@@ -445,7 +505,12 @@ window.UC_DECKS = {
         "show": "A discovered device becomes a device-attribute rule"
       }
     ],
-    "hook": "How long would a complete, correct list of every connected device take you today?"
+    "hook": "How long would a complete, correct list of every connected device take you today?",
+    "notes": {
+      "divider": "Open with the inventory question, and add the sting: how confident would they be that the list is correct? Every control they own assumes they know what's on the network — and that assumption breaks the moment you count the devices that can never run an agent.\nBridge: here's what I'll show you — an inventory that builds itself, passively, from the Sockets already in place.",
+      "why": "Name the three failure modes: agentless kit joins the network silently, the CMDB records what was procured rather than what's connected, and the classic fix — an active scanner — is exactly what OT and clinical teams forbid, because an unexpected probe can hang a PLC. Ask whether they're even allowed to scan their OT estate — usually not.\nWith Cato nothing probes anything: the Socket already sits in the traffic path, so devices are simply observed and resolved into the attributes a policy needs.\nDiscovery and enforcement share one vocabulary, so seeing something is one step from segmenting it. Let me show you the inventory.",
+      "demo": "Open Device Inventory and let the list speak — it built itself from the Socket that's already there; walk the columns: category, type, model, OS, manufacturer.\nGroup the list by Manufacturer, Type or Site and answer real questions instantly — every IP camera, everything at one plant.\nClick into a device for its Quick View and pick something evocative — a printer talking to the internet, a camera on old firmware — attributes beside its events and the apps it reaches.\nSwitch to the Device Dashboard — IoT and OT counts, the Segmentation Flows Sankey of what these devices actually use — then finish in the LAN Firewall: a rule built from the attributes you just discovered, allow with events first. Seeing to segmenting; the enforcement story continues on the OT security page."
+    }
   },
   "network-sdwan": {
     "pain": [
@@ -480,7 +545,12 @@ window.UC_DECKS = {
         "show": "Day-one visibility for a site provisioned before lunch"
       }
     ],
-    "hook": "How long did your last new site take, order to live?"
+    "hook": "How long did your last new site take, order to live?",
+    "notes": {
+      "divider": "Ask the order-to-live question and let them tell the story — the answer is usually months, and everything you're about to show contrasts directly with that number.\nThe frame: any available last mile in, a private backbone across — MPLS-class predictability without MPLS.\nBridge: here's what I'll show you — a site defined as code, on-net before lunch, with day-one visibility.",
+      "why": "The discovery question's second half stings: at a site with one circuit, what happens to voice and ERP when it fails? Today the honest answer is an outage — plus per-carrier tickets for QoS changes, and a middle mile nobody owns.\nWith Cato the Socket bonds whatever links are available — broadband, fibre, LTE — into active/active tunnels, and from the nearest PoP traffic rides a full mesh across multiple Tier-1 carriers with acceleration and loss mitigation built in. Be precise: the five-nines SLA is between PoPs — exactly why dual last miles matter.\nLet me show the whole motion, definition file to live site.",
+      "demo": "Start at API and Integrations and run the apply live — one file describes one site, a loop describes fifty; it's the artefact an M&A team hands over.\nOver to Sites: the new site appears seconds later, waiting for its Socket — zero-touch means it ships, plugs into any live link and calls home for its config.\nIn Topology, open the site — two tunnels up, per-link loss, latency and jitter — and if the setup allows, pull a cable and let the call carry on over the second link.\nThen Bandwidth Management: rules keyed to the application and the person, not ports and subnets.\nClose in App Analytics filtered to the new site — day-one visibility, provisioned before lunch — and back to the slides."
+    }
   },
   "network-agility-mna": {
     "pain": [
@@ -511,7 +581,12 @@ window.UC_DECKS = {
         "show": "An acquired group named in a rule, day one"
       }
     ],
-    "hook": "The deal closes on Friday — when can two companies actually work as one?"
+    "hook": "The deal closes on Friday — when can two companies actually work as one?",
+    "notes": {
+      "divider": "M&A is where network agility gets tested in public, and when integration takes quarters the business feels every one of them.\nAsk about their last deal — how long before acquired users could reach corporate applications under corporate policy, and what did they compromise on to get there?\nBridge: here's what I'll show you — that deal replayed the Cato way, from a couple of files and one directory integration.",
+      "why": "The legacy timeline runs to quarters: circuit orders or contract novations before anything moves, VPN meshes bolted between two firewall estates, hands-on engineering at every acquired site. The identity gap is usually worse — acquired people either wait on a directory trust project or end up sharing VPN credentials, and policy stays written in IP ranges, blind to who's connecting.\nThe contrast is days for the sites and day one for the identities: sites defined as code exist in minutes, and Entra ID provisions the acquired users and groups so a rule can name them immediately.\nHere's the Friday-close scenario, live.",
+      "demo": "Frame it: the acquisition closed on Friday; the goal is acquired sites on-net and acquired users reaching corporate apps under corporate policy within days.\nStart at API and Integrations and run the apply — one resource block per acquired site, or a CSV fed into a loop — the same workflow for three sites or three hundred.\nOver to Topology: the new sites sit alongside the existing estate; Sockets ship, anyone plugs them in, zero-touch does the rest.\nThen Access, Users — the acquired workforce synced straight from their own Entra tenant, no manual accounts — and finish in the WAN Firewall with the acquired group named as a source: least-privileged access from the first morning, every allow and block attributed to a username in Events."
+    }
   },
   "network-mpls-migration": {
     "pain": [
@@ -546,7 +621,12 @@ window.UC_DECKS = {
         "show": "Egress via DC firewall or Cato PoP — per-site choice"
       }
     ],
-    "hook": "Which sites could you move tomorrow — and which are stuck because others still need them?"
+    "hook": "Which sites could you move tomorrow — and which are stuck because others still need them?",
+    "notes": {
+      "divider": "Most organisations buying Cato aren't building a WAN — they're leaving one, and the hard part isn't either end state, it's the middle. Land the hook, then add the follow-up: who owns the routing design for the in-between network, and how long do they have to run it?\nBridge: here's what I'll show you — co-existence by design, a datacentre Socket bridging both worlds while sites leave one at a time.",
+      "why": "The big-bang trap first: a flag-day cutover puts every risk in one window — one misrouted prefix and every site loses the datacentre, so the migration gets postponed, again. And MPLS terms rarely end together, so the interim network has to work for months, not days.\nThe Cato pattern inverts it: the datacentre takes a Socket first and becomes the bridge, advertising the prefixes of every site still on MPLS; each branch moves as its contract expires, and nothing on the legacy side changes until its circuit is switched off.\nThe two routing tables are the whole trick — let me walk them.",
+      "demo": "Open the datacentre site, show its routed ranges: the local range plus the prefix of a site still on MPLS, next hop the MPLS router on the DC LAN — that line is the entire integration; no BGP redesign, nothing changes on the carrier side.\nOver to Topology: migrated prefixes behind their own Sockets, legacy prefixes behind the DC.\nThen play cutover day: assign the range to a new Socket site, delete the static route — that's the whole change window. Live flows in App Analytics prove new and legacy sites keep talking.\nFinish on egress in the Internet Firewall — stay on the DC firewall or break out at the PoP, per site — then the end state: last site moves, delete the route, decommission the router, terminate the contract."
+    }
   },
   "network-cloud-datacenter": {
     "pain": [
@@ -577,7 +657,12 @@ window.UC_DECKS = {
         "show": "Cloud flows fully attributed — the view virtual firewalls never gave"
       }
     ],
-    "hook": "After all that interconnect and firewall spend, which console shows branch-to-VPC policy?"
+    "hook": "After all that interconnect and firewall spend, which console shows branch-to-VPC policy?",
+    "notes": {
+      "divider": "Open on the spend: ask what the interconnect circuits and cloud firewall licences cost per year, then land the hook — after all of that, which single console shows the policy between a branch user and the production VPC? There usually isn't one.\nBridge: here's what I'll show you — a VPC treated as just another site on the WAN, about an hour from deployment to live.",
+      "why": "Every cloud estate shows the same two spending patterns. Premium interconnects deliver a pipe and nothing more — the path carries no inspection — and branch traffic often still hairpins through a physical DC to get there. Cloud virtual firewalls add a second policy stack the customer must size, upgrade and failover-test themselves, with logging the WAN team never sees.\nWith Cato the VPC lands on the same backbone, same policy set and same analytics as any branch, and egress happens at the PoP nearest the cloud region — never the public internet middle mile.\nHere's a cloud site behaving as just another site.",
+      "demo": "Start in Topology and let the rendering make the argument: the Azure and AWS sites sit beside the physical estate, drawn no differently. Mention the three ways in — vSocket, IPsec from a cloud-native gateway, or a layer-2 cross-connect at the PoP — mixed by region and requirement.\nOpen the AWS site and show the HA status: primary and secondary vSocket, both tunnelled, automatic failover — against designing, licensing and failover-testing a firewall pair yourself.\nThen the WAN Firewall: a branch group allowed to an app in the VPC — same rule anatomy as branch-to-DC, one rulebase, one audit trail.\nFinish in App Analytics filtered to the VPC — flows fully attributed — and close on economics: no interconnect subscription, no virtual firewall fleet, the next region in about an hour."
+    }
   },
   "network-global-app-performance": {
     "pain": [
@@ -608,7 +693,12 @@ window.UC_DECKS = {
         "show": "TCP acceleration and loss mitigation as per-rule toggles"
       }
     ],
-    "hook": "When Sydney's Teams calls to London go choppy, who do you even call?"
+    "hook": "When Sydney's Teams calls to London go choppy, who do you even call?",
+    "notes": {
+      "divider": "Open on the complaint everyone recognises — the choppy call with a customer, escalated the same afternoon — then land the hook. Between continents the internet is a chain of providers you hold no contract with, so when the fault sits in the middle mile there's nobody to ring.\nBridge: here's what I'll show you — one backbone doing what global MPLS charges a fortune for, plus the SaaS piece MPLS never covered.",
+      "why": "Today it's two poor answers. The public internet hot-potato routes across providers, with peering congestion you can't see and can't escalate — and TCP throughput collapses over long, lossy paths. Global MPLS buys predictability at a price that rules it out and never covered SaaS anyway.\nWith Cato everything enters at its nearest PoP and rides one provider's backbone: TCP terminates locally so window scaling isn't throttled by round-trip time, loss is recovered between PoPs instead of punished with end-to-end retransmits, and SaaS exits beside the app.\nLet me show those mechanics as policy, then prove it with a live call.",
+      "demo": "Start in Bandwidth Management: priorities keyed to the application and the person, the same policy enforced at the socket and at every PoP — no per-region QoS to drift.\nThen the live proof: a Teams or Zoom call from the far site, and its drill-down in Experience Monitoring — the latency and TTFB behind the score (scoring lives here, not in App Analytics).\nOver to Topology: separate last mile from middle mile on one screen — the who-do-you-call question answered: was the bad hour the local ISP or the long haul.\nFinish in Network Rules with the acceleration and loss-mitigation toggles — a per-rule decision, not an appliance per region — then close on smart egress: their SaaS app exiting beside the app instance, not head office. Back to the slides."
+    }
   },
   "network-cloud-interconnect": {
     "pain": [
@@ -643,7 +733,12 @@ window.UC_DECKS = {
         "show": "One rulebase governs branch, DC, tunnel and interconnect traffic alike"
       }
     ],
-    "hook": "Some flows deserve a wire, not a tunnel — and it should still be just a site."
+    "hook": "Some flows deserve a wire, not a tunnel — and it should still be just a site.",
+    "notes": {
+      "divider": "For most cloud estates a vSocket or an IPsec tunnel is exactly right — so start by conceding that. Then name the exception: storage replication, backup, bulk data movement between DC and cloud. Those flows want what a leased line used to give them.\nHere's what I'll show you: a dedicated circuit into the PoP that still behaves like an ordinary site.",
+      "why": "Concede the tunnel tax: every tunnel on-ramp rides the internet last mile and pays per-tunnel ceilings plus encryption overhead on every packet. Then ask the page's question — which of their flows run over ExpressRoute or Direct Connect today, and once that circuit lands, which console owns its policy?\nThe alternative is a layer-2 circuit through an exchange fabric — Equinix Fabric or Megaport — or a physical cross-connect from a colo cage: one VLAN coordinated across all parties, nothing to deploy or patch in the path.\nThen pivot: let me show you how little of this the console even needs to know about.",
+      "demo": "Open Network, Sites, and the Cloud Interconnect site — type Cloud Datacenter, connection Cross-Connect. Say plainly it's a configuration example, not live traffic — don't promise charts from it.\nWalk the settings and let the absences talk: no socket serial, no tunnel parameters, no appliance. The console needs only the site and its ranges.\nOver to Topology — it sits on the same map as every branch and DC. Then open the AWS vSocket site and show its live analytics: the moment a circuit lands, it inherits this same visibility.\nClose in the WAN Firewall — one rulebase for branch, DC, tunnel and interconnect alike. Back on the slides, set the lead-time expectation: circuits take weeks to months, so the order goes at the front of the project plan."
+    }
   },
   "network-ipsec-asa": {
     "pain": [
@@ -674,7 +769,12 @@ window.UC_DECKS = {
         "show": "Tunnel and firewall events — the audit trail survives the Socket swap"
       }
     ],
-    "hook": "Not every site can take a Socket on day one — none of them has to wait."
+    "hook": "Not every site can take a Socket on day one — none of them has to wait.",
+    "notes": {
+      "divider": "Open with the honest hierarchy: a Socket is the preferred way to connect a site — but an estate of ASAs mid-migration, in a partner facility or awaiting retirement doesn't have to sit off the backbone while it waits.\nFrame it as scaffolding: same backbone, same security stack, today, on hardware they already own. Here's what I'll show you — the whole Cato side of that design, live.",
+      "why": "Be straight about today: sites that can't take a Socket sit off the backbone entirely, and IKEv2 to an ASA fails with TS_UNACCEPTABLE unless you know the quirk — a route-based VTI, or the setting that sends each traffic selector separately. Knowing that is credibility in the room.\nWith Cato they get dual tunnels on fixed allocated IPs at two PoPs — deterministic, easy for change control to approve — and everything built here survives the later Socket swap.\nAsk: is the ASA staying, or is IPsec a bridge? If the site still exists in eighteen months, what stops a Socket landing there? Then move to the console.",
+      "demo": "Start in Topology: the IPsec site sits beside Socket and vSocket sites — the connection method differs, the platform doesn't.\nThen Site Settings, IPsec: primary and secondary tunnels, two allocated IPs at two PoPs. Land the line that this is the whole Cato side — their ASA config is usually the longer half.\nOpen Connection Status for live phase one and two state; if a change window allows, drop the primary and let the room watch routes move — allow up to thirty seconds for detection.\nFinish in Events: tunnel connects and firewall verdicts in the same schema as every other site, carried over unchanged when the ASA becomes a Socket. Close on the wave plan — which sites swap first, which stay IPsec, and until when."
+    }
   },
   "network-global-expansion": {
     "pain": [
@@ -709,7 +809,12 @@ window.UC_DECKS = {
         "show": "Application experience from the new region — measurably usable, not just connected"
       }
     ],
-    "hook": "Where does the business open next — and why should the network take quarters?"
+    "hook": "Where does the business open next — and why should the network take quarters?",
+    "notes": {
+      "divider": "Before this slide, ask two questions: where does the business open next, and what happened last time — how long the circuit took, who staged the firewall, who flew out. Run everything against their next market, not a hypothetical.\nThe frame is simple: the commercial team signs a lease in weeks, then IT becomes the reason the site opens late. Here's what I'll show you — that next site built live.",
+      "why": "Today every region restarts the same build: carrier contracts on someone else's lead time, firewalls purchased and shipped, an engineer on a plane. And China concentrates all of it, with a compliance dimension a DIY VPN overlay only makes worse.\nThe difference is that the infrastructure already exists in region — the PoP is there before they are, full stack inside — so expansion becomes onboarding, not a build.\nAsk the page's questions: which markets in the next twelve to eighteen months, and when a site opens somewhere with no engineers, who racks the kit? Then build the site live.",
+      "demo": "Create their next market live in Network, Sites — name, country, socket model, native range: a policy object in minutes, before any kit is ordered. Narrate the claim flow — the socket ships, anyone plugs in power and WAN, it pulls its config. Nobody technical travels.\nOpen the Sydney site on IPsec with no Cato hardware at all: the landing team works on the Client while the socket is in transit.\nShow the spread in Topology, then the Internet Firewall — no rule names a region; the global policy applied at first connect. Finish in App Analytics: the new region measurably usable, not just connected.\nClose on China off-console — compliant connectivity through in-country presence with licensed local partners; scope specifics with the Cato China team."
+    }
   },
   "network-resilient-site-design": {
     "pain": [
@@ -740,7 +845,12 @@ window.UC_DECKS = {
         "show": "Link down, SLA violations, failover — the evidence and alerting feed"
       }
     ],
-    "hook": "When did someone last deliberately pull a link to prove the failover works?"
+    "hook": "When did someone last deliberately pull a link to prove the failover works?",
+    "notes": {
+      "divider": "Open with the inevitability: every site fails eventually — a digger through the fibre, a dead power supply, a PoP out of rotation. The framing that lands is that resilience is a design decision made per site class: a kiosk shouldn't get the same design, or the same spend, as a datacentre.\nHere's what I'll show you — what that design looks like in the console, and how you prove it works.",
+      "why": "Most availability conversations start with an SLA percentage and end with an invoice — and a failover nobody has deliberately tested is a diagram, not a design. That's the today side.\nWith Cato there are four distinct failure domains, each with its own building block: last mile, Socket hardware, PoP, and total off-cloud — so resilience and cost get matched to how much each site actually matters.\nAsk the page's question: which of your sites could you genuinely not afford to lose for a morning — and when did someone last deliberately pull a link there? Then go and look at a real site's link design.",
+      "demo": "Open a branch site's Socket configuration and read the link design: precedence one active, two passive, three last resort — the LTE link carries almost nothing while idle, so the cellular bill stays near zero.\nThen Topology: open an HA site and walk the three indicators behind Ready — Connected, Keepalive, Compatible Version. Anything not green is a ticket, not trivia.\nNow the proof: pull the primary link in a change window and watch flows re-home to the surviving one — per-second scoring on loss, jitter and latency moves them before users open tickets; on an HA pair the standby takes over after three seconds of missed keepalives.\nFinish in Events — link down, SLA violations, failover: the change-record evidence and the alerting feed. Re-run this after every ISP change or Socket upgrade."
+    }
   },
   "security-retail-pci": {
     "pain": [
@@ -775,7 +885,12 @@ window.UC_DECKS = {
         "show": "Who changed what, when — the assessor pack from one console"
       }
     ],
-    "hook": "If the till can't authorise a card, the store stops selling."
+    "hook": "If the till can't authorise a card, the store stops selling.",
+    "notes": {
+      "divider": "Open with the till: in retail the store network is the revenue path, yet it's usually the least engineered part of the business — flat LANs assembled refit by refit, behind one consumer broadband line.\nPCI DSS 4.0 raises the bar on proving controls operate continuously, not just before the assessor arrives. Here's what I'll show you — one store's build, and why it scales to hundreds without an engineer visit.",
+      "why": "On a flat network the guest Wi-Fi, cameras and signage sit beside the payment devices, so everything gets assessed with them — and evidence is weeks of screenshots, stale the day after collection.\nThe answer is segmentation enforced at the store edge, LTE keeping the tills authorising through a broadband cut, and evidence that becomes a console export.\nAsk their questions: how many networks does a typical store run — and are they actually separate, or just SSIDs on one LAN? What did the last assessment's evidence collection take in weeks and teams? Hold one caveat — scope reduction is the QSA's call. Then walk the store.",
+      "demo": "Narrate the estate in Topology: imagine each of these is a store — same Socket, same VLAN plan, same policy.\nOpen the site's Networks — POS, guest, staff, cameras — and make the zero-touch point: plugged in by store staff, configured centrally.\nIn the LAN Firewall, show guest blocked from the POS VLAN at the store edge and point at the hit counters — enforced and counted, not a diagram claim. Then the LTE site: describe pulling broadband and the tills keep authorising — a quiet alert instead of a store that can't sell.\nClose in the Audit Trail and Events: policy, its enforcement and its change history from one console — the pack they spent weeks assembling last time. After every rule, repeat: defined once, applied to every store."
+    }
   },
   "security-firewall-refresh": {
     "pain": [
@@ -810,7 +925,12 @@ window.UC_DECKS = {
         "show": "One rule change enforcing across regions within seconds"
       }
     ],
-    "hook": "Should this refresh be the last one you ever run?"
+    "hook": "Should this refresh be the last one you ever run?",
+    "notes": {
+      "divider": "Get the specifics before you start: which models hit end-of-support and when, what the renewal quote says, how painful the last estate-wide change was — then run everything against those numbers.\nThe frame: a refresh is the one moment doing nothing isn't an option, which makes it the natural moment to ask whether this one should be the last. Here's what I'll show you — the firewall as a service, not a device.",
+      "why": "The treadmill has three taxes: the sizing gamble against a multi-year traffic guess, the capex-and-rollout programme measured in months, and the lifecycle drag of firmware and change windows until the next EOL notice. TLS inspection quietly stays off because it pushes a correctly sized box off a performance cliff.\nWith Cato, enforcement moves to the PoP: capacity scales in the cloud, Cato owns the patching, new capabilities arrive as software.\nAsk what the annual support renewal costs across the estate, and how long the last policy change took to reach every site. Then open the rulebase they'd inherit.",
+      "demo": "Open the Internet Firewall and walk the ordered rulebase — allow and block by identity, group, application and category — then say it explicitly: this is the whole estate's internet policy, and there is no box behind it.\nMove to the WAN Firewall — the segmentation their DC pair does today, in the same rule grammar. Then TLS Inspection: the switch that halves appliance throughput is a policy decision here.\nIn IPS, tell the virtual-patching story: protections for new critical CVEs deployed by Cato Security Research, no customer change window — unpatched assets shielded while ops patch on their own timetable.\nThen prove it: block a risky category, save, and filter Events to show the rule enforcing across regions within seconds. Close on the renewal quote."
+    }
   },
   "security-finance-dora": {
     "pain": [
@@ -845,7 +965,12 @@ window.UC_DECKS = {
         "show": "Who changed which policy, when — exportable governance evidence"
       }
     ],
-    "hook": "DORA doesn't ask you to be resilient — it asks you to prove it."
+    "hook": "DORA doesn't ask you to be resilient — it asks you to prove it.",
+    "notes": {
+      "divider": "Before the slide, find the pressure point: ask where their DORA gap analysis hurts most — resilience-testing evidence, incident-report assembly, or the sheer size of the third-party register — and lead with that pillar.\nDORA has applied since 17 January 2025, so this is a live programme, not a future one. Here's what I'll show you — evidence for each pillar, from one console.",
+      "why": "Today the stack works against them four times over: every point product is another ICT third party to assess and register, resilience is a chain of single points of failure, the incident timeline is scattered across consoles with different clocks, and proving a control applies everywhere is guesswork.\nWith Cato, resilience is the architecture's default and every flow feeds one telemetry plane — the same platform that fails over also produces the evidence.\nAsk who owns the programme and how long a report-grade timeline takes to assemble today. Mind the wording: Cato supports a DORA programme — it never makes anyone compliant. Now to the console.",
+      "demo": "Start in Topology: dual uplinks, HA state, each site's connected PoP — failover with no operator action. That's the resilience pillar in one view.\nThen Experience Monitoring, positioned as the test-evidence tool: run a controlled failover window and capture what users actually experienced before, during and after.\nOpen a detection in the Threats Dashboard and pivot into its XDR story — correlated events, affected users, a timeline: the skeleton of a regulator-facing report, assembled for you, not by you. Drill into Events for the same window: every flow and verdict on one clock, attributed to a user — no logs collected from firewall, proxy and VPN separately.\nClose in the Audit Trail — who changed which policy, when, exportable — then count the displaced vendors and offer the published certifications as one due-diligence pack."
+    }
   },
   "security-consistent": {
     "pain": [
@@ -880,7 +1005,12 @@ window.UC_DECKS = {
         "show": "Office and home blocked by the same rule, same identity"
       }
     ],
-    "hook": "Pick one rule — is it enforced identically in Glasgow, in Dubai and at home?"
+    "hook": "Pick one rule — is it enforced identically in Glasgow, in Dubai and at home?",
+    "notes": {
+      "divider": "Open by asking how many devices a single policy change touches today, and how remote-user policy relates to site policy — the punchline lands hardest against their own numbers.\nThe frame: most estates don't have one security policy, they have dozens, each drifting with every change window. Here's what I'll show you — one rulebase, and the same block landing in the office and at home.",
+      "why": "Today policy lives in the boxes, and every box is a separate source of truth — versions drift, and attackers only need to find the weakest enforcement point.\nWith Cato, policy is a cloud object: defined once, enforced by every PoP, written against IdP groups and posture profiles rather than IP addresses — an HR move in the directory changes access with no firewall change request.\nAsk their question: pick one rule — blocking uploads to personal cloud storage, say. Is it enforced identically in Glasgow, at home, in Dubai — and how long would proving that take? Then prove it live.",
+      "demo": "Walk the Internet Firewall and point at what's absent: no per-site, per-appliance or per-region policy exists anywhere in the product. Rules are scoped to groups and posture — this is the policy, for everyone.\nOpen a user under Access and run the thought experiment: change their department in the directory and every rule referencing the group follows. Device Posture adds the second dimension — identity says who, posture says from what, both continuous.\nMake one change live — block a risky category for a group — and save: that is now the policy at every PoP, no push jobs, no maintenance window. Trigger it behind the site socket, then again on the Client from home.\nFinish in Events filtered to the user: both blocks side by side, same rule, same identity — one answer for the auditor."
+    }
   },
   "security-ot-iot": {
     "pain": [
@@ -915,7 +1045,12 @@ window.UC_DECKS = {
         "show": "Live hit counts — every block attributed to a device, not an IP"
       }
     ],
-    "hook": "Can you list every device on your plant floor right now?"
+    "hook": "Can you list every device on your plant floor right now?",
+    "notes": {
+      "divider": "Before you open, ask which frameworks they align to — Purdue, IEC 62443 — and which vendors dominate their floor; you'll build the demo rule on their answer.\nThen land the hook: plant devices arrive with the machinery, get plugged in by integrators and stay for decades, and none of them can run an agent. Here's what I'll show you — every one of them found, named and put under policy.",
+      "why": "Today's picture: no inventory anyone trusts, patch windows measured in months because production uptime always wins, and flat networks where one compromised camera can move laterally towards the SCADA layer.\nWith Cato, discovery is passive — no agents, no scanners, no disruption — and the attributes it finds become policy objects: a rule can target every PLC, or every Siemens S7-300, and it follows the device as it joins the network. Segmentation lands on the frameworks OT teams already use.\nAsk their question back: if one camera were compromised today, what stops it reaching the SCADA servers or calling out to the internet? Then open the inventory.",
+      "demo": "Start in the Device Inventory: category, type, model, OS, manufacturer — classified passively from traffic. Map the screen to Purdue levels as you go: PLCs at the bottom, HMI and SCADA above, enterprise IT at the top.\nBuild the rule live in the Internet Firewall — Manufacturer Siemens, Type PLC, block internet egress: any matching PLC at any site, now or in future, inherits it automatically.\nIn the WAN Firewall, walk the segmentation — HMI to PLC on control protocols, cross-level denied by default, the same logic enforced on-LAN by the Socket — then the vendor scoped to the jump server only.\nClose in Events with live hit counts, every block attributed to a device rather than an IP — and the discipline line: on a plant you monitor first; a false positive stops a machine, not a web page."
+    }
   },
   "security-dlp-forensics": {
     "pain": [
@@ -950,7 +1085,12 @@ window.UC_DECKS = {
         "show": "The evidence view itself recorded — access proven"
       }
     ],
-    "hook": "When DLP flags a credit-card leak, can your analysts see what actually matched — and prove who looked?"
+    "hook": "When DLP flags a credit-card leak, can your analysts see what actually matched — and prove who looked?",
+    "notes": {
+      "divider": "A DLP alert fires and nobody can say whether it is a real leak or noise — the tool names the rule, not the data. Worse, the evidence you would need to decide is itself sensitive, so careless capture creates a second copy of the leak.\nHere's what I'll show you: an investigation that never leaves the console — the block, the secured evidence, and proof of exactly who looked.",
+      "why": "Today the analyst sees rule, user and application but never the content that matched, so real leaks get dismissed as noise while false positives trigger full incident-response fire drills.\nWith Cato the snippet — up to the full 20 MB file — lands encrypted in an S3 bucket in the customer's own AWS account, under a key unique to their account, readable only with the right role, and every view is audited.\nAsk the room: when DLP flags a credit-card upload, can your analysts see exactly what matched, and prove afterwards who looked? Then move to the console and stage one live.",
+      "demo": "Open in DLP Configuration: the forensics integration toggle — and note that even switching it on is an audited change.\nNow play the user: upload a document seeded with card numbers to Copilot and let the block land on screen — at that same moment the encrypted snippet is written to the bucket.\nMove to the Data Protection Dashboard and click View Forensics on the block you just caused — one hop into the data incident, no second console. Walk the detail, then View Evidence, pausing on the locked panel: deliberate, role-gated, logged — exactly what a DPO will probe.\nClose in the Audit Trail with your own evidence view on the record — leak confirmed, impact known, access proven — then back to the deck."
+    }
   },
   "security-inbound-ips": {
     "pain": [
@@ -985,7 +1125,12 @@ window.UC_DECKS = {
         "show": "Public proof: detect-to-protect in 0–2 days"
       }
     ],
-    "hook": "When the next critical CVE lands on a service you publish, how long are you exposed before you can patch?"
+    "hook": "When the next critical CVE lands on a service you publish, how long are you exposed before you can patch?",
+    "notes": {
+      "divider": "Every estate still publishes something — a partner portal, a B2B API, a legacy web app — and each one is under automated attack from the moment it goes live, defended by appliances with their own patch cycles and downtime windows.\nHere's what I'll show you: the service published while the site stays dark, attacks absorbed at the PoP, and protection that arrives faster than any patch window.",
+      "why": "Today an exposed service means a DMZ, a WAF and a reverse proxy — and a race every time a critical CVE lands, because patching needs downtime the business will not give. Auditors add pressure: the frameworks all want demonstrable controls over public-facing services.\nWith Cato the world sees one allocated IP at a PoP and every request is scrubbed there before it reaches their equipment — and the signature set is built for exactly this: 93 per cent of CVE signatures protect inbound.\nAsk what they publish today and how it is protected, then anchor the walk-through to the service they name.",
+      "demo": "Start with the allocated IP at the PoP nearest the room — London for a UK audience: this one static address is all the internet ever sees.\nBuild the Remote Port Forwarding rule to a lab web service, showing source filtering — by IP or country — if it is partner-only.\nIn IPS, confirm inbound protection is on: signatures written and deployed by Cato Security Research, nothing for the customer to patch.\nProve the legitimate path from a phone hotspot, then open Events against the IP — real scanner traffic collects quickly, every verdict an attributed event.\nFinish on the public Rapid CVE Mitigation page: detect-to-protect in nought to two days, no downtime, no change on their side."
+    }
   },
   "security-compliance": {
     "pain": [
@@ -1020,7 +1165,12 @@ window.UC_DECKS = {
         "show": "Every policy change attributed — one change record, one console"
       }
     ],
-    "hook": "When the auditor asks for proof a control worked last quarter, how many consoles do you have to open?"
+    "hook": "When the auditor asks for proof a control worked last quarter, how many consoles do you have to open?",
+    "notes": {
+      "divider": "Open with the stakes: compliance is a condition of trading — it decides whether customers sign, whether regulators stay satisfied and whether an insurer will underwrite the cyber risk. The pain is rarely the framework itself; it is the dozen consoles the evidence lives in.\nHere's what I'll show you: the controls and the audit evidence coming from one place, ready to hand to an auditor.",
+      "why": "Today the same policy takes weeks to configure across every tool, shadow SaaS makes compliance impossible to attest, and every audit is a correlation project. With Cato every flow is inspected once at the PoP and every decision lands in one management plane — the difference between owning tools and producing evidence.\nBe straight about the boundary: the ISMS clauses stay customer-owned — Cato is the engine inside it, never a substitute for governance.\nThen ask: which framework is driving you right now, and when the auditor wants proof a control worked last quarter, how many consoles do you open? Their answer is your segue into the console.",
+      "demo": "Open on the Cloud Apps Dashboard and let the app count talk — sanctioned, unsanctioned, risk-scored: you cannot govern what you cannot see.\nDrill into one app's catalogue entry: its risk score and the certifications the vendor holds — supplier due diligence cut from weeks of questionnaires to a lookup.\nIn DLP Configuration, walk the rule blocking cardholder data to unsanctioned apps, and narrate it in the auditor's language: information classification and transfer control.\nSwitch to the Data Protection Dashboard for proof — events over time, top rules, users and apps: the control-effectiveness evidence clause 9 asks for.\nEnd in the Audit Trail — one attributable change record for the whole stack — and close on scheduled exports: one evidence pack, not a quarter of screenshot-gathering."
+    }
   },
   "security-data-casb-dlp": {
     "pain": [
@@ -1055,7 +1205,12 @@ window.UC_DECKS = {
         "show": "The data incident: user, app, matched data, secured evidence"
       }
     ],
-    "hook": "How many cloud apps are in use right now — and which of them hold your customers' PII?"
+    "hook": "How many cloud apps are in use right now — and which of them hold your customers' PII?",
+    "notes": {
+      "divider": "Before this slide, ask which SaaS apps they have sanctioned — and which they suspect are in use anyway. The business is adopting cloud and AI apps faster than security can see, and the most sensitive processes are moving with the data.\nHere's what I'll show you: the whole app estate discovered from traffic alone, then control that follows the data — allow the app, block the risky activity, stop the sensitive upload.",
+      "why": "Today nobody can answer the PII question with confidence: new shadow apps surface weekly, users with local admin install whatever gets the job done, and data drifts into personal storage and GenAI tools unchecked. With Cato nothing new deploys — traffic already crosses the PoP, so CASB and DLP simply switch on where the data flows: inline for live traffic, out-of-band for data at rest in sanctioned tenants.\nAsk it plainly: how many cloud applications are in use right now, and how long would it take to say which hold customer PII? Then open the dashboard and answer it for them.",
+      "demo": "Open the Cloud Apps Dashboard and set the discovered estate against what they expected — the gap is the shadow-IT conversation, sharpest when an app they never named appears.\nDrill into App Analytics for one risky GenAI or file-sharing app: the risk score, what feeds it, who is using it.\nIn CASB, bring it under control — allow browsing, block uploads, or hold it to a pilot group: activity control, not crude deny.\nThen DLP Configuration: block credit-card uploads to unsanctioned destinations using the pre-built PCI, PII and PHI profiles — one policy across web, SaaS and on-prem.\nFinish in Events on the data incident — user, app, matched data types, secured evidence — and bridge to the DLP forensics story if they want the investigation depth."
+    }
   },
   "security-ransomware": {
     "pain": [
@@ -1090,7 +1245,12 @@ window.UC_DECKS = {
         "show": "Segmentation rules stopping spread to backups — hit counts prove it"
       }
     ],
-    "hook": "If ransomware detonated in a branch tonight, what stops it reaching your backups before anyone sees the beacon?"
+    "hook": "If ransomware detonated in a branch tonight, what stops it reaching your backups before anyone sees the beacon?",
+    "notes": {
+      "divider": "Frame ransomware as a chain, not an event: access, payload, command and control, lateral movement, exfiltration, encryption — and every link has to cross the network. The attacker needs all six to work; the defender only needs to break one.\nHere's what I'll show you: six independent controls meeting six stages at the PoP, and the moment fifty alerts become one story.",
+      "why": "Today the chain wins through the gaps — a remote user split-tunnelling past the appliance, branch breakout, OT devices that cannot run the agent — and the weak signals that do fire sit in tools that never talk to each other.\nWith Cato there is no unexamined path: every flow crosses the SPACE engine, and XDR correlates the fragments into one MITRE-mapped story natively.\nThen the discovery question: if ransomware detonated on a branch laptop tonight, what stops it reaching the backup servers — and would anyone see the C2 before the encryption starts? Go and break the chain on screen.",
+      "demo": "Open the Threats Dashboard and frame it: everything here was caught because the traffic had to cross a PoP — no behind-the-firewall.\nThen the live block: as a remote user, download the harmless EICAR file and show the block page and its event — novel variants take the same path into the sandbox.\nFilter Events to IPS and open a real exploit attempt with its CVE named: that protection was live at every PoP before anyone booked a patch window.\nOpen the XDR Stories Workbench — one incident, a timeline, affected users, MITRE mapping. This is the fifty-alerts moment; let it land.\nFinish on the WAN Firewall rule guarding the backups, hit counts proving enforcement, and close on who watches at 03:00 — MDR on the same platform."
+    }
   },
   "security-tls-inspection": {
     "pain": [
@@ -1125,7 +1285,12 @@ window.UC_DECKS = {
         "show": "Inspected, bypassed and QUIC-blocked flows, all visible"
       }
     ],
-    "hook": "What percentage of your web traffic is actually decrypted today — and who decided what slips through?"
+    "hook": "What percentage of your web traffic is actually decrypted today — and who decided what slips through?",
+    "notes": {
+      "divider": "Open with the dependency, not the feature: nearly everything is encrypted now, so SWG, CASB, DLP and AI governance reach full fidelity only on decrypted traffic — and big-bang decryption breaks things and burns trust.\nHere's what I'll show you: a rollout that stages safely — certificates first, a monitored pilot, and exceptions that are governed rather than silent.",
+      "why": "Today controls judge encrypted traffic by the handshake — a domain name and a certificate — while pinned apps and QUIC slip past with nobody deciding. The fear is legitimate: the estate holds a long tail that genuinely breaks under decryption.\nWith Cato the posture is inspect by default, bypass by exception — a staged rollout finds the breakage on your terms, and every exception becomes a bypass rule with an owner and a review date.\nAsk the page's question: what percentage of web traffic is actually decrypted today, and who decided what slips through? Then open the rule base.",
+      "demo": "Start in TLS Inspection and walk the shipped rule base: first-match ordering, uneditable bypasses at the top — Android, Linux, unknown OS, the maintained pinned-app list — and the implicit final rule inspecting everything unmatched.\nRun the Configuration Wizard live: five recommended rules applied in minutes — data-driven, not a services engagement.\nIn Certificate Management, show the trust anchor — default Cato certificate or their own CA's — the artefact the MDM team distributes first.\nThen a pilot user's browser: the padlock issuer reads Cato Networks plus the PoP, and a blocked HTTPS site renders a clean branded page, not a scary warning.\nClose in Events — inspected, bypassed and QUIC-blocked flows all visible — and land the wrap: this is the fidelity prerequisite every other demo stands on."
+    }
   },
   "security-uk-public-sector": {
     "pain": [
@@ -1160,7 +1325,12 @@ window.UC_DECKS = {
         "show": "One event stream, one clock — the assessor pack in one console"
       }
     ],
-    "hook": "Your next Cyber Essentials renewal lands under Danzell — MFA and 14-day patching are now auto-fail questions."
+    "hook": "Your next Cyber Essentials renewal lands under Danzell — MFA and 14-day patching are now auto-fail questions.",
+    "notes": {
+      "divider": "Open with the date: since 27 April 2026 every new Cyber Essentials assessment runs under the Danzell question set, and two answers became automatic failures — MFA on cloud services and 14-day patching. A tightening, not a rewrite, but it lands on their next renewal.\nHere's what I'll show you: one boundary answering for the whole estate, and the assessor pack assembling itself from one console.",
+      "why": "Today a public-body estate — civic centre, depots, libraries, schools, plus a hybrid workforce — means a boundary per site, configurations that drift, and assessment evidence scattered across a rack of consoles and spreadsheets. With Cato every site and worker crosses the same default-deny policy at the PoP, and a whole class of security infrastructure leaves the 14-day patching scope.\nAsk which conversation is in front of them this year — a CE renewal under Danzell, or a CAF-based assessment such as GovAssure or the CAF-aligned DSPT. Position with care: Cato supports the work; it never makes anyone compliant. Then open the mapping.",
+      "demo": "Start on the mapping tables and read the what-stays-with-you column out loud — agreeing what Cato does not cover buys credibility for everything after.\nThen the Internet Firewall: one ordered, default-deny rule base fronting the civic centre, every depot and school, and each home worker — the firewalls theme answered once, not per box.\nInto the Audit Trail: who changed which rule, when, from where, exportable — secure-configuration evidence and CAF governance on one screen.\nOpen a Device Posture profile — encryption, anti-malware, OS version — gating access continuously: user access control a CE Plus assessor can watch operating.\nFinish in Events, one stream with one clock, and assemble the pack on screen — policy export, posture, events, audit trail — one console instead of a screenshot hunt."
+    }
   },
   "security-healthcare-nhs": {
     "pain": [
@@ -1195,7 +1365,12 @@ window.UC_DECKS = {
         "show": "A supplier reaches one system; everything else blocks, attributed"
       }
     ],
-    "hook": "If a key supplier were encrypted tonight, which clinical systems keep working — and what could their credentials reach?"
+    "hook": "If a key supplier were encrypted tonight, which clinical systems keep working — and what could their credentials reach?",
+    "notes": {
+      "divider": "Anchor on the incident the room remembers: in 2024 a pathology supplier was encrypted, two London trusts postponed more than ten thousand outpatient appointments, and blood testing fell to a tenth of normal. A supplier compromise became a patient-safety incident — cyber risk in health is clinical risk.\nHere's what I'll show you: segmentation enforced at the Socket, the unpatchable device estate made visible, and a supplier confined to exactly one system.",
+      "why": "Today it is the estate WannaCry exposed: flat networks beneath clinical systems, unpatchable devices on VLANs nobody can map, supplier credentials reaching far beyond the system they support.\nWith Cato the LAN Firewall enforces segmentation on the Socket itself — it holds even if the circuit drops — Device Inventory classifies the IoMT estate from traffic with no agents, and DSPT evidence assembles as a by-product of operation.\nAsk the page's questions: if a key supplier were encrypted tonight, which clinical systems keep working — and could you show an auditor, from live data, which VLANs an unpatched imaging device can reach today? Then go and show them.",
+      "demo": "Frame with the DSPT mapping table, conceding Objective E to information governance — honesty that buys the segmentation story.\nOpen Device Inventory for a hospital site — devices classified from traffic, no agents — and ask: which of these did clinical engineering know were on this VLAN?\nThen the LAN Firewall: scoped per site and VLAN, enforced on the Socket — IoMT held to named integration flows, corporate blocked from clinical, still enforced if the internet drops.\nShow a posture profile gating a remote clinician — the NHS MFA policy worded exactly: MFA on all remote access to all systems.\nFinish in the WAN Firewall as a supplier engineer: reach the one permitted system, attempt another, show the attributed block — then events and the audit trail: the pack assembling itself."
+    }
   },
   "security-legal-confidentiality": {
     "pain": [
@@ -1230,7 +1405,12 @@ window.UC_DECKS = {
         "show": "Timestamped revocation and change history — the questionnaire pack"
       }
     ],
-    "hook": "What stops a fee-earner on Matter A reaching Matter B's workspace over the network — and could you prove it?"
+    "hook": "What stops a fee-earner on Matter A reaching Matter B's workspace over the network — and could you prove it?",
+    "notes": {
+      "divider": "Open with the firm's own claim: the wall is declared in the conflicts system and enforced in the DMS — but underneath, both matter teams share the same flat LAN and VPN. The courts' test since Bolkiah is no real risk of disclosure — hard to argue from one application layer.\nHere's what I'll show you: the wall as network policy, identity-based, enforced wherever a fee-earner works, and provable.",
+      "why": "Today the obligations are impeccably documented and the estate undermines them: walls stop at the DMS, panel reviews cost partners fee-earning days on questionnaires, and when a lateral leaves for opposing counsel nobody can prove, with timestamps, when access died.\nWith Cato a wall is a rule pair over the implicit deny, scoped to IdP groups, so it holds at the office, at court and at home; DLP stops privileged-class material heading for personal storage; every decision lands as evidence.\nAsk: what stops a fee-earner on Matter A reaching Matter B's workspace over the network, and could you prove it? Then build the wall in front of them.",
+      "demo": "Start on the obligation map and read the stays-with-the-firm column aloud — agreeing what Cato does not do buys the room.\nIn the WAN Firewall, build the wall as a rule pair for the two matter groups over the implicit deny, and point at the source column: identity, not geography.\nAttempt cross-wall access as a walled user and filter Events to that identity — rule, user, time: effective measures as evidence, not assertion.\nThen DLP Configuration: the built-in Legal classifier blocking privileged uploads to personal cloud — agreements, patents, court documents — and say honestly that scoping is group and data-type based, not per-matter.\nClose in the Audit Trail: change history plus the timestamped revocation when a leaver's groups are removed — the questionnaire answering itself from one console."
+    }
   },
   "security-ai": {
     "pain": [
@@ -1265,7 +1445,12 @@ window.UC_DECKS = {
         "show": "Ongoing governance reporting — which apps, users and policies fired"
       }
     ],
-    "hook": "If someone pasted customer PII into a chatbot yesterday, could you produce the prompt today?"
+    "hook": "If someone pasted customer PII into a chatbot yesterday, could you produce the prompt today?",
+    "notes": {
+      "divider": "Open with the question on the slide and let it sit — most rooms cannot answer it. Then widen it: it is really three questions. What are your people pasting into chatbots, what have your developers built on top of LLMs, and what are your agents doing with the access they were given?\nSay you will show one platform answering all three, and step into the walk.",
+      "why": "Talk it as a governance gap, not a tech gap: GenAI adoption has outrun governance almost everywhere, and the three surfaces — users, applications, agents — usually belong to nobody.\nThe point to land on the Cato side is architectural: AI security here is not a bolt-on product, it is another set of policies evaluated by SPACE, the same single-pass engine already carrying their traffic — so discovery, prompt-level auditing and enforcement arrive with no new appliances and no re-plumbing.\nAsk the page's sharper version: which GenAI tools are your users signed into right now? Then pivot — let's go and find out in the console.",
+      "demo": "Start in the Cloud Apps Dashboard, filtered to Generative AI — who uses what, how much data moves — and let the gap between sanctioned and found speak. In CASB, open one discovered tool's catalogue entry — data handling, compliance posture, risk score — to ground which apps deserve sanctioned status.\nStay in CASB for the rule and stress activity-level control: permit prompting, block the upload. Then DLP Configuration: inspect prompts and uploads for PII and payment data — the blocked card upload on the DLP forensics page is your proof point.\nClose on the Data Protection Dashboard, where discovery becomes an ongoing governance report. For homegrown apps and agents, talk to the focus-area cards rather than demoing live — that edge is still firming up."
+    }
   },
   "security-ai-visibility": {
     "pain": [
@@ -1300,7 +1485,12 @@ window.UC_DECKS = {
         "show": "The GenAI Report — the board-ready wrap-up artefact"
       }
     ],
-    "hook": "A no-cost four-week assessment: your real GenAI usage discovered, nothing blocked, board-ready report at the end."
+    "hook": "A no-cost four-week assessment: your real GenAI usage discovered, nothing blocked, board-ready report at the end.",
+    "notes": {
+      "divider": "Lead with the shape of the offer before any product: four weeks, led by a Cato engineer, entirely in monitor mode, currently at no cost for a limited time — nothing to deploy, nothing to break.\nFrame it as the answer to a CISO's bind: deliver AI's upside without a leaked prompt making the headlines. Then bridge: here is what the weekly syncs actually look like on screen.",
+      "why": "The pressure comes from three directions at once — boards mandating adoption, regulators expecting AI to be known and governed, customers needing trust — and blocking wholesale just routes the business around you.\nThe assessment threads that needle because everything it uses is native to the platform: TLS inspection, CASB and DLP, and the AI Interaction Policy in monitor mode, so traffic flows exactly as before. The meeting load is one deployment call, two half-hour syncs and a wrap-up.\nAsk the audit version of the page's question: could you evidence GenAI usage against NIST or HIPAA tomorrow? Then pivot — everything from here is live console, not slideware.",
+      "demo": "Open where the week-two sync opens, on the Overview — the reference numbers here are a 22.8 percent violation rate across 22.2 thousand interactions, broken down by policy. Move to Discovery for the inventory: every app with users, interactions, risk rating and the interceptor that saw it — and separate embedded AI early, or a sanctioned copilot's twenty-one thousand interactions will drown the shadow rows.\nAI Users puts names to the numbers: per-user trends and violation rates — the evidence that starts the acceptable-use conversation. The Data Protection Dashboard is the week-three story: monitor-mode matches only, PII leading, nothing blocked.\nFinish in Reports with the GenAI Report — a usage page and a data-protection page — the wrap-up artefact, then route the next step against the five-stage journey."
+    }
   },
   "ai-genai-security": {
     "pain": [
@@ -1335,7 +1525,12 @@ window.UC_DECKS = {
         "show": "Every interaction attributed and exportable — the audit trail"
       }
     ],
-    "hook": "Which GenAI tools were used last week, by whom — and what was pasted into them?"
+    "hook": "Which GenAI tools were used last week, by whom — and what was pasted into them?",
+    "notes": {
+      "divider": "Start by asking what their AI policy actually is today. The usual answer is that they blocked a chatbot — and that sets up everything, because a ban does not stop use, it moves it to personal accounts where you cannot see it.\nFrame the goal as safe enablement: keep the productivity, control what leaves in each prompt. Then bridge: here is that capability live, from discovery through to the audit trail.",
+      "why": "Contrast the two worlds honestly: the web filter judged a domain once per category and never saw what was pasted in — yet the risk lives in the prompt, and the same app can be fine for one prompt and a breach for the next.\nPrompt-level control gives a decision per interaction, and anonymisation is the unlock: sensitive values masked in flight while the prompt is still answered, so nobody drifts to a personal account.\nLand the page's sting: if you can name the tools but not what was pasted into them, you have visibility of domains, not of data. Then pivot to the console.",
+      "demo": "Open on the Overview tiles and let adoption rate prove this is mainstream behaviour, not a fringe habit. Follow the latest-application widget into the shadow inventory, stressing how it was built: from traffic already crossing the platform, nothing deployed, prompt content untouched.\nOn AI Users, sort by violations and drill one person — apps used, adoption over time — the evidenced conversation to have with a department head. In the User Interaction Policy, walk one rule: source, apps, engine profile, the four actions, a notification template — and name the prerequisite out loud, TLS inspection at account level.\nShow the recommended DLP profiles against the Generative AI Tools category as the upload backstop, then close in Events: attributed, exportable — the audit trail they walked in without."
+    }
   },
   "ai-agentic-security": {
     "pain": [
@@ -1366,7 +1561,12 @@ window.UC_DECKS = {
         "show": "Managed platforms via API, custom agents via the AI-FW proxy"
       }
     ],
-    "hook": "How many AI agents are running in your environment right now — and what did each do yesterday?"
+    "hook": "How many AI agents are running in your environment right now — and what did each do yesterday?",
+    "notes": {
+      "divider": "Before anything on screen, ask what triggered this conversation — a developer-tools audit, a copilot-platform rollout, an incident — and who owns agent risk today; the honest answer is usually nobody.\nFrame the stakes: agents act at machine speed with someone's delegated permissions, and published attacks like EchoLeak and CurXecute arrived through tool responses, not prompts. Then bridge into the walk: discover, observe, govern.",
+      "why": "Three problems compound: sprawl — nobody holds an inventory of agents or the MCP servers they touch; delegated identity — an agent carries the launcher's access to repos, file systems and CRM; and injection that can hide in what an agent reads, not just what it is asked.\nThe distinction to draw is the three agent types — local on endpoints, managed on platforms like Bedrock or Copilot Studio, and custom code — secured differently, governed in one workflow across four inspection points: prompts, outputs, tool calls and tool messages.\nPivot: start with discovery, because you cannot govern what you cannot list.",
+      "demo": "Open Scout and land the deployment story: a script pushed by MDM — Intune, Jamf or Kandji — with no TLS inspection, proxy or browser extension involved. Move to Local Agents: every instance with user, tools and last seen, shadow copies flagged from personal email addresses; drill one to its MCP servers and mark a dubious tool unsanctioned — that classification feeds straight into policy.\nIn Agent Sessions, open a session with a violation tag and narrate the timeline: the payload arrived in a tool message, not a prompt, and policy intervened right there. Flip to Schema for the call graph.\nClose on Integrations: managed platforms connect by API, custom agents by repointing their LLM base URL at the AI-FW proxy — same Guards, same audit, one model for every agent."
+    }
   },
   "ai-homegrown-apps": {
     "pain": [
@@ -1397,7 +1597,12 @@ window.UC_DECKS = {
         "show": "Drill the session: detections, verdicts and the engine's analysis report"
       }
     ],
-    "hook": "If someone typed 'ignore your system instructions' into your chatbot tonight, what component stops it?"
+    "hook": "If someone typed 'ignore your system instructions' into your chatbot tonight, what component stops it?",
+    "notes": {
+      "divider": "Ask the app or platform team what AI they have shipped or in flight — which models, whether a gateway like LiteLLM is already in place, and who fielded the last question about whether the chatbot is safe.\nFrame the gap: a model key, a system prompt and a vector store go live in a sprint; runtime protection usually never ships. Bridge: here is a Guard in that interaction path, end to end.",
+      "why": "The risks are the ones the OWASP LLM community keeps top of its list — injection and multi-turn manipulation, leakage from connected CRM and HR data, regulated topics the app must not advise on, and no audit trail when someone asks what the bot told a customer.\nThe answer is a Guard between the app and its models, deployed three ways — inline proxy, an API verdict the app enforces itself, or through an existing AI gateway — so integration is an afternoon, not a re-architecture.\nExtend the hook with the page's second half: where would you find the record of the attempt tomorrow morning? Then go live.",
+      "demo": "Open a guard and walk the three types, then the details page — endpoint, headers, keys and the sample request code a developer pastes in; that page is the integration story. Move to the interaction policy: engine profiles grouping detectors — identifiers, secrets, injection, regulated topics — mapped to Block, Anonymize or Monitor per guard and direction; when rules collide, the stricter action wins.\nIn the Playground, run the jailbreak scenario live, then a custom prompt with a fake National Insurance number — adjust a confidence level and re-run; this is the rehearsal space their team keeps.\nClose in the Interaction Explorer: drill the session — detections, verdicts, the engine's analysis report — the audit trail their app lacks today."
+    }
   },
   "ai-legal-genai": {
     "pain": [
@@ -1432,7 +1637,12 @@ window.UC_DECKS = {
         "show": "Per-matter AI-usage evidence, exportable for a client security review"
       }
     ],
-    "hook": "Your fee-earners use GenAI on client matters today — could you show a client how it is controlled?"
+    "hook": "Your fee-earners use GenAI on client matters today — could you show a client how it is controlled?",
+    "notes": {
+      "divider": "Open with the firm's own policy: what is it today? The common answer is that everyone was told not to use public chatbots — a ban with no visibility, which sets up the whole story.\nThen ask whether any client's outside-counsel guidelines already mention AI; there is usually at least one, and it makes the per-matter point for you. Bridge: here is discovery through to client-facing evidence.",
+      "why": "Keep it in the profession's language: a prompt naming a client is a transfer of confidential information to a model the firm never assessed — the SRA's Risk Outlook says exactly this, and the firm stays responsible for the outcome regardless.\nA ban fails twice: use moves to personal accounts, and the recruitment edge moves to firms that found a safer answer. The unlock is scoping — policy sources are IdP groups, so one client's no-AI clause and another's AI-with-redaction terms can both be true at once: the ethical wall, applied to AI.\nAsk: if a client requested an AI-usage report on their matter tomorrow, who could produce it? Then pivot.",
+      "demo": "Open on Discovery and stress how the estate was built: from traffic already crossing the platform, nothing installed on fee-earner laptops, prompt content untouched. On AI Users, drill one associate — apps used, the safe-versus-violation split — the specific conversation a practice-group head can act on.\nIn the User Interaction Policy, build the redaction rule: a practice-group IdP source, the sanctioned assistant, Anonymize and Monitor — then run a prompt naming a client and show the identifier masked, the answer still returned. Add a second rule blocking GenAI for a restricted client team, notification attached: an outside-counsel clause enforced, not just filed.\nShow the Legal DLP profile — classifiers for agreements, patents and court documents — then close in Events: attributed, exportable, ready for a client's security review."
+    }
   },
   "ai-eu-ai-act": {
     "pain": [
@@ -1467,7 +1677,12 @@ window.UC_DECKS = {
         "show": "Who changed which AI policy, when, from where"
       }
     ],
-    "hook": "If a regulator asked tomorrow which AI systems process EU data, how long would your answer take?"
+    "hook": "If a regulator asked tomorrow which AI systems process EU data, how long would your answer take?",
+    "notes": {
+      "divider": "Open on ownership: who holds AI Act readiness — legal, compliance, the CISO — and can they list the AI actually in use? Most programmes stall on that first step.\nSketch the dates: general applicability from August 2026, the high-risk wave deferred to late 2027 — runway for building the evidence machine, not a cancellation. Bridge: here is the inventory, the control and the evidence, live.",
+      "why": "Ground it in the research the page cites: over half of organisations lack systematic AI inventories, and in one analysis of 106 enterprise AI systems, 40 percent could not be clearly classified against the Act's tiers. Add the angle that surprises UK boards: output used in the Union pulls a third-country deployer into scope.\nThen position with care, exactly as the page insists — Cato supports the readiness programme, it never makes anyone compliant; classification, impact assessments and documentation stay with governance, and this is the evidence layer underneath.\nAsk whether any team's customisation of a third-party tool could tip them from deployer into provider. Pivot to the console.",
+      "demo": "Open the Overview and let the tiles speak — the gap between the app count on screen and what the room believed is their inventory problem, quantified. Walk Discovery next: per-app users, risk and last activity, embedded SaaS AI included — the input every classification and scoping exercise starts from.\nBuild one User Interaction Policy rule — four actions, a notification that teaches at the moment of use, TLS inspection named as the prerequisite. In Events, filter to AI: attributed, exportable to CSV or the SIEM — and be straight that this is supporting evidence, with retention defaulting to three months against Article 26's six-month window.\nClose in the Audit Trail — who changed which AI policy, when, from where. They arrived without an inventory and leave with one."
+    }
   },
   "migration-methodology": {
     "pain": [
@@ -1502,7 +1717,12 @@ window.UC_DECKS = {
         "show": "Validation tests and a written rollback step per wave"
       }
     ],
-    "hook": "The question is not whether Cato works — it is whether you can get there without a weekend of heroics."
+    "hook": "The question is not whether Cato works — it is whether you can get there without a weekend of heroics.",
+    "notes": {
+      "divider": "Land the doubt first: nobody in the room questions whether the platform works — they question whether they can get there without an outage or a stalled project.\nSay this is the Professional Services method itself: engineered, reversible and deliberately boring in the best possible way. Then set expectations — most of this is a whiteboard session, not a console demo, and their answers drive the design.",
+      "why": "Talk the co-existence problem plainly: two networks run side by side for months, and the silent killer in multi-region estates is asymmetric routing — the return takes a different regional hub, stateful firewalls see half the conversation, sessions drop.\nThe method beats that with sequence: discovery before design, then one deciding question — which device makes the routing decision between legacy and Cato — with six patterns to choose from. The proof is scale: roughly three hundred sites moved on routed-range pre-staging, each migration a delete-and-update of ranges, not a policy rebuild.\nAsk their 2am question: is rollback a route change or a site visit? Then start the workshop.",
+      "demo": "On the whiteboard, run the structured discovery first — traffic flows, layer-2 versus layer-3 LAN, routing strategy — because the pattern is dictated by facts, never a template. Weigh the macro approach next: one cutover window against phased waves, judged on site count, risk appetite and contract end dates; most estates land phased.\nThen pin the default gateway per site archetype — L3 switch, legacy firewall or the Socket — that single answer selects the co-existence pattern. In the console at Sites, show routed ranges with dummy pre-staging or a BGP handoff, sizing hub bandwidth and redundancy.\nFinish in Topology: validation tests per wave, the rollback step written down — re-add the range, withdraw the prefix, re-point the static — and if multi-region, trace one flow both directions before leaving the room."
+    }
   },
   "migration-journey-mpls": {
     "pain": [
@@ -1537,7 +1757,12 @@ window.UC_DECKS = {
         "show": "Circuit off, contract cancelled — full any-to-any on Cato"
       }
     ],
-    "hook": "Press play and watch the middle of an MPLS exit — the part everyone fears — never break."
+    "hook": "Press play and watch the middle of an MPLS exit — the part everyone fears — never break.",
+    "notes": {
+      "divider": "Set the emotional truth: nobody stalls at the start of an MPLS exit, or at the end — they stall in the middle, when circuits expire on different dates and half the estate sits on each network.\nSay this page exists for exactly that moment: an animated walkthrough of the middle. Then press play and let the phases carry the story.",
+      "why": "The fear is specific: while sites straddle two networks, can a migrated branch still reach an un-migrated one? The answer is yes, throughout — the first Socket at the colo peers eBGP with the MPLS CE, advertising each side's prefixes to the other, so every site holds a route to every other at every phase.\nThe shape of the journey de-risks itself: the bridge first, then the datacentre and cloud as early wins, then branch waves, then the switch-off — and rollback at any point is a routing change.\nPivot: rather than assert it, watch it — the player steps through all five phases.",
+      "demo": "Start the player on the baseline: everything hub-and-spoke through the carrier core, the cloud estate reached the long way, through the datacentre. Advance to the hub bridge: the first Socket lands at the colo beside the MPLS CE and peers eBGP with it — dual-homed, both paths live, nothing changes for users yet.\nNext the datacentres come on-net — an HA Socket pair on-prem, a vSocket in the cloud — with the amber interim path showing branches still on MPLS reaching them across the handoff. In the waves phase, branches swing up while the last site rides the emptying MPLS cloud, still reaching everything.\nFinish on retirement: circuit off, contract cancelled, any-to-any on one routing table — then point at the full co-existence page for the routing tables line by line."
+    }
   },
   "migration-journey-sdwan": {
     "pain": [
@@ -1572,7 +1797,12 @@ window.UC_DECKS = {
         "show": "AS-path length anchors each site — symmetry by routing, not manual pins"
       }
     ],
-    "hook": "It never stalls on whether Cato is better — it stalls on how both fabrics coexist mid-cutover."
+    "hook": "It never stalls on whether Cato is better — it stalls on how both fabrics coexist mid-cutover.",
+    "notes": {
+      "divider": "Most SD-WAN prospects already believe the destination — what they cannot picture is the middle, when half the estate sits on each fabric and traffic has to flow cleanly between them.\nSo rather than argue the case, I want to show you the transition itself. What follows is the eBGP-hub co-existence pattern played end to end as an animation — parallel hub, datacentre and cloud, branch waves, then the overlay switched off.",
+      "why": "Today everything anchors to one hub appliance — branches, the datacentre, even the cloud estate backhauls through it. And the real fear mid-cutover is asymmetry: if a flow goes out one fabric and comes back the other, the stateful firewalls each see half a conversation and sessions drop.\nAsk them straight: how would you keep both fabrics symmetric while sites move? The answer is that the fabrics meet in exactly one place, routes are exchanged over eBGP at that boundary, and crossing between them adds an AS hop — so best-path selection keeps every flow and its return on the same hub. Rollback is just reconvergence.\nLet me press play and walk it through phase by phase.",
+      "demo": "Phase one — a Socket stands up beside the legacy hub and the eBGP handoff comes alive, validated with test prefixes before a single production site moves. Point out that nothing has moved yet; legacy still carries everything.\nPhase two takes the low-risk wins: HA Sockets in the datacentre, a vSocket in the Azure hub. Apps and cloud are on-net while every branch still rides the overlay across the handoff.\nPhase three is the waves — each branch cutover is independent, its overlay link falls dormant rather than deleted, and the handoff stays as the way back until sign-off. Phase four strikes through the hub, overlay, controllers and licences — one fabric, any-to-any.\nFinish on the routing-insight section below the player: symmetry is a property of the routing, not a manual pin. The route-filtering detail and the multi-region options A to F live on the Migration Methodology page."
+    }
   },
   "migration-journey-zscaler": {
     "pain": [
@@ -1603,7 +1833,12 @@ window.UC_DECKS = {
         "show": "ZCC uninstalled, ZIA and ZPA decommissioned — one client, one platform"
       }
     ],
-    "hook": "How do users keep internet security while you move? Watch the answer play out in five phases."
+    "hook": "How do users keep internet security while you move? Watch the answer play out in five phases.",
+    "notes": {
+      "divider": "Every SSE replacement stalls on the same fear — pull users off ZIA and internet security goes dark. It never has to, and that is the whole point of this section.\nThe answer is sequencing: the private-app rail moves first, users move last, and two agents co-exist in between. I am going to play that out for you as five phases, one moving picture.",
+      "why": "Today this customer runs two products and two policy sets, an agent that only does security, and private apps reached over ZPA and backhaul — with the WAN on somebody else's kit entirely.\nThe line that beats the objection is on this page: internet security never goes dark. The apps move first — a Socket in the datacentre, a vSocket in AWS — then users swing cohort by cohort with ZIA kept one flip away over interim IPsec until the converted policy is live and proven. Only then does ZCC come off, and every phase is independently reversible.\nLet me show you exactly how that plays out.",
+      "demo": "Phase one, the rail: a Socket lands in the London datacentre — the anchor of this estate — and a vSocket in AWS. The destinations users care about are on the backbone before anyone moves; users feel nothing.\nPhase two, the pilot: the branch Socket and the pilot's Cato Client swing to the PoP for private apps and the converted web policy together. Call out the trick — ZCC rides inside the Cato tunnel, and the interim IPsec lane keeps ZIA one flip away.\nPhase three, the waves: cohorts swap on the same dual-agent bridge and ZIA drains to standby — its egress, the ZPA lanes and the fallback all go dormant. Phase four retires it: ZCC uninstalled, ZIA and ZPA decommissioned, one client and one platform.\nIf they want the policy conversion and the real migration story behind this, that is the full Zscaler use case."
+    }
   },
   "migration-journey-vpn": {
     "pain": [
@@ -1634,7 +1869,12 @@ window.UC_DECKS = {
         "show": "Concentrators decommissioned — always-on ZTNA, nothing internet-exposed left to patch"
       }
     ],
-    "hook": "A VPN replacement moves people, not circuits — cohorts, not cutovers, is why it never stalls."
+    "hook": "A VPN replacement moves people, not circuits — cohorts, not cutovers, is why it never stalls.",
+    "notes": {
+      "divider": "Nobody needs convincing that the VPN estate is a liability — what stalls the project is the middle, with some users on the new client, some on the old, and contractors nobody wants to touch.\nThe key idea here: sites co-exist by routing, but clients co-exist by cohort. Let me play the whole retirement through for you, one cohort at a time.",
+      "why": "Today one tunnel grants the whole network — employees, contractors and BYOD alike — into headends that are sized for peak, patched on the vendor's schedule and left listening on the public internet. Even the Azure apps hairpin through the same datacentre.\nThe pattern that de-risks it is swap, not stack: no machine ever runs two full-tunnel agents, so each user is always on exactly one working path, and rollback is a per-cohort MDM change measured in minutes. Contractors never install anything at all — which is exactly why they move on the clientless wave.\nHere is how it unfolds.",
+      "demo": "Phase one, the rail: a Socket at the London datacentre and a vSocket in Azure put both app estates on the backbone before anyone moves — identity and MFA connected, posture in monitor, and the Azure hairpin collapses to one hop.\nPhase two, the pilot: MDM removes the VPN profile and installs the Cato Client in a single change window. The pilot's old tunnel falls dormant — that dormant tunnel is the rollback.\nPhase three, the waves: departments repeat the pilot's checklist, and contractors go clientless in the browser — no agent, no network address, just their named apps. The headends drain to standby through the soak window.\nPhase four: tunnel-groups disabled, concentrators decommissioned, posture flips from monitor to enforce and always-on takes over. Nothing is left listening on the internet. The full mechanics live in the AnyConnect and DirectAccess playbooks — back to the deck."
+    }
   },
   "migration-journey-firewall": {
     "pain": [
@@ -1665,7 +1905,12 @@ window.UC_DECKS = {
         "show": "Last appliance goes quiet — one global policy, no next refresh"
       }
     ],
-    "hook": "This renewal quote is a fork: another sizing exercise, or the last one you ever run."
+    "hook": "This renewal quote is a fork: another sizing exercise, or the last one you ever run.",
+    "notes": {
+      "divider": "The renewal quote on the table forces a decision either way — that is what makes this conversation easy to open. A refresh buys the same posture on newer tin and books the next end-of-life date straight back onto the calendar.\nSo the honest question is whether this sizing exercise is the last one they ever run. Let me show you the refresh becoming an exit, phase by phase.",
+      "why": "Today they have six edges and six rulebases, quietly drifting apart — branches, a regional hub, the datacentre pair and a virtual appliance in the cloud, all tied to one vendor's support cycle.\nWhat takes the fear out is monitor-first: FWaaS runs alongside each appliance and the events show exactly what the cloud rulebase would have allowed or blocked before it decides anything. Cutover becomes a policy change, rollback is the same change in reverse, and the appliance stays racked and licensed until its wave is signed off.\nWatch how the estate converges.",
+      "demo": "Phase one: the first Socket lands at the Frankfurt hub — deliberately the regional interconnect, which already sees cross-estate traffic, so one eBGP handoff covers co-existence. Imported rules run in FWaaS monitor while the appliance enforces.\nPhase two: Frankfurt cuts over and the bridge is live. The London DC's HA Socket starts its monitor run beside the firewall pair, and the AWS vSocket is the early win — no rack visit, no downtime window — already enforcing the forming rulebase.\nPhase three: branch waves cut enforcement to the cloud, and the DC pair's jobs split — internet and WAN policy to FWaaS, east-west segmentation to the LAN Firewall on the Socket. Signed-off appliances drop to powered-on standby.\nPhase four: the last monitor run signs off, the renewal is cancelled, with nothing left to size, patch or EOL. The economics and the full runbook are on the Firewall Refresh use case."
+    }
   },
   "migration-zscaler": {
     "pain": [
@@ -1696,7 +1941,12 @@ window.UC_DECKS = {
         "show": "Every verdict attributed to a named user and rule, exported"
       }
     ],
-    "hook": "A real customer got to one agent in five reversible phases — with the lessons learned left in."
+    "hook": "A real customer got to one agent in five reversible phases — with the lessons learned left in.",
+    "notes": {
+      "divider": "This one is grounded in a migration that actually happened — a UK professional-services firm that went from ZIA and ZCC on every endpoint to a single agent, in five phases, each one reversible.\nAnd the honest version of that story, friction included, builds more trust than any polished slide. Here is what I will show you: the baseline, the converted policy proving itself, and the evidence trail.",
+      "why": "Today's picture is a hairpin: internet traffic detours into a separate security cloud while the WAN sits on different kit — plus years of accumulated rules nobody fully owns.\nThe discovery question on this page is worth asking out loud: if you exported your ZIA and ZPA policy base today, how much of it could you still explain — and how much would you actually want to carry forward? The honest answer is why conversion starts with clean-up, not copy: export, review and map, deploy, optimise.\nOn the endpoint, ZCC and the Cato Client genuinely co-exist — the ZCC tunnel rides inside the Cato tunnel on-site — so protection never gaps. Let me show you how the pilot proves it.",
+      "demo": "Start in Monitor, Experience Monitoring: the pilot cohort's baseline week — per-user scores, connected PoP, TTFB — captured alongside the same users' ZIA logs, the yardstick for everything that follows.\nMove to Security, Internet Firewall: only the rules this cohort actually hits, recreated monitor-first. Block stays Block, Caution becomes Prompt, and every rule tracks an event — the hit counts are the parity evidence. Cato ends in an implicit allow, the same default posture as ZIA.\nThen Security, CASB: two rules — corporate SaaS pinned to the corporate tenant, uploads to personal instances blocked — matching what Cloud App Control decided for the same users.\nClose in Monitor, Events: filter to the converted rules, every verdict attributed to a named user and rule, and export the dated CSV. If the pilot passes, the group simply widens — and parity means intent, never identical counts."
+    }
   },
   "migration-palo-alto": {
     "pain": [
@@ -1731,7 +1981,12 @@ window.UC_DECKS = {
         "show": "Withdraw the handoff route — reversion timed in minutes"
       }
     ],
-    "hook": "The PA refresh date is already on the calendar — and Palo Alto's own migration tool is end-of-life."
+    "hook": "The PA refresh date is already on the calendar — and Palo Alto's own migration tool is end-of-life.",
+    "notes": {
+      "divider": "The refresh date is already on this customer's calendar — end of sale for the 3200 and 5200 series has passed and support ends in 2028 — and Palo Alto's own migration tool, Expedition, is end-of-life with no successor.\nSo even staying put is a migration project without a vendor tool. Here is what I will show you: a parallel socket beside the PA, policy proving itself at parity, and a rollback timed in minutes.",
+      "why": "Today every refresh re-buys the hardware plus the whole subscription stack — Threat Prevention, URL Filtering, WildFire, DNS Security, GlobalProtect — each licensed and sized per box, with TLS decryption eating the sizing fastest. Panorama is software they must run themselves, and CVE-2024-3400, a CVSS ten zero-day in GlobalProtect, forced emergency hotfix weekends across every exposed firewall.\nThe discovery question anchors it to their numbers: what does the next refresh plus subscriptions actually cost across the estate, and how many change windows did those hotfixes take?\nWith Cato, inspection moves to the PoP and the only PA-side change in the entire pilot is one route. Let me walk it.",
+      "demo": "Open Monitor, Topology: the pilot branch up on its nearest PoP with the PA untouched as default gateway — day-one co-existence, one route is all we asked of the PA estate.\nThen Security, Internet Firewall: the fifteen to twenty highest-hit App-ID rules translated monitor-first, custom App-IDs recreated as custom apps above the catalogue. Read hit counts against the week-zero Panorama baseline — compare flow outcomes, never rule labels.\nThen Monitor, Experience Monitoring: the GlobalProtect cohort's week on the Cato Client, HIP objects rebuilt as posture profiles re-checked every ten minutes, not only at logon.\nMonitor, Threats Dashboard next: IPS ran a week in monitor, then flipped to block — a harmless test detection stopped, block page shown, attributed to user, device and site.\nFinish in Topology: withdraw the handoff route in a change window and traffic reverts to the PA in minutes — a rehearsed rollback is the strongest close."
+    }
   },
   "migration-netskope": {
     "pain": [
@@ -1766,7 +2021,12 @@ window.UC_DECKS = {
         "show": "Scores hold steady — leaving the Netskope Client cost users nothing"
       }
     ],
-    "hook": "Netskope's SSE is strong — the case is architectural: one converged dataplane instead of five steering mechanisms."
+    "hook": "Netskope's SSE is strong — the case is architectural: one converged dataplane instead of five steering mechanisms.",
+    "notes": {
+      "divider": "Be straight about this one: Netskope built an excellent SSE, and customers rarely leave over performance. The case is architectural — SD-WAN arrived by acquisition on appliances feeding a separate security cloud, and every user population needs its own steering mechanism.\nSo we win on convergence and operations, and we neutralise on features. Here is what I will show you: the swapped cohort, private access without Publishers, and DLP rebuilt from source.",
+      "why": "A mature Netskope estate steers traffic five different ways — Client, tunnels, PAC and explicit proxy, proxy chaining — each with its own exception lists and failure modes, across two stitched-together dataplanes. And third-party reviews note DLP, CASB and ZTNA tuning can run to months.\nThe discovery question matters here: which steering mechanisms are actually live in the tenant today, and who owns the exception lists? Each mechanism is a separate cutover cohort with its own rollback — and those years of exceptions encode knowledge you want to inherit, not rediscover. The SSL bypass list is the single best import in the whole estate.\nOn the endpoint it is replace, not coexist — the two clients never tunnel side by side. Let me show you the pilot.",
+      "demo": "Start in Access, Users: the swapped cohort connected by name, with device, Client version and PoP — the roster check after the swap. The Netskope MDM package stays live — it's the rollback.\nThen Security, WAN Firewall: the pilot group allowlisted to named private apps behind the datacentre Socket, implicit block underneath — the Publisher's job done by routing plus policy, NPA definitions dormant as the way back.\nThen Security, DLP Configuration: the one profile the estate fires, rebuilt from Cato's catalogue, the EDM dataset regenerated from source data — nothing exports from Netskope — in monitor.\nIn Monitor, Events, walk the test list — blocked, prompted, tenant-restricted, each DLP payload — each verdict attributed, paired with its Netskope log line.\nClose on Experience Monitoring: scores hold steady across the parity weeks — leaving the Netskope Client cost users nothing. API Data Protection keeps scanning at rest and retires last."
+    }
   },
   "migration-cisco": {
     "pain": [
@@ -1801,7 +2061,12 @@ window.UC_DECKS = {
         "show": "All three planes in one feed — the multi-console problem closed"
       }
     ],
-    "hook": "How many separate migrations has the Cisco portfolio already booked for you over the next eighteen months?"
+    "hook": "How many separate migrations has the Cisco portfolio already booked for you over the next eighteen months?",
+    "notes": {
+      "divider": "Open with the calendar, not the pitch: AnyConnect 4.x support ends March 2027, the small ASA models go end-of-support in 2026, and the Umbrella legacy SKUs are already past end of sale. Cisco has booked several migrations for this customer whether they move or not.\nSo the question is whether to modernise each silo separately or converge once. Here is what I will show you: all three planes — DNS and web, remote access, and the WAN — each proven with its own rollback.",
+      "why": "Today it is a console per product — the Umbrella dashboard, ASDM or FMC for the firewalls, vManage or the Meraki Dashboard for the overlay, ISE for posture — each with its own licence model and renewal date. And their own landing zone, Secure Access, adds yet another console mid-transition.\nThe discovery question does the selling: map the Cisco renewal and end-of-life dates over the next eighteen months — how many separate migrations has the portfolio already booked, and how many consoles do they land in?\nWith Cato it converges to one platform and one policy model, regional eBGP hubs keep both overlays symmetric throughout, and every plane keeps a rehearsed, minutes-long rollback — a DNS re-point, an MDM re-push, a BGP withdrawal. Let me walk the three planes.",
+      "demo": "Start in Security, Internet Firewall: Umbrella destination lists deduped against system categories, survivors becoming custom categories on monitor-first rules. Flag the egress-IP catch — once a site sits behind the Socket it stops matching its Umbrella network identity, so its policy moves in that window.\nThen Network, Sites, BGP: the hub handoff Established, OMP redistributed both ways — filters dropping the default route so nothing is reachable two ways at once.\nAccess, Device Posture next: the ISE posture set rebuilt as one profile — anti-malware, disk encryption, OS build — evaluated continuously, not just at logon.\nThen Experience Monitoring: the AnyConnect cohort's quiet, green week with always-on enforced — ahead of the concentrator model, not level with it.\nFinish in Monitor, Events: one feed for DNS, web, WAN and remote access, each verdict attributed to user, site and rule — beside today's four dashboards, the multi-console problem closed on screen."
+    }
   },
   "migration-fortinet": {
     "pain": [
@@ -1836,7 +2101,12 @@ window.UC_DECKS = {
         "show": "Rollback rehearsed — spoke re-enabled, BGP reconverges in minutes"
       }
     ],
-    "hook": "FortiOS 7.6.3 removes SSL-VPN either way — spend that re-engineering once, on the way out."
+    "hook": "FortiOS 7.6.3 removes SSL-VPN either way — spend that re-engineering once, on the way out.",
+    "notes": {
+      "divider": "Nobody replaces a working FortiGate estate on a whim — what puts it on the table is three calendars the customer does not control: the patch treadmill, the hardware refresh cycle, and now FortiOS 7.6.3 removing SSL-VPN tunnel mode outright.\nRemote access gets re-engineered either way, so the honest question is whether to spend that effort once, on the way out. Here is what I will show you: the hub handoff, a live branch on both fabrics, policy at parity, and the rollback run as a drill.",
+      "why": "The record does the framing — FortiOS tops the known-exploited list, a chunk of those entries used in ransomware campaigns, and FortiJump showed the management plane itself becoming the breach, exposing every managed FortiGate's config and credentials. Meanwhile support ends sixty months after end of order and every refresh re-sizes both boxes and licences.\nThe discovery questions are on the page: which FortiGates are inside eighteen months of end of support, what did the last emergency patch cycle cost in change windows, and what is the plan for 7.6.3?\nThe Cato pattern is a parallel socket at each regional hub with an eBGP handoff — AS-path length keeps traffic symmetric, and every rollback is just BGP reconverging. Let me prove each piece.",
+      "demo": "Start in Network, Sites, BGP, Show BGP Status: the neighbour Established, routes exchanged both ways — validated with a test prefix first, filters dropping the default route and parallel-site prefixes.\nThen Monitor, Topology: the pilot branch on its Socket reaching hosts behind un-migrated FortiGate sites and reached back — one flow crossing backbone, handoff and legacy fabric.\nSecurity, Internet Firewall next: the bounded policy slice, rationalised on hit counts, monitor-first, every rule tracking events against the FortiAnalyzer baseline. Keep it fair — the single-pass engine inspects flows FortiOS never profiled; new detections are coverage gained, not false positives.\nThen Experience Monitoring: the SSL-VPN cohort's week on the Cato Client — FortiClient disabled through EMS first, one data path per endpoint.\nClose in Network, Routing Table with the drill: withdraw the branch, re-enable the spoke, BGP reconverging in minutes, ping running, then cut forward — that rehearsal de-risks every later wave."
+    }
   },
   "migration-forcepoint": {
     "pain": [
@@ -1871,7 +2141,12 @@ window.UC_DECKS = {
         "show": "Every verdict attributed to a named user and rule"
       }
     ],
-    "hook": "Where does a proxy-heritage web stack sit in a data-security-first roadmap?"
+    "hook": "Where does a proxy-heritage web stack sit in a data-security-first roadmap?",
+    "notes": {
+      "divider": "Open with the roadmap question: Forcepoint now describes itself as an AI-powered data-security company — it sold the governments business to TPG and launched Data Security Cloud in 2025. None of that is an end-of-life, and say so plainly; the pressure is strategic, and the operational case stands on its own.\nHere's what the path onto one platform looks like.",
+      "why": "Today the estate is explicit by design: a PAC decides what reaches the proxy, only proxied web ports get inspected, identity rides proxy auth, and web, firewall and the ex-Bitglass SSE each keep their own console. With Cato, steering flips to transparent — the Client and Socket own the path — so the PAC estate stops being maintenance and becomes the rollback lever.\nAsk which Forcepoint products are actually deployed, when each contract renews, and whether any appliance end-of-sale notices are in hand. Be honest, too, that endpoint DLP may stay as a hybrid.\nNow let me show you how it lands.",
+      "demo": "Start in Access, Users: the pilot group synced over SCIM, so everything you're about to see carries a name — identity without proxy challenges.\nThen the Internet Firewall — read the hit counts out loud; Websense's Confirm action lands as Prompt, though time-quota browsing has no direct twin, so validate that per policy. Then DLP Configuration: dictionary and regex classifiers arrive as data types, structured fingerprints as exact data matching — thresholds re-proved, never copied.\nOn TLS Inspection, show the bypasses sitting above the pilot-scoped Inspect rule — pinned apps must be bypasses. Finish in Events: one verdict per rule, attributed by name.\nClose on the safety net — rollback is reinstating the PAC by GPO — then back to the deck."
+    }
   },
   "migration-anyconnect": {
     "pain": [
@@ -1906,7 +2181,12 @@ window.UC_DECKS = {
         "show": "The full session trail, attributed to identity"
       }
     ],
-    "hook": "You are already forced to replace the client — why rebuild the same architecture?"
+    "hook": "You are already forced to replace the client — why rebuild the same architecture?",
+    "notes": {
+      "divider": "The client migration is already booked for them: AnyConnect 4.x loses support in March 2027, and the smaller ASA headends go in August 2026 — so a repackage, re-test and redeploy project happens either way. The only open question is whether they rebuild the concentrator model at the end of it.\nFrame it as the project they already own, done once, properly — here's what that looks like live.",
+      "why": "Today every remote session hairpins through a datacentre appliance sized for a guessed peak — a snow day finds the cliff — and listening on the public internet. Split tunnels dodge the hairpin by skipping inspection entirely; either way, somebody loses.\nWith Cato there is no headend: the Client attaches to the nearest PoP, posture is checked for the life of the session, and access is per named application, not per subnet.\nWorth asking: how many headends, what's peak concurrency against the licensed ceiling, and who owns the split-tunnel exception list? Let's connect and see.",
+      "demo": "Connect with the Client first — SSO and MFA at the IdP, attached to the nearest PoP. Point at what's absent: no concentrator address, no choosing the least busy gateway.\nThen Client Connectivity Policy: the rules deciding who may bring a tunnel up at all — group, country, posture — control an ASA scatters across DAP logic. Open a Device Posture profile and land the ISE point: these checks run continuously through the session, not once at logon.\nIn the WAN Firewall, show one named application granted and the adjacent resource refused — least privilege by default, not an ACL project. Close in Events on the full session trail by identity — the audit trail concentrator syslog never delivered — then back to the deck."
+    }
   },
   "migration-directaccess": {
     "pain": [
@@ -1941,7 +2221,12 @@ window.UC_DECKS = {
         "show": "One identity-attributed audit trail, in one place"
       }
     ],
-    "hook": "Microsoft has already decided DirectAccess dies — the only question is what replaces it."
+    "hook": "Microsoft has already decided DirectAccess dies — the only question is what replaces it.",
+    "notes": {
+      "divider": "Microsoft's guidance is blunt: DirectAccess is deprecated and will be removed from a future Windows Server release, so the move lands with their next server refresh whether they plan it or not. Even the sanctioned successor, Always On VPN, is still a gateway estate they build and nurse themselves.\nPosition this as the forced move made once, properly — and to more than Windows. Here's what I'll walk through.",
+      "why": "Today remote access covers domain-joined Windows Enterprise only — Macs, phones and contractor laptops sit outside — kept alive by a Network Location Server that breaks everyone when it fails, plus PKI and IP-HTTPS plumbing to nurse. And a connected tunnel grants the network, not an application.\nWith Cato the always-on behaviour survives, but cross-platform, with no domain join, no NLS, and posture checked live rather than assumed from domain membership.\nAsk how many non-Windows and unmanaged users sit unserved today, what happens when the NLS drops, and which Windows Server release finally forces the change. Then let's see it.",
+      "demo": "Connect as the user first — the client connects on its own to the nearest PoP; no server deciding whether it's inside or outside, no domain-join prerequisite. Mention it's the same client on macOS and mobile.\nThen Client Connectivity Policy: the connection gate DirectAccess buried in GPO scoping and security groups, now explicit and identity-driven. In Device Posture, the trust domain join merely implied becomes an enforced, continuous check.\nOver to the WAN Firewall: one named application for the group and no rule granting the subnet — the machine on the network becomes the user on the application. Close in Events with the whole trail in one place — not scattered across DA server, NLS and event logs — then back to the deck."
+    }
   },
   "migration-versa": {
     "pain": [
@@ -1976,7 +2261,12 @@ window.UC_DECKS = {
         "show": "Translated rules matching what their VOS ancestors matched"
       }
     ],
-    "hook": "Who patched your Director in August 2024 — you, your carrier, or nobody?"
+    "hook": "Who patched your Director in August 2024 — you, your carrier, or nobody?",
+    "notes": {
+      "divider": "Ask the patching question: the 2024 Director zero-day was exploited in the wild against the providers who run Director for downstream enterprises, and 2025 brought a CVSS 10 bypass in Concerto. Patches exist for all of it — the real question is who applied them, and how quickly.\nThis is the operating model on trial, not the packet path. Here's what I'll show you on the way out of it.",
+      "why": "Today someone — them or their carrier — hosts and patches Director, Controller, Analytics and Concerto, all locked to one software version so upgrades are fleet events; at scale that's two Director servers and a six-server analytics cluster per 2,500 appliances. In carrier-managed estates even a config export is a change ticket with lead time.\nWith Cato there's no head-end anywhere in the estate: the control plane is part of the service and the vendor patches the platform.\nUse the page's question — who patched those four components in August 2024 and April 2025, and how long did it take? Then the co-existence build.",
+      "demo": "Open the hub site's BGP settings: a parallel Socket beside their hub, neighbour Established, the MP-BGP overlay intact on its side of the seam. Then the routing table — filter to the exchanged prefixes and read off AS path and communities: the two worlds are talking.\nNow the upgrade they can't answer: Cloud Apps discovery on the pilot cohort with nothing translated, because a VOS estate typically carries no inline CASB. Follow with Experience Monitoring — site and users scored across a working week, answering whether it feels slower than the overlay.\nFinish in Events: translated rules in monitor, nothing blocking until events prove each rule matches its VOS ancestor. Wrap: cutover is a routing event; rollback re-enables the spoke and BGP reconverges."
+    }
   },
   "migration-cloudflare": {
     "pain": [
@@ -2011,7 +2301,12 @@ window.UC_DECKS = {
         "show": "Cohort scores holding from the day of the swap"
       }
     ],
-    "hook": "Could you list every Access app, tunnel and service token today?"
+    "hook": "Could you list every Access app, tunnel and service token today?",
+    "notes": {
+      "divider": "Lead with the inventory challenge: most Cloudflare Zero Trust estates were never designed — the CDN landed first, then Access apps, tunnels and DNS filtering accreted team by team, sometimes across accounts. If they can't list every Access app, service token and egress IP today, that is the finding.\nBe clear the CDN, WAF and DNS stay on Cloudflare — a scoped move, not an exit. Here's what I'll show you.",
+      "why": "Today the free anchor sets the price perception while the enterprise pieces — isolation, dedicated egress IPs, custom DLP, retention — sit in add-ons and contracts. And the branch side is thin: by their own appliance reference, no QoS, no fail-open, failover up to thirty seconds.\nWith Cato it's one dataplane — Socket for sites, Client for users, one policy engine — plus a proper SD-WAN edge with a monitored last mile. Concede the network is genuinely strong; the gap is platform convergence.\nAsk whether they could produce that full inventory today, and say which account each piece lives in. Then to the console.",
+      "demo": "Start in the Internet Firewall: Gateway's DNS, network and HTTP policies as one ordered rulebase, with Isolate as a policy action rather than an add-on SKU. Then the WAN Firewall: each named Access app is one allow rule over an implicit deny — and flag that service tokens have no like-for-like, so machine flows get designed, not assumed.\nShow the connection gate: a device failing posture refused at connect, reason on screen. Over to Sites for the re-pointed Magic WAN edge — both IPsec tunnels up, the old tunnel definition idle as the rollback.\nClose on Experience Monitoring, cohort scores holding from the day of the agent swap — the swap is per cohort, never two agents on one device. Back to the deck."
+    }
   },
   "migration-iboss": {
     "pain": [
@@ -2046,7 +2341,12 @@ window.UC_DECKS = {
         "show": "A per-user trail — reporting continuity for the safeguarding lead"
       }
     ],
-    "hook": "Which exam platforms are keyed to your iboss egress IPs today?"
+    "hook": "Which exam platforms are keyed to your iboss egress IPs today?",
+    "notes": {
+      "divider": "Open on the egress IPs: iboss gateways are single-tenant, so every SaaS restriction, partner firewall and exam-platform allowlist may be keyed to addresses nobody owns a list of. If that question gets a shrug, discovery starts there.\nThen the wider frame: an SSE-only platform beside a separate network vendor becomes one console — and every wave keeps the hosted PAC as its way back. Here's the walk.",
+      "why": "Today steering is the estate: PAC files, per-platform connectors, GRE tunnels and DNS redirection — four paths in, each encoding years of exceptions. And because iboss was SSE-only until 2024, the network runs on a second vendor — two policy planes, two renewals.\nWith Cato, steering goes transparent — Client for roaming devices, Socket for sites — and both planes land in one console, with the hosted PAC frozen as every wave's rollback rail.\nAsk who owns the list of allowlists keyed to their dedicated IPs. Then into the console — and the pilot cohort is staff, never pupils: safeguarding filtering can't run monitor-only.",
+      "demo": "Start in Sites: the pilot school's GRE tunnel replaced by a Socket — an upgrade, not a swap, with HA and QoS the proxy tunnel never had.\nThen the Internet Firewall: the cohort's tier translated with every rule tracking events — those hit counts are the safeguarding evidence. On the IPS Content Policy tab, show SafeSearch and YouTube enforcement, and say the caveat out loud: DNS-over-HTTPS bypasses these controls, so the DoH change ships alongside.\nIn TLS Inspection, both root certificates sit side by side and the bypasses are seeded from the harvested iboss lists — rollback never breaks HTTPS. Finish in Events on the per-user trail the safeguarding lead needs, then close: any wave re-points to the hosted PAC in one change."
+    }
   },
   "migration-checkpoint": {
     "pain": [
@@ -2081,7 +2381,12 @@ window.UC_DECKS = {
         "show": "Hit counts read against the week-zero show-hits baseline"
       }
     ],
-    "hook": "Spend the refresh budget renewing the appliance model — or retiring it?"
+    "hook": "Spend the refresh budget renewing the appliance model — or retiring it?",
+    "notes": {
+      "divider": "The calendar does the opening: a broad appliance cohort leaves support in December 2025, so Quantum Force refresh quotes are landing now, and R81.10 follows in March 2026 with a management-first upgrade project attached. Money and change windows are being spent either way.\nPose the choice — renew the appliance model or retire it — then show what retiring it looks like, one prefix at a time.",
+      "why": "Today the estate is management-heavy: SmartConsole's ordered and inline layers, blades licensed per gateway, its own identity collectors — and since Perimeter 81, a second policy plane in the Harmony SASE portal. Harmony Connect customers have already been through one forced migration inside the same vendor, and the 2024 zero-day showed the gateway itself is attack surface.\nWith Cato it's one policy plane in the CMA, no management server to run, and PoPs the vendor patches.\nAsk which gateways sit on the December list, whether a refresh quote is on the table, and who owns the management upgrade. Then the parallel build.",
+      "demo": "Open Topology first: the parallel Socket alive beside the untouched Quantum gateway — the only Check Point change in the build is one route on a transit VLAN.\nThen the Internet Firewall: ordered and inline layers flattened into one first-match rulebase — effective policy translated, never the layer structure. On TLS Inspection, put the staged bypass-first rules beside the HTTPS Inspection blade export and be honest: Cato will decrypt more than the blade ever did, so new detections are findings, not regressions.\nThe Threats Dashboard shows IPS monitor-first, then a harmless test detection blocked and attributed. Close in Events, reading hit counts against the week-zero show-hits baseline — same flows, same intent, names attached. Wrap on rollback: withdraw the route, traffic reverts in minutes, rehearsed."
+    }
   },
   "migration-edgeconnect": {
     "pain": [
@@ -2116,7 +2421,12 @@ window.UC_DECKS = {
         "show": "Firewall and IPS verdicts with no SSE tunnel in path"
       }
     ],
-    "hook": "Can HPE say in writing which of three SD-WAN lines carries the roadmap?"
+    "hook": "Can HPE say in writing which of three SD-WAN lines carries the roadmap?",
+    "notes": {
+      "divider": "Put the roadmap question on the table: post-Juniper, HPE sells three branch SD-WAN lines on three management planes, and nobody has said which one wins. Nothing is end-of-life — say that plainly — but a written commitment is a fair procurement ask.\nMeanwhile this estate runs the WAN in one console and security in another, stitched together by tunnels. Here's the consolidation, live.",
+      "why": "Today EdgeConnect does the WAN and full inspection is service-chained to a separate SSE — two consoles, two policy models, two contracts, with tunnel orchestration as the seam every change touches. Add the appliance anchor: sizing, HA pairs, bandwidth-tier licences, and Boost metered per megabit.\nWith Cato the edge thins to a Socket while inspection and acceleration move to the PoP, platform-wide and unmetered — SD-WAN and SSE consolidated in one move.\nAsk whether they know what Boost and the SSE subscription cost per year, side by side, across the estate. Then to the hub handoff.",
+      "demo": "Start in the hub site's BGP settings: the eBGP handoff Established with the EdgeConnect hub, the fabric and every overlay intact on its side. Then Network Rules: one Business Intent Overlay landed as an app-aware rule, hit counts proving it matches what the overlay matched. In Bandwidth Management, the overlay's QoS priority becomes a profile that only bites under congestion — shaping under load, not throttling at rest.\nApp Analytics carries the Boost honesty test: timed transfers, run cold, judged against the agreed business window rather than a dedup ratio — either verdict is a finding. Close in Events: firewall and IPS verdicts on the pilot site, no SSE tunnel in the path — it was simply never rebuilt. Wrap: rollback re-enables the spoke and routing reconverges."
+    }
   },
   "migration-symantec": {
     "pain": [
@@ -2151,7 +2461,12 @@ window.UC_DECKS = {
         "show": "Verdicts attributed by name — no proxy challenge needed"
       }
     ],
-    "hook": "Reporter is end-of-life — your hit data is a wasting asset either way."
+    "hook": "Reporter is end-of-life — your hit data is a wasting asset either way.",
+    "notes": {
+      "divider": "Reporter's end-of-life is the opening: the hit data that justifies rationalising twenty years of CPL lives in databases that will not migrate anywhere, so exporting it is urgent whatever they decide. The rest of the pressure is structural — hardware EOL backstops, the SGOS 7.3 sunset, subscription-only renewals with steep uplifts.\nThe play is rationalise, not port. Here's what the landing zone looks like.",
+      "why": "Today it's explicit steering — PAC, WCCP, agents — feeding proxies whose policy is order-dependent CPL nobody can fully audit, with decryption on a dedicated appliance and reporting on a product already discontinued. With Cato, steering goes transparent, the live fraction of the CPL becomes a rulebase where every rule earns its keep on hit counts, and WSS, CloudSOC and DLP intent land in one console.\nStay honest on DLP: fingerprinting, endpoint channels and Discover argue for a scoped hybrid, not a contest.\nAsk which components are actually deployed, when each renews, and who consumes Reporter's output today. Then the walkthrough.",
+      "demo": "Open the Internet Firewall on the rationalised slice: block and prompt rules with live hit counts, the coach page reborn as Prompt — every rule justified by events, not archaeology. Then TLS Inspection: the SSL Visibility appliance recast as policy — bypasses first, verified entry by entry from the old exemptions, then Inspect scoped to the cohort; the appliance gets no successor.\nThe Cloud Apps Dashboard shows CASB discovery with no SpanVA collector — the PoP already sees the traffic. In Client Connectivity, the pilot-scoped rule above the default allow keeps enforcement on the migration group only.\nFinish in Events — verdicts attributed by name, no proxy challenge — and close on the exit: rollback reinstates the PAC and the WSS agent, a config event, not a project."
+    }
   },
   "migration-sophos": {
     "pain": [
@@ -2186,7 +2501,12 @@ window.UC_DECKS = {
         "show": "Rollback drilled mid-pilot — re-plug the RED, revert, swap forward"
       }
     ],
-    "hook": "Your XGS refresh quote rises again in July 2026 — what if it removed the appliance cycle instead?"
+    "hook": "Your XGS refresh quote rises again in July 2026 — what if it removed the appliance cycle instead?",
+    "notes": {
+      "divider": "Open on the calendar, not the product. Every XG firewall has been out of support since March 2025, licence prices rose roughly thirty per cent on the way out, and XGS hardware went up another ten per cent from July 2026 — so the refresh money is being spent either way.\nThe honest question is whether it buys another appliance cycle or removes it. Here's what I'll show you.",
+      "why": "Resist the consolidation pitch — Sophos Central genuinely is one console. The real pressure is architectural: small sites tunnel everything back to the hub before anything is inspected, and the VPN portal and ZTNA gateway sit on exactly the surface class in the CISA exploited-vulnerabilities record.\nThe give-back is that everything they like stays — endpoint, XDR and MDR remain in Central, and none of it needs a Sophos firewall.\nAsk who patches the XG boxes now support has ended, and what happens to the ZTNA seat price when it becomes Workspace Protection at renewal. Then move to the live walk.",
+      "demo": "Start in Network, Sites: the pilot branch that used to run an SD-RED is up on a Socket that provisioned itself, with the hub handoff carrying the un-migrated traffic.\nMove to Device Posture and open the anti-malware check — Sophos sits in the vendor drop-down, so the Security Heartbeat replacement is a selection, not a promise. Then the Internet Firewall: a bounded SFOS slice rebuilt with tracking on, nothing blocking until events justify it.\nIn Experience Monitoring, land that every device here also runs Intercept X — a week of Good scores is coexistence evidence no vendor statement provides. Finish in Topology: the RED was re-plugged mid-pilot, re-established, then swapped forward again. That drill makes the wave plan credible — back to the deck."
+    }
   },
   "migration-cisco-asa": {
     "pain": [
@@ -2221,7 +2541,12 @@ window.UC_DECKS = {
         "show": "RA cohort baselined Good — no concentrator hairpin"
       }
     ],
-    "hook": "CISA ordered end-of-support ASAs permanently disconnected — a government has called time on this appliance category."
+    "hook": "CISA ordered end-of-support ASAs permanently disconnected — a government has called time on this appliance category.",
+    "notes": {
+      "divider": "Land the directive: ED 25-03 didn't ask agencies to patch — it ordered the hardware unplugged, and its April revision added that patching doesn't necessarily remove an attacker already on the box.\nFrom there the frame is simple: with every 5500-X at or past its support wall, the customer runs a migration project either way — the only choice is what it buys. Here's what I'll show you.",
+      "why": "Today is a frozen picture: the surviving boxes are capped on the 9.16 train with no fixes ahead, and Cisco's sanctioned exit is Firepower — a reimage, a new console, partial config conversion — landing on hardware with its own end-of-life treadmill already visible.\nWith Cato the same effort is spent once, and the bigger half is greenfield: SWG, CASB, DLP and TLS inspection this estate never had, running in monitor from week one.\nAsk where their serials sit against the 2025 and 2026 support walls, and whether anyone has run the NCSC's RayInitiator checks. Then go live.",
+      "demo": "Open in Network, Sites on the hub tunnel and name the trap avoided: an ASA takes one traffic selector per child SA, so this site is route-based VTI — and it negotiated cleanly.\nTopology next: the pilot branch on a Socket, the ASA still racked — reverting is a route change, drilled mid-pilot. Then the WAN Firewall: translated ACEs as an ordered allowlist — the direction split matters: site-to-site rules here, outbound exceptions to the Internet Firewall — with hit counts reconciling against the ASA's own hitcnt baseline.\nThe Threats Dashboard is the greenfield dividend: verdicts on traffic the ASA never looked inside. Close on Experience Monitoring — the remote cohort a week at Good, no concentrator in the path."
+    }
   },
   "migration-sonicwall": {
     "pain": [
@@ -2252,7 +2577,12 @@ window.UC_DECKS = {
         "show": "Rollback drilled — re-plug the TZ, its VPN re-establishes"
       }
     ],
-    "hook": "Every cloud-backup customer's firewall config was accessed — would you re-import that policy into anything?"
+    "hook": "Every cloud-backup customer's firewall config was accessed — would you re-import that policy into anything?",
+    "notes": {
+      "divider": "Open with the breach, stated flatly: SonicWall and Mandiant concluded that every customer using cloud backup had their firewall configs accessed — files holding credentials, keys and full policy.\nThat makes this the most incident-driven displacement in the library, and it reframes the Gen 8 refresh quote: the question isn't which appliance next, it's whether the estate gets rebuilt clean somewhere without portals. Here's what I'll show you.",
+      "why": "Walk the two mechanics rather than the headlines. Firewall-terminated SSL-VPN was the reported way in across the Akira campaigns — and the 2025 wave hit patched Gen 7 boxes, through credentials carried over from Gen 6 imports. And after the backup breach, every secret in the estate is potentially adversary-held regardless of patch level.\nSo the answer is rebuild, never re-import: cohorts to IdP-backed ZTNA first, secrets rotated, nothing compromised crossing over.\nAsk whether they used MySonicWall cloud backup, whether the Essential Credential Reset is complete, and where the SMA 100 users landed after October 2025. Then go to the walk.",
+      "demo": "Start in Access, Users, and land what's absent: the pilot cohort signs in through the IdP with MFA and posture, and no local account exists anywhere — the direct counter to the credential carry-over mechanic in SonicWall's own advisory.\nThen Sites: the TZ branch on a Socket, and the NSa hub running an IPsec on-ramp for un-migrated traffic — on a freshly generated key, because nothing that ever lived in a cloud backup gets reused. In the Internet Firewall, the zone-matrix slice runs as identity-aware rules with tracking on, reconciling against the SonicOS counters.\nFinish in Topology with the rollback — re-plug the TZ and its tunnel re-establishes — and mention the pilot portal going dark, verified from outside. That portal check is the de-risking headline."
+    }
   },
   "migration-zscaler-policy": {
     "pain": [
@@ -2287,7 +2617,12 @@ window.UC_DECKS = {
         "show": "Every match attributed to user, app and rule"
       }
     ],
-    "hook": "Copying five years of ZIA policy verbatim is the most reliable way to wreck a migration."
+    "hook": "Copying five years of ZIA policy verbatim is the most reliable way to wreck a migration.",
+    "notes": {
+      "divider": "Getting sites and agents onto Cato is the easy half of a Zscaler replacement — the half that stalls programmes is five years of ZIA policy across half a dozen engines.\nSo this section is about method, not features: export everything, cull on hit counts, map what survives, and let events earn every block. Here's what that looks like in the console.",
+      "why": "The failure mode is faithfulness: copy the estate verbatim and the dead rules, contradictions and every quirk arrive intact — and because the category and DLP taxonomies differ, a faithful copy can quietly weaken enforcement.\nThe method inverts that: hit counts decide what exists before anything is mapped — the same logic Cato later automates, flagging allow rules with no events in sixty days. Everything lands in monitor, so events prove each rule before it can hurt anyone.\nAsk which rules haven't matched in months, and which still say test or temp in the name — then take them into the console.",
+      "demo": "Run this against their own export — a working session, not a tour. In the Internet Firewall, rebuild one of their real ZIA rules: SCIM group as source, category as destination, Caution becoming Prompt — and show the insights flagging rules nobody uses.\nTLS Inspection is the sequencing moment: certificates first, conservative bypasses, and the honest line that CASB, DLP and tenant restrictions all wait behind this switch. In CASB, open the recommended starting policy and swap their corporate tenant into a restriction rule; in DLP, a Data Control rule in monitor, with source data hashed in the browser before upload — nothing imported blind.\nClose in Events: filter to the rules just built, every match attributed, and agree who signs off each monitor-to-block flip."
+    }
   },
   "migration-palo-alto-policy": {
     "pain": [
@@ -2322,7 +2657,12 @@ window.UC_DECKS = {
         "show": "Events are the new hit counts — translation proven"
       }
     ],
-    "hook": "How many rules are in your rulebase — and how many actually fired in the last 90 days?"
+    "hook": "How many rules are in your rulebase — and how many actually fired in the last 90 days?",
+    "notes": {
+      "divider": "Put the question to the room and wait: how many rules, and how many fired in ninety days? The gap between those numbers is the clean-up dividend — and it sizes the whole conversion.\nAdd the uncomfortable fact: Expedition is gone, retired at the end of 2024 with no successor, so there is no tool to hide behind. Here's how the translation actually runs.",
+      "why": "Fifteen years of App-ID policy doesn't convert as a file format — it's a functional translation between two models. Zones don't exist on Cato, so every rule consciously lands on a surface; and application-default is the silent trap — translate a rule without re-pinning its ports and you've quietly broadened it.\nThe good news runs the other way too: rules that only existed to attach different security profiles collapse, because IPS and anti-malware are platform layers — the translated rulebase comes out materially shorter by design.\nAnd nothing enforces on day one: monitor-first means no helpdesk storm. Now show them where their rules land.",
+      "demo": "Start from their export: sort the rulebase by hit count and agree the cull list in the room — that single move reframes porting a thousand rules into translating the ones that matter.\nInternet Firewall first: default-allow posture, explicit blocks recreating their interzone-deny intent, and a rule where the ports were re-pinned rather than trusting application-default. Then the WAN Firewall — opposite posture — and map one of their zone-pair rules onto the allowlist live. In TLS Inspection, walk the wizard and say plainly that decryption is rebuilt, not ported, with three domains queueing behind it.\nCloud Apps Dashboard lets discovered SaaS challenge their sanctioned-app tags. Finish in Events: the evidence that sized the clean-up now proves the translation."
+    }
   },
   "migration-netskope-policy": {
     "pain": [
@@ -2357,7 +2697,12 @@ window.UC_DECKS = {
         "show": "Hit tracking that gates every monitor-to-block flip"
       }
     ],
-    "hook": "Your SSL do-not-decrypt list is years of archaeology — inherit it, don't rediscover it."
+    "hook": "Your SSL do-not-decrypt list is years of archaeology — inherit it, don't rediscover it.",
+    "notes": {
+      "divider": "Start with the artefact everyone forgets: the SSL do-not-decrypt list. It encodes years of certificate-pinning archaeology, and it's the single most valuable export in the whole estate — Cato's TLS bypasses get seeded straight from it.\nThe wider frame: connectivity lands in weeks; what stalls a Netskope migration is the policy estate. Here's how it translates, domain by domain.",
+      "why": "Paint today honestly: hundreds of Real-time Protection rules and DLP profiles nobody remembers commissioning, and steering exceptions that bypassed inspection entirely — so coverage changes at cutover and quiet rules wake up. EDM datasets can't come at all: they're hashed in vendor-specific form, and every one is rebuilt from the source system.\nThe method makes that safe: only the firing subset migrates, and monitor mode runs side by side against Netskope events until hit parity is proven.\nAsk which rules and profiles actually fired in ninety days — and who owns the ones that didn't. Then into the console.",
+      "demo": "Work from their export pack — RTP policies, DLP profiles, the do-not-decrypt list, steering exceptions, ninety days of analytics.\nInternet Firewall first: one rulebase where Cloud Firewall and web rules both land — show where an explicit catch-all block sits if they ran default-deny egress. In CASB, map one instance-aware rule by intent: corporate tenant enforced by header injection plus an app-control rule, and be straight that User Alert becomes Prompt without justification capture. DLP next: the EDM workflow, rebuilt from the HR or CRM source with data owners named — start it early, it's the long-lead item.\nIn TLS Inspection, seed the bypasses from their list. Close in Events on the hit tracking that gates every flip, and agree acceptance criteria per domain."
+    }
   },
   "migration-cisco-policy": {
     "pain": [
@@ -2392,7 +2737,12 @@ window.UC_DECKS = {
         "show": "Monitor-mode telemetry; parity criteria agreed per domain"
       }
     ],
-    "hook": "What percentage of your ASA ACEs show zero hits today — and who would still defend the rest?"
+    "hook": "What percentage of your ASA ACEs show zero hits today — and who would still defend the rest?",
+    "notes": {
+      "divider": "The network half of a Cisco migration is a routing event — the weeks disappear into policy, because it lives in four places: ASDM, FMC, CDO and the Umbrella dashboard, and nobody can say which exceptions still matter.\nThe reflex is to copy everything to be safe. That imports a decade of graveyard. Here's the pipeline that avoids it.",
+      "why": "Two facts carry this section. Hit counts are already in their hands — show access-list prints a live hitcnt per entry, the most valuable artefact in the whole exercise — and they decide what migrates. And Umbrella policy is keyed to sites' public egress IPs: the moment a Socket goes live, the site stops matching its Umbrella policy entirely, so per-site web policy moves inside the swap window, never as a follow-up.\nOn Cato, DNS, web and firewall policy collapse into one engine, and rules follow real identities instead of addresses. Ask how many destination-list entries anyone would still defend, then go live.",
+      "demo": "Ask for the exports in advance — a destination-list CSV and a show access-list capture; their own dead rules land harder than any slide.\nStart in the WAN Firewall: one ordered base replacing several per-interface ACLs, sorting explained — site-to-site rules onto the allowlist, outbound exceptions into the Internet Firewall, never a raw copy. Then build one mapping live: a slice of a destination list becomes a custom category on a rule in monitor — export to enforce-ready in minutes.\nTLS Inspection next: decryption is re-expressed, not transcribed, and it gates SWG, CASB and DLP fidelity alike. The Cloud Apps Dashboard is the baseline replacing App Discovery; close in Events, agreeing the parity checklist per domain — that agreement is the deliverable."
+    }
   },
   "migration-fortinet-policy": {
     "pain": [
@@ -2427,7 +2777,12 @@ window.UC_DECKS = {
         "show": "Hit evidence justifying each monitor-to-block flip"
       }
     ],
-    "hook": "Translate the estate badly and your old technical debt arrives on a new platform wearing a new logo."
+    "hook": "Translate the estate badly and your old technical debt arrives on a new platform wearing a new logo.",
+    "notes": {
+      "divider": "The routing side of a FortiGate exit is solved — what's waiting is a decade of FortiOS policy: per-VDOM tables, near-identical UTM profile variants, thousands of objects with dead entries hiding inside.\nTranslate that badly and the debt simply moves house. So this section is about the pipeline that stops it travelling. Here's what I'll show you.",
+      "why": "Lead with the sharpest fact: on FortiOS, inspection only happened where a profile was attached — traffic with no profile was never inspected at all. Cato's single-pass engine sees everything, so expect new detections in monitor and triage them as findings, not incidents.\nStructurally, profile pairs become platform layers — IPS and anti-malware run account-wide, carve-outs turn into explicit, auditable exceptions — and because the config is flat text, objects are scripted across rather than re-keyed.\nAsk how many rules show zero hits in ninety days, and who is empowered to decide those don't migrate. Then into the console.",
+      "demo": "Have them bring a config export or FortiManager policy package — translate real rules live.\nWAN Firewall first: one global rulebase — no interface pairs, no policy packages — and the posture conversation: FortiOS is implicit-deny everywhere, Cato splits allowlist WAN from blocklist internet, so egress posture is a decision, not a translation. Then API and Integrations: the flat-text config means the whole object model is scripted across rather than re-keyed by hand.\nTLS Inspection is the staged switch — SWG parity, CASB activity control and DLP all hang off it. The Cloud Apps Dashboard shows shadow-IT discovery running with nothing configured — the upgrade from log-only sensors. Close in Events on one monitor-mode rule and the hit evidence that would earn its block."
+    }
   },
   "migration-forcepoint-policy": {
     "pain": [
@@ -2462,7 +2817,12 @@ window.UC_DECKS = {
         "show": "Telemetry that retires dead rules and earns the block"
       }
     ],
-    "hook": "The DLP estate decides this deal — rationalise it classifier by classifier, not rip and hope."
+    "hook": "The DLP estate decides this deal — rationalise it classifier by classifier, not rip and hope.",
+    "notes": {
+      "divider": "Name the four heritages up front — Stonesoft rules in SMC, Websense categories, ex-Bitglass CASB, and the TRITON-era DLP suite — four consoles converging into one rulebase.\nAnd say the honest thing early: the DLP estate is genuine enterprise depth, and it gets rationalised policy by policy, with a recorded decision for each. Here's what I'll show you.",
+      "why": "Most of the estate is dead weight — rules for decommissioned servers, DLP policies that never raised a triaged incident. And two things simply cannot be ported: fingerprint hashes and trained ML classifiers.\nSo every surviving DLP policy takes one of three routes — direct map onto predefined data types, rebuild as EDM from source data, or redesign-or-retain. Where USB and print mandates exceed network DLP, recommend the hybrid deliberately: the endpoint agent stays, with a posture check proving it runs.\nAsk whether they can show ninety days of hit counts across SMC, web and DLP — if not, export starts by turning counters on. Then go live.",
+      "demo": "Run it on their exports — the SMC rulebase with counters, the DLP list with incident history.\nInternet Firewall first: map one of their Confirm rules to Prompt live, and point at the recommended block baseline inherited on day one. Then the WAN Firewall for the posture contrast — a site-to-site SMC rule on the default-deny allowlist. In TLS Inspection, land the co-existence rule: one inspection owner per cohort while the proxy still decrypts for everyone un-migrated.\nDLP Configuration is the deep moment: map one of their real classifiers into a content profile set to monitor — and where it's an ML classifier, the decision is redesign or retain, written down. Close in Events on the telemetry that retires dead rules and earns every block."
+    }
   },
   "migration-iboss-policy": {
     "pain": [
@@ -2497,7 +2857,12 @@ window.UC_DECKS = {
         "show": "User-attributed events — safeguarding reporting continuity answered on screen"
       }
     ],
-    "hook": "The steering swap takes weeks; the policy keeps you paying iboss for months. Shall we shrink it first?"
+    "hook": "The steering swap takes weeks; the policy keeps you paying iboss for months. Shall we shrink it first?",
+    "notes": {
+      "divider": "Open with the honest asymmetry: Clients and Sockets move traffic in weeks, but the policy — per-OU tiers, bypass lists, exceptions built up since the appliance-filter days — is what keeps the old subscription billing for months.\nSay the goal plainly: shrink it before you move it. A rule nobody can explain is documentation, not policy.\nThen bridge: here's what I'll show you — four policy domains landing in one console, with a rollback rail the whole way.",
+      "why": "Talk the today side as lived experience: years of exceptions nobody can explain, exam platforms keyed to dedicated egress IPs where one slip breaks things mid-term, and per-user reporting that safeguarding treats as statutory evidence.\nAsk the page's question: when did anyone last review hit counts on the iboss side, and how many rules would survive a zero-hit cull? That answer usually shrinks the migration by a third before mapping starts.\nThe with-Cato side is the pipeline — dead rules die at review, survivors deploy in monitor, and the PAC stays hosted so rollback for any cohort is one GPO change.\nLet me show you what it looks like on the other side.",
+      "demo": "Start in Security, Internet Firewall: walk one rule end to end and show the per-OU tier ladder as ordered group-scoped blocks — then Content Restrictions for SafeSearch and YouTube, naming the DoH caveat before anyone asks.\nMove to TLS Inspection: bypass rules seeded from their harvested PAC and SSL lists, and the CA story — Cato's root certificate alongside the iboss CA from day one, so rollback never breaks HTTPS.\nThen CASB and DLP Configuration: the default recommended policy as the starting point, activity-level control, and content profiles rebuilt from rule intent against 350-plus predefined data types — both in monitor.\nFinish in Monitor, Events: filter to one user, one rule — safeguarding continuity answered on screen. Close on the cohort wave plan."
+    }
   },
   "migration-versa-policy": {
     "pain": [
@@ -2532,7 +2897,12 @@ window.UC_DECKS = {
         "show": "Every hit attributed to user and rule — how monitor earns block"
       }
     ],
-    "hook": "Could you produce one branch's effective firewall policy today — or does that answer start with a provider ticket?"
+    "hook": "Could you produce one branch's effective firewall policy today — or does that answer start with a provider ticket?",
+    "notes": {
+      "divider": "Land the hook and let it sit: in most Versa estates nobody can show you what a single branch actually enforces, because the real policy is the product of Director template layers plus that device's bind data — and in a carrier-managed estate even asking is a change ticket with lead time.\nFrame the session: rebuild the effective policy per site, rationalise it, land it somewhere readable.\nHere's what I'll show you.",
+      "why": "The today story is indirection: workflows, staging and post-staging templates, bind data, and per-rule UTM profiles breeding near-identical objects across revisions. In managed estates the export request goes in week one because everything downstream waits on the provider.\nAsk the page's question: could they produce one branch's effective policy today and say which rules matched traffic last quarter — and if that starts with a ticket, how long does it take?\nWith Cato it becomes one readable rulebase, IPS and anti-malware as global layers rather than per-rule profiles, plus visibility the estate never had.\nLet's look at where it lands.",
+      "demo": "Open Security, WAN Firewall: default deny, with policy sections doing what template scoping used to — common intent stated once, genuine site exceptions where they earn it.\nAcross to Internet Firewall: category rules replacing URL-filter profiles, and point at action versus tracking — alert-only intent carries over as allow plus track, which is exactly how a monitor rule later becomes a block rule.\nTLS Inspection next: staged by category then pilot groups, the fidelity prerequisite for everything downstream.\nThen Monitor, Cloud Apps Dashboard: shadow-IT discovery with risk scores — the upgrade, since the estate had no CASB to migrate.\nClose in Events: every hit attributed to user and rule. A week of this answers every will-it-break-the-business question — then back to the slides."
+    }
   },
   "migration-cloudflare-policy": {
     "pain": [
@@ -2567,7 +2937,12 @@ window.UC_DECKS = {
         "show": "Hit counts accumulating on a migrated rule — the evidence to enforce"
       }
     ],
-    "hook": "How many of your Gateway rules fired in ninety days — and which add-ons are actually on the contract?"
+    "hook": "How many of your Gateway rules fired in ninety days — and which add-ons are actually on the contract?",
+    "notes": {
+      "divider": "Ask the hook question and wait — most teams can't say how many Gateway rules fired in ninety days, or which of DLP, Browser Isolation and dedicated egress IPs are actually on the contract.\nName the twist: intent is split across DNS, network and HTTP rule sets, with Magic Firewall in a separate packet-level engine.\nHere's what I'll show you — all of it converging into one policy model.",
+      "why": "The today picture is fragmentation: three Gateway policy types evaluated as separate rule sets, Magic Firewall filtering packets with no user identity at all, CASB reporting API findings after the fact, and DLP scope depending on the invoice.\nBe clear on scope too — WAF, CDN and Workers stay on Cloudflare; only Zero Trust policy translates.\nWith Cato the same intent lands in one converged rulebase family, Isolate becomes a policy action beside Block and Prompt rather than an add-on SKU, and cf-terraforming gives you the whole estate as a machine-readable export to rationalise from.\nLet me show you the target.",
+      "demo": "Start with the two firewall postures — Security, WAN Firewall then Internet Firewall: allowlist against blocklist, and where Gateway network policies and Magic Firewall rules each land. Flag that a Magic Firewall allow leaning on a permissive default must become an explicit WAN rule.\nStay in Internet Firewall for the SWG walk: Allow, Block, Prompt and RBI Isolate in one ordered rulebase — negations become allow-above-block pairs.\nThen TLS Inspection: rebuild one of their Do-Not-Inspect entries as an exception live, and land the dependency — content rules degrade to SNI matching until inspection covers the category.\nCASB next: App Catalog risk scores and an inline App Control rule — say it honestly, findings regenerate, intent migrates.\nFinish in Monitor, Events: hit counts accumulating on a migrated rule — the evidence that earns enforcement."
+    }
   },
   "migration-checkpoint-policy": {
     "pain": [
@@ -2602,7 +2977,12 @@ window.UC_DECKS = {
         "show": "Hit evidence justifying each monitor-to-block promotion, with audit trail"
       }
     ],
-    "hook": "How many layers exist because traffic needs a boundary — and how many because an administrator needed delegation?"
+    "hook": "How many layers exist because traffic needs a boundary — and how many because an administrator needed delegation?",
+    "notes": {
+      "divider": "Open with the hook as a genuine question — how many layers exist because traffic needs a boundary, and how many because an administrator once needed delegation? Most rooms go quiet.\nFrame the problem: with Ordered and Inline Layers, what the policy actually allows is the product of every layer passing — nobody can read it off the console.\nHere's what I'll show you: that hierarchy flattened into something readable, with the clean-up done first.",
+      "why": "Walk the today side slowly: an Accept in one layer only stands if no later layer drops the flow, an inline layer's implicit cleanup silently drops what a flat rulebase would keep matching, and NAT lives in its own rulebase apart from access policy entirely.\nAsk the discovery question — how many rules have zero hits in ninety days? The Management API exports every layer with hit counts, so the answer is knowable before mapping starts.\nWith Cato you translate the effective policy, flattened, and every implicit cleanup becomes an explicit decision proven in monitor mode.\nLet me flatten one of their rules live.",
+      "demo": "Start in Security, WAN Firewall: one flat, first-match allowlist — flatten one of their layered rules and point out the rule that never existed, the inline cleanup nobody wrote that must become an explicit block or the flattening silently allows traffic.\nThen Administration, API and Integrations: the object-dictionary export resolves every reference, so object translation runs end to end through GraphQL or Terraform, not re-keyed by hand.\nAcross to Internet Firewall: map two or three categories by intent and show Prompt standing in for their UserCheck Ask pages.\nTLS Inspection next: staged by category and pilot group — and be honest that their HTTPS Inspection blade probably never ran at full coverage, so expect new detections.\nClose in Monitor, Events: the hit evidence behind every monitor-to-block promotion, with the audit trail attached."
+    }
   },
   "migration-edgeconnect-policy": {
     "pain": [
@@ -2637,7 +3017,12 @@ window.UC_DECKS = {
         "show": "Allow, block and monitor hits attributed — one console, not two"
       }
     ],
-    "hook": "How many of your seven overlays could you justify today? Two sharing an answer is one intent, not two."
+    "hook": "How many of your seven overlays could you justify today? Two sharing an answer is one intent, not two.",
+    "notes": {
+      "divider": "Open on the split: this estate keeps its policy in two planes — steering, QoS and breakout in up to seven Business Intent Overlays in Orchestrator, and web security on someone else's SSE tenant at the end of a service chain.\nThen the hook: how many of those overlays could they justify today? Two overlays sharing an answer is one intent, not two.\nHere's what I'll show you — that intent re-expressed in one console.",
+      "why": "The today side is structural: seven overlays are usually three or four genuine intents wearing different topologies, and the deepest translation isn't a rulebase at all — it's working out what each overlay was for. Add the SSE service chain and you have two consoles, two rulebases and a tunnel seam to keep frozen during any change window.\nAsk the discovery question: which applications actually ride each overlay, and why does its topology or QoS differ from the next?\nWith Cato each overlay collapses into two clean constructs — a network rule and a bandwidth profile — while single-pass inspection at the PoP retires the chain entirely.\nLet me show you the landing zone.",
+      "demo": "Start in Network, Network Rules: one overlay's steering and QoS intent as a single app-aware rule, paired with a bandwidth profile — the priority tiers run P10 real-time down to the P255 default.\nThen Security, WAN Firewall: the hub-and-spoke restriction a topology used to imply, now stated explicitly as which-sites-reach-which rules under default deny.\nAcross to Internet Firewall: breakout policy with no tunnel to a third-party SWG anywhere in it — that seam is gone.\nTLS Inspection next: staged by category then pilot groups, because the SWG, CASB and DLP domains all hang off it.\nClose in Monitor, Events: allow, block and monitor hits attributed to user and rule — the audit trail two consoles never gave them. Then back to the wave plan."
+    }
   },
   "migration-symantec-policy": {
     "pain": [
@@ -2672,7 +3057,12 @@ window.UC_DECKS = {
         "show": "Hit counts playing Reporter's role — evidence for every promotion"
       }
     ],
-    "hook": "How many CPL layers are live, when were they audited — and who archives the hit data before Reporter dies?"
+    "hook": "How many CPL layers are live, when were they audited — and who archives the hit data before Reporter dies?",
+    "notes": {
+      "divider": "Open with the hook's three-part question — how many CPL layers are live, when were they audited, and who archives the hit data before Reporter dies? On-prem Reporter's end of life is already announced, so the evidence base is on borrowed time.\nFrame the estate: up to twenty years of CPL across VPM and hand-written Local files, spread over four consoles.\nHere's what I'll show you: what survives, and where it lands.",
+      "why": "Start with the fact that surprises people: no CPL-to-Cato converter exists — and that's the good news. Most CPL volume is proxy plumbing — auth exemptions, WCCP workarounds, pinned-certificate bypasses — that simply ceases to exist in a transparent Client and Socket model.\nSo the triage rule is the story: every layer is classified as business intent, plumbing, or dead, with Reporter and access-log hit data as the referee — and that data gets archived in week one, not at decommission.\nFour consoles converge into one rulebase, and if the mapped set isn't dramatically smaller than the CPL line count, the review phase didn't happen.\nLet's walk their policy through it.",
+      "demo": "Start in Security, Internet Firewall: CPL intent landing as ordered category rules — map a coach page to Prompt live, and show the recommended block baseline they inherit on day one.\nThen Access, Users: SCIM-provisioned groups referenced directly in rules — no IWA realms, no BCAAA servers, no Kerberos SPNs, because nothing challenges the browser any more.\nTLS Inspection next: the SSLV appliance rebuilt as staged PoP policy — certificate fleet-wide, test group, expand by category, with the bypass list verified entry by entry rather than copied.\nThen DLP Configuration: map one of their described-content policies into a content profile live, and state the IDM and VML position plainly — redesign or retain, decided per policy; the honest hybrid keeps the endpoint agent where regulation demands it.\nClose in Monitor, Events: hit counts playing Reporter's role — the evidence for every promotion."
+    }
   },
   "migration-sophos-policy": {
     "pain": [
@@ -2707,7 +3097,12 @@ window.UC_DECKS = {
         "show": "Hit evidence that flips a monitor rule to block"
       }
     ],
-    "hook": "How many SFOS rules passed no traffic in ninety days — and how many depend on a Heartbeat that's leaving?"
+    "hook": "How many SFOS rules passed no traffic in ninety days — and how many depend on a Heartbeat that's leaving?",
+    "notes": {
+      "divider": "Open with the hook's double question: how many SFOS rules passed no traffic in ninety days — and how many of the rest are conditioned on a Security Heartbeat that leaves with the firewall? The second half is the trap that bites late, so inventory it now.\nFrame it: swapping an XGS for a Socket is routing; the policy estate is where this project earns its keep.\nHere's what I'll show you.",
+      "why": "Paint the today picture: per-appliance rule tables with near-identical web-policy variants per user population, and inspection that only happens where a policy is attached — so there are gaps nobody sees, like the guest network. TLS inspection scope was set by appliance headroom, not intent; Sophos markets its hardware on multiplying inspection throughput precisely because it runs out.\nAsk the discovery question and let the counters answer it.\nWith Cato the per-box tables collapse into one global policy rationalised on usage evidence, TLS is scoped by what they want decrypted, and CASB and DLP arrive greenfield — the upgrade, not the gap.\nLet me translate one of their rules live.",
+      "demo": "Start with the postures — Security, WAN Firewall against Internet Firewall: opposite defaults, no zones, no per-box tables. Translate one of their egress rules live and ask which posture they actually want.\nThen Administration, API and Integrations: the SFOS XML export is structured data, so objects script end to end through GraphQL or Terraform rather than being re-keyed.\nBack in Internet Firewall, translate a web policy: two or three categories mapped by intent, Prompt doing their Warn pages, a custom category absorbing their URL groups.\nThen Monitor, Cloud Apps Dashboard: shadow-IT discovery running with zero configuration — the domain their firewall never had.\nClose in Events: filter to one monitor-mode rule and show the hit evidence that flips it to block — the phase they'll live in for the first months."
+    }
   },
   "migration-cisco-asa-policy": {
     "pain": [
@@ -2742,7 +3137,12 @@ window.UC_DECKS = {
         "show": "Event evidence justifying every promotion and every cull"
       }
     ],
-    "hook": "How many ACEs show zero hits today — and what inspects a laptop's upload to a personal cloud drive?"
+    "hook": "How many ACEs show zero hits today — and what inspects a laptop's upload to a personal cloud drive?",
+    "notes": {
+      "divider": "Open with both halves of the hook: how many ACEs show zero hits today — and what inspects a laptop's upload to a personal cloud drive right now? The first answer sizes the clean-up; the second is almost always nothing, and it frames half this session.\nName what makes ASA unusual: the translation workload is smaller than a full NGFW estate, and the greenfield workload is bigger.\nHere's what I'll show you — both halves.",
+      "why": "Today: a decade of interface ACLs and nested object-groups, a NAT table whose real dependencies are invisible in the ACL export — the classic cutover breaker — and nothing above layer four.\nThe hit-count discipline matters: counters reset on reload, so it's a thirty-to-ninety-day counting window, not a snapshot — and zero-hit is not dead; DR and break-glass rules get parked as disabled rules with sign-off, not silently dropped.\nWith Cato the survivors split cleanly into the two firewall bases, the NAT table dissolves deliberately, and SWG, CASB and DLP arrive greenfield from best-practice baselines — the uplift they're actually buying.\nLet's translate a few of their lines.",
+      "demo": "Start in Security, WAN Firewall: translate one of their east-west ACEs live — no interfaces, no security levels, and per-rule hit counts doing the same evidential job their hitcnt did.\nThen Administration, API and Integrations: show access-list pre-expands the object-groups, so translation scripts end to end via GraphQL or Terraform.\nAcross to Access, Device Posture: build a profile live — AV presence, disk encryption — and say plainly that DAP and HostScan have no export path; this is intent restated, evaluated continuously rather than at connect time.\nThen TLS Inspection: bypasses first, phased inspect rules by category and pilot group, with no appliance throughput deciding the scope.\nClose in Monitor, Events: the evidence behind every promotion and every cull — then hand back to the counting-window agreement on the slides."
+    }
   },
   "migration-sonicwall-policy": {
     "pain": [
@@ -2777,6 +3177,11 @@ window.UC_DECKS = {
         "show": "The discard pile and the rotation log — two auditable outcomes"
       }
     ],
-    "hook": "After the MySonicWall backup breach, who rotated the credentials sitting inside your configuration exports?"
+    "hook": "After the MySonicWall backup breach, who rotated the credentials sitting inside your configuration exports?",
+    "notes": {
+      "divider": "Open with the hook and pause: after the MySonicWall cloud-backup breach, who rotated the credentials sitting inside their configuration exports? SonicWall's own investigation concluded every customer who used the service was affected.\nThat sets rule zero for this whole session: on this estate the export isn't just a mapping input, it's potential breach material — so we rotate everything and port nothing.\nHere's what I'll show you.",
+      "why": "The today side has two layers. Operationally: a zone matrix per box multiplied across a branch estate, hiding duplication — and DPI-SSL rationed by per-model connection limits, so many estates never fully enabled it. Then the security layer: the exploitation mechanic in the 2024-25 campaigns was configuration carry-over — old secrets imported into new boxes — and this migration must not repeat that on a third platform.\nAsk both discovery questions: how many rules passed no traffic since the counters were cleared, and who rotated the export credentials. Ask early whether cloud backup was ever used.\nWith Cato: one global rulebase levels every site up, and the SSLVPN zone is replaced by IdP-backed ZTNA, never translated.\nLet me show you.",
+      "demo": "Start in Security, WAN Firewall: translate one of their zone-matrix rules live into the global ordered rulebase — no zone columns, no per-rule service attachments, because those run as account-level layers.\nThen Administration, API and Integrations: the SonicOS API export is structured JSON — objects, rules, NAT — so translation scripts straight into GraphQL or Terraform.\nTLS Inspection next: quite likely their first full inspection — certificate via MDM, sensitive-category bypasses first, and no connection-count ceiling deciding who gets inspected; expect new detections to triage, not incidents.\nThen Monitor, Cloud Apps Dashboard: shadow-IT discovery and the DLP domains the firewall never had.\nClose in Events on the two auditable outcomes: the discard pile from rationalisation, and the rotation log — local accounts removed, keys retired, measured against SonicWall's own reset guidance."
+    }
   }
 };

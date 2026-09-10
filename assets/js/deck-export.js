@@ -189,10 +189,11 @@
   }
 
   /* ---------- slide designs ---------- */
-  /* Each slide is { brands: [...], build: function(rels, no, total) -> spTree body } */
+  /* Each slide is { brands: [...], notes: optional speaker-notes string
+     (multi-paragraph via \n), build: function(rels, no, total) -> spTree body } */
 
-  function coverSlide(title, sub) {
-    return { brands: ["white"], build: function (rels) {
+  function coverSlide(title, sub, note) {
+    return { brands: ["white"], notes: note, build: function (rels) {
       var body = navyBg();
       if (rels.white) body += logo(rels.white, MARGIN, 600000, 936000);   /* ~2.6 cm */
       body += box(MARGIN, 2450000, W - 2 * MARGIN, 1500000,
@@ -207,7 +208,10 @@
   }
 
   function agendaSlide(ucs) {
-    return { brands: [], build: function () {
+    var note = "Running order: "
+      + ucs.map(function (uc, i) { return (i + 1) + ". " + uc.title; }).join("; ")
+      + ".\nReorder emphasis to suit the room — ask which of these matter most before you start.";
+    return { brands: [], notes: note, build: function () {
       var body = box(MARGIN, 700000, W - 2 * MARGIN, 380000,
         para("AGENDA", { sz: 1100, b: true, color: C.green600 }));
       body += box(MARGIN, 1080000, W - 2 * MARGIN, 700000,
@@ -232,8 +236,8 @@
     } };
   }
 
-  function dividerSlide(uc, hook) {
-    return { brands: ["white"], build: function (rels, no, total) {
+  function dividerSlide(uc, hook, note) {
+    return { brands: ["white"], notes: note, build: function (rels, no, total) {
       var body = navyBg();
       if (rels.white) body += logo(rels.white, MARGIN, 500000, 500000);
       body += box(MARGIN, 1950000, W - 2 * MARGIN, 400000,
@@ -255,8 +259,8 @@
       para(label, { sz: 1100, b: true, color: color, algn: "ctr" }), "ctr");
   }
 
-  function whySlide(uc, deck) {
-    return { brands: ["green"], build: function (rels) {
+  function whySlide(uc, deck, note) {
+    return { brands: ["green"], notes: note, build: function (rels) {
       var body = box(MARGIN, 620000, W - 2 * MARGIN, 340000,
         para(String(uc.title).toUpperCase(), { sz: 1000, color: C.dim }));
       body += box(MARGIN, 980000, W - 2 * MARGIN, 700000,
@@ -287,8 +291,8 @@
     } };
   }
 
-  function demoSlide(uc, steps) {
-    return { brands: ["green"], build: function (rels) {
+  function demoSlide(uc, steps, note) {
+    return { brands: ["green"], notes: note, build: function (rels) {
       var body = box(MARGIN, 620000, W - 2 * MARGIN, 340000,
         para(String(uc.title).toUpperCase(), { sz: 1000, color: C.dim }));
       body += box(MARGIN, 980000, W - 2 * MARGIN, 600000,
@@ -315,7 +319,9 @@
   }
 
   function closingSlide() {
-    return { brands: ["white"], build: function (rels) {
+    var note = "Agree the next step before leaving the call: a scoped proof of value "
+      + "with success criteria written down. Offer the workbook of what was shown today.";
+    return { brands: ["white"], notes: note, build: function (rels) {
       var body = navyBg();
       var h = 700000;
       if (rels.white) body += logo(rels.white, Math.floor((W - logoW(h)) / 2), 1500000, h);
@@ -380,6 +386,42 @@
     + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
     + "</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>";
 
+  /* ---------- speaker notes parts ---------- */
+
+  /* notes master: empty spTree + the same clrMap as the slide master; its
+     rels point at theme2 (PowerPoint expects the notes master to own a theme) */
+  var NOTES_MASTER = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + "<p:notesMaster " + XMLNS + "><p:cSld><p:spTree>"
+    + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+    + "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>"
+    + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
+    + "</p:spTree></p:cSld><p:clrMap bg1=\"lt1\" tx1=\"dk1\" bg2=\"lt2\" tx2=\"dk2\" accent1=\"accent1\" "
+    + 'accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" '
+    + 'hlink="hlink" folHlink="folHlink"/></p:notesMaster>';
+
+  /* second theme part for the notes master — same scheme, its own name */
+  var THEME2 = THEME.replace('name="Cato"', 'name="Cato Notes"');
+
+  /* a slide's speaker notes: one body placeholder, one <a:p> per \n line */
+  function notesSlideXml(text) {
+    var paras = String(text).split("\n").map(function (line) {
+      return "<a:p><a:pPr><a:buNone/></a:pPr>"
+        + '<a:r><a:rPr lang="en-GB" sz="1200" dirty="0">'
+        + '<a:solidFill><a:srgbClr val="' + C.ink + '"/></a:solidFill></a:rPr>'
+        + "<a:t>" + xesc(line) + "</a:t></a:r></a:p>";
+    }).join("");
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      + "<p:notes " + XMLNS + "><p:cSld><p:spTree>"
+      + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+      + "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>"
+      + "<a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr>"
+      + '<p:sp><p:nvSpPr><p:cNvPr id="2" name="Notes Placeholder 1"/>'
+      + '<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+      + '<p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/>'
+      + "<p:txBody><a:bodyPr/><a:lstStyle/>" + paras + "</p:txBody></p:sp>"
+      + "</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>";
+  }
+
   function slideXml(body) {
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + "<p:sld " + XMLNS + "><p:cSld><p:spTree>"
@@ -392,6 +434,14 @@
 
   function pptx(slides) {
     var n = slides.length;
+
+    /* trimmed speaker notes per slide ("" = no notesSlide part emitted) */
+    var noteTexts = slides.map(function (s) {
+      return String(s.notes == null ? "" : s.notes).replace(/^\s+|\s+$/g, "");
+    });
+    var anyNotes = false;
+    noteTexts.forEach(function (t) { if (t) anyNotes = true; });
+
     var ids = [], rels = [];
     for (var i = 1; i <= n; i++) {
       ids.push('<p:sldId id="' + (255 + i) + '" r:id="rId' + (i + 1) + '"/>');
@@ -413,9 +463,19 @@
         + 'openxmlformats-officedocument.presentationml.slideLayout+xml"/>'
         + '<Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-'
         + 'officedocument.theme+xml"/>'
+        + (anyNotes
+          ? '<Override PartName="/ppt/notesMasters/notesMaster1.xml" ContentType="application/vnd.'
+            + 'openxmlformats-officedocument.presentationml.notesMaster+xml"/>'
+            + '<Override PartName="/ppt/theme/theme2.xml" ContentType="application/vnd.openxmlformats-'
+            + 'officedocument.theme+xml"/>'
+          : "")
         + slides.map(function (s, i) {
             return '<Override PartName="/ppt/slides/slide' + (i + 1) + '.xml" ContentType="application/'
-              + 'vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+              + 'vnd.openxmlformats-officedocument.presentationml.slide+xml"/>'
+              + (noteTexts[i]
+                ? '<Override PartName="/ppt/notesSlides/notesSlide' + (i + 1) + '.xml" ContentType='
+                  + '"application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml"/>'
+                : "");
           }).join("")
         + "</Types>" },
 
@@ -427,6 +487,10 @@
       { name: "ppt/presentation.xml", data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         + "<p:presentation " + XMLNS + ' saveSubsetFonts="1">'
         + '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>'
+        /* schema order: sldMasterIdLst, notesMasterIdLst, sldIdLst */
+        + (anyNotes
+          ? '<p:notesMasterIdLst><p:notesMasterId r:id="rId' + (n + 3) + '"/></p:notesMasterIdLst>'
+          : "")
         + "<p:sldIdLst>" + ids.join("") + "</p:sldIdLst>"
         + '<p:sldSz cx="' + W + '" cy="' + H + '"/><p:notesSz cx="' + H + '" cy="' + W + '"/>'
         + "</p:presentation>" },
@@ -437,7 +501,12 @@
         + 'relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>'
         + rels.join("")
         + '<Relationship Id="rId' + (n + 2) + '" Type="http://schemas.openxmlformats.org/'
-        + 'officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/></Relationships>' },
+        + 'officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>'
+        + (anyNotes
+          ? '<Relationship Id="rId' + (n + 3) + '" Type="http://schemas.openxmlformats.org/'
+            + 'officeDocument/2006/relationships/notesMaster" Target="notesMasters/notesMaster1.xml"/>'
+          : "")
+        + "</Relationships>" },
 
       { name: "ppt/slideMasters/slideMaster1.xml", data: MASTER },
       { name: "ppt/slideMasters/_rels/slideMaster1.xml.rels",
@@ -458,6 +527,16 @@
       { name: "ppt/theme/theme1.xml", data: THEME }
     ];
 
+    if (anyNotes) {
+      files.push({ name: "ppt/notesMasters/notesMaster1.xml", data: NOTES_MASTER });
+      files.push({ name: "ppt/notesMasters/_rels/notesMaster1.xml.rels",
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+          + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+          + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+          + 'relationships/theme" Target="../theme/theme2.xml"/></Relationships>' });
+      files.push({ name: "ppt/theme/theme2.xml", data: THEME2 });
+    }
+
     /* Cato lockups become media parts, embedded once per deck */
     var BRAND = window.DECK_BRAND || {};
     var mediaAdded = {};
@@ -474,6 +553,21 @@
           files.push({ name: "ppt/media/cato-" + b + ".png", data: b64bytes(BRAND[b].png) });
         }
       });
+      if (noteTexts[i]) {
+        /* rel id lands after the picture rels (rId2..) — never collides */
+        extra += '<Relationship Id="rId' + (2 + (s.brands || []).length)
+          + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/'
+          + 'notesSlide" Target="../notesSlides/notesSlide' + (i + 1) + '.xml"/>';
+        files.push({ name: "ppt/notesSlides/notesSlide" + (i + 1) + ".xml",
+          data: notesSlideXml(noteTexts[i]) });
+        files.push({ name: "ppt/notesSlides/_rels/notesSlide" + (i + 1) + ".xml.rels",
+          data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+            + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+            + 'relationships/notesMaster" Target="../notesMasters/notesMaster1.xml"/>'
+            + '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+            + 'relationships/slide" Target="../slides/slide' + (i + 1) + '.xml"/></Relationships>' });
+      }
       nextId = 10;
       files.push({ name: "ppt/slides/slide" + (i + 1) + ".xml",
         data: slideXml(s.build(picRels, i + 1, slides.length)) });
@@ -496,18 +590,24 @@
     return null;
   }
 
-  /* the three per-use-case slides; defensive against missing deck content */
+  /* the three per-use-case slides; defensive against missing deck content
+     (entry.notes = {divider, why, demo} speaker notes — may be absent) */
   function caseSlides(uc) {
     var deck = (window.UC_DECKS || {})[uc.id];
-    var out = [dividerSlide(uc, (deck && deck.hook) || uc.summary)];
+    var notes = (deck && deck.notes) || {};
+    var out = [dividerSlide(uc, (deck && deck.hook) || uc.summary, notes.divider)];
     if (deck && ((deck.pain && deck.pain.length) || (deck.gain && deck.gain.length))) {
-      out.push(whySlide(uc, deck));
+      out.push(whySlide(uc, deck, notes.why));
     }
     if (deck && deck.demo && deck.demo.length) {
-      out.push(demoSlide(uc, deck.demo.slice(0, 5)));
+      out.push(demoSlide(uc, deck.demo.slice(0, 5), notes.demo));
     }
     return out;
   }
+
+  var COVER_NOTE = "Introductions, then set the scene: everything we look at today is one "
+    + "platform, one policy set, one console — the Cato Management Application. "
+    + "Tailor the agenda to what this audience cares about.";
 
   function buildDeck(ids, title) {
     var ucs = [];
@@ -515,13 +615,15 @@
       var uc = findUc(id);
       if (uc) ucs.push(uc);
     });
+    var coverNote = COVER_NOTE
+      + (ucs.length > 1 ? "\nAgenda is next — flag which items matter most to them." : "");
     var slides;
     if (ucs.length === 1 && !title) {
-      slides = [coverSlide(ucs[0].title, ucs[0].summary)];
+      slides = [coverSlide(ucs[0].title, ucs[0].summary, coverNote)];
     } else {
       var sub = ucs.length === 1 ? ucs[0].summary
         : "A guided walk through " + ucs.length + " use cases in the Cato Management Application";
-      slides = [coverSlide(title || "Cato SASE demonstration", sub)];
+      slides = [coverSlide(title || "Cato SASE demonstration", sub, coverNote)];
       if (ucs.length > 1) slides.push(agendaSlide(ucs));
     }
     ucs.forEach(function (uc) { slides = slides.concat(caseSlides(uc)); });
