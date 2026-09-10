@@ -68,7 +68,7 @@ PLANNER_LINK_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="planner.html">
 # deck generator script tags (root and ../ forms) — the JS is deleted below, so the
 # tags must go too or every page would 404 three scripts
 DECK_SCRIPT_RE = re.compile(
-    r'\n?[ \t]*<script src="(?:\.\./)?assets/js/deck-(?:brand|content|export)\.js"></script>')
+    r'\n?[ \t]*<script src="(?:\.\./)?assets/js/deck-(?:brand|content|diagrams|export)\.js"></script>')
 
 FIGURE_RE = re.compile(r'<figure class="shot">.*?</figure>', re.DOTALL)
 
@@ -115,7 +115,7 @@ def main():
                      # demo-flow instructions (what to click in the CMA), which are not
                      # prospect-facing. With the JS gone, the injected deck button and
                      # index builder never appear; the <script> tags are stripped above.
-                     "deck-export.js", "deck-content.js", "deck-brand.js"):
+                     "deck-export.js", "deck-content.js", "deck-brand.js", "deck-diagrams.js"):
         f = OUT / "assets" / "js" / internal
         if f.exists():
             f.unlink()  # planner is an internal SE tool; never ships to prospects
