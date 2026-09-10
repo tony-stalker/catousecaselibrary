@@ -33,7 +33,8 @@
   function short(s) { return String(s || "").replace(/\s*\(.*$/, ""); }
 
   /* option key -> brand slug in window.PLANNER_LOGOS (missing brands draw nothing) */
-  var BRAND = { versa: "versa", "edgeconnect-silverpeak": "hpe-aruba", "cisco-viptela": "cisco",
+  var BRAND = { cato: "cato",
+    versa: "versa", "edgeconnect-silverpeak": "hpe-aruba", "cisco-viptela": "cisco",
     "fortinet-sdwan": "fortinet", "cloudflare-magic-wan": "cloudflare",
     zscaler: "zscaler", netskope: "netskope", forcepoint: "forcepoint", iboss: "iboss",
     "symantec-broadcom": "symantec", "cisco-umbrella": "cisco",
@@ -245,7 +246,7 @@
     g += box({ x: 24, y: y + 210, w: 192, cls: "pt-plain", title: "Data centre",
       sub: "Socket beside the CE" });
 
-    g += box({ x: 288, y: y, w: 244, h: 90, cls: "pt-cloud", title: "", sub: "" });
+    g += box({ x: 288, y: y, w: 244, h: 90, cls: "pt-cloud", title: "", sub: "", mark: "cato" });
     g += '<text class="pt-t-green" x="' + (288 + 122) + '" y="' + (y + 24)
       + '" text-anchor="middle">Cato SASE Cloud</text>'
       + '<text class="pt-sub" x="' + (288 + 122) + '" y="' + (y + 42)
@@ -294,7 +295,7 @@
 
     /* the platform: PoP rings on the backbone, then what it enforces for this estate */
     var cx = 300, cw = 320, ch = 176;
-    g += box({ x: cx, y: y, w: cw, h: ch, cls: "pt-cloud", title: "", sub: "" });
+    g += box({ x: cx, y: y, w: cw, h: ch, cls: "pt-cloud", title: "", sub: "", mark: "cato" });
     g += '<text class="pt-t-big" x="' + (cx + cw / 2) + '" y="' + (y + 26)
       + '" text-anchor="middle">Cato SASE Cloud</text>'
       + '<text class="pt-sub" x="' + (cx + cw / 2) + '" y="' + (y + 44)
@@ -437,7 +438,8 @@
       + edge("de7", "d6", "d7", "legacy egress", E_GREY)
       + edge("de6", "d4", "d5", "eBGP handoff — both paths live", E_CATO + "dashed=1;")
       + logoCell("dl1", m.sdwanKey, 326, 206)
-      + logoCell("dl2", m.proxyKey || m.fwKey, 626, 206);
+      + logoCell("dl2", m.proxyKey || m.fwKey, 626, 206)
+      + logoCell("dl3", "cato", 326, 46);
     p.push(page("During", d));
 
     var a = cell("a1", "Sites — branch & DC\nSocket / vSocket edges", 40, 80, 190, 60, S_GREEN)
@@ -452,7 +454,8 @@
       + edge("ae2", "a2", "a4", "Cato Client tunnel", E_CATO)
       + edge("ae3", "a4", "a5", "inspected egress", E_CATO)
       + edge("ae4", "a4", "a6", "over the backbone", E_CATO)
-      + edge("ae5", "a7", "a4", "", E_BLUE) + edge("ae6", "a4", "a8", "", E_BLUE);
+      + edge("ae5", "a7", "a4", "", E_BLUE) + edge("ae6", "a4", "a8", "", E_BLUE)
+      + logoCell("al1", "cato", 326, 86);
     p.push(page("After", a));
 
     return '<mxfile host="cato-use-case-library">' + p.join("") + "</mxfile>";

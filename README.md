@@ -1,6 +1,6 @@
 # Cato SASE Use Case Library
 
-A self-contained, offline-first HTML library of **76 Cato Networks use cases** for
+A self-contained, offline-first HTML library of **81 Cato Networks use cases** for
 sales engineers and partners — business objective, how the platform solves it, a
 custom diagram, and a step-by-step demo runbook for every scenario. No build step,
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
@@ -34,6 +34,12 @@ Start at `index.html` → the **Start here** journeys, search box, or clickable 
 `planner.html` is an internal SE tool: describe an opportunity's existing estate and it composes
 a sequenced migration methodology from these pages. It is deterministic — the rules in
 `assets/js/planner-rules.js` are its whole judgement — and it is excluded from the prospect build.
+
+Every use-case page can generate a concise Cato-branded **intro deck** (.pptx, client-side, no
+libraries), and the index's **Build a demo presentation** card composes one deck from any
+selection — pick use cases with the **+** on their cards, drag the chips into your demo order,
+or start from a preset. Slide content lives in the generated `assets/js/deck-content.js`; the
+decks carry the demo click-path, so all deck tooling is stripped from the prospect build.
 
 ## Maintaining it
 
