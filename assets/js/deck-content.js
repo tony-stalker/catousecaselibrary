@@ -1452,6 +1452,46 @@ window.UC_DECKS = {
       "demo": "Start in the Cloud Apps Dashboard, filtered to Generative AI — who uses what, how much data moves — and let the gap between sanctioned and found speak. In CASB, open one discovered tool's catalogue entry — data handling, compliance posture, risk score — to ground which apps deserve sanctioned status.\nStay in CASB for the rule and stress activity-level control: permit prompting, block the upload. Then DLP Configuration: inspect prompts and uploads for PII and payment data — the blocked card upload on the DLP forensics page is your proof point.\nClose on the Data Protection Dashboard, where discovery becomes an ongoing governance report. For homegrown apps and agents, talk to the focus-area cards rather than demoing live — that edge is still firming up."
     }
   },
+  "ai-threat-landscape": {
+    "pain": [
+      "A deepfaked video call moved US$25.6M — phishing opened the door",
+      "Agentic attackers ran ~17,600 actions in four days, no human needed",
+      "Employees keep pasting source code and secrets into chatbots nobody assessed"
+    ],
+    "gain": [
+      "Shadow AI discovered, governed and evidenced from traffic Cato already carries",
+      "Machine-speed defence: virtual patching, single-pass inspection and XDR correlation",
+      "The kill chain around every impersonation covered — honestly, not oversold"
+    ],
+    "demo": [
+      {
+        "area": "AI Security » Monitoring » Discovery",
+        "show": "The shadow-AI inventory: 67 apps found, 18 of them high-risk"
+      },
+      {
+        "area": "AI Security » Monitoring » Overview",
+        "show": "Violation rate and rule breakdown — the board slide after the headline"
+      },
+      {
+        "area": "AI Security » User Interaction Policy",
+        "show": "Engage, anonymise or block — a seeded prompt reaches ChatGPT masked"
+      },
+      {
+        "area": "Monitor » Threats Dashboard",
+        "show": "Every engine firing on the delivery, exploit and C2 stages"
+      },
+      {
+        "area": "XDR Stories Workbench",
+        "show": "A GenAI data-leak story — correlated, MITRE-mapped, closed"
+      }
+    ],
+    "hook": "If your CFO's voice asked finance for an urgent transfer tomorrow, how much of the attack around it would you see?",
+    "notes": {
+      "divider": "Open on Arup: a finance employee was suspicious of a phishing-style message — until a video call in which the CFO and several colleagues appeared and spoke. All of them were deepfakes; fifteen transfers, twenty-five point six million dollars gone. Then widen it: nine real, sourced incidents in three classes — deepfake fraud, AI-orchestrated attacks, and shadow AI with data leakage — each labelled reported or verified.\nLand the hook and let it sit. Then bridge: this is the honest version of the AI threat story — what the platform demonstrably breaks in each class, and what stays a people problem.",
+      "why": "Two shifts survive scrutiny. Impersonation is now cheap — a voice clone needs seconds of public audio. And attacks move at machine speed — the Hugging Face intrusion packed thousands of actions into four days, and the NCSC judges AI will shrink exploitation windows further. Lead with effectiveness, caveat volume — the credibility is the differentiator.\nSay the honest line plainly: Cato cannot detect a fake face or a cloned voice, and nobody's network platform can. What it demonstrably does: govern the shadow AI that leaks data, match machine-speed offence with virtual patching, single-pass inspection and XDR stories, and break the phishing-and-credential kill chain around every impersonation — with callback checks staying human.\nAsk the discovery question, then pivot to the console.",
+      "demo": "Start where Samsung's story starts, in Discovery: sixty-seven AI apps found, eighteen high-risk, built passively from traffic — the inventory every class-three incident was missing. The Overview turns it into a posture: a 22.8 per cent violation rate with its rule-level breakdown — the board slide.\nThen the User Interaction Policy: monitor, engage, anonymise and block in one rulebase — and the payoff from the user's side, a prompt seeded with PII reaching ChatGPT with the values masked. Contrast with Samsung's blunt ban: the employee keeps working, the data stays home. Back it with Events filtered to GenAI uploads — named, dated evidence.\nWiden on the Threats Dashboard: the delivery, exploit and C2 stages every class still crosses, each one an inspection point. Close on an XDR story — correlated and MITRE-mapped at machine speed — then back to the slides."
+    }
+  },
   "security-ai-visibility": {
     "pain": [
       "Boards mandate AI adoption — blocking GenAI is no longer defensible",

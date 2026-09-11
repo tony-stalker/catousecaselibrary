@@ -396,6 +396,16 @@ window.UC_CATALOG = [
     deck: "4 - Security use cases/AI_Security-Use_Cases.pptx"
   },
   {
+    id: "ai-threat-landscape",
+    file: "usecases/ai-threat-landscape.html",
+    category: "AI Security",
+    title: "AI Threat Landscape: Real Attacks & Defences",
+    summary: "Nine real, sourced incidents — deepfake fraud, AI-orchestrated intrusion and shadow-AI data leaks — and an honest map of where Cato breaks each attack class: kill-chain controls, machine-speed defence and GenAI governance.",
+    tags: ["AI Attacks", "Deepfake", "Shadow AI", "Threat Intel", "XDR"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "security-ai-visibility",
     file: "usecases/security-ai-visibility.html",
     category: "AI Security",
