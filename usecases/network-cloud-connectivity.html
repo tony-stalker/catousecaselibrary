@@ -222,6 +222,46 @@
         “cross-connect” — the physical fibre patch in an Equinix or Interxion facility — is still
         what physically delivers the circuit into the Cato PoP.)</p>
       </div>
+
+      <h3 style="margin-top:26px">What the platform delivers on each on-ramp</h3>
+      <p>
+        The architecture table above is about plumbing; this matrix is about capability. Everything
+        that runs <em>in the PoP</em> — the security stack, egress routing, network optimisation —
+        applies whichever door the traffic came through. The SD-WAN and experience-monitoring
+        family is different: it needs a Socket at the site, so on IPsec and interconnect sites
+        those rows go dark.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Capability</th><th>vSocket</th><th>IPsec site</th><th>Cloud Interconnect</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Secure WAN connectivity</strong></td><td>✔</td><td>✔</td><td>✔<sup>†</sup></td></tr>
+            <tr><td><strong>Network optimisation</strong></td><td>✔</td><td>✔</td><td>✔</td></tr>
+            <tr><td><strong>Next-gen WAN / internet firewall</strong></td><td>✔</td><td>✔</td><td>✔</td></tr>
+            <tr><td><strong>IPS</strong></td><td>✔</td><td>✔</td><td>✔</td></tr>
+            <tr><td><strong>Anti-malware / NG anti-malware</strong></td><td>✔</td><td>✔</td><td>✔</td></tr>
+            <tr><td><strong>Egress routing</strong></td><td>✔</td><td>✔</td><td>✔</td></tr>
+            <tr><td><strong>QoS</strong></td><td>✔</td><td>✖<sup>*</sup></td><td>✖<sup>*</sup></td></tr>
+            <tr><td><strong>SD-WAN features</strong></td><td>✔</td><td>✖</td><td>✖</td></tr>
+            <tr><td><strong>High availability</strong></td><td>✔</td><td>✔<sup>+</sup></td><td>✔<sup>‡</sup></td></tr>
+            <tr><td><strong>Off-cloud recovery</strong></td><td>✔</td><td>✖</td><td>✖</td></tr>
+            <tr><td><strong>Off-cloud transport</strong></td><td>✔</td><td>✖</td><td>✖</td></tr>
+            <tr><td><strong>Last-mile monitoring</strong></td><td>✔</td><td>✖</td><td>✖</td></tr>
+            <tr><td><strong>Digital Experience Monitoring probes</strong></td><td>✔</td><td>✖</td><td>✖</td></tr>
+            <tr><td><strong>Routing</strong></td><td>Static / BGP</td><td>Static / BGP</td><td>BGP only</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-3);margin-top:10px">
+        <sup>*</sup>&nbsp;Downstream QoS only ·
+        <sup>†</sup>&nbsp;Private Layer&nbsp;2 link; no encryption ·
+        <sup>‡</sup>&nbsp;Active/passive HA across two PoP locations ·
+        <sup>+</sup>&nbsp;Active/Active/Active tunnels across two PoP locations.
+        Capability matrix from Cato SE field material (September 2026); the encryption, HA and
+        routing notes align with the KB sources footnoted above.
+      </p>
     </section>
 
     <section id="scenarios" class="reveal">

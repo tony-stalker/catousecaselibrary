@@ -327,3 +327,10 @@ cloud.google.com/network-connectivity/docs/interconnect/pricing/ · docs.oracle.
 Network/Concepts/{fastconnect,fastconnectrequirements,fastconnectsecurity}.htm)
 
 Cato GitHub: github.com/catonetworks/terraform-cato-ipsec-aws · terraform-cato-ipsec-azure
+
+## Capability matrix — Cato SE field material (added 12 Sep 2026)
+Source: internal SE deck "Cato_vSocket_IPsec_Cloud_Interconnect_Matrix.pptx" (provided by the library maintainer, Sep 2026). Platform-capability view per on-ramp, reproduced verbatim on the page:
+- All three on-ramps: secure WAN connectivity (Interconnect: private L2, no encryption), network optimisation, NG WAN/internet FW, IPS, anti-malware/NGAM, egress routing, HA (IPsec: Active/Active/Active tunnels across two PoPs; Interconnect: active/passive across two PoPs).
+- vSocket only: full QoS (IPsec/Interconnect downstream-only), SD-WAN features, off-cloud recovery, off-cloud transport, last-mile monitoring, DEM probes.
+- Routing: vSocket and IPsec static/BGP; Interconnect BGP only.
+Consistency: encryption/HA/routing notes corroborated by the KB sources in this brief (cloud-interconnect-sites; configuring-sites-with-ipsec-connections; using-bgp-in-the-cato-cloud).
