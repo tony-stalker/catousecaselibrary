@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Connectivity: vSocket vs IPsec vs Cloud Interconnect — Cato Use Case Library</title>
+<meta name="description" content="Choosing the right on-ramp per cloud — vSocket, IPsec or Cloud Interconnect for Azure, AWS, GCP and OCI, compared on availability, throughput, HA, encryption, routing, effort and cost.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="network-cloud-connectivity">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-network">Network</a> / Cloud Connectivity Options</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-network">Network</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Cloud Connectivity: vSocket vs IPsec vs Cloud Interconnect</h1>
+    <p class="lede">
+      One platform, three ways in. Every cloud tenant — Azure, AWS, GCP or OCI — can join the
+      Cato WAN through a vSocket inside the network, an IPsec tunnel from the cloud's native
+      gateway, or a private Cloud Interconnect circuit into the PoP. Which one is right is an
+      architecture decision, not a default: the options differ on availability per cloud,
+      throughput ceilings, HA mechanics, encryption, routing, effort and cloud-side cost. This
+      page puts the three side by side so you can choose deliberately, per cloud and per workload.
+    </p>
+    <div class="meta-row">
+      <span class="tag">vSocket</span><span class="tag">IPsec</span><span class="tag">Cloud Interconnect</span>
+      <span class="tag">Azure</span><span class="tag">AWS</span><span class="tag">GCP</span><span class="tag">OCI</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>The on-ramp is an architecture decision</h2>
+      <p>
+        Bringing a cloud tenant onto the WAN is easy — Cato gives you three documented ways to do
+        it. Choosing well is the harder, more valuable conversation. Pick a vSocket where an IPsec
+        tunnel would have done, and you own a VM estate you didn't need. Pick IPsec for a
+        replication-heavy datacentre workload, and you hit tunnel ceilings and internet-path
+        variability. Pick an interconnect circuit for a two-week pilot, and the lead time alone
+        outlives the project.
+      </p>
+      <p>
+        The objective: <strong>match the on-ramp to the cloud and the workload — deliberately,
+        with the trade-offs on the table.</strong> Whichever you choose, the destination is the
+        same: the tenant becomes a first-class site on the Cato WAN, governed by one policy set,
+        visible in one console, routed over the same private backbone as every branch and
+        datacentre. The choice affects the path in; it never fragments the platform.
+      </p>
+      <p>
+        This page is the comparison. For depth on each option, the library has a dedicated page:
+        <a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a> (vSocket and
+        IPsec deployment in practice), <a href="network-ipsec-asa.html">IPsec Site Design</a>
+        (tunnel mechanics, IKEv1 vs IKEv2) and
+        <a href="network-cloud-interconnect.html">Cloud Interconnect</a> (circuits, availability
+        and the two-track PoV).
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“For each cloud you run production in — how does it reach the rest of the estate today,
+        what does that path cost per month, and who chose it? Was it a decision, or a default
+        someone inherited?”</p>
+      </div>
+    </section>
+
+    <section id="comparison" class="reveal">
+      <div class="section-kicker">The comparison</div>
+      <h2>Three on-ramps, side by side</h2>
+      <p>
+        Everything in this table comes from the Cato knowledge base and the cloud providers' own
+        documentation — sources footnoted below, figures correct as of September 2026. Where the
+        KB publishes no number, the cell says so rather than guessing.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th></th><th>vSocket</th><th>IPsec site</th><th>Cloud Interconnect</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>What it is</strong></td>
+              <td>Cato's virtual Socket — a VM inside the VNet/VPC, building encrypted DTLS tunnels to the nearest PoP; same CMA management plane as a physical Socket<sup>1</sup></td>
+              <td>A Cato site terminating IKEv1/IKEv2 tunnels from a third-party device — here, the cloud provider's native VPN gateway; no Cato footprint in the cloud<sup>2</sup></td>
+              <td>A private layer-2 virtual circuit from the cloud's interconnect fabric into a Cato PoP, stitched by a fabric provider (Equinix, Megaport, Console Connect, Interxion)<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Per-cloud availability</strong></td>
+              <td>Azure ✔ · AWS ✔ · GCP ✔ · <strong>OCI ✖</strong> — the KB lists vSocket platforms as AWS, Azure, GCP and VMware only; OCI connects via IPsec or interconnect<sup>1</sup></td>
+              <td>Azure ✔ (VPN Gateway / vWAN) · AWS ✔ (VGW or Transit Gateway) · GCP ✔ (HA VPN) · OCI ✔ (Site-to-Site VPN — Cato's documented OCI design)<sup>4</sup></td>
+              <td>Azure ✔ (ExpressRoute) · AWS ✔ (Direct Connect) · GCP ✔ (Partner Interconnect) · OCI ✔ (FastConnect) — subject to PoP availability per location<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Typical throughput</strong></td>
+              <td>Azure: 1&nbsp;Gbps (2-NIC) / 2&nbsp;Gbps (3-NIC, accelerated networking) · GCP: up to 2&nbsp;Gbps · AWS: no published cap — instance-dependent, c5n.xlarge suggested above 2&nbsp;Gbps<sup>5</sup></td>
+              <td>Up to 3&nbsp;Gbps per IPsec site (IKEv1 and IKEv2) — but the cloud gateway adds its own per-tunnel ceilings: AWS 1.25&nbsp;Gbps per standard tunnel, GCP ≈1–3&nbsp;Gbps per tunnel (250k pps), Azure SKU-dependent<sup>5,6</sup></td>
+              <td>Up to 10&nbsp;Gbps — the highest of the three; minimum 500&nbsp;Mbps on an Enforcement Model licence (no minimum on Bursting)<sup>3,5</sup></td>
+            </tr>
+            <tr>
+              <td><strong>HA model</strong></td>
+              <td>Two vSockets per site; failover actuation differs per cloud — Azure: floating IP via API (NIC update up to 120&nbsp;s) · AWS: route-table rewrite · GCP: internal load balancer + VRRP (~3–5&nbsp;s)<sup>7</sup></td>
+              <td>Up to 6 active tunnels per HA role — all primary tunnels to one PoP, all secondary to a different PoP; no automatic PoP re-homing (unlike Sockets)<sup>2</sup></td>
+              <td>Active/passive only, two circuits to two different Cato PoPs; single circuit supported; circuits never load-share<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Encryption</strong></td>
+              <td>DTLS-encrypted tunnels to the PoP — encrypted end to end by design<sup>1</sup></td>
+              <td>IPsec encrypted; sites at 100&nbsp;Mbps or more must use AES 128/256 GCM-16 (CBC only below 100&nbsp;Mbps)<sup>2</sup></td>
+              <td><strong>Private but unencrypted</strong> — Cato markets “no encryption overhead” on the L2 circuit; the mandatory MD5 field is BGP session authentication, not traffic encryption<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>BGP &amp; routing</strong></td>
+              <td>BGP supported — but <strong>not with AWS vSocket HA</strong>, and on Azure only from Socket v14.0 does BGP peer on the floating IP and survive failover<sup>7</sup></td>
+              <td>One BGP neighbour per tunnel, max two per connection; secondary steered by AS-path prepend; 1,024 received prefixes per neighbour by default; IPv4 only<sup>8</sup></td>
+              <td>BGP mandatory — /30 peering, MD5 required; cloud-side prefix limits apply (AWS DX 100 advertisements, Azure 1,000 IPv4 advertised, OCI 2,000 with a 60-minute BGP teardown if exceeded)<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Deployment effort &amp; time-to-live</strong></td>
+              <td>Marketplace wizard or Terraform plus cloud-side plumbing (subnets, IAM roles / managed identities, route tables); live in hours; reboot required on AWS before first connection<sup>9</sup></td>
+              <td>Fastest — no footprint to deploy; configure the gateway, tunnels and BGP and the site is live in minutes to hours (OCI tunnels can take up to 15 minutes to establish)<sup>4</sup></td>
+              <td>Slowest — circuit order plus fabric provisioning; on-demand from the CMA at “immediately available” PoPs, otherwise published lead times of 3 weeks to 3 months<sup>10</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Cloud-side cost components</strong></td>
+              <td>The VM itself (Standard_D8ls_v5 / a certified EC2 type / n2-standard-4), public IPs and standard egress — no premium networking product<sup>9</sup></td>
+              <td>Gateway fees — Azure hourly per SKU; AWS $0.05/hr per connection (plus TGW attachment and data processing if used); GCP ~$0.05/hr per tunnel; OCI positions VPN Connect as egress-led (verify per account) — plus egress on all four<sup>6</sup></td>
+              <td>Fabric port / virtual-circuit charges, the cloud's interconnect product charges (DX / ExpressRoute / Partner Interconnect / FastConnect), and the Cato interconnect bandwidth licence; OCI billing starts once provisioned or after 30 days<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>Operational model</strong></td>
+              <td>You own the cloud resources (VM, subnets, route tables); Cato owns the software — zero-touch provisioning, CMA-managed, full site telemetry<sup>1</sup></td>
+              <td>The cloud provider operates the gateway; Cato holds only site config — you inherit the gateway's limits, SLAs and upgrade cadence<sup>2</sup></td>
+              <td>No appliance and no tunnel to run; circuit lifecycle sits with the fabric provider and your Cato representative<sup>3</sup></td>
+            </tr>
+            <tr>
+              <td><strong>When it wins</strong></td>
+              <td>Production estates in a vSocket-supported cloud wanting the full site experience — QoS, deep analytics, last-mile optimisation inside the VNet/VPC</td>
+              <td>Quick pilots, low-bandwidth spokes, clouds without a vSocket (OCI), and estates already standardised on cloud VPN hubs; can run on an SSE licence<sup>11</sup></td>
+              <td>Deterministic latency, sustained high throughput and compliance-driven private paths — datacentre-class flows that justify a wire</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-3);margin-top:10px">
+        Sources (Cato knowledge base and provider docs, accessed 12 Sep 2026):
+        <sup>1</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/what-are-cato-sockets" target="_blank" rel="noopener">What are Cato Sockets</a> and <a href="https://knowledge.catonetworks.com/docs/connecting-sites-to-the-cato-cloud" target="_blank" rel="noopener">Connecting Sites to the Cato Cloud</a> ·
+        <sup>2</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/en/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 Sites</a> ·
+        <sup>3</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-sites" target="_blank" rel="noopener">Getting Started with Cloud Interconnect Sites</a> and the per-cloud interconnect articles ·
+        <sup>4</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/redundant-vpn-connection-to-oracle-cloud-using-bgp" target="_blank" rel="noopener">Redundant VPN Connection to Oracle Cloud using BGP</a> ·
+        <sup>5</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/en/cato-cloud-thresholds-and-limits" target="_blank" rel="noopener">Cato Cloud Thresholds and Limits</a> ·
+        <sup>6</sup>&nbsp;Azure VPN Gateway SKU, AWS Site-to-Site VPN quota/pricing and GCP Cloud VPN documentation ·
+        <sup>7</sup>&nbsp;the per-cloud vSocket HA articles (<a href="https://knowledge.catonetworks.com/docs/configuring-ha-for-azure-vsockets" target="_blank" rel="noopener">Azure</a>, <a href="https://knowledge.catonetworks.com/docs/configuring-ha-for-aws-vsockets" target="_blank" rel="noopener">AWS</a>, <a href="https://knowledge.catonetworks.com/docs/configuring-high-availability-ha-for-gcp-vsocket-sites-using-terraform" target="_blank" rel="noopener">GCP</a>) ·
+        <sup>8</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/en/configuring-bgp-neighbors-for-an-ipsec-connection" target="_blank" rel="noopener">Configuring BGP Neighbors for an IPsec Connection</a> ·
+        <sup>9</sup>&nbsp;the per-cloud vSocket deployment articles ·
+        <sup>10</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-availability" target="_blank" rel="noopener">Cloud Interconnect Availability</a> ·
+        <sup>11</sup>&nbsp;<a href="https://knowledge.catonetworks.com/docs/managing-site-bandwidth-in-licenses" target="_blank" rel="noopener">Managing Site Bandwidth</a> — vSocket sites require SASE licences; IPsec sites take SASE or SSE.
+      </p>
+
+      <h3 style="margin-top:26px">Per-cloud at a glance</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Cloud</th><th>vSocket</th><th>IPsec</th><th>Cloud Interconnect</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Azure</strong></td>
+              <td>✔ Supported — Marketplace or manual VHD; HA via zones or availability sets; the usual first choice</td>
+              <td>✔ Supported — VPN Gateway (AZ SKUs) or vWAN; active-active pairs map to Cato's two-PoP tunnel model</td>
+              <td>✔ Supported — ExpressRoute provider circuits via Equinix ECX</td>
+            </tr>
+            <tr>
+              <td><strong>AWS</strong></td>
+              <td>✔ Supported — Marketplace/CloudFormation or manual AMI; HA supported, but no BGP with HA</td>
+              <td>✔ Supported — VGW or Transit Gateway; ECMP beyond 1.25&nbsp;Gbps per tunnel needs the TGW</td>
+              <td>✔ Supported — Direct Connect private virtual interface via the fabric provider</td>
+            </tr>
+            <tr>
+              <td><strong>GCP</strong></td>
+              <td>✔ Supported — Marketplace or Cato Terraform module; HA (zonal pair behind an internal LB) since March 2026</td>
+              <td>✔ Supported — HA VPN, BGP mandatory; the cleanest mapping to Cato's primary/secondary model</td>
+              <td>✔ Supported — Partner Interconnect VLAN attachments</td>
+            </tr>
+            <tr>
+              <td><strong>OCI</strong></td>
+              <td><strong>✖ Not available</strong> — no OCI vSocket exists in the KB; plan IPsec or interconnect from the start</td>
+              <td>✔ Supported — Site-to-Site VPN to a DRG; Cato's reference design is dual tunnels to two PoPs with BGP</td>
+              <td>✔ Supported — FastConnect partner circuits; the PoP must be in the same OCI region as the tenant</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <div class="co-title">Naming note — “Cross Connect”</div>
+        <p>Cato Cloud Interconnect was called <strong>“Cato Cross Connect”</strong> until May 2024 —
+        older docs, SKUs and blog posts use the old name for the same product. (The generic colo
+        “cross-connect” — the physical fibre patch in an Equinix or Interxion facility — is still
+        what physically delivers the circuit into the Cato PoP.)</p>
+      </div>
+    </section>
+
+    <section id="scenarios" class="reveal">
+      <div class="section-kicker">Which one, when</div>
+      <h2>Scenario cards</h2>
+      <p>
+        The table gives the facts; these are the calls you'll actually make. Each recommendation
+        follows from the documented characteristics above — not from habit.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Production estate in one VNet/VPC → vSocket</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">A production Azure, AWS or GCP network with real users and workloads behind it
+          deserves the full site experience: QoS, deep per-site analytics and an HA pair inside
+          the network. On Azure, a single hub vSocket serves multiple spoke VNets via peering —
+          the KB's documented, cost-efficient scale-out. Budget hours, not weeks, and remember it
+          needs a SASE licence.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Quick pilot, low-bandwidth spoke, or OCI → IPsec</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Nothing to deploy: the cloud's own gateway builds IKEv2 tunnels to two Cato PoPs and
+          the region is on the WAN in minutes. Right for pilots, spokes that will never push
+          gigabits, estates standardised on cloud VPN hubs — and it is Cato's documented path for
+          OCI, where no vSocket exists. Accept the trade: gateway per-tunnel ceilings, an internet
+          last mile, and no automatic PoP re-homing.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Deterministic latency or compliance-driven private path → Cloud Interconnect</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Replication, bulk data movement and latency-sensitive DC-to-cloud flows justify a wire:
+          up to 10&nbsp;Gbps over a private L2 circuit, no tunnel overhead, no internet in the
+          path. Plan for the physics — circuit lead times run from on-demand to three months —
+          and note the circuit itself is unencrypted by design, which some compliance regimes
+          will want discussed, not discovered.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Multi-cloud, mixed estate → combine them</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The options are per-site choices, not a platform decision: vSockets in the production
+          Azure and AWS hubs, IPsec for the GCP pilot and the OCI tenant, an interconnect circuit
+          where one region's replication traffic justifies it. All land on the same backbone,
+          in the same policy set, in the same console — the mix is normal, not a compromise.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The architecture</div>
+      <h2>Four clouds, three doors, one WAN</h2>
+      <p>
+        However a tenant connects, it terminates at a Cato PoP and joins the same global private
+        backbone. The on-ramp decides the path in — appliance tunnel, gateway tunnel or private
+        circuit — and nothing else: policy, analytics, routing and the rest of the estate are
+        identical on the far side of the PoP.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Azure, AWS, GCP and OCI reaching the Cato backbone via vSocket, IPsec or Cloud Interconnect</title>
+          <desc id="dg1-desc">Four cloud platforms on the left — Azure, AWS, GCP and OCI. Three on-ramp methods in the middle: vSocket (available for Azure, AWS and GCP — a Cato appliance inside the VNet or VPC using DTLS tunnels), IPsec site (available for all four clouds from their native VPN gateways), and Cloud Interconnect (available for all four clouds as a private layer-2 circuit via a fabric provider). Green animated lanes show Azure, AWS and GCP connecting to the vSocket option and OCI connecting to IPsec; a neutral static line shows OCI's FastConnect circuit to Cloud Interconnect. All three methods converge on a Cato PoP, which sits on the global private backbone — one policy set and one console regardless of on-ramp. OCI is the one cloud with no vSocket option.</desc>
+
+          <!-- Clouds (left) -->
+          <rect class="dg-node" x="30" y="40" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="105" y="63" text-anchor="middle">Azure</text>
+          <text class="dg-sub" x="105" y="82" text-anchor="middle">VNets · vWAN</text>
+
+          <rect class="dg-node" x="30" y="150" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="105" y="173" text-anchor="middle">AWS</text>
+          <text class="dg-sub" x="105" y="192" text-anchor="middle">VPCs · TGW</text>
+
+          <rect class="dg-node" x="30" y="260" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="105" y="283" text-anchor="middle">GCP</text>
+          <text class="dg-sub" x="105" y="302" text-anchor="middle">VPCs · Cloud Router</text>
+
+          <rect class="dg-node" x="30" y="370" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="105" y="393" text-anchor="middle">OCI</text>
+          <text class="dg-sub" x="105" y="412" text-anchor="middle">VCNs · DRG</text>
+          <text class="dg-tiny" x="105" y="446" text-anchor="middle">no vSocket option</text>
+
+          <!-- On-ramp methods (middle) -->
+          <rect class="dg-node-green" x="350" y="66" width="200" height="72" rx="10"/>
+          <text class="dg-label" x="450" y="92" text-anchor="middle">vSocket</text>
+          <text class="dg-sub" x="450" y="110" text-anchor="middle">Azure · AWS · GCP</text>
+          <text class="dg-tiny" x="450" y="126" text-anchor="middle">Cato VM in the VNet/VPC</text>
+
+          <rect class="dg-node" x="350" y="200" width="200" height="72" rx="10"/>
+          <text class="dg-label" x="450" y="226" text-anchor="middle">IPsec site</text>
+          <text class="dg-sub" x="450" y="244" text-anchor="middle">all four clouds</text>
+          <text class="dg-tiny" x="450" y="260" text-anchor="middle">native VPN gateway · IKEv2</text>
+
+          <rect class="dg-node-dark" x="350" y="334" width="200" height="72" rx="10"/>
+          <text class="dg-label-inv" x="450" y="360" text-anchor="middle">Cloud Interconnect</text>
+          <text class="dg-sub-inv" x="450" y="378" text-anchor="middle">all four clouds</text>
+          <text class="dg-sub-inv" x="450" y="394" text-anchor="middle">private L2 via fabric</text>
+
+          <!-- Lanes: clouds to methods -->
+          <path class="lane lane-allow" d="M 180 68 C 250 70, 300 82, 346 92"/>
+          <path class="lane lane-allow" d="M 180 178 C 250 168, 300 140, 346 116"/>
+          <path class="lane lane-allow" d="M 180 288 C 240 270, 290 170, 346 128"/>
+          <path class="lane lane-allow" d="M 180 398 C 240 380, 290 290, 346 252"/>
+          <path class="lane-static" fill="none" style="stroke-width:3.4" d="M 180 412 C 250 405, 300 385, 346 378"/>
+
+          <!-- Lanes: methods to PoP -->
+          <path class="lane lane-allow" d="M 550 102 C 620 120, 660 170, 688 208"/>
+          <path class="lane lane-allow" d="M 550 236 L 682 236"/>
+          <path class="lane-static" fill="none" style="stroke-width:3.4" d="M 550 370 C 620 352, 660 302, 688 264"/>
+
+          <!-- PoP + backbone (right) -->
+          <ellipse class="dg-backbone" cx="838" cy="236" rx="108" ry="52"/>
+          <circle cx="880" cy="210" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="850" cy="268" r="6" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="838" y="312" text-anchor="middle">Cato Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="716" cy="236" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="716" cy="236" r="30"/>
+          <text class="dg-label" x="716" y="172" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="716" y="188" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">one policy set · one console</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Encrypted tunnels — vSocket DTLS or IPsec IKEv2</span>
+          <span class="key"><span class="swatch" style="border-top:3px solid var(--ink-3)"></span> Private layer-2 circuit — no tunnel, no encryption overhead</span>
+        </div>
+        <div class="diagram-caption">Azure, AWS and GCP can use any of the three doors; OCI has two — IPsec or FastConnect into Cloud Interconnect, there being no OCI vSocket. Every door lands on the same PoP, backbone and policy set.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>A decision, not a default</h4><p>Availability, throughput, HA mechanics, encryption and cost — compared per cloud, so the on-ramp is chosen on evidence rather than inherited.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>One platform behind every door</h4><p>Whichever on-ramp carries the traffic, the tenant lands in the same rulebase, topology and analytics as every physical site — the choice never fragments policy.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Mix freely, per site</h4><p>vSocket here, IPsec there, a circuit where the flows justify it — all three coexist in one account, and your demo tenant runs them side by side.</p></div></div>
+        <div class="benefit"><div class="b-icon">📏</div><div><h4>Honest numbers</h4><p>Every figure on this page is KB- or provider-documented, dated, and where Cato publishes no number (AWS vSocket throughput), the page says so instead of inventing one.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo — map their clouds</div>
+        <p>Which of the four clouds run production? Which already have connectivity, and by what
+        method? Any OCI in the estate is your opening — it forces the architecture conversation
+        this page exists for, because the default answer (vSocket) is not available there.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Frame the choice on the comparison table</h4>
+          <p>Open on the table above: three on-ramps, ten dimensions, four clouds. The message is
+          not “pick our favourite” — it is that one platform gives them all three, so the choice
+          can follow the workload.</p>
+        </li>
+        <li>
+          <h4>Show all three living in one topology</h4>
+          <p><span class="path">Monitor → Topology</span></p>
+          <p>The demo tenant runs the mix this page recommends: vSocket sites in Azure
+          (Azure-UKS-Hub-vSocket) and AWS (eu-west-2, HA pair), IPsec sites from an Azure vWAN hub
+          and aws-sydney-ipsec, and a Cloud Interconnect site. One map, one WAN — the on-ramp is
+          invisible at this altitude, which is exactly the point.</p>
+        </li>
+        <li>
+          <h4>Walk the site list — three site types, one console</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Filter to the cloud sites and show the site types side by side. Open the AWS vSocket
+          site's HA status (primary active, secondary standby), then the vWAN IPsec site's tunnel
+          configuration (primary and secondary PoP destinations), then the Cloud Interconnect
+          site's definition — no serial, no tunnel parameters, just PoPs, bandwidth and BGP.</p>
+        </li>
+        <li>
+          <h4>Show the routing story</h4>
+          <p><span class="path">Network → Sites → Site Configuration</span></p>
+          <p>On the IPsec site, walk the BGP neighbour config — one neighbour per tunnel, the
+          secondary preferred down by AS-path prepend. On the interconnect site, the same BGP
+          discipline over a /30 with MD5. Same routing model, different transport underneath.</p>
+        </li>
+        <li>
+          <h4>Be honest about the interconnect site</h4>
+          <p>The Cloud Interconnect site is a configuration example — it is not passing traffic,
+          and a live view needs a provisioned circuit. Walk its config and the availability/lead-time
+          story; for live graphs, pivot back to the vSocket site. Honesty here sells the whole
+          library.</p>
+        </li>
+        <li>
+          <h4>Close per their estate</h4>
+          <p>Put their clouds against the per-cloud matrix: “your Azure hub wants a vSocket, the
+          GCP pilot is an afternoon of IPsec, and the OCI tenant was never going to take an
+          appliance — here is what it takes instead.” Then hand them the deep-dive page for
+          whichever option they lean toward.</p>
+        </li>
+      </ol>
+      <figure class="shot">
+        <img src="../assets/img/cma-home-topology.png" alt="Cato Management Application topology view showing sites arranged radially around Cato PoPs, with connected sites in green.">
+        <figcaption>One topology, whatever the on-ramp — vSocket, IPsec and interconnect sites render side by side with the physical estate.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-net-sites.png" alt="Network → Sites list in the CMA showing the site estate with connectivity status and socket version widgets.">
+        <figcaption>Network → Sites: every connection method is just a site type in the same list — the comparison on this page ends in one console either way.</figcaption>
+      </figure>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        This PoV proves a <em>decision</em>, not just a deployment: that the on-ramp chosen for
+        each cloud was the right one, with measured evidence behind it. Run it inside the frame
+        from <a href="management-pov-framework.html">Running a Cato PoV</a> — criteria agreed at
+        the workshop before anything is configured, every artefact dated on its register. The
+        shape: a decision workshop against the comparison table, then one candidate on-ramp
+        deployed per pilot cloud (usually a vSocket in the primary cloud and IPsec in a second
+        cloud or OCI), measured and failed over. Cloud Interconnect joins as a design-validation
+        track only — its lead times put live circuits outside most PoV windows, and the
+        <a href="network-cloud-interconnect.html">Cloud Interconnect page</a> carries the
+        two-track runbook for exactly that.
+      </p>
+
+      <h3 style="margin-top:22px">Success criteria</h3>
+      <div class="table-wrap" style="margin:14px 0 22px">
+        <table class="data">
+          <thead>
+            <tr><th>Criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where it lives in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>On-ramp decision recorded</strong></td>
+              <td>Each pilot cloud mapped against the comparison table with the chosen option and the reasons — availability, throughput need, licence type, lead time</td>
+              <td>A one-page decision matrix from the workshop, on the register, signed by the customer's network owner</td>
+              <td>The workshop record (plus this page as the reference)</td>
+            </tr>
+            <tr>
+              <td><strong>Candidate on-ramps live</strong></td>
+              <td>The chosen option deployed per pilot cloud — vSocket HA pair and/or IPsec site with primary and secondary tunnels to two different PoPs — each rendered in the topology beside the physical estate</td>
+              <td>Topology view; vSocket HA status or IPsec tunnel status showing both PoP connections up</td>
+              <td>Monitor → Topology&nbsp;· Network → Sites</td>
+            </tr>
+            <tr>
+              <td><strong>Throughput &amp; latency evidence</strong></td>
+              <td>A repeatable timed transfer and round-trip measurement, branch → cloud workload, on each deployed on-ramp — results consistent with the configured bandwidth and the documented ceilings (vSocket instance class; 3&nbsp;Gbps IPsec site limit and the cloud gateway's per-tunnel cap)</td>
+              <td>Transfer timings and RTT figures alongside the site's real-time throughput graphs, same run, dated — comparative table if two on-ramps were deployed</td>
+              <td>Network → Sites → Site Monitoring → Real Time</td>
+            </tr>
+            <tr>
+              <td><strong>Failover demonstrated per option</strong></td>
+              <td>vSocket: primary stopped in a change window, secondary takes over (route table repointed on AWS / floating IP moved on Azure). IPsec: primary tunnel dropped, traffic continues on the secondary tunnel to the second PoP via BGP</td>
+              <td>HA/tunnel status before, during and after; BGP peer state-change events; reachability checks either side</td>
+              <td>Network → Sites&nbsp;· Home → Events</td>
+            </tr>
+            <tr>
+              <td><strong>One policy set across on-ramps</strong></td>
+              <td>A single WAN Firewall rule governing branch-to-cloud traffic on <em>both</em> deployed on-ramps — proof the choice of transport never forked the policy</td>
+              <td>The rule plus its events showing hits against both cloud sites</td>
+              <td>Security → WAN Firewall&nbsp;· Home → Events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Scope:</strong> one or two pilot clouds with representative workloads, one branch socket as the measurement source, and the option chosen per cloud at the workshop — not mid-PoV.</li>
+          <li><strong>vSocket cloud-side (if chosen):</strong> marketplace/deployment rights (AWS: Marketplace, CloudFormation, IAM roles, key pairs; Azure: owner permissions on the resource groups — the HA script creates a managed identity with Contributor on both VMs; GCP: a service account with the documented roles); three subnets (MGMT/WAN/LAN); public DNS resolution from the VNet/VPC; on AWS remember the post-deploy reboot.</li>
+          <li><strong>IPsec cloud-side (if chosen):</strong> the gateway at a BGP-capable tier (not Azure Basic SKU), a distinct public source IP per tunnel, and the BGP sheet agreed early — ASNs, peer IPs, and Cato's defaults (ASN 64515, 1,024 prefixes per neighbour). On AWS, decide VGW vs Transit Gateway up front: ECMP beyond 1.25&nbsp;Gbps per tunnel needs the TGW.</li>
+          <li><strong>Cloud Interconnect (design track only):</strong> check the availability list for the customer's PoPs on day one and put the lead time on the table; the circuit order plan is the deliverable, not a live circuit.</li>
+          <li><strong>Licences:</strong> SASE site licences for vSocket sites; IPsec sites run on SASE or SSE; interconnect bandwidth is licensed with a 500&nbsp;Mbps minimum on Enforcement Model accounts. No TLS inspection needed — this is a transport PoV.</li>
+          <li><strong>Change windows:</strong> booked for the failover tests, with the cloud platform team present — the consoles being failed over are theirs.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-top:26px">Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Run the decision workshop</h4>
+          <p>Walk each pilot cloud through the comparison table and record the choice and the
+          reasons in the decision matrix. Force the OCI row if OCI is present — it removes the
+          vSocket default and makes the exercise real. Agree the measurement plan (file size,
+          schedule, source branch) at the same sitting.</p>
+        </li>
+        <li>
+          <h4>Deploy the vSocket candidate</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>Create the site (the CMA issues the serial), deploy from the marketplace or
+          Terraform, wire the route tables, and validate HA before the evidence days. The
+          <a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a> PoV runbook
+          carries the step-by-step, including the IAM policy for AWS HA and the classic
+          plumbing traps.</p>
+        </li>
+        <li>
+          <h4>Deploy the IPsec candidate</h4>
+          <p><span class="path">Network → Sites</span></p>
+          <p>IKEv2 site, primary and secondary tunnels to two different PoPs, one BGP neighbour
+          per tunnel, GCM ciphers (mandatory at 100&nbsp;Mbps and above). Cato's Terraform modules
+          (<span style="white-space:nowrap">terraform-cato-ipsec-aws / -azure</span>) stand the
+          integration up as code. Tunnel mechanics, proposal discipline and troubleshooting live
+          on <a href="network-ipsec-asa.html">IPsec Site Design</a> — the Cato side is identical
+          whether the peer is an ASA or a cloud gateway.</p>
+        </li>
+        <li>
+          <h4>Build the single WAN Firewall rule</h4>
+          <p><span class="path">Security → WAN Firewall</span></p>
+          <p>One rule: source = the pilot branch, destination = both cloud sites, action Allow,
+          Track Event. That one rule matching traffic over two different transports is the
+          fifth criterion proving itself.</p>
+        </li>
+        <li>
+          <h4>Run the evidence days</h4>
+          <p><span class="path">Network → Sites → Site Monitoring → Real Time</span> <span class="path">Home → Events</span></p>
+          <p>Timed transfers and RTT per on-ramp, same file, same hour, read against the
+          real-time graphs — parallel streams for the throughput runs, since a single TCP flow
+          will not fill a multi-gigabit path. Then the failover windows: stop the primary vSocket
+          and watch the takeover; drop the primary IPsec tunnel and watch BGP move traffic to the
+          secondary PoP. Every capture dated, on the register, against its criterion.</p>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:26px">Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>vSocket deployed but never connects</h4><p>In order: the post-deploy <strong>reboot</strong> was skipped (documented requirement on AWS), outbound traffic to the Cato Cloud is blocked by the security group, or the VNet/VPC cannot resolve public DNS — the Azure KB is explicit that the vSocket must reach a public DNS server.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>IPsec proposal mismatch</h4><p>IKEv2's <code>NO_PEER_PROPOSAL_SELECTED</code> means the two menus don't intersect. Take the CMA off Automatic and set exact Init/Auth parameters matching the gateway line for line — and remember the GCM rule: sites at 100&nbsp;Mbps+ must use AES 128/256 GCM-16.</p></div></div>
+        <div class="benefit"><div class="b-icon">🌐</div><div><h4>Second tunnel won't come up</h4><p>The KB's rule for stacking tunnels: <strong>each active tunnel within an HA role must use a different public IP address</strong>. The cloud gateways provide them by design — Azure active-active gives each instance its own IP; GCP HA VPN has two interfaces; on AWS each connection has two tunnel endpoints — so map each gateway interface to its own Cato tunnel rather than presenting one IP for all.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗺</div><div><h4>Failover test fails on AWS</h4><p>The vSocket HA mechanism is the route-table API call and nothing else: check the IAM actions (CreateRoute / DescribeRouteTables / ReplaceRoute), UDP 20480 open between LAN interfaces, and both LAN subnets on the same route table. And remember <strong>BGP is not supported with AWS vSocket HA</strong> — don't debug what can't work.</p></div></div>
+        <div class="benefit"><div class="b-icon">↔️</div><div><h4>Asymmetric paths muddy the measurements</h4><p>OCI sends VCN return traffic down <em>any</em> up tunnel — land both OCI tunnels on the same Cato site as primary/secondary. And when two on-ramps to the same cloud coexist, prefer one deliberately via BGP and verify both directions use it before timing anything.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>Throughput below expectation</h4><p>Check the ceilings in order: single TCP stream (use parallel streams), the configured last-mile bandwidth on the site, the cloud gateway's per-tunnel cap (AWS 1.25&nbsp;Gbps standard tunnel), the vSocket size (Azure 2-NIC tops out at 1&nbsp;Gbps), then the 3&nbsp;Gbps IPsec site limit. The lowest one is what you measured.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:26px">Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats to set at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>OCI has no vSocket</strong> — the choice there is IPsec or FastConnect interconnect, and pretending otherwise at the workshop costs you the deployment week when it surfaces.</li>
+          <li><strong>Per-tunnel ceilings are real</strong> — 3&nbsp;Gbps is the IPsec <em>site</em> limit reached with multiple tunnels; the cloud gateway caps each tunnel lower (AWS 1.25&nbsp;Gbps standard), and no per-tunnel Cato figure is published. Never promise 3&nbsp;Gbps through one tunnel.</li>
+          <li><strong>Interconnect lead times are physics</strong> — on-demand at some PoPs, three weeks to three months at others. Keep Cloud Interconnect on the design track and scope any live circuit as the post-PoV expansion motion.</li>
+          <li><strong>The interconnect circuit is unencrypted by design</strong> — Cato positions “no encryption overhead” as the feature it is, but say it out loud in any compliance-sensitive engagement; MD5 authenticates the BGP session, not the traffic.</li>
+          <li><strong>HA asymmetries per cloud:</strong> AWS vSocket HA has no BGP and no alt-WAN; Azure failover can take up to 120 seconds (write the criterion accordingly); GCP HA needs vSocket 24.0.20395+. IPsec sites never re-home PoPs automatically — the secondary tunnel is the failover, so configure it.</li>
+          <li><strong>Licence types differ:</strong> vSocket sites need SASE licences; IPsec sites can run on SSE — which occasionally decides the option all by itself.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <div class="co-title">Unwinding cleanly at the end</div>
+        <p>Delete the PoV WAN Firewall rule and the pilot sites from the CMA, then the cloud side:
+        CloudFormation stack or resource-group items and Elastic IPs for a vSocket (plus the HA
+        IAM role or managed identity), the gateway connections and any TGW attachments for IPsec
+        (gateway hourly fees keep billing until deleted), and cancel any interconnect
+        provider-side orders before their billing starts. The decision matrix and the evidence
+        register survive — they are the design input for production, whichever way the decision
+        lands.</p>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/connecting-sites-to-the-cato-cloud" target="_blank" rel="noopener">Connecting Sites to the Cato Cloud — the three methods</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/en/cato-cloud-thresholds-and-limits" target="_blank" rel="noopener">Cato Cloud Thresholds and Limits — the throughput figures</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/en/configuring-ipsec-ikev2-sites" target="_blank" rel="noopener">Configuring IPsec IKEv2 Sites</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-sites" target="_blank" rel="noopener">Getting Started with Cloud Interconnect Sites</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/cloud-interconnect-availability" target="_blank" rel="noopener">Cloud Interconnect Availability — PoPs, providers, lead times</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/redundant-vpn-connection-to-oracle-cloud-using-bgp" target="_blank" rel="noopener">Redundant VPN Connection to Oracle Cloud using BGP</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="network-cloud-datacenter.html">Cloud Datacentre Integration</a> — vSocket &amp; IPsec deployment in depth</li>
+            <li><a href="network-cloud-interconnect.html">Cloud Interconnect: Dedicated Circuits to Cloud &amp; DC</a> — circuits, availability, two-track PoV</li>
+            <li><a href="network-ipsec-asa.html">IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)</a> — tunnel mechanics that apply to any peer</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

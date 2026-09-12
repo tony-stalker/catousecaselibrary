@@ -194,6 +194,16 @@ window.UC_CATALOG = [
   },
 
   {
+    id: "network-cloud-connectivity",
+    file: "usecases/network-cloud-connectivity.html",
+    category: "Network",
+    title: "Cloud Connectivity: vSocket vs IPsec vs Cloud Interconnect",
+    summary: "Choosing the right on-ramp per cloud — vSocket, IPsec or Cloud Interconnect for Azure, AWS, GCP and OCI, compared on availability, throughput, HA, encryption, routing, effort and cost.",
+    tags: ["vSocket", "IPsec", "Cloud Interconnect", "Azure", "AWS", "GCP", "OCI"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "network-cloud-interconnect",
     file: "usecases/network-cloud-interconnect.html",
     category: "Network",

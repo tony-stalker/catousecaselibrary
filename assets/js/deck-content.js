@@ -700,6 +700,42 @@ window.UC_DECKS = {
       "demo": "Start in Bandwidth Management: priorities keyed to the application and the person, the same policy enforced at the socket and at every PoP — no per-region QoS to drift.\nThen the live proof: a Teams or Zoom call from the far site, and its drill-down in Experience Monitoring — the latency and TTFB behind the score (scoring lives here, not in App Analytics).\nOver to Topology: separate last mile from middle mile on one screen — the who-do-you-call question answered: was the bad hour the local ISP or the long haul.\nFinish in Network Rules with the acceleration and loss-mitigation toggles — a per-rule decision, not an appliance per region — then close on smart egress: their SaaS app exiting beside the app instance, not head office. Back to the slides."
     }
   },
+  "network-cloud-connectivity": {
+    "pain": [
+      "The on-ramp per cloud is usually a default someone inherited, not a decision",
+      "Pick wrong and you own a VM estate you didn't need — or hit tunnel ceilings",
+      "OCI breaks the default entirely: no vSocket exists there"
+    ],
+    "gain": [
+      "Three documented doors per cloud, chosen on evidence — availability, throughput, HA, cost",
+      "Whichever door, the tenant lands in one policy set, one console, one backbone",
+      "Mix freely per site — vSocket, IPsec and a circuit coexist in one account"
+    ],
+    "demo": [
+      {
+        "area": "Monitor » Topology",
+        "show": "All three on-ramps on one map — invisible at this altitude, which is the point"
+      },
+      {
+        "area": "Network » Sites",
+        "show": "Three site types side by side: HA pair, tunnel pair, circuit definition"
+      },
+      {
+        "area": "Network » Sites » Site Configuration",
+        "show": "Same BGP discipline on IPsec and interconnect — different transport underneath"
+      },
+      {
+        "area": "Network » Sites",
+        "show": "The interconnect site is a configuration example — say so, then pivot to the vSocket for live graphs"
+      }
+    ],
+    "hook": "For each cloud you run production in — was the on-ramp a decision, or a default someone inherited?",
+    "notes": {
+      "divider": "Open on the page's discovery question: for each cloud running production — how does it reach the rest of the estate today, what does that path cost per month, and who chose it? Was it a decision, or a default someone inherited?\nName the stakes: a vSocket where a tunnel would have done buys a VM estate you didn't need; IPsec under a replication-heavy workload hits tunnel ceilings; an interconnect circuit for a two-week pilot has a lead time that outlives the project.\nBridge: here's what I'll show you — one platform with three documented doors into every cloud, so the choice can follow the workload. And one cloud forces the conversation: OCI has no vSocket at all.",
+      "why": "Walk the table by dimension, not by cell. Availability: vSocket covers Azure, AWS and GCP; OCI connects by IPsec or FastConnect only. Throughput: an Azure vSocket tops out at one to two gigabits, an IPsec site at three — though the cloud gateway caps each tunnel lower — and an interconnect circuit runs to ten. Encryption: the tunnels are encrypted by design; the interconnect circuit is private but unencrypted — say that aloud in any compliance-sensitive room. Effort: IPsec in minutes, a vSocket in hours, a circuit in weeks to months. Licences occasionally decide it alone — vSocket sites need SASE, IPsec can run on SSE.\nWhichever door they pick, the tenant lands on the same backbone, one policy set, one console — the choice never fragments the platform. Let me show the mix living together.",
+      "demo": "Start in Topology: the demo tenant runs the mix this page recommends — vSocket sites in Azure and AWS, IPsec sites from an Azure vWAN hub and Sydney, and a Cloud Interconnect site. One map; the on-ramp is invisible at this altitude, which is exactly the point.\nThen Network, Sites: the AWS vSocket's HA status, the vWAN site's primary and secondary tunnels to two different PoPs, and the interconnect definition — no serial, no tunnel parameters, just PoPs, bandwidth and BGP.\nWalk the routing: one BGP neighbour per tunnel, the secondary steered down by AS-path prepend — the same discipline over a /30 on the circuit.\nBe honest: the interconnect site is a configuration example, not passing traffic — pivot to the vSocket for live graphs.\nClose per their estate against the per-cloud matrix, then hand them the deep-dive page for the option they lean toward."
+    }
+  },
   "network-cloud-interconnect": {
     "pain": [
       "Datacentre-class flows ride tunnels: internet last mile, bandwidth ceilings, encryption overhead",

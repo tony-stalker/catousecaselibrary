@@ -1,6 +1,6 @@
 # Cato SASE Use Case Library
 
-A self-contained, offline-first HTML library of **82 Cato Networks use cases** for
+A self-contained, offline-first HTML library of **83 Cato Networks use cases** for
 sales engineers and partners — business objective, how the platform solves it, a
 custom diagram, and a step-by-step demo runbook for every scenario. No build step,
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
@@ -20,7 +20,7 @@ what-good-looks-like, troubleshooting, gotchas & exit — authoring contract in
 |---|---|---|
 | Access | 6 | ZTNA, BYOD on-ramps (portal / Browser Extension / Enterprise Browser), identity design, per-user remote-worker experience |
 | Management | 7 | Visibility, DEM (with live CMA captures), API/Terraform, PoV framework, asset discovery, TCO |
-| Network | 9 | SD-WAN, MPLS migration, cloud DC + Cloud Interconnect, ASA IPsec design, resilient sites |
+| Network | 10 | SD-WAN, MPLS migration, cloud DC + Cloud Interconnect, cloud on-ramp comparison (vSocket / IPsec / interconnect), ASA IPsec design, resilient sites |
 | Security | 14 | FWaaS refresh, TLS inspection playbook, OT/IoT, compliance (ISO/NIS2, DORA, PCI, UK CE/CAF, NHS DSPT) |
 | AI Security | 8 | AI threat landscape (nine real incidents), GenAI visibility assessment, end-user GenAI, agentic AI, homegrown AI apps, legal GenAI |
 | Migration | 38 | PS methodology + 15-vendor playbooks + per-vendor policy deep-dives (FW/SWG/CASB/DLP) + 5 animated phased journeys (MPLS, SD-WAN, VPN, firewall, Zscaler) |
@@ -91,7 +91,7 @@ Conventions and gotchas:
 index.html            landing page (journeys, search, category grid)
 whatsnew.html         change log (generated from git history)
 planner.html          migration planner (internal only; excluded from the prospect build)
-usecases/*.html       the 82 use-case pages
+usecases/*.html       the 83 use-case pages
 assets/               shared CSS/JS, images (CMA screenshots, diagrams)
 _extract/             tooling, source-deck digests, research briefs, verification scripts
 "1 - … " … "5 - …"    original PowerPoint decks (do not share raw — see privacy note)
