@@ -210,6 +210,26 @@
     } };
   }
 
+  /* single-use-case cover — absorbs the divider (category kicker + hook) so the
+     deck doesn't open with two near-identical navy title slides */
+  function singleCoverSlide(uc, hook, note) {
+    return { brands: ["white"], notes: note, build: function (rels) {
+      var body = navyBg();
+      if (rels.white) body += logo(rels.white, MARGIN, 600000, 936000);   /* ~2.6 cm */
+      body += box(MARGIN, 2000000, W - 2 * MARGIN, 400000,
+        para(String(uc.category).toUpperCase() + " USE CASE",
+          { sz: 1200, b: true, color: C.green }));
+      body += box(MARGIN, 2450000, W - 2 * MARGIN, 1500000,
+        para(uc.title, { sz: 3600, b: true, color: "FFFFFF" }));
+      body += shape("rect", MARGIN, 4120000, 1828800, 60960, C.green);    /* accent bar */
+      if (hook) body += box(MARGIN, 4360000, W - 2 * MARGIN, 1100000,
+        para(hook, { sz: 1600, color: C.invSub }));
+      body += box(MARGIN, H - 560000, W - 2 * MARGIN, 350000,
+        para("Cato Networks — SASE demonstration", { sz: 1000, color: C.invDim }));
+      return body;
+    } };
+  }
+
   function agendaSlide(ucs) {
     var note = "Running order: "
       + ucs.map(function (uc, i) { return (i + 1) + ". " + uc.title; }).join("; ")
@@ -763,10 +783,11 @@
      UC_DECK_DIAGRAMS registry has an entry for this id), DEMO; defensive
      against missing deck content (entry.notes = {divider, why, demo}
      speaker notes — may be absent) */
-  function caseSlides(uc) {
+  function caseSlides(uc, skipDivider) {
     var deck = (window.UC_DECKS || {})[uc.id];
     var notes = (deck && deck.notes) || {};
-    var out = [dividerSlide(uc, (deck && deck.hook) || uc.summary, notes.divider)];
+    var out = skipDivider ? []
+      : [dividerSlide(uc, (deck && deck.hook) || uc.summary, notes.divider)];
     if (deck && ((deck.pain && deck.pain.length) || (deck.gain && deck.gain.length))) {
       out.push(whySlide(uc, deck, notes.why));
     }
@@ -797,14 +818,20 @@
       + (ucs.length > 1 ? "\nAgenda is next — flag which items matter most to them." : "");
     var slides;
     if (ucs.length === 1 && !title) {
-      slides = [coverSlide(ucs[0].title, ucs[0].summary, coverNote)];
+      /* one use case, no custom title: the cover IS the divider — a second navy
+         title slide straight after it read as a duplicate */
+      var uc0 = ucs[0], deck0 = (window.UC_DECKS || {})[uc0.id];
+      var n0 = (deck0 && deck0.notes) || {};
+      var openNote = n0.divider ? n0.divider + "\n" + COVER_NOTE : coverNote;
+      slides = [singleCoverSlide(uc0, (deck0 && deck0.hook) || uc0.summary, openNote)];
+      slides = slides.concat(caseSlides(uc0, true));
     } else {
       var sub = ucs.length === 1 ? ucs[0].summary
         : "A guided walk through " + ucs.length + " use cases in the Cato Management Application";
       slides = [coverSlide(title || "Cato SASE demonstration", sub, coverNote)];
       if (ucs.length > 1) slides.push(agendaSlide(ucs));
+      ucs.forEach(function (uc) { slides = slides.concat(caseSlides(uc)); });
     }
-    ucs.forEach(function (uc) { slides = slides.concat(caseSlides(uc)); });
     slides.push(closingSlide());
     return pptx(slides);
   }
