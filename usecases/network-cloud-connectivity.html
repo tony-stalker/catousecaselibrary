@@ -306,6 +306,149 @@
       </div>
     </section>
 
+    <section id="decider" class="reveal">
+      <div class="section-kicker">Decision helper</div>
+      <h2>Which on-ramp? A guided pick</h2>
+      <p>
+        Answer for one cloud site at a time and the helper ranks the three on-ramps using only the
+        documented facts on this page — availability, throughput ceilings, HA mechanics,
+        encryption, licences and lead times. It is rule-of-thumb guidance, deliberately not a
+        price calculator: the costs that usually decide (egress rates above all) live in your
+        provider's rate card, not in this library.
+      </p>
+      <style>
+      #decider fieldset{border:0;margin:0;padding:0;min-width:0}
+      #decider legend{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
+      #decider .chips{display:flex;flex-wrap:wrap;gap:8px}
+      #decider .chips input{position:absolute;opacity:0;pointer-events:none}
+      #decider .chips label{display:inline-block;font-size:.85rem;color:var(--ink-2);background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 14px;cursor:pointer;user-select:none}
+      #decider .chips input:checked+label{background:var(--green-050);border-color:var(--green-600);color:var(--green-700);font-weight:600}
+      #decider .chips input:focus-visible+label{outline:2px solid var(--green-600);outline-offset:2px}
+      #decider .verdict-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:16px}
+      #decider .verdict-card ul{margin:10px 0 0;padding-left:18px;font-size:.86rem;color:var(--ink-2)}
+      #decider .verdict-card.gated{opacity:.65}
+      </style>
+      <form id="decider-form" class="card" onsubmit="return false">
+        <div class="grid-2">
+          <fieldset>
+            <legend>Cloud platform</legend>
+            <div class="chips">
+              <input type="radio" name="dc-cloud" id="dc-cloud-azure" value="azure" checked><label for="dc-cloud-azure">Azure</label>
+              <input type="radio" name="dc-cloud" id="dc-cloud-aws" value="aws"><label for="dc-cloud-aws">AWS</label>
+              <input type="radio" name="dc-cloud" id="dc-cloud-gcp" value="gcp"><label for="dc-cloud-gcp">GCP</label>
+              <input type="radio" name="dc-cloud" id="dc-cloud-oci" value="oci"><label for="dc-cloud-oci">OCI</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Sustained throughput per site</legend>
+            <div class="chips">
+              <input type="radio" name="dc-throughput" id="dc-tp-lt1" value="lt1"><label for="dc-tp-lt1">&lt; 1 Gbps</label>
+              <input type="radio" name="dc-throughput" id="dc-tp-g1_2" value="g1_2" checked><label for="dc-tp-g1_2">1–2 Gbps</label>
+              <input type="radio" name="dc-throughput" id="dc-tp-g2_3" value="g2_3"><label for="dc-tp-g2_3">2–3 Gbps</label>
+              <input type="radio" name="dc-throughput" id="dc-tp-g3_10" value="g3_10"><label for="dc-tp-g3_10">3–10 Gbps</label>
+              <input type="radio" name="dc-throughput" id="dc-tp-gt10" value="gt10"><label for="dc-tp-gt10">&gt; 10 Gbps</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Cloud-to-WAN egress volume</legend>
+            <div class="chips">
+              <input type="radio" name="dc-egress" id="dc-eg-light" value="light"><label for="dc-eg-light">Light</label>
+              <input type="radio" name="dc-egress" id="dc-eg-steady" value="steady" checked><label for="dc-eg-steady">Steady</label>
+              <input type="radio" name="dc-egress" id="dc-eg-heavy" value="heavy"><label for="dc-eg-heavy">Heavy</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Encryption required in transit (compliance)</legend>
+            <div class="chips">
+              <input type="radio" name="dc-encryption" id="dc-enc-yes" value="yes"><label for="dc-enc-yes">Yes — mandated</label>
+              <input type="radio" name="dc-encryption" id="dc-enc-no" value="no" checked><label for="dc-enc-no">No hard requirement</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Failover expectation</legend>
+            <div class="chips">
+              <input type="radio" name="dc-ha" id="dc-ha-single" value="single"><label for="dc-ha-single">Single instance is fine</label>
+              <input type="radio" name="dc-ha" id="dc-ha-standard" value="standard" checked><label for="dc-ha-standard">Standard HA</label>
+              <input type="radio" name="dc-ha" id="dc-ha-fast" value="fast"><label for="dc-ha-fast">Deterministic, seconds-level</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Time to live</legend>
+            <div class="chips">
+              <input type="radio" name="dc-timeline" id="dc-tl-days" value="days"><label for="dc-tl-days">Days</label>
+              <input type="radio" name="dc-timeline" id="dc-tl-weeks" value="weeks" checked><label for="dc-tl-weeks">Weeks</label>
+              <input type="radio" name="dc-timeline" id="dc-tl-quarter" value="quarter"><label for="dc-tl-quarter">This quarter</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Also true at this site</legend>
+            <div class="chips">
+              <input type="checkbox" name="dc-feat-sdwan" id="dc-ft-sdwan" value="sdwan"><label for="dc-ft-sdwan">SD-WAN features, full QoS, DEM probes / last-mile monitoring in the cloud site</label>
+              <input type="checkbox" name="dc-feat-sse" id="dc-ft-sse" value="sse"><label for="dc-ft-sse">SSE-only licence estate</label>
+            </div>
+          </fieldset>
+        </div>
+      </form>
+      <div id="decider-result" aria-live="polite"></div>
+      <noscript>
+        <div class="callout warn">
+          <div class="co-title">JavaScript is off</div>
+          <p>The interactive helper needs JavaScript — the table below carries the same rules of thumb.</p>
+        </div>
+      </noscript>
+
+      <h3 style="margin-top:26px">Which wins when — the same rules, static</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>If this is true</th><th>Reach for</th><th>Why (documented)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Sustained &gt; 3 Gbps per site</strong></td>
+              <td>Cloud Interconnect</td>
+              <td>Rated up to 10 Gbps; vSocket tops out at 2 Gbps on Azure and GCP, IPsec at 3 Gbps per site</td>
+            </tr>
+            <tr>
+              <td><strong>In-transit encryption mandated</strong></td>
+              <td>vSocket or IPsec</td>
+              <td>vSocket runs DTLS-encrypted tunnels; IPsec encrypts with AES-GCM (required at 100 Mbps and above). The interconnect circuit is private but unencrypted — MD5 is BGP session auth only</td>
+            </tr>
+            <tr>
+              <td><strong>SD-WAN, full QoS or DEM in the cloud site</strong></td>
+              <td>vSocket</td>
+              <td>SD-WAN features, full QoS, last-mile monitoring and DEM probes are vSocket-only; IPsec and interconnect sites get downstream QoS only</td>
+            </tr>
+            <tr>
+              <td><strong>SSE-only licence estate</strong></td>
+              <td>IPsec</td>
+              <td>IPsec sites run on SASE or SSE licences; vSocket sites need SASE</td>
+            </tr>
+            <tr>
+              <td><strong>Live this week</strong></td>
+              <td>vSocket or IPsec</td>
+              <td>vSocket is a marketplace-wizard deployment with zero-touch provisioning (Terraform on GCP); IPsec is cloud-gateway configuration. Interconnect lead times run from CMA on-demand to 3 months by PoP (as of Sep 2026)</td>
+            </tr>
+            <tr>
+              <td><strong>The tenant is OCI</strong></td>
+              <td>IPsec or FastConnect</td>
+              <td>No OCI vSocket exists in the KB; Cato's documented OCI paths are IPsec and Cloud Interconnect via FastConnect, where the Cato PoP must be in the same Oracle Cloud region as the tenant</td>
+            </tr>
+            <tr>
+              <td><strong>Heavy sustained egress</strong></td>
+              <td>Cloud Interconnect</td>
+              <td>Cato positions it for data centres with a high volume of traffic — then compare your provider's internet-egress vs interconnect-egress rates; this library quotes no prices</td>
+            </tr>
+            <tr>
+              <td><strong>Seconds-level failover on GCP</strong></td>
+              <td>vSocket HA</td>
+              <td>GCP vSocket HA fails over behind an internal load balancer, typically 3–5 s (March 2026); Azure's floating-IP move can take up to 120 s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="solution" class="reveal">
       <div class="section-kicker">The architecture</div>
       <h2>Four clouds, three doors, one WAN</h2>
@@ -645,6 +788,7 @@
 
 <script src="../assets/js/catalog.js"></script>
 <script src="../assets/js/app.js"></script>
+<script src="../assets/js/onramp-decider.js"></script>
 <script src="../assets/js/deck-brand.js"></script>
 <script src="../assets/js/deck-content.js"></script>
 <script src="../assets/js/deck-diagrams.js"></script>
