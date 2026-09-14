@@ -622,8 +622,25 @@ interface Tunnel1
       </ol>
 
       <h3>What good output looks like</h3>
-      <!-- capture-wanted: «Network → Sites → Site Settings → IPsec — Primary and Secondary tunnel config with Init/Auth parameters set to the GCM sheet» -->
-      <!-- capture-wanted: «Site Connection Status — live IKEv2 phase 1/2 state showing the negotiated parameters» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-ipsec-settings.png" alt="CMA IPsec site settings for a live IKEv2 site: the Primary tunnel's destination is a Cato FQDN (redacted) with PoP Location Automatic, and the tunnel table shows interface PRIMARY1 on WAN1 with a redacted authentication identifier, last-mile bandwidth 100 Mbps upstream and 1000 Mbps downstream, and Status Connected. Below sit a collapsed Secondary section, Init Message Parameters noting that when the Cato PoP only responds to connections the initial parameters are set by the incoming connection, and Auth Message Parameters with encryption and integrity algorithms on Automatic and Diffie-Hellman group 16 (4096-bit).">
+        <figcaption><strong>Site Settings → IPsec</strong> — the page where the cipher sheet from this
+        page&rsquo;s config tables is entered, shown on a live IKEv2 reference site. Point at the
+        Primary tunnel: FQDN destination, Status <strong>Connected</strong>, the tenant&rsquo;s FQDN and
+        authentication identifier redacted. This tenant runs its Init/Auth algorithms on Automatic
+        with DH group 16 (4096-bit) — fine against a modern peer, but against the ASA take the
+        dropdowns off Automatic and set the sheet&rsquo;s exact values line for line.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-ike-connection-status.png" alt="CMA Connection Details drawer opened over the IPsec settings page of an IKEv2 branch site in Larnaca, Cyprus. The Primary section lists the local address 209.206.4.207, a redacted peer address, initiator FW-init (steering), and last IKE SA and ESP SA establishment times in milliseconds. Init Message Parameters show PROTOCOL_IKE with DH group GROUP_15_MODP3072 and automatic encryption, PRF and integrity algorithms; Auth Message Parameters show PROTOCOL_ESP with DH group GROUP_16_MODP4096.">
+        <figcaption><strong>Site Connection Status → Connection Details</strong> — the live IKEv2 state,
+        read from the PoP. Point at Initiator: <strong>FW-init (steering)</strong> means the Cato side
+        built the tunnel — <em>Initiate Connection by Cato</em> doing its job — and the Last IKE SA /
+        ESP SA ages show phase 1 and phase 2 standing and rekeying on schedule. The negotiated
+        parameters are listed underneath (PROTOCOL_IKE with DH group 15/3072-bit on Init,
+        PROTOCOL_ESP with group 16/4096-bit on Auth): this drawer is where a proposal mismatch stops
+        being a guess. Peer address redacted.</figcaption>
+      </figure>
       <!-- capture-wanted: «Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill» -->
       <!-- capture-wanted: «Monitor → Events — tunnel Disconnected/Connected pair around the ASA reload, timeline connection log alongside» -->
       <p>

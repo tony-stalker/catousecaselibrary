@@ -529,7 +529,10 @@
         <figcaption>The inspection-ratio criterion read straight off the generated report (lab tenant, one week): 51% of TLS inspected overall, decomposed per OS — macOS at 69%, Windows at 41%, Linux entirely bypassed by the platform exclusions. The per-OS split is the honest wrap-up: it shows exactly where the exclusion register, not appetite, sets the ceiling.</figcaption>
       </figure>
       <!-- capture-wanted: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user -->
-      <!-- capture-wanted: Security → Certificate Management — active certificate with expiry and PEM/DER download options -->
+      <figure class="shot">
+        <img src="../assets/img/cma-cert-management.png" alt="CMA Certificate Management page listing one row, 2024 Default Cato Certificate: type Cato Certificate, creation date 5 March 2024, expiration date 3 March 2034, common name Cato Networks Root CA, status Active with a green tick, and the row's actions menu open showing Download PEM and Download DER options." loading="lazy">
+        <figcaption><strong>Security → Certificate Management</strong> — the artefact everything in week one hangs off. Point at the dates: the default Cato certificate, created March 2024 and expiring <strong>March 2034</strong> — a ten-year validity, so the root the MDM/GPO job distributes is not a renewal treadmill — with Status: Active (only one certificate can be active at a time). The row&rsquo;s menu is where distribution starts: <strong>Download PEM</strong> or <strong>Download DER</strong>, whichever format the endpoint tooling wants.</figcaption>
+      </figure>
       <p>
         The wrap-up needs three exhibits side by side: the report chart showing the pilot's inspected
         share climbing wave by wave, the before/after EICAR (or DLP) event pair, and the policy

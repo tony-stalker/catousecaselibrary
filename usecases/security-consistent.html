@@ -435,7 +435,16 @@
         <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Internet Firewall rulebase showing thirteen ordered rules with sources of user groups, individual users and devices, Block, Allow and Prompt actions, and live hit-count bars.">
         <figcaption>The single rulebase the whole PoV runs against — user-scoped and device-scoped rules with live hit counts, and no per-site or per-appliance variant anywhere. In the PoV, your proof rule sits in this list and its hit counter climbs from both paths.</figcaption>
       </figure>
-      <!-- capture-wanted: Monitor → Events filtered by one Internet Firewall rule name, showing a site-sourced event and an SDP-user event side by side with identity attribution -->
+      <figure class="shot">
+        <img src="../assets/img/cma-events-ifw-site-sdp.png" alt="Two stacked CMA Events views filtered to the rule Default Block for Risky Categories, 37 K events counted above an event-frequency histogram. The upper table lists Site-sourced Block events from NewYork HQ and WestUS-HQ attributed to named users Ashley Cooper, Matthew Foster and Nicole Hayes; the lower table shows the same rule's six SDP User Block events, all attributed to remote user Natalie Blake." loading="lazy">
+        <figcaption><strong>Monitor → Events, filtered to one rule</strong> — a composite of two views of the
+        same filter, Rule Is <em>Default Block for Risky Categories</em> (37 K events in the window; demo
+        tenant, fictional identities). Point at the <em>Source is Site or SDP User</em> column: the top rows
+        are site-sourced Blocks from NewYork HQ and WestUS-HQ, each carrying a named user, and the bottom
+        rows are the same rule blocking a remote SDP user — six events for one Client user. One rule name,
+        one verdict, both origins, identity attribution throughout: this is the money-shot filter from the
+        two-path test.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Threats Dashboard after the EICAR tests, showing the Anti-Malware detections for both paths -->
       <figure class="shot">
         <img src="../assets/img/cma-policy-changes.png" alt="CMA Notifications drawer on the My Policy Changes tab: a published policy change marked completed successfully, with its timestamp and an Audit Trail link" loading="lazy">

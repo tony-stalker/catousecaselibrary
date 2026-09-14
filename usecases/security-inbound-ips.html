@@ -470,8 +470,25 @@
       </ol>
 
       <h3>What good output looks like</h3>
-      <!-- capture-wanted: Network → IP Allocation showing a static IP allocated at the London PoP -->
-      <!-- capture-wanted: Security → Remote Port Forwarding rule — external allocated IP/port mapped to an internal test-service IP/port, with an Allow List of permitted source ranges -->
+      <figure class="shot">
+        <img src="../assets/img/cma-ip-allocation-london.png" alt="CMA Network → IP Allocation: summary tiles showing 10 total IPs and 10 IP licences with a gauge reading Allocated 10, Available 0, above a ten-row table of allocated addresses by PoP — three at London plus Melbourne, Dublin, Sydney, Manchester, New York, Frankfurt and Amsterdam, each of type System. The IP address column is a grey redacted block.">
+        <figcaption><strong>Network → IP Allocation</strong> — the raw material for inbound publishing.
+        Ten licensed static IPs, all allocated: three at the London PoP alongside Melbourne, Dublin,
+        Sydney, Manchester, New York, Frankfurt and Amsterdam (the tenant's allocated addresses are
+        redacted). Point at the <em>Allocated 10 / Available 0</em> gauge — each address is a licensed
+        object that exists before any rule references it, so binding one to a Remote Port Forwarding
+        rule is a policy edit, not a provisioning ticket.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-rpf-rules.png" alt="CMA Security → Remote Port Forwarding, published revision, with the feature toggle enabled and a two-rule table. Rule 1, Inbound Web Server Access, is greyed out as disabled and maps a London external IP (redacted) on port 8080 to internal 172.16.1.2 port 80 with an Allow List whose traffic source is Any, flagged with an amber warning triangle. Rule 2, Dev1 AVD, maps a London external IP (redacted) on port 33389 to internal 10.5.3.19 port 3389 over TCP and UDP with an Allow List of redacted source ranges.">
+        <figcaption><strong>Security → Remote Port Forwarding</strong> — the published mapping. Point at
+        the Dev1 AVD row: external port 33389 on a London allocated IP (redacted) forwarded to
+        <strong>10.5.3.19:3389</strong> inside, TCP and UDP, traffic type Allow List with the permitted
+        source ranges (also redacted) doing the gatekeeping. Then point at the disabled web-server rule
+        above it, whose Allow List is still <em>Any</em> and wears an amber warning triangle — the
+        console itself flags an unscoped inbound rule, which is precisely the discipline this PoV is
+        built around.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Events filtered to the allocated IP — allowed inbound flows alongside IPS/scanner block events against the same address -->
       <p>
         The money shot is a single Events filter — the allocated IP — returning two interleaved

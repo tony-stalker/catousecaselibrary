@@ -1,13 +1,13 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-91 of the 151 still-wanted captures need setup a clean tenant can't provide by navigation.
+85 of the 104 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
 and tell Claude the file→page mapping. It crops, catalogues, embeds and ships. Avoid real names on screen.
 Auto-regenerated from live capture-wanted comments (embedded ones drop off). Full list: `CAPTURE-LIST.md`.
 
-## BGP / Interconnect — bring up an eBGP handoff (or Cross-Connect site) so Show BGP Status is Established and the routing table shows learned routes  (15)
+## BGP / Interconnect — bring up an eBGP handoff (or Cross-Connect site) so Show BGP Status is Established and the routing table shows learned routes  (12)
 
 - migration-checkpoint: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–Gaia eBGP transit-VLAN handoff
 - migration-cisco: Network → Routing Table filtered to the pilot prefixes, showing BGP-learned overlay routes via the hub handoff
@@ -19,11 +19,8 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-versa: Network → Routing Table filtered to the pilot and overlay prefixes, showing BGP-learned routes with AS path and received communities
 - migration-versa: Site Settings → BGP — Show BGP Status with the neighbour Established and learned routes listed
 - network-cloud-interconnect: Monitor → Topology — a connected Cloud Interconnect site alongside socket and vSocket sites
-- network-cloud-interconnect: Network → Sites — Cloud Interconnect site-creation flow showing connection type and primary/secondary PoP selection
-- network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP peer definition showing MD5, metrics and primary/secondary PoP
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
-- migration-sonicwall: Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured
 
 ## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (5)
 
@@ -64,11 +61,10 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 - migration-sonicwall: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (19)
+## Other staged state (a specific rule/profile/filter that must exist first)  (17)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
-- management-asset-discovery: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - management-visibility: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
 - migration-checkpoint: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
@@ -78,7 +74,6 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-agility-mna: Administration → Audit Trail filtered to the pilot window — site create, socket assign, policy publish, bandwidth edit and site delete attributed to one named admin with previous/new values
 - network-global-app-performance: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them
 - security-compliance: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
-- security-data-casb-dlp: Cloud Apps / Applications Dashboard on pilot traffic — sanctioned vs unsanctioned counts and App Risk widget
 - security-dlp-forensics: Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values
 - security-dlp-forensics: Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident
 - security-finance-dora: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
@@ -110,13 +105,12 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-finance-dora: Monitor → Experience Monitoring site view spanning a failover drill window, scores before/during/after visible
 - security-ransomware: Monitor → Threats Dashboard after the delivery drill — Anti-Malware detections from site and SDP-user paths in one view
 
-## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (9)
+## Rule with data — create the named pilot rule and let hit/detection counts accrue before capturing  (8)
 
 - access-offshore-bpo: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 - access-remote-worker: CMA Home → Experience Monitoring — Remote Users tab filtered to the complaint application, cohort-wide, for the timed "is it just me" check
 - ai-eu-ai-act: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week
 - migration-anyconnect: CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing
-- migration-sophos: Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules
 - migration-symantec: Monitor → Cloud Apps Dashboard app inventory filtered to the pilot cohort — sanctioned/unsanctioned apps with risk scores, the CloudSOC Audit comparison artefact
 - migration-versa: Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort
 - security-ransomware: Security → LAN Firewall — a LAN Network rule with nested LAN Firewall rules and hit counts on a pilot Socket site

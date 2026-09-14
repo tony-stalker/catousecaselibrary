@@ -505,10 +505,35 @@
         different courier address — and the quarters-long project the customer budgeted for is the
         line that never appears.
       </p>
-      <!-- capture-wanted: Monitor → Topology showing a newly connected site in a new region on its in-region PoP, beside the existing estate -->
+      <figure class="shot">
+        <img src="../assets/img/cma-topo-newregion-card.png" alt="CMA Topology page: a radial ring of the tenant's sites around a central hub, with a summary bar counting 24 sites — 18 connected, 1 degraded, 5 disconnected — and 7 users connected remotely. The site card for Yangon Assembly is open on the right, showing Site Type vSocket Azure, Country MM, Connected PoP Bangkok, Site Status Connected since Sep 12 2026, WAN Recovery Partial, and a Site Sockets section with the Socket connected on version 27.0.24031.">
+        <figcaption><strong>Home → Topology</strong> — the workshop prediction, matched. The new site's
+        card sits open beside the whole estate ring: a Myanmar branch reading <strong>Connected PoP
+        Bangkok</strong>, exactly the in-region PoP the coverage map promised, with the connect
+        timestamp ready to date the register entry. Point at the ring first — 24 sites the newcomer
+        just joined — then at the card: nothing elsewhere in the tenant changed to admit it.</figcaption>
+      </figure>
       <!-- capture-wanted: Home → Events filtered to a single new site's first hour — Internet Firewall events hitting pre-existing global rules -->
-      <!-- capture-wanted: Site Monitoring → Real Time for a new-region site — last-mile round-trip to the local PoP -->
-      <!-- capture-wanted: Network → Sites → Site Configuration → General — Preferred PoP Location section with Automatic + City set -->
+      <figure class="shot">
+        <img src="../assets/img/cma-realtime-newregion.png" alt="CMA Real Time monitoring for the Yangon Assembly branch site in Yangon, Myanmar (vSocket Azure): tiles showing 1 Gb capacity each way, average throughput 37.3 Kbps up and 28.7 Kbps down, queue size 0 and 0% discarded, above a Transport table where the single WAN 01 link of type CATO reads 66 Kbps average throughput, 1 ms jitter, 0% packet loss and 89 ms round-trip latency, with live round-trip latency and upstream/downstream throughput charts beneath.">
+        <figcaption><strong>Network → Sites → Site Monitoring → Real Time</strong> — the last-mile
+        number that anchors the egress A/B. The Bangkok-homed branch's Cato transport reads
+        <strong>89 ms round-trip, 0% packet loss, 1 ms jitter</strong>, live, with the latency and
+        throughput graphs ticking underneath. Point at the round-trip column: that is site to
+        in-region PoP over the local loop — the figure the legacy backhaul path has to beat before
+        it even leaves the country. The demo site is a vSocket, but the measurement is identical
+        for hardware.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-preferred-pop.png" alt="CMA Site Configuration General settings for a branch site: name, type Branch, timezone Yangon (Asia), country Myanmar and city Yangon at the top, and in the Preferred PoP Locations section below, the Primary location field reading Automatic (default) with its dropdown open over the page listing PoP cities including Tel Aviv, Frankfurt, Ashburn, Amsterdam, London, Hong Kong, Singapore and Seattle. Secondary location reads Automatic (default) and an unticked checkbox reads Only connect to the Preferred PoP Locations.">
+        <figcaption><strong>Network → Sites → Site Configuration → General</strong> — pinning a PoP,
+        captured mid-flow. Primary location sits on <strong>Automatic (default)</strong> with the
+        city list open — Hong Kong and Singapore are the in-region candidates for this Myanmar
+        branch — and the <em>Only connect to the Preferred PoP Locations</em> box below stays
+        deliberately unticked. Point at that pairing: Automatic plus a preferred city is the fix
+        for an unexpected-PoP drift, while hard-restricting mid-pilot would hold the site to one
+        PoP even on its bad day.</figcaption>
+      </figure>
 
       <h3 style="margin-top:26px">Troubleshooting</h3>
       <div class="grid-2">

@@ -538,7 +538,10 @@
         <figcaption>The receiving end of the DLP slice: predefined regional PII data types with per-type match thresholds. The threshold column is what step 3 re-proves in monitor against known samples — the one number never copied across from Forcepoint's severity settings.</figcaption>
       </figure>
       <!-- capture-wanted: Monitor → Events filtered to pilot Internet-firewall and Data Control rules, Block/Prompt and DLP monitor events attributed to a named pilot user -->
-      <!-- capture-wanted: Access → Proxy Configuration Policy rulebase serving a transitional PAC to a straggler group -->
+      <figure class="shot">
+        <img src="../assets/img/cma-proxy-config-pac.png" alt="The Access Proxy Configuration Policy page in the CMA: a single rule named Account, described as generated automatically from previous configuration, scoped to Any users and Any platforms and serving the PAC file http://10.5.1.8/proxy.pac; the revision chip reads Published Revision and the toggle at the top right reads Proxy Configuration Policy Disabled." loading="lazy">
+        <figcaption><strong>Access → Proxy Configuration Policy</strong> — where the transitional PAC lives once proxy control moves into the CMA. What this tenant shows is the mechanism rather than the finished runbook step: one rule serving a PAC URL (http://10.5.1.8/proxy.pac) scoped to Any, with the policy itself still toggled off. In the pilot you scope that rule to the straggler group and enable the policy — the dwindling PAC population becomes a named group you can watch shrink, while everyone else's Client routes with no proxy in the path at all.</figcaption>
+      </figure>
       <figure class="shot">
         <img src="../assets/img/cma-acc-client-conn.png" alt="CMA Access Client Connectivity Policy, published and enabled, with a cohort rule above the default allow: the rule is scoped to named users with connection origin pinned to the Cato Client and Browser Extension" loading="lazy">
         <figcaption>Client Connectivity Policy with a cohort rule above the default allow: the pilot group is enumerated as named users and connection origin is pinned to the Cato Client &mdash; so migration-cohort enforcement lands only on the pilot.</figcaption>

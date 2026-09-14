@@ -485,7 +485,18 @@
           the dev-experience criterion is real evidence — have the dev lead log timestamps from
           "guard created" to "first validated call from the app", plus every line of config or code
           the integration actually required.</p>
-          <!-- capture-wanted: «AI Security → Guards — guard details page showing endpoint, headers, guard API keys and sample integration code» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ai-guard-deployment.png" alt="The Manage Proxy Guard drawer open on its Deployment tab: a Guard API Keys panel with two keys masked by the UI as dot strings behind reveal, copy and regenerate controls, then a Getting Started section and a request-format table giving the POST proxy endpoint https://api.aisec.catonetworks.com/fw/v1/proxy/azure and its headers — the required Authorization bearer guard token and an optional x-cato-provider-api-key override" loading="lazy">
+            <figcaption><strong>Guards → Manage Proxy Guard → Deployment</strong> — the page the dev
+            team integrates against, exactly as CMA hands it over. Point at the two guard API keys
+            (masked by the UI itself, with the printed advice to rotate via the second key while the
+            first regenerates), then the request format: POST to the guard's proxy endpoint,
+            <code>Authorization: Bearer &lt;guard_key&gt;</code>, and the optional
+            <code>x-cato-provider-api-key</code> per-request override. This is the top of the tab —
+            the header table and the sample integration code continue below the fold — but the
+            endpoint-plus-header swap shown here is the whole of the integration ask, which is why
+            the dev-experience clock starts on this screen.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Baseline the latency before any policy exists</h4>

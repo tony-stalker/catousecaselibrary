@@ -605,9 +605,35 @@ hop 9  Cato PoP      London, GB      loss 0.0%    avg 6 ms
         <img src="../assets/img/cma-home-em-probes.png" alt="CMA Home Experience Monitoring Probes policy tab with both enablement toggles on, one User rule (remote connection origin) and one Site rule, each carrying reachability, path-trace and per-application probes including ChatGPT on ports 443 and 80" loading="lazy">
         <figcaption>Experience Monitoring Probes policy: a User rule (remote origin) and a Site rule, each carrying reachability, path-trace and per-application probes &mdash; here a ChatGPT probe on 443/80 and a traceroute. Scope these rules to the pilot group for the PoV.</figcaption>
       </figure>
-      <!-- capture-wanted: an application drill-down where the app scores Poor on TTFB while the Connection Details chain is green end to end — the "not the network" verdict -->
-      <!-- capture-wanted: the Show Full Traceroute Data panel open, with the copy control visible -->
-      <!-- capture-wanted: Home → Reports — a recurring Site and User Experience report schedule with a customer mailing list -->
+      <figure class="shot">
+        <img src="../assets/img/cma-em-poor-app-chain.png" alt="Cato Management Application Site Experience Monitoring drill for the site Tampa Factory, connected via vSocket Azure to the Miami PoP, filtered to Google Applications: in the Select Application list HTTP(S), Microsoft General and DemoApp all score Good while Google Applications scores Poor with an average TTFB of 215 milliseconds across 57,115 flows, a Top Site Hosts table shows the one host using the app rated Poor, and the Site Application Experience Score panel below lists alert events beside its score timeline.">
+        <figcaption><strong>Home → Experience Monitoring → site drill</strong> — the "not the
+        network" verdict, criterion four in the flesh. Point at the application list: on the same
+        site, Socket and Miami PoP, HTTP(S), Microsoft General and DemoApp all score Good while
+        Google Applications sits Poor at <strong>215 ms average TTFB</strong> — every network
+        segment the apps share is serving the neighbours well. Then scroll to Connection Details
+        and let the chain concur — Socket Good at 7% CPU, last mile clean — so the escalation goes
+        to the application owner with numbers attached, not to the circuit.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-full-traceroute-panel.png" alt="The Traceroute Data panel open over the Path Analysis Traceroute tab in a Cato Management Application user drill-down, the device name redacted: a monospaced hop-by-hop table of the last mile route to Cato PoP Seattle (ID 49) lists ten hops with per-hop loss, probes sent and received, and average, best, worst and standard-deviation latency — every resolved hop at 0.0% loss, hop nine shown only as question marks — with green Copy and Cancel buttons beneath. Behind the panel sit the drill's event feed, the Seattle PoP destination field and the start of the Last Mile Routes diagram from a remote user.">
+        <figcaption><strong>Path Analysis → Command Line → Show Full Traceroute Data</strong> — the
+        escalation artefact, one click from copyable. Per hop: IP, geolocation, loss %, probes sent
+        and received, average / best / worst latency and standard deviation, from this device's
+        gateway to the Seattle PoP. Here the path is clean — ten hops at 0.0% loss into a healthy
+        PoP, with hop 9 answering nothing (???), normal for routers that deprioritise probe replies
+        — and that is evidence too: the same print-out on a bad day, taken over a historical window,
+        is what the <strong>Copy</strong> button pastes into the ISP ticket.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-report-schedule-dialog.png" alt="The Create Schedule drawer open on the Cato Management Application Reports page for the Site and User Experience report template: Report Schedule set to Weekly, every Monday, in the London (Europe) timezone with a note that reports cover 00:00 to 23:59 of the selected period; Export Format PDF selected over CSV; and a Subscriptions mailing list of All Admins with a New link beside it, above Save Schedule and Cancel buttons. Behind the drawer the report catalogue highlights the Site and User Experience row and previews the branded Account Experience Summary page.">
+        <figcaption><strong>Home → Reports → Create Schedule</strong> — the hand-over made
+        recurring. The Site and User Experience template scheduled <strong>Weekly, every
+        Monday</strong>, exported as PDF, with a Subscriptions mailing list attached — All Admins
+        here; use <em>New</em> to build a list carrying the customer's operations lead, since
+        external recipients are supported. This is the closing move of the PoV: the worst-first
+        review keeps arriving on Mondays after the SE stops driving it.</figcaption>
+      </figure>
 
       <h3>Troubleshooting</h3>
       <div class="grid-2">

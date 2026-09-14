@@ -547,13 +547,41 @@ client = OpenAI(
         end-user access policy — a useful reminder in the wrap-up that agent governance arrives
         alongside, not instead of, the user-facing AI controls.</figcaption>
       </figure>
-      <!-- capture-wanted: AI Security → Local Agents inventory with one instance drilled into (MCP servers, tools, licence type) -->
-      <!-- capture-wanted: AI Security → Agent Sessions session detail — prompts, tool calls and tool results for one complete session -->
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-agent-drill-graph.png" alt="CMA Local Agents instance drill-down rendered as a graph: five local directory nodes including /home/Catopod and demo workspace folders feed a central Claude Code coding-agent node, which fans out to the MCP tool groups @bytebase/dbhub and @modelcontextprotocol/server and on to individual tools execute_sql, search_objects, get_file_contents and list_commits, with collapsed expanders reading +14 more directories, +3 more tools, +5 more tool groups and +29 total tools" loading="lazy">
+        <figcaption><strong>Local Agents → instance drill-down</strong> — the blast-radius picture for one
+        discovered agent. Point at the three columns: the local directories this Claude Code instance
+        can read on the left (five shown, <strong>+14 more</strong> collapsed), the agent in the middle,
+        and the MCP servers it connects to on the right — <strong>@bytebase/dbhub</strong> reaching
+        <code>execute_sql</code> is the edge worth pausing on, and the &ldquo;+5 more tool groups /
+        +29 total tools&rdquo; expanders show the surface keeps going. This is discovery output, not
+        policy: what the agent <em>can</em> touch, mapped before any control exists.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-session-audit.png" alt="The Session Audit drawer opened over the Agent Sessions grid: a Claude Code session for a demo user on hostname DemoMode-AgentLab, showing interceptor Claude Code Hooks, model claude-sonnet-4-6, tools used (Read, ListMcpResourcesTool, ToolSearch, Skill), one violated rule named Coding Agents - Tool - PII - Sensitive Identifiers, and an Interactions timeline running from the user prompt through agent responses to a highlighted Read File call tagged Monitor, each step carrying an elapsed timestamp" loading="lazy">
+        <figcaption><strong>Agent Sessions → Session Audit</strong> — one complete session, replayed.
+        Open with the header: interceptor <strong>Claude Code Hooks</strong>, the model, the tools the
+        session actually invoked, and one violated rule — <em>Coding Agents – Tool – PII – Sensitive
+        Identifiers</em>. Then walk the timeline underneath: user prompt at 10:28, agent responses,
+        and the <strong>Read File</strong> call tagged <em>Monitor</em> at +00:09 with the full path
+        of the file the rule fired on. This is criterion 3's evidence — not that a session happened,
+        but exactly what the agent did inside it, step by timestamped step.</figcaption>
+      </figure>
       <figure class="shot">
         <img src="../assets/img/cma-ai-agents-policy.png" alt="CMA AI Security Agents Policy (Coding Agent Policy) rulebase: four enabled rules watching both user messages to agents and agent tool use for PII and secrets, each with an engine profile and the Monitor action" loading="lazy">
         <figcaption>The Coding Agent Policy in monitor mode: rules watch both directions &mdash; PII and secrets in what users tell agents, and in what agents' tools touch &mdash; logging detections before any block is turned on.</figcaption>
       </figure>
-      <!-- capture-wanted: AI Security → Managed Agents inventory after a platform API integration -->
+      <figure class="shot">
+        <img src="../assets/img/cma-ai-managed-agents.png" alt="CMA Managed Agents inventory listing 12 agents from one owner across Amazon Bedrock AgentCore and Amazon Bedrock Agents Classic: each row shows knowledge bases and data sources, tool counts, AI invocation counts (9,788 on one AgentCore harness) and last-activity timestamps, with Classic rows reading Not supported for invocations and activity; the Environment column is redacted" loading="lazy">
+        <figcaption><strong>Managed Agents</strong> — the cloud half of the inventory, populated by the
+        platform API integration rather than by Scout on an endpoint. Point at the provider mix:
+        <strong>Amazon Bedrock AgentCore</strong> rows carry AI invocation counts (one harness at
+        <strong>9,788</strong>) and last-activity timestamps, while the <strong>Agents Classic</strong>
+        rows honestly read <em>Not supported</em> for both — the view reports what each platform API
+        exposes, no more. Knowledge bases and tool counts per agent are criterion 2's exposure detail;
+        the redacted environment column holds the tenant's cloud account identifiers, and the empty
+        Owner column is the pilot's week-1 job, not the tool's.</figcaption>
+      </figure>
 
       <h3>Troubleshooting — what actually goes wrong</h3>
       <div class="grid-2">

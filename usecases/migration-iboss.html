@@ -697,9 +697,15 @@
         <img src="../assets/img/cma-tls-inspection-policy.png" alt="Cato TLS Inspection policy with bypass rules for sensitive categories, pinned applications and platforms, followed by phased Inspect rules scoped to test networks and a pilot user group" loading="lazy">
         <figcaption>TLS inspection staged the way the pilot needs it: bypasses first — sensitive categories, pinned apps, device platforms — then Inspect rules scoped to named groups. The pilot-group Inspect rule from step 3 slots into exactly this shape, with the bypass rows seeded from the harvested iboss SSL and PAC lists.</figcaption>
       </figure>
-      <!-- capture-wanted: Security → IPS Content Policy tab with SafeSearch enforced and YouTube Moderate/Strict selected -->
+      <figure class="shot">
+        <img src="../assets/img/cma-ips-content-policy.png" alt="CMA IPS page open on the Content Policy tab, with the IPS Enabled toggle on and a note that IPS scans all network traffic by default. A Search Engine section offers Google and Bing SafeSearch checkboxes, and a YouTube section offers a YouTube content restrictions checkbox with a Restrictions Level choice of Moderate or Strict; all four controls are shown unticked." loading="lazy">
+        <figcaption><strong>Security → IPS → Content Policy</strong> — the whole SafeSearch tier on one tab, shown here before enablement so every control is visible: Google and Bing SafeSearch as single ticks, and YouTube content restrictions with a Moderate or Strict level. Point at how little there is to translate — what iboss delivers as per-group SafeSearch policy becomes three checkboxes riding the IPS engine, enforced in-line for everyone whose traffic Cato carries. In the pilot you tick all three, then prove enforcement from a cohort device — with the DoH caveat from the troubleshooting section in mind.</figcaption>
+      </figure>
       <!-- capture-wanted: Monitor → Events filtered to a pilot user showing Internet-firewall category verdicts and Content Restrictions activity attributed by name -->
-      <!-- capture-wanted: Network → IP Allocation with allocated egress IPs bound to a NAT network rule -->
+      <figure class="shot">
+        <img src="../assets/img/cma-network-rules-nat-egress.png" alt="CMA Network Rules base with six ordered routing rules. Rule 2, named Static Egress, matches the ifconfig.io app towards the Internet and routes with Method NAT, its allocated egress IP chips redacted; rule 1 does the same for SSH-V2 and RDP apps. Rule 3 routes a redacted category via Tokyo PoP chips, and the remaining rows use backhaul methods; several source and rule names are covered by grey redaction boxes." loading="lazy">
+        <figcaption><strong>Network → Network Rules</strong> — the fixed-egress pattern that replaces iboss dedicated IPs, live in a lab tenant. Point at rule 2, <strong>Static Egress</strong>: Method NAT via the tenant's allocated IPs (the redacted chips), so matching traffic always leaves Cato on the same addresses — exactly what exam-platform allowlists and SaaS tenant restrictions key on. Here the rule matches a test app from Any source; the step's version scopes Source to the pilot cohort instead. The neighbouring rows show the same ordered rulebase carrying Route-via-PoP and backhaul methods — fixed egress is one rule in the routing policy, not a bolt-on proxy feature.</figcaption>
+      </figure>
 
       <h3>Troubleshooting the pilot</h3>
       <div class="grid-2">

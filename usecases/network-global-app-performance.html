@@ -396,7 +396,15 @@
           allocated IP at that PoP, if the customer needs a fixed address for tenant allowlisting).
           The far-region user now rides the backbone to a front door beside the app instead of
           crossing the public internet to a regional breakout.</p>
-          <!-- capture-wanted: Network → Network Rules — Route via PoP rule editor with an egress PoP location selected for a SaaS app -->
+          <figure class="shot">
+            <img src="../assets/img/cma-routevia-editor.png" alt="Cato Management Application Network Rules page with the Edit Rule panel open over the ordered rulebase: Primary Transport set to Cato with Interface Role Automatic, Secondary Transport None, and Routing Method Route/NAT set to Route via with the egress locations Tokyo, Tokyo_DC2, Tokyo_DC3 and Tokyo_DC4 selected. The rule's name and matched app are redacted, and a footnote states changes are saved to an unpublished revision without modifying the active policy.">
+            <figcaption><strong>Network → Network Rules → Edit Rule</strong> — the smart-egress lever
+            itself, on a live rule. Point at Routing Method: Route/NAT set to <em>Route via</em> with
+            the Tokyo PoP locations selected, so matching traffic rides the Cato primary transport
+            across the backbone and breaks out beside the app instead of at a distant regional
+            breakout. Note the footer while you edit: changes land in an unpublished revision, so
+            nothing touches the active policy until the revision is published.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Run the baseline week</h4>
@@ -439,7 +447,15 @@
         <figcaption>The user-experience delta, captured: per-site experience scores with average TTFB per site — the far site's row is the number to screenshot weekly, because its TTFB trend across the PoV is the criterion-two artefact.</figcaption>
       </figure>
       <!-- capture-wanted: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them -->
-      <!-- capture-wanted: Home → Experience Monitoring — Applications drill-down for a WAN-hosted app showing TTFB trend across a multi-week window -->
+      <figure class="shot">
+        <img src="../assets/img/cma-em-app-ttfb-trend.png" alt="Cato Management Application Experience Monitoring drill-down for the application DemoApp over a Last 2 Weeks window, 38 hosts and users: a gauge scores the average experience Fair, the Application Experience Score timeline from 1 to 13 September rides the boundary between the green Good and amber Fair bands, and beneath the Application Performance tab the top of the Latency Breakdown chart shows daily latency series between roughly 250 and 500 milliseconds with a spike near 11 September.">
+        <figcaption><strong>Home → Experience Monitoring → application drill</strong> — the multi-week
+        trend that anchors the before/after story. The score timeline hugs the Good/Fair boundary
+        across the two-week window, and the Latency Breakdown opening beneath decomposes each day
+        into TCP connect, TLS connect, HTTP(S) latency and Time to First Byte — the one-day spike
+        near 11 Sep is exactly the kind of event the trend lets you name and date. Scroll on in the
+        live console for the error-rate and throughput panels that sit below this fold.</figcaption>
+      </figure>
       <!-- capture-wanted: Site Monitoring → Real Time — Transport tab for a long-haul site: Distance, jitter and loss flat across a baseline week -->
 
       <h3 style="margin-top:26px">Troubleshooting</h3>

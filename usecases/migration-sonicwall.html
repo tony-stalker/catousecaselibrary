@@ -685,7 +685,10 @@
           the on-ramp. <strong>Do not delete the branch from the SonicWall VPN topology</strong> —
           for the PoV the TZ goes on a shelf at the branch, powered off, config intact. That shelf
           is the rollback (criterion 5).</p>
-          <!-- capture-wanted: «Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-sites-mixed-estate.png" alt="CMA Network Sites page for a 21-site estate: summary tiles count 4 connected, 4 degraded and 13 disconnected sites, a Connection Types donut mixes 4 IPsec IKEv2 sites with vSockets in Azure, AWS and GCP, physical Socket X1600 and X1700 hardware and 2 Cloud Interconnect links, and a Socket Versions panel lists the running firmware. The site table's name column is redacted; visible rows show connection type, connectivity status, PoP city (Manchester, London, Dublin), HA status and country." loading="lazy">
+            <figcaption><strong>Network → Sites</strong> — a mixed estate mid-displacement, on one screen (lab tenant, site names redacted). Point at the Connection Types donut: IPsec IKEv2 — the same construct as the NSa on-ramp — coexisting with physical X-series Sockets, vSockets in Azure, AWS and GCP, and Cloud Interconnect, all 21 sites in a single table with per-site connectivity status, PoP and HA columns. This shot stands in for the pilot pairing rather than showing it: after this step your table has two rows that matter — the NSa hub as an IPsec IKEv2 site and the swapped branch as a Connected Socket with its native range — and every later TZ swap in the phased cutover is just another Socket row in the same view.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Enrol the SSL-VPN cohort — IdP-backed, no local accounts</h4>

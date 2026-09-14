@@ -540,9 +540,26 @@ provider "cato" {
         <img src="../assets/img/cma-wan-fw-rulebase.png" alt="CMA WAN Firewall rulebase showing twelve ordered allowlist rules with sources, destinations, services and live hit counts">
         <figcaption>The rulebase your pipeline writes into — Security → WAN Firewall, published revision. During the pilot the <code>pov-tf-</code> rule sits here alongside console-authored rules, identical in effect and hit-count telemetry; after <code>terraform destroy</code> it is gone, and only the Audit Trail remembers it.</figcaption>
       </figure>
-      <!-- capture-wanted: Administration → API & Integrations, API Keys tab showing a View key and an Edit key with expiry and IP allowlist set -->
+      <figure class="shot">
+        <img src="../assets/img/cma-api-keys.png" alt="CMA Resources → Service API Keys: a table of twelve service API keys with columns for key name, a Downgraded to View checkbox, Allow access from IPs, service principal, Created By, creation date and expiry, with a green New button above. Keys named SPLUNK, datadog-key, API Explorer and catocli are ticked as view-only while Mutation-Key, terraform and Claude-code are not; every row reads Any IP and Never, the entire Created By column is a grey redacted block, and one key name is also redacted.">
+        <figcaption><strong>Resources → Service API Keys</strong> — the two-key split, visible per row.
+        Point at the Downgraded to View column: ticked keys (SPLUNK, datadog-key, catocli) can only run
+        query calls, while unticked keys such as terraform carry Edit rights — those are the ones your
+        pipeline vaults and guards. Honest caveat: this long-lived demo tenant's keys all read
+        <em>Any IP</em> and <em>Never</em> expires — the expiry date and source-IP allowlist argued for
+        above are set in the New dialogue at creation, so the pilot keys you mint should look stricter
+        than these (creator identities redacted).</figcaption>
+      </figure>
       <!-- capture-wanted: terminal output of terraform plan/apply for a cato_wf_rule with parallelism=1 -->
-      <!-- capture-wanted: Administration → Audit Trail entry for an API-key change showing previous and new values -->
+      <figure class="shot">
+        <img src="../assets/img/cma-audit-apikey.png" alt="CMA Account → Audit Trail filtered to API-key changes: a count chart showing 1 audit on 14 Sep sits above a single highlighted entry dated Sep 14, 2026 with module API Key, change type CREATED, model type API Key and model name pilot-events-feed-view. The admin column is a grey redacted box and a Details section opens beneath the row.">
+        <figcaption><strong>Account → Audit Trail</strong> — the key's birth certificate. Filtered to
+        the API Key module, one entry: change type <strong>CREATED</strong>, model name
+        <code>pilot-events-feed-view</code>, timestamped to the second and attributed to a named admin
+        (identity redacted here). Point at the audit-count chart above the table — every key creation,
+        downgrade and deletion lands in this ledger, so the governance answer to "who minted that
+        credential, and when?" is a filter, not an investigation.</figcaption>
+      </figure>
       <!-- capture-wanted: a Cato event rendered in a SIEM (e.g. Sentinel or Splunk) via an Event Integration -->
 
       <h3>Troubleshooting</h3>

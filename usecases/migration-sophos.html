@@ -629,7 +629,10 @@
           the branch, powered off, config intact. That shelf is the rollback (criterion 5). If the
           RED ran in a transparent/bridged mode, the re-addressing agreed in prerequisites happens
           before this window, not during it.</p>
-          <!-- capture-wanted: «Network → Sites — new Socket site with native range, alongside the IPsec IKEv2 hub site with BGP configured» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-sites-mixed-estate.png" alt="CMA Network Sites page for a 21-site estate: summary tiles count 4 connected, 4 degraded and 13 disconnected sites, a Connection Types donut mixes 4 IPsec IKEv2 sites with vSockets in Azure, AWS and GCP, physical Socket X1600 and X1700 hardware and 2 Cloud Interconnect links, and a Socket Versions panel lists the running firmware. The site table's name column is redacted; visible rows show connection type, connectivity status, PoP city (Manchester, London, Dublin), HA status and country." loading="lazy">
+            <figcaption><strong>Network → Sites</strong> — what a mid-migration estate looks like on one screen (lab tenant, site names redacted). Point at the Connection Types donut: IPsec IKEv2 tunnels — the same construct as the XGS hub handoff — coexisting with physical X-series Sockets, vSockets in Azure, AWS and GCP, and Cloud Interconnect, 21 sites in a single table with per-site connectivity status, PoP and HA columns. This shot is the coexistence design as a screen rather than the pilot pairing itself: after this step your table has the two rows that matter — the hub as an IPsec IKEv2 site and the swapped branch as a Connected Socket with its native range — and every later SD-RED cutover just adds another Socket row to the same view.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Enrol the pilot cohort — Cato Client alongside the Sophos endpoint agent</h4>
@@ -670,7 +673,10 @@
           cleared the TLS layering tests.
           (Docs: <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Managing the Internet Firewall policy</a> ·
           <a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring TLS Inspection policy</a>.)</p>
-          <!-- capture-wanted: «Security → TLS Inspection — policy with a pilot-cohort-scoped Inspect rule above the default bypass rules» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-tlsi-policy-defaults.png" alt="CMA TLS Inspection policy page with the TLS Inspection Enabled toggle on and a Published Revision badge. Three bypass rules are listed — Honeypot scoped to a named desktop device, a disabled Bypass Seattle rule for a branch site, and Lab Admin using Azure CLI bypassing Microsoft Azure for an admin identity — above a collapsed Default rules (4 - 4) folder. No Inspect rules are present." loading="lazy">
+            <figcaption><strong>Security → TLS Inspection</strong> — the policy as this step finds it (lab tenant): inspection enabled account-wide on a published revision, with the tenant's bypass rules — a named device, a site, an admin identity's Azure CLI traffic — sitting above the collapsed default rules. The pilot Inspect rule is the one thing this shot does not show: it is what you create, above these rows and scoped to the pilot cohort, so everyone outside the cohort keeps flowing uninspected. Point at the Bypass actions — every non-inspection decision is a named, ordered rule, which is exactly where the harvested SFOS exclusion list lands.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Run the rollback drill — then swap forward again</h4>

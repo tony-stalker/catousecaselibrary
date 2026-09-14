@@ -477,3 +477,104 @@ tenant and handed back six HEICs. All four monitor rules built on 5 Aug (rules 5
   has since promoted a PII rule to Block, so the caption names the difference rather than hiding it.
   The Legal ML classifier has only ONE match — a richer legal-specific capture is still worth having
   if the pilot ever accrues more.
+
+## Batch: 14 Sep 2026 — two-tenant capture session (demo browse + personal-tenant staging)
+
+Demo-mode shots are inherently anonymous (DM avatar, no tenant name); personal-tenant (lab) shots
+carry #555 boxes over tenant-identifying data — site names, allocated IPs, admin identities, cloud
+account ids. All 1920w, top global bar cropped. Session log with per-shot redaction details:
+scratchpad `shots/CAPTURE-SESSION-LOG.md` (14 Sep session).
+
+- **cma-ipsec-settings.png** (demo) — IPsec site settings of the IKEv2 site: Primary tunnel
+  Connected, Init/Auth parameter sections, algorithms Automatic, DH group 16. **Embedded** →
+  network-ipsec-asa. Redacted: tenant FQDN, auth identifier.
+- **cma-ike-connection-status.png** (demo) — Connection Details drawer: live IKE/ESP SA ages,
+  FW-init (steering), GROUP_15_MODP3072 / GROUP_16_MODP4096. **Embedded** → network-ipsec-asa.
+  Redacted: peer address.
+- **cma-topo-vsocket-card.png / cma-topo-newregion-card.png** (demo) — Topology estate ring with a
+  site card open: Warsaw DC vSocket (PoP Warsaw) / Yangon Assembly (PoP Bangkok). **Embedded** →
+  network-cloud-datacenter / network-global-expansion. Redacted: ISP IP in card.
+- **cma-realtime-cloud-site.png / cma-realtime-newregion.png** (demo) — Real Time Transport views
+  (Warsaw DC 148 ms; Yangon 89 ms last-mile). **Embedded** → network-cloud-datacenter /
+  network-global-expansion.
+- **cma-preferred-pop.png** (demo) — General settings, Preferred PoP Locations dropdown open with
+  the PoP city list. **Embedded** → network-global-expansion.
+- **cma-sockets-inventory.png** (demo) — Socket inventory with an X1500 in Installed state + Assign
+  action. **Embedded** → network-agility-mna. Redacted: serial/MAC columns.
+- **cma-events-ifw-site-sdp.png** (demo, composite) — one IFW rule, site-sourced Block events with
+  named users (top) + the same rule's SDP-user events (bottom). **Embedded** → security-consistent.
+- **cma-events-wanfw-two-origins.png** (demo) — one WAN FW rule, SDP-user and site rows interleaved.
+  **Embedded** → access-hybrid-workforce (honest partial: office rows attribute to site).
+- **cma-em-app-ttfb-trend.png / cma-em-site-drill.png / cma-em-poor-app-chain.png** (demo) — EM
+  drill-downs: DemoApp 2-week latency breakdown incl. TTFB; Tampa Factory site drill;
+  Google Applications Poor at 215 ms beside Good apps. **Embedded** → network-global-app-performance /
+  network-sdwan / management-dem.
+- **cma-full-traceroute-panel.png** (demo) — Full Traceroute Data panel, hop-by-hop to Seattle PoP,
+  Copy control visible. **Embedded** → management-dem. Redacted: device name.
+- **cma-stories-by-indication.png** (demo) — Stories Workbench grouped by Indications with per-group
+  criticality counts over a 576-story fortnight. **Embedded** → management-soc-xdr.
+- **cma-configured-integrations.png** (demo) — Configured Integrations: CrowdStrike, Sentinel,
+  Splunk, Entra ID etc. Connected. **Embedded** → management-soc-xdr (CrowdStrike stands in for
+  Defender — framed in caption).
+- **cma-cert-management.png** (demo) — default Cato certificate Active with PEM/DER download menu
+  open. **Embedded** → security-tls-inspection.
+- **cma-dns-protection.png** (demo) — the eight DNS protections with Action/Track columns.
+  **Embedded** → migration-cisco (enforce-mode shown; PoV sets Allow+Event on same screen).
+- **cma-tlsi-policy-defaults.png** (demo) — TLS Inspection policy, bypass rules above Default rules,
+  no Inspect rule yet. **Embedded** → migration-sophos.
+- **cma-ips-content-policy.png** (demo) — IPS Content Policy tab: SafeSearch + YouTube
+  Moderate/Strict. **Embedded** → migration-iboss.
+- **cma-ai-agent-drill-graph.png** (demo) — Local Agent drill graph: directories → Claude Code →
+  MCP tool groups → tools. **Embedded** → ai-agentic-security. (Inventory + MCP-table variants
+  catalogued unused: shots 62/63b in session scratchpad.)
+- **cma-ai-session-audit.png** (demo) — Session Audit drawer: interceptor Claude Code Hooks, tools,
+  violated PII rule, timestamped interaction timeline. **Embedded** → ai-agentic-security.
+- **cma-ai-managed-agents.png** (demo) — Managed Agents: Bedrock AgentCore/Classic inventory with
+  tool + invocation counts. **Embedded** → ai-agentic-security. Redacted: cloud account id column.
+- **cma-ai-guard-deployment.png** (demo) — Manage Proxy Guard drawer, Deployment tab: masked Guard
+  API Keys, proxy endpoint, header table. **Embedded** → ai-homegrown-apps.
+- **cma-device-inventory-bysite.png / cma-device-quickview.png** (demo) — Device Inventory grouped
+  by site (one expanded: workstation + iPhone + Android) and the unmanaged-Android Quick View.
+  **Embedded** → management-asset-discovery ×2.
+- **cma-saved-reports.png** (lab) — Saved Reports with a recurring monthly report + subscriptions.
+  **Embedded** → management-visibility.
+- **cma-report-schedule-dialog.png** (lab) — Create Schedule drawer: Weekly/Monday, PDF, mailing
+  list (built zero-write, cancelled). **Embedded** → management-dem.
+- **cma-api-keys.png** (lab) — Service API Keys table with view-downgrade flags, allowlist and
+  expiry columns. **Embedded** → management-api-automation. Redacted: Created By column, one key name.
+- **cma-audit-apikey.png** (lab) — Audit Trail API Key CREATED entry. **Embedded** →
+  management-api-automation. Redacted: admin chip.
+- **cma-dlp-forensics-settings.png** (lab) — Forensics settings: Store DLP Evidence, encrypt-locked,
+  original-files, AWS destination Connected. **Embedded** → security-dlp-forensics.
+- **cma-ip-allocation-london.png** (lab) — 10 allocated IPs incl. three London PoP rows.
+  **Embedded** → security-inbound-ips. Redacted: IP column.
+- **cma-rpf-rules.png** (lab) — Remote Port Forwarding rulebase: London IP:33389 → internal 3389
+  with source Allow List. **Embedded** → security-inbound-ips. Redacted: external IPs, allowlist range.
+- **cma-network-rules-nat-egress.png** (lab) — Network Rules with Static Egress NAT rule via
+  allocated IPs. **Embedded** → migration-iboss. Redacted: IP chips, site chips, rule/app name, stray menu.
+- **cma-routevia-editor.png** (lab) — rule editor: Route via + Tokyo egress locations. **Embedded**
+  → network-global-app-performance. Redacted: rule/app names, site chips.
+- **cma-voice-rule-editor.png** (lab, zero-write) — rule editor mid-build: PLM + TCP Acceleration
+  ticked under Bandwidth Management. NOTE: priority dropdown shows default P255, not P10 — caption
+  frames it as where the priority is set. **Embedded** → network-mpls-migration.
+- **cma-networks-routed-ranges.png** (lab) — site Networks: native + five Routed ranges with LAN
+  gateway IPs. **Embedded** → network-mpls-migration. Redacted: site name, one public IP.
+- **cma-lanfw-ot-rule-editor.png** (lab, zero-write) — LAN FW rule editor: device-attribute
+  Type = PLC, Track Event. **Embedded** → security-ot-iot + management-asset-discovery.
+- **cma-lanfw-rulebase.png** (lab) — live LAN FW rulebase, site-scoped rules + Default rules group.
+  **Embedded** → security-ot-iot + security-firewall-refresh. Redacted: site chips.
+- **cma-sites-mixed-estate.png** (lab) — Sites page, 21-site mixed estate: donut with 9 connection
+  types incl. Cloud Interconnect. **Embedded** → migration-sophos + migration-sonicwall. Redacted:
+  site-name column.
+- **cma-ci-new-connection.png** (lab, zero-write) — CI New Primary Connection dialog: Public Cloud,
+  AWS Direct Connect, "City | Equinix Fabric" PoP picker, bandwidth, region, subnet fields.
+  **Embedded** → network-cloud-interconnect.
+- **cma-ci-bgp-peer.png** (lab) — CI site BGP Peer 0: ASNs, /30 pair, metric/hold/keepalive, masked
+  MD5, Disconnected. **Embedded** → network-cloud-interconnect.
+- **cma-ci-configured.png** (lab) — configured Direct Connect connection: Equinix, S-VLAN,
+  Manchester PoP, network settings, per-layer connection status. **Catalogued, unused** (candidate:
+  network-cloud-interconnect if a second figure is wanted). Redacted: AWS account, connection ids.
+- **cma-proxy-config-pac.png** (lab) — Proxy Configuration Policy serving a PAC URL. **Embedded** →
+  migration-forcepoint (Any-scoped; caption directs scoping to the straggler group).
+- **cma-apps-dashboard.png** (lab) — Applications dashboard: per-app Risk, Sanctioned chips, usage.
+  **Embedded** → security-data-casb-dlp.

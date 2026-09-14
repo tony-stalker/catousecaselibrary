@@ -561,13 +561,37 @@
         rulebase looks like once monitor mode graduates to enforcement — device-attribute rules with
         live hit counts — which is precisely the "phase two" picture to leave on the table.
       </p>
-      <!-- capture-wanted: Assets → Device Inventory grid grouped by Site, one pilot site expanded, device count and attribute columns visible -->
-      <!-- capture-wanted: Device Inventory Quick View of an unexpected/unmanaged device showing attributes, events and accessed apps -->
+      <figure class="shot">
+        <img src="../assets/img/cma-device-inventory-bysite.png" alt="CMA Device Inventory grouped by Site: a list of demo sites each carrying a device count, with one site expanded to show a Windows workstation, an Apple iPhone on iOS and a OnePlus Android phone. Columns show site, category, device type, manufacturer, OS, MAC address, last-seen IP and OS version for each row, and a Group By: Site selector sits above the grid." loading="lazy">
+        <figcaption><strong>Device Inventory grouped by Site</strong> — the register the CMDB gets reconciled
+        against. Point at the per-site counts down the left, then expand one site: a Windows workstation,
+        an Apple iPhone and a OnePlus Android, each fingerprinted down to manufacturer, OS, MAC address
+        and last-seen IP — from existing traffic through the Socket, with nothing installed on any of
+        them. Read the pilot site's count next to the written CMDB expectation and present the delta
+        neutrally: either direction is the finding.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/img/cma-device-quickview.png" alt="CMA Device Quick View drawer for an Android phone: category Mobile, last active about three hours ago, and a Device Info panel listing OS, MAC address, vendor OnePlus Tech (Shenzhen) Ltd, last-seen IP, site, network name, device ID, a first-seen date and Is Managed set to No. Beneath sit destination application and domain chips — tcp, google_play_store plus eleven more, googleapis.com, ntp.org plus nine more — and collapsed Events by Sub Type and Events by Action sections, with a View Events link at the top." loading="lazy">
+        <figcaption><strong>Device Quick View</strong> — the unknown-device moment from the walkthrough.
+        Point at <strong>Is Managed: No</strong> and the first-seen date — when this phone appeared —
+        then at the destination applications and domains (google_play_store and eleven more apps,
+        googleapis.com, ntp.org and nine more domains): what it is talking to, before anyone has
+        touched it. Events by Sub Type and Events by Action sit one click below, and View Events
+        pivots to the full stream for the deeper dig.</figcaption>
+      </figure>
       <figure class="shot">
         <img src="../assets/img/cma-home-devices.png" alt="CMA Home Devices page summary bar showing 77 total devices, 13 newly discovered, 2 identified IoT and 0 OT over the last two days, with category cards for PC, networking, mobile, IoT and uncategorised devices and a device-type breakdown donut" loading="lazy">
         <figcaption>Home &rarr; Devices during a discovery window: 77 devices seen, 13 newly discovered, IoT and OT identified passively from existing traffic &mdash; the summary bar that frames the pilot read-out.</figcaption>
       </figure>
-      <!-- capture-wanted: Security → LAN Firewall rule with device-attribute criteria and Track = Event, plus the resulting LAN Firewall events in Monitor → Events -->
+      <figure class="shot">
+        <img src="../assets/img/cma-lanfw-ot-rule-editor.png" alt="CMA LAN Firewall page with the New Firewall Rule panel open: a device-attribute criterion with Type set to PLC, shown both as a selected value chip and as an attribute-table row, above an empty Platforms section. A footnote states changes will be saved to an unpublished revision without modifying the active policy, next to Create new revision and Cancel buttons; behind the panel the existing LAN Firewall rulebase lists rules such as AWS, London and Azure Spoke to Spoke." loading="lazy">
+        <figcaption><strong>Security → LAN Firewall, rule editor</strong> — inventory classification used
+        directly as policy: a device-attribute criterion of <strong>Type = PLC</strong>, with Track set
+        to Event so every match lands in Events and nothing blocks. This is deliberately half the
+        evidence — the events half arrives in <span class="path">Monitor → Events</span> once matching
+        traffic flows. Worth a beat: the footnote says changes save to an unpublished revision, so the
+        rule can be built live in front of the customer without touching the active policy.</figcaption>
+      </figure>
 
       <h3>Troubleshooting</h3>
       <div class="grid-2">

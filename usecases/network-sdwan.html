@@ -440,7 +440,17 @@
       <!-- capture-wanted: Network → Sites → Site Monitoring → Real Time — Transport tab during a link pull, throughput shifting to the surviving link -->
       <!-- capture-wanted: Home → Events filtered to Connectivity / Failover sub-type for a pilot site -->
       <!-- capture-wanted: Site Monitoring → Real Time — QoS tab under congestion: P10 steady, default class Queue Size climbing -->
-      <!-- capture-wanted: Home → Experience Monitoring — Sites tab drill-down for a branch site over a multi-week window -->
+      <figure class="shot">
+        <img src="../assets/img/cma-em-site-drill.png" alt="Site Experience Monitoring drill-down for the Tampa Factory site, a vSocket Azure site connected through the Miami PoP, over a Last 2 Weeks window: 2,449 scored app experiences split 750 Good, 1,038 Fair and 661 Poor across six hosts. A per-application table lists HTTP(S) at 4.9 GB Good, Microsoft General 4.65 GB Good, DemoApp 2.34 GB Good, Google Applications 591 MB Poor and Google Search 551 MB Fair, and the HTTP(S) detail panel shows 409 ms average TTFB, 4.67 GB download, 239 MB upload and 203,197 flows; the top-hosts panel and the score timeline are redacted." loading="lazy">
+        <figcaption><strong>Home → Experience Monitoring → site drill-down</strong> — a fortnight of
+        scored experience for one site, with nothing extra deployed to collect it. Point at the split
+        first: 2,449 scored app measurements, 750 Good / 1,038 Fair / 661 Poor across six hosts — then
+        at the per-application table, where Google Applications sits Poor at 591 MB while HTTP(S)
+        scores Good with a 409 ms average TTFB over 203,197 flows. This is the trend wrapper for the
+        whole register: the same view drills from account level down to the pilot site, and every
+        number is measured from live traffic over the 14-day window (the tenant's host list is
+        redacted here).</figcaption>
+      </figure>
 
       <h3 style="margin-top:26px">Troubleshooting</h3>
       <div class="grid-2">

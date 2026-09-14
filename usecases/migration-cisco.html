@@ -622,7 +622,10 @@
       </ol>
 
       <h3>What good output looks like</h3>
-      <!-- capture-wanted: «Security → DNS Protection — the eight protections with actions set to Allow (monitor) for the PoV» -->
+      <figure class="shot">
+        <img src="../assets/img/cma-dns-protection.png" alt="CMA DNS Protection page with the Enabled toggle on and a table of eight protections — Malicious Domains, Newly Registered Domains, Crypto Miners, Command and Control, Domain Generation Algorithms, Phishing, Dynamic DNS and DNS Tunnelling — each row with a short description, an Action column reading Block for every protection except Dynamic DNS on Allow, and a Track column reading Event throughout." loading="lazy">
+        <figcaption><strong>Security → DNS Protection</strong> — where the Umbrella DNS-layer policy lands: eight protections, each with its own Action and Track column. This reference tenant shows the end state — <strong>Block + Event</strong> on seven of the eight, Dynamic DNS on Allow — but for the monitor-first window this runbook stages, set each Action to <strong>Allow</strong> with Event tracking on this same screen: every protection still logs its matches, nothing blocks, and the events reconcile against the Umbrella activity reports before anything flips to Block.</figcaption>
+      </figure>
       <!-- capture-wanted: «Network → Routing Table filtered to the pilot prefixes, showing BGP-learned overlay routes via the hub handoff» -->
       <figure class="shot">
         <img src="../assets/img/cma-posture-profile-baseline.png" alt="CMA New Device Profile panel named Pilot Baseline Posture with three device checks staged: CrowdStrike anti-malware, Windows disk encryption and a Windows registry check on the CurrentVersion key for minimum OS build" loading="lazy">

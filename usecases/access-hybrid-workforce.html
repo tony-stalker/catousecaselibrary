@@ -436,7 +436,16 @@
           into one user for the per-application view
           (<a href="https://knowledge.catonetworks.com/docs/using-the-experience-monitoring-page" target="_blank" rel="noopener">Using the Experience Monitoring Page</a>,
           <a href="https://knowledge.catonetworks.com/docs/the-user-experience-monitoring-drill-down-page-remote-and-office-users" target="_blank" rel="noopener">the user drill-down page</a>).</p>
-          <!-- capture-wanted: «CMA Monitor → Events — one user, same WAN rule hit from office and remote origins» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-events-wanfw-two-origins.png" alt="CMA Events page filtered to Sub-Type WAN Firewall and the rule Demo Hub to Lab Chat Airlines, showing 744 events over the last two days. The table interleaves SDP User rows attributed to remote user Natalie Blake with Site rows from NewYork HQ, all hitting the same rule with a Monitor action within the same minute; the Site rows carry the site name rather than a user display name." loading="lazy">
+            <figcaption><strong>Monitor → Events</strong> — one WAN Firewall rule (<em>Demo Hub to Lab
+            Chat Airlines</em>), 744 hits in two days, with <strong>SDP User</strong> rows for a named
+            remote user interleaved with <strong>Site</strong> rows from the office origin seconds
+            apart. Point at the Rule column: identical on every row, so there is no remote variant to
+            drift. One honest caveat — the office rows attribute to the site rather than the user's
+            name, so for the strict two-chair proof also filter on the user and pair their office-mode
+            event with this view.</figcaption>
+          </figure>
         </li>
       </ol>
 

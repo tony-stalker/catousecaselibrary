@@ -432,7 +432,16 @@ ip route 192.168.1.0 255.255.255.0 192.168.2.1    <span class="cmt"># next hop =
           pilot prefix now lives behind its own socket in the Cato routing table; the carrier's
           return route (previous step) carries traffic from un-migrated sites back via the DC.
           The un-migrated estate is not touched.</p>
-          <!-- capture-wanted: Network → Sites → Site Configuration → Networks showing a Routed range with the MPLS CE LAN IP as Gateway -->
+          <figure class="shot">
+            <img src="../assets/img/cma-networks-routed-ranges.png" alt="CMA Networks page for a cloud data centre site in London on a vSocket for Azure, the site name redacted: LAN 01 holds six ranges — a Native subnet 10.6.0.32/27 with floating IP 10.6.0.38, and five Routed ranges including Spoke1 VNET 10.7.0.0/22, Spoke 2 VNET 10.70.0.0/22, ASA-mgmt 10.6.0.64/27 and an internet-only Azure DNS entry at 168.63.129.16, every one pointing at Gateway 10.6.0.33. One routed range's subnet and name are also redacted.">
+            <figcaption><strong>Site Configuration → Networks</strong> — the routed-range mechanics in
+            the flesh. This data-centre site (name redacted) declares its native range
+            <strong>10.6.0.32/27</strong> plus five Routed ranges, every one pointing at
+            <strong>Gateway 10.6.0.33</strong> — a next-hop on the site LAN; here that next-hop reaches
+            Azure spoke VNETs, but the mechanism is identical for co-existence. Point at any Routed row
+            and substitute the MPLS CE's LAN IP as the gateway: Cato delivers traffic for the legacy
+            prefixes to the DC site, the site hands it to the CE, and no BGP is required.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Protect voice with priority and packet loss mitigation</h4>
@@ -445,7 +454,16 @@ ip route 192.168.1.0 255.255.255.0 192.168.2.1    <span class="cmt"># next hop =
           UDP traffic is duplicated with a small delay
           (<a href="https://knowledge.catonetworks.com/docs/packet-loss-mitigation-for-multi-tunnel-links" target="_blank" rel="noopener">Packet Loss Mitigation for Multi-Tunnel Links</a>).
           Scope it to the voice rule only — duplication costs bandwidth.</p>
-          <!-- capture-wanted: Network → Network Rules showing a voice rule with Packet Loss Mitigation enabled and a P10 bandwidth priority -->
+          <figure class="shot">
+            <img src="../assets/img/cma-voice-rule-editor.png" alt="CMA Network → Network Rules with a New Rule panel open over the rulebase: the Configuration section shows Bandwidth Management with a mandatory Bandwidth Priority dropdown reading P255 above a hint that lower numbers mean higher priority in the range 2 to 254, ticked checkboxes for Active TCP Acceleration and Packet Loss Mitigation, and a Primary Transport of Cato with Automatic interface role. A footnote states changes will be saved to an unpublished revision, above Create new revision and Cancel buttons.">
+            <figcaption><strong>Network Rules → New Rule</strong> — the two controls that protect
+            voice, shown mid-build. Point at Bandwidth Management: <strong>Packet Loss
+            Mitigation</strong> is ticked (alongside Active TCP Acceleration), and the mandatory
+            Bandwidth Priority dropdown — still on its P255 default here — is where the voice rule
+            gets its top profile, P10 in this playbook, with the transport pinned to Cato. The panel's
+            own footnote keeps the demo honest: changes only land in an unpublished revision, and this
+            rule was cancelled rather than created — nothing was saved.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Prove it, both directions, and file the evidence</h4>

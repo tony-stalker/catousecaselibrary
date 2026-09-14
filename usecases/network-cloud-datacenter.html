@@ -477,10 +477,26 @@
         Cross-connect throughput cases belong in the companion page,
         <a href="network-cloud-interconnect.html">Cloud Interconnect</a>.
       </p>
-      <!-- capture-wanted: Monitor → Topology — a cloud vSocket site rendered beside physical sites, both tunnels up -->
+      <figure class="shot">
+        <img src="../assets/img/cma-topo-vsocket-card.png" alt="CMA Topology view: an estate ring of 24 sites (18 connected, 1 degraded, 5 disconnected) with 7 users connected remotely, and a site card open for a cloud data-centre site in Warsaw. The card shows Site Type vSocket Azure, country Poland, Connected PoP Warsaw, Site Status Connected with a since-timestamp, HA Status N/A, WAN Recovery Partial (16 of 22), and under Site Sockets a socket version of 27.0.24031 with Socket Status Connected.">
+        <figcaption><strong>Home → Topology</strong> — the cloud data centre in the same estate ring as
+        every physical site. Point at the card: Site Type <strong>vSocket Azure</strong>, Connected PoP
+        Warsaw, Connected with a since-timestamp, and a socket version and Socket Status listed
+        exactly as they would be for a branch Socket — a first-class site, not an attachment. HA
+        Status reads N/A because this reference site runs a single vSocket; a production pair shows
+        its primary/secondary state on this same card.</figcaption>
+      </figure>
       <!-- capture-wanted: Network → Sites — vSocket HA status: primary active, secondary standby, keepalive Ok -->
       <!-- capture-wanted: Home → Events filtered to one WAN Firewall rule showing site and SDP-user sources to a cloud-site destination -->
-      <!-- capture-wanted: Network → Sites → Site Monitoring → Real Time — cloud site throughput during a timed branch-to-VPC transfer -->
+      <figure class="shot">
+        <img src="../assets/img/cma-realtime-cloud-site.png" alt="CMA Real Time Transport view for a vSocket Azure data-centre site in Warsaw: summary tiles show 1 Gb capacity upstream and downstream, average throughput of 46.4 Kbps up and 9.84 Kbps down, zero queue and zero discard. A WAN 01 tunnel row of type CATO reports 0% packet loss and 148 ms round-trip latency, above live charts of round-trip latency between roughly 146 and 148 ms and stacked upstream and downstream throughput peaking near 240 Kbps.">
+        <figcaption><strong>Site Monitoring → Real Time</strong> — the Transport view of the cloud DC,
+        live. Point at the tiles: <strong>1 Gb</strong> capacity each way on the vSocket, zero discard
+        and zero packet loss, and a round-trip latency chart holding around 148 ms from this
+        tenant to the Warsaw PoP. This capture shows the site&rsquo;s ordinary background traffic, not
+        a timed transfer — in the PoV step, run the branch-to-VPC copy and watch the
+        upstream/downstream graph carry the load here while the latency line stays flat.</figcaption>
+      </figure>
 
       <h3 style="margin-top:26px">Troubleshooting</h3>
       <div class="grid-2">

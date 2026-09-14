@@ -465,7 +465,10 @@ Owners &amp; dates:                  circuit order — customer cloud team, wk 1
           appliance anywhere in its definition. Until the circuit is live it will sit disconnected
           with zero hosts — <strong>that is correct, expected, and exactly what the Track A
           criterion claims</strong>: the design is real, reviewable and ready, and nothing more.</p>
-          <!-- capture-wanted: Network → Sites — Cloud Interconnect site-creation flow showing connection type and primary/secondary PoP selection -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ci-new-connection.png" alt="The New Primary Connection panel on a Cloud Interconnect site in the CMA: Connection Type Public Cloud Connection, Cloud Provider AWS Direct Connect with an example account ID, the Cato PoP and fabric picker set to Amsterdam | Equinix Fabric, bandwidth 1000 Mbps, destination cloud region eu-central-1, and a subnet field under Configure Network Settings; behind the panel the site's Primary and Secondary sections read that no connections are configured yet.">
+            <figcaption><strong>Site Configuration → Cloud Interconnect → New Connection</strong> — the whole Track A build is this one panel. Walk the three steps: connection type <strong>Public Cloud Connection</strong> with the provider (AWS Direct Connect here — the same picker offers Azure ExpressRoute, OCI FastConnect and Google Cloud Interconnect) and the account ID; then the Cato PoP paired with its fabric — Amsterdam | Equinix Fabric — the bandwidth tier (1,000 Mbps) and destination region eu-central-1; then the peering subnet from the design sheet. Point at what is absent: no socket, no tunnel, no appliance anywhere in the form — and the Secondary section below repeats the same panel against the second PoP.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Define both BGP peers (Track A)</h4>
@@ -479,7 +482,10 @@ Owners &amp; dates:                  circuit order — customer cloud team, wk 1
           Switch on BGP email notifications for peer state changes now — when the circuit lands,
           the session coming up is itself a dated evidence artefact, and the same notifications
           book-end the Track B failover test.</p>
-          <!-- capture-wanted: Site Configuration → Cloud Interconnect — BGP peer definition showing MD5, metrics and primary/secondary PoP -->
+          <figure class="shot">
+            <img src="../assets/img/cma-ci-bgp-peer.png" alt="The BGP page of a Cloud Interconnect site in the CMA: Peer 0 with peer ASN 64522 and Cato ASN 64521, peer IP 172.16.88.6 against Cato IP 172.16.88.5 residing in Primary, Advertise Summary routes and Accept all ticked, metric 100, hold time 60, keepalive interval 20, MD5 Auth masked with asterisks, BFD disabled, and a red Disconnected status chip beside a Show BGP Status button.">
+            <figcaption><strong>Site Configuration → BGP</strong> — the peer definition exactly as the design sheet dictates: Cato ASN 64521 against peer ASN 64522, the /30 pair 172.16.88.5 and .6, residing in <strong>Primary</strong>, advertising summary routes at metric 100 with hold 60, keepalive 20 and MD5 authentication set (masked) — the secondary peer repeats this with its failover metric. The red Disconnected chip is Track A told honestly: no circuit terminates here yet, and that is precisely what the criterion claims — the design real, reviewable and ready. When the cross-connect lands, <strong>Show BGP Status</strong> is where the session coming up becomes the dated evidence artefact.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Verify the circuit when it lands (Track B)</h4>
