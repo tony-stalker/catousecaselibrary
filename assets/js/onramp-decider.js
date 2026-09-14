@@ -8,6 +8,28 @@
 
   var GT10_REASON = 'No single Cato on-ramp exceeds 10 Gbps — Cloud Interconnect is the ceiling';
 
+  /* Per-cloud profile lines — always shown on a live card so the selected cloud's
+     own facts are visible even when no scoring rule fires. All brief-verified. */
+  var PROFILES = {
+    vsocket: {
+      azure: 'Azure vSocket: up to 1 Gbps (2 NIC) or 2 Gbps (3 NIC with accelerated networking); HA pair fails over via a floating IP',
+      aws: 'AWS vSocket: no published ceiling — deployment-dependent (certified instance types t3.large to c7i.8xlarge); HA fails over by route-table rewrite',
+      gcp: 'GCP vSocket: up to 2 Gbps on n2-standard-4, deployed from the GCP Marketplace or Cato’s Terraform module; HA (Mar 2026) behind an internal load balancer, typically 3–5 s'
+    },
+    ipsec: {
+      azure: 'Azure side: VPN Gateway AZ SKUs from 650 Mbps (VpnGw1AZ) to a 10 Gbps aggregate benchmark (VpnGw5AZ); BGP on all SKUs except Basic',
+      aws: 'AWS side: VGW/TGW at 1.25 Gbps per standard tunnel (large-bandwidth option 5 Gbps); ECMP aggregation on a Transit Gateway only',
+      gcp: 'GCP side: HA VPN with a 99.99% SLA, BGP mandatory via Cloud Router, 1–3 Gbps per tunnel scaled by ECMP',
+      oci: 'OCI side: VPN Connect — two redundant tunnels to a DRG; Cato’s documented reference design is IKEv1 with BGP, active-active to two PoPs'
+    },
+    interconnect: {
+      azure: 'Azure side: ExpressRoute (provider model) into a Cato PoP over the fabric — private L2, BGP only',
+      aws: 'AWS side: Direct Connect private virtual interface into a Cato PoP over the fabric — private L2, BGP only',
+      gcp: 'GCP side: Partner Interconnect VLAN attachments into a Cato PoP — private L2, BGP only',
+      oci: 'OCI side: FastConnect partner circuit into a Cato PoP — private L2, BGP only'
+    }
+  };
+
   /* Rules as data: { when(inputs) } plus either { gate: true } or { score: n },
      and a reason string. { flag: true } renders the reason prominently. */
   var OPTIONS = [
@@ -19,8 +41,10 @@
           when: function (i) { return i.cloud === 'oci'; } },
         { gate: true, reason: GT10_REASON,
           when: function (i) { return i.throughput === 'gt10'; } },
-        { gate: true, reason: 'Above the published vSocket ceiling — Azure tops out at 1 Gbps (2 NIC) / 2 Gbps (3 NIC, accelerated networking), GCP at 2 Gbps',
-          when: function (i) { return (i.throughput === 'g2_3' || i.throughput === 'g3_10') && (i.cloud === 'azure' || i.cloud === 'gcp'); } },
+        { gate: true, reason: 'Above the Azure vSocket ceiling — 1 Gbps (2 NIC) / 2 Gbps (3 NIC with accelerated networking)',
+          when: function (i) { return (i.throughput === 'g2_3' || i.throughput === 'g3_10') && i.cloud === 'azure'; } },
+        { gate: true, reason: 'Above the GCP vSocket ceiling — up to 2 Gbps (single machine type, n2-standard-4)',
+          when: function (i) { return (i.throughput === 'g2_3' || i.throughput === 'g3_10') && i.cloud === 'gcp'; } },
         { score: -1, reason: 'No published AWS vSocket ceiling — throughput is deployment-dependent, so size and test; c5n.xlarge is the KB suggestion above 2 Gbps',
           when: function (i) { return i.cloud === 'aws' && (i.throughput === 'g2_3' || i.throughput === 'g3_10'); } },
         { score: 3, reason: 'vSocket is the only on-ramp with SD-WAN features, full QoS, last-mile monitoring and DEM probes — the others get downstream QoS only',
@@ -120,6 +144,10 @@
           });
         }
       });
+      if (!r.gated) {
+        var prof = PROFILES[opt.key] && PROFILES[opt.key][i.cloud];
+        if (prof) { r.reasons.unshift({ kind: 'profile', delta: 0, text: prof, flag: false }); }
+      }
       return r;
     });
 
@@ -158,6 +186,9 @@
   };
 
   function reasonHTML(re) {
+    if (re.kind === 'profile') {
+      return '<li style="color:var(--ink-2)">' + re.text + '</li>';
+    }
     var prefix = re.kind === 'gate' ? 'Ruled out'
       : re.kind === 'note' ? 'Note'
       : (re.delta > 0 ? '+' + re.delta : String(re.delta));
@@ -173,9 +204,12 @@
       + '<span class="tag" style="' + (VERDICT_STYLE[r.verdict] || '') + '">' + r.verdict + '</span>'
       + (r.gated ? '' : '<span class="tag">score ' + (r.score > 0 ? '+' + r.score : r.score) + '</span>')
       + '</div>';
-    var bullets = r.reasons.length
-      ? r.reasons.map(reasonHTML).join('')
-      : '<li>No rule fired either way on these answers — a neutral fit.</li>';
+    var scored = r.reasons.some(function (re) { return re.kind !== 'profile'; });
+    var bullets = r.reasons.map(reasonHTML).join('');
+    if (!r.gated && !scored) {
+      bullets += '<li style="color:var(--ink-3)">Nothing on these answers moves the score either way.</li>';
+    }
+    if (!bullets) { bullets = '<li>No rule fired either way on these answers — a neutral fit.</li>'; }
     return '<div class="card verdict-card' + (r.gated ? ' gated' : '') + '">'
       + head + '<ul>' + bullets + '</ul></div>';
   }
