@@ -430,8 +430,8 @@ window.UC_CATALOG = [
     file: "usecases/ai-genai-security.html",
     category: "AI Security",
     title: "GenAI Security for End Users",
-    summary: "From shadow-AI discovery to prompt-level enforcement — the User Interaction Policy, browser plugin and DLP working together so employees can use GenAI without leaking data.",
-    tags: ["GenAI", "Shadow AI", "User Interaction Policy", "Browser Plugin", "DLP"],
+    summary: "From shadow-AI discovery to prompt-level enforcement — the Cato AI Security engine's User Interaction Policy and browser plugin, so employees can use GenAI without leaking data.",
+    tags: ["GenAI", "Shadow AI", "User Interaction Policy", "Browser Plugin"],
     status: "new",
     deck: null
   },

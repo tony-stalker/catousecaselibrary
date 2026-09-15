@@ -585,3 +585,10 @@ scratchpad `shots/CAPTURE-SESSION-LOG.md` (14 Sep session).
   **Embedded** → ai-genai-security (third plugin outcome, Week 1). No redactions needed (fictional
   payload, no tenant identity). Candidate reuse: ai-eu-ai-act (user-facing transparency/literacy
   evidence). HEIC original in _extract/media/.
+- **DLP thread moved off ai-genai-security (15 Sep, Tony's call — page highlights the AI Security
+  engine only):** dlp-incident-cma.png removed there (already lived on security-dlp-forensics
+  #evidence + access-offshore-bpo); cma-genai-dlp-events-grid.png now **Embedded** →
+  security-data-casb-dlp (match-report step; also still on ai-threat-landscape);
+  cma-genai-dlp-forensics.png now **Embedded** → security-dlp-forensics (staged-incident step —
+  serves the evidence-viewer want). ai-genai-security keeps UIP + plugin figures only; its DLP
+  wording reduced to a cross-link, hero tag/catalog tag/deck step/diagram label de-DLP'd.

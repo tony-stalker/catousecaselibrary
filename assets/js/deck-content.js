@@ -1593,10 +1593,6 @@ window.UC_DECKS = {
         "show": "One rule end to end — monitor, anonymise or block per prompt"
       },
       {
-        "area": "Security » DLP Configuration",
-        "show": "Recommended profiles backstopping uploads to Generative AI Tools"
-      },
-      {
         "area": "Monitor » Events",
         "show": "Every interaction attributed and exportable — the audit trail"
       }
@@ -1605,7 +1601,7 @@ window.UC_DECKS = {
     "notes": {
       "divider": "Start by asking what their AI policy actually is today. The usual answer is that they blocked a chatbot — and that sets up everything, because a ban does not stop use, it moves it to personal accounts where you cannot see it.\nFrame the goal as safe enablement: keep the productivity, control what leaves in each prompt. Then bridge: here is that capability live, from discovery through to the audit trail.",
       "why": "Contrast the two worlds honestly: the web filter judged a domain once per category and never saw what was pasted in — yet the risk lives in the prompt, and the same app can be fine for one prompt and a breach for the next.\nPrompt-level control gives a decision per interaction, and anonymisation is the unlock: sensitive values masked in flight while the prompt is still answered, so nobody drifts to a personal account.\nLand the page's sting: if you can name the tools but not what was pasted into them, you have visibility of domains, not of data. Then pivot to the console.",
-      "demo": "Open on the Overview tiles and let adoption rate prove this is mainstream behaviour, not a fringe habit. Follow the latest-application widget into the shadow inventory, stressing how it was built: from traffic already crossing the platform, nothing deployed, prompt content untouched.\nOn AI Users, sort by violations and drill one person — apps used, adoption over time — the evidenced conversation to have with a department head. In the User Interaction Policy, walk one rule: source, apps, engine profile, the four actions, a notification template — and name the prerequisite out loud, TLS inspection at account level.\nShow the recommended DLP profiles against the Generative AI Tools category as the upload backstop, then close in Events: attributed, exportable — the audit trail they walked in without."
+      "demo": "Open on the Overview tiles and let adoption rate prove this is mainstream behaviour, not a fringe habit. Follow the latest-application widget into the shadow inventory, stressing how it was built: from traffic already crossing the platform, nothing deployed, prompt content untouched.\nOn AI Users, sort by violations and drill one person — apps used, adoption over time — the evidenced conversation to have with a department head. In the User Interaction Policy, walk one rule: source, apps, engine profile, the four actions, a notification template — and name the prerequisite out loud, TLS inspection at account level.\nClose in Events: attributed, exportable — the audit trail they walked in without."
     }
   },
   "ai-agentic-security": {

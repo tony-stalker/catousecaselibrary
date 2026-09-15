@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-85 of the 104 still-wanted captures need setup a clean tenant can't provide by navigation.
+84 of the 103 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -61,7 +61,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 - migration-sonicwall: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (17)
+## Other staged state (a specific rule/profile/filter that must exist first)  (16)
 
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
@@ -75,7 +75,6 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-global-app-performance: Monitor → Topology — two long-haul pilot sites homed to their nearest PoPs with the backbone path between them
 - security-compliance: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
 - security-dlp-forensics: Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values
-- security-dlp-forensics: Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident
 - security-finance-dora: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
 - security-firewall-refresh: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - security-healthcare-nhs: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems

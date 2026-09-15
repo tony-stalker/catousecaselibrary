@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenAI Security for End Users — Cato Use Case Library</title>
-<meta name="description" content="From shadow-AI discovery to prompt-level enforcement — the User Interaction Policy, browser plugin and DLP working together so employees can use GenAI without leaking data.">
+<meta name="description" content="From shadow-AI discovery to prompt-level enforcement — the Cato AI Security engine's User Interaction Policy and browser plugin, so employees can use GenAI without leaking data.">
 <script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
@@ -39,7 +39,7 @@
     </p>
     <div class="meta-row">
       <span class="tag">GenAI</span><span class="tag">Shadow AI</span><span class="tag">User Interaction Policy</span>
-      <span class="tag">Browser Plugin</span><span class="tag">DLP</span>
+      <span class="tag">Browser Plugin</span>
     </div>
     <div class="meta-row" style="margin-top:18px">
       <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
@@ -175,11 +175,7 @@
         contractor estate on another vendor's SASE — the <strong>AI Security Browser Plugin</strong>
         (Chrome, Edge and other Chromium browsers, deployable via Intune) intercepts supported AI
         apps in the browser itself and enforces the same outcomes: block, anonymise or engage the
-        user, modifying the prompt and masking content before it ever reaches the LLM. And beneath
-        the interaction policy sits the <strong>recommended DLP configuration for AI apps</strong>:
-        Cato-recommended content profiles for PII, financial data, access keys &amp; tokens and
-        legal data, applied in DLP rules against the <em>Generative AI Tools</em> application
-        category as the file-and-upload backstop.
+        user, modifying the prompt and masking content before it ever reaches the LLM.
       </p>
 
       <figure class="shot">
@@ -239,7 +235,7 @@
 
           <!-- Cato PoP labels -->
           <text class="dg-label" x="480" y="158" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
-          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security · User Interaction Policy · DLP</text>
+          <text class="dg-tiny" x="480" y="173" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">AI Security · User Interaction Policy</text>
 
           <!-- Users (right) -->
           <g>
@@ -305,7 +301,7 @@
           <tbody>
             <tr>
               <td><strong>1 · Baseline</strong></td>
-              <td>Monitor — User Interaction Policy rules and the recommended DLP rules, all in monitor mode</td>
+              <td>Monitor — User Interaction Policy rules in monitor mode</td>
               <td>Nothing changes; every AI interaction is logged</td>
               <td>You know the real AI estate and the top data-risk patterns</td>
             </tr>
@@ -331,14 +327,11 @@
         </table>
       </div>
       <p>
-        The DLP backstop follows the same arc. Cato's recommended configuration for AI apps defines
-        four content profiles — <strong>PII</strong> (person identifiers, credit card and licence
-        numbers), <strong>financial data</strong> (bank and card accounts, routing and SWIFT codes),
-        <strong>access keys &amp; tokens</strong> (AWS, GCP, GitHub and GitLab credentials) and
-        <strong>legal data</strong> (ML classifiers for agreements, patents and court documents) —
-        each applied in a rule against the <em>Generative AI Tools</em> application category, with
-        monitor or block set to match the stage you've reached. Accounts created after 25 March 2025
-        receive the pre-defined recommended rules automatically; earlier accounts add them manually.
+        This page stays on the AI Security engine — the prompt layer. File uploads to the same AI
+        applications are the DLP engine's job, with its own recommended configuration, match report
+        and forensics trail: that story lives on
+        <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a> and
+        <a href="security-dlp-forensics.html">DLP Forensics &amp; Evidence</a>.
       </p>
       <div class="callout warn">
         <div class="co-title">Prerequisites worth stating up front</div>
@@ -346,10 +339,6 @@
         inspect AI traffic — and its rules take precedence over TLS inspection bypass rules.
         API-based integrations support monitoring only.</p>
       </div>
-      <figure class="shot">
-        <img src="../assets/img/dlp-incident-cma.png" alt="CMA Data Incident detail pane showing a blocked upload to Microsoft Copilot: action Block, rule 'Copilot restrict PII', DLP profile CC-UK, matched data type credit card numbers, with a secured forensics evidence panel below.">
-        <figcaption>Stage 4 as evidence: a blocked card-data upload to a GenAI assistant, attributed to user, rule, DLP profile and matched data types — with secured forensics for investigators.</figcaption>
-      </figure>
     </section>
 
     <section id="demo" class="reveal">
@@ -398,14 +387,6 @@
           the policy in the moment. Note the prerequisite: TLS Inspection enabled at account level.</p>
         </li>
         <li>
-          <h4>Show the DLP backstop</h4>
-          <p><span class="path">Security → DLP Configuration</span></p>
-          <p>Show the Cato-recommended profiles — PII, financial data, access keys &amp; tokens,
-          legal — in rules against the <em>Generative AI Tools</em> application category. One
-          policy engine covers pastes, prompts and file uploads to AI apps alongside the rest of
-          the data protection estate.</p>
-        </li>
-        <li>
           <h4>Cover the gap with the browser plugin</h4>
           <p>For managed devices whose traffic never crosses a Cato PoP — a contractor estate on a
           third-party SASE, for example — the AI Security Browser Plugin (Chrome, Edge and Chromium
@@ -430,9 +411,8 @@
         baseline. The four-week <a href="security-ai-visibility.html">GenAI Visibility
         Assessment</a> ends with an inventory, a violation rate and a report; this PoV proves the
         customer can act on it: one pilot group taken up the User Interaction Policy's action
-        ladder step by evidenced step, one off-net device cohort covered by the browser plugin, and
-        the DLP backstop producing a match report — all of it exported as the governance evidence
-        pack. Agree the criteria below <em>before</em> configuring anything; the frame for that
+        ladder step by evidenced step, and one off-net device cohort covered by the browser
+        plugin — all of it exported as the governance evidence pack. Agree the criteria below <em>before</em> configuring anything; the frame for that
         conversation is <a href="management-pov-framework.html">Running a Cato PoV</a>.
       </p>
 
@@ -459,12 +439,6 @@
               <td>One cohort of managed Chromium-browser devices whose traffic never crosses a Cato PoP gets the same outcomes via the browser plugin, pushed by Intune.</td>
               <td>Plugin-attributed interactions in the inventory and events for the cohort's users</td>
               <td><span class="path">AI Security → Monitoring → Discovery</span></td>
-            </tr>
-            <tr>
-              <td><strong>DLP backstop with a match report</strong></td>
-              <td>The recommended DLP configuration for AI apps runs in monitor against the Generative AI Tools category; the match report is reviewed with the data owners.</td>
-              <td>Events export annotated true/false positive, per recommended rule</td>
-              <td><span class="path">Monitor → Events</span> <span class="path">Security → DLP Configuration</span></td>
             </tr>
             <tr>
               <td><strong>Users educated, not just policed</strong></td>
@@ -517,30 +491,6 @@
           <figure class="shot">
             <img src="../assets/img/cma-ai-uip.png" alt="CMA AI Security User Interaction Policy rulebase, published revision, with five rules pairing IdP source groups (Finance Users, Health Care Users, Engineering Users, Human Resources) and app scopes with engine profiles and an Anonymize and Block action, each showing a violation count" loading="lazy">
             <figcaption>The published User Interaction Policy rulebase: each rule pairs an IdP source group and app scope with an engine profile and an action &mdash; here Anonymize &amp; Block &mdash; with violation counts accruing per rule. (The notification template is set inside the rule editor.)</figcaption>
-          </figure>
-        </li>
-        <li>
-          <h4>Week 1 — the DLP backstop, in monitor</h4>
-          <p><span class="path">Security → DLP Configuration</span></p>
-          <p>Apply Cato's recommended DLP configuration for AI apps: four content profiles — PII,
-          financial data, access keys &amp; tokens, and legal data (ML classifiers) — each in a
-          monitor rule against the <em>Generative AI Tools</em> application category
-          (<a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a>).
-          Accounts created after 25 March 2025 have the recommended rules pre-defined; earlier
-          accounts add them manually. This is the file-and-upload backstop beneath the prompt
-          layer — leave every rule in monitor for the whole PoV unless the match report argues
-          otherwise.</p>
-          <figure class="shot">
-            <img src="../assets/img/cma-genai-dlp-events-grid.png" alt="CMA events grid filtered to the AI DLP monitor rules: eight ChatGPT upload events for one pilot user, each row naming the file, the matching rule and DLP profile across PII, financial data, access keys and legal data, every action Allow" loading="lazy">
-            <figcaption>The match report the data owners actually review (lab tenant, fictional identities and synthetic test files): eight uploads to ChatGPT across all four recommended rules, each attributed to a user, a file, a rule and a profile &mdash; and every action <strong>Allow</strong>. Monitor mode is the whole point in week one; the grid tells you which data classes travel to AI apps before anyone argues about blocking them.</figcaption>
-          </figure>
-          <p>Each row opens into the incident, and the incident opens into the evidence &mdash; the
-          snippet that actually matched, with the matched value highlighted and a match counter for
-          the rest of the file. Access to it is gated and logged, which is the answer to the
-          reasonable objection that a match report is itself a data-exposure risk.</p>
-          <figure class="shot">
-            <img src="../assets/img/cma-genai-dlp-forensics.png" alt="Two CMA panels: a confirmation dialog warning that evidence may contain sensitive information and that access is logged, and a Forensics panel showing match 2 of 3 with an AWS access key highlighted in the file snippet" loading="lazy">
-            <figcaption>Opening the forensics on an access-key match: the viewer must first confirm the access is logged and monitored (left), and the snippet then shows the matched value in context with a 2-of-3 match counter (right). The key shown is AWS&#39;s own documented example value in a synthetic test file.</figcaption>
           </figure>
         </li>
         <li>
@@ -611,11 +561,10 @@
           <h4>Assemble the evidence pack</h4>
           <p><span class="path">AI Security → Monitoring → Overview</span> <span class="path">Monitor → Events</span></p>
           <p>For the wrap-up: dated captures of the Overview dashboard (violation rate trend across
-          the four weeks, breakdown by rule) and the AI Users page for the pilot group; the DLP
-          match report with the data owners' true/false-positive annotations; the plugin cohort's
-          inventory view; and the events export — every monitored, anonymised, engaged and blocked
-          interaction, attributed and exportable for compliance auditing. Read it against the
-          criteria table, row by row, in the decision meeting booked at the workshop.</p>
+          the four weeks, breakdown by rule) and the AI Users page for the pilot group; the plugin
+          cohort's inventory view; and the events export — every monitored, anonymised, engaged and
+          blocked interaction, attributed and exportable for compliance auditing. Read it against
+          the criteria table, row by row, in the decision meeting booked at the workshop.</p>
         </li>
       </ol>
 
@@ -625,7 +574,6 @@
         <div class="benefit"><div class="b-icon">🧩</div><div><h4>Plugin misbehaving alongside other extensions</h4><p>Browser extensions that rewrite page content — ad blockers, other security or DLP plugins — can interfere with prompt interception. Test the cohort's standard extension set on one device first, and check the plugin can reach the Cato service (allowlist the catonetworks.com TLD in any third-party SASE in the path).</p></div></div>
         <div class="benefit"><div class="b-icon">🎭</div><div><h4>Anonymise left a value unmasked</h4><p>Working as documented, not broken: only detectors that support anonymisation mask values — anything outside the detector set passes through (the DOB in the figure above is the canonical example). Verify each promised data class in monitor, and use Anonymize and Block where an unmasked leak is unacceptable.</p></div></div>
         <div class="benefit"><div class="b-icon">👤</div><div><h4>Events show IPs, not names</h4><p>Identity sync lag or an unsynced pilot user. Confirm the IdP integration is populating the pilot group before the first weekly review — the ladder's whole story is per-user.</p></div></div>
-        <div class="benefit"><div class="b-icon">📦</div><div><h4>DLP match report empty or noisy</h4><p>Empty: check TLSi covers the pilot group and the rules target the Generative AI Tools category. Noisy: tune thresholds with the data owners on the annotated export — and give monitor mode enough traffic time; a day-three report convinces no one.</p></div></div>
         <div class="benefit"><div class="b-icon">🔌</div><div><h4>API-sourced usage won't enforce</h4><p>By design: with the AI Security API Integration module, the User Interaction Policy supports monitoring actions only. Enforcement evidence must come from the inline path or the browser plugin — position API-sourced visibility as discovery, not control.</p></div></div>
       </div>
 
@@ -637,7 +585,7 @@
           <li><strong>Enforcement follows evidence, never leads it:</strong> if a stakeholder pushes to block in week one, the answer is the assessment's own lesson — monitor first, or the pilot proves nothing except that blocking is possible.</li>
           <li><strong>Anonymisation has a documented edge:</strong> the detector set is finite. Never promise masking for a data class you have not seen masked in this tenant, in monitor, on seeded test data.</li>
           <li><strong>Export as you go:</strong> take dated captures and event exports weekly rather than reconstructing at the end — retention windows are licence-dependent, and the wrap-up should read a register, not memories.</li>
-          <li><strong>Clean exit:</strong> return Interaction and Access Policy pilot rules to monitor (or disable them), remove the plugin from the cohort via Intune, and hand over the evidence pack. The recommended DLP monitor rules are worth leaving in place — they are the start of the production policy, and the customer will ask to keep the dashboards.</li>
+          <li><strong>Clean exit:</strong> return Interaction and Access Policy pilot rules to monitor (or disable them), remove the plugin from the cohort via Intune, and hand over the evidence pack — the customer will ask to keep the dashboards.</li>
         </ul>
       </div>
     </section>
@@ -656,7 +604,6 @@
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-ai-security-browser-plugin" target="_blank" rel="noopener">What is the AI Security Browser Plugin</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/ai-security-for-end-users-overview-dashboard" target="_blank" rel="noopener">AI Security for End Users — Overview Dashboard</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/monitoring-via-the-ai-users-page" target="_blank" rel="noopener">Monitoring via the AI Users Page</a></li>
-            <li><a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a></li>
           </ul>
         </div>
         <div class="card">

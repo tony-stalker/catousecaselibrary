@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 104 live `capture-wanted` items across 51 pages
+Regenerated 103 live `capture-wanted` items across 51 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -131,7 +131,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **migration-cisco-asa**: Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)
 
-## Other  (11)
+## Other  (10)
 
 - **access-byod-clientless**: RBI-isolated portal session — download/copy attempt refused in the browser
 - **management-visibility**: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
@@ -141,7 +141,6 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **migration-versa**: Monitor → Cloud Apps Dashboard — shadow-IT discovery with risk scores for a pilot cohort
 - **network-agility-mna**: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation
 - **network-resilient-site-design**: Socket Actions menu showing Activate Manual HA Failover / Stop HA Failover
-- **security-dlp-forensics**: Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident
 - **security-legal-confidentiality**: CMA Security → WAN Firewall — symmetric wall rule pair scoped to two IdP matter-team groups
 - **security-retail-pci**: Network → Sites → Networks for a store site showing POS/CDE, guest, staff and cameras/IoT ranges
 

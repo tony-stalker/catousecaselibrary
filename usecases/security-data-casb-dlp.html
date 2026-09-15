@@ -441,6 +441,10 @@
           upload check before re-running. The agreed false-positive rate on this report is the number
           that decides which rule gets promoted.</p>
           <figure class="shot">
+            <img src="../assets/img/cma-genai-dlp-events-grid.png" alt="CMA events grid filtered to four Data Control monitor rules covering AI apps: eight ChatGPT upload events for one pilot user, each row naming the file, the matching rule and DLP profile across PII, financial data, access keys and legal data, every action Allow" loading="lazy">
+            <figcaption>What the match report looks like before it leaves the platform (lab tenant, fictional identities and synthetic test files): eight uploads to a GenAI app caught by four Data Control monitor rules &mdash; PII, financial data, access keys, legal &mdash; each row attributed to a user, a file, a rule and a profile, every action <strong>Allow</strong>. The same engine and the same review works whatever the destination app; here the destination class happens to be Generative AI Tools (<a href="https://knowledge.catonetworks.com/docs/recommended-dlp-configuration-to-monitor-ai-apps" target="_blank" rel="noopener">Recommended DLP Configuration to Monitor AI Apps</a>).</figcaption>
+          </figure>
+          <figure class="shot">
             <img src="../assets/img/cma-events-export-dialog.png" alt="CMA Events page filtered to Apps Security sub-type over a two-week window totalling 640,000 events, with a histogram, a field-picker sidebar and Data Control rows behind an Export Events dialog offering a zip download" loading="lazy">
             <figcaption>The match report leaving the platform (lab tenant, fictional identities): a fortnight of Apps Security events &mdash; 640,000 of them &mdash; filtered, then handed to the data owners as a file. The export is the artefact the tuning session runs on; the histogram above it is what tells you whether a spike is a real change in behaviour or a noisy data type you are about to fix.</figcaption>
           </figure>

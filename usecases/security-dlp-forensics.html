@@ -407,7 +407,10 @@
           <strong>Download File</strong> where originals are stored. Allow for the few minutes it can
           take after the event before the file is available; dated screenshots of every hop go into
           the evidence doc.</p>
-          <!-- capture-wanted: «Evidence viewer after View Evidence → Confirm — the matched snippet from a staged fictional-data incident» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-genai-dlp-forensics.png" alt="Two CMA panels: a confirmation dialog warning that evidence may contain sensitive information and that access is logged, and a Forensics panel showing match 2 of 3 with an AWS access key highlighted in the file snippet" loading="lazy">
+            <figcaption>The trail's destination, from a staged incident (lab tenant, synthetic test file): <strong>View Evidence</strong> first demands a confirmation that the access is logged and monitored (left) &mdash; the consent gate that answers the objection that a match report is itself a data-exposure risk &mdash; and the snippet then shows the matched value highlighted in context with a 2-of-3 match counter (right). The key shown is AWS&#39;s own documented example value; every one of these views lands in the Audit Trail you export in the next step.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Prove the governance, export the report</h4>
