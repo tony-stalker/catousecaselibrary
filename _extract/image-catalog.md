@@ -578,3 +578,10 @@ scratchpad `shots/CAPTURE-SESSION-LOG.md` (14 Sep session).
   migration-forcepoint (Any-scoped; caption directs scoping to the straggler group).
 - **cma-apps-dashboard.png** (lab) — Applications dashboard: per-app Risk, Sanctioned chips, usage.
   **Embedded** → security-data-casb-dlp.
+- **cma-ai-plugin-personal-genai.png** (14 Sep, Tony self-serve, lab device) — Chrome on
+  chatgpt.com (signed out): AI Security Browser Plugin dialog "Sensitive Information being sent
+  Personal GenAI Account Detected" naming the detected values (bank account number, name, email —
+  all staged fictional Jane Doe / example.com data), Discard-prompt 21 s countdown vs Send anyway.
+  **Embedded** → ai-genai-security (third plugin outcome, Week 1). No redactions needed (fictional
+  payload, no tenant identity). Candidate reuse: ai-eu-ai-act (user-facing transparency/literacy
+  evidence). HEIC original in _extract/media/.
