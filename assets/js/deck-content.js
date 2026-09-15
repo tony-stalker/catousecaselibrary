@@ -472,6 +472,42 @@ window.UC_DECKS = {
       "demo": "Start with the workshop, homework done: shortlist use cases from the library and pre-draft a criterion for each, so the session edits a straw man. Close by booking two meetings on the spot — the weekly sync and the decision meeting with the economic buyer.\nThen the build: pilot branch connected, Client group enrolled, IdP populating users — identity-attributed evidence is the difference between an IP did this and a named person did this.\nIn Topology, capture evidence item zero — tunnels up, first traffic — dated, into the evidence doc.\nFinish in App Analytics: their apps and users named on screen makes it real on day five, not day thirty — and when the first can-it-also arrives, park it on screen, captured, not dismissed."
     }
   },
+  "management-data-lake": {
+    "pain": [
+      "Nobody can say how many events the estate generates - until the quota discards them",
+      "Retention is discovered at the audit, after the data is already deleted",
+      "SIEM ingestion bills grow on firewall noise nobody reads"
+    ],
+    "gain": [
+      "Units sized from the account's own event history, not guesswork",
+      "The first unit is free - and so is exporting the feed to S3, Blob or a SIEM",
+      "A trimmed feed: gzip on export, no-Event rules on the noise"
+    ],
+    "demo": [
+      {
+        "area": "Home » Events",
+        "show": "The event-rate chart - hover a peak, mind the granularity, read the real number"
+      },
+      {
+        "area": "Home » Events » Smart View",
+        "show": "Popular Fields by Event Type - Security dominates, and that is the trimming lever"
+      },
+      {
+        "area": "Resources » Event Integrations",
+        "show": "The S3 push feed with an event-type filter - 60-second cadence, gzip on the wire"
+      },
+      {
+        "area": "Use case page » Calculator",
+        "show": "Band tables in, unit count and rough storage out - with the KB caveats on screen"
+      }
+    ],
+    "hook": "One Data Lake unit is included with every account. The whole conversation is whether your peak hour fits in it - and that answer is already sitting in your Events chart.",
+    "notes": {
+      "divider": "Open by asking who owns the SIEM bill and who owns retention. They are usually different people, and this page speaks to both.\nThe frame: events are the exhaust of every policy decision, the Data Lake is where they live, and the unit model is how the peak hour gets sized. Everything on this page traces to the public KB guide.",
+      "why": "Make the free tier concrete first: every account includes one unit - 2.5 million events an hour, three months of retention. Then the two failure modes: a peak hour over the licensed rate is discarded for the rest of the hour, and data past retention is deleted for good.\nThen the good news: exporting the feed out - S3, Azure Blob, the API - carries no Cato charge, so the long-retention problem can live in their own storage at their own rates.",
+      "demo": "Start in the Events chart and size from evidence: hover the tallest bar, note the granularity, and compare that number with 2.5 million. That single gesture is the whole sizing method.\nIn Smart View, show Event Type distribution - Security events dominate in most accounts, which is where trimming starts: sub-type filters on the integration, Allow-with-no-Event rules for chatty safe traffic.\nFinish on Event Integrations: the S3 feed pushing every 60 seconds, filters per integration, three integrations per account. If they run the calculator, read the caveats out loud - the KB calls its own storage figures a very rough estimate."
+    }
+  },
   "management-asset-discovery": {
     "pain": [
       "Agentless devices — cameras, PLCs, BYOD — join the network silently.",

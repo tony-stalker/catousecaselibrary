@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Logs &amp; the Cato Data Lake — Cato Use Case Library</title>
+<meta name="description" content="How events are generated, what a Data Lake unit buys, how to size units from real history or the KB tables, and how to export the feed to S3, Azure Blob or a SIEM — free of charge.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+<style>
+#calculator .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#calculator .chips input { position: absolute; opacity: 0; pointer-events: none; }
+#calculator .chips label { display: inline-block; font-size: .85rem; color: var(--ink-2); background: var(--surface); border: 1px solid var(--hairline); border-radius: 999px; padding: 5px 14px; cursor: pointer; user-select: none; }
+#calculator .chips input:checked + label { background: var(--green-050); border-color: var(--green-600); color: var(--green-700); font-weight: 600; }
+#calculator .chips input:focus-visible + label { outline: 2px solid var(--green-600); outline-offset: 2px; }
+#calculator .verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin-top: 16px; }
+#calculator .verdict-card ul { margin: 10px 0 0; padding-left: 18px; font-size: .86rem; color: var(--ink-2); }
+#calculator input[type="number"] { font: inherit; font-size: .9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--hairline); border-radius: 8px; padding: 6px 10px; max-width: 200px; }
+</style>
+</head>
+<body data-uc="management-data-lake">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-management">Management</a> / Data Lake</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-management">Management</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Event Logs &amp; the Cato Data Lake</h1>
+    <p class="lede">
+      Every tracked policy hit, connection and detection across the platform lands as an event in
+      the Cato Data Lake — and the licence that sizes it is one of the few Cato conversations with real
+      arithmetic in it. Size the units too low and the busiest hour's excess events may be
+      discarded; export everything unfiltered and the SIEM bill does the complaining instead.
+      This page covers how events are generated, what a Data Lake unit actually buys, how to
+      estimate units from real history or the KB's tables, and how to get the feed out — which
+      Cato does free of charge.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Data Lake</span><span class="tag">Events</span><span class="tag">Retention</span>
+      <span class="tag">S3 Export</span><span class="tag">SIEM</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Three conversations depend on understanding this pipeline. <strong>Sizing at order time:</strong>
+        Data Lake units are licensed on peak events per hour, so an estimate has to exist before the
+        first renewal conversation. <strong>Avoiding silent loss:</strong> events beyond the licensed
+        hourly rate may be discarded for the remainder of the hour — undersizing is not a
+        performance problem, it is missing evidence. <strong>Budgeting the SIEM:</strong> exporting
+        the full firehose to external storage is free on Cato's side, but downstream SIEMs typically
+        bill by ingested volume — trimming the feed is a policy exercise, not a procurement one.
+      </p>
+      <div class="stat-row">
+        <div class="stat-tile stat-good"><div class="stat-value">1 <span class="unit">unit free</span></div><div class="stat-label">every account includes 2.5M events/hour with 3-month retention</div></div>
+        <div class="stat-tile"><div class="stat-value">2.5M <span class="unit">events/h</span></div><div class="stat-label">per Data Lake unit — licensed on the peak hour, not the average</div></div>
+        <div class="stat-tile"><div class="stat-value">180 <span class="unit">GB/mo</span></div><div class="stat-label">the KB's "very rough" storage equivalent of one unit's event rate</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">Free</div><div class="stat-label">export to cloud storage and SIEMs — integrations carry no additional Cato cost</div></div>
+      </div>
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>“How many events does your estate generate in its busiest hour — and if the excess above
+        your licensed rate were being discarded right now, how would you find out?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The pipeline</div>
+      <h2>From policy hit to Data Lake unit</h2>
+      <p>
+        Events come from the services — Networking, Security, Access and the rest — and the volume
+        is a function of policy. Cato retains a core set of key security and connectivity events
+        for every customer; beyond that, each policy rule's tracking option decides whether a hit
+        becomes an event. The licence then defines the hourly rate limit: units of
+        <strong>2.5 million events per hour</strong>, licensed on the <strong>peak</strong> — a
+        quiet hour does not bank capacity for a busy one, and events in excess of the licensed rate
+        may be discarded for the remainder of the hour.
+      </p>
+      <p>
+        Retention is the second dimension of the same unit: variants of <strong>3, 6 or 12
+        months</strong>, and the chosen variant applies to all units — mixing retention periods is
+        not possible. After the retention period, event data is deleted from the Cato Cloud and
+        cannot be recovered. One caveat worth quoting exactly: if a customer pays for additional
+        retention, no allowance is made for the free retention — all event retention becomes
+        chargeable. The model applies to contracts and renewals from 1 January 2024, and some
+        contracts include terms that differ.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The event pipeline — generation, rate limiting, retention, export</title>
+          <desc id="dg1-desc">Cato services generate events according to policy logging. An hourly rate-limit gate, sized in Data Lake units of 2.5 million events per hour, admits events into the Data Lake; excess events beyond the licensed peak are discarded for the remainder of the hour. Retained events are held for the 3, 6 or 12 month unit variant and can be consumed through the CMA Events page, an AWS S3 push feed, an Azure Blob feed, the eventsFeed API, and SIEM ingestion — all free of charge.</desc>
+
+          <!-- Event sources -->
+          <rect class="dg-node" x="20" y="60" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="110" y="85" text-anchor="middle">Firewall policies</text>
+          <text class="dg-sub" x="110" y="103" text-anchor="middle">Internet · WAN · LAN</text>
+
+          <rect class="dg-node" x="20" y="175" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="110" y="200" text-anchor="middle">Security services</text>
+          <text class="dg-sub" x="110" y="218" text-anchor="middle">IPS · CASB · RBI</text>
+
+          <rect class="dg-node" x="20" y="290" width="180" height="62" rx="10"/>
+          <text class="dg-label" x="110" y="315" text-anchor="middle">Sites &amp; SDP users</text>
+          <text class="dg-sub" x="110" y="333" text-anchor="middle">Sockets · Cato Clients</text>
+
+          <!-- Rate-limit gate -->
+          <rect class="dg-node" x="250" y="163" width="170" height="86" rx="10"/>
+          <text class="dg-label" x="335" y="190" text-anchor="middle">Hourly rate gate</text>
+          <text class="dg-sub" x="335" y="208" text-anchor="middle">2.5M events/h per unit</text>
+          <text class="dg-tiny" x="335" y="226" text-anchor="middle">licensed on the peak</text>
+
+          <!-- Discard branch -->
+          <path class="lane lane-block" d="M 335 249 L 335 308"/>
+          <path class="lane-x" d="M 324 312 L 346 334"/>
+          <path class="lane-x" d="M 346 312 L 324 334"/>
+          <text class="dg-tiny" x="335" y="356" text-anchor="middle">excess over the peak:</text>
+          <text class="dg-tiny" x="335" y="371" text-anchor="middle">discarded rest of hour</text>
+
+          <!-- Data Lake -->
+          <rect class="dg-node-green" x="460" y="157" width="180" height="98" rx="10"/>
+          <text class="dg-label" x="550" y="184" text-anchor="middle">Cato Data Lake</text>
+          <text class="dg-sub" x="550" y="202" text-anchor="middle">3 / 6 / 12-month units</text>
+          <text class="dg-tiny" x="550" y="220" text-anchor="middle">first unit free</text>
+          <text class="dg-tiny" x="550" y="236" text-anchor="middle">deleted after retention</text>
+
+          <!-- Export container -->
+          <rect class="dg-node-dark" x="690" y="30" width="250" height="380" rx="10"/>
+          <text class="dg-label-inv" x="815" y="58" text-anchor="middle">Export destinations</text>
+          <text class="dg-sub-inv" x="815" y="76" text-anchor="middle">free of charge</text>
+
+          <rect class="dg-node" x="706" y="92" width="218" height="48" rx="10"/>
+          <text class="dg-label" x="815" y="112" text-anchor="middle">CMA Events page</text>
+          <text class="dg-tiny" x="815" y="129" text-anchor="middle">Home → Events</text>
+
+          <rect class="dg-node" x="706" y="150" width="218" height="48" rx="10"/>
+          <text class="dg-label" x="815" y="170" text-anchor="middle">AWS S3 push feed</text>
+          <text class="dg-tiny" x="815" y="187" text-anchor="middle">60 s / 9.5 MB · .GZ</text>
+
+          <rect class="dg-node" x="706" y="208" width="218" height="48" rx="10"/>
+          <text class="dg-label" x="815" y="228" text-anchor="middle">Azure Blob feed</text>
+          <text class="dg-tiny" x="815" y="245" text-anchor="middle">feed target &#183; mechanics not published</text>
+
+          <rect class="dg-node" x="706" y="266" width="218" height="48" rx="10"/>
+          <text class="dg-label" x="815" y="286" text-anchor="middle">eventsFeed API</text>
+          <text class="dg-tiny" x="815" y="303" text-anchor="middle">pull · supports gzip</text>
+
+          <rect class="dg-node" x="706" y="324" width="218" height="48" rx="10"/>
+          <text class="dg-label" x="815" y="344" text-anchor="middle">SIEM ingestion</text>
+          <text class="dg-tiny" x="815" y="361" text-anchor="middle">filtered, trimmed feed</text>
+
+          <!-- Flows -->
+          <path class="lane lane-allow" d="M 200 91 C 226 91, 230 178, 250 191"/>
+          <path class="lane lane-allow" d="M 200 206 L 250 206"/>
+          <path class="lane lane-allow" d="M 200 321 C 226 321, 230 234, 250 221"/>
+          <path class="lane lane-allow" d="M 420 206 L 460 206"/>
+          <path class="lane lane-info" d="M 640 206 C 662 206, 668 206, 690 206"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Event generation — within the licensed hourly rate</span>
+          <span class="key"><span class="swatch block"></span> Beyond the hourly peak — may be discarded</span>
+          <span class="key"><span class="swatch info"></span> Export &amp; ingestion — no additional Cato cost</span>
+        </div>
+        <div class="diagram-caption">Policies decide which events exist; Data Lake units set the hourly peak the platform retains. Everything past the gate is queryable in the CMA for the retention window and exportable free of charge — so the trimming that protects a SIEM budget happens in policy and integration filters, not downstream.</div>
+      </div>
+
+      <p>The KB's own examples of how units map to requirements, reproduced verbatim:</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Peak number of events generated per hour</th><th>Retention period required</th><th class="num">Additional Data Lake units required</th><th>Type of Data Lake unit required</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Up to 2.5 million</td><td>3 months</td><td class="num">0</td><td>N/A</td></tr>
+            <tr><td>Up to 2.5 million</td><td>6 months</td><td class="num">1</td><td>6-month unit</td></tr>
+            <tr><td>Up to 5 million</td><td>3 months</td><td class="num">1</td><td>3-month unit</td></tr>
+            <tr><td>Up to 7.5 million</td><td>12 months</td><td class="num">2</td><td>12-month unit</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🕐</div><div><h4>Peak, not average</h4><p>Units define the maximum events per hour. A period of fewer events has no bearing on future hours — size for the busiest hour of the busiest day, then verify against real history.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗄️</div><div><h4>Retention is a variant, not a mix</h4><p>Three-, six- and twelve-month unit variants exist, and the chosen variant applies to every unit on the account. There is no blending of retention periods across units.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧮</div><div><h4>One published sizing instrument</h4><p>Real event history is the preferred method; for accounts without one, the KB's bandwidth and SDP Client tables are the normative fallback — reproduced verbatim below.</p></div></div>
+        <div class="benefit"><div class="b-icon">📤</div><div><h4>Export is free of charge</h4><p>Integrations forwarding data to external cloud storage and SIEMs carry no additional Cato cost — the only bills in this conversation are the unit licence and the customer's own SIEM.</p></div></div>
+      </div>
+    </section>
+
+    <section id="sizing" class="reveal">
+      <div class="section-kicker">Sizing from the KB</div>
+      <h2>The published tables — verbatim</h2>
+      <p>
+        For accounts <strong>with</strong> an event history, the KB's guidance is simple: read the
+        peaks off the Events chart (the demo runbook below walks it). For accounts
+        <strong>without</strong> one, the KB publishes two band tables — peak events per hour by
+        total bandwidth and by SDP Client count — and a five-step procedure over them, summarised
+        in the calculator section. Both tables assume the customer is logging <strong>all</strong>
+        events, and both estimate the <strong>peak</strong>.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Total Bandwidth</th><th class="num">Estimated peak events per hour</th><th>SDP Clients</th><th class="num">Estimated peak events per hour</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Up to 2.5Gbps</td><td class="num">1,000,000</td><td>Up to 3K</td><td class="num">1,000,000</td></tr>
+            <tr><td>2.5-6Gbps</td><td class="num">5,000,000</td><td>3K-7K</td><td class="num">5,000,000</td></tr>
+            <tr><td>6-9Gbps</td><td class="num">7,500,000</td><td>7K-11K</td><td class="num">7,500,000</td></tr>
+            <tr><td>9-12Gbps</td><td class="num">10,000,000</td><td>11K-15K</td><td class="num">10,000,000</td></tr>
+            <tr><td>12-15Gbps</td><td class="num">12,500,000</td><td>15K-19K</td><td class="num">12,500,000</td></tr>
+            <tr><td>15-18Gbps</td><td class="num">15,000,000</td><td>19K-23K</td><td class="num">15,000,000</td></tr>
+            <tr><td>18-21Gbps</td><td class="num">17,500,000</td><td>23K-27K</td><td class="num">17,500,000</td></tr>
+            <tr><td>21-24Gbps</td><td class="num">20,000,000</td><td>27K-31K</td><td class="num">20,000,000</td></tr>
+            <tr><td>24-27Gbps</td><td class="num">22,500,000</td><td>31K-35K</td><td class="num">22,500,000</td></tr>
+            <tr><td>27-30Gbps</td><td class="num">25,000,000</td><td>35K-39K</td><td class="num">25,000,000</td></tr>
+            <tr><td>30-33Gbps</td><td class="num">27,500,000</td><td>39K-43K</td><td class="num">27,500,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-2)">
+        Nothing is published beyond 33 Gbps or 43K SDP Clients — past those bands, size from the
+        account's event history with Cato rather than extrapolating.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">The KB's worked example — and an honest footnote</div>
+        <p>The KB works one example against these tables: 3 Gbps of total bandwidth reads off as a
+        5-million-event peak, CASB and RBI add one unit, and the customer buys "three more Data Lake
+        Storage units of the appropriate duration". But the example's SDP line reads 5,000 clients
+        as "an additional estimated peak of two and a half million events per hour" — while the SDP
+        table above puts 5,000 clients in the 3K–7K band at <strong>5,000,000</strong>. The tables
+        are the normative instrument ("Follow this procedure to calculate requirements from the
+        tables"), so this page and the estimator below follow the tables — the conservative
+        reading. Be aware the KB's own example reads lower.</p>
+      </div>
+
+      <h3>Storage and export volume — the rough conversion</h3>
+      <p>
+        Data volume is <strong>not</strong> used in the calculation or purchase of units and is not
+        reported by the CMA — units are bought on events per hour alone. But customers planning an
+        export to external storage or a SIEM can use the KB's rough conversion: one Data Lake unit
+        (2.5 million events per hour) is very roughly equivalent to <strong>180 GB per month</strong>
+        of data storage. The KB's table, verbatim:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Events per hour</th><th class="num">Additional Data Lake units</th><th class="num">GB per month (estimated)</th><th class="num">3 months</th><th class="num">6 months</th><th class="num">12 months</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2.5 million</td><td class="num">0</td><td class="num">180</td><td class="num">540</td><td class="num">1080</td><td class="num">2160</td></tr>
+            <tr><td>5 million</td><td class="num">1</td><td class="num">360</td><td class="num">1080</td><td class="num">2160</td><td class="num">4320</td></tr>
+            <tr><td>7.5 million</td><td class="num">2</td><td class="num">540</td><td class="num">2160</td><td class="num">4320</td><td class="num">8640</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-2)">
+        Reproduced verbatim, arithmetic gap included: rows one and two multiply cleanly
+        (180 GB/month → 540 / 1,080 / 2,160 GB; 360 → 1,080 / 2,160 / 4,320), but row three does
+        not — a stated 540 GB/month would give 1,620 / 3,240 / 6,480 GB, while the stated totals of
+        2,160 / 4,320 / 8,640 imply 720 GB/month. The estimator below computes linearly
+        (peak ÷ 2.5M × 180 GB/month × months) rather than reproducing the inconsistency.
+        Derived from the KB's own figures — not a published number — 2.5M events/hour for a month
+        at 180 GB works out to roughly <strong>100 bytes per event</strong> on average; Cato
+        publishes no per-event-type sizes. The KB flags the whole conversion as "a very rough
+        estimate": an account sized for occasional peaks stores far less than one generating events
+        at a consistently high rate.
+      </p>
+    </section>
+
+    <section id="calculator" class="reveal">
+      <div class="section-kicker">Unit estimator</div>
+      <h2>Estimate units and export volume</h2>
+      <p>
+        This estimator implements the KB's five-step procedure over the published tables — nothing
+        more. It follows the tables where the KB's own worked example reads lower, computes storage
+        linearly where the KB's table row three does not, and refuses to extrapolate beyond the
+        published bands. The procedure it automates:
+      </p>
+      <ol style="font-size:.92rem;color:var(--ink-2);margin:8px 0 0;padding-left:22px">
+        <li>Read the estimated peak events per hour from the <strong>Total Bandwidth</strong> table.</li>
+        <li>Read the estimated peak events per hour from the <strong>SDP Clients</strong> table.</li>
+        <li>Add the two.</li>
+        <li>Divide by 2.5 million and round up — the units for bandwidth and SDP Clients.</li>
+        <li>Using multiple high-event services such as CASB or LAN Firewall? Add <strong>1</strong> Data Lake unit.</li>
+      </ol>
+      <details class="decider-fold">
+        <summary>Open the estimator — five inputs, three result cards</summary>
+        <div class="decider-fold-body">
+      <form id="calc-form" class="card" onsubmit="return false">
+        <div class="grid-2">
+          <fieldset>
+            <legend>Total bandwidth across all sites</legend>
+            <div class="chips">
+              <input type="radio" name="dl-bw" id="dl-bw-b0" value="b0" checked><label for="dl-bw-b0">Up to 2.5 Gbps</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b1" value="b1"><label for="dl-bw-b1">2.5–6</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b2" value="b2"><label for="dl-bw-b2">6–9</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b3" value="b3"><label for="dl-bw-b3">9–12</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b4" value="b4"><label for="dl-bw-b4">12–15</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b5" value="b5"><label for="dl-bw-b5">15–18</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b6" value="b6"><label for="dl-bw-b6">18–21</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b7" value="b7"><label for="dl-bw-b7">21–24</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b8" value="b8"><label for="dl-bw-b8">24–27</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b9" value="b9"><label for="dl-bw-b9">27–30</label>
+              <input type="radio" name="dl-bw" id="dl-bw-b10" value="b10"><label for="dl-bw-b10">30–33</label>
+              <input type="radio" name="dl-bw" id="dl-bw-over" value="over"><label for="dl-bw-over">&gt; 33 Gbps</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>SDP Clients in use</legend>
+            <div class="chips">
+              <input type="radio" name="dl-sdp" id="dl-sdp-s0" value="s0" checked><label for="dl-sdp-s0">Up to 3K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s1" value="s1"><label for="dl-sdp-s1">3K–7K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s2" value="s2"><label for="dl-sdp-s2">7K–11K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s3" value="s3"><label for="dl-sdp-s3">11K–15K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s4" value="s4"><label for="dl-sdp-s4">15K–19K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s5" value="s5"><label for="dl-sdp-s5">19K–23K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s6" value="s6"><label for="dl-sdp-s6">23K–27K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s7" value="s7"><label for="dl-sdp-s7">27K–31K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s8" value="s8"><label for="dl-sdp-s8">31K–35K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s9" value="s9"><label for="dl-sdp-s9">35K–39K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-s10" value="s10"><label for="dl-sdp-s10">39K–43K</label>
+              <input type="radio" name="dl-sdp" id="dl-sdp-over" value="over"><label for="dl-sdp-over">&gt; 43K</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Retention period (applies to all units)</legend>
+            <div class="chips">
+              <input type="radio" name="dl-retention" id="dl-ret-3" value="3" checked><label for="dl-ret-3">3 months</label>
+              <input type="radio" name="dl-retention" id="dl-ret-6" value="6"><label for="dl-ret-6">6 months</label>
+              <input type="radio" name="dl-retention" id="dl-ret-12" value="12"><label for="dl-ret-12">12 months</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>High-event services</legend>
+            <div class="chips">
+              <input type="checkbox" name="dl-services" id="dl-svc" value="yes"><label for="dl-svc">CASB, RBI or LAN Firewall enabled</label>
+            </div>
+            <p style="font-size:.8rem;color:var(--ink-3);margin:8px 0 0">The KB's procedure adds one unit for multiple high-event services; it publishes no per-service figures, so this estimator adds a single unit.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Extra events per hour (measured or assumed)</legend>
+            <input type="number" name="dl-extra" id="dl-extra" value="0" min="0" step="100000" aria-label="Extra events per hour">
+            <p style="font-size:.8rem;color:var(--ink-3);margin:8px 0 0">The KB publishes no per-licence figures for other services or XOps integrations — measure their share on the Events chart, or enter your own assumption here.</p>
+          </fieldset>
+        </div>
+      </form>
+      <div id="calc-result" aria-live="polite"></div>
+        </div>
+      </details>
+      <noscript>
+        <div class="callout warn">
+          <div class="co-title">JavaScript is off</div>
+          <p>The estimator needs JavaScript — the five-step procedure above and the verbatim tables
+          in the previous section carry the same numbers, worked by hand.</p>
+        </div>
+      </noscript>
+    </section>
+
+    <section id="export" class="reveal">
+      <div class="section-kicker">Export &amp; ingestion</div>
+      <h2>Getting events out — free of charge</h2>
+      <p>
+        Cato supports consuming events in the CMA itself, as a high-scale feed to cloud
+        storage (AWS S3 and Azure Blob Storage; the push cadence below is published for S3), and by pull through the eventsFeed API — and
+        forwarding data to external cloud storage and SIEMs carries no additional Cato cost. The
+        choice is about mechanics:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">AWS S3 — the push feed</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Continuous push — unlike the eventsFeed API, which requires pulling data from Cato and
+          can be affected by rate limiting. Uploads land every <strong>60 seconds</strong>, or whenever more than
+          <strong>9.5 MB</strong> of uncompressed data accumulates, as <strong>.GZ</strong> files over HTTPS. Per-integration
+          filters select events by type or sub-type (multiple filters AND together; the default is
+          everything). Only S3 regions with the Security Token Service active are supported — the
+          China region is not — and the IAM role trusts Cato's documented integration ARN with the
+          CMA account ID as the ExternalId.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Azure Blob &amp; the eventsFeed API</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Azure Blob Storage is the equivalent feed target on the other cloud; the KB confirms it
+          as a high-scale feed destination. The eventsFeed API is the pull path — the right tool
+          for SIEM connectors and custom pipelines, with one budget lever worth knowing:
+          enabling gzip compression on API requests reduces the required storage by up to
+          <strong>95%</strong>. Up to <strong>three</strong> Event Integrations can be defined per account.</p>
+        </div>
+      </div>
+
+      <h3>Trimming the feed before the SIEM bills it</h3>
+      <p>
+        The KB's ingestion workflow cuts volume at the source, in three passes of the Events page's
+        field analysis:
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>Eliminate by Event Type</h4>
+          <p>In most cases, the vast majority of generated events are <strong>Security</strong> events. If
+          Security events are not needed downstream, filtering them out of the integration or
+          eventsFeed query is the single biggest cut available — the KB notes that eliminating
+          other event types is not likely to have a significant impact on the total.</p>
+        </li>
+        <li>
+          <h4>Eliminate by Sub-Type</h4>
+          <p>Within Security events, <strong>Internet and WAN Firewall</strong> events represent the vast
+          majority for many accounts. Filter sub-types the SOC does not consume.</p>
+        </li>
+        <li>
+          <h4>Eliminate by Application — the Allow-no-Event technique</h4>
+          <p>A significant share of firewall events often comes from applications nobody needs
+          logged — DNS is the classic case. Create firewall rules with the <strong>Allow</strong> action and
+          <strong>no Event</strong> for that traffic, so the events are never generated. The KB recommends a
+          Custom Application defined with the destination IPs of DNS servers that need no
+          tracking, allowed by a single rule. Other candidates it names: ICMP, SNMP, Windows
+          Update, Microsoft Teams and Zoom.</p>
+        </li>
+      </ol>
+      <div class="callout">
+        <div class="co-title">Two practices worth adopting on every account</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Enable the integration even without a target:</strong> switching on integration with
+          Cato events under Resources → Event Integrations lets Cato analyse the account's feed
+          when troubleshooting with support — without it, that data is not available.</li>
+          <li><strong>XDR stories are silent by default:</strong> no story events are generated until an XDR
+          Response Policy rule is configured — build the rule before promising story events in the
+          SIEM.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">The demo in one sentence</div>
+        <p>Read the account's real event peaks off the chart, walk the Popular Fields elimination
+        that shrinks them, then show where the feed leaves the platform — turning a licensing
+        abstraction into fifteen minutes of concrete arithmetic.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Open on the Events chart and find the peaks</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Set a long window and look at the events-over-time chart. The question the licence
+          asks is visible here: what is the tallest bar? An account peaking at 400K events per
+          hour sits comfortably inside the free unit; one exceeding 2.5M in every hour needs an
+          additional unit before events start being discarded.</p>
+          <!-- capture-wanted: «CMA Home → Events — events-over-time chart with the Time Series Granularity control visible and a clear peak bar» -->
+        </li>
+        <li>
+          <h4>Hover for exact heights — and mind the granularity</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Hover a bar to read its exact height. Then change the time window and point out the
+          Time Series Granularity: the period each bar represents changes with the window, so a
+          "peak hour" read off a 90-day chart is not the same measurement as one off a 24-hour
+          chart. The KB's advice: prefer a long analysis window, and verify the granularity before
+          quoting a number.</p>
+        </li>
+        <li>
+          <h4>Walk the Popular Fields elimination</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Use the Popular Fields panel to show the event-type distribution — Security events
+          dominating is the normal picture. Drill into Sub-Type (Internet and WAN Firewall
+          carrying most of it) and then Application, where DNS usually owns a surprising share.
+          This is the trimming workflow from the export section, demonstrated live on real data.</p>
+          <!-- capture-wanted: «CMA Home → Events — Popular Fields panel showing the event-type distribution with Security events dominating» -->
+        </li>
+        <li>
+          <h4>Show where the feed leaves the platform</h4>
+          <p><span class="path">Resources → Event Integrations</span></p>
+          <p>Open the Event Integrations page and make the best-practice point: enable integration
+          with Cato events even if no external target exists yet — it lets Cato analyse the feed
+          when troubleshooting with support. Note the account-level cap of three integrations.</p>
+        </li>
+        <li>
+          <h4>Open a configured integration and its filter</h4>
+          <p><span class="path">Resources → Event Integrations</span></p>
+          <p>Show an integration's configuration: the target, and the event filter selecting types
+          and sub-types (multiple filters AND together; no filter means everything is uploaded).
+          This is where the Popular Fields analysis becomes configuration — the SIEM receives the
+          trimmed feed, not the firehose.</p>
+          <!-- capture-wanted: «CMA Resources → Event Integrations — configured integration dialog with the event-type filter set» -->
+        </li>
+        <li>
+          <h4>Close on the commercial frame</h4>
+          <p>Three sentences to land: every account includes one Data Lake unit free — 2.5M events
+          per hour, three months of retention. Additional units raise the peak rate or extend
+          retention to 6 or 12 months, and one variant applies to all units. Export to their own
+          storage or SIEM costs nothing on the Cato side — the sizing conversation is about their
+          peak hour, and the chart from step one already answered it.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo reads peaks off a demo tenant; the PoV measures the customer's own event
+        generation and proves the export path end to end with their bucket, their IAM role and
+        their SIEM budget in mind. Agree the success criteria below <strong>before configuring
+        anything</strong>, per <a href="management-pov-framework.html">Running a Cato PoV</a> —
+        each has a measurement, an evidence artefact and a place in the CMA where it is read out.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we demonstrate</th><th>Evidence artefact</th><th>Where in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>A measured peak, not a guessed one</td>
+              <td>At least one full week of real event history read from the Events chart, with the peak hour identified by hovering and the granularity noted</td>
+              <td>Dated Events chart screenshot with the peak bar's exact height and the Time Series Granularity visible</td>
+              <td>Home → Events</td>
+            </tr>
+            <tr>
+              <td>A unit recommendation traceable to the measurement</td>
+              <td>Units sized from the measured peak (peak ÷ 2.5M, rounded up; +1 for high-event services; retention variant chosen) — not from the no-history tables</td>
+              <td>A one-page sizing note showing the arithmetic from measured peak to unit count and variant</td>
+              <td>Home → Events</td>
+            </tr>
+            <tr>
+              <td>S3 export proven end to end</td>
+              <td>.GZ event objects landing in the customer's own bucket on the 60-second / 9.5 MB cadence, opened and validated</td>
+              <td>Bucket listing showing .gz objects with timestamps, plus one decompressed object's event rows</td>
+              <td>Resources → Event Integrations</td>
+            </tr>
+            <tr>
+              <td>The feed matches the trimming plan</td>
+              <td>The integration filter carries the agreed event types and sub-types, and the exported volume visibly reflects it</td>
+              <td>Integration configuration screenshot beside before/after object counts or sizes</td>
+              <td>Resources → Event Integrations</td>
+            </tr>
+            <tr>
+              <td>The gzip claim, tested on their events</td>
+              <td>The same eventsFeed API sample pulled with and without gzip compression — the KB claims a reduction of up to 95%; measure what their events actually give</td>
+              <td>The two response sizes recorded side by side in the evidence doc</td>
+              <td>Resources → Service API Keys</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>History:</strong> at least a week of representative traffic through the pilot scope
+          before the measurement criterion is read — a quiet pilot week undersizes the estate.</li>
+          <li><strong>AWS side:</strong> an S3 bucket in a region where the Security Token Service is active
+          (the China region is unsupported), and an IAM role trusting Cato's documented integration
+          ARN with the CMA account ID as the ExternalId.</li>
+          <li><strong>API side:</strong> an API key for the eventsFeed gzip comparison, created under
+          <span class="path">Resources → Service API Keys</span>.</li>
+          <li><strong>Integration budget:</strong> up to three Event Integrations exist per account — check
+          nothing already occupies the slots the PoV needs.</li>
+          <li><strong>Policy logging:</strong> the tables and the trimming workflow assume events are being
+          generated — confirm the relevant policy rules have tracking enabled before measuring.</li>
+          <li><strong>XDR expectations:</strong> stories generate no events by default; if story events are
+          in scope, an XDR Response Policy rule must be configured first.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Baseline the event history</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Set the window to the full pilot period, note the Time Series Granularity, and hover
+          the tallest bars for exact heights. Record the peak events per hour and the date it
+          occurred — this number drives everything else in the runbook.</p>
+        </li>
+        <li>
+          <h4>Turn the measurement into a sizing note</h4>
+          <p>Divide the measured peak by 2.5 million and round up; add one unit if high-event
+          services such as CASB, RBI or the LAN Firewall are enabled; pick the retention variant
+          the customer's compliance posture needs, remembering it applies to every unit. Subtract
+          the free unit to state the additional units required. One page, arithmetic shown.</p>
+        </li>
+        <li>
+          <h4>Create the S3 integration</h4>
+          <p><span class="path">Resources → Event Integrations</span></p>
+          <p>Enable integration with Cato events, then add the S3 integration: bucket, region, and
+          the IAM role ARN whose trust policy names Cato's integration ARN with the CMA account ID
+          as the ExternalId. Leave the filter empty for the first landing — prove the pipe before
+          trimming it.</p>
+        </li>
+        <li>
+          <h4>Watch the objects land, then validate one</h4>
+          <p>Within minutes the bucket should show .gz objects arriving every 60 seconds, or
+          sooner when 9.5 MB of uncompressed data accumulates. List the bucket, screenshot the
+          timestamps, download one object and open it — the event rows inside are the end-to-end
+          proof. If a browser decompresses the file but keeps the .GZ extension, rename it to .LOG
+          or .TXT before opening.</p>
+          <!-- capture-wanted: «AWS S3 console — bucket listing showing .gz event objects landing on the 60-second cadence» -->
+        </li>
+        <li>
+          <h4>Apply the trimming plan</h4>
+          <p><span class="path">Resources → Event Integrations</span></p>
+          <p>Set the integration filter to the agreed event types and sub-types (filters AND
+          together). Where the Popular Fields analysis found chatty applications nobody needs
+          logged, create Allow-and-no-Event firewall rules — the Custom Application holding the
+          DNS server IPs is the KB's worked pattern. Compare object volume before and after.</p>
+        </li>
+        <li>
+          <h4>Run the gzip comparison</h4>
+          <p><span class="path">Resources → Service API Keys</span></p>
+          <p>Pull the same eventsFeed sample twice — once plain, once with gzip compression
+          enabled on the request — and record both sizes. The KB's claim is a reduction of up to
+          95%; the customer's own ratio is the number that belongs in their SIEM budget.</p>
+        </li>
+      </ol>
+
+      <h3>Troubleshooting</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🪣</div><div><h4>No objects in the bucket</h4><p>Check the IAM role's trust policy names Cato's documented integration ARN and carries the CMA account ID as the ExternalId, and that the bucket's region has the Security Token Service active — the China region is not supported at all.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔢</div><div><h4>Exported counts differ from the Events page</h4><p>Expected: the Events page total can be rounded, and multiple occurrences of the same event within one minute are combined into a single exported log. Minor discrepancies are by design, not loss.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>An expected event type is missing</h4><p>Check the policy rule's tracking option — rules generate events only when tracking is set, and an earlier Allow-no-Event trimming rule may already be suppressing exactly what you are looking for.</p></div></div>
+        <div class="benefit"><div class="b-icon">📖</div><div><h4>No XDR story events in the feed</h4><p>Stories generate no events by default. Configure an XDR Response Policy rule and re-test — this is a configuration gap, not an export fault.</p></div></div>
+        <div class="benefit"><div class="b-icon">🚦</div><div><h4>The integration will not save</h4><p>Count the existing Event Integrations — the account cap is three. Consolidate targets or retire an unused integration before adding the PoV's.</p></div></div>
+        <div class="benefit"><div class="b-icon">📉</div><div><h4>The measured peak exceeds the licensed rate</h4><p>Events beyond the licensed hourly rate may be discarded for the remainder of the hour — which also silently caps what the PoV can measure. Raise the sizing conversation before reading further numbers off the chart.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; clean exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Pricing is commercial:</strong> unit prices are not published, and the KB notes some
+          contracts include terms that differ from the published model — the sizing note states
+          units, never prices. Confirm commercials with Cato.</li>
+          <li><strong>One variant for all units:</strong> retention variants cannot be mixed, and paying for
+          additional retention makes all event retention chargeable — no allowance is made for the
+          free retention.</li>
+          <li><strong>Deleted means deleted:</strong> after the retention period, event data is removed from
+          the Cato Cloud and cannot be recovered — the export feed is the only long-term archive.</li>
+          <li><strong>The 180 GB conversion is rough:</strong> volume estimates in the evidence doc should
+          carry the KB's own caveat, and the ≈100 bytes-per-event average is derived arithmetic,
+          not a published figure.</li>
+          <li><strong>Azure Blob mechanics:</strong> the KB confirms Azure Blob Storage as a feed target but
+          this page does not claim a cadence or size trigger for it — prove that path in the
+          tenant if it is the customer's cloud.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Exit:</strong> remove or disable the PoV's Event Integration (freeing one of the
+        three slots), revoke the API key used for the gzip test, and have the customer delete the
+        IAM role and bucket policy on their side. Leave the trimming rules only if the customer
+        wants to keep them — they are ordinary firewall rules, documented in the evidence pack.
+        Export the bucket listings, sizing note and chart screenshots before tenant access ends.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/guide-to-cato-data-lake" target="_blank" rel="noopener">Guide to Cato Data Lake</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/best-practices-for-cato-event-logs-and-ingestion" target="_blank" rel="noopener">Best Practices for Cato Event Logs and Ingestion</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/integrating-cato-events-with-aws-s3" target="_blank" rel="noopener">Integrating Cato Events with AWS S3</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-custom-apps" target="_blank" rel="noopener">Working with Custom Apps</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/creating-the-response-policy-for-xops-stories" target="_blank" rel="noopener">Creating the Response Policy for XDR Stories</a></li>
+            <li><a href="https://api.catonetworks.com/documentation/" target="_blank" rel="noopener">Cato API documentation (eventsFeed)</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+            <li><a href="management-soc-xdr.html">SOC Modernisation with XDR &amp; MDR</a></li>
+            <li><a href="management-api-automation.html">Automation at Scale with API, catocli &amp; Terraform</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/datalake-calc.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

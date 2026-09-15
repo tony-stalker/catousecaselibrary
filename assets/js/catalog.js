@@ -131,6 +131,17 @@ window.UC_CATALOG = [
   },
 
   {
+    id: "management-data-lake",
+    file: "usecases/management-data-lake.html",
+    category: "Management",
+    title: "Event Logs & the Cato Data Lake",
+    summary: "How events are generated, what a Data Lake unit buys, how to size units from real history or the KB tables, and how to export the feed to S3, Azure Blob or a SIEM — free of charge.",
+    tags: ["Data Lake", "Events", "Retention", "S3 Export", "SIEM"],
+    status: "new",
+    deck: null
+  },
+
+  {
     id: "management-asset-discovery",
     file: "usecases/management-asset-discovery.html",
     category: "Management",

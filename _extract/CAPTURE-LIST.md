@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 103 live `capture-wanted` items across 51 pages
+Regenerated 107 live `capture-wanted` items across 52 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -15,8 +15,9 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **ai-eu-ai-act**: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
 - **ai-eu-ai-act**: AI Security → User Access Policy — detection counts accumulating on an Engage User rule during the monitor-first week
 
-## API & automation  (3)
+## API & automation  (4)
 
+- **management-data-lake**: CMA Resources → Event Integrations — configured integration dialog with the event-type filter set
 - **management-api-automation**: a Cato event rendered in a SIEM (e.g. Sentinel or Splunk) via an Event Integration
 - **management-api-automation**: terminal output of terraform plan/apply for a cato_wf_rule with parallelism=1
 - **management-soc-xdr**: Home → Detection & Response Policy, a Response Policy rule with the Event response, beside the resulting Detection and Response event in a SIEM
@@ -49,8 +50,10 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
 
-## Monitoring — Events  (23)
+## Monitoring — Events  (25)
 
+- **management-data-lake**: CMA Home → Events — events-over-time chart with the Time Series Granularity control visible and a clear peak bar
+- **management-data-lake**: CMA Home → Events — Popular Fields panel showing the event-type distribution with Security events dominating
 - **access-identity-design**: CMA Monitor → Events — before/after pair: IP-only event beside named-user event from the same pilot subnet
 - **access-third-party**: CMA Monitor → Events — one contractor identity, named-rule allows beside an attempted-access WAN block
 - **migration-cloudflare**: Monitor → Events filtered to pilot rules showing Internet-firewall Block and DNS Protection verdicts attributed to a named pilot user
@@ -131,8 +134,9 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **network-ipsec-asa**: Monitor → Topology — the IPsec site shown on the secondary PoP mid-failover drill
 - **migration-cisco-asa**: Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)
 
-## Other  (10)
+## Other  (11)
 
+- **management-data-lake**: AWS S3 console — bucket listing showing .gz event objects landing on the 60-second cadence
 - **access-byod-clientless**: RBI-isolated portal session — download/copy attempt refused in the browser
 - **management-visibility**: Monitor → App Analytics, Users tab filtered to the pilot site — usernames, applications and usage on one screen
 - **migration-anyconnect**: CMA Security → WAN Firewall — wave-group parity rules named after the old ACL entries, hit counts accruing

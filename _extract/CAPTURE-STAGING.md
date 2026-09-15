@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-84 of the 103 still-wanted captures need setup a clean tenant can't provide by navigation.
+85 of the 107 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -61,8 +61,9 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 - migration-sonicwall: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (16)
+## Other staged state (a specific rule/profile/filter that must exist first)  (17)
 
+- management-data-lake: AWS S3 console — bucket listing showing .gz event objects landing on the 60-second cadence
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
 - ai-eu-ai-act: Stories Workbench — a story raised from prompt-level User Interaction Policy detections, the richer view where AI Security events are sparse
 - management-vendor-consolidation: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
