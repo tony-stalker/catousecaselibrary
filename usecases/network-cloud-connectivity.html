@@ -316,18 +316,9 @@
         price calculator: the costs that usually decide (egress rates above all) live in your
         provider's rate card, not in this library.
       </p>
-      <style>
-      #decider fieldset{border:0;margin:0;padding:0;min-width:0}
-      #decider legend{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
-      #decider .chips{display:flex;flex-wrap:wrap;gap:8px}
-      #decider .chips input{position:absolute;opacity:0;pointer-events:none}
-      #decider .chips label{display:inline-block;font-size:.85rem;color:var(--ink-2);background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 14px;cursor:pointer;user-select:none}
-      #decider .chips input:checked+label{background:var(--green-050);border-color:var(--green-600);color:var(--green-700);font-weight:600}
-      #decider .chips input:focus-visible+label{outline:2px solid var(--green-600);outline-offset:2px}
-      #decider .verdict-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:16px}
-      #decider .verdict-card ul{margin:10px 0 0;padding-left:18px;font-size:.86rem;color:var(--ink-2)}
-      #decider .verdict-card.gated{opacity:.65}
-      </style>
+      <details class="decider-fold">
+        <summary>Open the guided pick — seven quick answers, ranked verdicts</summary>
+        <div class="decider-fold-body">
       <form id="decider-form" class="card" onsubmit="return false">
         <div class="grid-2">
           <fieldset>
@@ -390,6 +381,8 @@
         </div>
       </form>
       <div id="decider-result" aria-live="polite"></div>
+        </div>
+      </details>
       <noscript>
         <div class="callout warn">
           <div class="co-title">JavaScript is off</div>
