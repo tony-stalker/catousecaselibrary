@@ -48,7 +48,8 @@
       'Units are sized to the PEAK hour. The storage figures here assume that peak rate all month — an estate sized for occasional spikes will store far less than one generating events at a consistently high rate.',
       'The ≈100 bytes-per-event average is DERIVED from the KB’s own figures (2.5M events/hour ≈ 180 GB/month); Cato publishes no per-event-type sizes.',
       'XDR stories generate no events by default — an XDR Response Policy rule is required before story events appear in any feed.',
-      'The first Data Lake unit (2.5M events/hour, 3-month retention) is included free with every account.'
+      'The included unit (2.5M events/hour, 3-month retention) only stands alone: once an account licenses units \u2014 more rate, longer retention or the service unit \u2014 all units are chargeable, including the first (the KB\u2019s own wording: \u201call event retention is chargeable\u201d). Confirm the commercial treatment with Cato.',
+      'Field calibration (Sep 2026, anonymised): a real ~42 Gbps / ~43K-SDP-user estate running WAN Firewall, SWG, ATP and CASB peaks at roughly 31M events/hour \u2014 near the floor of this range, not the additive ceiling. Site bandwidth and SDP users are largely the same traffic, so the sum double-counts.',
     ];
   }
 
@@ -65,6 +66,20 @@
     };
   }
 
+  function sizeAt(peak, i) {
+    var totalUnits = Math.max(1, Math.ceil(peak / UNIT_EVENTS));
+    var covered = totalUnits === 1 && i.retention === '3' && !i.highEventServices;
+    var unitsToLicense = covered ? 0 : totalUnits + (i.highEventServices ? 1 : 0);
+    var months = MONTHS[i.retention];
+    var gbPerMonth = Math.round((peak / UNIT_EVENTS) * GB_PER_UNIT_MONTH);
+    var storageTotalGb = gbPerMonth * months;
+    return {
+      peakEventsPerHour: peak, totalUnits: totalUnits, covered: covered,
+      unitsToLicense: unitsToLicense, gbPerMonth: gbPerMonth,
+      storageTotalGb: storageTotalGb, storageCompressedGb: Math.round(storageTotalGb * 0.05)
+    };
+  }
+
   function estimate(inputs) {
     var i = normalise(inputs);
 
@@ -72,35 +87,24 @@
       return {
         inputs: i,
         beyondTables: true,
-        message: 'Beyond the published tables — the KB stops at 33 Gbps and 43K SDP Clients. Size from the account’s own event history with Cato rather than extrapolating.',
-        peakEventsPerHour: null,
-        totalUnits: null,
-        additionalUnits: null,
-        unitVariant: null,
-        gbPerMonth: null,
-        storageTotalGb: null,
-        storageCompressedGb: null,
+        message: 'Beyond the published tables — the KB stops at 33 Gbps and 43K SDP Clients. Size from the account\u2019s own event history with Cato rather than extrapolating.',
+        floor: null, ceiling: null, additionalUnitsKb: null, unitVariant: null,
         notes: baseNotes()
       };
     }
 
-    var peak = BW[i.bw].events + SDP[i.sdp].events + i.extraEventsPerHour;
-    var totalUnits = Math.max(1, Math.ceil(peak / UNIT_EVENTS));
-    var additionalUnits = (totalUnits - 1) + (i.highEventServices ? 1 : 0);
-    var months = MONTHS[i.retention];
-    var gbPerMonth = Math.round((peak / UNIT_EVENTS) * GB_PER_UNIT_MONTH);
-    var storageTotalGb = gbPerMonth * months;
+    var bwE = BW[i.bw].events, sdpE = SDP[i.sdp].events;
+    var floor = sizeAt(Math.max(bwE, sdpE) + i.extraEventsPerHour, i);
+    var ceiling = sizeAt(bwE + sdpE + i.extraEventsPerHour, i);
+    var additionalUnitsKb = (ceiling.totalUnits - 1) + (i.highEventServices ? 1 : 0);
 
     return {
       inputs: i,
       beyondTables: false,
-      peakEventsPerHour: peak,
-      totalUnits: totalUnits,
-      additionalUnits: additionalUnits,
+      floor: floor,
+      ceiling: ceiling,
+      additionalUnitsKb: additionalUnitsKb,
       unitVariant: i.retention + '-month',
-      gbPerMonth: gbPerMonth,
-      storageTotalGb: storageTotalGb,
-      storageCompressedGb: Math.round(storageTotalGb * 0.05),
       notes: baseNotes()
     };
   }
@@ -135,21 +139,22 @@
     }
 
     var i = res.inputs;
+    var f = res.floor, c = res.ceiling;
+    var extraNote = (i.extraEventsPerHour > 0 ? ' (both ends include your ' + fmt(i.extraEventsPerHour) + ' measured/assumed extra)' : '');
     var unitsCard = '<div class="card verdict-card">'
-      + '<h3 style="margin:0;font-size:1.02rem">Units</h3><ul>'
-      + '<li><strong>Estimated peak:</strong> ' + fmt(res.peakEventsPerHour) + ' events/hour'
-      + (i.extraEventsPerHour > 0 ? ' (includes your ' + fmt(i.extraEventsPerHour) + ' measured/assumed extra)' : '') + '</li>'
-      + '<li><strong>Units for the estimated peak:</strong> ' + res.totalUnits + ' (peak ÷ 2.5M, rounded up)</li>'
-      + (i.highEventServices ? '<li><strong>High-event services:</strong> +1 unit — the KB procedure adds one unit for multiple high-event services such as CASB, RBI or LAN Firewall; it publishes no per-service figures.</li>' : '')
-      + '<li><strong>Additional units to license:</strong> ' + res.additionalUnits + ' — the first unit is included free.</li>'
-      + '<li><strong>Unit variant:</strong> ' + res.unitVariant + ' — the variant applies to all units; mixing retention periods is not possible.</li>'
+      + '<h3 style="margin:0;font-size:1.02rem">Units \u2014 floor to ceiling</h3><ul>'
+      + '<li><strong>Estimated peak:</strong> ' + fmt(f.peakEventsPerHour) + ' \u2013 ' + fmt(c.peakEventsPerHour) + ' events/hour' + extraNote + '</li>'
+      + '<li><strong>Floor</strong> = the larger of the two bands \u2014 field-calibrated: bandwidth and SDP users are largely the same traffic. <strong>Ceiling</strong> = the KB\u2019s additive sum. Presales sizing leans on the floor; verify with the Events chart.</li>'
+      + '<li><strong>Units to license:</strong> ' + (c.unitsToLicense === 0 ? 'none \u2014 covered by the included unit' : f.unitsToLicense + ' \u2013 ' + c.unitsToLicense + ' \u2014 all units are chargeable once you license (the included unit only stands alone)') + '</li>'
+      + '<li><strong>The KB\u2019s additive procedure alone reads:</strong> ' + res.additionalUnitsKb + ' additional unit' + (res.additionalUnitsKb === 1 ? '' : 's') + ' on top of the included one' + (i.highEventServices ? ' (includes the single +1 for high-event services such as CASB, RBI or LAN Firewall \u2014 no per-service figures are published)' : '') + '</li>'
+      + '<li><strong>Unit variant:</strong> ' + res.unitVariant + ' \u2014 the variant applies to all units; mixing retention periods is not possible.</li>'
       + '</ul></div>';
 
     var storageCard = '<div class="card verdict-card">'
       + '<h3 style="margin:0;font-size:1.02rem">Export volume (rough)</h3><ul>'
-      + '<li><strong>≈ ' + fmt(res.gbPerMonth) + ' GB/month</strong> at the peak rate, on the KB’s 180 GB-per-unit-month conversion.</li>'
-      + '<li><strong>≈ ' + fmt(res.storageTotalGb) + ' GB</strong> held over the ' + res.unitVariant + ' retention window — the same ballpark applies to external storage if everything is exported.</li>'
-      + '<li>On API export, gzip compression reduces required storage by up to 95% — as little as ~' + fmt(res.storageCompressedGb) + ' GB for the same window.</li>'
+      + '<li><strong>\u2248 ' + fmt(f.gbPerMonth) + ' \u2013 ' + fmt(c.gbPerMonth) + ' GB/month</strong> at the peak rate, on the KB\u2019s 180 GB-per-unit-month conversion.</li>'
+      + '<li><strong>\u2248 ' + fmt(f.storageTotalGb) + ' \u2013 ' + fmt(c.storageTotalGb) + ' GB</strong> held over the ' + res.unitVariant + ' retention window \u2014 the same ballpark applies to external storage if everything is exported.</li>'
+      + '<li>On API export, gzip compression reduces required storage by up to 95% \u2014 as little as ~' + fmt(f.storageCompressedGb) + ' \u2013 ' + fmt(c.storageCompressedGb) + ' GB for the same window.</li>'
       + '</ul></div>';
 
     var notesCard = '<div class="card verdict-card">'

@@ -118,6 +118,22 @@ CASB+RBI → 1 more; "buying three more Data Lake Storage units of the appropria
   default** — a Response Policy rule is required; Events-page totals can differ slightly from
   exported counts (rounding; same-minute events combined into one exported log).
 
+## 4b. Field calibration (library maintainer, Sep 2026 — anonymised, not a KB figure)
+
+- A real estate at ~42 Gbps total bandwidth with ~43K SDP users, running WAN Firewall, SWG, ATP
+  and CASB, peaks at roughly **31M events/hour** — where the KB's ADDITIVE procedure (were its
+  tables extrapolated) would suggest well over 55M. Interpretation: total bandwidth and SDP-user
+  activity are substantially the SAME traffic, so summing the two tables double-counts.
+- Presales guidance derived from this: present a RANGE — floor = max(BW band, SDP band)
+  (field-calibrated; the real account sits just above its 27.5M SDP band) and ceiling = the KB's
+  additive sum. Size the commercial conversation from the floor, verify with the Events chart.
+- First-unit commercial treatment (maintainer field ruling, consistent with A's "no allowance is
+  made for the free retention... all event retention is chargeable"): the included unit only
+  stands alone. Once an account licenses units — more rate, longer retention, or the service
+  unit — ALL units are chargeable, including the first. The calculator's "units to license"
+  reflects this; the KB Examples table's "additional units" column is the capacity delta, not
+  the invoice count. Confirm commercial treatment with Cato (standing action note).
+
 ## 5. UNVERIFIED — quarantined; must NOT appear as fact
 
 1. Per-licence event contributions for XOps/DLP/DEM/IoT-OT/EPP etc. — the KB quantifies ONLY the

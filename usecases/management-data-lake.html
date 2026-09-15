@@ -79,7 +79,7 @@
         bill by ingested volume — trimming the feed is a policy exercise, not a procurement one.
       </p>
       <div class="stat-row">
-        <div class="stat-tile stat-good"><div class="stat-value">1 <span class="unit">unit free</span></div><div class="stat-label">every account includes 2.5M events/hour with 3-month retention</div></div>
+        <div class="stat-tile stat-good"><div class="stat-value">1 <span class="unit">unit included</span></div><div class="stat-label">2.5M events/hour, 3-month retention — but it only stands alone; licensing any units makes all units chargeable</div></div>
         <div class="stat-tile"><div class="stat-value">2.5M <span class="unit">events/h</span></div><div class="stat-label">per Data Lake unit — licensed on the peak hour, not the average</div></div>
         <div class="stat-tile"><div class="stat-value">180 <span class="unit">GB/mo</span></div><div class="stat-label">the KB's "very rough" storage equivalent of one unit's event rate</div></div>
         <div class="stat-tile stat-good"><div class="stat-value">Free</div><div class="stat-label">export to cloud storage and SIEMs — integrations carry no additional Cato cost</div></div>
@@ -333,6 +333,17 @@
               <input type="radio" name="dl-bw" id="dl-bw-b10" value="b10"><label for="dl-bw-b10">30–33</label>
               <input type="radio" name="dl-bw" id="dl-bw-over" value="over"><label for="dl-bw-over">&gt; 33 Gbps</label>
             </div>
+      <div class="callout">
+        <div class="co-title">Field calibration — why this page quotes a floor and a ceiling</div>
+        <p>A real estate at roughly <strong>42 Gbps</strong> of total bandwidth with
+        <strong>~43K SDP users</strong>, running WAN Firewall, SWG, ATP and CASB, peaks at about
+        <strong>31M events per hour</strong> (field observation, Sep 2026, anonymised) — where the
+        KB's additive procedure would read well over 55M. Site bandwidth and SDP users are largely
+        the <em>same traffic</em>, so summing the two tables double-counts. The estimator below
+        therefore quotes a range: <strong>floor</strong> = the larger of the two bands
+        (field-calibrated), <strong>ceiling</strong> = the KB's additive sum. Size the presales
+        conversation from the floor and verify against the account's own Events chart.</p>
+      </div>
           </fieldset>
           <fieldset>
             <legend>SDP Clients in use</legend>
@@ -471,7 +482,7 @@
           <p><span class="path">Home → Events</span></p>
           <p>Set a long window and look at the events-over-time chart. The question the licence
           asks is visible here: what is the tallest bar? An account peaking at 400K events per
-          hour sits comfortably inside the free unit; one exceeding 2.5M in every hour needs an
+          hour sits comfortably inside the included unit; one exceeding 2.5M in every hour needs an
           additional unit before events start being discarded.</p>
           <!-- capture-wanted: «CMA Home → Events — events-over-time chart with the Time Series Granularity control visible and a clear peak bar» -->
         </li>
@@ -511,9 +522,10 @@
         </li>
         <li>
           <h4>Close on the commercial frame</h4>
-          <p>Three sentences to land: every account includes one Data Lake unit free — 2.5M events
-          per hour, three months of retention. Additional units raise the peak rate or extend
-          retention to 6 or 12 months, and one variant applies to all units. Export to their own
+          <p>Three sentences to land: every account includes one Data Lake unit — 2.5M events per hour,
+          three months of retention — but it only stands alone: the moment an account licenses
+          units, all units are chargeable, including the first. Additional units raise the peak
+          rate or extend retention to 6 or 12 months, and one variant applies to all units. Export to their own
           storage or SIEM costs nothing on the Cato side — the sizing conversation is about their
           peak hour, and the chart from step one already answered it.</p>
         </li>
@@ -602,8 +614,9 @@
           <h4>Turn the measurement into a sizing note</h4>
           <p>Divide the measured peak by 2.5 million and round up; add one unit if high-event
           services such as CASB, RBI or the LAN Firewall are enabled; pick the retention variant
-          the customer's compliance posture needs, remembering it applies to every unit. Subtract
-          the free unit to state the additional units required. One page, arithmetic shown.</p>
+          the customer's compliance posture needs, remembering it applies to every unit. Quote the
+          floor-to-ceiling range and state that all units are chargeable once licensing begins —
+          the included unit only stands alone. One page, arithmetic shown.</p>
         </li>
         <li>
           <h4>Create the S3 integration</h4>
