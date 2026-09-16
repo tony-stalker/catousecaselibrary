@@ -28,7 +28,7 @@
   };
   var SDP = {
     s0:  { label: 'Up to 3K', events: 1000000 },
-    s1:  { label: '3K–7K', events: 5000000 },
+    s1:  { label: '3K–7K', events: 2500000 },  /* the KB's own worked example prices 5,000 clients at 2.5M; its table row says 5M — the estimator follows the example (see the page callout) */
     s2:  { label: '7K–11K', events: 7500000 },
     s3:  { label: '11K–15K', events: 10000000 },
     s4:  { label: '15K–19K', events: 12500000 },

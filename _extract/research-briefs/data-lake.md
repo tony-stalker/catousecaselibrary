@@ -68,7 +68,11 @@ tables — size with Cato" rather than extrapolate.
 5,000 SDP clients would generate an additional estimated peak of two and a half million events
 per hour", but A's own SDP table puts 5,000 clients in the 3K–7K band = 5M. The tables are the
 normative instrument ("Follow this procedure to calculate requirements from the tables");
-the calculator follows the tables (conservative) and the page notes the example reads lower.
+RESOLVED 16 Sep (maintainer directive, presales-lean): the estimator follows the WORKED
+EXAMPLE for the 3K–7K band (2.5M — the KB's own pricing of 5,000 clients), keeping mid-size
+user estates inside the included unit and making the estimator reproduce the example's
+arithmetic exactly; the table's 5M is quoted on-page as the conservative alternative. All
+other bands follow the tables.
 Example otherwise: 3 Gbps → 5M; total 7.5M "(2 units)" [= additional, base unit free];
 CASB+RBI → 1 more; "buying three more Data Lake Storage units of the appropriate duration."
 
