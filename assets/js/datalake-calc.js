@@ -44,12 +44,11 @@
 
   function baseNotes() {
     return [
-      'The KB calls the 180 GB-per-month conversion "a very rough estimate" — data volume is not used in the calculation or purchase of units, and it is not reported by the CMA.',
-      'Units are sized to the PEAK hour. The storage figures here assume that peak rate all month — an estate sized for occasional spikes will store far less than one generating events at a consistently high rate.',
-      'The ≈100 bytes-per-event average is DERIVED from the KB’s own figures (2.5M events/hour ≈ 180 GB/month); Cato publishes no per-event-type sizes.',
-      'XDR stories generate no events by default — an XDR Response Policy rule is required before story events appear in any feed.',
-      'The included unit (2.5M events/hour, 3-month retention) only stands alone: once an account licenses units \u2014 more rate, longer retention or the service unit \u2014 all units are chargeable, including the first (the KB\u2019s own wording: \u201call event retention is chargeable\u201d). Confirm the commercial treatment with Cato.',
-      'Field calibration (Sep 2026, anonymised): a real ~42 Gbps / ~43K-SDP-user estate running WAN Firewall, SWG, ATP and CASB peaks at roughly 31M events/hour \u2014 near the floor of this range, not the additive ceiling. Site bandwidth and SDP users are largely the same traffic, so the sum double-counts.',
+      'The KB calls the 180 GB-per-month conversion \u201ca very rough estimate\u201d \u2014 volume is not how units are bought, and the CMA does not report it.',
+      'Units are sized to the PEAK hour \u2014 spiky estates store far less than the peak-rate figures shown here.',
+      '\u2248100 bytes per event is DERIVED from the KB\u2019s own figures; no per-event-type sizes are published.',
+      'XDR stories generate no events by default \u2014 a Response Policy rule is required first.',
+      'The band tables assume ALL events are logged \u2014 Allow-with-no-Event tuning on low-value traffic (DNS, ICMP/SNMP, Windows Update, Teams, Zoom) lowers the real peak below its band.'
     ];
   }
 
@@ -144,7 +143,7 @@
     var unitsCard = '<div class="card verdict-card">'
       + '<h3 style="margin:0;font-size:1.02rem">Units \u2014 floor to ceiling</h3><ul>'
       + '<li><strong>Estimated peak:</strong> ' + fmt(f.peakEventsPerHour) + ' \u2013 ' + fmt(c.peakEventsPerHour) + ' events/hour' + extraNote + '</li>'
-      + '<li><strong>Floor</strong> = the larger of the two bands \u2014 field-calibrated: bandwidth and SDP users are largely the same traffic. <strong>Ceiling</strong> = the KB\u2019s additive sum. Presales sizing leans on the floor; verify with the Events chart.</li>'
+      + '<li>Floor = larger band (field-calibrated \u2014 see the calibration note above); ceiling = the KB\u2019s additive sum. Presales leans on the floor.</li>'
       + '<li><strong>Units to license:</strong> ' + (c.unitsToLicense === 0 ? 'none \u2014 covered by the included unit' : f.unitsToLicense + ' \u2013 ' + c.unitsToLicense + ' \u2014 all units are chargeable once you license (the included unit only stands alone)') + '</li>'
       + '<li><strong>The KB\u2019s additive procedure alone reads:</strong> ' + res.additionalUnitsKb + ' additional unit' + (res.additionalUnitsKb === 1 ? '' : 's') + ' on top of the included one' + (i.highEventServices ? ' (includes the single +1 for high-event services such as CASB, RBI or LAN Firewall \u2014 no per-service figures are published)' : '') + '</li>'
       + '<li><strong>Unit variant:</strong> ' + res.unitVariant + ' \u2014 the variant applies to all units; mixing retention periods is not possible.</li>'

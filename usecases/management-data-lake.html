@@ -312,6 +312,13 @@
         <li>Divide by 2.5 million and round up — the units for bandwidth and SDP Clients.</li>
         <li>Using multiple high-event services such as CASB or LAN Firewall? Add <strong>1</strong> Data Lake unit.</li>
       </ol>
+      <p><strong>Why the estimator reads a floor-to-ceiling range:</strong> a real estate at roughly
+      42 Gbps with ~43K SDP users, running WAN Firewall, SWG, ATP and CASB, peaks at about
+      <strong>31M events per hour</strong> (field observation, Sep 2026, anonymised) — far below the
+      55M+ the additive tables would suggest, because site bandwidth and SDP users are largely the
+      same traffic. The floor takes the larger of the two bands; the ceiling is the KB's additive
+      sum. Size the presales conversation from the floor, then verify against the account's own
+      Events chart.</p>
       <details class="decider-fold">
         <summary>Open the estimator — five inputs, three result cards</summary>
         <div class="decider-fold-body">
@@ -333,17 +340,6 @@
               <input type="radio" name="dl-bw" id="dl-bw-b10" value="b10"><label for="dl-bw-b10">30–33</label>
               <input type="radio" name="dl-bw" id="dl-bw-over" value="over"><label for="dl-bw-over">&gt; 33 Gbps</label>
             </div>
-      <div class="callout">
-        <div class="co-title">Field calibration — why this page quotes a floor and a ceiling</div>
-        <p>A real estate at roughly <strong>42 Gbps</strong> of total bandwidth with
-        <strong>~43K SDP users</strong>, running WAN Firewall, SWG, ATP and CASB, peaks at about
-        <strong>31M events per hour</strong> (field observation, Sep 2026, anonymised) — where the
-        KB's additive procedure would read well over 55M. Site bandwidth and SDP users are largely
-        the <em>same traffic</em>, so summing the two tables double-counts. The estimator below
-        therefore quotes a range: <strong>floor</strong> = the larger of the two bands
-        (field-calibrated), <strong>ceiling</strong> = the KB's additive sum. Size the presales
-        conversation from the floor and verify against the account's own Events chart.</p>
-      </div>
           </fieldset>
           <fieldset>
             <legend>SDP Clients in use</legend>
@@ -454,6 +450,52 @@
           Update, Microsoft Teams and Zoom.</p>
         </li>
       </ol>
+
+      <h3>Tuning in practice — real-world low-value traffic</h3>
+      <p>
+        Two different levers, two different bills. A rule set to <strong>Allow with no Event</strong>
+        stops the event being <em>generated</em> — that is the lever that reduces the peak rate and
+        therefore <strong>Data Lake units</strong>. A filter on an Event Integration or eventsFeed
+        query stops the event being <em>ingested</em> — that trims the <strong>SIEM bill</strong>,
+        but the event still counts against the hourly rate limit. Presales conversations routinely
+        conflate the two; keep them separate and the sizing gets smaller honestly.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Traffic</th><th>Why it is low value in the log</th><th>The move</th><th>Which bill it shrinks</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Recursive DNS to public resolvers</strong></td>
+              <td>Every lookup that leaves the internal resolvers becomes a firewall allow event — commonly the single largest application slice, with almost no investigative value per row</td>
+              <td>The KB's own technique: a Custom Application on the resolver destination IPs, allowed by one rule with <strong>no Event</strong></td>
+              <td>Data Lake units and the SIEM</td>
+            </tr>
+            <tr>
+              <td><strong>NMS polling — ICMP and SNMP</strong></td>
+              <td>A monitoring platform sweeping hundreds of sites generates constant, identical, expected flows around the clock</td>
+              <td>Allow + no Event on the monitoring protocols from the NMS source (both named by the KB as safe-to-untrack)</td>
+              <td>Data Lake units and the SIEM</td>
+            </tr>
+            <tr>
+              <td><strong>Windows Update, Teams, Zoom</strong></td>
+              <td>Known-safe bulk: patch cycles and call media produce large flow counts that spike exactly when nobody is investigating them</td>
+              <td>Allow + no Event per the KB's safe-traffic examples — or, if the rows are wanted in Cato but not downstream, a sub-type filter on the integration instead</td>
+              <td>Units if untracked; SIEM only if filtered</td>
+            </tr>
+            <tr>
+              <td><strong>What not to touch</strong></td>
+              <td>IPS, anti-malware, DLP and other threat sub-types are the rows the SIEM exists for — and XDR stories only produce events once a Response Policy rule exists</td>
+              <td>Keep tracking on; trim volume with the three passes above, never by blinding detection sub-types</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.9rem;color:var(--ink-2)">
+        The KB's band tables assume the account is <em>logging all events</em> — an estate tuned
+        this way peaks below its band. Tune first, then re-read the Events chart peak and size
+        units from the measured number, not the table.
+      </p>
       <div class="callout">
         <div class="co-title">Two practices worth adopting on every account</div>
         <ul style="margin:6px 0 0;padding-left:20px">
