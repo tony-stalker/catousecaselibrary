@@ -54,6 +54,54 @@
 
   SELECTS.forEach(function (s) { fill($("#" + s.el), s.dimension); });
   checkboxes($("#f-sec"), "security-controls");
+
+  /* Data Lake sizing selects — bands come from the estimator engine itself
+     (assets/js/datalake-calc.js) so the planner can never drift from the page. */
+  (function fillDataLakeBands() {
+    var DL = window.UC_DATALAKE;
+    if (!DL || !DL.bands) { return; }
+    [["#f-dl-bw", DL.bands.bw], ["#f-dl-users", DL.bands.sdp]].forEach(function (pair) {
+      var sel = $(pair[0]);
+      if (!sel) { return; }
+      Object.keys(pair[1]).forEach(function (k) {
+        var opt = document.createElement("option");
+        opt.value = k; opt.textContent = pair[1][k].label;
+        sel.appendChild(opt);
+      });
+    });
+  })();
+
+  function dataLakeCard() {
+    var DL = window.UC_DATALAKE;
+    var bwSel = $("#f-dl-bw"), userSel = $("#f-dl-users");
+    if (!DL || !bwSel || !userSel) { return ""; }
+    var bw = bwSel.value, sdp = userSel.value;
+    if (!bw && !sdp) { return ""; }
+    var casb = !!document.querySelector('input[type=checkbox][data-dim="security-controls"][value="casb"]:checked');
+    var res = DL.estimate({ bw: bw || "b0", sdp: sdp || "s0", highEventServices: casb, retention: "3" });
+    var fmt = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
+    var body;
+    if (res.beyondTables) {
+      body = "<p>" + esc(res.message) + "</p>";
+    } else {
+      var f = res.floor, c = res.ceiling;
+      body = "<ul>"
+        + "<li><strong>Estimated peak:</strong> " + fmt(f.peakEventsPerHour) + " – " + fmt(c.peakEventsPerHour)
+        + " events/hour (floor = larger band, field-calibrated; ceiling = the KB’s additive sum — presales leans on the floor)</li>"
+        + "<li><strong>Data Lake units to license:</strong> "
+        + (c.unitsToLicense === 0 ? "none — covered by the included unit"
+          : f.unitsToLicense + " – " + c.unitsToLicense + " on the 3-month variant — all units are chargeable once licensing begins")
+        + (casb ? " (includes the single +1 for high-event services, read from the CASB control above)" : "") + "</li>"
+        + "<li><strong>Export volume, rough:</strong> ≈ " + fmt(f.gbPerMonth) + " – " + fmt(c.gbPerMonth)
+        + " GB/month — the KB calls this conversion “a very rough estimate”</li>"
+        + "</ul>";
+    }
+    return '<div class="card" style="margin-bottom:18px"><div class="section-kicker">'
+      + "Data Lake sizing (from the bandwidth and SDP inputs)</div>" + body
+      + '<p style="font-size:.85rem;color:var(--ink-3);margin:8px 0 0">Retention variants, tuning levers and the full estimator: '
+      + '<a href="usecases/management-data-lake.html#calculator">Event Logs &amp; the Cato Data Lake</a>. '
+      + "Verify against the account’s own Events chart before quoting.</p></div>";
+  }
   checkboxes($("#f-drivers"), "drivers");
 
   /* SD-WAN vendor only matters when the transport involves SD-WAN. */
@@ -274,6 +322,8 @@
         + "Evidence that closes the migration (" + plan.evidence.length + ")</div>"
         + grouped(plan.evidence) + "</div>";
     }
+
+    h += dataLakeCard();
 
     if (plan.pages.length) {
       h += '<div class="card"><div class="section-kicker">The detail lives here ('
