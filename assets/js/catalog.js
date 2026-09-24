@@ -348,7 +348,7 @@ window.UC_CATALOG = [
     summary: "Go deep on ISO 27001:2022 — device posture checks as the continuously enforced endpoint control, an Annex A mapping table with the auditor's artefact per row, and the Posture Compliance Report, Audit Trail and event retention that turn operation into evidence.",
     tags: ["ISO 27001", "Device Posture", "Annex A", "Client Connectivity Policy", "Audit evidence"],
     status: "new",
-    deck: null
+    deck: "4 - Security use cases/ISO 27001/Cato ISO 27001 High-Level Deck.pptx"
   },
   {
     id: "security-data-casb-dlp",
