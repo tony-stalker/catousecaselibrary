@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 107 live `capture-wanted` items across 52 pages
+Regenerated 116 live `capture-wanted` items across 53 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -29,7 +29,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 
 - **access-offshore-bpo**: CMA Applications Portal — only CRM and VDI published to a BPO cohort group, opening through RBI
 
-## Access — Posture & Client policies  (7)
+## Access — Posture & Client policies  (8)
 
 - **migration-anyconnect**: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet
 - **migration-anyconnect**: Monitor → Events — Client Connectivity block event naming the failed posture check for a wave device
@@ -38,6 +38,7 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **migration-directaccess**: CMA Access → Always-On Policy — DA-Pilot rule with bypass settings
 - **migration-directaccess**: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - **migration-directaccess**: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
+- **security-iso27001**: Resources → Device Posture → Check Policy tab — Continuous checks, even when disconnected (recommended) selected, interval 10 minutes
 
 ## Assets — Device Inventory  (3)
 
@@ -45,12 +46,13 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-ot-iot**: Assets → Device Inventory Segmentation Flows Sankey for an OT VLAN, protocols and destinations visible
 - **security-retail-pci**: Home → Devices → Segmentation tab — Segmentation Flows Sankey for a store site (device type → application → protocol → destination)
 
-## Client-side (end-user view)  (2)
+## Client-side (end-user view)  (3)
 
 - **access-hybrid-workforce**: Cato Client blocked dialog — Details naming the failed device check
 - **migration-anyconnect**: Cato Client for Windows connected via the nearest PoP — post-swap wave device
+- **security-iso27001**: Cato Client blocked dialog after a failed posture check — Details naming the unmet requirement (e.g. firewall not running)
 
-## Monitoring — Events  (25)
+## Monitoring — Events  (27)
 
 - **management-data-lake**: CMA Home → Events — events-over-time chart with the Time Series Granularity control visible and a clear peak bar
 - **management-data-lake**: CMA Home → Events — Popular Fields panel showing the event-type distribution with Security events dominating
@@ -77,6 +79,8 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-tls-inspection**: Monitor → Events before/after pair — EICAR over HTTPS downloading for an uninspected user vs. Anti-Malware block event for an inspected pilot user
 - **security-uk-public-sector**: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 - **migration-sonicwall**: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
+- **security-iso27001**: Home → Events filtered to Client Connectivity Policy events for one user — a device-posture failure event showing the unmet requirement
+- **security-iso27001**: Home → Events filtered to one pilot user — a device-posture failure event beside the subsequent successful connection
 
 ## Monitoring — Experience  (5)
 
@@ -148,11 +152,16 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 - **security-legal-confidentiality**: CMA Security → WAN Firewall — symmetric wall rule pair scoped to two IdP matter-team groups
 - **security-retail-pci**: Network → Sites → Networks for a store site showing POS/CDE, guest, staff and cameras/IoT ranges
 
-## Reports & Audit  (3)
+## Reports & Audit  (8)
 
 - **management-vendor-consolidation**: Administration → Audit Trail filtered to the PoV window, showing network and security policy changes interleaved in one attributed log
 - **security-compliance**: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
 - **security-finance-dora**: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
+- **security-iso27001**: Home → Posture — Account Score with the checks table filtered or labelled ISO 27001:2022
+- **security-iso27001**: Home → Reports — a generated Posture Compliance Report page showing the ISO 27001:2022 control-to-check mapping with coverage and gaps
+- **security-iso27001**: Home → Reports → Generated PDFs — a Posture Compliance Report row Ready, with an inner page showing the ISO 27001:2022 mapping
+- **security-iso27001**: Account → Audit Trail filtered to a pilot window — a Client Connectivity rule edit with previous and new values
+- **security-iso27001**: Account → Roles & Permissions — predefined and custom roles with page-level Edit / View-only / None
 
 ## Security — DLP & Data Protection  (6)
 

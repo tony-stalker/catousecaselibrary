@@ -1,6 +1,6 @@
 # Capture staging list — wanted screenshots that need tenant config or a live action
 
-85 of the 107 still-wanted captures need setup a clean tenant can't provide by navigation.
+91 of the 116 still-wanted captures need setup a clean tenant can't provide by navigation.
 You're working these in your own tenant — each bucket's heading says what to set up first.
 
 **How to hand back:** name each file anything, drop it in the library root or `_extract/media/`,
@@ -22,13 +22,14 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - network-cloud-interconnect: Site Configuration → Cloud Interconnect — BGP status showing learned/advertised subnets over a live circuit
 - security-firewall-refresh: Network → Sites → Site Settings → BGP "Show BGP Status" for a socket–appliance eBGP transit-VLAN handoff
 
-## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (5)
+## Client-side end-user view — needs a real Client/browser showing the block / anonymise / SCIM-disabled experience  (6)
 
 - access-byod-clientless: RBI-isolated portal session — download/copy attempt refused in the browser
 - migration-cisco: Access → Always-On Policy — a rule scoped to the pilot cohort with the bypass passcode dialog
 - network-agility-mna: CMA "Activate New Socket" notification / Assign Cato Socket to Site dialogue during zero-touch activation
 - security-data-casb-dlp: Cato Client block notification pop-up from a DLP Data Control rule, showing a customised notification template
 - security-finance-dora: Monitor → Events filtered to the staged-incident window on the Anti-malware preset, with the CSV export dialog open
+- security-iso27001: Cato Client blocked dialog after a failed posture check — Details naming the unmet requirement (e.g. firewall not running)
 
 ## Events / evidence — create the named pilot rule, generate matching traffic, then filter Monitor→Events (allow beside attempted-access block, by user)  (28)
 
@@ -61,7 +62,7 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-uk-public-sector: Monitor → Events filtered to IPS and Anti-Malware events for a pilot site, monitor-mode window
 - migration-sonicwall: Monitor → Events filtered to one monitor-mode (Allow + Event) rule from the translated slice, showing the per-rule hit evidence
 
-## Other staged state (a specific rule/profile/filter that must exist first)  (17)
+## Other staged state (a specific rule/profile/filter that must exist first)  (18)
 
 - management-data-lake: AWS S3 console — bucket listing showing .gz event objects landing on the 60-second cadence
 - access-remote-worker: CMA Connection Details for the same user after remediation — the Wi-Fi node back to Good (the "after" half of the before/after proof)
@@ -77,11 +78,12 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - security-compliance: Administration → Audit Trail filtered to a pilot window, showing attributed policy changes with previous and new values
 - security-dlp-forensics: Audit Trail filtered to the pilot's DLP configuration changes — Store DLP Evidence enablement and admin permission grant with previous/new values
 - security-finance-dora: Administration → Audit Trail filtered to the PoV window, one change expanded to show previous and new values
+- security-iso27001: Account → Audit Trail filtered to a pilot window — a Client Connectivity rule edit with previous and new values
 - security-firewall-refresh: Monitor → Threats Dashboard showing IPS monitor-mode verdicts for a pilot site, then a blocked test detection with block page
 - security-healthcare-nhs: Assets → Device Inventory filtered to one hospital-style site with the OS / OS version column visible, showing devices on unsupported operating systems
 - migration-cisco-asa: Network → Sites — IPsec IKEv2 hub site with dual tunnels up to two allocated IPs (interim ASA on-ramp)
 
-## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (6)
+## Posture — a Device Posture profile (AV + disk-encryption/cert checks) + a Client Connectivity rule requiring it; the dialog/event shots also need a real device that FAILS a check  (8)
 
 - access-hybrid-workforce: Cato Client blocked dialog — Details naming the failed device check
 - migration-anyconnect: CMA Access → Client Connectivity Policy — wave-group rule, posture Any, Allow WAN and Internet
@@ -89,9 +91,13 @@ Auto-regenerated from live capture-wanted comments (embedded ones drop off). Ful
 - migration-cloudflare: Access → Client Connectivity Policy rule referencing a Device Posture profile, with the Client-side posture-failure message
 - migration-directaccess: CMA Access → Client Connectivity Policy — DA-Pilot rule, posture Any, Allow WAN and Internet
 - migration-directaccess: CMA Access → Device Posture — DA-Pilot profile with device-certificate + disk-encryption checks
+- security-iso27001: Home → Events filtered to Client Connectivity Policy events for one user — a device-posture failure event showing the unmet requirement
+- security-iso27001: Home → Events filtered to one pilot user — a device-posture failure event beside the subsequent successful connection
 
-## Reports — generate/schedule the specific report and open the delivered PDF  (0)
+## Reports — generate/schedule the specific report and open the delivered PDF  (2)
 
+- security-iso27001: Home → Reports — a generated Posture Compliance Report page showing the ISO 27001:2022 control-to-check mapping with coverage and gaps
+- security-iso27001: Home → Reports → Generated PDFs — a Posture Compliance Report row Ready, with an inner page showing the ISO 27001:2022 mapping
 
 ## Resilience drill — perform the timed drill (link pull / HA failover) and capture the mid-drill Real-Time / Events state  (9)
 

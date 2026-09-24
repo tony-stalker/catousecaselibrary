@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Becoming ISO/IEC 27001:2022 Compliant: Device Posture &amp; Evidence — Cato Use Case Library</title>
+<meta name="description" content="How Cato helps an organisation become ISO/IEC 27001:2022 compliant — device posture checks as the continuously enforced endpoint control, an Annex A mapping table, and the Posture Compliance Report, Audit Trail and event retention that produce auditor-ready evidence.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+  /* Annex A mapping table: let headers wrap so four columns fit the card */
+  #mapping table.data th { white-space: normal; }
+  #mapping table.data th:nth-child(1) { width: 19%; }
+  #mapping table.data th:nth-child(2) { width: 27%; }
+  #mapping table.data th:nth-child(3) { width: 29%; }
+  #mapping table.data th:nth-child(4) { width: 25%; }
+  #mapping table.data td .badge { margin-top: 4px; }
+  #solution table.data th { white-space: normal; }
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="security-iso27001">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-security">Security</a> / ISO/IEC 27001:2022</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-security">Security</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Becoming ISO/IEC 27001:2022 Compliant: Device Posture &amp; Evidence</h1>
+    <p class="lede">
+      No product makes an organisation ISO 27001 compliant — certification attests a management
+      system. What a platform can do is <strong>enforce the selected controls continuously</strong>
+      and <strong>generate the evidence</strong> a Stage 2 auditor asks for. This use case goes deep
+      on the 2022 edition with Cato's inbuilt device posture checks as the endpoint control that is
+      otherwise hardest to prove, an Annex A mapping table, and the Posture Compliance Report, Audit
+      Trail and event retention that turn operation into an evidence pack.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ISO 27001</span><span class="tag">Device Posture</span><span class="tag">Annex A</span>
+      <span class="tag">Client Connectivity Policy</span><span class="tag">Audit evidence</span><span class="tag">Compliance</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters — and why now</h2>
+      <div class="callout warn">
+        <div class="co-title">Read this first — say it out loud in the room</div>
+        <p>ISO/IEC 27001:2022 certifies an <strong>Information Security Management System</strong>:
+        clauses 4–10 (context, leadership, planning, support, operation, performance evaluation,
+        improvement) are mandatory, organisational, and nothing a vendor can perform for the
+        customer. Annex A's 93 reference controls are selected by the customer's own risk assessment
+        and recorded in their Statement of Applicability. The honest — and more credible — claim is
+        that Cato <strong>helps implement and evidence</strong> the Annex A controls the customer
+        selects, never that it "makes you compliant". The clause 4–10 map lives on
+        <a href="security-compliance.html">Achieving Compliance</a>; this page is the Annex A depth.</p>
+      </div>
+      <p>
+        The 2022 edition restructured Annex A into four themes — Organizational (37 controls),
+        People (8), Physical (14) and Technological (34) — and introduced <strong>eleven controls
+        that did not exist in 2013</strong>. Five of them are core SASE capabilities: A.5.23
+        information security for use of cloud services, A.8.9 configuration management, A.8.12
+        data leakage prevention, A.8.16 monitoring activities and A.8.23 web filtering. Every
+        organisation certifying or recertifying today is on the 2022 edition: under IAF MD 26 the
+        transition closed on <strong>31 October 2025</strong>, and every accredited 2013 certificate
+        expired or was withdrawn on that date regardless of its printed expiry. A 2013 certificate
+        cannot be revived — a lapsed organisation starts a fresh Stage 1 and Stage 2 against 2022.
+      </p>
+      <div class="stat-row" style="margin:18px 0">
+        <div class="stat-tile"><div class="stat-value">93</div><div class="stat-label">Annex A reference controls in four themes (114 in 14 domains under 2013)</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">11</div><div class="stat-label">Controls new in 2022 — five of them squarely in SASE territory: A.5.23, A.8.9, A.8.12, A.8.16, A.8.23</div></div>
+        <div class="stat-tile stat-bad"><div class="stat-value">31 Oct 2025</div><div class="stat-label">Every ISO/IEC 27001:2013 certificate withdrawn — the 2022 numbering is the only one in play</div></div>
+      </div>
+      <p>
+        Two ideas carry the whole conversation. First, the auditor tests <em>operation</em>, not
+        intent: is the control enforced consistently, and can the organisation show records of it
+        over time? Second, the evidence burden scales with the number of consoles: one policy engine
+        and one event store shrink the collection job across a dozen-plus technological controls
+        that would otherwise mean exporting from a stack of point products. Device posture is the
+        sharpest example of both, because the endpoint is where most Annex A technological controls
+        are hardest to prove.
+      </p>
+    </section>
+
+    <section id="problem" class="reveal">
+      <div class="section-kicker">The problem</div>
+      <h2>Stage 2 wants operation, records and consistency</h2>
+      <p>
+        The certification journey is well trodden: scope the ISMS (clause 4.3), assess and treat
+        risk (6.1.2/6.1.3), produce the SoA and implement controls, run the ISMS long enough to
+        generate records (auditors typically expect at least three months of operation), then a
+        <strong>Stage 1</strong> readiness review of the documentation and a <strong>Stage 2</strong>
+        certification audit six to eight weeks later. The certificate runs three years with annual
+        surveillance audits in years one and two and recertification in year three. Stage 2 is where
+        control stacks fail: auditors walk processes, interview staff and examine technical evidence
+        — "the operational reality of the ISMS, not just its documented intent".
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Demonstrable, consistent enforcement</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Not "we have a policy" but "here is the rule, here is it firing on real traffic, here is what happens to a device that does not meet it" — the same answer for the office, the home worker and the contractor.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Records over time — and proof they are reviewed</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Practitioner guidance is to hold around twelve months of logs, and storing them is not enough: auditors want evidence that logs are reviewed, anomalies handled and outcomes recorded. A snapshot on audit day is not a control.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Evidence sprawl from point tools</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A tool per control means an export per control — endpoint console, VPN concentrator, web proxy, DLP, firewall manager — each with its own clock, identity model and retention. The audit becomes a correlation project.</p>
+        </div>
+      </div>
+      <h3 style="margin-top:22px">The endpoint is the hard part</h3>
+      <p>
+        Look down the Technological theme and most of the controls that touch a laptop — A.8.1 user
+        endpoint devices, A.8.5 secure authentication, A.8.7 protection against malware, A.8.9
+        configuration management, A.8.12 data leakage prevention — are the ones organisations find
+        hardest to evidence. The policy says "encrypted disk, running EDR, patched OS"; the proof is
+        usually a spreadsheet exported from the endpoint tool, disconnected from whether the device
+        was actually <em>allowed onto the network</em> in that state. What an auditor wants to see is
+        the link: the baseline, the enforcement gate, the outcome for a device that fails, and the
+        record of it — continuously, not once at login.
+      </p>
+      <div class="callout risk">
+        <div class="co-title">Discovery questions</div>
+        <p>“When Stage 2 asks how you know a non-compliant laptop cannot reach the finance system —
+        today, not at last login — where does the answer live?” · “How many consoles do you export
+        from to evidence one Annex A control for twelve months?” · “Which of the eleven new 2022
+        controls are on your SoA as 'implemented' — and which are still 'planned'?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato answer</div>
+      <h2>Device posture as the enforcement gate, evidence as a by-product</h2>
+      <p>
+        Cato's device posture is not a separate agent or an integration project: the Cato Client
+        already on the device evaluates <strong>Device Checks</strong>, bundled into <strong>Device
+        Posture Profiles</strong>, and those profiles gate whether the device may connect at all and
+        what it may reach. Checks inside one profile combine with <strong>AND</strong>; multiple
+        profiles on one rule combine with an implicit <strong>OR</strong>. Since 7 August 2026 the
+        checks re-run <strong>continuously, every 10 minutes by default</strong> — which is the ISO
+        sentence: the control is enforced all the time, not proven once.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The ISMS loop with device posture as the enforcement gate</title>
+          <desc id="dg1-desc">A clockwise loop. The ISMS policy and Statement of Applicability select controls; the Device Posture gate evaluates eleven check types on every Cato Client every ten minutes and blocks or disconnects a device that fails a check, raising a posture event; devices that pass reach the Cato PoP where one policy — ZTNA, firewall as a service, DLP and IPS — is enforced on every flow. Enforcement decisions land in the Cato Management Application's evidence plane: events, the Audit Trail and the Data Lake with three to twelve months of retention. Reports, including the Posture Compliance Report mapped to ISO 27001:2022, feed the Stage 2 and surveillance auditor, and management review and improvement close the loop back into policy.</desc>
+
+          <!-- Top row: policy -> posture gate -> PoP -> enforced controls -->
+          <rect class="dg-node" x="30" y="52" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="76" text-anchor="middle">ISMS policy &amp; SoA</text>
+          <text class="dg-sub" x="118" y="94" text-anchor="middle">risk-driven controls</text>
+
+          <rect class="dg-node-green" x="250" y="52" width="190" height="58" rx="10"/>
+          <text class="dg-label" x="345" y="76" text-anchor="middle">Device Posture gate</text>
+          <text class="dg-sub" x="345" y="94" text-anchor="middle">11 checks · every 10 min</text>
+
+          <circle class="pulse-ring" cx="540" cy="81" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="540" cy="81" r="30"/>
+          <text class="dg-label" x="540" y="28" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="540" y="43" text-anchor="middle">one policy · every edge</text>
+
+          <rect class="dg-node" x="650" y="52" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="750" y="76" text-anchor="middle">Enforced controls</text>
+          <text class="dg-sub" x="750" y="94" text-anchor="middle">ZTNA · FWaaS · DLP · IPS</text>
+
+          <path class="lane lane-allow" d="M 206 81 C 220 81, 236 81, 250 81"/>
+          <path class="lane lane-allow" d="M 440 81 C 462 81, 486 81, 508 81"/>
+          <path class="lane lane-allow" d="M 572 81 C 598 81, 624 81, 650 81"/>
+
+          <!-- Posture failure: blocked / disconnected -->
+          <path class="lane lane-block" d="M 345 110 C 345 140, 345 165, 345 186"/>
+          <g aria-label="non-compliant device blocked">
+            <path class="lane-x" d="M 333 190 L 357 214"/><path class="lane-x" d="M 357 190 L 333 214"/>
+          </g>
+          <text class="dg-tiny" x="345" y="236" text-anchor="middle">fails a check → no tunnel / disconnect</text>
+          <path class="lane lane-info" d="M 366 202 C 470 202, 560 230, 650 239"/>
+          <text class="dg-tiny" x="500" y="196" text-anchor="middle">posture event</text>
+
+          <!-- Right side down: enforcement -> CMA evidence plane -->
+          <path class="lane lane-info" d="M 750 110 C 750 140, 750 170, 750 200"/>
+          <rect class="dg-node-dark" x="650" y="200" width="200" height="78" rx="10"/>
+          <text class="dg-label-inv" x="750" y="228" text-anchor="middle">CMA evidence plane</text>
+          <text class="dg-sub-inv" x="750" y="246" text-anchor="middle">events · Audit Trail</text>
+          <text class="dg-sub-inv" x="750" y="263" text-anchor="middle">Data Lake 3–12 months</text>
+
+          <!-- Bottom row: evidence -> reports -> auditor -->
+          <path class="lane lane-info" d="M 700 278 C 680 330, 640 359, 610 359"/>
+          <rect class="dg-node" x="400" y="330" width="210" height="58" rx="10"/>
+          <text class="dg-label" x="505" y="354" text-anchor="middle">Reports &amp; evidence</text>
+          <text class="dg-sub" x="505" y="372" text-anchor="middle">Posture Compliance Report</text>
+
+          <path class="lane lane-info" d="M 400 359 C 350 359, 290 359, 230 359"/>
+          <rect class="dg-node-green" x="30" y="330" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="130" y="354" text-anchor="middle">Auditor · Stage 2</text>
+          <text class="dg-sub" x="130" y="372" text-anchor="middle">surveillance · recertification</text>
+
+          <!-- Loop back: management review -> policy -->
+          <path class="lane-static" fill="none" d="M 118 330 C 118 260, 118 180, 118 110"/>
+          <text class="dg-tiny" x="130" y="176" text-anchor="start">clause 9 review</text>
+          <text class="dg-tiny" x="130" y="192" text-anchor="start">clause 10 improvement</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Enforcement path — compliant devices only</span>
+          <span class="key"><span class="swatch block"></span> Posture failure — blocked or disconnected</span>
+          <span class="key"><span class="swatch info"></span> Telemetry &amp; evidence</span>
+        </div>
+        <div class="diagram-caption">The ISMS loop with posture as the gate: the SoA selects the controls, the Client enforces the endpoint baseline every ten minutes, the PoP enforces the rest on every flow, and every decision lands in one evidence plane — from which the Posture Compliance Report and the Audit Trail feed the auditor, and the review cycle feeds policy.</div>
+      </div>
+
+      <h3>The eleven check types, and the Client each needs</h3>
+      <p>
+        The Knowledge Base documents eleven Device Check types. Third-party agent checks
+        (Anti-Malware, Firewall, Patch Management, DLP) are matched through the OPSWAT library, so the
+        customer's existing EDR, MDM or endpoint DLP is a drop-down entry, not an integration. The
+        Device Certificate check verifies a user certificate signed by a CA associated with the
+        account — the KB's own recommended zero-trust pattern gates the connection on it. An Intune
+        MDM compliance state can also be a check (Windows, macOS excluding multi-NIC devices, Linux).
+        The KB's version table carries a twelfth row — "Device Checks applied for users in an
+        office" (Windows 5.7, macOS 5.8, Linux 5.3) — which is not a check but the capability to
+        apply the same profiles to devices connecting behind a Socket, so the office and the home
+        worker meet one baseline. Minimum Cato Client version per OS, per the KB (dash = not
+        supported):
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Device Check type (KB name)</th><th class="num">Windows</th><th class="num">macOS</th><th class="num">Linux</th><th class="num">iOS</th><th class="num">Android</th><th>Control it most directly evidences</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Anti-Malware</td><td class="num">5.2</td><td class="num">5.2</td><td class="num">5.1</td><td class="num">—</td><td class="num">—</td><td>A.8.7 Protection against malware</td></tr>
+            <tr><td>Firewall</td><td class="num">5.4</td><td class="num">5.2</td><td class="num">5.1</td><td class="num">—</td><td class="num">—</td><td>A.8.1 User endpoint devices · A.8.20 Networks security</td></tr>
+            <tr><td>Disk Encryption</td><td class="num">5.5</td><td class="num">5.6</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>A.8.1 · A.8.24 Use of cryptography</td></tr>
+            <tr><td>Patch Management</td><td class="num">5.5</td><td class="num">5.2</td><td class="num">5.2</td><td class="num">—</td><td class="num">—</td><td>A.8.9 Configuration management</td></tr>
+            <tr><td>Device Certificate</td><td class="num">5.5</td><td class="num">5.4</td><td class="num">5.1</td><td class="num">5.3</td><td class="num">5.0.1.115</td><td>A.8.5 Secure authentication · A.8.1</td></tr>
+            <tr><td>DLP (endpoint agent present)</td><td class="num">5.9</td><td class="num">5.4.3</td><td class="num">5.2</td><td class="num">—</td><td class="num">—</td><td>A.8.12 Data leakage prevention</td></tr>
+            <tr><td>Cato Client Version</td><td class="num">5.0</td><td class="num">5.0</td><td class="num">5.0</td><td class="num">—</td><td class="num">—</td><td>A.8.9 Configuration management</td></tr>
+            <tr><td>Running Process</td><td class="num">5.11</td><td class="num">5.7</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>A.8.1 · A.8.7 (an EDR or agent that must be running)</td></tr>
+            <tr><td>Registry Keys</td><td class="num">5.11</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>A.8.9 (Windows build or hardening key present)</td></tr>
+            <tr><td>Property List (plist)</td><td class="num">—</td><td class="num">5.7</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>A.8.9 (macOS configuration present)</td></tr>
+            <tr><td>OS Version</td><td class="num">6.8.2</td><td class="num">6.1</td><td class="num">—</td><td class="num">5.9</td><td class="num">5.6</td><td>A.8.9 · A.8.1 (minimum supported OS)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.88rem;color:var(--ink-2)">
+        Source: <a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>
+        (KB, accessed 24 Sep 2026) and
+        <a href="https://knowledge.catonetworks.com/docs/configuring-intune-mdm-compliance-checks-for-device-posture" target="_blank" rel="noopener">Configuring Intune MDM Compliance Checks for Device Posture</a>.
+        The last column is this page's mapping, not the KB's — the control a check evidences is decided by the customer's SoA.
+      </p>
+
+      <figure class="shot">
+        <img src="../assets/img/cma-posture-checks-catalog.png" alt="CMA Resources Device Posture page on the Device Checks tab: a catalogue of checks with Name, Category, Vendor and Criteria columns — SentinelOne, Cato EPP and CrowdStrike anti-malware checks with Real time protection enabled, a CrowdStrike Falcon version gate above 7.03.X, Windows and macOS firewall checks, Intune and Jamf patch-management checks, McAfee and Forcepoint endpoint DLP checks, Cato Client minimum-version checks, disk-encryption checks on C: and Macintosh HD, a Windows registry key on CurrentVersion, a macOS plist path and a device certificate check" width="1600" height="1294" loading="lazy">
+        <figcaption>The endpoint baseline as objects an auditor can read (lab tenant): each row is one Device Check — anti-malware with real-time protection required and a minimum EDR version, firewall, patch management via the MDM agent, endpoint DLP present, minimum Cato Client, disk encryption per volume, a registry key, a plist and a device certificate. Bundle them into a profile and the "endpoint policy" the SoA describes becomes something the Client enforces.</figcaption>
+      </figure>
+
+      <h3>Where posture applies</h3>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🚪</div><div><h4>Client Connectivity Policy — the front door</h4><p><em>Access → Client Connectivity Policy</em> — Ordered rules scope users and groups, countries, platforms and Device Posture Profiles; actions are <strong>Allow WAN and Internet</strong>, <strong>Allow Internet only</strong> or <strong>Block WAN and Internet</strong>, over a final implicit ANY ANY block. A device that fails the profile never establishes a tunnel.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Internet and WAN Firewall rules — conditional access</h4><p>Device Posture Profiles and device attributes (category, type, model, OS, manufacturer, OS version) are matching criteria in both rulebases, so a rule can allow the finance segment only from a device that passes the profile. For Clients that cannot run a check you choose whether the rule skips them or applies to them.</p></div></div>
+        <div class="benefit"><div class="b-icon">📌</div><div><h4>Always-On — no opt-out for remote workers</h4><p><em>Access → Always-On Policy</em> — Rules that keep users connected can be scoped by posture profile; Client Connectivity Policy and Device Authentication take precedence. Bypasses are controlled artefacts — an admin one-time passcode valid up to 15 minutes, or a logged disconnect reason. Not supported for Linux Clients.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Check Policy — continuous, not point-in-time</h4><p><em>Resources → Device Posture → Check Policy</em> — Three modes: <strong>Continuous checks, even when disconnected (recommended)</strong>, Check on connect and while connected, or One-time check. Since 7 August 2026 continuous checking at the recommended 10-minute interval is enabled by default for all accounts; the interval can be set between 5 and 1,440 minutes. Needs Windows Client 5.15+ or macOS Client 5.9+.</p></div></div>
+      </div>
+
+      <h3 style="margin-top:22px">What happens when a device fails</h3>
+      <p>
+        At connect, the Client does not connect to the Cato Cloud and shows the user an error; a
+        <strong>Details</strong> button lists the specific unmet requirements. If a device fails a
+        periodic check while connected, the Client disconnects — same message, same Details. Each
+        failure creates a Block event with Event Sub-Type <strong>Client Connectivity Policy</strong>
+        and the reason "Device fails to meet the Device Check", carrying the same unmet-requirement
+        detail — the record the auditor wants beside the rule. There is
+        <strong>no warn-but-allow action</strong> for posture in the Client Connectivity Policy: the
+        graduated middle ground is <em>Allow Internet only</em>, or a posture-scoped rule in the
+        Internet or WAN Firewall with that rulebase's own actions. Say so — it is a feature in an
+        audit, and a design decision in a rollout.
+      </p>
+
+      <div class="callout">
+        <div class="co-title">Two things called "posture" — keep them apart on every slide</div>
+        <p><strong>Device Posture</strong> is everything above: endpoint checks evaluated by the Cato
+        Client, configured under <span class="path">Resources → Device Posture</span>.
+        <strong>Account Posture</strong> is different: a set of best-practice checks Cato runs
+        against the <em>CMA configuration itself</em> every 24 hours — is TLS inspection on, is MFA
+        enforced for admins, is a risky rule left open — scored as an <strong>Account Score</strong>
+        under <span class="path">Home → Posture</span>, with each check carrying a
+        <strong>Label</strong> that maps it to ISO 27001:2022, NIST SP 800-53 Rev. 5 or GDPR. The
+        <strong>Posture Compliance Report</strong> is generated from the account-posture checks. Both
+        are ISO evidence; they are not the same control. The "Posture" event type in Home → Events is
+        the account one.</p>
+      </div>
+    </section>
+
+    <section id="evidence" class="reveal">
+      <div class="section-kicker">Evidence surfaces</div>
+      <h2>Where the auditor's artefacts come from</h2>
+      <p>
+        The second half of the story is that none of this evidence is assembled by hand. Each
+        surface below is a standing feature of the platform; the PoV runbook later turns each one
+        into a dated artefact for the pack.
+      </p>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">📋</div><div><h4>Posture Compliance Report — the ISO-labelled report</h4><p><em>Home → Reports</em> — Maps controls from ISO 27001:2022, NIST SP 800-53 Rev. 5 and GDPR to the relevant Cato account-posture checks, to show coverage, gaps and remediation priority. One-off or recurring (daily, weekly or monthly), stored in the Cato Cloud, emailed or downloaded. The sibling <em>Posture Report</em> scores the configuration against Cato's own recommendations (<a href="https://knowledge.catonetworks.com/docs/en/generating-a-posture-or-posture-compliance-report" target="_blank" rel="noopener">KB</a>).</p></div></div>
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Account Posture page — score, trend, Review &amp; Resolve</h4><p><em>Home → Posture</em> — The Account Score (checks passed and failed), a score-over-time trend, and a checks table with All / Account Posture / SaaS Security tabs; each check has a Label for its framework, a Review &amp; Resolve wizard and an AI "Guide me" walkthrough. The catalogue lives at <em>Resources → Posture Check Catalog</em> — (<a href="https://knowledge.catonetworks.com/docs/reviewing-posture-checks-for-your-account" target="_blank" rel="noopener">KB</a>).</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Audit Trail — 12 months of attributed change</h4><p><em>Account → Audit Trail</em> — Every configuration change by an administrator or the API — additions, deletions and edits of rules and settings, with before/after values for certain policies. Twelve months retained, viewable three months at a time; entries can take several minutes to appear (<a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">KB</a>). This is A.8.9 and A.5.15 change evidence without a CAB spreadsheet.</p></div></div>
+        <div class="benefit"><div class="b-icon">🗄️</div><div><h4>Events and the Data Lake — the retention conversation</h4><p><em>Home → Events</em> — Every enforcement decision from every engine is an identity-attributed event; export up to 250,000 events per query over a 31-day maximum range, or stream via Event Integrations to a SIEM. Base retention is 3 months with 2.5 million events per hour; additional units extend retention to 12 months — sized on <a href="management-data-lake.html">Data Lake sizing</a>. For A.8.15 that is "3 months included, buy up to 12".</p></div></div>
+        <div class="benefit"><div class="b-icon">✅</div><div><h4>Policy revisions and Publish — change control by design</h4><p>Each admin edits in a private unpublished revision; nothing takes effect until <strong>Publish</strong> and the Publish Revision confirmation. Paired with the Audit Trail this is the who/what/when an auditor asks for under A.8.9 (<a href="https://knowledge.catonetworks.com/docs/working-with-policy-revisions" target="_blank" rel="noopener">KB</a>). The revision model does not document rollback to a previous published revision — the Audit Trail is the attribution record; do not claim more.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Admin MFA, SSO and RBAC — the console is itself in scope</h4><p><em>Account → Roles &amp; Permissions</em> — Admin authentication is SSO (recommended), Cato credentials, or Cato credentials plus authenticator-app MFA — enabled by default for new admins and always on for accounts created after 10 December 2023; with SSO, MFA belongs to the IdP. Nine predefined roles (Editor, Viewer, Network Admin, Security Admin, Access Admin, Regional Viewer, Restricted Viewer, Logistics Admin, AI Security Sensitive) plus custom roles with page-level Edit/View-only/None and entity scoping; permissions cannot be split per tab within a page (<a href="https://knowledge.catonetworks.com/docs/managing-admin-roles-using-rbac" target="_blank" rel="noopener">KB</a>).</p></div></div>
+      </div>
+    </section>
+
+    <section id="mapping" class="reveal">
+      <div class="section-kicker">Framework mapping — Annex A</div>
+      <h2>Annex A controls: what the auditor wants, what Cato does, what to show</h2>
+      <p>
+        The centrepiece. Control numbers and names are the 2022 edition; "what the auditor wants to
+        see" is synthesised from published control guidance and the evidence expectations above, not
+        quoted from ISO/IEC 27002. Every row is a "supports and evidences" claim — applicability is
+        the customer's SoA decision, and the final column names an artefact you can actually produce
+        from the CMA. Controls introduced in 2022 carry a marker.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Annex A control (2022)</th><th>What the auditor wants to see</th><th>Cato capability</th><th>Evidence artefact in the CMA</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A.5.14</strong> Information Transfer</td>
+              <td>Transfer rules plus technical enforcement (encrypted paths, controlled channels) and logs of transfers</td>
+              <td>Encrypted Client and Socket tunnels; Data Control rules on uploads; endpoint DLP posture check</td>
+              <td>TLS Inspection and Data Control rulebases; Data Control events with file name/type; the DLP check in the profile</td>
+            </tr>
+            <tr>
+              <td><strong>A.5.15</strong> Access Control</td>
+              <td>A topic-level policy mapped to enforcement points; periodic review records</td>
+              <td>Client Connectivity Policy plus WAN and Internet Firewall rulebases scoped by identity, posture and device attributes</td>
+              <td>Published rulebases (exportable); Audit Trail entries for each review-driven change</td>
+            </tr>
+            <tr>
+              <td><strong>A.5.16</strong> Identity Management</td>
+              <td>Lifecycle of identities, unique IDs, IdP integration — the lifecycle itself lives in the IdP/HR</td>
+              <td>SCIM/IdP-provisioned users and groups drive every rule; users disabled at sync</td>
+              <td>Access → Users showing SCIM origin and status; group membership referenced by rules (design: <a href="access-identity-design.html">Identity Integration Design</a>)</td>
+            </tr>
+            <tr>
+              <td><strong>A.5.17</strong> Authentication Information</td>
+              <td>Credential and MFA policy with enforcement records</td>
+              <td>Admin SSO/MFA for the CMA; user SSO in the access path</td>
+              <td>Account → Login Restrictions and Access → Single Sign-On settings; admin list with authentication method</td>
+            </tr>
+            <tr>
+              <td><strong>A.5.18</strong> Access Rights</td>
+              <td>Provisioning, review and revocation; logs showing rights actually changed</td>
+              <td>Group-driven rules so a rights change is an IdP change; RBAC for admin rights</td>
+              <td>Audit Trail (rule and role changes); a leaver's disabled user record beside their last event</td>
+            </tr>
+            <tr>
+              <td><strong>A.5.23</strong> Information Security for Use of Cloud Services <span class="badge badge-new">New in 2022</span></td>
+              <td>Cloud-service inventory, security requirements per service, monitoring of usage</td>
+              <td>CASB app catalogue with risk score 0–10 and compliance attributes (incl. "ISO 27001"); Application Control rules keyed on them</td>
+              <td>Cloud Apps dashboard (sanctioned vs discovered); an Application Control rule keyed on attestation attributes and its events</td>
+            </tr>
+            <tr>
+              <td><strong>A.6.7</strong> Remote Working</td>
+              <td>Remote-working policy plus demonstrable technical protection of remote access and session logs</td>
+              <td>Posture-gated Client Connectivity Policy; Always-On so the controls cannot be opted out of</td>
+              <td>The Always-On rule scoped by profile; Client Connectivity events per user; posture-failure events</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.1</strong> User Endpoint Devices</td>
+              <td>Endpoint policy, posture enforcement records, and what happens to a non-compliant device</td>
+              <td>Device Checks and Profiles; Check Policy continuous evaluation; block/disconnect on failure</td>
+              <td>The profile and its checks; the Check Policy tab; a posture-failure event with the unmet requirement; the Client's Details dialog</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.2</strong> Privileged Access Rights <span class="tag">partial</span></td>
+              <td>Privileged-account inventory and allocation/review records</td>
+              <td>CMA RBAC roles and scoped custom roles; posture-conditioned WAN rules for admin segments. PAM proper is out of scope</td>
+              <td>Account → Roles &amp; Permissions and Administrators; the admin-segment WAN rule. Say "partial" in the SoA note</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.3</strong> Information Access Restriction</td>
+              <td>Enforced access rules, denied-access logs, reviews</td>
+              <td>WAN Firewall allowlist over a default ANY-ANY block; posture as a rule condition</td>
+              <td>The rulebase with hit counts; block events attributed to a user and rule</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.5</strong> Secure Authentication</td>
+              <td>MFA configuration, authentication logs, lockout behaviour</td>
+              <td>SSO/MFA for users and admins; Device Certificate check as a device-identity factor</td>
+              <td>Authentication settings; the certificate check in the profile; the KB zero-trust pattern rule</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.7</strong> Protection Against Malware</td>
+              <td>Anti-malware configuration, detection logs, update cadence, blocked-threat records</td>
+              <td>Anti-Malware and NGAM at the PoP on WAN and Internet traffic; the Anti-Malware posture check requiring the endpoint agent (and real-time protection) via OPSWAT</td>
+              <td>Security → Anti-Malware policy; Threats dashboard and malware events; the anti-malware check with vendor and version criteria</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.9</strong> Configuration Management <span class="badge badge-new">New in 2022</span></td>
+              <td>Baseline configurations, change records, drift monitoring</td>
+              <td>The posture profile is the enforced endpoint baseline; one global policy; revisions and Publish; Account Posture checks on the CMA's own configuration</td>
+              <td>The profile; the Audit Trail with before/after values; Home → Posture score and trend</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.12</strong> Data Leakage Prevention <span class="badge badge-new">New in 2022</span></td>
+              <td>Classification-linked DLP rules, inline enforcement, incident/block records</td>
+              <td>Data Control policy (350+ data types) inline at the PoP; DLP posture check that the endpoint DLP agent is present</td>
+              <td>Data Control rulebase; Data Protection dashboard; DLP events with matched profile — demo on <a href="security-compliance.html">Achieving Compliance</a></td>
+            </tr>
+            <tr>
+              <td><strong>A.8.15</strong> Logging</td>
+              <td>Log coverage across the estate, retention, protection, review records</td>
+              <td>Every engine's decisions in one identity-attributed event store; Data Lake retention 3 months base, extendable to 12; SIEM streaming</td>
+              <td>Event exports per control; retention licence; Event Integrations configuration</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.16</strong> Monitoring Activities <span class="badge badge-new">New in 2022</span></td>
+              <td>Inbound/outbound monitoring, baselines, real-time alerting, threat-intelligence integration, reporting procedures</td>
+              <td>IPS (threat-feed signatures, Block or Monitor), rule tracking with notifications, XDR stories, scheduled reports</td>
+              <td>IPS policy and events; a rule's tracking and notification settings; a scheduled report in Saved Reports</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.20</strong> Networks Security</td>
+              <td>Network security architecture, traffic controls, protection mechanisms in operation</td>
+              <td>FWaaS, IPS and anti-malware on every flow at the PoP; Firewall posture check on the endpoint</td>
+              <td>Rulebases with hit counts; Threats dashboard; the firewall check in the profile</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.21</strong> Security of Network Services</td>
+              <td>Security features and service levels of network services — including outsourced ones — and provider monitoring</td>
+              <td>Cato <em>is</em> the outsourced network service: its own certifications plus Experience Monitoring views</td>
+              <td>Trust Center certificates in the supplier file (below); Experience Monitoring and status evidence</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.22</strong> Segregation of Networks</td>
+              <td>Segmentation design, enforced policies between segments, evidence cross-segment traffic is controlled</td>
+              <td>WAN Firewall allowlist with default ANY-ANY block; LAN Firewall per site/VLAN; posture as a condition on segment access</td>
+              <td>The WAN and LAN Firewall rulebases; block events between segments</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.23</strong> Web Filtering <span class="badge badge-new">New in 2022</span></td>
+              <td>Filtering policy, category/domain rules in force, block logs</td>
+              <td>Internet Firewall rules on application categories, custom categories, domains and FQDNs (Allow, Block, Prompt) with tracking</td>
+              <td>The Internet Firewall rulebase with hit counts; block events by category</td>
+            </tr>
+            <tr>
+              <td><strong>A.8.24</strong> Use of Cryptography</td>
+              <td>Cryptography policy, TLS/tunnel standards in force; key management stays customer-side</td>
+              <td>Encrypted transport everywhere; TLS Inspection policy enforcing minimum TLS version and cipher strength; Disk Encryption posture check</td>
+              <td>TLS Inspection rulebase with min-version/cipher settings; the disk-encryption check in the profile</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.88rem;color:var(--ink-2)">
+        Sources (all accessed 24 Sep 2026): control numbers and names per the ISMS.online Annex A listing; new-in-2022 set per Advisera and Secureframe; Cato capabilities per the KB —
+        <a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/adding-device-conditions-to-firewall-rules" target="_blank" rel="noopener">Adding Device Conditions to Firewall Rules</a>,
+        <a href="https://knowledge.catonetworks.com/docs/protecting-users-with-always-on-security" target="_blank" rel="noopener">Protecting Users with Always-On Security</a>,
+        <a href="https://knowledge.catonetworks.com/docs/zero-trust-device-security-with-cato" target="_blank" rel="noopener">Zero Trust Device Security With Cato</a>,
+        <a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-wan-firewall" target="_blank" rel="noopener">What is the Cato WAN Firewall?</a>,
+        <a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Managing the Internet Firewall Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/configuring-the-anti-malware-policy" target="_blank" rel="noopener">Configuring the Anti-Malware Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/configuring-the-ips-policy" target="_blank" rel="noopener">Configuring the IPS Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Creating the Data Control Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/managing-the-application-control-policy" target="_blank" rel="noopener">Managing the Application Control Policy</a>,
+        <a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring TLS Inspection Policy for the Account</a>,
+        <a href="https://knowledge.catonetworks.com/docs/reference-for-rule-objects" target="_blank" rel="noopener">Reference for Rule Objects</a>,
+        <a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a>,
+        <a href="https://knowledge.catonetworks.com/docs/guide-to-cato-data-lake" target="_blank" rel="noopener">Guide to Cato Data Lake</a>,
+        <a href="https://knowledge.catonetworks.com/docs/authenticating-admins" target="_blank" rel="noopener">Authenticating Admins</a>.
+        Full brief with labels: <code>_extract/research-briefs/iso27001.md</code>.
+      </p>
+    </section>
+
+    <section id="supplier" class="reveal">
+      <div class="section-kicker">Supplier due diligence — A.5.19 to A.5.22</div>
+      <h2>Cato's own certifications belong in the customer's supplier file</h2>
+      <p>
+        Four Organizational controls — A.5.19 Information Security in Supplier Relationships, A.5.20
+        Addressing Information Security Within Supplier Agreements, A.5.21 Managing Information
+        Security in the ICT Supply Chain and A.5.22 Monitoring, Review and Change Management of
+        Supplier Services — ask the customer to evidence that they <em>assessed</em> their suppliers.
+        A.8.21 adds security of outsourced network services explicitly. When the network service is
+        Cato, Cato's own attestations are exactly the artefacts that go in that file. They evidence
+        the supplier, never the customer.
+      </p>
+      <div class="card">
+        <h3 style="margin-top:0">As published on the Cato Trust Center (vendor self-published; checked 24 Sep 2026)</h3>
+        <p style="font-size:.94rem;color:var(--ink-2)">
+          The <a href="https://security.catonetworks.com/" target="_blank" rel="noopener">Cato Networks Trust
+          Center</a> lists <strong>ISO/IEC 27001:2022</strong>, ISO/IEC 27017, ISO/IEC 27018 and ISO/IEC
+          27701, ISO 14001 (2026), a SOC 2 Type II report (2025, with HIPAA attestation) and SOC 3 (2025),
+          a PCI DSS certificate (2026), a NIST SP 800-53 Rev. 5 attestation report, and badges for
+          GDPR, HIPAA, CSA, Cyber Essentials, TISAX (AL3), C5 and ENS. The scope of each certificate —
+          which entities and services it covers — is not public.
+        </p>
+        <p style="font-size:.94rem;color:var(--ink-2);margin-bottom:0">
+          <strong>How to use it:</strong> do not paraphrase the list into a customer document. Pull the
+          actual certificates and reports via the Trust Center under NDA, so the supplier file holds
+          the issuer, scope and expiry the customer's auditor will check — and note that any supplier
+          still presenting a 2013-edition certificate is presenting a withdrawn one.
+        </p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Find out where they are on the journey — pre-Stage 1, between audits, or a surveillance
+        visit due — and which Annex A rows are "planned" on their SoA. Then run this as a loop:
+        baseline → gate → failure → evidence → change control. Paths are the new-navigation CMA;
+        confirm the tenant's Check Policy tab before you start, as continuous checking is the
+        default since 7 August 2026 but a tenant may have been changed.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>The endpoint baseline as objects</h4>
+          <p><span class="path">Resources → Device Posture</span></p>
+          <p>Open the Device Posture Profiles tab and then Device Checks. Read a profile's checks out
+          as the auditor would — anti-malware with real-time protection, firewall, disk encryption,
+          patch management, device certificate — and say the AND rule: the device must satisfy all of
+          them. Then the Check Policy tab: continuous checks every 10 minutes, even when disconnected.
+          That tab is the "continuously enforced" sentence for A.8.1 and A.8.9.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-acc-posture.png" alt="CMA Resources Device Posture page on the Device Posture Profiles tab, with Device Checks and Check Policy tabs beside it, listing six profiles — Windows managed with an anti-malware check, Mac admins, Linux Devices with a minimum Cato Client version, Realtime protection, a pilot profile and a Windows FW Check profile — each showing its attached Device Checks; Device Posture sits under the Objects group in the Resources menu" width="3024" height="1502" loading="lazy">
+            <figcaption>The demo's opening screen (lab tenant): <strong>Resources → Device Posture</strong> with its three tabs — Profiles, Checks and <strong>Check Policy</strong>. Six profiles, each naming the checks it demands; the Check Policy tab beside them is where "continuous, every 10 minutes" is set.</figcaption>
+          </figure>
+          <!-- capture-wanted: «Resources → Device Posture → Check Policy tab — Continuous checks, even when disconnected (recommended) selected, interval 10 minutes» -->
+        </li>
+        <li>
+          <h4>The gate — a Client Connectivity rule that uses the profile</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Walk the rulebase top-down: a corporate rule with the profile attached and
+          <strong>Allow WAN and Internet</strong>; a low-confidence or profile-less rule with
+          <strong>Allow Internet only</strong> and WAN blocked; the implicit ANY ANY block at the end.
+          Open the rule editor to show Device Posture Profiles as a first-class condition. This is
+          A.5.15 and A.6.7 as an enforced rule rather than a document.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-ccp-rulebase-wide.png" alt="CMA Access Client Connectivity Policy rulebase, Published Revision, with columns for users and groups, confidence level, connection origin, platforms, countries, Device Posture Profiles and Action: high-confidence rules with profiles such as Corp Windows and MacOS Xprotect set to Allow Internet and WAN, low-confidence variants set to Allow Internet and Block WAN, a Linux rule with posture Any, a Certificate Check rule using a Corporate Cert profile, and roaming-user rules across iOS, Android, macOS and Windows" width="2133" height="959" loading="lazy">
+            <figcaption>The front door as a rulebase (lab tenant, fictional identities): profile-gated rules allowing WAN and Internet, their low-confidence twins allowing Internet only with WAN blocked, and a certificate-check rule — read down the Device Posture Profiles and Action columns and the graduated access model is visible without a slide.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/cma-ccp-rule-posture.png" alt="CMA Client Connectivity Policy rule editor for a Corp Windows rule with the Device Posture Profiles section expanded showing a Corp Windows device profile attached and the Action set to Allow WAN and Internet" width="2133" height="959" loading="lazy">
+            <figcaption>Inside the rule (lab tenant, fictional identities): Device Posture Profiles is a condition like any other, and the action is <strong>Allow WAN and Internet</strong> — remove the profile from the device's reality and the rule no longer matches, so the final implicit block applies.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>The failure — what a non-compliant device experiences</h4>
+          <p>On a demo laptop, break one check (stop the firewall service or the EDR process) and
+          reconnect, or wait for the next periodic check while connected. The Client refuses or
+          disconnects and the <strong>Details</strong> button names the unmet requirement. Then
+          switch to <span class="path">Home → Events</span> and filter to the Client Connectivity
+          Policy events for that user: the same unmet requirement, timestamped and attributed. Rule,
+          outcome, record — the three things Stage 2 asks for, in three clicks.</p>
+          <!-- capture-wanted: «Cato Client blocked dialog after a failed posture check — Details naming the unmet requirement (e.g. firewall not running)» -->
+          <!-- capture-wanted: «Home → Events filtered to Client Connectivity Policy events for one user — a device-posture failure event showing the unmet requirement» -->
+        </li>
+        <li>
+          <h4>Account posture — the ISO-labelled checks</h4>
+          <p><span class="path">Home → Posture</span></p>
+          <p>Switch vocabularies deliberately: "that was the device; this is the account." Show the
+          Account Score, the trend, and the checks table with the <strong>ISO 27001:2022</strong>
+          label on individual checks. Open one with Review &amp; Resolve to show remediation is
+          guided. For a compliance owner this is the first time a security console has spoken their
+          language unprompted.</p>
+          <!-- capture-wanted: «Home → Posture — Account Score with the checks table filtered or labelled ISO 27001:2022» -->
+        </li>
+        <li>
+          <h4>The report that generates itself</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>From the Catalog, generate the <strong>Posture Compliance Report</strong> and open the
+          ISO 27001:2022 section: controls mapped to checks, coverage and gaps. Then show
+          <strong>Create Schedule</strong> — monthly, PDF, to the compliance mailing list. The close
+          for this step: "your surveillance-audit artefact now produces itself on the first of the
+          month."</p>
+          <!-- capture-wanted: «Home → Reports — a generated Posture Compliance Report page showing the ISO 27001:2022 control-to-check mapping with coverage and gaps» -->
+        </li>
+        <li>
+          <h4>Change control — the Audit Trail</h4>
+          <p><span class="path">Account → Audit Trail</span></p>
+          <p>Edit something small in the demo tenant first (a profile description), publish, then
+          open the Audit Trail: the change, the admin, the time, and — for policies that support it
+          — previous and new values. Twelve months retained. Pair it with
+          <span class="path">Account → Roles &amp; Permissions</span> to show who <em>could</em> have
+          made the change. A.8.9 and A.5.18 in one screen.</p>
+          <!-- capture-wanted: «Account → Roles & Permissions — predefined and custom roles with page-level Edit / View-only / None» -->
+        </li>
+      </ol>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        Compliance has no toggle; what a pilot can prove is that a named Annex A control is
+        <strong>enforced on real devices and evidenced by platform-generated artefacts</strong>.
+        Scope it to a pilot cohort (one department, ten to thirty managed laptops) and the endpoint
+        rows of the mapping table, with the customer's ISMS owner choosing which rows from their own
+        SoA. Agree the criteria before configuring anything, per
+        <a href="management-pov-framework.html">Running a Cato PoV</a>. The broader evidence-pack
+        method — policy exports, rule hit count reports, the CASB/DLP rows — is on
+        <a href="security-compliance.html">Achieving Compliance</a>; this runbook adds the posture and
+        evidence-retention proofs that page does not cover.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Posture profile enforced on the pilot cohort</td>
+              <td>Every pilot device connects only by matching a Client Connectivity rule that requires the agreed profile — checks re-evaluated continuously at the tenant's interval</td>
+              <td>The profile and its checks; the Check Policy setting; the pilot rule; Client Connectivity events for cohort users over the window</td>
+              <td>Resources → Device Posture · Access → Client Connectivity Policy · Home → Events</td>
+            </tr>
+            <tr>
+              <td>A non-compliant device is blocked and evidenced</td>
+              <td>A deliberately broken device (one check failed) is refused at connect and disconnected while connected; the failure is recorded with the unmet requirement</td>
+              <td>Client Details dialog screenshot beside the dated posture-failure event for that user</td>
+              <td>Cato Client · Home → Events</td>
+            </tr>
+            <tr>
+              <td>Posture Compliance Report scheduled and delivered</td>
+              <td>The ISO 27001:2022-mapped report is generated once, then scheduled and received by the compliance mailing list without anyone logging in</td>
+              <td>The generated PDF; the schedule row; the delivery email</td>
+              <td>Home → Reports (Catalog, Saved Reports, Generated PDFs)</td>
+            </tr>
+            <tr>
+              <td>Policy change attributed with before/after</td>
+              <td>A pilot change (adding a check to the profile, editing the rule) appears in the Audit Trail with admin, time and — where the policy supports it — previous and new values, alongside the Publish receipt</td>
+              <td>Audit Trail view filtered to the pilot window; the My Policy Changes publish record</td>
+              <td>Account → Audit Trail · Notifications → My Policy Changes</td>
+            </tr>
+            <tr>
+              <td>Evidence retention proven, not promised</td>
+              <td>A 30-day export of cohort events is produced inside the window and the retention licence covering the audit period is agreed</td>
+              <td>The dated events export (CSV); the Data Lake retention decision in the pack</td>
+              <td>Home → Events · commercial proposal</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>The ISMS owner in the workshop</strong> choosing which Annex A rows the pilot evidences from their SoA. Without them the mapping is our guess.</li>
+          <li><strong>Client versions per check</strong> — check the cohort's Cato Client against the minimums in the check-type table above (for example Disk Encryption needs Windows 5.5 / macOS 5.6; Running Process needs Windows 5.11 / macOS 5.7; OS Version needs Windows 6.8.2 / macOS 6.1), and Windows 5.15+ / macOS 5.9+ for continuous checks. Upgrade the cohort first or scope the checks to what the Client can run.</li>
+          <li><strong>OPSWAT-listed endpoint products</strong> — the customer's EDR, firewall, patch and DLP agents must appear in the Vendor drop-down of the relevant check type; confirm in the New Device Check dialog before promising a check.</li>
+          <li><strong>A pilot cohort and a sacrificial device</strong> — a SCIM-synced group for the cohort (see <a href="access-identity-design.html">Identity Integration Design</a>) and one laptop the customer is willing to break a check on for the failure proof.</li>
+          <li><strong>Licences and retention</strong> — ZTNA/SDP licences for the cohort; the Data Lake retention conversation started in week one, because the base 3 months will not cover a 12-month evidence expectation (<a href="management-data-lake.html">sizing</a>).</li>
+          <li><strong>No TLS inspection needed</strong> for the posture proofs. If the customer adds A.8.12 content rows, stage it first per <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Build the checks from what the estate already runs</h4>
+          <p><span class="path">Resources → Device Posture → Device Checks</span></p>
+          <p>Create one check per agreed control: Anti-Malware (vendor and product from the OPSWAT
+          list, "real-time protection enabled"), Firewall, Disk Encryption (per volume), Patch
+          Management (the MDM agent), and Cato Client Version as the floor. Keep the first profile
+          to three or four checks — every check is AND, and a profile nobody passes proves nothing
+          (<a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks</a>).</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-posture-check-sophos.png" alt="CMA New Device Check dialogue for a Windows anti-malware check with vendor Sophos Limited selected and the OPSWAT product list open, offering Sophos Endpoint Agent, Endpoint Security and Control, GVM Scanning Service and Sophos Home" width="1600" height="1302" loading="lazy">
+            <figcaption>The prerequisite check made visible (lab tenant): the anti-malware check's OPSWAT vendor list with a vendor selected and its products enumerated. If the customer's agent is in this list, the A.8.7 endpoint check is a drop-down; if it is not, say so in week one.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Bundle into the pilot profile and set the Check Policy</h4>
+          <p><span class="path">Resources → Device Posture → Device Posture Profiles</span> <span class="path">Resources → Device Posture → Check Policy</span></p>
+          <p>Create "ISO Pilot Baseline" from the checks; note the profile name and check list in the
+          evidence doc as the A.8.9 baseline. On the Check Policy tab confirm <strong>Continuous
+          checks, even when disconnected</strong> at 10 minutes — the default since 7 August 2026, but
+          confirm rather than assume; the interval is bounded at 5 to 1,440 minutes
+          (<a href="https://knowledge.catonetworks.com/docs/client-connectivity-policy-continuous-posture-checks-check-policy" target="_blank" rel="noopener">Continuous Posture Checks (Check Policy)</a>).</p>
+        </li>
+        <li>
+          <h4>Week one: the rule with posture Any, tracking on</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span></p>
+          <p>Add a rule above the corporate rules: source the pilot group, platforms in scope, posture
+          <em>Any</em>, action Allow WAN and Internet. Nothing is gated yet; the point is a week of
+          Client Connectivity events for the cohort so you know who would fail before anyone does.
+          Publish and record the Publish Revision receipt
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Week two: attach the profile and stage the failure</h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Home → Events</span></p>
+          <p>Edit the pilot rule: Device Posture Profiles = ISO Pilot Baseline. Publish. Now a failed
+          check means no tunnel. On the sacrificial laptop, stop the firewall service and reconnect
+          — screenshot the Client's error with <strong>Details</strong> open — then restore it and
+          reconnect. Filter Home → Events to that user and export the posture-failure event beside
+          the successful reconnect. Rule, outcome, record, dated.</p>
+          <!-- capture-wanted: «Home → Events filtered to one pilot user — a device-posture failure event beside the subsequent successful connection» -->
+        </li>
+        <li>
+          <h4>Generate, then schedule, the Posture Compliance Report</h4>
+          <p><span class="path">Home → Reports</span></p>
+          <p>From the Catalog select the Posture Compliance Report, Generate now, and file the PDF's
+          ISO 27001:2022 section. Then Generate ▼ → Create Schedule: monthly, PDF, subscription the
+          compliance mailing list. The schedule row in Saved Reports and the first delivered email are
+          both artefacts
+          (<a href="https://knowledge.catonetworks.com/docs/en/generating-a-posture-or-posture-compliance-report" target="_blank" rel="noopener">Generating Posture or Posture Compliance Reports</a>).</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-report-schedule-dialog.png" alt="The Create Schedule drawer on the CMA Reports page: Report Schedule set to Weekly every Monday in the London timezone, Export Format PDF selected, a Subscriptions mailing list of All Admins, and Save Schedule and Cancel buttons — shown here for a Site and User Experience report template" width="1920" height="851" loading="lazy">
+            <figcaption>The scheduling mechanics (lab tenant, shown here on a different template): frequency, format and a subscription list, saved as a standing schedule. The pilot uses the identical drawer on the Posture Compliance Report, set to monthly — the surveillance-audit artefact on a timer.</figcaption>
+          </figure>
+          <!-- capture-wanted: «Home → Reports → Generated PDFs — a Posture Compliance Report row Ready, with an inner page showing the ISO 27001:2022 mapping» -->
+        </li>
+        <li>
+          <h4>Capture the change record</h4>
+          <p><span class="path">Account → Audit Trail</span></p>
+          <p>Filter to the pilot window: the checks created, the profile, the rule added and then
+          edited, each attributed and timestamped, with previous and new values where the policy
+          supports it. The pilot's own build is the exhibit. Capture the view for the pack — the
+          KB documents 12 months of retention viewed 3 months at a time, and entries can take several
+          minutes to appear
+          (<a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Using the Audit Trail</a>).</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-policy-changes.png" alt="CMA Notifications drawer on the My Policy Changes tab: a published policy change marked completed successfully, with its timestamp and an Audit Trail link" width="2133" height="959" loading="lazy">
+            <figcaption>The publish receipt (lab tenant): My Policy Changes recording the revision as published, timestamped, with a one-click hop to the Audit Trail entry. Screenshot it for each pilot change — the Publish step and the Audit Trail together are the A.8.9 change record.</figcaption>
+          </figure>
+          <!-- capture-wanted: «Account → Audit Trail filtered to a pilot window — a Client Connectivity rule edit with previous and new values» -->
+        </li>
+        <li>
+          <h4>Export 30 days of cohort events and settle retention</h4>
+          <p><span class="path">Home → Events</span></p>
+          <p>Before the window closes, filter to the cohort and export — up to 250,000 events per
+          query, 31 days maximum
+          (<a href="https://knowledge.catonetworks.com/docs/analyzing-events-in-your-network" target="_blank" rel="noopener">Analyzing Events in Your Network</a>).
+          File it as the A.8.15 artefact, then write the retention line into the pack: base 3 months
+          included, additional units in 3-, 6- or 12-month variants
+          (<a href="https://knowledge.catonetworks.com/docs/guide-to-cato-data-lake" target="_blank" rel="noopener">Guide to Cato Data Lake</a>).
+          A 12-month evidence expectation is a licensing decision, and the pilot is where it gets made.</p>
+        </li>
+      </ol>
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">⬇️</div><div><h4>A check never passes on some devices</h4><p>The Client is below that check's minimum version (Running Process needs Windows 5.11; Disk Encryption needs macOS 5.6; OS Version needs Windows 6.8.2). Check the Client version column under Access → Users before touching the check; upgrade or scope the profile by platform.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔀</div><div><h4>Everyone fails — or nobody does</h4><p>AND/OR semantics: checks inside one profile are AND, so one unmet check fails the device; multiple profiles on one rule are OR, so a permissive second profile lets everything through. One profile per rule in the pilot, and add checks one at a time.</p></div></div>
+        <div class="benefit"><div class="b-icon">⏱️</div><div><h4>The broken device stays connected</h4><p>Continuous checking needs Windows 5.15+ / macOS 5.9+ and the Check Policy set to continuous; on One-time check the device is only evaluated at connect. The interval floor is 5 minutes — a failure can take up to the configured interval to disconnect.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏷️</div><div><h4>The agent is installed but the check fails</h4><p>OPSWAT matches vendor and product; a renamed product, a version below the criterion, or real-time protection disabled all fail the check. Open the Client's Details dialog — it names the unmet requirement — and compare with the check's criteria.</p></div></div>
+        <div class="benefit"><div class="b-icon">🐧</div><div><h4>Linux or mobile devices behave differently</h4><p>Several checks are Windows/macOS only (see the dashes in the table), Always-On is not supported on Linux, and firewall rules let you choose whether unsupported Clients are skipped or matched. Scope the cohort to the platforms the checks cover, and say so in the pack.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>The failure happened but no event shows it</h4><p>Filter on Event Sub-Type "Client Connectivity Policy" with a Block action, not the "Posture" event type — that one is account posture. Entries and Audit Trail rows can take several minutes to appear; re-query before assuming the record is missing.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Honest caveats — say them at the workshop</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>There is no warn-only posture action.</strong> A device that fails the profile is refused or disconnected. The graduated path is Allow Internet only, or posture-scoped firewall rules — design the rollout around that, and use the week-one posture-Any rule to find who would fail first.</li>
+          <li><strong>Posture is one control family.</strong> The ISMS still needs the organisational controls — risk assessment, the SoA, reviews, internal audit, corrective action — and A.8.2 privileged access is only partially addressed. Write "supports and evidences", never "closes".</li>
+          <li><strong>The Posture Compliance Report is an aid, not an audit opinion.</strong> It maps account-posture checks to framework controls; it does not assess the customer's ISMS, and it does not know about device posture. Present it as coverage input to the SoA, alongside the device-posture artefacts.</li>
+          <li><strong>Cato's certificates evidence Cato.</strong> They go in the supplier file for A.5.19–5.22; they are not the customer's certificate. Pull them via the Trust Center under NDA rather than restating the list.</li>
+          <li><strong>Retention is a licence line.</strong> Base Data Lake retention is 3 months; the ~12-month expectation is practitioner guidance, not standard text, but auditors do ask. Settle it commercially before the pack claims it.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> remove the profile from the pilot rule first (so nobody
+        is locked out by a stale check), then disable rather than delete the rule — its events are
+        the evidence record. Leave the checks and profile in place if the customer is proceeding;
+        otherwise delete them, and note that every removal lands in the Audit Trail, which is a tidy
+        closing exhibit of change control. Cancel the report schedule only if the customer asks —
+        most keep it. Hand the ISMS owner the pack as their working paper for Stage 2: the mapping
+        rows evidenced, the rows marked "not in pilot scope", and the retention decision.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/creating-device-posture-profiles-and-device-checks" target="_blank" rel="noopener">Creating Device Posture Profiles and Device Checks (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/client-connectivity-policy-continuous-posture-checks-check-policy" target="_blank" rel="noopener">Continuous Posture Checks — Check Policy (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/upcoming-update-to-device-posture-checks" target="_blank" rel="noopener">Update to Device Posture Checks — continuous by default from 7 Aug 2026 (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-the-client-connectivity-policy" target="_blank" rel="noopener">Configuring the Client Connectivity Policy (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/adding-device-conditions-to-firewall-rules" target="_blank" rel="noopener">Adding Device Conditions to Firewall Rules (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/zero-trust-device-security-with-cato" target="_blank" rel="noopener">Zero Trust Device Security With Cato (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/en/generating-a-posture-or-posture-compliance-report" target="_blank" rel="noopener">Generating Posture or Posture Compliance Reports (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/reviewing-posture-checks-for-your-account" target="_blank" rel="noopener">Reviewing Posture Checks for Your Account (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-audit-trail" target="_blank" rel="noopener">Using the Audit Trail (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-policy-revisions" target="_blank" rel="noopener">Working with Policy Revisions (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-admin-roles-using-rbac" target="_blank" rel="noopener">Managing Admin Roles Using RBAC (KB)</a> · <a href="https://knowledge.catonetworks.com/docs/authenticating-admins" target="_blank" rel="noopener">Authenticating Admins (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/guide-to-cato-data-lake" target="_blank" rel="noopener">Guide to Cato Data Lake (KB)</a></li>
+            <li><a href="https://security.catonetworks.com/" target="_blank" rel="noopener">Cato Networks Trust Center</a> · <a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Cato security, compliance &amp; privacy</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a> — the clause 4–10 map, the evidence-pack method and the CASB/DLP demo</li>
+            <li><a href="security-uk-public-sector.html">UK Public Sector: Cyber Essentials &amp; NCSC CAF</a></li>
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a> — posture inside the access policy</li>
+            <li><a href="access-identity-design.html">Identity Integration Design</a></li>
+            <li><a href="management-data-lake.html">Event Logs &amp; the Cato Data Lake</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

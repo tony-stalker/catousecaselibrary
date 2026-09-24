@@ -1244,6 +1244,46 @@ window.UC_DECKS = {
       "demo": "Open on the Cloud Apps Dashboard and let the app count talk — sanctioned, unsanctioned, risk-scored: you cannot govern what you cannot see.\nDrill into one app's catalogue entry: its risk score and the certifications the vendor holds — supplier due diligence cut from weeks of questionnaires to a lookup.\nIn DLP Configuration, walk the rule blocking cardholder data to unsanctioned apps, and narrate it in the auditor's language: information classification and transfer control.\nSwitch to the Data Protection Dashboard for proof — events over time, top rules, users and apps: the control-effectiveness evidence clause 9 asks for.\nEnd in the Audit Trail — one attributable change record for the whole stack — and close on scheduled exports: one evidence pack, not a quarter of screenshot-gathering."
     }
   },
+  "security-iso27001": {
+    "pain": [
+      "Stage 2 auditors test operation and records, not the policy document",
+      "The endpoint is where Annex A technological controls are hardest to prove",
+      "A tool per control means an export per control — evidence sprawl"
+    ],
+    "gain": [
+      "Device posture enforced continuously — every 10 minutes by default",
+      "One evidence plane: events, Audit Trail, Data Lake retention to 12 months",
+      "The Posture Compliance Report maps ISO 27001:2022 controls to checks"
+    ],
+    "demo": [
+      {
+        "area": "Resources » Device Posture",
+        "show": "Profiles, the eleven check types and the Check Policy — continuous, 10 minutes"
+      },
+      {
+        "area": "Access » Client Connectivity Policy",
+        "show": "A posture-gated rule: Allow WAN and Internet, Internet only, or blocked"
+      },
+      {
+        "area": "Home » Events",
+        "show": "Break a check: the Client refuses, Details names it, the event matches"
+      },
+      {
+        "area": "Home » Posture & Reports",
+        "show": "ISO 27001:2022-labelled checks, then the Posture Compliance Report generated and scheduled"
+      },
+      {
+        "area": "Account » Audit Trail",
+        "show": "The change record — who, what, when, before and after"
+      }
+    ],
+    "hook": "When Stage 2 asks how you know a non-compliant laptop cannot reach the finance system right now — where does the answer live?",
+    "notes": {
+      "divider": "Start with the honest sentence: no product makes you ISO 27001 compliant — certification attests a management system, clauses four to ten, and those are yours. What a platform can do is enforce the controls you select continuously and generate the evidence the auditor asks for.\nThen why now: the 2013 edition died on the thirty-first of October 2025. Everyone certifying today is on 2022, and five of its eleven new controls — cloud services, configuration management, DLP, monitoring, web filtering — are core SASE capabilities.\nLand the hook and let it sit.",
+      "why": "Stage 2 is where control stacks fail. The auditor wants demonstrable, consistent enforcement, around twelve months of records, and proof the records are reviewed — not a snapshot on audit day. And the endpoint is the hard part: the policy says encrypted disk, running EDR, patched OS, and the proof is usually a spreadsheet disconnected from whether the device was ever allowed on the network in that state.\nWith Cato the Client already on the device evaluates the checks, the profile gates the connection, the checks re-run every ten minutes by default, and every decision lands in one evidence plane. Say the boundary out loud: posture is one control family; the ISMS still needs the organisational controls.",
+      "demo": "Open in Resources, Device Posture: read a profile's checks out as the auditor would, then the Check Policy tab — continuous, every ten minutes. Then Access, Client Connectivity Policy: the rule with the profile attached and Allow WAN and Internet, its Internet-only twin, and the implicit block at the end.\nBreak a check on the demo laptop: the Client refuses, Details names the unmet requirement, and Home, Events has the same detail timestamped. Rule, outcome, record.\nSwitch vocabularies deliberately for Home, Posture — that was the device, this is the account — and show the ISO 27001:2022 labels, then generate the Posture Compliance Report and schedule it monthly. Close in Account, Audit Trail: the change you made a minute ago, attributed, with before and after."
+    }
+  },
   "security-data-casb-dlp": {
     "pain": [
       "The business adopts SaaS and AI apps faster than security can see",

@@ -341,6 +341,16 @@ window.UC_CATALOG = [
     deck: "4 - Security use cases/WIP - Helping Achieve Compliance with Cato Networks.pptx"
   },
   {
+    id: "security-iso27001",
+    file: "usecases/security-iso27001.html",
+    category: "Security",
+    title: "Becoming ISO/IEC 27001:2022 Compliant: Device Posture & Evidence",
+    summary: "Go deep on ISO 27001:2022 — device posture checks as the continuously enforced endpoint control, an Annex A mapping table with the auditor's artefact per row, and the Posture Compliance Report, Audit Trail and event retention that turn operation into evidence.",
+    tags: ["ISO 27001", "Device Posture", "Annex A", "Client Connectivity Policy", "Audit evidence"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "security-data-casb-dlp",
     file: "usecases/security-data-casb-dlp.html",
     category: "Security",
