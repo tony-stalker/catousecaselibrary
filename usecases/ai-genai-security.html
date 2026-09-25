@@ -523,15 +523,21 @@
           Monitor</strong> and attach a notification template. Have a pilot user — Priya — seed a
           prompt containing fictional test values for the agreed data classes: the sensitive values
           are masked in-flight, the prompt is still answered, and the notification explains what
-          happened. The Govern-section figure above shows exactly what her screen looks like.
+          happened. The Govern-section figure above (ChatGPT) shows exactly what her screen
+          looks like; the figure below shows the same Anonymize action in the Claude desktop
+          app, with the model's own reply confirming that the placeholders are what it received.
           Screenshot it from the user's side and pair it with the event — that pairing is the
           single most persuasive artefact this PoV produces.</p>
           <p>Be precise about the boundary: <strong>only detectors that support anonymisation are
-          masked</strong>. In the figure above the name, email address and bank account number are
+          masked</strong>. In both figures the name, email address and bank account number are
           tokenised while the date of birth passes through untouched — it is not in the detector
           set. Test the customer's own data classes in monitor before promising masking for them;
           where a class must never leave and its detector cannot anonymise, <strong>Anonymize and
           Block</strong> is the honest setting — masked where supported, blocked otherwise.</p>
+          <figure class="shot">
+            <img src="../assets/img/genai-anonymised-prompt-claude.png" alt="Claude conversation, dark theme. The sent prompt asks for a draft email for customer [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]. A grey status line reads 'Reviewing redacted personal and financial details in the request.' The reply is a draft email template addressed to [NAME_1] with an Account Details on File list showing Name [NAME_1], Date of Birth 01/01/1988, Email [EMAIL_1] and Account Number [BANK_ACCOUNT_NUMBER_1], followed by a notes section whose first bullet begins 'I kept the placeholders exactly as you provided them'." width="857" height="1142" loading="lazy">
+            <figcaption>The Anonymize action in a <strong>native desktop app</strong> (lab device, Claude desktop, cropped, staged fictional data, two frames stitched): the typed prompt named Jane Doe, her email address and a nine-digit account number; the model received [NAME_1], [EMAIL_1] and [BANK_ACCOUNT_NUMBER_1], and its own reply says so &mdash; <em>&ldquo;I kept the placeholders exactly as you provided them&rdquo;</em> &mdash; user-side proof the real values never reached the vendor. No browser plugin is involved: the masking happened on the network path, through the User Interaction Policy at the PoP &mdash; which needs TLS inspection enabled at account level but no app-specific TLSi rule. The date of birth passes through unmasked &mdash; only detectors that support anonymisation mask values, and DOB was outside that set here &mdash; and the draft email was still written.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Week 3 — the engage moment, on the access layer</h4>
@@ -572,7 +578,7 @@
       <div class="grid-2">
         <div class="benefit"><div class="b-icon">🕳️</div><div><h4>Prompts not being evaluated</h4><p>Almost always TLS inspection scope: the policy needs TLSi enabled at account level, and the pilot user's traffic must actually cross a PoP. Interaction rules take precedence over TLSi bypass rules — but a device that never reaches Cato needs the plugin path, not the inline one.</p></div></div>
         <div class="benefit"><div class="b-icon">🧩</div><div><h4>Plugin misbehaving alongside other extensions</h4><p>Browser extensions that rewrite page content — ad blockers, other security or DLP plugins — can interfere with prompt interception. Test the cohort's standard extension set on one device first, and check the plugin can reach the Cato service (allowlist the catonetworks.com TLD in any third-party SASE in the path).</p></div></div>
-        <div class="benefit"><div class="b-icon">🎭</div><div><h4>Anonymise left a value unmasked</h4><p>Working as documented, not broken: only detectors that support anonymisation mask values — anything outside the detector set passes through (the DOB in the figure above is the canonical example). Verify each promised data class in monitor, and use Anonymize and Block where an unmasked leak is unacceptable.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎭</div><div><h4>Anonymise left a value unmasked</h4><p>Working as documented, not broken: only detectors that support anonymisation mask values — anything outside the detector set passes through (the DOB in the two anonymise figures above is the canonical example). Verify each promised data class in monitor, and use Anonymize and Block where an unmasked leak is unacceptable.</p></div></div>
         <div class="benefit"><div class="b-icon">👤</div><div><h4>Events show IPs, not names</h4><p>Identity sync lag or an unsynced pilot user. Confirm the IdP integration is populating the pilot group before the first weekly review — the ladder's whole story is per-user.</p></div></div>
         <div class="benefit"><div class="b-icon">🔌</div><div><h4>API-sourced usage won't enforce</h4><p>By design: with the AI Security API Integration module, the User Interaction Policy supports monitoring actions only. Enforcement evidence must come from the inline path or the browser plugin — position API-sourced visibility as discovery, not control.</p></div></div>
       </div>

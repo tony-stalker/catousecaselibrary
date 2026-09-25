@@ -412,10 +412,10 @@
               <td>Redaction works — seen from the fee-earner's chair</td>
               <td>A prompt naming a client is masked in-flight by <strong>Anonymize and
               Monitor</strong>: the tokens are what the model receives, and the answer still comes
-              back — proven in the fee-earner's own browser, not a console</td>
+              back — proven on the fee-earner's own device, not in a console</td>
               <td>Side-by-side capture: the prompt as typed and the anonymised prompt the AI
               actually received, plus the matching interaction event</td>
-              <td>AI Security → User Interaction Policy · the fee-earner's browser · Monitor → Events</td>
+              <td>AI Security → User Interaction Policy · the fee-earner's device · Monitor → Events</td>
             </tr>
             <tr>
               <td>The AI-use policy has teeth</td>
@@ -518,8 +518,12 @@
           dropped, and API-based integrations support monitoring only
           (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
           Then prove it from the user's side: Rachel runs a prompt naming a client from her own
-          browser and screenshots what the model actually received. That capture — not a console
+          machine and screenshots what the model actually received. That capture — not a console
           view — is the artefact that convinces a sceptical partner.</p>
+          <figure class="shot">
+            <img src="../assets/img/genai-anonymised-prompt-claude.png" alt="Dark-themed Claude chat pane showing two frames of one exchange joined by a thin seam: the sent prompt asks for a draft email for customer [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1]; a grey status line says 'Reviewing redacted personal and financial details in the request'; the reply is a draft email template whose Account Details on File list repeats the placeholders and the unmasked date of birth, followed by closing notes whose first bullet begins 'I kept the placeholders exactly as you provided them'" width="857" height="1142" loading="lazy">
+            <figcaption>User-side proof from the Claude desktop app rather than a browser &mdash; and the model itself confirms the masking. The name, email address and account number typed into the prompt arrived as <em>[NAME_1]</em>, <em>[EMAIL_1]</em> and <em>[BANK_ACCOUNT_NUMBER_1]</em>, and the model's first closing note &mdash; <strong>"I kept the placeholders exactly as you provided them"</strong> &mdash; says placeholders, not real values, reached it. Tell that partner or a client's security reviewer two things plainly: the date of birth passed unmasked &mdash; only detectors that support anonymisation mask values, and nothing in this profile masked one, so test each promised data class in monitor before claiming it; and with no browser plugin in the path, masking happened on the network &mdash; the User Interaction Policy at the PoP, which needs account-level TLS inspection. The email still got drafted.</figcaption>
+          </figure>
         </li>
         <li>
           <h4>Give the AI-use policy teeth — and measure the effect</h4>

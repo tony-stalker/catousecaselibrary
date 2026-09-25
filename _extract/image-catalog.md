@@ -592,3 +592,30 @@ scratchpad `shots/CAPTURE-SESSION-LOG.md` (14 Sep session).
   cma-genai-dlp-forensics.png now **Embedded** → security-dlp-forensics (staged-incident step —
   serves the evidence-viewer want). ai-genai-security keeps UIP + plugin figures only; its DLP
   wording reduced to a cross-link, hero tag/catalog tag/deck step/diagram label de-DLP'd.
+
+## Batch: 25 Sep 2026 — Claude desktop anonymised prompt (Tony self-serve hand-back)
+
+End-user capture, not CMA: two HEIC frames of one reply in the Claude desktop app, staged with
+fictional data on a lab device. HEIC originals in `_extract/media/` (Screenshot 2026-09-25 at
+23.56.29 / 23.56.42). No tenant identity on screen; nothing redacted.
+
+- **genai-anonymised-prompt-claude.png** (25 Sep, Tony self-serve, lab device; 857×1142 composite
+  of the two frames — upper frame cut above the input bar with the scroll-down arrow painted out,
+  thin grey seam line, lower frame = the tail of the same reply) — the **Claude desktop app** (a
+  native window, not a browser tab; model chip read Sonnet 5) after the User Interaction Policy's
+  Anonymize action. Prompt as typed: "Draft an email for customer Jane Doe, DOB 01/01/1988,
+  email jane.doe@company.com, account 987654321." Prompt as sent, in the bubble: "Draft an email
+  for customer [NAME_1], DOB 01/01/1988, email [EMAIL_1], account [BANK_ACCOUNT_NUMBER_1].#"
+  (trailing # is a stray keystroke). The reply drafts the email around the placeholders, and its
+  closing notes say verbatim "I kept the placeholders exactly as you provided them (e.g.,
+  [NAME_1], [BANK_ACCOUNT_NUMBER_1]) so you can swap in the real values in your own system" —
+  the model's own confirmation that only tokens arrived. DOB passed through unmasked (outside what
+  this rule's detectors anonymise — same boundary as genai-anonymised-prompt.png; the KB never
+  enumerates which detectors anonymise, so captions say "outside that set here", not "no DOB
+  detector exists"). Distinct from the ChatGPT shot in two ways: the model acknowledges the
+  placeholders, and a native desktop app means the browser plugin was not in the path — the
+  masking happened on the network path. NOTE: window chrome is cropped, so the frame alone does
+  not evidence a native window — "desktop app" rests on the SE's capture provenance.
+  **Embedded** → ai-genai-security (PoV Week 2, Anonymize and Monitor) + ai-legal-genai
+  (walkthrough step "Add the Anonymize rule for client identifiers"). Candidate reuse:
+  security-ai, ai-eu-ai-act (transparency evidence).
