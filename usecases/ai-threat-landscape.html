@@ -611,6 +611,13 @@
           (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>);
           stage it per the <a href="security-tls-inspection.html">TLS Inspection playbook</a>.
           Discovery is network-level and starts building while that conversation runs.</li>
+          <li><strong>Internet Firewall inspecting the traffic, with the default QUIC rule enabled</strong>
+          — the KB's second prerequisite alongside TLSi
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          The policy only sees prompts that arrive as inspectable TLS; a browser or app allowed to
+          use QUIC over UDP bypasses inspection entirely. Cato creates the QUIC and GQUIC
+          block rules the first time TLS inspection is switched on — confirm nobody has since
+          disabled them.</li>
           <li><strong>Identity integration syncing the pilot cohort</strong> — the inventory and
           events should name people, not IP addresses (see
           <a href="access-identity-design.html">Identity Integration Design</a>).</li>
@@ -688,7 +695,7 @@
 
       <h3>Troubleshooting</h3>
       <div class="grid-2">
-        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Interaction data isn't appearing</h4><p>Almost always TLS inspection: it must be enabled at the account level before the User Interaction Policy can inspect AI traffic. Check <span class="path">Security → TLS Inspection</span> and confirm the cohort's traffic is in inspection scope with no bypass rule swallowing it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Interaction data isn't appearing</h4><p>Almost always TLS inspection: it must be enabled at the account level before the User Interaction Policy can inspect AI traffic. Check <span class="path">Security → TLS Inspection</span> and confirm the cohort's traffic is in inspection scope — interaction rules take precedence over TLSi bypass rules, so an app-level bypass is not the cause. Second check: the Internet Firewall's default QUIC block rule is still enabled — with it off, the browser and the AI app can talk QUIC over UDP and the prompt is then never TLS-inspected, so the policy never sees it.</p></div></div>
         <div class="benefit"><div class="b-icon">🪪</div><div><h4>Inventory shows IPs, not people</h4><p>Identity integration isn't syncing the pilot cohort. Fix the IdP sync before any customer-facing review — anonymous rows undercut the accountability story this PoV sells.</p></div></div>
         <div class="benefit"><div class="b-icon">🧾</div><div><h4>A criterion needs a licence the trial lacks</h4><p><em>AI for End Users</em>, CASB+DLP and XOps gate different criteria. Write entitlements against each criterion before week one, and drop — rather than fudge — any criterion the trial cannot cover.</p></div></div>
         <div class="benefit"><div class="b-icon">📡</div><div><h4>The DLP or IPS evidence is thin</h4><p>A quiet ten-user cohort gives sensors little to say. Widen the Events window, let the pilot run its full course, and remember new IPS rules can take up to ten minutes to become effective — these criteria accrue, they don't fire on demand.</p></div></div>

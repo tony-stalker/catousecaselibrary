@@ -482,6 +482,11 @@
           Policy inspects AI traffic on the back of account-level TLSi, so without it there is no
           prompt-level story. Stage it per <a href="security-tls-inspection.html">TLS Inspection:
           Staged Rollout Playbook</a>, scoped to the cohort.</li>
+          <li><strong>Internet Firewall inspecting the traffic, with the default QUIC rule enabled</strong>
+          — the KB's second prerequisite alongside TLSi (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          The policy only sees prompts that arrive as inspectable TLS; a browser allowed to use QUIC
+          over UDP bypasses inspection entirely. Cato creates the QUIC and GQUIC block rules
+          the first time TLS inspection is switched on — confirm nobody has since disabled them.</li>
           <li><strong>Licences</strong> — AI Security for End Users is a separate per-user licence;
           the 30-day trial is arranged with your Cato SE and CSM and <em>is</em> the assessment
           clock, so activate it at kickoff, not before. CASB/DLP enabled (may itself need a trial).</li>

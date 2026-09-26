@@ -354,6 +354,10 @@
           (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>) —
           stage it per the <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a>. Discovery itself is
           network-level and does not read prompt content, so the inventory starts building while the TLSi conversation is still running.</li>
+          <li><strong>Internet Firewall inspecting the traffic, with the default QUIC rule enabled</strong> — the KB's second prerequisite alongside TLSi
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-the-user-interaction-policy" target="_blank" rel="noopener">Working with the User Interaction Policy</a>).
+          The policy only sees prompts that arrive as inspectable TLS; a browser or app allowed to use QUIC over UDP bypasses inspection entirely.
+          Cato creates the QUIC and GQUIC block rules the first time TLS inspection is switched on — confirm nobody has since disabled them.</li>
           <li><strong>Identity integration syncing the pilot group</strong> — the inventory and dashboards should say "Priya uses these five AI apps", not "an IP address does".</li>
           <li><strong>Prompt privacy approved up front:</strong> whoever owns privacy signs off what interaction data is captured and who may view it — before the first rule, not after.</li>
         </ul>
@@ -451,7 +455,7 @@
 
       <h3 style="margin-top:26px">Troubleshooting</h3>
       <div class="grid-2">
-        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Interaction data isn't appearing</h4><p>The usual cause is TLS inspection: it must be enabled at the account level before the User Interaction Policy can inspect AI traffic. Check <span class="path">Security → TLS Inspection</span> and confirm the pilot group's traffic is in inspection scope.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔐</div><div><h4>Interaction data isn't appearing</h4><p>The usual cause is TLS inspection: it must be enabled at the account level before the User Interaction Policy can inspect AI traffic. Check <span class="path">Security → TLS Inspection</span> and confirm the pilot group's traffic is in inspection scope. Second check: the Internet Firewall's default QUIC block rule is still enabled — with it off, the browser and the AI app can talk QUIC over UDP and the prompt is then never TLS-inspected, so the policy never sees it.</p></div></div>
         <div class="benefit"><div class="b-icon">🧾</div><div><h4>A feature you expected isn't licensed</h4><p><em>AI for End Users</em> and <em>AI for Applications</em> are separate per-user licences. Agent- and homegrown-app capabilities sit on the Applications side — out of scope for this starter pilot; confirm the trial covers what you promised before promising it.</p></div></div>
         <div class="benefit"><div class="b-icon">🪪</div><div><h4>Inventory shows IPs, not people</h4><p>Identity integration isn't syncing the pilot group. Fix the IdP sync before the dashboard walkthrough — anonymous rows undercut the whole "who is using what" story (see <a href="access-identity-design.html">Identity Integration Design</a>).</p></div></div>
         <div class="benefit"><div class="b-icon">🔌</div><div><h4>Anonymise isn't available on a rule</h4><p>If the tenant sees AI traffic through the AI Security API Integration module, the KB notes the User Interaction Policy supports monitoring actions only. The monitor → anonymise step needs inline traffic through a Cato PoP.</p></div></div>
