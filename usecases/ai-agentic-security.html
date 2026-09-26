@@ -483,6 +483,26 @@
           connected MCP servers. Capture the first inventory the day it populates — dated — and again
           at the end; the delta (new agents appearing mid-pilot) is often the finding that lands
           hardest. Nothing is enforced at this stage.</p>
+          <p>Scout re-scans when its schedule invokes it, so the schedule is what keeps the
+          inventory current. The SE's field configuration below runs it every two hours — the KB's
+          <a href="https://knowledge.catonetworks.com/docs/overview-of-scouts-and-agent-controls" target="_blank" rel="noopener">Scout article</a>
+          recommends every six, scheduling the installation script so each run also updates Scout —
+          and the paths match the install locations the KB's uninstall section lists; confirm both
+          against the customer's deployment, and check whether the installation script has already
+          registered its own Scout task on Windows before adding this one. These blocks invoke the installed binary, not the installation
+          script, so plan Scout updates through the MDM rather than assuming the schedule does them.
+          The MDM should own the schedule too: Intune or Jamf pushes the task or cron entry alongside
+          the binary, not an admin registering it by hand.</p>
+<pre class="code"><span class="cmt"># Windows — scheduled task via PowerShell, every 2 hours (SE field config); needs an elevated context — the MDM's device-script context or an admin shell</span>
+$action    = New-ScheduledTaskAction -Execute "C:\ProgramData\AIM\ai-scout.exe"
+$trigger   = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 2) -RepetitionDuration (New-TimeSpan -Days 3650)
+$principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+$settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -RunOnlyIfNetworkAvailable
+
+Register-ScheduledTask -TaskName "Cato AI Scout" -Action $action -Trigger $trigger -Principal $principal -Settings $settings
+Start-ScheduledTask -TaskName "Cato AI Scout"</pre>
+<pre class="code"><span class="cmt"># macOS — cron, every 2 hours (SE field config); the MDM must run this as root so it lands in root's crontab</span>
+(crontab -l 2&gt;/dev/null; echo "0 */2 * * * /usr/local/bin/ai-scout &gt;&gt; /var/log/ai-scout.log 2&gt;&amp;1") | crontab -</pre>
         </li>
         <li>
           <h4>Connect the managed platform</h4>
@@ -585,7 +605,7 @@ client = OpenAI(
 
       <h3>Troubleshooting — what actually goes wrong</h3>
       <div class="grid-2">
-        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>A known agent is missing from Local Agents</h4><p>Scout never reached that endpoint or has not re-scanned. Check the MDM deployment status for the device, confirm it is in the pilot group, and check the instance's last-seen timestamp after the next scan cycle before concluding anything about the product.</p></div></div>
+        <div class="benefit"><div class="b-icon">🕳️</div><div><h4>A known agent is missing from Local Agents</h4><p>Scout never reached that endpoint or has not re-scanned. Check the MDM deployment status for the device, confirm it is in the pilot group, and check the instance's last-seen timestamp after the next scan cycle before concluding anything about the product. Either way, confirm the scheduled task or cron entry that invokes Scout exists on the device and last ran when it should have — a schedule that never fired looks like an agent that was never there, and one that stopped firing looks like an agent that went away. Then check the device's row on <span class="path">AI Security → Scout</span> (First Seen / Last Seen): a host that has never appeared there is a deployment problem, not a discovery one.</p></div></div>
         <div class="benefit"><div class="b-icon">☁️</div><div><h4>Managed agents not appearing after integration</h4><p>The API credential can connect but cannot enumerate — wrong project, environment or permission scope on the platform side. Re-check the integration's credentials against the platform's requirements with the platform owner, then re-sync.</p></div></div>
         <div class="benefit"><div class="b-icon">🧵</div><div><h4>Custom-agent sessions never arrive</h4><p>The agent's traffic is not crossing the AI-FW: the base-URL redirect was applied in the repo but not in the running environment (an environment variable overrides it, or a sidecar bypasses it). Verify the deployed configuration, not the source code.</p></div></div>
         <div class="benefit"><div class="b-icon">🏷️</div><div><h4>Inventory without owners</h4><p>A hostname is not an owner, and criterion 5 fails without attribution. Map every discovered instance to a named person in week 1 while the list is short. Personal or free-tier instances are flagged, not shamed — the shadow-agent finding is a pilot deliverable, not a disciplinary file.</p></div></div>
@@ -614,6 +634,7 @@ client = OpenAI(
           <ul style="margin:0;padding-left:20px;font-size:.94rem">
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-ai-security-for-agents" target="_blank" rel="noopener">What is AI Security for Agents</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-local-ai-agents-security" target="_blank" rel="noopener">Local AI Agents Security</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/overview-of-scouts-and-agent-controls" target="_blank" rel="noopener">Overview of Scouts and Agent Controls</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-managed-ai-agents-security" target="_blank" rel="noopener">Managed AI Agents Security</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/what-is-custom-ai-agents-security" target="_blank" rel="noopener">Custom AI Agents Security</a></li>
             <li><a href="https://knowledge.catonetworks.com/docs/advanced-configuration-for-claude-code" target="_blank" rel="noopener">Advanced Configuration for Claude Code</a></li>
