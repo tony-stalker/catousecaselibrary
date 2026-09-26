@@ -31,6 +31,21 @@
 <main class="main">
     <div class="card" style="margin-bottom:16px">
       <div class="section-kicker">26 September 2026</div>
+      <h3 style="margin:4px 0 0">ai-agentic-security: AI Scout scheduling — Windows scheduled task and macOS cron (SE field config)</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>PoV &quot;Deploy Scout to the pilot group&quot; step now carries the SE&#x27;s two-hourly</li><li>schedule verbatim: a PowerShell Register-ScheduledTask block (SYSTEM,</li><li>StartWhenAvailable, RunOnlyIfNetworkAvailable) and a crontab one-liner</li><li>logging to /var/log/ai-scout.log. Intro states honestly where it differs from</li><li>the KB&#x27;s Scout article (KB schedules the installation script every 6 h so each</li><li>run also updates Scout; its Windows installer registers its own task — check</li><li>for a duplicate), and that the paths match the KB&#x27;s uninstall locations.</li><li>Troubleshooting card gains the schedule check and the AI Security → Scout</li><li>First Seen / Last Seen check; Scout article linked under Resources.</li><li>STALENESS row records what is field config vs KB-corroborated; search index</li><li>regenerated.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">26 September 2026</div>
+      <h3 style="margin:4px 0 0">AI pages: Internet Firewall / default QUIC rule prerequisite everywhere the UIP is staged</h3>
+      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Adds the KB&#x27;s second User Interaction Policy prerequisite (Internet Firewall</li><li>inspecting traffic with the default QUIC rule enabled) to the PoV prerequisites</li><li>and the TLS-related troubleshooting card on ai-legal-genai, security-ai,</li><li>ai-eu-ai-act, ai-threat-landscape and security-ai-visibility, matching the</li><li>wording shipped on ai-genai-security. Corrects the QUIC mechanism on every</li><li>page: browsers prefer QUIC and fall back to TCP when it is blocked, so the text</li><li>now says &quot;allowed to use QUIC&quot; / &quot;can talk QUIC&quot;. ai-eu-ai-act and</li><li>ai-threat-landscape troubleshooting cards no longer blame a TLSi bypass rule</li><li>(interaction rules take precedence over bypass rules per the KB). Search index</li><li>regenerated.</li></ul>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">26 September 2026</div>
+      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
+      
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="section-kicker">26 September 2026</div>
       <h3 style="margin:4px 0 0">ai-genai-security: add the Internet Firewall / default QUIC rule prerequisite</h3>
       <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The User Interaction Policy KB lists a second prerequisite beside account-level</li><li>TLS inspection: the Internet Firewall must inspect the traffic and the default</li><li>QUIC rule must be enabled. Added to the PoV prerequisites callout and to the</li><li>&quot;Prompts not being evaluated&quot; troubleshooting card (QUIC over UDP is never</li><li>TLS-inspected, so the policy never sees the prompt). Search index regenerated.</li></ul>
     </div>
