@@ -558,14 +558,16 @@ client = OpenAI(
 
       <h3>What good output looks like</h3>
       <figure class="shot">
-        <img src="../assets/img/cma-ai-access-policy.png" alt="CMA AI Security area, July 2026: left navigation showing Monitoring (Overview, Discovery, AI Users, Session Explorer; Local Agents and Agent Sessions under AI Security for Agents; Guards, Homegrown Agents, Interaction Explorer, Managed Agents under AI Security for Apps) and Configuration (Engine Profiles, Playground, Integrations, User Interaction Policy, User Access Policy, Browser Plugin, Agents Policy), with the User Access Policy rulebase open in the main pane" loading="lazy">
-        <figcaption>The CMA's AI Security area as it stands (July 2026) — the pilot's evidence map is
-        the left navigation: <strong>Local Agents</strong> and <strong>Agent Sessions</strong> under
-        monitoring are where criteria 1 and 3 land, <strong>Managed Agents</strong> and
-        <strong>Integrations</strong> carry criterion 2, and <strong>Agents Policy</strong> under
-        configuration is where the monitor-mode control lives. The open pane is the neighbouring
-        end-user access policy — a useful reminder in the wrap-up that agent governance arrives
-        alongside, not instead of, the user-facing AI controls.</figcaption>
+        <img src="../assets/img/cma-ai-agents-overview.png" alt="CMA AI Security → Agents Overview dashboard for last month: interceptor Claude Code Hooks, 10 active users, 2 applications, a funnel to 3.38k total interactions split into 3.33k allowed and 57 blocked; Top Usage bubble chart dominated by Claude Code at 3.25k; Violation Breakdown donut of 83 violations led by Block PII in Coding Agents – Secrets &amp; Passwords, two demo rules blocking unsanctioned or unclassified MCPs, and a monitor-mode sensitive-data rule; High Risk Skills table listing planning-with-files, commit, commit-push-pr, summarize-changes and ai-integration-phase with finding counts; Top Users bar list; Top MCPs table with Atlassian Remote and cato-cli-mcp marked Sanctioned alongside unclassified servers" loading="lazy">
+        <figcaption><strong>AI Security → Agents Overview</strong> — the one-screen summary the pilot
+        wrap-up opens on. Read it left to right: <strong>Claude Code Hooks</strong> is the interceptor
+        doing the tracing, ten users and two applications feed the interaction funnel, and the
+        allowed-versus-blocked split shows how little the monitor-mode pilot actually stopped. The
+        <strong>Violation Breakdown</strong> is the evidence for criterion 3 — the top rule is the
+        secrets-and-passwords guard, followed by the unsanctioned-MCP rules that criterion 2 exists to
+        populate. The bottom row is the exposure register in miniature: <strong>High Risk Skills</strong>
+        with findings per skill, the top users by interaction volume, and <strong>Top MCPs</strong> with
+        its sanctioned-versus-unclassified status column — the list the recommendation regularises.</figcaption>
       </figure>
       <figure class="shot">
         <img src="../assets/img/cma-ai-agent-drill-graph.png" alt="CMA Local Agents instance drill-down rendered as a graph: five local directory nodes including /home/Catopod and demo workspace folders feed a central Claude Code coding-agent node, which fans out to the MCP tool groups @bytebase/dbhub and @modelcontextprotocol/server and on to individual tools execute_sql, search_objects, get_file_contents and list_commits, with collapsed expanders reading +14 more directories, +3 more tools, +5 more tool groups and +29 total tools" loading="lazy">
