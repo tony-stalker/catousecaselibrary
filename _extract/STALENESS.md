@@ -7,7 +7,7 @@ build time (July 2026) from the sources cited on each page.
 | Dated fact | Where it lives | Recheck when |
 |---|---|---|
 | AnyConnect 4.x support ends Mar 2027 (maintenance ended Mar 2024) | migration-anyconnect, migration-cisco | Mar 2027 — reframe as "ended" |
-| ASA 5506/5508/5516-X EOS Aug 2026; ASA 5500-X support ends 2026 | migration-anyconnect, migration-cisco | Sep 2026 — reframe as past |
+| ASA 5506/5508/5516-X EOS 31 Aug 2026 — reframed as past 27 Sep 2026 (anyconnect prose; the cisco table and stat tiles already read as dates) | migration-anyconnect, migration-cisco | Mar 2027 — AnyConnect 4.x EOS 31 Mar 2027 is the next date to reframe |
 | Umbrella legacy SKUs EOS Sep 2025; vEdge support ends 2026 | migration-cisco | Quarterly |
 | PA-3200/5200 EOS (support to Aug 2028); Expedition EOL Dec 2024 | migration-palo-alto(-policy) | Aug 2028 / stable |
 | CVE-2024-3400, CVE-2024-47575 (FortiJump), CVE-2024-39717 (Versa), 2025 Concerto CVEs | palo-alto, fortinet, versa pages | Stable as history; add newer CVEs quarterly |
@@ -31,12 +31,12 @@ build time (July 2026) from the sources cited on each page.
 | Six Sophos firewall CVEs in CISA KEV (incl. CVE-2020-25223 SG UTM, CVE-2020-29574 CyberoamOS) | migration-sophos | Quarterly — counts grow |
 | Sophos endpoint credentials (Gartner MQ EPP Leader 17th consecutive 2026; MDR 26k+ customers Jan 2025; MSP Elevate May 2025) | migration-sophos | On next MQ / annually |
 | SD-RED 20/60 has NO declared EOL — page explicitly says do not claim it | migration-sophos | Quarterly — reframe if Sophos declares one |
-| DSPT 2025-26 "v8" aligned to CAF v3.4, deadline 30 Jun 2026 just closed; NO 2026-27 (v9) edition yet — page carries a staleness callout | security-healthcare-nhs | Sep 2026 — new edition expected on ~Sept cadence |
+| DSPT 2026-27 "v9" released 1 Sep 2026 (dsptoolkit.nhs.uk/News/release-notes; spreadsheet News/169 8 Sep; audit scope News/170 10 Sep), aligned to CAF v4.0, deadline 30 Jun 2027, mandatory audit = 11 fixed outcomes + 1 chosen, new mandatory XDR policy — page updated 27 Sep 2026; the 47-outcome count is carried over from v8 and NOT yet re-verified against the v9 spreadsheet | security-healthcare-nhs | Oct 2026 — NHS England's updated audit guidance was promised for early Oct; verify the v9 outcome count; then Sep 2027 for v10 |
 | NCSC CAF v4.0 (Aug 2025) vs NHS still on v3.4 | security-healthcare-nhs | On next DSPT edition |
 | NHS Supply Chain requires CE+ from in-scope suppliers (Sep 2025); NHS England MFA policy (Aug 2023); HSCN operational, no announced successor | security-healthcare-nhs | Annually |
 | Always-On bypass minimum Client versions (Win 5.9+ / macOS 5.5+ / iOS 5.6+); EM Connection Details scoring thresholds | access-remote-worker | Quarterly vs KB — versions move with releases |
 | Digital Omnibus "publication still pending" wording (agreed May–Jun 2026; delays Annex III high-risk incl. Art 26 → 2 Dec 2027, Annex I → 2 Aug 2028) — in the Read-this-first callout AND objective | ai-eu-ai-act | On OJ publication (~weeks) — cite the amending regulation, drop "pending" |
-| AI Act general applicability "from 2 Aug 2026" phrasing; Art 50 marking grace to 2 Dec 2026 for pre-market systems | ai-eu-ai-act | Sep 2026 — confirm "from" reads naturally as past; Dec 2026 for the grace row |
+| AI Act general applicability reframed as past ("since 2 Aug 2026") on 27 Sep 2026; Art 50 marking grace to 2 Dec 2026 for pre-market systems still reads as future | ai-eu-ai-act | Dec 2026 — reframe the grace row; Dec 2027 for the Annex III deferral |
 | Member-state authority tracker 9 clear / 12 partial / 6 none (as of 17 Jun 2026) | ai-eu-ai-act | Quarterly — refresh after 2 Aug 2026 enforcement start |
 | CSA (13 Mar 2026) >half lack AI inventories; appliedAI 40% of 106 systems unclassifiable | ai-eu-ai-act | Stable as dated research; replace if fresher studies appear |
 | Cato Data Lake default retention 3 months (extendable) — hedged on-page, support page login-gated | ai-eu-ai-act | Quarterly vs KB/SKU — firm up if a public source appears |

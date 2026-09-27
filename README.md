@@ -81,7 +81,9 @@ Conventions and gotchas:
   fictional users only. Case studies are anonymised.
 - `measure_svg.py` must run **silent**; any output is a diagram regression.
 - External link checks use **curl, not python** — machines behind Cato TLS inspection
-  lack the Cato root CA in python's trust store.
+  lack the Cato root CA in python's trust store. Known false positive: `www.sophos.com`
+  times out from behind the tunnel (curl exit 28/92) but the two migration-sophos links
+  are live — confirm with a browser before "fixing" them.
 - Screenshots come from a demo tenant with fictional identities; `.heic` originals are
   archived in `_extract/media/`.
 
