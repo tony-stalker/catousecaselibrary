@@ -76,6 +76,12 @@ Inline `<svg viewBox="0 0 960 4xx" role="img" aria-labelledby="dg1-title dg1-des
   produce no EDGE lines and no BOX overflow > 4px.
 - Cato PoP: `circle.dg-pop` (r≈30) + optional `circle.pulse-ring` behind it; backbone as
   `ellipse.dg-backbone` or a chain of PoP circles.
+- Depth comes from the stylesheet, not the markup (Sep 2026): node classes carry CSS
+  `filter: drop-shadow` via the `--dg-shadow*` tokens, PoP rings glow (`--dg-glow`) and have
+  a filled core (`--dg-pop-core` — never put text inside the ring), the backbone ellipse is
+  tinted (`--dg-backbone-fill`), and the `<svg>` sits on a dot-grid canvas (`--dg-canvas`,
+  `--dg-dot`). Do not add inline filters/gradients per diagram; light and dark values of
+  every token live in style.css.
 - Flows: `path.lane.lane-allow|lane-limit|lane-block|lane-info` (animated marching dashes;
   green=allowed, amber=restricted, red=blocked/attack, dark blue=telemetry/alert flows to
   SOC/monitoring — legend swatch `.swatch.info`) and `.lane-static` for neutral links.
