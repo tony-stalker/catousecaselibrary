@@ -40,6 +40,12 @@ def build_handler(root: Path):
 
         do_HEAD = do_GET
 
+        def end_headers(self):
+            # pages and the generated JS (catalog, search index, deck content) change on
+            # every release; browsers must revalidate rather than reuse a cached copy
+            self.send_header("Cache-Control", "no-cache")
+            super().end_headers()
+
         def do_POST(self):
             if self.path.split("?", 1)[0] != "/api/feedback":
                 self.send_error(404)
