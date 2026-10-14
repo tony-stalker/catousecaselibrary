@@ -133,6 +133,7 @@ h3 { font-size: 1.12rem; margin: 1.2em 0 .4em; }
 .chip-cat-security   { background: #fbdfd6; color: #8a3014; }
 .chip-cat-migration  { background: #f7ecd0; color: #7a5a10; }
 .chip-cat-ai-security { background: #f9e0ee; color: #8a2360; }
+.chip-cat-platform-demo { background: #dcefef; color: #0f5a5e; }
 .uc-card .tag { cursor: pointer; }
 .uc-card .tag:hover { background: var(--green-050); color: var(--green-700); }
 .tag.tag-vert { background: var(--navy-800); color: #cfe6de; border-color: var(--navy-800); }
@@ -569,6 +570,7 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
   :root[data-theme="dark"] .chip-cat-security   { background: #46200f; color: #f5b39c; }
   :root[data-theme="dark"] .chip-cat-migration  { background: #3d330f; color: #e8d089; }
   :root[data-theme="dark"] .chip-cat-ai-security { background: #431533; color: #f0a6d2; }
+  :root[data-theme="dark"] .chip-cat-platform-demo { background: #0f3a3c; color: #8fe0e4; }
   :root[data-theme="dark"] .badge-ready { background: #0e3512; color: #7fd68a; }
   :root[data-theme="dark"] .badge-wip   { background: #3d300c; color: #e8c46e; }
   :root[data-theme="dark"] .badge-new   { background: #14324f; color: #93c5f2; }
@@ -766,6 +768,8 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
 .deck-title-input:focus { outline: 2px solid var(--green-500); outline-offset: 1px; }
 .deck-count { font-size: .86rem; color: var(--ink-3); white-space: nowrap; }
 .deck-builder-actions .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.deck-compact { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: .84rem; color: var(--ink-2); cursor: pointer; }
+.deck-compact input { accent-color: var(--green-600); margin-top: 3px; flex: none; }
 
 /* floating tray on use-case pages (the builder card plays this role on the index) */
 .deck-tray {

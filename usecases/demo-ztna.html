@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: ZTNA — Cato Use Case Library</title>
+<meta name="description" content="Five minutes on identity-aware, posture-checked access from the Cato Client — the user, the device check, the rule that allows and the rule that denies.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-ztna">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 5: ZTNA</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: ZTNA</h1>
+    <p class="lede">
+      Segment 5 of <a href="demo-platform-60.html">the 60-minute platform demo</a> — minutes 30 to 35.
+      Five minutes on identity-aware, posture-checked access from the Cato Client: the user as the IdP
+      knows her, the device check the Client runs, the rule that allows her to one private application
+      and the rule that denies the rest. Same engine as the four segments before it, now applied to
+      traffic coming in to your applications rather than going out to the internet.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ZTNA</span><span class="tag">Cato Client</span><span class="tag">Device Posture</span>
+      <span class="tag">Client Connectivity Policy</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The sentence they must leave with</h2>
+      <p>
+        <strong>Access to a private application is decided by who the user is and the state of the
+        device she is on — continuously, by the same engine that just inspected her internet traffic —
+        and nothing she has not been explicitly allowed is reachable.</strong>
+      </p>
+      <p>
+        Legacy remote access gives a credential the whole network: once the tunnel is up, the VPN has
+        done its job and lateral movement is the user's problem to resist. Cato replaces that with a
+        single user identity provisioned from the IdP, so a policy written once is enforced whether the
+        user is behind a site or remote, paired with a Device Posture Profile the Cato Client evaluates
+        on the endpoint. Checks inside a profile combine with AND; since 7 August 2026 they re-run
+        continuously, every 10 minutes by default, so a device that drifts out of compliance mid-session
+        is disconnected rather than trusted until tomorrow's login.
+      </p>
+      <p>
+        This segment shows the Socket-site path: the application sits behind a Cato Socket in the London
+        DC, and the WAN Firewall is the rulebase that allows or denies the flow. The next segment,
+        <a href="demo-app-connectors.html">App Connectors</a>, covers the applications you do not want
+        to on-ramp a whole network for. Keep the two apart in the room — same identity, same posture,
+        same engine, two ways for the application to be reachable.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Bridge in, three beats, bridge out</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from DLP</div>
+        <p>“So far every flow was a user going out. Now the other direction: users reaching your private applications.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — Who, and on what</h4>
+          <p><strong>Say:</strong> “Every private-access decision starts with two facts the platform already holds: the user, as your IdP provisioned her, and the device, as the Client sees it right now.”</p>
+          <p><strong>Show:</strong> Priya under <span class="path">Access → Users</span> — SCIM-provisioned, with her IdP groups, the same identity whether she is at a desk behind a Socket or at home on the Client. Then the Device Posture Profile under <span class="path">Resources → Device Posture</span>: the checks it bundles and that they combine with AND.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — The rule that allows and the rule that denies</h4>
+          <p><strong>Say:</strong> “Least privilege is two rules, not two hundred: one that names the user group, the posture profile and the one application, and the implicit block underneath it that catches everything else.”</p>
+          <p><strong>Show:</strong> <span class="path">Access → Client Connectivity Policy</span> — the front door: a device that fails the profile never establishes a tunnel. Then <span class="path">Security → WAN Firewall</span>: the allow rule scoped to Priya's group plus the profile, reaching only the ERP application behind the London DC Socket; nothing beneath it but the implicit block.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — The proof in events</h4>
+          <p><strong>Say:</strong> “Here is the same person, twice: allowed from the managed laptop, denied from the one that fails the check. The allow carries her name, the rule, the action and the destination — not an IP address; the block carries her name, the policy and the check she failed.”</p>
+          <p><strong>Show:</strong> <span class="path">Monitor → Events</span> filtered to Priya: the allow against the named WAN Firewall rule beside the block from the non-compliant device, reason “Device fails to meet the Device Check”.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to App Connectors</div>
+        <p>“That user reached an application on a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>Identity and posture decide; the WAN Firewall enforces</h2>
+      <p>
+        The Cato Client connects Priya to the nearest PoP, where the single-pass engine already knows
+        her identity and group from SCIM and her device state from the posture profile the Client has
+        just evaluated. The Client Connectivity Policy decides whether a tunnel exists at all; the WAN
+        Firewall then decides, rule by rule, top-down and first-match, what that tunnel may reach. The
+        same user on a device that fails the profile fails the Client Connectivity rule, so no tunnel
+        is established — she never reaches the WAN Firewall — and the Client names the failed check,
+        with a Client Connectivity Policy block event behind it.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">ZTNA decision for one user on two devices</title>
+          <desc id="dg1-desc">The same user, Priya, connects through the Cato Client from a managed laptop that passes the Device Posture Profile and from a personal laptop that fails it. The compliant device passes the Client Connectivity Policy, reaches the Cato PoP where the single-pass engine combines her IdP group with the posture result, matches WAN Firewall rule 1 and reaches the ERP application behind the London DC Socket. The non-compliant device fails the Client Connectivity Policy, so no tunnel is established and it is stopped before the PoP; the WAN Firewall implicit block waits beneath rule 1 for any tunnel that matches nothing.</desc>
+
+          <!-- Policy inputs feeding the engine -->
+          <rect class="dg-node" x="300" y="28" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="400" y="52" text-anchor="middle">Policy inputs</text>
+          <text class="dg-sub" x="400" y="70" text-anchor="middle">IdP groups · posture profile</text>
+          <path class="lane-static" d="M 400 86 L 400 192"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="400" cy="230" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="400" cy="230" r="30"/>
+          <text class="dg-label" x="400" y="290" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="400" y="306" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Single-pass engine · ZTNA</text>
+
+          <!-- Decisions -->
+          <rect class="dg-node-green" x="540" y="92" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="625" y="116" text-anchor="middle">WAN Firewall rule 1</text>
+          <text class="dg-sub" x="625" y="134" text-anchor="middle">Allow · Finance → ERP</text>
+
+          <rect class="dg-node-dark" x="540" y="300" width="170" height="58" rx="10"/>
+          <text class="dg-label-inv" x="625" y="324" text-anchor="middle">WAN Firewall</text>
+          <text class="dg-sub-inv" x="625" y="342" text-anchor="middle">Implicit block · the rest</text>
+          <path class="lane-static" d="M 424 254 L 540 329"/>
+
+          <!-- Client Connectivity Policy gate: posture fail, no tunnel -->
+          <rect class="dg-node-dark" x="220" y="318" width="200" height="58" rx="10"/>
+          <text class="dg-label-inv" x="320" y="342" text-anchor="middle">Client Connectivity Policy</text>
+          <text class="dg-sub-inv" x="320" y="360" text-anchor="middle">Posture fail · no tunnel</text>
+
+          <!-- Destination -->
+          <rect class="dg-node" x="770" y="92" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="116" text-anchor="middle">London DC</text>
+          <text class="dg-sub" x="855" y="134" text-anchor="middle">Socket X1500 · ERP app</text>
+
+          <!-- Green: compliant device -->
+          <path class="lane lane-allow" d="M 150 140 C 250 140, 320 192, 370 214"/>
+          <path class="lane lane-allow" d="M 430 214 C 470 190, 500 121, 540 121"/>
+          <path class="lane lane-allow" d="M 710 121 L 770 121"/>
+
+          <!-- Red: non-compliant device — stopped at the Client Connectivity Policy, before the PoP -->
+          <path class="lane lane-block" d="M 150 320 C 185 320, 190 347, 220 347"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 428 335 L 452 359"/><path class="lane-x" d="M 452 335 L 428 359"/>
+          </g>
+
+          <!-- Users (left) -->
+          <g>
+            <circle cx="110" cy="140" r="23" fill="var(--status-good)"/>
+            <circle cx="110" cy="133" r="6.5" fill="#fff"/>
+            <path d="M 97 153 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="110" y="182" text-anchor="middle">Priya · managed laptop</text>
+            <text class="dg-sub" x="110" y="198" text-anchor="middle">Finance group · posture pass</text>
+          </g>
+          <g>
+            <circle cx="110" cy="320" r="23" fill="var(--status-critical)"/>
+            <circle cx="110" cy="313" r="6.5" fill="#fff"/>
+            <path d="M 97 333 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="110" y="362" text-anchor="middle">Priya · personal laptop</text>
+            <text class="dg-sub" x="110" y="378" text-anchor="middle">Finance group · posture fail</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Identity + posture match — named allow rule</span>
+          <span class="key"><span class="swatch block"></span> Posture fails — no tunnel, Client Connectivity block event</span>
+        </div>
+        <div class="diagram-caption">One identity, two devices, two outcomes. The failing device is stopped at the Client Connectivity Policy and never reaches the PoP or the WAN Firewall. The thin grey lines are the control plane: SCIM-provisioned groups and the posture profile are the objects the rules reference, and the implicit block sits beneath rule 1 for any tunnel that matches nothing.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>One identity, both worlds</h4><p>A single user identity means a policy written once is enforced whether the user is behind a site or remote — no VPN ACLs drifting away from the office rulebase.</p></div></div>
+        <div class="benefit"><div class="b-icon">🛡️</div><div><h4>Posture without another agent</h4><p>The Cato Client already on the device evaluates the Device Checks; third-party anti-malware, firewall, patch and DLP agents are matched through the OPSWAT library, so the existing EDR is a drop-down entry.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Continuous, not login-only</h4><p>Checks re-run every 10 minutes by default. A device that fails while connected is disconnected, with a Details button naming the unmet requirement and a block event behind it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Least privilege as a rulebase</h4><p>WAN Firewall rules name a group, a posture profile and one destination over a final implicit ANY ANY block — the deny is the absence of an allow, and it is logged.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Five minutes, four screens</h2>
+      <ol class="steps">
+        <li>
+          <h4>The user as the IdP knows her <span class="tag">1 min</span></h4>
+          <p><span class="path">Access → Users</span></p>
+          <p><strong>Say:</strong> “Priya was never created in this console — SCIM provisioned her and her groups from your IdP in near real time, and if she leaves, the same sync disables her.”</p>
+          <p><strong>Show:</strong> Priya's user record: origin SCIM, the directory named as source, her group membership — the Finance group the rule in step 3 will reference.</p>
+          <!-- capture-wanted: «CMA Access → Users — SCIM-provisioned user detail showing origin, directory source and group membership» -->
+        </li>
+        <li>
+          <h4>The device check the Client runs <span class="tag">1 min</span></h4>
+          <p><span class="path">Resources → Device Posture → Profiles</span> <span class="path">Resources → Device Posture → Check Policy</span></p>
+          <p><strong>Say:</strong> “This is the endpoint baseline as an object: anti-malware running, disk encrypted, patched. All of these must be true — and the Client re-checks every ten minutes, not once at login.”</p>
+          <p><strong>Show:</strong> The corporate profile and its checks; point at the AND between them, then the Check Policy tab for the continuous-check setting and its interval.</p>
+          <!-- capture-wanted: «CMA Resources → Device Posture — corporate profile with anti-malware, disk-encryption and patch checks» -->
+        </li>
+        <li>
+          <h4>The rule that allows, the rule that denies <span class="tag">2 min</span></h4>
+          <p><span class="path">Access → Client Connectivity Policy</span> <span class="path">Security → WAN Firewall</span></p>
+          <p><strong>Say:</strong> “Two gates. The first decides whether a tunnel exists at all — the profile is a condition of connecting. The second decides what the tunnel may reach: one rule, Finance plus the profile, to the ERP application behind the London DC Socket. Everything else falls to the implicit block.”</p>
+          <p><strong>Show:</strong> The Client Connectivity rule with the posture profile attached and action Allow WAN and Internet, then the WAN Firewall allow rule — source group, posture profile as criteria, destination the ERP host, tracking set to Events — and the empty space beneath it.</p>
+          <!-- capture-wanted: «CMA Security → WAN Firewall — one group-plus-posture allow rule to a named host over the implicit block» -->
+        </li>
+        <li>
+          <h4>Same person, allowed and denied <span class="tag">1 min</span></h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p><strong>Say:</strong> “Here is Priya twice. From the managed laptop: the allow, named rule, destination. From the personal laptop: a block, Sub-Type Client Connectivity Policy, reason ‘Device fails to meet the Device Check’. That pair is your audit trail for least privilege.”</p>
+          <p><strong>Show:</strong> Events filtered to Priya's identity — the allow and the block side by side — the allow carrying user name, rule, action and destination; the block carrying user name, Sub-Type Client Connectivity Policy and the unmet check (no destination, because no flow was attempted).</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one identity, a WAN Firewall allow beside a Client Connectivity Policy posture block» -->
+        </li>
+      </ol>
+      <p>
+        <strong>Transition.</strong> Say it before you change screen: “That user reached an application on
+        a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?”
+        Then open <a href="demo-app-connectors.html">Segment 6: App Connectors</a>.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Likely questions and the two-sentence answer</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Is this just a VPN with a different name?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">A VPN gives a tunnel the network; here the Client reaches the nearest PoP and the WAN Firewall decides per rule what the identity may reach, over an implicit block. When the same user sits in the office the Client switches to riding the Socket and hits exactly the same rulebase — there is no second policy for remote users to drift from.</p>
+          <p style="font-size:.9rem"><a href="access-hybrid-workforce.html#solution">Securing the Hybrid Workforce — one front door</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“What happens if the device goes non-compliant mid-session?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The Check Policy re-runs the profile continuously — every 10 minutes by default since 7 August 2026, configurable between 5 and 1,440 — and a device that fails while connected is disconnected with a Details button naming the unmet check. Each failure creates a block event with Sub-Type Client Connectivity Policy, so the record exists beside the rule. Continuous checking needs Windows Client 5.15+ or macOS Client 5.9+; confirm the tenant's Check Policy tab before the demo, as a tenant may have changed the default.</p>
+          <p style="font-size:.9rem"><a href="security-iso27001.html#solution">ISO 27001 — posture as the enforcement gate</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Do we need to deploy another agent for posture?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">No — the Cato Client already on the device evaluates the Device Checks, and third-party anti-malware, firewall, patch management and endpoint DLP agents are recognised through the OPSWAT library, so your current EDR is a selection rather than an integration. An Intune MDM compliance state can also be a check.</p>
+          <p style="font-size:.9rem"><a href="security-iso27001.html#solution">ISO 27001 — the eleven check types</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“How do the groups get here, and what about leavers?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">SCIM from the IdP creates, updates and disables Cato users and syncs the groups policy references, in near real time; unassigning a user in the IdP disables them in Cato. Build purpose-named flat groups for Cato to consume and change-control them like firewall rules — nested groups are not supported over SCIM.</p>
+          <p style="font-size:.9rem"><a href="access-identity-design.html#decisions">Identity Integration Design — the four decisions</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-Minute Platform Demo — running order</a></li>
+            <li><a href="demo-dlp.html">Previous — Segment 4: DLP</a></li>
+            <li><a href="demo-app-connectors.html">Next — Segment 6: App Connectors</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="security-iso27001.html">ISO 27001 — device posture and evidence</a></li>
+            <li><a href="access-identity-design.html">Identity Integration Design</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: App Connectors — Cato Use Case Library</title>
+<meta name="description" content="Five minutes on publishing a private application without touching the network — connector, connector group, private app, policy, and the user reaching it by published domain.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-app-connectors">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 6: App Connectors</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: App Connectors</h1>
+    <p class="lede">
+      Segment 6 of <a href="demo-platform-60.html">the 60-minute platform demo</a> — minutes 35 to 40.
+      Five minutes on publishing a private application without touching the network: an outbound-only
+      App Connector beside the application, a connector group, a Private App that maps an internal
+      address to a published domain, and a Private Access Policy rule brokered at the PoP. The user
+      reaches the application by name; a user with no rule cannot even resolve it. Same identity, same
+      posture, same engine as the ZTNA segment — a second way for the application to be reachable.
+    </p>
+    <div class="meta-row">
+      <span class="tag">App Connectors</span><span class="tag">Private Access</span><span class="tag">ZTNA</span>
+      <span class="tag">M&amp;A</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The sentence they must leave with</h2>
+      <p>
+        <strong>A private application can be published to the right users in minutes — no inbound
+        firewall rules, no route advertisements, no readdressing, no site on-ramp — because the
+        connector dials out, the PoP brokers the session, and nothing is reachable unless a policy rule
+        says so.</strong>
+      </p>
+      <p>
+        Cato Private Access provides identity-based access to private applications without extending
+        the network to users. Instead of the network-level connectivity a traditional VPN grants, the
+        user gets least-privileged, application-specific access based on identity and context.
+        Applications stay hidden and unreachable unless explicitly authorised: the user connects to the
+        Cato Cloud, and an authorised session is brokered through an outbound-only App Connector
+        deployed in the same environment as the application — data centre, cloud VPC or LAN. Because
+        the connector never accepts inbound connections and needs no routing changes, Private Access can
+        be introduced without redesigning the application network.
+      </p>
+      <p>
+        The previous segment showed an application behind a Cato Socket, enforced by the WAN Firewall.
+        This one shows the four objects that replace the site: the <strong>App Connector</strong>, the
+        <strong>App Connector Group</strong> it belongs to, the <strong>Private App</strong> that is
+        published through the group, and the <strong>Private Access Policy</strong> that decides who may
+        reach it. Be plain in the room that the feature is request-enabled at the time of writing — the
+        KB pages carry a feature-releases banner — and that it is for user-initiated access only; the
+        <a href="access-app-connectors.html">depth page</a> carries the full boundary list.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Bridge in, three beats, bridge out</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from ZTNA</div>
+        <p>“That user reached an application on a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — The connector that dials out</h4>
+          <p><strong>Say:</strong> “This is the whole network change: one connector, placed beside the application, that opens an outbound DTLS tunnel to the best available PoP. It accepts nothing inbound and advertises no routes — the acquired data centre keeps its addressing and the firewall team keeps its weekend.”</p>
+          <p><strong>Show:</strong> <span class="path">Access → App Connectors</span> — the Overview widgets (Connectivity Status, Model, Socket versions, App Connector Groups), then the one connected connector in the list: its group, model, connected PoP and the Private Apps it serves.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — The application as a published name</h4>
+          <p><strong>Say:</strong> “The user never learns an internal address. The app has an internal address the connector resolves locally, and a published domain the user types — the two can differ — and it is published through a connector group, not a single box, so a failed connector is not a failed application.”</p>
+          <p><strong>Show:</strong> <span class="path">Access → Private Apps</span> — one app: Internal App Address against Published App Domain (app.example.intranet), the Service / Port items, Publish via the App Connectors Group, and the probing status that says it is available.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — The rule, and what the user sees</h4>
+          <p><strong>Say:</strong> “One rule: the group, the device posture profile and this app, Allow. No rule matches, access is blocked — the authorised user resolves and opens the name, and an unauthorised user's lookup simply does not resolve. The application is invisible, not merely refused.”</p>
+          <p><strong>Show:</strong> <span class="path">Access → Private Access → Private Access Policy</span> — the allow rule and the empty space beneath it. Then the user experience: Marcus on the Cato Client opens app.example.intranet; for a user outside the rule, Cato DNS denies the lookup and the name does not resolve.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to Digital Experience Monitoring</div>
+        <p>“Every one of those flows produces telemetry, and that telemetry answers the question you will hear most: is it slow because of Cato?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>The PoP brokers; DNS is the gate; the connector forwards</h2>
+      <p>
+        The flow has four steps. The user connects to the Cato Cloud with the Cato Client or clientless
+        access. The PoP authenticates the user and evaluates the Private Access Policy. If the user is
+        authorised, the session is brokered through an outbound DTLS tunnel to an App Connector. The
+        connector forwards the traffic locally to the application. The gate sits at DNS: when the user
+        looks up the published domain, Cato DNS returns a synthetic (CGNAT) IP for an authorised user and
+        denies the request for everyone else — the domain does not resolve and no session to the
+        application environment is ever established. Authorisation is decided at the PoP before any
+        session reaches the application, and once access is granted the traffic is subject to Cato's
+        full security stack, including Threat Prevention and CASB/DLP inspection.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Private Access decision for one published application</title>
+          <desc id="dg1-desc">Two users on the Cato Client look up the published domain app.example.intranet. The Cato PoP, acting as ZTNA broker, evaluates the Private Access Policy. For Marcus, who matches the allow rule, Cato DNS returns a synthetic IP and the PoP stitches the session through the outbound DTLS tunnel of an App Connector in the acquired data centre, which forwards it to the internal application. For a contractor with no matching rule, Cato DNS denies the lookup, the domain does not resolve and the flow stops.</desc>
+
+          <!-- Policy inputs feeding the broker -->
+          <rect class="dg-node" x="300" y="28" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="400" y="52" text-anchor="middle">Private Access Policy</text>
+          <text class="dg-sub" x="400" y="70" text-anchor="middle">group · posture · app</text>
+          <path class="lane-static" d="M 400 86 L 400 192"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="400" cy="230" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="400" cy="230" r="30"/>
+          <text class="dg-label" x="400" y="290" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="400" y="306" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">ZTNA broker · Cato DNS</text>
+
+          <!-- Decisions -->
+          <rect class="dg-node-green" x="540" y="92" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="625" y="116" text-anchor="middle">Rule matched · Allow</text>
+          <text class="dg-sub" x="625" y="134" text-anchor="middle">DNS returns synthetic IP</text>
+
+          <rect class="dg-node-dark" x="540" y="300" width="170" height="58" rx="10"/>
+          <text class="dg-label-inv" x="625" y="324" text-anchor="middle">No rule · Block</text>
+          <text class="dg-sub-inv" x="625" y="342" text-anchor="middle">Domain does not resolve</text>
+
+          <!-- Destination: connector then app -->
+          <rect class="dg-node" x="770" y="92" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="116" text-anchor="middle">App Connector</text>
+          <text class="dg-sub" x="855" y="134" text-anchor="middle">outbound DTLS · group</text>
+
+          <path class="lane-static" d="M 855 150 L 855 190"/>
+          <rect class="dg-node" x="770" y="190" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="214" text-anchor="middle">Internal application</text>
+          <text class="dg-sub" x="855" y="232" text-anchor="middle">acquired DC · LAN</text>
+          <text class="dg-tiny" x="855" y="268" text-anchor="middle">app.example.intranet</text>
+
+          <!-- Green: authorised user -->
+          <path class="lane lane-allow" d="M 150 140 C 250 140, 320 192, 370 214"/>
+          <path class="lane lane-allow" d="M 430 214 C 470 190, 500 121, 540 121"/>
+          <path class="lane lane-allow" d="M 710 121 L 770 121"/>
+
+          <!-- Red: unauthorised user -->
+          <path class="lane lane-block" d="M 150 320 C 250 320, 320 268, 370 246"/>
+          <path class="lane lane-block" d="M 430 246 C 470 270, 500 329, 540 329"/>
+          <path class="lane lane-block" d="M 710 329 L 756 329"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 762 317 L 786 341"/><path class="lane-x" d="M 786 317 L 762 341"/>
+          </g>
+
+          <!-- Users (left) -->
+          <g>
+            <circle cx="110" cy="140" r="23" fill="var(--status-good)"/>
+            <circle cx="110" cy="133" r="6.5" fill="#fff"/>
+            <path d="M 97 153 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="110" y="182" text-anchor="middle">Marcus · Cato Client</text>
+            <text class="dg-sub" x="110" y="198" text-anchor="middle">Finance group · posture pass</text>
+          </g>
+          <g>
+            <circle cx="110" cy="320" r="23" fill="var(--status-critical)"/>
+            <circle cx="110" cy="313" r="6.5" fill="#fff"/>
+            <path d="M 97 333 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="110" y="362" text-anchor="middle">Contractor · Cato Client</text>
+            <text class="dg-sub" x="110" y="378" text-anchor="middle">No matching rule</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Rule matched — synthetic IP returned, session stitched through the connector</span>
+          <span class="key"><span class="swatch block"></span> No rule — Cato DNS denies the lookup, nothing reaches the application</span>
+        </div>
+        <div class="diagram-caption">The connector dials out; the PoP decides. The thin grey lines are the control plane: the policy objects the broker evaluates, and the connector's local forwarding to the application it was deployed beside.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🚪</div><div><h4>No network change</h4><p>Private Access requires no inbound firewall rules, uses outbound-only tunnels from the application environment, does not require IP readdressing and does not require site on-ramping.</p></div></div>
+        <div class="benefit"><div class="b-icon">🫥</div><div><h4>Invisible until allowed</h4><p>The PoP assigns a synthetic IP to the published domain, so the user never learns the internal address. For an unauthorised user the domain does not resolve — the application is hidden, not merely refused.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Groups, not boxes</h4><p>A Private App is attached to an App Connector Group of up to 10 connectors. The PoP probes them continuously, selects the optimal one per session and fails over automatically with no administrator action.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Same engine, same policy objects</h4><p>The rule uses the IdP-synced groups and the Device Posture Profiles already defined across the account. Once a session is granted, the full security stack — Threat Prevention, CASB and DLP — still inspects it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Five minutes, three screens and one lookup</h2>
+      <ol class="steps">
+        <li>
+          <h4>The connector that dials out <span class="tag">1 min</span></h4>
+          <p><span class="path">Access → App Connectors</span></p>
+          <p><strong>Say:</strong> “This is the only thing we deployed in the acquired data centre — a connector, physical X1500 or a virtual image in AWS, Azure, GCP or ESXi, that opens an outbound DTLS tunnel. No inbound rule, no route advertisement, no readdressing.”</p>
+          <p><strong>Show:</strong> The Overview widgets — Connectivity Status, Model, Socket versions, App Connector Groups — then the one connected connector in the list: Name, Connectivity Status, Group, Model, Country, Connected PoP and the Private Apps column. Use the Group by drop-down to show which connectors sit in which group and which apps the group covers.</p>
+          <!-- capture-wanted: «CMA Access → App Connectors — Overview widgets (Connectivity Status, Model, Socket versions, App Connector Groups) with one connected connector in the list» -->
+        </li>
+        <li>
+          <h4>The application as a published name <span class="tag">1 min</span></h4>
+          <p><span class="path">Access → Private Apps</span></p>
+          <p><strong>Say:</strong> “Two names: the internal address, which the connector resolves on its own LAN, and the published domain, which is all the user ever sees. It is published through the connector group, not a single connector, and only the ports we list are allowed.”</p>
+          <p><strong>Show:</strong> One app opened: Internal App Address beside Published App Domain (app.example.intranet), the Service / Port items (for example TCP/443), Publish via the App Connectors Group with the group selected, and the probing status showing the application available through the group.</p>
+          <!-- capture-wanted: «CMA Access → Private Apps — one Private App showing Internal App Address, Published App Domain, Service/Port items, Publish via App Connectors Group and probing status» -->
+        </li>
+        <li>
+          <h4>The rule that allows; the default that blocks <span class="tag">2 min</span></h4>
+          <p><span class="path">Access → Private Access → Private Access Policy</span></p>
+          <p><strong>Say:</strong> “Who, under what conditions, to which app. Users and groups come from your IdP; the criteria can require a Device Posture Profile, a platform, the Client as origin, a country or a user risk level — all of them must hold. Rules are evaluated top down, first match wins, and if nothing matches, access is blocked. Every match generates an event, and that is the hit count.”</p>
+          <p><strong>Show:</strong> The one allow rule — Finance group, the corporate Device Posture Profile as criteria, the Private App, action Allow — and the absence of anything beneath it. Point at the Hit Count column as the evidence that the rule is doing work.</p>
+          <!-- capture-wanted: «CMA Access → Private Access → Private Access Policy — one allow rule with group, Device Posture Profile criteria and a Private App, Hit Count visible» -->
+        </li>
+        <li>
+          <h4>What the user sees <span class="tag">1 min</span></h4>
+          <p><span class="path">Cato Client device → browser / terminal</span></p>
+          <p><strong>Say:</strong> “Marcus types the name and it opens: Cato DNS answered with a synthetic IP, the PoP stitched his session through the connector's outbound tunnel. The contractor types the same name and gets nothing — Cato DNS denies the lookup and the name does not resolve. You cannot attack what you cannot resolve.”</p>
+          <p><strong>Show:</strong> From a Cato Client device in the Finance group, open app.example.intranet in the browser. From a device whose user matches no rule, run a lookup for the same name and show that it does not resolve. If you have only one device to hand, narrate the second outcome from the reference architecture rather than faking it.</p>
+          <!-- capture-wanted: «Cato Client device — browser open on app.example.intranet beside a terminal lookup for the same name from an unauthorised user that returns no answer» -->
+        </li>
+      </ol>
+      <p>
+        <strong>Transition.</strong> Say it before you change screen: “Every one of those flows produces
+        telemetry, and that telemetry answers the question you will hear most: is it slow because of
+        Cato?” Then open <a href="demo-dem.html">Segment 7: Digital Experience Monitoring</a>.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Likely questions and the two-sentence answer</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Is this generally available today?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Not by default at the time of writing: the Private Access and App Connector KB pages carry a banner asking you to contact feature-releases@catonetworks.com to enable the feature, and connectors need Socket v26.0.23570 or higher. Say so in the room, and treat the enablement request as the first PoV action rather than a surprise later.</p>
+          <p style="font-size:.9rem"><a href="access-app-connectors.html#objective">Private Access with App Connectors — status and scope</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Can the application call back to the user, or sync to another site?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">No — Private Access supports user-initiated access only; applications do not initiate connections toward users, and server-initiated or bidirectional patterns are out of scope. Those scenarios are served by the full Cato networking architecture of Socket and IPsec sites, and an environment published through connectors today can be onboarded as a full site later if it needs them.</p>
+          <p style="font-size:.9rem"><a href="access-app-connectors.html#solution">Private Access with App Connectors — the boundary</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We have overlapping IP ranges from an acquisition — does that matter?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">It is the case this was built for: the application is published without readdressing, because the PoP abstracts the internal address behind a synthetic IP from the account's CGNAT range and DNS mapping, and users reach it without routing-domain integration. The defaults are 100.64.0.0/16 for management and 100.65.0.0/16 for applications, and both can be overridden under Resource → System Settings if they clash.</p>
+          <p style="font-size:.9rem"><a href="access-app-connectors.html#solution">Private Access with App Connectors — M&amp;A and CGNAT</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“What happens when a connector fails?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The PoP stops selecting it for new sessions and routes subsequent sanctioned sessions through the next best connector in the group — automatically, with failover designed to restore access within 30 seconds, although some active sessions may need to be re-established. Deploy at least two connectors per group in separate availability zones, racks or power domains; a group holds up to 10.</p>
+          <p style="font-size:.9rem"><a href="access-app-connectors.html#demo">Private Access with App Connectors — groups and failover</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-cato-private-access" target="_blank" rel="noopener">What Is Cato Private Access?</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/app-connector-reference-architecture" target="_blank" rel="noopener">App Connector Reference Architecture</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-app-connectors" target="_blank" rel="noopener">Working with App Connectors</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-private-applications" target="_blank" rel="noopener">Configuring Private Applications</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-the-private-access-policy" target="_blank" rel="noopener">Configuring the Private Access Policy</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-Minute Platform Demo — running order</a></li>
+            <li><a href="demo-ztna.html">Previous — Segment 5: ZTNA</a></li>
+            <li><a href="demo-dem.html">Next — Segment 7: Digital Experience Monitoring</a></li>
+            <li><a href="access-app-connectors.html">Private Access with App Connectors — depth page</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="access-identity-design.html">Identity Integration Design</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

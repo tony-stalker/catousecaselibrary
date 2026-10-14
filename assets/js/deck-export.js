@@ -247,8 +247,11 @@
       cols.forEach(function (list, ci) {
         var paras = list.map(function (uc, i) {
           var n = ci * perCol + i + 1;
+          var d = (window.UC_DECKS || {})[uc.id];
+          var slot = d && d.slot ? run(String(d.slot) + "   ", { sz: 1100, color: C.dim }) : "";
           return paraRuns(
             run(n + "   ", { sz: 1400, b: true, color: C.green600 })
+            + slot
             + run(uc.title, { sz: 1400, color: C.ink })
             + run("   " + uc.category, { sz: 1100, color: C.dim }),
             { spcBef: i ? 700 : 0 });
@@ -783,11 +786,17 @@
      UC_DECK_DIAGRAMS registry has an entry for this id), DEMO; defensive
      against missing deck content (entry.notes = {divider, why, demo}
      speaker notes — may be absent) */
-  function caseSlides(uc, skipDivider) {
+  function caseSlides(uc, skipDivider, compact) {
     var deck = (window.UC_DECKS || {})[uc.id];
     var notes = (deck && deck.notes) || {};
     var out = skipDivider ? []
       : [dividerSlide(uc, (deck && deck.hook) || uc.summary, notes.divider)];
+    /* compact = divider + "what we'll show" only: the facilitation deck for a
+       one-hour demo, where the console does the explaining */
+    if (compact) {
+      if (deck && deck.demo && deck.demo.length) out.push(demoSlide(uc, deck.demo.slice(0, 7), notes.demo));
+      return out;
+    }
     if (deck && ((deck.pain && deck.pain.length) || (deck.gain && deck.gain.length))) {
       out.push(whySlide(uc, deck, notes.why));
     }
@@ -799,7 +808,7 @@
       out.push(diagramSlide(uc, diag, dnote));
     }
     if (deck && deck.demo && deck.demo.length) {
-      out.push(demoSlide(uc, deck.demo.slice(0, 5), notes.demo));
+      out.push(demoSlide(uc, deck.demo.slice(0, 7), notes.demo));
     }
     return out;
   }
@@ -808,7 +817,8 @@
     + "platform, one policy set, one console — the Cato Management Application. "
     + "Tailor the agenda to what this audience cares about.";
 
-  function buildDeck(ids, title) {
+  function buildDeck(ids, title, opts) {
+    var compact = !!(opts && opts.compact);
     var ucs = [];
     (ids || []).forEach(function (id) {
       var uc = findUc(id);
@@ -824,13 +834,13 @@
       var n0 = (deck0 && deck0.notes) || {};
       var openNote = n0.divider ? n0.divider + "\n" + COVER_NOTE : coverNote;
       slides = [singleCoverSlide(uc0, (deck0 && deck0.hook) || uc0.summary, openNote)];
-      slides = slides.concat(caseSlides(uc0, true));
+      slides = slides.concat(caseSlides(uc0, true, compact));
     } else {
       var sub = ucs.length === 1 ? ucs[0].summary
         : "A guided walk through " + ucs.length + " use cases in the Cato Management Application";
       slides = [coverSlide(title || "Cato SASE demonstration", sub, coverNote)];
       if (ucs.length > 1) slides.push(agendaSlide(ucs));
-      ucs.forEach(function (uc) { slides = slides.concat(caseSlides(uc)); });
+      ucs.forEach(function (uc) { slides = slides.concat(caseSlides(uc, false, compact)); });
     }
     slides.push(closingSlide());
     return pptx(slides);
@@ -842,10 +852,10 @@
       if (!uc) return;
       download(buildDeck([id], null), safeName(uc.title) + ".pptx");
     },
-    forSelection: function (ids, title) {
+    forSelection: function (ids, title, opts) {
       if (!ids || !ids.length) return;
       var name = title || "Cato SASE demonstration";
-      download(buildDeck(ids, name), safeName(name) + ".pptx");
+      download(buildDeck(ids, name, opts), safeName(name) + ".pptx");
     },
     _blob: buildDeck            /* exposed for the verify harness */
   };
@@ -868,7 +878,7 @@
      re-renders all registered selection UI. */
 
   var STORE_KEY = "uc-deck-selection";
-  var sel = { ids: [], title: "" };
+  var sel = { ids: [], title: "", compact: false };
   var renderers = [];
 
   function loadSel() {
@@ -884,13 +894,14 @@
         }
         sel.ids = ids;
         if (typeof d.title === "string") sel.title = d.title;
+        sel.compact = d.compact === true;
       }
     } catch (e) { /* storage unavailable / corrupt — start empty */ }
   }
 
   function saveSel() {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({ ids: sel.ids, title: sel.title }));
+      localStorage.setItem(STORE_KEY, JSON.stringify({ ids: sel.ids, title: sel.title, compact: sel.compact }));
     } catch (e) { /* storage unavailable — selection lives for this page only */ }
   }
 
@@ -943,10 +954,11 @@
   }
 
   function setSelTitle(t) { sel.title = t; saveSel(); }   /* no repaint — user is typing */
+  function setSelCompact(on) { sel.compact = !!on; notify(); }
 
   function generateFromSel() {
     if (!sel.ids.length) return;
-    window.DeckExport.forSelection(sel.ids.slice(), trim(sel.title));
+    window.DeckExport.forSelection(sel.ids.slice(), trim(sel.title), { compact: sel.compact });
   }
 
   /* presets ADD (union): keep existing selection + order, append missing ids */
@@ -959,7 +971,13 @@
       ids: ["security-compliance", "security-finance-dora", "security-retail-pci", "security-uk-public-sector",
             "security-healthcare-nhs", "security-legal-confidentiality", "ai-eu-ai-act"] },
     { label: "AI security",
-      ids: ["security-ai", "security-ai-visibility", "ai-genai-security", "ai-agentic-security", "ai-homegrown-apps"] }
+      ids: ["security-ai", "security-ai-visibility", "ai-genai-security", "ai-agentic-security", "ai-homegrown-apps"] },
+    /* the one-hour first demo: seven segments in running order, compact slides
+       (divider + what we'll show) so the console carries the hour — see
+       usecases/demo-platform-60.html for timings and bridge lines */
+    { label: "Platform demo (60 min)", compact: true, title: "Cato SASE platform demo",
+      ids: ["demo-swg", "demo-threat-prevention", "demo-casb", "demo-dlp", "demo-ztna",
+            "demo-app-connectors", "demo-dem"] }
   ];
 
   /* ---------- index cards: round +/✓ toggle on every use-case card ---------- */
@@ -1085,7 +1103,12 @@
     var presetRow = el("div", { "class": "deck-presets", role: "group", "aria-label": "Selection presets" });
     PRESETS.forEach(function (p) {
       var b = el("button", { type: "button", "class": "deck-preset" }, p.label);
-      b.addEventListener("click", function () { addManyToSel(p.ids); });
+      b.addEventListener("click", function () {
+        if (p.compact) sel.compact = true;
+        if (p.title && !trim(sel.title)) sel.title = p.title;
+        addManyToSel(p.ids);
+        notify();          /* addManyToSel only repaints when ids changed */
+      });
       presetRow.appendChild(b);
     });
     var clearBtn = el("button", { type: "button", "class": "deck-preset deck-clear", disabled: "" }, "Clear");
@@ -1298,9 +1321,21 @@
     actions.appendChild(go);
     card.appendChild(actions);
 
+    /* compact mode: divider + "what we'll show" per use case — the facilitation
+       deck for a one-hour demo (7 segments ≈ 17 slides instead of ~31) */
+    var compactWrap = el("label", { "class": "deck-compact" });
+    var compactCb = el("input", { type: "checkbox", id: "deck-compact" });
+    compactCb.checked = sel.compact;
+    compactCb.addEventListener("change", function () { setSelCompact(compactCb.checked); });
+    compactWrap.appendChild(compactCb);
+    compactWrap.appendChild(document.createTextNode(
+      " Compact deck — divider and \u201cwhat we\u2019ll show\u201d only (one-hour demos; skips the why and diagram slides)"));
+    card.appendChild(compactWrap);
+
     function renderActions() {
       var n = sel.ids.length;
-      count.textContent = n + " selected";
+      compactCb.checked = sel.compact;
+      count.textContent = n + " selected" + (sel.compact ? " · compact" : "");
       if (n) {
         go.removeAttribute("disabled");
         clearBtn.removeAttribute("disabled");

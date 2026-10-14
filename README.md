@@ -1,6 +1,6 @@
 # Cato SASE Use Case Library
 
-A self-contained, offline-first HTML library of **85 Cato Networks use cases** for
+A self-contained, offline-first HTML library of **94 Cato Networks use cases** for
 sales engineers and partners — business objective, how the platform solves it, a
 custom diagram, and a step-by-step demo runbook for every scenario. No build step,
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
@@ -14,16 +14,17 @@ what-good-looks-like, troubleshooting, gotchas & exit — authoring contract in
 > source PPTX decks in its history contain customer references. Share externally
 > only via the sanitised zip from `_extract/package.sh`.
 
-## Contents (6 categories)
+## Contents (7 categories)
 
 | Category | Pages | Highlights |
 |---|---|---|
-| Access | 6 | ZTNA, BYOD on-ramps (portal / Browser Extension / Enterprise Browser), identity design, per-user remote-worker experience |
+| Access | 7 | ZTNA, Private Access with App Connectors, BYOD on-ramps (portal / Browser Extension / Enterprise Browser), identity design, per-user remote-worker experience |
 | Management | 8 | Visibility, DEM (with live CMA captures), API/Terraform, PoV framework, asset discovery, data lake & event logs, TCO |
 | Network | 10 | SD-WAN, MPLS migration, cloud DC + Cloud Interconnect, cloud on-ramp comparison (vSocket / IPsec / interconnect), ASA IPsec design, resilient sites |
 | Security | 15 | FWaaS refresh, TLS inspection playbook, OT/IoT, compliance (ISO/NIS2, ISO 27001 posture-enforced, DORA, PCI, UK CE/CAF, NHS DSPT) |
 | AI Security | 8 | AI threat landscape (nine real incidents), GenAI visibility assessment, end-user GenAI, agentic AI, homegrown AI apps, legal GenAI |
 | Migration | 38 | PS methodology + 15-vendor playbooks + per-vendor policy deep-dives (FW/SWG/CASB/DLP) + 5 animated phased journeys (MPLS, SD-WAN, VPN, firewall, Zscaler) |
+| Platform Demo | 8 | SE-only demo facilitation: the 60-minute first-demo running order (timings, bridge lines, staging checklist) + seven five-minute segments (SWG, threat prevention, CASB, DLP, ZTNA, App Connectors, DEM); excluded from the prospect edition |
 
 Vertical filter: Retail · Finance · Public Sector · Healthcare · Manufacturing ·
 Education · BPO · Legal.
@@ -93,7 +94,7 @@ Conventions and gotchas:
 index.html            landing page (journeys, search, category grid)
 whatsnew.html         change log (generated from git history)
 planner.html          migration planner (internal only; excluded from the prospect build)
-usecases/*.html       the 85 use-case pages
+usecases/*.html       the 94 use-case pages
 assets/               shared CSS/JS, images (CMA screenshots, diagrams)
 _extract/             tooling, source-deck digests, research briefs, verification scripts
 "1 - … " … "5 - …"    original PowerPoint decks (do not share raw — see privacy note)

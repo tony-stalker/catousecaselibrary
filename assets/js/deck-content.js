@@ -30,7 +30,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Monitor » Events",
-        "show": "Every allow and block, attributed — the audit trail they lack"
+        "show": "Every allow and block, attributed — the audit trail you lack today"
       }
     ],
     "hook": "How many suppliers can reach more than the one application they were onboarded for — and would you know?",
@@ -106,7 +106,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » DLP Configuration",
-        "show": "Source-code upload to personal storage blocked, incident walked"
+        "show": "Source-code upload to personal storage blocked — the incident record, end to end"
       },
       {
         "area": "Access » Users",
@@ -462,7 +462,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Monitor » App Analytics",
-        "show": "Their apps and users on screen by day five"
+        "show": "Your apps and users on screen by day five"
       }
     ],
     "hook": "What would you need to see proven, on your own traffic, to make a decision?",
@@ -486,7 +486,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Home » Events",
-        "show": "The event-rate chart - hover a peak, mind the granularity, read the real number"
+        "show": "The event-rate chart - hover a peak to read the true peak-hour rate"
       },
       {
         "area": "Home » Events » Smart View",
@@ -498,7 +498,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Use case page » Calculator",
-        "show": "Band tables in, unit count and rough storage out - with the KB caveats on screen"
+        "show": "Band tables in, unit count and indicative storage out"
       }
     ],
     "hook": "One Data Lake unit is included with every account. The whole conversation is whether your peak hour fits in it - and that answer is already sitting in your Events chart.",
@@ -762,7 +762,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Network » Sites",
-        "show": "The interconnect site is a configuration example — say so, then pivot to the vSocket for live graphs"
+        "show": "A Cloud Interconnect site definition, with a live vSocket's analytics alongside"
       }
     ],
     "hook": "For each cloud you run production in — was the on-ramp a decision, or a default someone inherited?",
@@ -862,7 +862,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Network » Sites",
-        "show": "Create their next market's site live — before any hardware exists"
+        "show": "Create your next market's site live — before any hardware exists"
       },
       {
         "area": "Network » Sites",
@@ -1098,7 +1098,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Assets » Device Inventory",
-        "show": "Category, type, model, OS, manufacturer — visibility they don't have today"
+        "show": "Category, type, model, OS, manufacturer — visibility you don't have today"
       },
       {
         "area": "Security » Internet Firewall",
@@ -1298,7 +1298,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Monitor » Cloud Apps Dashboard",
-        "show": "The app estate versus what they expected — the shadow-IT gap"
+        "show": "The app estate versus what you expected — the shadow-IT gap"
       },
       {
         "area": "Monitor » App Analytics",
@@ -1418,7 +1418,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Mapping tables",
-        "show": "What Cato covers — and honestly, what stays with you"
+        "show": "What Cato covers — and what stays with you"
       },
       {
         "area": "Security » Internet Firewall",
@@ -1458,7 +1458,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "DSPT mapping table",
-        "show": "Where Cato contributes — and Objective E conceded to IG up front"
+        "show": "Where Cato contributes — and Objective E stays with Information Governance"
       },
       {
         "area": "Assets » Device Inventory",
@@ -1470,7 +1470,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Access » Device Posture",
-        "show": "MFA and posture on every remote path — the NHS MFA policy, worded"
+        "show": "MFA and posture on every remote path — aligned to the NHS MFA policy"
       },
       {
         "area": "Security » WAN Firewall",
@@ -1573,7 +1573,7 @@ window.UC_DECKS = {
     "gain": [
       "Shadow AI discovered, governed and evidenced from traffic Cato already carries",
       "Machine-speed defence: virtual patching, single-pass inspection and XDR correlation",
-      "The kill chain around every impersonation covered — honestly, not oversold"
+      "The kill chain around every impersonation covered end to end"
     ],
     "demo": [
       {
@@ -1582,11 +1582,11 @@ window.UC_DECKS = {
       },
       {
         "area": "AI Security » Monitoring » Overview",
-        "show": "Violation rate and rule breakdown — the board slide after the headline"
+        "show": "Violation rate and rule breakdown — the board-level view"
       },
       {
         "area": "AI Security » User Interaction Policy",
-        "show": "Engage, anonymise or block — a seeded prompt reaches ChatGPT masked"
+        "show": "Engage, anonymise or block — a sensitive prompt reaches ChatGPT masked"
       },
       {
         "area": "Monitor » Threats Dashboard",
@@ -1618,7 +1618,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "AI Security » Overview",
-        "show": "The violation rate, app and user totals — the sync opener"
+        "show": "The violation rate, app and user totals — the headline numbers"
       },
       {
         "area": "AI Security » Discovery",
@@ -1634,7 +1634,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Home » Reports",
-        "show": "The GenAI Report — the board-ready wrap-up artefact"
+        "show": "The GenAI Report — the board-ready summary"
       }
     ],
     "hook": "A no-cost four-week assessment: your real GenAI usage discovered, nothing blocked, board-ready report at the end.",
@@ -1658,7 +1658,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "AI Security » Monitoring » Overview",
-        "show": "The AI app count — usually multiples of what they expect"
+        "show": "The AI app count — typically far higher than expected"
       },
       {
         "area": "AI Security » AI Users",
@@ -1766,7 +1766,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "AI Security » Discovery",
-        "show": "The shadow-AI estate — longer than the managing partner expects"
+        "show": "The shadow-AI estate — typically far longer than expected"
       },
       {
         "area": "AI Security » AI Users",
@@ -1806,7 +1806,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "AI Security » Monitoring » Overview",
-        "show": "App count multiples of belief — the inventory gap, quantified"
+        "show": "The AI app count — the inventory gap, quantified"
       },
       {
         "area": "AI Security » Discovery",
@@ -1834,7 +1834,7 @@ window.UC_DECKS = {
   },
   "migration-methodology": {
     "pain": [
-      "Nobody doubts Cato works — they doubt getting there without an outage",
+      "The doubt is never whether Cato works — it is getting there without an outage",
       "Two networks must co-exist for months while sites move",
       "Asymmetric routing across regional hubs silently drops sessions"
     ],
@@ -2406,7 +2406,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Monitor » Events",
-        "show": "Translated rules matching what their VOS ancestors matched"
+        "show": "Translated rules matching what the original VOS rules matched"
       }
     ],
     "hook": "Who patched your Director in August 2024 — you, your carrier, or nobody?",
@@ -2562,7 +2562,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Monitor » App Analytics",
-        "show": "The Boost honesty test — timed transfers against the business window"
+        "show": "Timed transfers against the business window — Boost compared like for like"
       },
       {
         "area": "Monitor » Events",
@@ -2746,7 +2746,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Security » Internet Firewall",
-        "show": "One of their real ZIA rules rebuilt live, tracking on"
+        "show": "One of your real ZIA rules rebuilt live, tracking on"
       },
       {
         "area": "Security » TLS Inspection",
@@ -2754,7 +2754,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » CASB",
-        "show": "Default recommended policy with their tenant restriction swapped in"
+        "show": "Default recommended policy with your tenant restriction swapped in"
       },
       {
         "area": "Security » DLP Configuration",
@@ -2790,7 +2790,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » WAN Firewall",
-        "show": "One of their zone-pair rules mapped onto the allowlist live"
+        "show": "One of your zone-pair rules mapped onto the allowlist live"
       },
       {
         "area": "Security » TLS Inspection",
@@ -2838,7 +2838,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » TLS Inspection",
-        "show": "Bypasses seeded from their SSL do-not-decrypt list"
+        "show": "Bypasses seeded from your SSL do-not-decrypt list"
       },
       {
         "area": "Monitor » Events",
@@ -2958,14 +2958,14 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » DLP Configuration",
-        "show": "One of their real classifiers mapped live, set to monitor"
+        "show": "One of your real classifiers mapped live, set to monitor"
       },
       {
         "area": "Monitor » Events",
         "show": "Telemetry that retires dead rules and earns the block"
       }
     ],
-    "hook": "The DLP estate decides this deal — rationalise it classifier by classifier, not rip and hope.",
+    "hook": "The DLP estate decides this migration — rationalise it classifier by classifier, not rip and hope.",
     "notes": {
       "divider": "Name the four heritages up front — Stonesoft rules in SMC, Websense categories, ex-Bitglass CASB, and the TRITON-era DLP suite — four consoles converging into one rulebase.\nAnd say the honest thing early: the DLP estate is genuine enterprise depth, and it gets rationalised policy by policy, with a recorded decision for each. Here's what I'll show you.",
       "why": "Most of the estate is dead weight — rules for decommissioned servers, DLP policies that never raised a triaged incident. And two things simply cannot be ported: fingerprint hashes and trained ML classifiers.\nSo every surviving DLP policy takes one of three routes — direct map onto predefined data types, rebuild as EDM from source data, or redesign-or-retain. Where USB and print mandates exceed network DLP, recommend the hybrid deliberately: the endpoint agent stays, with a posture check proving it runs.\nAsk whether they can show ninety days of hit counts across SMC, web and DLP — if not, export starts by turning counters on. Then go live.",
@@ -2990,7 +2990,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » TLS Inspection",
-        "show": "Bypass rules seeded from their harvested PAC and SSL lists"
+        "show": "Bypass rules seeded from your PAC and SSL lists"
       },
       {
         "area": "Security » CASB",
@@ -3106,7 +3106,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Security » WAN Firewall",
-        "show": "One flat allowlist — flatten one of their layered rules live"
+        "show": "One flat allowlist — flatten one of your layered rules live"
       },
       {
         "area": "Administration » API & Integrations",
@@ -3118,7 +3118,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » TLS Inspection",
-        "show": "Staged inspection their constrained HTTPS Inspection blade never delivered"
+        "show": "Staged inspection your constrained HTTPS Inspection blade never delivered"
       },
       {
         "area": "Monitor » Events",
@@ -3198,7 +3198,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » DLP Configuration",
-        "show": "Map a described-content policy live; state the IDM/VML position plainly"
+        "show": "Map a described-content policy live, with the IDM/VML position made explicit"
       },
       {
         "area": "Monitor » Events",
@@ -3226,7 +3226,7 @@ window.UC_DECKS = {
     "demo": [
       {
         "area": "Security » WAN Firewall",
-        "show": "Opposite default postures — translate one of their egress rules live"
+        "show": "Opposite default postures — translate one of your egress rules live"
       },
       {
         "area": "Administration » API & Integrations",
@@ -3234,7 +3234,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » Internet Firewall",
-        "show": "Category mapping by intent; Prompt replacing their Warn pages"
+        "show": "Category mapping by intent; Prompt replacing your Warn pages"
       },
       {
         "area": "Monitor » Cloud Apps Dashboard",
@@ -3314,7 +3314,7 @@ window.UC_DECKS = {
       },
       {
         "area": "Security » TLS Inspection",
-        "show": "Their first full inspection — bypasses first, no connection-count ceiling"
+        "show": "Your first full TLS inspection — bypasses first, no connection-count ceiling"
       },
       {
         "area": "Monitor » Cloud Apps Dashboard",
@@ -3330,6 +3330,361 @@ window.UC_DECKS = {
       "divider": "Open with the hook and pause: after the MySonicWall cloud-backup breach, who rotated the credentials sitting inside their configuration exports? SonicWall's own investigation concluded every customer who used the service was affected.\nThat sets rule zero for this whole session: on this estate the export isn't just a mapping input, it's potential breach material — so we rotate everything and port nothing.\nHere's what I'll show you.",
       "why": "The today side has two layers. Operationally: a zone matrix per box multiplied across a branch estate, hiding duplication — and DPI-SSL rationed by per-model connection limits, so many estates never fully enabled it. Then the security layer: the exploitation mechanic in the 2024-25 campaigns was configuration carry-over — old secrets imported into new boxes — and this migration must not repeat that on a third platform.\nAsk both discovery questions: how many rules passed no traffic since the counters were cleared, and who rotated the export credentials. Ask early whether cloud backup was ever used.\nWith Cato: one global rulebase levels every site up, and the SSLVPN zone is replaced by IdP-backed ZTNA, never translated.\nLet me show you.",
       "demo": "Start in Security, WAN Firewall: translate one of their zone-matrix rules live into the global ordered rulebase — no zone columns, no per-rule service attachments, because those run as account-level layers.\nThen Administration, API and Integrations: the SonicOS API export is structured JSON — objects, rules, NAT — so translation scripts straight into GraphQL or Terraform.\nTLS Inspection next: quite likely their first full inspection — certificate via MDM, sensitive-category bypasses first, and no connection-count ceiling deciding who gets inspected; expect new detections to triage, not incidents.\nThen Monitor, Cloud Apps Dashboard: shadow-IT discovery and the DLP domains the firewall never had.\nClose in Events on the two auditable outcomes: the discard pile from rationalisation, and the rotation log — local accounts removed, keys retired, measured against SonicWall's own reset guidance."
+    }
+  },
+  "access-app-connectors": {
+    "pain": [
+      "To reach one app, a user has to be put on the whole network that hosts it",
+      "Inbound VPN rules, advertised subnets and colliding IP ranges turn an app project into a year-long WAN project",
+      "Applications sit reachable on the network whether or not a policy ever allows them"
+    ],
+    "gain": [
+      "Publish an application without touching routing, firewall ingress or the address plan",
+      "The domain only resolves for users the policy allows; everyone else gets no DNS answer",
+      "Outbound-only connectors in a group fail over automatically, with no administrator action"
+    ],
+    "demo": [
+      {
+        "area": "Access » App Connectors",
+        "show": "Connectors in their groups, each Connected to a named PoP — nothing dialled in"
+      },
+      {
+        "area": "Access » Private Apps",
+        "show": "Internal address beside the published domain, ports limited to what the app needs"
+      },
+      {
+        "area": "Access » Private Access » Private Access Policy",
+        "show": "One Allow rule: pilot IdP group plus posture and platform; no match means blocked"
+      },
+      {
+        "area": "Cato Client (live)",
+        "show": "Priya resolves to 100.65.x.x and opens the app; Marcus's lookup does not resolve"
+      },
+      {
+        "area": "Monitor » Events",
+        "show": "Every allowed session attributed to Priya and the rule; nothing at all for Marcus"
+      }
+    ],
+    "hook": "Which application have you been asked to give people access to that is still waiting on a network change — and how long has it been waiting?",
+    "notes": {
+      "divider": "Open on the wall every private-application project hits: to reach the app, the user has traditionally had to be put on the network that hosts it. That means a VPN concentrator with inbound rules, subnets advertised into a routing domain and, in any estate with more than one history, IP ranges that collide. The application project becomes a WAN project, and the WAN project takes a year.\nAsk the hook and let them name the app. Then bridge: a VPN gives a user the network; Private Access gives them the application. I will show you one app published without a single change to routing, firewall ingress or addressing — and the deny as clearly as the allow.",
+      "why": "Frame it as brokering, not connectivity. The PoP is the ZTNA broker: it registers each published app, gives it a synthetic CGNAT IP, and authorises identity, policy, application, port and protocol before any session to the application environment exists. An unauthorised user's DNS lookup is simply refused — the domain does not resolve.\nThe connector next to the app is outbound-only Socket software: no inbound firewall rule, no advertised subnet, no readdressing, no site on-ramping. That is why it wins for M&A with overlapping IPs, partner-hosted apps, cloud VPCs you cannot re-address, and quick wins before the WAN project.\nBe honest about scope: user-initiated only, lowest network priority, no QoS. Server-initiated or bidirectional patterns are a Socket or IPsec site. And it is request-enabled — confirm the tenant has it before promising a date.",
+      "demo": "Start at App Connectors: Connectivity Status, Model, Socket versions and the groups with their app counts. Point at the Connected PoP column — this box in their VPC dialled out, nothing dialled in. Open one connector's Network Analytics if time allows: Socket-style telemetry, not a black box.\nThen Private Apps: the Internal App Address, resolvable only inside the VPC, beside the Published App Domain users type, the service and port items, the group, and the ICMP probe settings.\nPrivate Access Policy: one rule, pilot IdP group, posture profile and platform, the published app, Allow. Walk the remaining criteria and the default — if no rule matches, access is blocked.\nLive proof: as Priya, resolve app.example.intranet to a 100.65.x.x address and open it. As Marcus, the name does not resolve. Stop one connector and repeat — new sessions move to the other.\nClose in Events filtered to the rule: Priya's sessions, attributed; nothing for Marcus."
+    }
+  },
+  "demo-platform-60": {
+    "pain": [
+      "Without a running order the first two segments eat twenty minutes and DEM is dropped",
+      "The one thing the network lead came to see never appears",
+      "A five-minute segment has no time to generate its own evidence on the day"
+    ],
+    "gain": [
+      "Seven capabilities in thirty-five minutes, five minutes each, one console throughout",
+      "One idea proven from seven angles: one cloud platform, one policy engine, one console",
+      "The room leaves with a decision to run a proof of value with an agreed scope"
+    ],
+    "demo": [
+      {
+        "area": "10–15 » SWG",
+        "show": "A user-aware category/app rule and the event that records the decision"
+      },
+      {
+        "area": "15–20 » Threat Prevention",
+        "show": "A threat stopped in the cloud, the event behind it, the story that explains it"
+      },
+      {
+        "area": "20–25 » CASB",
+        "show": "Shadow IT discovered, risk scored, one Application Control rule"
+      },
+      {
+        "area": "25–30 » DLP",
+        "show": "A sensitive upload stopped and the incident visible"
+      },
+      {
+        "area": "30–35 » ZTNA",
+        "show": "Identity and posture decide; the rule that allows and the implicit block that denies"
+      },
+      {
+        "area": "35–40 » App Connectors",
+        "show": "A private app published by domain; the user reaches it, an unauthorised user cannot resolve it"
+      },
+      {
+        "area": "40–45 » DEM",
+        "show": "Per-user, per-app score and the fault domain found hop by hop"
+      }
+    ],
+    "hook": "One console, seven capabilities, thirty-five minutes of screen time — the same single-pass engine seen from seven angles.",
+    "notes": {
+      "divider": "Start the clock when the last expected attendee joins, not when you join. Ten minutes of listening first: who is in the room and what they want to see, written on the agenda slide. Then two slides at minute five with the one idea — one cloud platform, one policy engine, one console. Every flow, user to internet, user to private application, site to site, passes the same single-pass engine in the PoP.\nSay it once and keep pointing at the picture: two ways in, one engine, three ways out. Then the bridge into the console — every decision starts with the same three questions: who is this user, where are they going, and should they? Let's start with the internet.",
+      "why": "Sixty minutes sounds generous until you divide it. Ten to introductions, ten to questions, five to next steps leaves thirty-five minutes for seven capabilities — five minutes each, no more. Without a running order the first two segments eat twenty minutes, ZTNA gets squeezed, DEM is dropped, and the one thing the network lead came to see never appears.\nThe aim is not to show everything. It is to leave the room with one idea proven from seven angles and convert that into a PoV with an agreed scope. Each segment is the same engine from a different angle, and the bridge lines are quoted as written: the bridge-out of one segment is the bridge-in of the next. If the room is five minutes late, the cut plan pays for it — the running order does not stretch.",
+      "demo": "Seven segments, five minutes each, in order, one console. Every proof point depends on evidence already in the tenant — walk the staging checklist the day before.\nIf you run late, cut in this order and no other. Cut one: CASB to the dashboard only — name the shadow IT and the risk score, skip the Application Control rule; two minutes instead of five. Cut two: fold DLP into CASB — show the DLP incident from the events screen you are already on, skip the configuration walk. Cut three: DEM score only — show the per-user, per-app score and say what path analysis would add.\nNever cut the segment the room came for. Security-led audience: ZTNA and App Connectors stay in at full length. Network or ops-led: DEM stays in. Park anything longer than a one-sentence answer and take it at minute 45, in the order written."
+    }
+  },
+  "demo-swg": {
+    "pain": [
+      "Internet policy lives in boxes — per site, per appliance, per region — with no single copy anywhere",
+      "TLS inspection stays off because turning it on pushes a correctly sized appliance off a performance cliff",
+      "The appliance estate never produced one audit trail of who reached what, under which rule"
+    ],
+    "gain": [
+      "One ordered Internet Firewall rulebase, defined once, enforced by the single-pass engine at every PoP",
+      "Rules written against IdP groups and device posture, not subnets — a directory change alone changes access",
+      "Every verdict is an event carrying the user, the rule, the action and the destination — site or remote client"
+    ],
+    "demo": [
+      {
+        "area": "Security » Internet Firewall",
+        "show": "One global rulebase — a risky-category block with a live hit count, a Prompt rule, rules whose Source is a named person or group"
+      },
+      {
+        "area": "Security » TLS Inspection",
+        "show": "Bypasses at the top, phased inspect rules scoped to a pilot group beneath — two actions only, Inspect and Bypass"
+      },
+      {
+        "area": "Monitor » Events",
+        "show": "Filtered to the category rule — site-sourced and SDP-user rows, same rule name, same verdict, named user on each"
+      }
+    ],
+    "hook": "Every decision the platform makes starts with the same three questions: who is this user, where are they going, and should they? Let's start with the internet.",
+    "slot": "10–15",
+    "notes": {
+      "divider": "This is segment one — minutes ten to fifteen — and the first time the console opens. The scene slides promised a single engine; this is the simplest place to show it.\nSay the bridge line as written: every decision starts with the same three questions — who is this user, where are they going, and should they. Let's start with the internet.\nThe sentence they must leave with: internet policy is one rulebase, written against people and applications, enforced in the cloud for every site and every user — and every decision it makes is an event you can read. Three beats, three screens, then the bridge to Threat Prevention.",
+      "why": "Policy here is a cloud object, not a device configuration. The Internet Firewall is defined once in the CMA and enforced by the single-pass engine in every PoP, so whichever PoP a socket or a client reaches, the identical rule set is already there. Sources are user groups synced from the identity provider and device-posture profiles, not subnets — and there is no per-site, per-appliance or per-region policy anywhere in the product.\nThe second idea is the dependency. Without TLS inspection, URL filtering falls back to domain-level decisions; full-path categorisation, file-type control and content-aware verdicts need the decrypted stream. In an appliance estate inspection quietly stays off; in the PoP it is a policy decision, staged by cohort and category. Everything the later segments show — CASB, DLP, GenAI governance — reaches full fidelity only on decrypted traffic, which is why the prerequisite lands here, in segment one.",
+      "demo": "Open Security, Internet Firewall and scroll slowly: this is the internet policy for every site and every remote user — ordered, first match wins, no second copy anywhere. Stop on the risky-category block with its hit count, then a rule whose Source is a named user or group, then a Prompt rule — the action a firewall-only audience has never had and a proxy audience knows as Caution. Point at Hit Count: live decisions, not a design document. Stay on the rulebase; do not open editors.\nThen TLS Inspection: bypasses at the top, phased inspect rules scoped to a pilot group beneath, two actions only. Mention, without clicking, that the implicit final rule inspects everything unmatched. If already behind, say the staging sentence over the rulebase instead — never skip the Events proof.\nFinish in Monitor, Events filtered to that rule. Read one row aloud — user, category, rule, action — then point at Source: a site row and an SDP-user row, same rule, same verdict. Leave Events open; the next segment returns to it.\nClose verbatim: That was policy you wrote. Now the threats you did not see coming — same engine, same flow, no extra appliance."
+    }
+  },
+  "demo-threat-prevention": {
+    "pain": [
+      "Appliance-based inspection leaves the split-tunnelled laptop and the branch breakout open",
+      "A patch cycle per box — firewall, IPS appliance and VPN concentrator alike",
+      "Weak signals sit as fifty separate alerts; correlating them is a SIEM project"
+    ],
+    "gain": [
+      "Every flow passes the engine — IPS and Anti-Malware inspect every user, site and cloud instance by default",
+      "Signatures written and deployed by Cato Security Research, including virtual patches for new CVEs — nothing to patch at the edge",
+      "XDR groups related events into one story with a timeline and ATT&CK mapping — no SIEM project"
+    ],
+    "demo": [
+      {
+        "area": "Monitor » Threats Dashboard",
+        "show": "Blocked IPS, DNS and malware threats by engine, top signatures, timeline and the MITRE ATT&CK tab"
+      },
+      {
+        "area": "Security » IPS",
+        "show": "Protection Policy — WAN, inbound and outbound scopes each set to Block; nothing to patch"
+      },
+      {
+        "area": "Security » Anti-Malware",
+        "show": "Anti-Malware, NG Anti-Malware and Sandbox toggles with the two default rules, Block Malicious and Block Suspicious"
+      },
+      {
+        "area": "Monitor » Events",
+        "show": "One IPS or Anti-Malware event opened — user or site, threat name, action"
+      },
+      {
+        "area": "Home » Stories Workbench",
+        "show": "One story — criticality, correlated timeline and ATT&CK mapping; fifty alerts become one incident"
+      }
+    ],
+    "hook": "That was policy you wrote. Now the threats you did not see coming — same engine, same flow, no extra appliance.",
+    "slot": "15–20",
+    "notes": {
+      "divider": "Say the bridge-in word for word: that was policy you wrote, now the threats you did not see coming — same engine, same flow, no extra appliance.\nThe one sentence they must leave with: every flow already passes the engine, so once IPS and Anti-Malware are enabled they inspect every user, site and cloud instance by default — there is no uninspected path and no appliance to add.\nThe frame is the ransomware chain: delivery, exploit, payload, command and control, lateral movement, exfiltration — every link has to cross the network, and on Cato every flow traverses a PoP. The chain never finds the split-tunnelled laptop or the branch breakout that appliance-based inspection leaves open.\nFive minutes, four screens: the Threats Dashboard, IPS, Anti-Malware and one event opened in full — then the story, where the tenant has one.",
+      "why": "The Single Pass Cloud Engine inspects each flow once against IPS, next-generation anti-malware, cloud sandboxing and DNS security, with TLS inspection at cloud scale — site, cloud and remote-user traffic all pass the same engines, with no appliance capacity to ration.\nThe second half is who does the work. IPS signatures are written and deployed by Cato Security Research to every PoP, including protections for newly exploited CVEs — no customer change window, nothing to patch at the edge. Audiences running a mixed estate of firewalls, IPS boxes and a separate VPN stack hear this as the removal of a patch cycle per box.\nAnd because the events already share one data lake, one identity model and one timeline, XDR correlates the weak signals into a single story mapped to MITRE ATT&CK without a SIEM project — in the console the team already uses.",
+      "demo": "Before the clock starts, have Events pre-filtered to IPS and Anti-Malware for the last few days, and a story open in a second tab if the tenant has one — finding the right event live is where the segment slips.\nOpen on the Threats Dashboard: everything on this screen was stopped in the cloud on traffic already passing through. Do not read the numbers out; point at the engines and the ATT&CK tab.\nThen IPS: enabled once for the account, scanning all traffic by default, WAN, inbound and outbound each set to Block — Cato maintains the signatures. Then Anti-Malware: engines on, two default rules, scan-to-sandbox — nothing on this page was written by the customer.\nOpen one event and walk the fields, then one story: criticality, correlated timeline, ATT&CK mapping. Close on the story, or the event, with the bridge out: Threats are what comes in. Next is where your data goes: the SaaS applications people adopted without asking."
+    }
+  },
+  "demo-casb": {
+    "pain": [
+      "The business adopts SaaS without asking — the most sensitive processes move into applications security never sanctioned",
+      "Nobody can say how many cloud applications are in use, which are risky, or who is using them",
+      "Control stops at allow or deny — no way to permit the corporate tenant while closing the personal copy"
+    ],
+    "gain": [
+      "Every cloud application discovered from traffic already at the PoP — no agents, log uploads or extra proxies",
+      "Each application scored and attributed: certifications held, security capabilities, popularity, and the named users behind it",
+      "One Application Control rule, three outcomes — corporate tenant open, personal tenant blocked, risky app browsed but not uploaded to"
+    ],
+    "demo": [
+      {
+        "area": "Monitor » Cloud Apps Dashboard",
+        "show": "Application count, sanctioned-versus-unsanctioned split, newly seen and risky apps, GenAI tools among them"
+      },
+      {
+        "area": "Monitor » App Analytics",
+        "show": "One unsanctioned file-sharing or GenAI app — risk score, its inputs, and the users and sites behind it"
+      },
+      {
+        "area": "Security » CASB",
+        "show": "One Application Control rule walked end to end — group, application, tenant or activity, action, tracking"
+      },
+      {
+        "area": "Security » CASB",
+        "show": "The Type column — App rows beside Data rows — marks the CASB licence boundary for the DLP handover"
+      }
+    ],
+    "hook": "Threats are what comes in. Next is where your data goes: the SaaS applications people adopted without asking.",
+    "slot": "20–25",
+    "notes": {
+      "divider": "Say the bridge-in line as you leave Threat Prevention: threats are what comes in; next is where your data goes — the SaaS applications people adopted without asking.\nThis is five minutes, minutes twenty to twenty-five, and it runs on three screens, one rule and no configuration on the day. The sentence they must leave with: Cato already sees every cloud application their people use, scores its risk and lets them control what they do in it, without deploying anything new.\nIf you are running late, show the dashboard only and move on in two minutes.",
+      "why": "The business case for SaaS is being written by the business, not by IT, and the processes holding the most sensitive data are moving into applications security never sanctioned. So the first thing a prospect wants from CASB is not a rule but an answer: how many applications are in use, which are risky and who is using them. Because every user and site already sends traffic through the Cato PoP, that inventory builds itself from traffic — no agents, no log uploads, no extra proxy.\nThe second thing they want is control finer than allow or deny. Cato classifies the application inline, scores its risk and controls the activity — upload, download, share, login — per user and group. Shadow AI is the version of this story every audience recognises; treat it as one more class of unsanctioned application and point to GenAI Security for End Users for depth.",
+      "demo": "Open on Monitor, Cloud Apps Dashboard: every cloud application the organisation used in the period, found from traffic before any policy was written. Point at the application count and the sanctioned-versus-unsanctioned split and ask the room what number they would have guessed — the gap is the shadow IT conversation.\nDrill to App Analytics on one unsanctioned file-sharing or GenAI application: the risk score and its inputs, then the users and sites behind it. Name the user by identity, not by address.\nThen Security, CASB: walk one Application Control rule end to end — source group, application, the activity or tenant criterion, action, tracking. Monitor and Block rules sit in the same rulebase; new rules start in Monitor with Event tracking on.\nClose on the Type column, App rows beside Data rows, and leave it on screen: CASB tells you which application. DLP tells you what is inside the upload."
+    }
+  },
+  "demo-dlp": {
+    "pain": [
+      "DLP is a second product bolted on beside the proxy — another agent, log upload or extra proxy",
+      "A DLP alert says which rule and which user; it never shows what actually matched",
+      "Day one means writing regular expressions before a single policy can be trusted"
+    ],
+    "gain": [
+      "The engine that already sees every upload reads what is inside it — one policy, one event stream",
+      "Predefined data types and ML document classifiers — profiles assembled, not authored",
+      "Who, which app, which file, which data type matched, what was done — evidence locked, role-gated, logged"
+    ],
+    "demo": [
+      {
+        "area": "Security » Data Types & Profiles",
+        "show": "Predefined Credit cards and PII profiles beside a user-defined keyword profile"
+      },
+      {
+        "area": "Security » DLP Configuration",
+        "show": "One Data Control row: these groups, Upload, Credit cards profile — Block, notify, event"
+      },
+      {
+        "area": "Monitor » Events",
+        "show": "Data Incident pane top to bottom — file, matched data types, evidence secured"
+      },
+      {
+        "area": "Monitor » Data Protection Dashboard",
+        "show": "Top Violating Rules — monitor-mode evidence above an enforced block"
+      }
+    ],
+    "hook": "CASB tells you which application. DLP tells you what is inside the upload.",
+    "slot": "25–30",
+    "notes": {
+      "divider": "Pick up straight from CASB: the prospect has just seen which applications their users adopted. Say the bridge line — CASB tells you which application, DLP tells you what is inside the upload — and give them the one sentence to leave with: the same engine that already sees every upload can read what is inside it and stop sensitive data leaving, with no new deployment, one policy and one event stream.\nThen set the five minutes: data types, one profile, one inline Data Control rule, and the incident it produces — who, what data type, where, and the action taken — in the same console as every segment before it.",
+      "why": "Every user and site already sends its traffic through the Cato PoP, so DLP is not a second product bolted on beside the proxy: it is a Data Control rule switched on where the traffic already is. The upload is decrypted once at the PoP under TLS inspection and passes the same single-pass engine as the SWG, threat-prevention and CASB decisions. DLP adds one question — does the content match a profile? — and the answer decides the action per activity and per destination.\nStress that the proof point is not the rule, it is the incident. Most tools tell the analyst which rule and which user, not what matched. Cato's Data Incident pane carries the full chain — user, application, activity, file, matched data types, action — and, where forensics are enabled, encrypted evidence in storage the customer owns, retrievable under role-based access and logged to the Audit Trail. That is the slide the security lead photographs.",
+      "demo": "Open Data Types & Profiles on the DLP Profiles tab: predefined Credit cards and PII profiles with their data-type chips, a user-defined keyword profile beside them. Profiles come from a catalogue nobody had to write. Leave the Data Types tab closed unless asked.\nMove to DLP Configuration — the same rulebase CASB used two minutes ago. Point at Block uploading credit card numbers: source groups, Any Cloud Application, Upload, Credit cards profile, Block, sitting above the monitor-mode rows that gather evidence.\nThen Events: filter to the DLP rule, open the pre-staged block and walk the Data Incident pane top to bottom — action, user, application, activity, file, rule, profile, matched data types. Stop at Evidence is Secured; the lock is the point.\nClose on the Data Protection Dashboard, Inline Protection tab: Top Violating Rules, monitor rules above an enforced block, the violations timeline. End on the estate, not one user, then turn to the room: so far every flow was a user going out. Now the other direction: users reaching your private applications."
+    }
+  },
+  "demo-ztna": {
+    "pain": [
+      "Legacy remote access gives a credential the whole network — once the tunnel is up, lateral movement is the user's problem",
+      "VPN ACLs drift away from the office rulebase — two policies for the same person",
+      "Posture is checked once at login, so a device that drifts out of compliance is trusted until tomorrow"
+    ],
+    "gain": [
+      "Access decided by who the user is and the state of her device — by the same engine that inspected her internet traffic",
+      "One identity, provisioned from the IdP, enforced identically behind a Socket or on the Client",
+      "Posture re-checked every 10 minutes — a failing device is disconnected, and the block is logged with the unmet check"
+    ],
+    "demo": [
+      {
+        "area": "Access » Users",
+        "show": "Priya's record — origin SCIM, the directory as source, her Finance group"
+      },
+      {
+        "area": "Resources » Device Posture » Profiles",
+        "show": "The corporate profile's checks combined with AND; Check Policy shows the continuous interval"
+      },
+      {
+        "area": "Access » Client Connectivity Policy",
+        "show": "The front door — the posture profile as a condition of a tunnel existing at all"
+      },
+      {
+        "area": "Security » WAN Firewall",
+        "show": "One allow rule — Finance plus profile to the ERP host — and the implicit block beneath it"
+      },
+      {
+        "area": "Monitor » Events",
+        "show": "Priya twice — the named allow beside the Client Connectivity Policy block, reason the failed Device Check"
+      }
+    ],
+    "hook": "So far every flow was a user going out. Now the other direction: users reaching your private applications.",
+    "slot": "30–35",
+    "notes": {
+      "divider": "Bridge in from DLP with the line on the slide: so far every flow was a user going out, now the other direction — users reaching your private applications.\nThe sentence they must leave with: access to a private application is decided by who the user is and the state of the device she is on, continuously, by the same engine that just inspected her internet traffic — and nothing she has not been explicitly allowed is reachable.\nSet the scope: this is the Socket-site path, the application behind a Socket in the London DC. App Connectors comes next — keep the two apart in the room.",
+      "why": "Legacy remote access gives a credential the whole network: once the tunnel is up the VPN has done its job and lateral movement is the user's problem to resist.\nCato replaces that with a single user identity provisioned from the IdP, so a policy written once is enforced whether the user is behind a site or remote, paired with a Device Posture Profile the Cato Client evaluates on the endpoint — no second agent, the existing EDR is a drop-down entry via the OPSWAT library. Checks combine with AND and re-run every 10 minutes by default, so a device that drifts mid-session is disconnected rather than trusted until tomorrow's login.\nLeast privilege is two rules, not two hundred: one that names the group, the profile and the one application, and the implicit block underneath it — the deny is the absence of an allow, and it is logged.",
+      "demo": "Open Priya under Access, Users: never created in this console — SCIM provisioned her and her groups, and if she leaves the same sync disables her. Point at the Finance group the rule will reference.\nResources, Device Posture: the corporate profile and its checks — anti-malware running, disk encrypted, patched — all must be true, then the Check Policy tab for the continuous-check interval.\nTwo gates. Client Connectivity Policy: the profile is a condition of connecting, action Allow WAN and Internet. WAN Firewall: one rule, Finance plus the profile, destination the ERP host, tracking set to Events — and the empty space beneath it.\nMonitor, Events filtered to Priya: the allow with name, rule, action and destination beside the block, Sub-Type Client Connectivity Policy, reason Device fails to meet the Device Check. That pair is the audit trail for least privilege.\nSay it before you change screen: that user reached an application on a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?"
+    }
+  },
+  "demo-app-connectors": {
+    "pain": [
+      "Publishing one private app means inbound firewall rules, route advertisements and a site on-ramp",
+      "A traditional VPN grants network-level connectivity, not access to one application",
+      "Acquired data centres with overlapping IP ranges need readdressing before anyone can reach them"
+    ],
+    "gain": [
+      "An outbound-only connector beside the app — no inbound rule, no routes, no readdressing",
+      "Identity-based, least-privileged access to one app, brokered at the PoP before any session is established",
+      "Invisible until allowed — for a user with no rule the published domain does not even resolve"
+    ],
+    "demo": [
+      {
+        "area": "Access » App Connectors",
+        "show": "Overview widgets and one connected connector — its group, model, PoP and the apps it serves"
+      },
+      {
+        "area": "Access » Private Apps",
+        "show": "Internal App Address beside Published App Domain, ports, published via the connector group"
+      },
+      {
+        "area": "Access » Private Access » Private Access Policy",
+        "show": "One allow rule — group, posture profile, app — and nothing beneath it; Hit Count as evidence"
+      },
+      {
+        "area": "Cato Client device",
+        "show": "Marcus opens app.example.intranet; the contractor's lookup does not resolve"
+      }
+    ],
+    "hook": "That user reached an application on a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?",
+    "slot": "35–40",
+    "notes": {
+      "divider": "This is the bridge from ZTNA, so say it as a question straight off the previous screen: that user reached an application on a Cato-connected site — what about the applications you do not want to on-ramp a whole network for?\nThe sentence they must leave with: a private application can be published to the right users in minutes, with no inbound firewall rules, no route advertisements, no readdressing and no site on-ramp, because the connector dials out, the PoP brokers the session and nothing is reachable unless a policy rule says so.\nBe plain that the feature is request-enabled at the time of writing and is for user-initiated access only. Then: four objects replace the site, and we have five minutes to see them.",
+      "why": "Frame it against the VPN: a traditional VPN grants network-level connectivity, and on-ramping a site means routes, inbound rules and readdressing — exactly the work an acquired data centre with overlapping ranges cannot absorb quickly.\nPrivate Access gives least-privileged, application-specific access based on identity and context without extending the network to users. The flow has four steps: the user connects to the Cato Cloud, the PoP authenticates and evaluates the Private Access Policy, the authorised session is brokered through an outbound DTLS tunnel to an App Connector, and the connector forwards locally. The gate is DNS — a synthetic CGNAT IP for an authorised user, a denied lookup for everyone else.\nSame IdP groups, same Device Posture Profiles, and once granted the full security stack still inspects the traffic. Now the four objects.",
+      "demo": "Open App Connectors: the Overview widgets, then the one connected connector — group, model, connected PoP and the Private Apps column. Say it plainly: this is the only thing deployed in the acquired data centre, and it dials out.\nPrivate Apps: one app, Internal App Address beside Published App Domain, the Service and Port items, published via the App Connectors Group, probing status available. Two names — the user only ever sees one.\nPrivate Access Policy: the one allow rule — Finance group, the corporate Device Posture Profile, the app, Allow — and the empty space beneath it. First match wins; no match is blocked. Point at Hit Count.\nThen the user: from a Finance-group Client, open app.example.intranet. From a device outside the rule, show the lookup does not resolve — with one device, narrate the second outcome rather than fake it.\nBefore you change screen: every one of those flows produces telemetry, and that telemetry answers the question you will hear most: is it slow because of Cato?"
+    }
+  },
+  "demo-dem": {
+    "pain": [
+      "\"The app is slow\" — and the truth sits across laptop, Wi-Fi, ISP, middle mile and app, each with its own owner",
+      "Traditional monitoring watches the infrastructure you own — the part a hybrid worker's path barely touches",
+      "Is it slow because of Cato? Argued in a war room, not answered from a console"
+    ],
+    "gain": [
+      "Every site, user, host and app scored Good, Fair or Poor — the helpdesk queue before it happens",
+      "Connection Details scores every node of the path on its own — the one amber node is the fault domain",
+      "Path Analysis keeps hop-by-hop loss and latency — \"no fault found\" becomes a documented circuit case"
+    ],
+    "demo": [
+      {
+        "area": "Home » Experience Monitoring",
+        "show": "Account Experience Good, link-quality stories in the feed, Sites and Remote Users sorted worst-first"
+      },
+      {
+        "area": "Experience Monitoring » User drill-down » Connection Details",
+        "show": "Marcus's node chain — one amber Wi-Fi node at −67.43 dBm, everything else green"
+      },
+      {
+        "area": "Path Analysis » Traceroute / Command Line",
+        "show": "Hop 2 inside the ISP at 24.3% loss over 1,010 probes while the Cato PoP sits clean"
+      },
+      {
+        "area": "Home » Experience Monitoring Probes",
+        "show": "Site and User probe rules — the proactive half beside the passive score"
+      },
+      {
+        "area": "Home » Reports",
+        "show": "The Site Experience template, scheduled — the monthly service review writes itself"
+      }
+    ],
+    "hook": "Every one of those flows produces telemetry, and that telemetry answers the question you will hear most: is it slow because of Cato?",
+    "slot": "40–45",
+    "notes": {
+      "divider": "Deliver the bridge-in straight from App Connectors: every flow the last six segments showed produced telemetry, and this is the segment that turns it into evidence.\nSet the frame in one breath: users do not experience a network or a security stack, they experience a Teams call that stutters or a CRM page that hangs. The ticket says the app is slow, and the truth sits somewhere along a path that crosses the laptop, the home Wi-Fi, the ISP, the middle mile and the application, each with a different owner and a different definition of fine.\nThen the promise: a per-user, per-app score and the fault domain found hop by hop, answered from the console rather than argued in a war room. If the audience is network- or operations-led, this is the one they came for.",
+      "why": "The one sentence they must leave with: because the Client, the Socket, the PoP and the backbone are one platform, Cato sees every hop a user's traffic takes and scores each one, so the app is slow resolves to a named segment in seconds.\nContrast it with what they have: traditional monitoring watches the infrastructure the organisation owns, which is exactly the part of a hybrid worker's path the traffic barely touches.\nTie it back to the engine: the six earlier segments showed it making decisions, allow, inspect, block. This segment shows what the same engine observes while it does so. The decision this capability makes is a score per segment. Loss on the last mile with backbone and application clean is the ISP's circuit; a slow application with everything before it green is the application's side of the fence. Either way the verdict is measured, not negotiated.",
+      "demo": "Confirm the DEM licence beforehand and pre-select the user you will drill. Open Experience Monitoring: Account Experience is Good, so anything degraded is local and findable. Point at the feed, link-quality SLA stories raised by the platform, then the Sites tab sorted worst-first with one data-centre site at Poor, and flip to Remote Users.\nDrill Marcus, an office user behind the site's Socket. Connection Details shows exactly one amber node, Wi-Fi at minus 67.43 dBm, just past the Good threshold, while device, LAN gateway, last mile and application stay green. Not the laptop, not the circuit, not Cato, not the app.\nThen Path Analysis, Traceroute: green hops, one red hop before a clean PoP. Command Line gives it as the circuit ticket needs it, hop 2 inside the ISP at 24.3 per cent loss over 1,010 probes. Close on Probes and the Site Experience report; if time is short, say it and skip the click. Running late, drop step 3.\nClose the console and turn to the room: One console, seven capabilities, thirty-five minutes of screen time. What would you want to see proven on your own traffic?"
     }
   }
 };

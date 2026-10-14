@@ -13,6 +13,8 @@ Transforms:
   - removes deck download buttons; ships NO PowerPoint files
   - excludes whatsnew.html and its nav link (internal change history)
   - excludes planner.html, its nav link and its JS (internal SE tool)
+  - excludes the "Platform Demo" category entirely (SE demo-facilitation pages: their
+    catalog entries, pages, nav link, filter button and any in-library links to them)
   - rewords SE-facing phrases to prospect-facing (rules below)
   - prospect footer + README
 """
@@ -72,6 +74,34 @@ DECK_SCRIPT_RE = re.compile(
 
 FIGURE_RE = re.compile(r'<figure class="shot">.*?</figure>', re.DOTALL)
 
+# ---- Platform Demo category: SE-only facilitation pages (running orders, bridge lines,
+# what to click). Derived from catalog.js so new segments are excluded automatically.
+INTERNAL_CATEGORIES = ("Platform Demo",)
+CAT_ENTRY_RE = re.compile(r'\n[ \t]*\{\s*\n\s*id: "([^"]+)",(?:(?!\n[ \t]*\{).)*?category: "([^"]+)".*?\n[ \t]*\},?', re.DOTALL)
+CAT_COMMENT_RE = re.compile(r'\n[ \t]*,?\s*/\* -+ \d+ · Platform Demo[^\n]*\*/')
+
+def internal_ids(cat_src: str):
+    return {m.group(1) for m in CAT_ENTRY_RE.finditer(cat_src) if m.group(2) in INTERNAL_CATEGORIES}
+
+def strip_catalog(cat_src: str) -> str:
+    cat_src = CAT_ENTRY_RE.sub(lambda m: "" if m.group(2) in INTERNAL_CATEGORIES else m.group(0), cat_src)
+    cat_src = CAT_COMMENT_RE.sub("", cat_src)
+    # a trailing comma before the closing bracket is invalid in older engines — tidy it
+    cat_src = re.sub(r'\},\s*\n\s*\];', '}\n];', cat_src)
+    return cat_src
+
+def strip_internal_links(text: str, ids) -> str:
+    for pid in ids:
+        # list items / paragraphs / table cells that only exist to link the internal page
+        text = re.sub(r'\n?[ \t]*<li>(?:(?!</li>).)*?href="(?:\.\./usecases/|usecases/)?%s\.html(?:#[^"]*)?"(?:(?!</li>).)*?</li>' % re.escape(pid), "", text, flags=re.DOTALL)
+        text = re.sub(r'\n?[ \t]*<p[^>]*>(?:(?!</p>).)*?href="(?:\.\./usecases/|usecases/)?%s\.html(?:#[^"]*)?"(?:(?!</p>).)*?</p>' % re.escape(pid), "", text, flags=re.DOTALL)
+        # any remaining inline anchor: keep its text, drop the link
+        text = re.sub(r'<a href="(?:\.\./usecases/|usecases/)?%s\.html(?:#[^"]*)?"[^>]*>(.*?)</a>' % re.escape(pid), r'\1', text, flags=re.DOTALL)
+    return text
+
+INTERNAL_NAV_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="#cat-platform-demo">[^<]*</a>')
+INTERNAL_FILTER_RE = re.compile(r'\n?[ \t]*<button class="filter-btn" data-cat="Platform Demo">[^<]*</button>')
+
 def _strip_section(m):
     # screenshots are prospect-safe: salvage any figures from removed sections
     figs = FIGURE_RE.findall(m.group(0))
@@ -100,13 +130,17 @@ def main():
             shutil.rmtree(item) if item.is_dir() else item.unlink()
     OUT.mkdir(exist_ok=True)
 
-    # pages
+    # pages (Platform Demo pages are SE-only and never ship)
+    skip = internal_ids((SRC / "assets" / "js" / "catalog.js").read_text())
     (OUT / "usecases").mkdir()
     n = 0
     for page in sorted((SRC / "usecases").glob("*.html")):
-        (OUT / "usecases" / page.name).write_text(transform(page.read_text()))
+        if page.stem in skip:
+            continue
+        (OUT / "usecases" / page.name).write_text(strip_internal_links(transform(page.read_text()), skip))
         n += 1
-    (OUT / "index.html").write_text(transform((SRC / "index.html").read_text()))
+    index_src = INTERNAL_FILTER_RE.sub("", INTERNAL_NAV_RE.sub("", (SRC / "index.html").read_text()))
+    (OUT / "index.html").write_text(strip_internal_links(transform(index_src), skip))
 
     # assets (css/js/img) — catalog.js gets the wording pass too
     shutil.copytree(SRC / "assets", OUT / "assets")
@@ -120,8 +154,9 @@ def main():
         if f.exists():
             f.unlink()  # planner is an internal SE tool; never ships to prospects
     cat = OUT / "assets" / "js" / "catalog.js"
-    cat_src = re.sub(r'deck: "[^"]*"', "deck: null", transform(cat.read_text()))
+    cat_src = re.sub(r'deck: "[^"]*"', "deck: null", transform(strip_catalog(cat.read_text())))
     cat.write_text(cat_src)
+    print(f"excluded {len(skip)} internal pages: {', '.join(sorted(skip))}")
 
     (OUT / "README.md").write_text(
         "# Cato SASE Use Case Library — Prospect Edition\n\n"

@@ -56,6 +56,16 @@ window.UC_CATALOG = [
   },
 
   {
+    id: "access-app-connectors",
+    file: "usecases/access-app-connectors.html",
+    category: "Access",
+    title: "Private Access with App Connectors",
+    summary: "Publish private applications through outbound-only App Connectors — no inbound rules, no route advertisement, no readdressing — with an identity- and posture-driven Private Access Policy brokered at the PoP; the fast path for M&A, overlapping IP estates and quick ZTNA wins.",
+    tags: ["ZTNA", "App Connectors", "Private Access", "M&A", "Cloud"],
+    status: "new",
+    deck: null
+  },
+  {
     id: "access-identity-design",
     file: "usecases/access-identity-design.html",
     category: "Access",
@@ -880,6 +890,88 @@ window.UC_CATALOG = [
     title: "SonicWall Policy Migration",
     summary: "Translate SonicOS policy to Cato — zone-matrix access rules and NAT, CFS web filtering, App Control and DPI-SSL re-expressed in the CMA model, with exported configs treated as compromised: rotate secrets, never port them.",
     tags: ["Policy Migration", "FW Rules", "CFS", "DPI-SSL", "App Control"],
+    status: "new",
+    deck: null
+  }
+  ,
+  /* ---------------- 7 · Platform Demo (SE-facing demo segments; excluded from the prospect edition) ---------------- */
+  {
+    id: "demo-platform-60",
+    file: "usecases/demo-platform-60.html",
+    category: "Platform Demo",
+    title: "The 60-Minute Platform Demo",
+    summary: "Running order, timing and transitions for a one-hour first demo — SWG, threat prevention, CASB, DLP, ZTNA, App Connectors and DEM in about 35 minutes of console time, with room kept for introductions, questions and next steps.",
+    tags: ["Demo Flow", "Running Order", "Timing", "Transitions", "First Demo"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-swg",
+    file: "usecases/demo-swg.html",
+    category: "Platform Demo",
+    title: "Demo Segment: Secure Web Gateway",
+    summary: "Five minutes on internet access control — category and application rules, user-aware policy, TLS inspection as the enabler, and the event that proves the decision.",
+    tags: ["SWG", "Internet Firewall", "URL Filtering", "TLS Inspection", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-threat-prevention",
+    file: "usecases/demo-threat-prevention.html",
+    category: "Platform Demo",
+    title: "Demo Segment: Threat Prevention",
+    summary: "Five minutes on IPS, anti-malware and the Threats Dashboard — a threat stopped in the cloud, the event behind it and the story that explains it.",
+    tags: ["IPS", "Anti-Malware", "Threats Dashboard", "XDR", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-casb",
+    file: "usecases/demo-casb.html",
+    category: "Platform Demo",
+    title: "Demo Segment: CASB",
+    summary: "Five minutes from shadow IT discovery to sanctioned-app control — the Cloud Apps Dashboard, risk scores, tenant restrictions and one Application Control rule.",
+    tags: ["CASB", "Shadow IT", "Cloud Apps Dashboard", "Application Control", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-dlp",
+    file: "usecases/demo-dlp.html",
+    category: "Platform Demo",
+    title: "Demo Segment: DLP",
+    summary: "Five minutes on data protection — data types, profiles and one inline rule: a sensitive upload stopped and the incident visible in events and the Data Protection Dashboard.",
+    tags: ["DLP", "Data Types", "Data Protection Dashboard", "Inline", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-ztna",
+    file: "usecases/demo-ztna.html",
+    category: "Platform Demo",
+    title: "Demo Segment: ZTNA",
+    summary: "Five minutes on identity-aware, posture-checked access from the Cato Client — the user, the device check, the rule that allows and the rule that denies.",
+    tags: ["ZTNA", "Cato Client", "Device Posture", "Client Connectivity Policy", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-app-connectors",
+    file: "usecases/demo-app-connectors.html",
+    category: "Platform Demo",
+    title: "Demo Segment: App Connectors",
+    summary: "Five minutes on publishing a private application without touching the network — connector, connector group, private app, policy, and the user reaching it by published domain.",
+    tags: ["App Connectors", "Private Access", "ZTNA", "M&A", "Demo Segment"],
+    status: "new",
+    deck: null
+  },
+  {
+    id: "demo-dem",
+    file: "usecases/demo-dem.html",
+    category: "Platform Demo",
+    title: "Demo Segment: Digital Experience Monitoring",
+    summary: "Close on evidence — per-user, per-app experience scores, path analysis hop by hop, and the fault domain found before the helpdesk ticket lands.",
+    tags: ["DEM", "Experience Monitoring", "Path Analysis", "Last Mile", "Demo Segment"],
     status: "new",
     deck: null
   }

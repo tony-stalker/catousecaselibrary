@@ -27,7 +27,7 @@
 
     var searchBox = $("#uc-search");
     var state = { q: "", cat: "All", vert: "All" };
-    var CATS = ["Access", "Management", "Network", "Security", "AI Security", "Migration"];
+    var CATS = ["Access", "Management", "Network", "Security", "AI Security", "Migration", "Platform Demo"];
 
     function matches(uc) {
       if (state.cat !== "All" && uc.category !== state.cat) return false;

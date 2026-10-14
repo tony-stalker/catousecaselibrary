@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: Threat Prevention — Cato Use Case Library</title>
+<meta name="description" content="Five minutes on IPS, anti-malware and the Threats Dashboard — a threat stopped in the cloud, the event behind it and the story that explains it.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-threat-prevention">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 2: Threat Prevention</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: Threat Prevention</h1>
+    <p class="lede">
+      Segment 2 of the 60-minute platform demo, minutes 15 to 20. The SWG segment showed policy the
+      customer wrote; this one shows the threats they did not see coming, stopped by the same
+      single-pass engine on the same flow. Five minutes across the Threats Dashboard, the IPS and
+      Anti-Malware policies and one threat event opened in full — then, where the tenant has one,
+      the XDR story that groups related events into a single incident.
+    </p>
+    <div class="meta-row">
+      <span class="tag">IPS</span><span class="tag">Anti-Malware</span><span class="tag">Threats Dashboard</span>
+      <span class="tag">XDR</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="demo-platform-60.html">⏱ Full 60-minute running order</a>
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The one sentence they must leave with</h2>
+      <p>
+        <strong>Every flow already passes the engine, so once IPS and Anti-Malware are enabled they
+        inspect every user, site and cloud instance by default — there is no uninspected path and no
+        appliance to add.</strong>
+      </p>
+      <p>
+        Ransomware is not one event but a chain — delivery, exploit, payload, command and control,
+        lateral movement, exfiltration — and every link has to cross the network. On Cato every flow
+        from every site, remote user and cloud instance traverses a PoP, where the Single Pass Cloud
+        Engine inspects it once against IPS, next-generation anti-malware, cloud sandboxing and DNS
+        security, with TLS inspection at cloud scale. The chain never finds the split-tunnelled laptop
+        or the branch breakout that appliance-based inspection leaves open.
+      </p>
+      <p>
+        The second half of the message is who does the work. IPS signatures are written and deployed by
+        Cato Security Research to every PoP — including protections for newly exploited CVEs — with no
+        customer change window and nothing to patch at the edge. And because the events already share
+        one data lake, one identity model and one timeline, Cato XDR correlates the weak signals into a
+        single story without a SIEM project. Audiences that run a mixed estate of firewalls, IPS boxes
+        and a separate VPN stack hear this as the removal of a patch cycle per box — firewall, IPS appliance and VPN
+        concentrator alike.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Say it, then show it</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from Secure Web Gateway</div>
+        <p>“That was policy you wrote. Now the threats you did not see coming — same engine, same flow, no extra appliance.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — what the cloud stopped this week</h4>
+          <p><strong>Say:</strong> every number on this dashboard was caught because the traffic had to pass a
+          PoP — there is no “behind the firewall” here, and nothing was deployed to produce the view.</p>
+          <p><strong>Show:</strong> the Threats Dashboard — blocked IPS, DNS and malware threats by engine,
+          the top signatures, the timeline, and the MITRE ATT&amp;CK tab beside it.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — on by default, maintained by Cato</h4>
+          <p><strong>Say:</strong> when IPS is enabled it scans all network traffic by default, and the
+          Anti-Malware engine scans all files by default; the signatures are written and deployed by Cato
+          Security Research, so there is nothing here for the customer to patch or update.</p>
+          <p><strong>Show:</strong> the IPS protection scopes — WAN, inbound, outbound — each set to Block;
+          then Anti-Malware with the NG Anti-Malware and Sandbox toggles and the two default rules,
+          Block Malicious and Block Suspicious.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — the event, then the story</h4>
+          <p><strong>Say:</strong> each block is an attributed event — user, signature or verdict, action — and
+          when several of those events belong to one attack, the platform groups them into one story
+          with a timeline and ATT&amp;CK mapping, so fifty alerts become one incident.</p>
+          <p><strong>Show:</strong> one IPS or Anti-Malware event opened in Monitor → Events, then one story in
+          the Stories Workbench. If the tenant has no story to show, stop at the event and say what
+          the story adds.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to CASB</div>
+        <p>“Threats are what comes in. Next is where your data goes: the SaaS applications people adopted without asking.”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>One pass, every engine, one verdict</h2>
+      <p>
+        A user on the Cato Client and a site behind a Socket send their traffic to the nearest PoP.
+        The single-pass engine inspects each flow once against IPS, next-generation anti-malware,
+        the cloud sandbox and DNS security. Clean traffic continues to the internet; a malicious
+        download, an exploit attempt or a beacon to attacker infrastructure is blocked at the PoP and
+        recorded as an attributed event. The same events feed the Threats Dashboard and, when they
+        belong together, an XDR story.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Threat prevention in the Cato PoP single-pass engine</title>
+          <desc id="dg1-desc">A remote user and a branch site send traffic into a Cato PoP. The single-pass engine applies IPS, next-generation anti-malware, sandboxing and DNS security. Clean traffic continues to the internet and SaaS. Traffic to and from attacker infrastructure is blocked at the PoP. Telemetry from every verdict flows to the Threats Dashboard and events, and related events are grouped into an XDR story.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="480" cy="180" rx="160" ry="50"/>
+          <circle cx="322" cy="192" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="638" cy="168" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="480" cy="180" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="180" r="30"/>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="56" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="80" text-anchor="middle">Remote user</text>
+          <text class="dg-sub" x="114" y="98" text-anchor="middle">Priya · Cato Client</text>
+
+          <rect class="dg-node" x="34" y="206" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="230" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="114" y="248" text-anchor="middle">Socket X1500</text>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="766" y="56" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="846" y="80" text-anchor="middle">Internet &amp; SaaS</text>
+          <text class="dg-sub" x="846" y="98" text-anchor="middle">clean traffic continues</text>
+
+          <rect class="dg-node-dark" x="766" y="206" width="160" height="58" rx="10"/>
+          <text class="dg-label-inv" x="846" y="230" text-anchor="middle">Attacker server</text>
+          <text class="dg-sub-inv" x="846" y="248" text-anchor="middle">malware · exploit · C2</text>
+
+          <!-- Allowed flows -->
+          <path class="lane lane-allow" d="M 196 86 C 300 90, 380 140, 452 168"/>
+          <path class="lane lane-allow" d="M 196 234 C 300 232, 380 212, 452 190"/>
+          <path class="lane lane-allow" d="M 510 170 C 600 130, 680 90, 764 86"/>
+
+          <!-- Blocked flow: attacker traffic stopped at the PoP -->
+          <path class="lane lane-block" d="M 764 236 C 700 236, 640 230, 584 214"/>
+          <g aria-label="blocked at the PoP">
+            <path class="lane-x" d="M 556 194 L 580 218"/><path class="lane-x" d="M 580 194 L 556 218"/>
+          </g>
+
+          <!-- Telemetry flows -->
+          <path class="lane lane-info" d="M 466 208 C 440 260, 420 300, 400 336"/>
+          <path class="lane lane-info" d="M 494 208 C 520 260, 540 300, 560 336"/>
+          <text class="dg-tiny" x="480" y="246" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <!-- PoP labels -->
+          <text class="dg-label" x="480" y="120" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="135" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">IPS · NGAM · Sandbox · DNS</text>
+
+          <!-- Monitoring (bottom) -->
+          <rect class="dg-node-green" x="286" y="338" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="371" y="362" text-anchor="middle">Threats Dashboard</text>
+          <text class="dg-sub" x="371" y="380" text-anchor="middle">every verdict is an event</text>
+
+          <rect class="dg-node-green" x="504" y="338" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="589" y="362" text-anchor="middle">XDR story</text>
+          <text class="dg-sub" x="589" y="380" text-anchor="middle">related events, one incident</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Clean traffic — inspected and forwarded</span>
+          <span class="key"><span class="swatch block"></span> Threat — blocked at the PoP</span>
+          <span class="key"><span class="swatch info"></span> Telemetry — dashboard, events, stories</span>
+        </div>
+        <div class="diagram-caption">Both sources, one engine, one verdict. The block never depends on where the user sits, and the event it produces is the same record the dashboard and the XDR story are built from.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>No unexamined path</h4><p>Site, cloud and remote-user traffic all pass the same engines, with TLS inspected at cloud scale and no appliance capacity to ration. The kill chain never finds the route it depends on.</p></div></div>
+        <div class="benefit"><div class="b-icon">🩹</div><div><h4>Virtual patching buys time</h4><p>Cato Security Research pushes IPS protections for newly exploited CVEs to every PoP, inbound and outbound, without customer involvement — shielding systems while the patch window catches up.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Correlation without a SIEM project</h4><p>XDR stories with MITRE ATT&amp;CK mapping are native to the platform. The signals are correlated the moment they are generated, in the console the team already uses.</p></div></div>
+        <div class="benefit"><div class="b-icon">🏭</div><div><h4>Laptops and PLCs alike</h4><p>Remote users, branch sites and agentless OT/IoT devices get identical protection — the policy follows the traffic, not the device's ability to run an agent.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Minutes 15 to 20 — four screens</h2>
+      <div class="callout">
+        <div class="co-title">Before you start the clock</div>
+        <p>Have Monitor → Events already filtered to IPS and Anti-Malware events for the last few days, and
+        — if the tenant has one — a story open in a second tab. The segment is five minutes; finding the
+        right event live is where it slips.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Open on the threat landscape <span class="tag">1 min</span></h4>
+          <p><span class="path">Monitor → Threats Dashboard</span> <span style="font-size:.85rem;color:var(--ink-2)">(Security → Threats Dashboard in the new navigation, as captured below)</span></p>
+          <p><strong>Say:</strong> “Everything on this screen was stopped in the cloud, on traffic that was already
+          passing through — nothing was deployed or shipped to produce it.”</p>
+          <p><strong>Show:</strong> the blocked IPS, DNS and malware counters, the top signatures, the timeline by
+          engine, and the MITRE ATT&amp;CK tab. Do not read the numbers out; point at the engines.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-sec-threats-dash.png" alt="CMA Threats Dashboard over a two-day window: counters for blocked IPS threats, blocked DNS threats, monitored suspicious activities, blocked malware threats and Dynamic Prevention; a Top Threats list led by a malicious-domain block signature, domain-reputation and DGA signatures; a threats timeline with DNS Protection, IPS and Anti Malware series; and a MITRE ATT&CK tab beside Threats Protection" loading="lazy">
+            <figcaption>The opening screen (demo tenant): one dashboard across every threat-prevention engine, with the timeline showing which engine caught what and when. The MITRE ATT&amp;CK tab is the set-up for the story at the end of the segment.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>IPS — on, scoped, blocking <span class="tag">1 min</span></h4>
+          <p><span class="path">Security → IPS</span></p>
+          <p><strong>Say:</strong> “IPS is enabled once for the account and scans all network traffic by default. The
+          signatures are maintained and deployed by Cato Security Research — there is nothing here for you
+          to patch or update, including the virtual patches for new CVEs.”</p>
+          <p><strong>Show:</strong> the Protection Policy tab — WAN, inbound and outbound scopes each set to Block —
+          and the other tabs by name only: Geo Restriction, Allow List, Suspicious Activity.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-sec-ips.png" alt="CMA Security → IPS page with the Enabled toggle on and the note that IPS scans all network traffic by default; the Protection Policy tab lists WAN Traffic, Inbound Traffic and Outbound Traffic scopes each set to Block and applied to Cato Cloud, with a Socket LAN scope available in Monitor; tabs for Enforcement Options, Geo Restriction, Allow List, Suspicious Activity and Content Policy" loading="lazy">
+            <figcaption>The whole IPS policy on one screen (demo tenant): one account-wide toggle, three protection scopes blocking, and a Socket LAN scope that can be enabled separately. There is no signature database to download, patch or tune — Cato maintains it; the tabs are scope and exception controls, not signature management.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Anti-Malware — the default rules <span class="tag">1 min</span></h4>
+          <p><span class="path">Security → Anti-Malware</span></p>
+          <p><strong>Say:</strong> “Two default rules: block malicious, block suspicious. Known malware is stopped by
+          signature, novel files go to next-generation anti-malware and the cloud sandbox — the same path
+          for a user at home or a site in Bristol.”</p>
+          <p><strong>Show:</strong> the three toggles — Anti-Malware, NG Anti-Malware, Sandbox — and the two default
+          rules with Verdict, Action and Sandbox Action columns. If the audience is security-led, mention
+          the File Hash Policy and Bypass List tabs for exceptions.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-sec-anti-malware.png" alt="CMA Security → Anti-Malware page with Anti-Malware Enabled, NG Anti-Malware Enabled and Sandbox Enabled toggles all on, the note that the engine scans all files by default, and the Protection Policy tab showing two default rules — Block Malicious and Block Suspicious — each scoped to All, source Any, with Action Block and Sandbox Action Scan; File Hash Policy and Bypass List tabs beside it" loading="lazy">
+            <figcaption>Anti-Malware as shipped (demo tenant): engines on, two default rules, scan-to-sandbox on both. Nothing on this page was written by the customer.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>One event, then the story <span class="tag">2 min</span></h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Home → Stories Workbench</span></p>
+          <p><strong>Say:</strong> “Every block is a record with the user, the signature or verdict and the action — the
+          same event for the dashboard, the SIEM export and the story. When several belong to one attack,
+          XDR groups them into one story with a timeline and ATT&amp;CK mapping, before anyone opened a ticket.”</p>
+          <p><strong>Show:</strong> open one IPS or Anti-Malware event from the pre-filtered view and walk the fields
+          — user or site, threat name, action. Then switch to the Stories Workbench, open a story and show
+          the criticality, the correlated timeline and the ATT&amp;CK mapping. If no story fits, stay on the
+          event and describe the story in one sentence.</p>
+          <!-- capture-wanted: «CMA Monitor → Events — one IPS or Anti-Malware block event opened, showing user, threat name/signature, verdict and action» -->
+          <figure class="shot">
+            <img src="../assets/img/cma-home-stories.png" alt="CMA Stories Workbench listing machine-generated detection stories banded by criticality, each attributed to a named user or site and to the producer engine — Network XDR, Threat Hunting or Threat Prevention" loading="lazy">
+            <figcaption>The story queue (demo tenant, fictional identities): one row per suspected incident rather than a page of raw alerts, ranked by criticality and attributed to a user or site. Open one and the correlated timeline and ATT&amp;CK mapping are the close of the segment.</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <p>
+        <strong>Transition.</strong> Close on the story, or on the event if there was no story, and say
+        the bridge out word for word: “Threats are what comes in. Next is where your data goes: the SaaS
+        applications people adopted without asking.” Then open the Cloud Apps Dashboard for Segment 3.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Four questions this segment provokes</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Who maintains the IPS signatures?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Cato Security Research writes and deploys them to every PoP, with no customer change windows and no appliance firmware. For newly exploited CVEs that is virtual patching: the exploit path is closed at the PoP while the service stays up and the patch window catches up.</p>
+          <p style="font-size:.92rem"><a href="security-inbound-ips.html#virtual-patching">Cloud-Delivered Inbound Protection — virtual patching</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Does a remote user get the same protection as a site?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Yes — the policy is a cloud object enforced by the single-pass engine in every PoP, not a device configuration, so Anti-Malware and IPS stop the same sample with the same verdict whether the user is behind the Glasgow socket or on the Cato Client at home. The events sit side by side under the same identity.</p>
+          <p style="font-size:.92rem"><a href="security-consistent.html#solution">Consistent Security Everywhere — configured once, applied everywhere</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“What about the stages a single block does not catch?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Ransomware needs every link of the chain — delivery, exploit, payload, C2, lateral movement, exfiltration — and each one crosses a PoP where an independent control can break it. Even a partially successful attack leaves weak signals, and XDR correlates them into one story mapped to MITRE ATT&amp;CK.</p>
+          <p style="font-size:.92rem"><a href="security-ransomware.html#kill-chain">Ransomware &amp; Advanced Threat Prevention — the attack, stage by stage</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“We have no 24×7 SOC — who works that queue overnight?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The optional Cato MDR service puts Cato's own analysts on the same story queue around the clock — same platform, same data, no separate collector or onboarding project. In-house analysts keep full visibility; MDR covers the hours and depth the team cannot staff.</p>
+          <p style="font-size:.92rem"><a href="management-soc-xdr.html#mdr">SOC Modernisation with XDR &amp; MDR — the managed service</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall — solution page</a></li>
+            <li><a href="https://www.catonetworks.com/rapid-cve-mitigation/" target="_blank" rel="noopener">Rapid CVE mitigation by Cato Security Research</a></li>
+            <li><a href="https://www.catonetworks.com/platform/extended-detection-and-response-xdr/" target="_blank" rel="noopener">XDR — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/services/" target="_blank" rel="noopener">Cato services, including MDR</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-minute platform demo — running order</a></li>
+            <li><a href="demo-swg.html">Previous: Segment 1 — Secure Web Gateway</a></li>
+            <li><a href="demo-casb.html">Next: Segment 3 — CASB</a></li>
+            <li><a href="security-ransomware.html">Ransomware &amp; Advanced Threat Prevention</a></li>
+            <li><a href="management-soc-xdr.html">SOC Modernisation with XDR &amp; MDR</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a></li>
+            <li><a href="security-inbound-ips.html">Cloud-Delivered Inbound Protection</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

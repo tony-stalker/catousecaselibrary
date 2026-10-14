@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Access with App Connectors — Cato Use Case Library</title>
+<meta name="description" content="Publish private applications through outbound-only App Connectors — no inbound rules, no route advertisement, no readdressing — with an identity- and posture-driven Private Access Policy brokered at the PoP; the fast path for M&A, overlapping IP estates and quick ZTNA wins.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="access-app-connectors">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-access">Access</a> / App Connectors</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-access">Access</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Private Access with App Connectors</h1>
+    <p class="lede">
+      A VPN gives a user the network; Cato Private Access gives them the application. It is a
+      user-to-application service brokered at the PoP — distinct from on-ramping a site — in which
+      an outbound-only App Connector next to the application publishes it under a domain that only
+      resolves for users the Private Access Policy allows. No inbound firewall rules, no route
+      advertisement, no readdressing: this use case shows how to publish a private application
+      without touching the network, and when a full Socket or IPsec site is still the right answer.
+    </p>
+    <div class="meta-row">
+      <span class="tag">ZTNA</span><span class="tag">App Connectors</span><span class="tag">Private Access</span>
+      <span class="tag">M&amp;A</span><span class="tag">Cloud</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Business objective</div>
+      <h2>Why this matters</h2>
+      <p>
+        Every private-application access project runs into the same wall: to reach an app, a user
+        has traditionally had to be put <em>on the network</em> that hosts it. That means a VPN
+        concentrator with inbound rules, subnets advertised into a routing domain, and — in any
+        estate with more than one history — IP ranges that collide. The application project becomes
+        a WAN project, and the WAN project takes a year.
+      </p>
+      <p>
+        Cato Private Access breaks that dependency. As the KB puts it, it lets you
+        <strong>"provide secure, identity-based access to private applications without extending your
+        network to users"</strong>: instead of network-level connectivity, you enforce
+        least-privileged, application-specific access on user identity and context. Applications stay
+        hidden and unreachable unless a policy explicitly allows them, sessions are brokered through
+        outbound-only App Connectors, and the whole thing goes in
+        <strong>"without modifying WAN topology or IP addressing"</strong>.
+      </p>
+      <p>
+        The objective for the SE: <strong>publish one real internal application to one real user
+        group, in the customer's own cloud or datacentre, without a single change to their routing,
+        firewall ingress or address plan</strong> — and show the deny as clearly as the allow.
+      </p>
+    </section>
+
+    <section id="fit" class="reveal">
+      <div class="section-kicker">Where it fits</div>
+      <h2>When a site is the wrong tool</h2>
+      <p>
+        Cato's ZTNA broker supports two deployment models under one policy engine: private access
+        <em>via sites</em> (Socket, vSocket or IPsec — the site provides access to everything behind
+        it) and private access <em>via App Connectors</em>, where "application access is enforced in
+        the Cato Cloud rather than being dependent on underlying network topology". Four situations
+        where the connector model wins outright:
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">M&amp;A with overlapping IPs</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The acquired estate uses the same 10.0.0.0/8 slices you do. Private Access "publishes applications without requiring IP readdressing, abstracts internal addressing using CGNAT and DNS mapping, and allows user access without routing-domain integration". Day-one access to their HR and finance apps while the network integration runs on its own timeline.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Partner-hosted or isolated apps</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">An application lives in a network you do not own or cannot route into — a managed-service provider's hosting, a lab segment, a brownfield site. A connector inside that environment needs only outbound internet; the host network never has to accept an inbound rule or learn a route.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cloud VPCs you cannot re-address</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A VPC built by a product team with its own CIDR plan, no transit gateway, no appetite for a vSocket redesign. Deploy the connector image from the AWS, Azure or GCP Marketplace into that VPC or VNet and publish the app. "Independent routing domains for each private network — no requirement for unique IP spaces."</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Quick wins before the WAN project</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The KB frames Private Access as "designed for rapid deployment and incremental adoption". Publish the three applications the remote workforce complains about most, prove ZTNA quickly, and let the socket rollout follow at its own pace — the policy you write now carries forward.</p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Be honest about scope — user-initiated only</div>
+        <p>Private Access "supports user-initiated access only. Applications do not initiate connections
+        toward users, and server-initiated or bidirectional communication patterns are not supported."
+        Site-to-site replication, a management server that pushes to agents, a build system that calls
+        back into developer workstations — those "fall outside the scope of Private Access and are
+        supported by the full Cato networking architecture of IPsec and Socket sites". The KB's own M&amp;A
+        guidance is the right line: start with Private Access; "if bidirectional or server-initiated
+        connectivity is required later, you can onboard the environment as a full Cato site."</p>
+      </div>
+
+      <div class="callout risk">
+        <div class="co-title">Discovery question</div>
+        <p>"Which application have you been asked to give people access to that is still waiting on a
+        network change — a firewall rule, a route, a re-addressing — and how long has it been waiting?"</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The Cato solution</div>
+      <h2>Brokered at the PoP, published by the connector</h2>
+      <p>
+        The Cato PoP is the ZTNA broker. It registers each published application in the Private
+        Access control plane and assigns it a <strong>synthetic (CGNAT) IP</strong> that stands in for
+        the application, so users never learn or connect to the internal address. Authorisation —
+        identity, policy, application, port and protocol — happens at the PoP <em>before</em> any
+        session to the application environment exists: "unauthorized application requests are denied
+        before a session to the application environment is established." Once a session is allowed,
+        it is still subject to Cato's full security stack, including Threat Prevention and CASB/DLP
+        inspection.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 480" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Private Access brokered flow through an App Connector Group</title>
+          <desc id="dg1-desc">An authorised Cato Client user asks Cato DNS at the PoP for a published domain. The PoP evaluates the Private Access Policy, returns a synthetic CGNAT IP, and stitches the session through an outbound-only DTLS tunnel from one of two App Connectors in a group — an AWS eu-west-2 virtual connector and a Manchester DC X1500 — to the internal application. An unauthorised user's DNS lookup is refused at the PoP and never reaches the connector.</desc>
+
+          <!-- Cato Cloud / PoP -->
+          <ellipse class="dg-backbone" cx="320" cy="205" rx="125" ry="48"/>
+          <circle class="pulse-ring" cx="320" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="320" cy="200" r="30"/>
+          <text class="dg-label" x="320" y="128" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP · ZTNA broker</text>
+          <text class="dg-tiny" x="320" y="144" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato DNS 10.254.254.1 · Private Access Policy</text>
+          <text class="dg-tiny" x="320" y="272" text-anchor="middle">Cato Cloud · full security stack</text>
+
+          <!-- Synthetic IP -->
+          <rect class="dg-node-dark" x="420" y="172" width="140" height="58" rx="10"/>
+          <text class="dg-label-inv" x="490" y="196" text-anchor="middle">Synthetic IP</text>
+          <text class="dg-sub-inv" x="490" y="214" text-anchor="middle">CGNAT 100.65.x.x</text>
+
+          <!-- App Connector Group container -->
+          <rect class="dg-node" x="600" y="70" width="340" height="120" rx="10"/>
+          <text class="dg-label" x="770" y="94" text-anchor="middle">App Connector Group</text>
+
+          <rect class="dg-node-green" x="615" y="108" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="690" y="132" text-anchor="middle">AWS eu-west-2</text>
+          <text class="dg-sub" x="690" y="150" text-anchor="middle">virtual connector</text>
+
+          <rect class="dg-node-green" x="775" y="108" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="850" y="132" text-anchor="middle">Manchester DC</text>
+          <text class="dg-sub" x="850" y="150" text-anchor="middle">X1500 · physical</text>
+
+          <text class="dg-tiny" x="508" y="256" text-anchor="middle">outbound-only DTLS tunnels</text>
+          <text class="dg-tiny" x="508" y="270" text-anchor="middle">PoP probes both · failover ~30 s</text>
+
+          <!-- Internal application -->
+          <rect class="dg-node-green" x="685" y="340" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="770" y="364" text-anchor="middle">Internal app server</text>
+          <text class="dg-sub" x="770" y="382" text-anchor="middle">app.example.intranet</text>
+          <text class="dg-tiny" x="770" y="420" text-anchor="middle">connector resolves via internal DNS · forwards on LAN</text>
+
+          <!-- Allowed flow -->
+          <path class="lane lane-allow" d="M 125 150 C 190 150, 240 180, 286 194"/>
+          <path class="lane lane-allow" d="M 352 200 L 418 200"/>
+          <path class="lane lane-allow" d="M 562 192 C 590 150, 600 137, 613 137"/>
+          <path class="lane lane-static" d="M 562 212 C 640 214, 700 186, 773 158"/>
+          <path class="lane lane-allow" d="M 690 168 C 690 250, 740 262, 745 338"/>
+          <path class="lane lane-static" d="M 850 168 C 850 250, 800 262, 795 338"/>
+
+          <!-- Blocked flow -->
+          <path class="lane lane-block" d="M 125 370 C 180 370, 205 335, 222 308"/>
+          <g aria-label="DNS lookup refused">
+            <path class="lane-x" d="M 213 288 L 237 312"/><path class="lane-x" d="M 237 288 L 213 312"/>
+          </g>
+          <text class="dg-tiny" x="110" y="300" text-anchor="middle">domain does not resolve</text>
+
+          <!-- Users -->
+          <g>
+            <circle cx="95" cy="150" r="23" fill="var(--status-good)"/>
+            <circle cx="95" cy="143" r="6.5" fill="#fff"/>
+            <path d="M 82 163 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="95" y="192" text-anchor="middle">Priya · Cato Client</text>
+            <text class="dg-sub" x="95" y="208" text-anchor="middle">in policy · posture OK</text>
+          </g>
+          <g>
+            <circle cx="95" cy="370" r="23" fill="var(--status-critical)"/>
+            <circle cx="95" cy="363" r="6.5" fill="#fff"/>
+            <path d="M 82 383 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="95" y="412" text-anchor="middle">Unauthorised user</text>
+            <text class="dg-sub" x="95" y="428" text-anchor="middle">no matching Allow rule</text>
+          </g>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Authorised — DNS answers, session stitched</span>
+          <span class="key"><span class="swatch block"></span> Not authorised — DNS refused</span>
+          <span class="key"><span class="swatch standby"></span> Second connector's tunnel / LAN path (grey)</span>
+        </div>
+        <div class="diagram-caption">Grey links are the second connector's tunnel and LAN path, shown as the non-selected path for this session: the PoP probes every connector in the group, selects the optimal one per session, and moves new sessions to the next best one if the current one becomes unreachable.</div>
+      </div>
+
+      <h3>The flow, step by step</h3>
+      <ol class="steps">
+        <li><h4>User connects to the Cato Cloud</h4><p>Through the Cato Client or another supported access method. User devices use the Cato DNS service at <strong>10.254.254.1</strong> so that queries for published domains reach the PoP.</p></li>
+        <li><h4>DNS request for the published domain</h4><p>Priya's device asks for <em>app.example.intranet</em>. The PoP identifies the Private App behind that domain and evaluates the Private Access Policy — identity, criteria, and whether the application, port and protocol are authorised.</p></li>
+        <li><h4>Allow: synthetic IP returned. Block: no answer.</h4><p>"If the user is authorized, Cato DNS returns the synthetic (CGNAT) IP address assigned to the published application domain. If the user is not authorized, Cato DNS denies the request. The domain does not resolve, and no session to the application environment is established."</p></li>
+        <li><h4>Session stitched through the connector</h4><p>Priya connects to the synthetic IP; the Cato Cloud sanctions the session, selects the optimal App Connector from the group and stitches the session into the outbound DTLS tunnel that connector already holds open.</p></li>
+        <li><h4>Connector forwards on the LAN</h4><p>The connector resolves the configured internal destination through its internal DNS when required and forwards the traffic over the local network. Priya communicates only with the synthetic IP; she "does not receive direct network reachability to the application environment".</p></li>
+      </ol>
+
+      <h3>The four objects you configure</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Object</th><th>Where</th><th>What it defines</th></tr></thead>
+          <tbody>
+            <tr><td><strong>App Connector</strong></td><td>Access → App Connectors (create: Access → App Connector → New)</td><td>The outbound-only DTLS endpoint deployed in the same environment as the application (datacentre, cloud VPC or LAN). Socket software — physical X1500 or a virtual image — with a name, country, type, group and optional preferred PoPs. Forwards only sessions that policy explicitly authorised; accepts no inbound connections and needs no routing changes.</td></tr>
+            <tr><td><strong>App Connector Group</strong></td><td>Chosen or created when you create a connector</td><td>The logical connectivity layer between the Cato Cloud and a set of Private Apps: up to 10 connectors that provide high availability, load distribution and operational separation. Applications attach to the group, never to an individual connector, and each application is published through one group at a time.</td></tr>
+            <tr><td><strong>Private App</strong></td><td>Access → Private Apps → New</td><td>What is published: the <em>Internal App Address</em> (hostname or IP in the private environment — an FQDN must resolve internally), the <em>Published App Domain</em> users type (an FQDN such as app.example.intranet, or a domain such as *.example.intranet), the allowed service/port items (for example TCP/80-88), the group it publishes through, and ICMP probing settings.</td></tr>
+            <tr><td><strong>Private Access Policy</strong></td><td>Access → Private Access → Private Access Policy</td><td>Who can reach which Private Apps under what conditions: an ordered rulebase of Users / Groups (synced from the IdP), Criteria (user risk, origin, platform, Device Posture profile, country — ANDed), Private Apps, Allow or Block, time range, and tracking. First match wins; if no rule matches, access is blocked. Supports revisions, rollback and multi-admin workflows like other CMA policies.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The KB's order of work: <strong>deploy the connector and assign it to a group → configure the Private App → write the policy rule</strong>. Best practice is to have the connector connected before you publish — an app whose group has no connected connector sits <em>Disabled</em>.</p>
+
+      <h3>Deployment options for the connector</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Platform</th><th>Prerequisites and notes (from the KB)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Physical — X1500</strong></td><td>All X1500 models; X1600 and X1700 are not currently supported as physical connectors. No serial number to enter: cable the device, and when it reaches Cato the CMA prompts you through Notifications → Activate New Socket → Assign to: App Connector. HA pair of physical connectors is listed as "Coming Soon".</td></tr>
+            <tr><td><strong>AWS</strong></td><td>Virtual type in CMA; image from AWS Marketplace ("Cato Networks App Connector"). New or existing VPC with three subnets — MGMT, WAN, LAN — each a minimum /28; existing internal security group; key pair; paste the serial number from CMA. Deploy with IMDSv2; reboot the instance after deployment to initiate the connection. A Terraform module exists for AWS.</td></tr>
+            <tr><td><strong>Azure</strong></td><td>Marketplace "Cato App Connector". 2-NIC (Standard_D2s_v5) or 3-NIC (Standard_D8ls_v5) deployments; WAN and LAN subnets always, MGMT only for 3-NIC, each a minimum /28. Paste the S/N from Access → App Connectors; optional public IPs, NSGs, Availability Set or Zone (1–3). Connects and auto-upgrades after deployment.</td></tr>
+            <tr><td><strong>Google Cloud</strong></td><td>Marketplace "Cato Networks App Connector" → Launch. Deployment service account, zone and region, VM name, Cato serial ID pasted from CMA, three subnets MGMT/WAN/LAN each a minimum /28.</td></tr>
+            <tr><td><strong>VMware ESXi</strong></td><td>Datacentre or uCPE on ESXi 8.0 or later. OVA from the Socket and vSocket Image Files page, deployed directly from vSphere; 2 vCPU, 4 GB RAM, at least 7 GB disk; exactly three NICs mapped LAN / Management / WAN; internet on WAN1 and public DNS for the LAN interfaces; serial number entered exactly, including dashes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The physical, AWS, Azure and GCP guides all require <strong>Socket v26.0.23570 or higher</strong> (ask Support to provide it to the account if it is not available; the ESXi guide does not state a Socket version — assume the same floor and confirm with Support). For every type, the connector object is created in the CMA first, and Preferred PoPs can be left at <em>Disabled</em> (best available PoP) or pinned to a primary and secondary — optionally restricted so the connector never falls back to a non-preferred PoP.</p>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🙈</div><div><h4>Hidden until authorised</h4><p>The published domain is only available to users the policy allows; everyone else gets no DNS answer. The internal address is never exposed — users only ever see the synthetic IP.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>No network change</h4><p>Outbound-only tunnels from the application side: no inbound firewall rules, no advertised subnets, no readdressing, no site on-ramping. The connector gets its LAN address, gateway and DNS by DHCP.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Identity and posture at the PoP</h4><p>Rules combine IdP users and groups with device posture profiles, platform, country, origin and user risk, continuously evaluated per session request.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Resilient by group</h4><p>Two or more connectors per group across zones or racks; the PoP probes them and fails new sessions over automatically, with no administrator action.</p></div></div>
+      </div>
+    </section>
+
+    <section id="design" class="reveal">
+      <div class="section-kicker">Design guidance</div>
+      <h2>Designing it properly</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Groups and resilience</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>One group per environment, region or security zone — production, DR, cloud, on-premises. The group an app publishes through must contain at least one connector that reaches the app over the LAN.</li>
+            <li>At least two connectors per group, each able to reach the same destinations. Cloud: separate availability zones or regions. Physical: separate racks, power domains or failure zones.</li>
+            <li>Up to 10 connectors per group; each app publishes through one group at a time.</li>
+            <li>Failover is automatic and "designed to restore application access within 30 seconds" — existing sessions may need to re-establish, depending on the protocol.</li>
+            <li>Multi-region apps: a connector in each environment that hosts an instance, all in the group the app publishes through.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">DNS and addressing</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem;color:var(--ink-2)">
+            <li>User side: Cato DNS at 10.254.254.1 processes published-domain queries at the PoP.</li>
+            <li>Connector side: DHCP for LAN IP, gateway and internal DNS; an internal FQDN in a Private App must be resolvable by that DNS. Static LAN IP and DNS is listed as "Coming Soon".</li>
+            <li>Reserved ranges: MGMT 100.64.0.0/16 (reserved once a connector is deployed) and Application 100.65.0.0/16 (reserved once an app is published). If either collides with the customer's network, override them under <span class="path">Resource → System Settings</span>.</li>
+            <li>Probing is ICMP today (interval and fault threshold configurable); if the app cannot answer ICMP, disable probing for it — and accept you lose connectivity and performance monitoring for that app in the CMA. TCP probes are promised for the future.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Known limitations to say out loud</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Limitation</th><th>Consequence for the design</th></tr></thead>
+          <tbody>
+            <tr><td>No QoS or Network Rules on connector traffic; it gets the lowest network priority</td><td>Do not position Private Access for latency-critical or bandwidth-guaranteed workloads — that is a site with a bandwidth profile.</td></tr>
+            <tr><td>Socket v26: only apps in the connector's LAN subnet are supported</td><td>Place the connector in the same subnet as the app, or plan for one connector per subnet for now.</td></tr>
+            <tr><td>Synthetic IPs are not exposed for reference in Network Policy rules</td><td>Control access with the Private Access Policy; do not expect to write WAN or network rules against the CGNAT address.</td></tr>
+            <tr><td>User-initiated only</td><td>Server-initiated or bidirectional patterns need a full Socket or IPsec site.</td></tr>
+            <tr><td>Browser-based access only for HTTP(S), RDP and SSH apps</td><td>Thick-client protocols need the Cato Client.</td></tr>
+            <tr><td>Physical connectors: X1500 only; HA pair "Coming Soon"</td><td>For physical resilience today, use two X1500 connectors in one group rather than waiting for an HA pair.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="co-title">Early availability — check before you promise</div>
+        <p>The core Private Access and App Connector KB pages (What Is Cato Private Access, Working with
+        App Connectors, Monitoring App Connectors, Configuring Private Applications, Configuring the
+        Private Access Policy) carry the note <em>"Please contact feature-releases@catonetworks.com for
+        more information about enabling and using this feature."</em> Treat it as request-enabled, not
+        default-on: confirm it is enabled on the tenant — and that Socket v26.0.23570 or higher is
+        available to the account — before a demo or PoV date is agreed.</p>
+        <p style="margin-top:8px"><strong>Licensing (Base Products):</strong> sites "are licensed based on
+        bandwidth and support all site types, including physical sites (Sockets), IPsec, Cloud
+        Interconnect, and App Connector deployments". The Bandwidth Pool covers "App Connector
+        deployments for private application access, with no limitation on the number of App
+        Connectors or published applications", and includes private-application traffic via App
+        Connector in its P95 measurement. Remote users need ZTNA User licences (each account gets 5 free
+        by default; they do not apply to users connected through a Cato site). Whether a connector
+        consumes anything beyond pooled bandwidth is not stated in the KB — ask rather than assume.</p>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>How to run the demo</h2>
+      <div class="callout">
+        <div class="co-title">Before you demo</div>
+        <p>Have one Private App already published through a group with two connected connectors, one
+        Allow rule for a pilot group, and two test identities: Priya (in the group, compliant device)
+        and Marcus (not in the group). The whole demo is the contrast between their two DNS lookups.
+        Confirm the feature is enabled on the demo tenant first — see Early availability above.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Start at the connector estate</h4>
+          <p><span class="path">Access → App Connectors</span></p>
+          <p>The Overview widgets: Connectivity Status (connected, disconnected, degraded, disabled),
+          Model (X1500, AWS, Azure, GCP…), Socket versions, and App Connector Groups with the number of
+          apps on each. Use <strong>Group by</strong> to show which connectors sit in which group and
+          which apps each group carries. Point at the Connected PoP column: "this box in their AWS VPC
+          dialled out to a PoP — nothing dialled in."</p>
+          <!-- capture-wanted: «CMA Access → App Connectors — Overview widgets and the connector list grouped by Connector Group, two connected connectors (AWS + X1500)» -->
+        </li>
+        <li>
+          <h4>Open one connector's analytics</h4>
+          <p><span class="path">Access → App Connectors</span> → select connector → Network Analytics</p>
+          <p>Site &amp; Tunnels tab: Connector Status, average upstream/downstream throughput, packet loss
+          and discards. Hardware tab: average CPU and per-core load. This is Socket-style telemetry in the
+          same Network Analytics view — the connector is Socket software, not a black box.</p>
+          <!-- capture-wanted: «CMA App Connector Network Analytics — Site & Tunnels tab with Connector Status and throughput» -->
+        </li>
+        <li>
+          <h4>Show what is published</h4>
+          <p><span class="path">Access → Private Apps</span></p>
+          <p>Open the app: Internal App Address (the real host or IP, resolvable only inside the VPC)
+          beside the Published App Domain (<em>app.example.intranet</em>) users will type. Show the
+          service/port items limited to what the app needs, the group it publishes through, and the
+          ICMP probe settings that drive the app's availability status. Mention that the page also
+          flags Private Apps defined but not yet referenced by any policy rule.</p>
+          <!-- capture-wanted: «CMA Access → Private Apps — Add Private App panel: General, App Settings, Publish via App Connectors Group, Probing» -->
+        </li>
+        <li>
+          <h4>Show who gets it</h4>
+          <p><span class="path">Access → Private Access → Private Access Policy</span></p>
+          <p>One rule: Users / Groups = the pilot IdP group; Criteria = a Device Posture profile (for
+          example anti-virus up to date) and Platform = Windows; Private Apps = the published app;
+          Action = Allow. Walk the rest of the criteria set — user risk level, origin (Client only),
+          country — and the default: "if no rule matches, access is blocked." Point out revisions and
+          the Hit Count column.</p>
+          <!-- capture-wanted: «CMA Private Access Policy — rule with Users/Groups, Device Posture criteria, Private Apps and Allow action, Hit Count visible» -->
+        </li>
+        <li>
+          <h4>Live proof: two lookups</h4>
+          <p>As Priya, on the Cato Client: resolve <em>app.example.intranet</em> — it answers with a
+          100.65.x.x address — then open the app. As Marcus, same command: the name does not resolve.
+          Nothing was blocked at a firewall; Marcus's device never learned where the app is. Then stop
+          one connector (or disable it) and repeat Priya's test — new sessions move to the other
+          connector in the group.</p>
+        </li>
+        <li>
+          <h4>Close on the evidence</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Filter to the pilot rule: Private Access Policy rules generate an event on every match and
+          the rule's Hit Count is derived from them. Priya's allowed sessions, attributed to her
+          identity and the rule name, are the audit trail; the absence of any session for Marcus is
+          the point.</p>
+          <!-- capture-wanted: «CMA Monitor → Events filtered to a Private Access Policy rule — allowed sessions attributed to user and rule» -->
+        </li>
+      </ol>
+    </section>
+
+    <section id="pov" class="reveal">
+      <div class="section-kicker">PoV runbook</div>
+      <h2>How to prove it in the customer's tenant</h2>
+      <p>
+        The demo publishes a lab app; the PoV publishes one of <strong>theirs</strong> — ideally the
+        application that is currently waiting on a network change — to a named pilot group, in the
+        environment where it actually lives. Agree the criteria below before configuring anything,
+        per <a href="management-pov-framework.html">Running a Cato PoV</a>: each row is a measurable
+        statement with a named evidence artefact.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Zero network change</td>
+              <td>The application is reachable by the pilot group with no inbound firewall rule, no route advertisement and no readdressing in the hosting environment</td>
+              <td>Customer's own change log for the VPC or datacentre segment showing only the connector deployment</td>
+              <td>Customer change records · Access → App Connectors</td>
+            </tr>
+            <tr>
+              <td>Hidden unless allowed</td>
+              <td>A user outside the pilot group cannot resolve the published domain; a user inside it can</td>
+              <td>Paired DNS lookups, timestamped: synthetic IP for the pilot user, no answer for the control user</td>
+              <td>Client device · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Posture gates the session</td>
+              <td>A pilot user whose device fails the posture profile is refused the same app</td>
+              <td>Same user, posture pass and posture fail, two lookups</td>
+              <td>Access → Device Posture · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Resilience without intervention</td>
+              <td>With one connector in the group taken down, new sessions continue through the other</td>
+              <td>Connector Disconnected in the list beside a successful session during the outage; measured time to restore</td>
+              <td>Access → App Connectors · Monitor → Events</td>
+            </tr>
+            <tr>
+              <td>Per-user audit trail</td>
+              <td>Every session to the pilot app is an event attributed to a user and the rule that allowed it</td>
+              <td>Events export filtered to the pilot rule for the pilot period; Hit Count on the rule</td>
+              <td>Monitor → Events · Private Access Policy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="co-title">Prerequisites — agree before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Feature enabled and Socket version available.</strong> Private Access with App
+          Connectors is request-enabled; confirm with feature-releases@catonetworks.com and that
+          Socket v26.0.23570+ is available to the account before the kick-off date is set.</li>
+          <li><strong>An IdP.</strong> "Private Access requires authenticated user identity, and
+          unauthenticated users can't access private applications." The pilot group exists in the IdP
+          and syncs to Cato — design choices in <a href="access-identity-design.html">Identity
+          Integration Design</a>.</li>
+          <li><strong>One application, written down.</strong> Internal address, published domain, the
+          exact services and ports, and the environment it lives in. The destination must accept
+          inbound traffic from the connector on the LAN; an internal FQDN must resolve through the
+          DNS the connector gets from DHCP.</li>
+          <li><strong>Somewhere to put two connectors.</strong> A VPC with three /28 subnets (or two for
+          Azure 2-NIC), an ESXi 8.0 host, or two X1500s — in separate zones or racks — with outbound
+          internet. A DHCP-served LAN for the connector's address and DNS.</li>
+          <li><strong>Licences.</strong> Bandwidth Pool for the connector traffic; ZTNA User licences
+          for the pilot cohort (five are free by default).</li>
+          <li><strong>Address check.</strong> Confirm 100.64.0.0/16 and 100.65.0.0/16 are unused in the
+          customer's estate, or agree the override values up front.</li>
+          <li><strong>Devices on the Cato Client</strong> with DNS pointed at 10.254.254.1. Browser-based
+          access is in scope only if the app is HTTP(S), RDP or SSH.</li>
+        </ul>
+      </div>
+
+      <h3>Configuration walkthrough</h3>
+      <ol class="steps">
+        <li>
+          <h4>Create the connector objects and the group</h4>
+          <p><span class="path">Access → App Connector → New</span></p>
+          <p>For each connector: name, country, Type (Physical or Virtual), Connector Group (type a new
+          name to create it — one group for this environment), Preferred PoPs left at Disabled unless
+          the customer wants them pinned. Apply, then copy the serial number for virtual connectors
+          (<a href="https://knowledge.catonetworks.com/docs/working-with-app-connectors" target="_blank" rel="noopener">Working with App Connectors</a>).</p>
+        </li>
+        <li>
+          <h4>Deploy the two connectors in the hosting environment</h4>
+          <p><span class="path">Access → App Connectors</span></p>
+          <p>AWS: Marketplace image into the VPC with MGMT/WAN/LAN subnets, IMDSv2, serial number pasted,
+          then reboot to initiate the connection
+          (<a href="https://knowledge.catonetworks.com/docs/creating-app-connectors-in-aws" target="_blank" rel="noopener">Creating App Connectors in AWS</a>).
+          Azure (<a href="https://knowledge.catonetworks.com/docs/creating-app-connectors-in-azure" target="_blank" rel="noopener">guide</a>),
+          GCP (<a href="https://knowledge.catonetworks.com/docs/creating-app-connectors-in-google-cloud-platform" target="_blank" rel="noopener">guide</a>) and
+          ESXi (<a href="https://knowledge.catonetworks.com/docs/configuring-an-esxi-app-connector" target="_blank" rel="noopener">guide</a>) follow the same shape.
+          Physical X1500: cable it, then assign it from Notifications → Activate New Socket → Assign to:
+          App Connector
+          (<a href="https://knowledge.catonetworks.com/docs/creating-physical-app-connectors" target="_blank" rel="noopener">Creating Physical App Connectors</a>).
+          Do not go further until both show <strong>Connected</strong> with a Connected PoP.</p>
+          <!-- capture-wanted: «CMA Access → App Connectors — both pilot connectors Connected, Group and Connected PoP columns» -->
+        </li>
+        <li>
+          <h4>Publish the application</h4>
+          <p><span class="path">Access → Private Apps → New</span></p>
+          <p>General: name. App Settings: Internal App Address and Published App Domain (same or
+          different), Service / Port items limited to what the app needs. Publish: Enabled, via App
+          Connectors Group, the pilot group. Probing: default ICMP interval and fault threshold, or
+          disabled if the app will not answer ICMP. Apply; status should show available, not Disabled
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-private-applications" target="_blank" rel="noopener">Configuring Private Applications</a>).</p>
+          <!-- capture-wanted: «CMA Access → Private Apps — pilot app showing status available through the connector group» -->
+        </li>
+        <li>
+          <h4>Write the Allow rule — and nothing else</h4>
+          <p><span class="path">Access → Private Access → Private Access Policy</span></p>
+          <p>New → New Rule: Users / Groups = pilot IdP group; Criteria = the customer's existing Device
+          Posture profile, the platforms the cohort actually uses, origin Client; Private Apps = the
+          pilot app; Action Allow; Track: Send Notification if the customer wants alerts. Save, then
+          Publish. There is no discovery-rule week here: the policy's default is block, and the
+          control user's failed lookup is evidence from day one
+          (<a href="https://knowledge.catonetworks.com/docs/configuring-the-private-access-policy" target="_blank" rel="noopener">Configuring the Private Access Policy</a>).</p>
+        </li>
+        <li>
+          <h4>Run the paired tests and the failover</h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p>Pilot user: lookup resolves to 100.65.x.x, app opens. Control user: no answer. Same pilot
+          user with the posture check deliberately failed: no answer. Then stop connector A in the
+          hosting environment, note the time the list shows Disconnected, re-run the pilot user's
+          test through connector B and record the time to restore against the KB's "designed to
+          restore application access within 30 seconds". Bring A back and confirm the group shows
+          both Connected.</p>
+        </li>
+        <li>
+          <h4>Assemble the evidence pack</h4>
+          <p><span class="path">Monitor → Events</span> <span class="path">Access → App Connectors</span></p>
+          <p>Export events filtered to the pilot rule for the period; screenshot the rule's Hit Count;
+          screenshot the connector list during and after the failover; attach the customer's own
+          change record showing no firewall, routing or addressing change in the hosting environment.</p>
+        </li>
+      </ol>
+
+      <h3>What good output looks like</h3>
+      <p>Four screens tell the story: the connector list with both pilot connectors Connected to a named
+      PoP; the Private App showing available through the group; the policy rule with a climbing Hit
+      Count; and the events view filtered to that rule, every row carrying the pilot user's identity.
+      Beside them, two terminal captures — one lookup answering 100.65.x.x and one not answering at all.</p>
+      <!-- capture-wanted: «CMA Access → App Connectors — Overview widgets: Connectivity Status, Model, Socket versions, App Connector Groups» -->
+      <!-- capture-wanted: «CMA Private Access Policy — pilot rule with Hit Count after the test week» -->
+      <!-- capture-wanted: «Cato Client device — nslookup of the published domain returning a 100.65.x.x synthetic IP» -->
+
+      <h3>Troubleshooting the pilot</h3>
+      <div class="grid-2">
+        <div class="benefit"><div class="b-icon">🔌</div><div><h4>App shows Disabled</h4><p>No connector in its group is connected — the KB is explicit that the app "appears as disabled" until one is. Check <span class="path">Access → App Connectors</span>: Connected PoP empty means it never reached Cato (WAN subnet, outbound internet, serial number); a last-known PoP means it dropped. Deploy and connect before publishing.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Pilot user resolves, but the app does not open</h4><p>The connector cannot resolve or reach the internal destination. An internal FQDN must resolve through the DNS the connector obtained by DHCP, and the destination must accept inbound traffic from the connector on the LAN. On Socket v26 the app must sit in the connector's LAN subnet.</p></div></div>
+        <div class="benefit"><div class="b-icon">📡</div><div><h4>App flaps Unavailable with no user impact</h4><p>The application does not answer ICMP, so the probe trips the fault threshold. Disable probing for that Private App (TCP probes are not yet available) and note that CMA connectivity monitoring for it goes with it.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧮</div><div><h4>Odd routing after publishing</h4><p>100.64.0.0/16 or 100.65.0.0/16 was already in use somewhere in the estate. Override the management and application ranges under <span class="path">Resource → System Settings</span> and re-test the lookups.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Published, connected, still no answer for the pilot user</h4><p>Work the policy: is the user in the synced IdP group under <span class="path">Access → Users</span>, do all the rule's criteria match (they are ANDed — posture, platform, origin, country), and is the app assigned to the group the rule and the app both reference? Remember the policy must be Published, not just Saved.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧱</div><div><h4>Everyone is blocked</h4><p>That is the design: "if no rule matches, access is blocked." A rule order problem (a Block above the Allow) or a rule scoped to the wrong group looks identical from the client. Check Hit Count on each rule to see which one is matching.</p></div></div>
+      </div>
+
+      <h3>Gotchas &amp; exit</h3>
+      <div class="callout warn">
+        <div class="co-title">Say these out loud before week one</div>
+        <ul style="margin:6px 0 0;padding-left:20px">
+          <li><strong>Request-enabled feature.</strong> If the tenant does not have it, the PoV does not
+          start. Confirm enablement and Socket version first, then book the kick-off.</li>
+          <li><strong>User-initiated only.</strong> If the pilot app needs to call back to the user's
+          device, or another server needs to reach it, that app is a site use case — pick a different
+          app or scope a site.</li>
+          <li><strong>Lowest network priority, no QoS.</strong> Do not pick a voice or video workload to
+          prove Private Access with.</li>
+          <li><strong>Failover re-establishes sessions.</strong> "Within 30 seconds" is a design target
+          for new sessions; a long-lived session may need to reconnect. Measure and quote what you saw.</li>
+          <li><strong>Browser access is HTTP(S), RDP and SSH only.</strong> Any other protocol means the
+          pilot cohort is on the Cato Client.</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Unwinding cleanly:</strong> disable the pilot rule rather than delete it — its Hit Count
+        and events are the record; set the Private App to not published; leave the connectors in
+        place if a rollout is likely (they become the first production group; confirm with Cato whether idle connectors carry any licence implication), or
+        delete the connector objects and tear down the VMs if not; revert any CGNAT override you made
+        for the pilot. If the answer is yes, the pilot group, app and rule are the production
+        rollout's first application, already live.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-cato-private-access" target="_blank" rel="noopener">What Is Cato Private Access?</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/app-connector-reference-architecture" target="_blank" rel="noopener">App Connector Reference Architecture</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-cato-private-access" target="_blank" rel="noopener">Configuring Cato Private Access</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/working-with-app-connectors" target="_blank" rel="noopener">Working with App Connectors</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/monitoring-app-connectors" target="_blank" rel="noopener">Monitoring App Connectors</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-private-applications" target="_blank" rel="noopener">Configuring Private Applications</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-the-private-access-policy" target="_blank" rel="noopener">Configuring the Private Access Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/zero-trust-access-to-private-applications-with-the-cato-sase-cloud" target="_blank" rel="noopener">Zero Trust Access to Private Applications</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/base-products" target="_blank" rel="noopener">Base Products (licensing)</a></li>
+            <li><a href="https://github.com/catonetworks/terraform-cato-appconnector-aws" target="_blank" rel="noopener">Terraform module — AWS App Connector</a></li>
+            <li><a href="https://www.catonetworks.com/platform/universal-zero-trust-network-access-ztna/" target="_blank" rel="noopener">Universal ZTNA — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-app-connectors.html">Demo Segment: App Connectors</a></li>
+            <li><a href="access-third-party.html">De-risking 3rd-Party &amp; Supply Chain Access</a></li>
+            <li><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+            <li><a href="access-byod-clientless.html">BYOD &amp; Unmanaged Device Access</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

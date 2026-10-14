@@ -1,6 +1,6 @@
 # Capture shopping list — demo-tenant screenshots wanted by the PoV runbooks
 
-Regenerated 116 live `capture-wanted` items across 53 pages
+Regenerated 137 live `capture-wanted` items across 59 pages
 (auto-drops any that have since been embedded). Grouped by CMA area for an efficient capture session.
 
 **Self-serve workflow** — capture in your own tenant, then hand back for embedding:
@@ -184,3 +184,27 @@ Regenerate this file: `grep -rn capture-wanted usecases/*.html`. Config-dependen
 ## Security — TLS Inspection  (1)
 
 - **migration-checkpoint**: Monitor → Events filtered to TLSi-decrypted pilot traffic showing first-time detections surfaced after staging
+
+## Access — Private Access & App Connectors + Platform Demo segments  (21)
+
+- **access-app-connectors**: CMA Access → App Connectors — Overview widgets and the connector list grouped by Connector Group, two connected connectors (AWS + X1500)
+- **access-app-connectors**: CMA Access → App Connectors — Overview widgets: Connectivity Status, Model, Socket versions, App Connector Groups
+- **access-app-connectors**: CMA Access → App Connectors — both pilot connectors Connected, Group and Connected PoP columns
+- **access-app-connectors**: CMA Access → Private Apps — Add Private App panel: General, App Settings, Publish via App Connectors Group, Probing
+- **access-app-connectors**: CMA Access → Private Apps — pilot app showing status available through the connector group
+- **access-app-connectors**: CMA App Connector Network Analytics — Site & Tunnels tab with Connector Status and throughput
+- **access-app-connectors**: CMA Monitor → Events filtered to a Private Access Policy rule — allowed sessions attributed to user and rule
+- **access-app-connectors**: CMA Private Access Policy — pilot rule with Hit Count after the test week
+- **access-app-connectors**: CMA Private Access Policy — rule with Users/Groups, Device Posture criteria, Private Apps and Allow action, Hit Count visible
+- **access-app-connectors**: Cato Client device — nslookup of the published domain returning a 100.65.x.x synthetic IP
+- **demo-app-connectors**: CMA Access → App Connectors — Overview widgets (Connectivity Status, Model, Socket versions, App Connector Groups) with one connected connector in the list
+- **demo-app-connectors**: CMA Access → Private Access → Private Access Policy — one allow rule with group, Device Posture Profile criteria and a Private App, Hit Count visible
+- **demo-app-connectors**: CMA Access → Private Apps — one Private App showing Internal App Address, Published App Domain, Service/Port items, Publish via App Connectors Group and probing status
+- **demo-app-connectors**: Cato Client device — browser open on app.example.intranet beside a terminal lookup for the same name from an unauthorised user that returns no answer
+- **demo-casb**: CMA Monitor → App Analytics — one unsanctioned app's detail: risk score with its inputs, and the Users list for that app
+- **demo-platform-60**: CMA Home → Experience Monitoring — a user with one application scored lower than the rest, ready for the path-analysis drill
+- **demo-threat-prevention**: CMA Monitor → Events — one IPS or Anti-Malware block event opened, showing user, threat name/signature, verdict and action
+- **demo-ztna**: CMA Access → Users — SCIM-provisioned user detail showing origin, directory source and group membership
+- **demo-ztna**: CMA Monitor → Events — one identity, a WAN Firewall allow beside a Client Connectivity Policy posture block
+- **demo-ztna**: CMA Resources → Device Posture — corporate profile with anti-malware, disk-encryption and patch checks
+- **demo-ztna**: CMA Security → WAN Firewall — one group-plus-posture allow rule to a named host over the implicit block

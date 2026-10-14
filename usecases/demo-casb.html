@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: CASB — Cato Use Case Library</title>
+<meta name="description" content="Five minutes from shadow IT discovery to sanctioned-app control — the Cloud Apps Dashboard, risk scores, tenant restrictions and one Application Control rule.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-casb">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 3: CASB</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: CASB</h1>
+    <p class="lede">
+      Segment 3 of <a href="demo-platform-60.html">the 60-minute platform demo</a> — minutes 20 to 25.
+      Five minutes from shadow IT discovery to sanctioned-app control: the Cloud Apps Dashboard shows
+      how many SaaS applications are really in use and how risky they are, App Analytics drills to one
+      application and the people using it, and a single Application Control rule brings it under
+      policy. Same engine, same flow, a different decision.
+    </p>
+    <div class="meta-row">
+      <span class="tag">CASB</span><span class="tag">Shadow IT</span><span class="tag">Cloud Apps Dashboard</span>
+      <span class="tag">Application Control</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The sentence they must leave with</h2>
+      <p>
+        <strong>Cato already sees every cloud application your people use, scores its risk, and lets
+        you control what they do in it — without deploying anything new.</strong>
+      </p>
+      <p>
+        The business case for SaaS is being written by the business, not by IT: the processes that
+        hold the most sensitive data are moving into cloud applications, and often into applications
+        security never sanctioned. The first thing a prospect wants from CASB is therefore not a rule
+        but an answer — how many applications are in use, which of them are risky, and who is using
+        them. Because every user and site already sends its traffic through the Cato PoP, that
+        inventory builds itself from traffic: no agents, no log uploads, no extra proxy.
+      </p>
+      <p>
+        The second thing they want is control that is finer than allow or deny. Cato classifies the
+        application inline, scores its risk and controls the activity — upload, download, share,
+        login — per user and group. That is what lets you permit the corporate tenant of an
+        application while blocking its personal equivalent, or allow browsing of a risky application
+        while stopping uploads to it. Shadow AI is the version of this story every audience recognises
+        in 2026; treat it as one more class of unsanctioned application and point to
+        <a href="ai-genai-security.html">GenAI Security for End Users</a> for the depth.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Say, then show</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from Threat Prevention</div>
+        <p>“Threats are what comes in. Next is where your data goes: the SaaS applications people adopted without asking.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — the number they did not expect</h4>
+          <p><strong>Say:</strong> “Before any policy exists, the platform already knows which cloud
+          applications this organisation uses — because the traffic is already here.”</p>
+          <p><strong>Show:</strong> <span class="path">Monitor → Cloud Apps Dashboard</span> — the
+          distinct application count, the sanctioned-versus-unsanctioned split, the newly seen
+          applications and the risky ones. Ask what number they expected; the gap is the shadow IT
+          conversation.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — one application, scored and attributed</h4>
+          <p><strong>Say:</strong> “Risk here is not a guess. Every application carries a score built
+          from the certifications it holds, its security capabilities and how widely it is used.”</p>
+          <p><strong>Show:</strong> <span class="path">Monitor → App Analytics</span> — drill into one
+          unsanctioned file-sharing or GenAI application the dashboard surfaced, walk the score and
+          its inputs, then the users and sites actually using it.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — the rule that brings it under control</h4>
+          <p><strong>Say:</strong> “Control is by activity, not just by application. The corporate
+          tenant stays open; the personal copy of the same application is closed; a risky application
+          can be browsed but not uploaded to.”</p>
+          <p><strong>Show:</strong> <span class="path">Security → CASB</span> — one Application
+          Control rule: the corporate tenant allowed, personal tenants of the same application
+          blocked, or uploads to the risky application blocked while browsing stays allowed.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to DLP</div>
+        <p>“CASB tells you which application. DLP tells you what is inside the upload.”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>Classify the application, score it, control the activity</h2>
+      <p>
+        The same single-pass engine that enforced the internet rule in segment 1 and stopped the
+        threat in segment 2 now makes a CASB decision. For every flow it identifies the cloud
+        application, looks up its risk score and compliance attributes, checks whether the
+        destination is the sanctioned tenant, and matches the activity the user is attempting against
+        the Application Control policy. The inventory, the risk scores and every decision land in the
+        same dashboards and event stream the prospect has already seen.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Inline CASB decisions at the Cato PoP</title>
+          <desc id="dg1-desc">Traffic from a Bristol office and a remote user reaches a Cato PoP running the single-pass engine with inline CASB. Access to the sanctioned corporate SaaS tenant is allowed. Access to a personal tenant of the same application is blocked. A risky unsanctioned application can be browsed but uploads are restricted. Every classification and decision is reported to the Cloud Apps Dashboard and events.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="440" cy="217" rx="160" ry="52"/>
+          <circle cx="283" cy="230" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="597" cy="204" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="440" cy="212" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="440" cy="212" r="30"/>
+          <text class="dg-label" x="440" y="146" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP — single-pass engine</text>
+          <text class="dg-tiny" x="440" y="162" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">app ID · risk score · tenant · activity</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="112" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="136" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="118" y="154" text-anchor="middle">Socket X1500 — all traffic</text>
+
+          <rect class="dg-node" x="34" y="262" width="168" height="58" rx="10"/>
+          <text class="dg-label" x="118" y="286" text-anchor="middle">Remote user — Priya</text>
+          <text class="dg-sub" x="118" y="304" text-anchor="middle">Cato Client</text>
+
+          <path class="lane lane-static" d="M 202 141 C 280 154, 345 180, 411 199"/>
+          <path class="lane lane-static" d="M 202 291 C 280 280, 345 246, 411 225"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node-green" x="752" y="58" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="840" y="82" text-anchor="middle">Corporate tenant</text>
+          <text class="dg-sub" x="840" y="100" text-anchor="middle">Sanctioned — M365 · Box</text>
+
+          <rect class="dg-node-dark" x="752" y="188" width="176" height="58" rx="10"/>
+          <text class="dg-label-inv" x="840" y="212" text-anchor="middle">Personal tenant</text>
+          <text class="dg-sub-inv" x="840" y="230" text-anchor="middle">Same app — unsanctioned</text>
+
+          <rect class="dg-node" x="752" y="318" width="176" height="58" rx="10"/>
+          <text class="dg-label" x="840" y="342" text-anchor="middle">Risky shadow app</text>
+          <text class="dg-sub" x="840" y="360" text-anchor="middle">Browse OK · no uploads</text>
+
+          <!-- Lanes from PoP -->
+          <path class="lane lane-allow" d="M 468 200 C 560 165, 650 116, 752 90"/>
+          <path class="lane lane-block" d="M 470 213 C 550 214, 620 216, 684 217"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 696 205 L 720 229"/><path class="lane-x" d="M 720 205 L 696 229"/>
+          </g>
+          <path class="lane lane-limit" d="M 468 225 C 560 262, 650 318, 752 344"/>
+
+          <!-- Telemetry to the dashboard -->
+          <rect class="dg-node" x="342" y="352" width="196" height="58" rx="10"/>
+          <text class="dg-label" x="440" y="376" text-anchor="middle">Cloud Apps Dashboard</text>
+          <text class="dg-sub" x="440" y="394" text-anchor="middle">inventory · risk · users · events</text>
+          <path class="lane lane-info" d="M 440 246 L 440 350"/>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Sanctioned tenant — allowed and monitored</span>
+          <span class="key"><span class="swatch block"></span> Personal tenant — blocked</span>
+          <span class="key"><span class="swatch limit"></span> Risky application — activity restricted</span>
+          <span class="key"><span class="swatch info"></span> Classification and decisions to the dashboard</span>
+        </div>
+        <div class="diagram-caption">One engine, three outcomes: the application is identified and scored inline, the tenant and the activity decide the action, and every decision feeds the Cloud Apps Dashboard and the event stream.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Discovery without deployment</h4><p>Traffic already traverses the PoP — the shadow IT and shadow AI inventory needs no agents, log uploads or extra proxies.</p></div></div>
+        <div class="benefit"><div class="b-icon">📊</div><div><h4>Risk you can defend</h4><p>Each application carries a risk score and compliance attributes — certifications held, security capabilities, popularity — visible in the Cloud Apps Dashboard and App Analytics.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎚️</div><div><h4>Granular activity control</h4><p>Not just allow or block: permit read-only use of a risky application while blocking uploads, shares or logins — per user group.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧩</div><div><h4>Inline and out-of-band, one policy</h4><p>Real-time control of live traffic plus API integrations with sanctioned SaaS tenants for data already at rest — one console, one event stream.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Minutes 20 to 25</h2>
+      <p>
+        Three screens, one rule, no configuration on the day. Before the session, confirm the demo
+        tenant's dashboard surfaces at least one unsanctioned file-sharing or GenAI application with
+        real users behind it, and that the Application Control policy already holds the rule you
+        intend to show. If you are running late, show the dashboard only and move on — two minutes
+        (Cut 1). If the next cut is also needed, stay on this segment's events screen and show the DLP
+        Data Incident there instead of walking DLP Configuration in segment 4 (Cut 2).
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Open on the inventory</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span></p>
+          <p><strong>Say:</strong> “This is every cloud application this organisation used in the
+          period — found from traffic, before any policy was written.”</p>
+          <p><strong>Show:</strong> the application count, the sanctioned-versus-unsanctioned split,
+          newly seen applications, the risky applications and the GenAI tools among them. Ask the room
+          what number they would have guessed. <em>[2 min]</em></p>
+          <figure class="shot">
+            <img src="../assets/img/cma-apps-dashboard.png" alt="The CMA Applications dashboard Overview tab on live traffic over the last two days: a KPI band showing 196 apps with 1 new, a classification donut of 157 unsanctioned against 39 sanctioned, 0 high-risk apps, 26 users and 0 plugins, above a Usage Flow panel tracing user departments through app activity categories." loading="lazy">
+            <figcaption>The opening screen on real traffic (lab tenant): two days of flows and the inventory already stands at 196 applications for 26 users, 157 unsanctioned against 39 sanctioned. That ratio is the first beat — point at it and let the room react before you say anything else.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Drill to one risky application</h4>
+          <p><span class="path">Monitor → App Analytics</span></p>
+          <p><strong>Say:</strong> “Pick any one of them and the platform tells you how risky it is,
+          why, and who is using it.”</p>
+          <p><strong>Show:</strong> one unsanctioned file-sharing or GenAI application: the risk score
+          and its inputs — compliance certifications held, security capabilities, popularity — then
+          the users and sites behind it. Name the user by identity, not by address. <em>[1 min]</em></p>
+          <!-- capture-wanted: «CMA Monitor → App Analytics — one unsanctioned app's detail: risk score with its inputs, and the Users list for that app» -->
+        </li>
+        <li>
+          <h4>Show the Application Control rule</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p><strong>Say:</strong> “One rule, three outcomes. The corporate tenant is allowed, the
+          personal tenant of the same application is blocked, and a risky application can be read but
+          not uploaded to. Control is by activity, per user group.”</p>
+          <p><strong>Show:</strong> the Application Control policy. Walk one rule end to end — source
+          group, application, the activity or tenant criterion, action, tracking. Point out the mix of
+          Monitor and Block rules in the same rulebase: new rules start in Monitor with Event tracking
+          on, and are promoted to Block only once the evidence has been reviewed. <em>[1.5 min]</em></p>
+          <figure class="shot">
+            <img src="../assets/img/cma-app-data-inline-policy.png" alt="CMA App and Data Inline Protection policy: a rule group mixing App and Data rules — monitor rules for logins, Gmail attachments and risky storage apps alongside block rules for credit-card and GenAI uploads — each with source, application, criteria, severity, action and tracking." loading="lazy">
+            <figcaption>The rulebase to walk (demo tenant, fictional groups): activity-criteria rules that allow logins to the corporate Microsoft tenant and the corporate SharePoint/OneDrive URL, a rule blocking personal OneDrive tenants (the separate Tenant Restriction tab is not shown), an activity rule blocking a single Teams activity, a monitor rule on Gmail attachments, and a rule keyed on risk score and a missing ISO 27001 attribute. Newer tenants show this policy under Security → App &amp; Data Inline; older ones under Security → CASB.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Close on the licence boundary, in one sentence</h4>
+          <p><span class="path">Security → CASB</span></p>
+          <p><strong>Say:</strong> “Everything on this screen is the CASB licence — the inventory, the
+          risk scores and the application rules. The data rules in the same policy are the next
+          segment, and they are the DLP licence.”</p>
+          <p><strong>Show:</strong> the Type column — App rows beside Data rows in one policy — and
+          leave it on screen for the transition. <em>[0.5 min]</em></p>
+        </li>
+      </ol>
+
+      <p>
+        <strong>Transition.</strong> With the Type column still visible: “CASB tells you which
+        application. DLP tells you what is inside the upload.” Then open
+        <a href="demo-dlp.html">segment 4</a> on Security → DLP Configuration.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Likely questions and the short answer</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Do we need to deploy agents or upload firewall logs for discovery?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">No. Traffic from every connected site and Cato
+          Client user already traverses the PoP, so the inventory builds from live traffic with no
+          agents, log uploads or additional proxies. Mark the applications the customer confirms as
+          sanctioned directly from the dashboard and the split updates.</p>
+          <p style="font-size:.92rem"><a href="security-data-casb-dlp.html#solution">Data Security with CASB &amp; DLP — one inspection point</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Can we allow an application but stop people uploading to it?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Yes — that is the point of activity-level
+          control. An Application Control rule can permit read-only use of a risky application while
+          blocking uploads, shares or logins for a given user group, and tenant criteria distinguish the
+          corporate instance from a personal one. Activities exist for applications classified in the
+          App Catalog; a plain website resolves to a URL category without them.</p>
+          <p style="font-size:.92rem"><a href="security-data-casb-dlp.html#demo">Data Security with CASB &amp; DLP — bringing an app under control</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Does this cover the AI tools people are using?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Yes. Shadow AI Discovery classifies traffic
+          against AI application signatures, domains and behavioural patterns — standalone AI tools and
+          AI features embedded in everyday SaaS — and evaluates the risk posture of what it finds. It is
+          passive by default: it does not block and does not inspect prompt content; the User
+          Interaction Policy is the enforcement layer above it.</p>
+          <p style="font-size:.92rem"><a href="ai-genai-security.html">GenAI Security for End Users</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“What does it need to see the traffic, and what licence is this?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Application Control rules require TLS
+          inspection for the traffic they match — without it there are no application activities to
+          act on — so it is staged on the pilot group first. The inventory, risk scores and Application
+          Control are included in the CASB licence; Data Control rules in the same policy additionally
+          require the DLP licence.</p>
+          <p style="font-size:.92rem"><a href="security-data-casb-dlp.html#pov">CASB/DLP PoV prerequisites</a> · <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cloud-access-security-broker-casb/" target="_blank" rel="noopener">CASB — platform page</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-applications-dashboard" target="_blank" rel="noopener">Using the Applications Dashboard (KB)</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-the-application-control-policy" target="_blank" rel="noopener">Managing the Application Control Policy (KB)</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-Minute Platform Demo — running order</a></li>
+            <li><a href="demo-threat-prevention.html">Previous segment: Threat Prevention</a></li>
+            <li><a href="demo-dlp.html">Next segment: DLP</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="management-visibility.html">Operational &amp; Executive Visibility</a></li>
+            <li><a href="ai-genai-security.html">GenAI Security for End Users</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

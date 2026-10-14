@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 60-Minute Platform Demo — Cato Use Case Library</title>
+<meta name="description" content="Running order, timing and transitions for a one-hour first demo — SWG, threat prevention, CASB, DLP, ZTNA, App Connectors and DEM in about 35 minutes of console time, with room kept for introductions, questions and next steps.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-platform-60">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / The 60-Minute Platform Demo</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>The 60-Minute Platform Demo</h1>
+    <p class="lede">
+      A first demo to a mixed IT and security audience is not an hour of console time. It is ten
+      minutes of listening, two slides, thirty-five minutes across seven capabilities in one console,
+      ten minutes of questions and five minutes agreeing what happens next. This page is the running
+      order, the timings, the bridge lines between segments, the tenant staging checklist and the cut
+      plan for when the clock gets away from you.
+    </p>
+    <div class="meta-row">
+      <span class="tag">Demo Flow</span><span class="tag">Running Order</span><span class="tag">Timing</span>
+      <span class="tag">Transitions</span><span class="tag">First Demo</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why a running order</div>
+      <h2>The hour is mostly not demo time</h2>
+      <p>
+        Sixty minutes sounds generous until you divide it. Ten minutes go to introductions and
+        setting the scene, ten to questions, five to next steps. That leaves thirty-five minutes of
+        console time for seven capabilities: five minutes each, no more. Without a running order the
+        first two segments eat twenty minutes, ZTNA gets squeezed, DEM is dropped, and the one thing a
+        network lead came to see never appears.
+      </p>
+      <p>
+        The aim of the hour is not to show everything. It is to leave the room with one idea — one
+        cloud platform, one policy engine, one console — proven from seven angles, and to convert
+        that into a decision to run a proof of value with an agreed scope. The PoV itself follows the
+        frame in <a href="management-pov-framework.html">Running a Cato PoV</a>: scope workshop,
+        written success criteria, a fixed end date and evidence collected as it lands. This page gets
+        you to the point where that conversation can start.
+      </p>
+      <div class="callout">
+        <div class="co-title">The one idea</div>
+        <p>Every flow — user to internet, user to private application, site to site — passes the same
+        single-pass engine in the Cato PoP. Each of the seven segments is that engine seen from a
+        different angle. Say it at minute five and let every transition repeat it.</p>
+      </div>
+    </section>
+
+    <section id="timeline" class="reveal">
+      <div class="section-kicker">Minute by minute</div>
+      <h2>The running order</h2>
+      <p>
+        Timings are start and end minutes on the meeting clock, not durations. Start the clock when
+        the last expected attendee joins, not when you join. If the room is five minutes late, the
+        cut plan below pays for it — the running order does not stretch.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>Minute</th><th>Segment</th><th>CMA area</th><th>Proof point</th><th>Page link</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>00–05</td>
+              <td>Introductions</td>
+              <td>None — no console yet</td>
+              <td>Who is in the room and what they want to see. Write the asks on the agenda slide.</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>05–10</td>
+              <td>Set the scene</td>
+              <td>None — two slides</td>
+              <td>One cloud platform, one policy engine, one console. Every flow passes the same single-pass engine, so every segment is the same engine from a different angle.</td>
+              <td>This page — <a href="#solution">the scene-setting picture</a></td>
+            </tr>
+            <tr>
+              <td>10–15</td>
+              <td>1 · Secure Web Gateway</td>
+              <td>Security → Internet Firewall · Security → TLS Inspection · Monitor → Events</td>
+              <td>A user-aware category/app rule and the event that records the decision.</td>
+              <td><a href="demo-swg.html">Demo Segment: Secure Web Gateway</a></td>
+            </tr>
+            <tr>
+              <td>15–20</td>
+              <td>2 · Threat Prevention</td>
+              <td>Monitor → Threats Dashboard · Security → IPS · Security → Anti-Malware · Monitor → Events</td>
+              <td>A threat stopped in the cloud, the event behind it, the story that explains it.</td>
+              <td><a href="demo-threat-prevention.html">Demo Segment: Threat Prevention</a></td>
+            </tr>
+            <tr>
+              <td>20–25</td>
+              <td>3 · CASB</td>
+              <td>Monitor → Cloud Apps Dashboard · Monitor → App Analytics · Security → CASB (Security → App &amp; Data Inline on newer tenants)</td>
+              <td>Shadow IT discovered, risk scored, one Application Control rule.</td>
+              <td><a href="demo-casb.html">Demo Segment: CASB</a></td>
+            </tr>
+            <tr>
+              <td>25–30</td>
+              <td>4 · DLP</td>
+              <td>Security → DLP Configuration · Security → Data Types &amp; Profiles · Monitor → Events · Monitor → Data Protection Dashboard</td>
+              <td>A sensitive upload stopped and the incident visible.</td>
+              <td><a href="demo-dlp.html">Demo Segment: DLP</a></td>
+            </tr>
+            <tr>
+              <td>30–35</td>
+              <td>5 · ZTNA</td>
+              <td>Access → Users · Access → Device Posture · Access → Client Connectivity Policy · Security → WAN Firewall · Monitor → Events</td>
+              <td>Identity and posture decide; the rule that allows and the implicit block that denies.</td>
+              <td><a href="demo-ztna.html">Demo Segment: ZTNA</a></td>
+            </tr>
+            <tr>
+              <td>35–40</td>
+              <td>6 · App Connectors</td>
+              <td>Access → App Connectors · Access → Private Apps · Access → Private Access → Private Access Policy</td>
+              <td>A private app published by domain without inbound rules or routing changes; the user reaches it, an unauthorised user cannot resolve it.</td>
+              <td><a href="demo-app-connectors.html">Demo Segment: App Connectors</a></td>
+            </tr>
+            <tr>
+              <td>40–45</td>
+              <td>7 · Digital Experience Monitoring</td>
+              <td>Home → Experience Monitoring · user/site drill-down → Path Analysis</td>
+              <td>Per-user, per-app score and the fault domain found hop by hop.</td>
+              <td><a href="demo-dem.html">Demo Segment: Digital Experience Monitoring</a></td>
+            </tr>
+            <tr>
+              <td>45–55</td>
+              <td>Questions</td>
+              <td>Wherever the question takes you</td>
+              <td>Parked questions answered first, in the order they were written down.</td>
+              <td><a href="#questions">Questions you will get</a></td>
+            </tr>
+            <tr>
+              <td>55–60</td>
+              <td>Next steps</td>
+              <td>None — close the console</td>
+              <td>Agree a PoV scope and book the decision meeting.</td>
+              <td><a href="management-pov-framework.html">Running a Cato PoV</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">The scene-setting picture</div>
+      <h2>One engine, seven angles</h2>
+      <p>
+        This is the picture you show at minute five, before any console. A user on the Cato Client and
+        a site behind a Cato Socket both enter the nearest PoP. The single-pass engine there makes the
+        decision, and the flow leaves for the internet, a SaaS application or a private application
+        reached through an App Connector. The seven segments along the top are not seven products —
+        they are the seven questions the same engine answers on the same flow.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 450" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">The 60-minute demo as one single-pass engine seen from seven angles</title>
+          <desc id="dg1-desc">A rail of seven labelled segment nodes runs across the top: SWG, Threats, CASB, DLP, ZTNA, App Connectors and DEM. Below, a remote user on the Cato Client and a branch site on a Cato Socket send flows into a single Cato PoP marked as the single-pass engine. Flows leave the PoP to the internet, to SaaS applications and to a private application reached through an App Connector. A telemetry lane runs from the PoP up to the DEM node.</desc>
+
+          <!-- Segment rail (top) -->
+          <rect class="dg-node" x="23" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="84" y="58" text-anchor="middle">1 · SWG</text>
+          <text class="dg-sub" x="84" y="76" text-anchor="middle">Internet FW · TLSi</text>
+
+          <rect class="dg-node" x="155" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="216" y="58" text-anchor="middle">2 · Threats</text>
+          <text class="dg-sub" x="216" y="76" text-anchor="middle">IPS · Anti-Malware</text>
+
+          <rect class="dg-node" x="287" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="348" y="58" text-anchor="middle">3 · CASB</text>
+          <text class="dg-sub" x="348" y="76" text-anchor="middle">Cloud apps · risk</text>
+
+          <rect class="dg-node" x="419" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="480" y="58" text-anchor="middle">4 · DLP</text>
+          <text class="dg-sub" x="480" y="76" text-anchor="middle">Data types · rules</text>
+
+          <rect class="dg-node" x="551" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="612" y="58" text-anchor="middle">5 · ZTNA</text>
+          <text class="dg-sub" x="612" y="76" text-anchor="middle">Identity · posture</text>
+
+          <rect class="dg-node" x="683" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="744" y="58" text-anchor="middle">6 · Connectors</text>
+          <text class="dg-sub" x="744" y="76" text-anchor="middle">Private apps</text>
+
+          <rect class="dg-node" x="815" y="34" width="122" height="58" rx="10"/>
+          <text class="dg-label" x="876" y="58" text-anchor="middle">7 · DEM</text>
+          <text class="dg-sub" x="876" y="76" text-anchor="middle">Score · path</text>
+
+          <!-- Rail bar and drop to the PoP -->
+          <path class="lane-static" fill="none" d="M 84 92 L 84 112 L 876 112 L 876 92"/>
+          <path class="lane-static" d="M 216 92 L 216 112"/>
+          <path class="lane-static" d="M 348 92 L 348 112"/>
+          <path class="lane-static" d="M 480 92 L 480 112"/>
+          <path class="lane-static" d="M 612 92 L 612 112"/>
+          <path class="lane-static" d="M 744 92 L 744 112"/>
+          <path class="lane-static" d="M 480 112 L 480 188"/>
+          <text class="dg-tiny" x="480" y="134" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">seven angles on one engine</text>
+
+          <!-- Backbone and PoP -->
+          <ellipse class="dg-backbone" cx="480" cy="290" rx="150" ry="48"/>
+          <circle cx="334" cy="302" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <circle cx="626" cy="278" r="7" fill="none" stroke="var(--green-600)" stroke-width="4"/>
+          <text class="dg-tiny" x="480" y="356" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Global Private Backbone</text>
+
+          <circle class="pulse-ring" cx="480" cy="285" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="480" cy="285" r="30"/>
+          <text class="dg-label" x="480" y="208" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP</text>
+          <text class="dg-tiny" x="480" y="223" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">single-pass engine · one policy</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="196" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="220" text-anchor="middle">Remote user</text>
+          <text class="dg-sub" x="114" y="238" text-anchor="middle">Cato Client</text>
+
+          <rect class="dg-node" x="34" y="330" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="114" y="354" text-anchor="middle">Branch site</text>
+          <text class="dg-sub" x="114" y="372" text-anchor="middle">Cato Socket</text>
+
+          <!-- Inbound lanes -->
+          <path class="lane lane-allow" d="M 196 225 C 290 232, 380 262, 448 278"/>
+          <path class="lane lane-allow" d="M 196 359 C 290 352, 380 318, 448 294"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="766" y="160" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="846" y="184" text-anchor="middle">Internet</text>
+          <text class="dg-sub" x="846" y="202" text-anchor="middle">web · categories</text>
+
+          <rect class="dg-node" x="766" y="260" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="846" y="284" text-anchor="middle">SaaS apps</text>
+          <text class="dg-sub" x="846" y="302" text-anchor="middle">sanctioned · shadow</text>
+
+          <rect class="dg-node-green" x="766" y="360" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="846" y="384" text-anchor="middle">Private app</text>
+          <text class="dg-sub" x="846" y="402" text-anchor="middle">via App Connector</text>
+
+          <!-- Outbound lanes -->
+          <path class="lane lane-allow" d="M 512 272 C 600 240, 680 200, 764 189"/>
+          <path class="lane lane-allow" d="M 514 286 C 600 288, 680 289, 764 289"/>
+          <path class="lane lane-allow" d="M 512 298 C 600 330, 680 380, 764 389"/>
+
+          <!-- Telemetry to DEM -->
+          <path class="lane lane-info" d="M 508 266 C 640 190, 780 150, 876 94"/>
+          <text class="dg-tiny" x="700" y="130" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">telemetry from every flow</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Flows inspected by the single-pass engine</span>
+          <span class="key"><span class="swatch info"></span> Telemetry feeding Experience Monitoring</span>
+        </div>
+        <div class="diagram-caption">The scene-setting picture: two ways in, one engine, three ways out. Segments 1–6 are decisions the engine makes on the flow; segment 7 is what the engine tells you about it afterwards.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🧭</div><div><h4>Say it once, then keep pointing at it</h4><p>Every bridge line below returns to this picture. When a segment ends, the next node on the rail lights up — same flow, next question.</p></div></div>
+        <div class="benefit"><div class="b-icon">🖥️</div><div><h4>One console for all seven</h4><p>Every CMA path in the running order sits in the same Cato Management Application. Do not open a second tool during the thirty-five minutes.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔁</div><div><h4>Two ways in, both the same</h4><p>The remote user and the branch site reach the same PoP and the same policy. Say so now; it saves the "is this the same for sites?" question later.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Evidence is the last angle</h4><p>DEM closes the hour because it answers the question an ops lead is already thinking: is it slow because of Cato? Keep it in unless the room is security-only.</p></div></div>
+      </div>
+    </section>
+
+    <section id="bridges" class="reveal">
+      <div class="section-kicker">Transitions</div>
+      <h2>The eight bridge lines</h2>
+      <p>
+        Quote these as written. Each segment page opens with its bridge-in and closes with its
+        bridge-out, so the words you say on the hour are the words the segment pages are built around.
+        The bridge-out of one segment is the bridge-in of the next.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>From</th><th>To</th><th>Say</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Scene</td><td>SWG</td><td>“Every decision the platform makes starts with the same three questions: who is this user, where are they going, and should they? Let's start with the internet.”</td></tr>
+            <tr><td>SWG</td><td>Threat Prevention</td><td>“That was policy you wrote. Now the threats you did not see coming — same engine, same flow, no extra appliance.”</td></tr>
+            <tr><td>Threat Prevention</td><td>CASB</td><td>“Threats are what comes in. Next is where your data goes: the SaaS applications people adopted without asking.”</td></tr>
+            <tr><td>CASB</td><td>DLP</td><td>“CASB tells you which application. DLP tells you what is inside the upload.”</td></tr>
+            <tr><td>DLP</td><td>ZTNA</td><td>“So far every flow was a user going out. Now the other direction: users reaching your private applications.”</td></tr>
+            <tr><td>ZTNA</td><td>App Connectors</td><td>“That user reached an application on a Cato-connected site. What about the applications you do not want to on-ramp a whole network for?”</td></tr>
+            <tr><td>App Connectors</td><td>DEM</td><td>“Every one of those flows produces telemetry, and that telemetry answers the question you will hear most: is it slow because of Cato?”</td></tr>
+            <tr><td>DEM</td><td>Close</td><td>“One console, seven capabilities, thirty-five minutes of screen time. What would you want to see proven on your own traffic?”</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="prep" class="reveal">
+      <div class="section-kicker">Tenant staging checklist</div>
+      <h2>What must be true before the call</h2>
+      <p>
+        A five-minute segment has no time to generate its own evidence. Every proof point in the
+        running order depends on something that already exists in the demo tenant: a rule with a
+        visible block, an event from the last few days, a dashboard with data in it. Walk this list the
+        day before, in order, and fix what is missing.
+      </p>
+      <ol class="steps">
+        <li>
+          <h4>TLS inspection on for the demo user group</h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p>The SWG, CASB and DLP segments all show decisions made on decrypted traffic. Confirm an
+          inspect rule covers the demo user or group, and that the sensitive-category bypasses sit
+          above it so you can answer the privacy question from the same screen.</p>
+        </li>
+        <li>
+          <h4>An Internet Firewall rule with a visible block</h4>
+          <p><span class="path">Security → Internet Firewall</span> <span class="path">Monitor → Events</span></p>
+          <p>One user-aware category or application rule with a non-zero hit count, and at least one
+          block event from the demo user in the recent window. Segment 1 opens on the rule and closes on
+          the event.</p>
+        </li>
+        <li>
+          <h4>Recent IPS and anti-malware events on the Threats Dashboard</h4>
+          <p><span class="path">Monitor → Threats Dashboard</span> <span class="path">Security → IPS</span> <span class="path">Security → Anti-Malware</span></p>
+          <p>The dashboard must show activity in the chosen time range, with at least one blocked
+          threat you can drill into. An empty dashboard is the worst thing segment 2 can open on.</p>
+        </li>
+        <li>
+          <h4>Cloud Apps Dashboard populated</h4>
+          <p><span class="path">Monitor → Cloud Apps Dashboard</span> <span class="path">Monitor → App Analytics</span></p>
+          <p>Enough recent SaaS traffic that the dashboard shows a spread of applications and risk
+          scores, including something unsanctioned you can point at for the shadow IT beat.</p>
+        </li>
+        <li>
+          <h4>One DLP rule with a recent incident</h4>
+          <p><span class="path">Security → DLP Configuration</span> <span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p>A rule that stops an upload containing a recognisable data type, and an incident from the
+          demo user in the recent window so the dashboard and the event list both have something to show.</p>
+        </li>
+        <li>
+          <h4>A demo user with a posture profile, one allow rule over the implicit block</h4>
+          <p><span class="path">Access → Users</span> <span class="path">Access → Device Posture</span> <span class="path">Security → WAN Firewall</span></p>
+          <p>The demo user is visible under Users, carries a posture profile, and matches one WAN
+          Firewall allow rule with nothing beneath it but the implicit block. Check the allow rule has
+          a recent event from the compliant device and that a block event exists from the
+          non-compliant one.</p>
+        </li>
+        <li>
+          <h4>One Private App through a connected App Connector Group</h4>
+          <p><span class="path">Access → App Connectors</span> <span class="path">Access → Private Apps</span></p>
+          <p>The connector group shows connected, the private application is published by domain, and
+          the policy names one allowed user and one who is not. Test both from a client before the day:
+          the allowed user reaches it, the other cannot resolve it.</p>
+        </li>
+        <li>
+          <h4>Experience Monitoring with a user showing a degraded hop</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p>A user whose score for one application is visibly lower than the rest, with a path
+          analysis that shows where the latency sits. If nobody is degraded on the day, show the score
+          and skip the drill — see the cut plan.</p>
+        </li>
+      </ol>
+      <!-- capture-wanted: «CMA Home → Experience Monitoring — a user with one application scored lower than the rest, ready for the path-analysis drill» -->
+    </section>
+
+    <section id="late" class="reveal">
+      <div class="section-kicker">If you are running late</div>
+      <h2>The cut plan</h2>
+      <p>
+        Cut in this order and no other. Each cut buys back a few minutes without removing a segment
+        from the story, because the bridge lines still work.
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0">Cut 1 · CASB to the dashboard only</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Show the Cloud Apps Dashboard, name the shadow IT and the risk score, skip the Application Control rule. Two minutes instead of five.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cut 2 · Fold DLP into CASB</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Show the DLP incident from the same events screen you are already on for CASB, and skip the DLP Configuration walk. The bridge line still lands.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Cut 3 · DEM score only</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Show the per-user, per-app score and say what path analysis would add. Drop the hop-by-hop drill.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="co-title">Never cut these</div>
+        <p>If the audience is security-led, ZTNA and App Connectors stay in at full length. If the
+        audience is network or ops-led, DEM stays in at full length. Take the time from the other cuts
+        or from the questions block, not from the segment the room came for.</p>
+      </div>
+      <div class="callout">
+        <div class="co-title">Park it</div>
+        <p>A question that takes more than one sentence to answer gets written on the agenda slide's
+        parking list, in the questioner's words, and answered at minute 45 — parked questions first,
+        in the order written. Say that out loud when you park the first one, so the room knows the
+        list is real.</p>
+      </div>
+    </section>
+
+    <section id="deck" class="reveal">
+      <div class="section-kicker">Build the deck</div>
+      <h2>Generating the facilitation deck</h2>
+      <p>
+        The two scene-setting slides and the segment dividers do not need to be built by hand. The
+        <strong>Build a demo presentation</strong> card on the <a href="../index.html#deck-builder">library home
+        page</a> has a <strong>Platform demo (60 min)</strong> preset that selects the seven segment pages
+        in running order, names the deck and switches the <strong>Compact</strong> option on. Compact
+        exports a cover, an agenda carrying each segment's minute slot, then for every segment a divider
+        slide (its bridge-in line) and a what-we-will-show slide (its CMA click-path), and a closing
+        slide — about seventeen slides, which is the right size for an hour where the console does the
+        talking. Untick Compact to get the full four slides per segment (adds the why and diagram slides).
+      </p>
+      <p>
+        Use the agenda slide's parking list for the questions you park, and keep the scene-setting
+        picture above as the last thing on screen before you open the console. Speaker notes on every
+        slide carry the bridge lines, so the deck can also be presented from a second screen.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">Questions you will get</div>
+      <h2>Six first-demo questions</h2>
+      <p>Short answers for the questions block. Each links to the depth page that carries the detail; if the question goes further than the page does, say so and park it for the PoV.</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Is it one agent?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Yes. The Cato Client (Windows, macOS, iOS, Android, Linux) connects the user to the nearest PoP, where the full single-pass stack — ZTNA, FWaaS, SWG, IPS, anti-malware, TLS inspection — is applied to every flow. On Windows, macOS, iOS and Android it is always-on, so there is no unprotected state to fall back into; Linux connects but without the always-on enforcement.</p>
+          <p style="font-size:.92rem"><a href="access-hybrid-workforce.html">Securing the Hybrid Workforce</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What about sites without Sockets?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">A Socket is the preferred way to connect a site: it manages the last mile, selects the best PoP automatically and re-homes if one becomes unavailable. A site behind a third-party firewall or in a public cloud can connect over IPsec to a configured PoP instead — narrower, but the same policy once the traffic arrives.</p>
+          <p style="font-size:.92rem"><a href="network-ipsec-asa.html">IPsec Site Design</a> · <a href="network-cloud-connectivity.html">Cloud Connectivity</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">How is TLS inspection handled for privacy?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Inspection is a rulebase with bypasses evaluated first: the sensitive categories (health, finance, government) and embedded operating systems are bypassed as the baseline, and whoever owns privacy signs off the inspect scope before any traffic is decrypted. Pinned and client-certificate applications are exempted by explicit bypass rules.</p>
+          <p style="font-size:.92rem"><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">What happens when a PoP is unavailable?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The Socket evaluates its links and moves to another PoP automatically, with preferred primary and secondary locations if the customer wants to steer it. Socket sites and Clients connect to the nearest available PoP (an IPsec site stays on the PoPs you configured for it), and every PoP runs the full software stack, so policy does not change with the PoP.</p>
+          <p style="font-size:.92rem"><a href="network-resilient-site-design.html">Resilient Site Design</a> · <a href="network-sdwan.html">SD-WAN</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Where is the data stored?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Event data lives in the Cato Data Lake for the licensed retention period — 3, 6 or 12 months — and is deleted from the Cato Cloud afterwards; it can be exported to S3, Azure Blob or a SIEM at no charge. For data residency and processing-location questions, point to Cato's published security, compliance and privacy page rather than answering from memory.</p>
+          <p style="font-size:.92rem"><a href="management-data-lake.html">Event Logs &amp; the Cato Data Lake</a> · <a href="security-compliance.html">Compliance</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">How long does a PoV take?</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">As long as the scope needs and no longer: one scope workshop, written success criteria, a weekly 30-minute sync and a fixed end date agreed up front. The packaged AI Visibility Assessment runs on a four-week clock and is the reference for how tightly the frame can be held.</p>
+          <p style="font-size:.92rem"><a href="management-pov-framework.html">Running a Cato PoV</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+            <li><a href="https://www.catonetworks.com/platform/architecture/" target="_blank" rel="noopener">Cato SASE Cloud architecture</a></li>
+            <li><a href="https://www.catonetworks.com/security-compliance-and-privacy/" target="_blank" rel="noopener">Security, compliance and privacy</a></li>
+            <li><a href="https://support.catonetworks.com" target="_blank" rel="noopener">Cato Knowledge Base</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-swg.html">1 · Demo Segment: Secure Web Gateway</a></li>
+            <li><a href="demo-threat-prevention.html">2 · Demo Segment: Threat Prevention</a></li>
+            <li><a href="demo-casb.html">3 · Demo Segment: CASB</a></li>
+            <li><a href="demo-dlp.html">4 · Demo Segment: DLP</a></li>
+            <li><a href="demo-ztna.html">5 · Demo Segment: ZTNA</a></li>
+            <li><a href="demo-app-connectors.html">6 · Demo Segment: App Connectors</a></li>
+            <li><a href="demo-dem.html">7 · Demo Segment: Digital Experience Monitoring</a></li>
+            <li><a href="management-pov-framework.html">Running a Cato PoV</a></li>
+            <li><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

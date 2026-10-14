@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: Digital Experience Monitoring — Cato Use Case Library</title>
+<meta name="description" content="Close on evidence — per-user, per-app experience scores, path analysis hop by hop, and the fault domain found before the helpdesk ticket lands.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-dem">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 7: DEM</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: Digital Experience Monitoring</h1>
+    <p class="lede">
+      Segment 7 of <a href="demo-platform-60.html">the 60-minute platform demo</a> — minutes 40 to 45,
+      the last five minutes of screen time. Every flow the previous six segments showed produced
+      telemetry; this segment turns it into evidence. Close on a per-user, per-app experience score
+      and the fault domain found hop by hop, so the question the prospect will hear most — “is it
+      slow because of Cato?” — is answered from the console, not argued in a war room.
+    </p>
+    <div class="meta-row">
+      <span class="tag">DEM</span><span class="tag">Experience Monitoring</span><span class="tag">Path Analysis</span>
+      <span class="tag">Last Mile</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The one sentence they must leave with</h2>
+      <p>
+        <strong>Because the Client, the Socket, the PoP and the backbone are one platform, Cato
+        sees every hop a user's traffic takes — and scores each one, so “the app is slow” resolves
+        to a named segment in seconds.</strong>
+      </p>
+      <p>
+        Users do not experience a network or a security stack; they experience a Teams call that
+        stutters or a CRM page that hangs. The ticket says “the app is slow”, and the truth sits
+        somewhere along a path that crosses the laptop, the home Wi-Fi, the ISP, the middle mile
+        and the application itself — each with a different owner and a different definition of
+        “fine”. Traditional monitoring watches the infrastructure the organisation owns, which is
+        exactly the part of a hybrid worker's path the traffic barely touches.
+      </p>
+      <p>
+        Experience Monitoring gives every site, user, host and application a score — Good, Fair or
+        Poor — and decomposes it node by node in Connection Details: device hardware, Wi-Fi, LAN
+        gateway, last mile, PoP, application. Each node is scored independently against published
+        thresholds, and application scores are judged against an AI baseline built from real
+        traffic for that application. This is the segment that lands best with a network or
+        operations audience, which is why the cut plan says never to drop it for them.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Bridge in, three beats, bridge out</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from App Connectors</div>
+        <p>“Every one of those flows produces telemetry, and that telemetry answers the question you
+        will hear most: is it slow because of Cato?”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — the scored view across users and sites</h4>
+          <p><strong>Say:</strong> “This is the helpdesk queue before it happens. Every site and
+          every user carries an experience score, and sorting worst-first shows who is about to
+          call.”</p>
+          <p><strong>Show:</strong> <span class="path">Home → Experience Monitoring</span> — the
+          summary bar, the Account Experience graph, the story feed, then the Sites and Remote
+          Users tabs sorted by experience.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — drill one user to the failing node</h4>
+          <p><strong>Say:</strong> “Pick the user at the top. One screen decomposes their path —
+          device, Wi-Fi, LAN gateway, last mile, PoP, application — and scores each piece on its
+          own. The one amber node is the fault domain. Not the laptop, not Cato, not the app.”</p>
+          <p><strong>Show:</strong> the user drill-down, Connection Details node chain, then Path
+          Analysis for the hop-by-hop route from the device to the PoP with per-hop loss and latency.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — the proactive angle</h4>
+          <p><strong>Say:</strong> “Passive scoring is the default. On top of it you define
+          synthetic probes for the applications you care about, the anomaly engine raises stories
+          when a site-and-app pair drifts from its baseline, and the Site Experience report lands
+          on a schedule.”</p>
+          <p><strong>Show:</strong> <span class="path">Home → Experience Monitoring Probes</span> for
+          the probe policy, then the Site Experience template under <span class="path">Home → Reports</span>.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to the close</div>
+        <p>“One console, seven capabilities, thirty-five minutes of screen time. What would you want
+        to see proven on your own traffic?”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>Same engine, seen from the telemetry side</h2>
+      <p>
+        The six earlier segments showed the single-pass engine making decisions: allow, inspect,
+        block. This segment shows what the same engine observes while it does so. Because the Cato
+        Client on the device, the Socket at the site, the PoP and the global private backbone are
+        one platform, Cato measures every hop the traffic actually takes — and the decision this
+        capability makes is a score per segment, so the failing one is measured rather than inferred.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 410" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Experience Monitoring scores every segment of a user's path through the Cato PoP</title>
+          <desc id="dg1-desc">A remote user and a Bristol Office Socket connect across the last mile to the Cato PoP in London, cross the global private backbone to the PoP nearest the application, and reach a SaaS app and a private app behind the London DC Socket. Four numbered measurement points mark the device, the last mile, the backbone and the application. A row of four scored tiles underneath shows device, backbone and application healthy and the last mile scored Fair, isolating the fault domain.</desc>
+
+          <!-- Backbone -->
+          <ellipse class="dg-backbone" cx="560" cy="175" rx="170" ry="52"/>
+          <text class="dg-tiny" x="560" y="250" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="30" y="90" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="110" y="114" text-anchor="middle">Remote user</text>
+          <text class="dg-sub" x="110" y="132" text-anchor="middle">Priya · Cato Client</text>
+
+          <rect class="dg-node" x="30" y="210" width="160" height="58" rx="10"/>
+          <text class="dg-label" x="110" y="234" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="110" y="252" text-anchor="middle">Socket X1500</text>
+
+          <!-- Last-mile lanes into the ingress PoP -->
+          <path class="lane lane-allow" d="M 190 119 C 290 119, 340 160, 400 168"/>
+          <path class="lane lane-allow" d="M 190 239 C 290 239, 340 190, 400 182"/>
+          <text class="dg-tiny" x="290" y="182" text-anchor="middle">ISP last mile</text>
+
+          <!-- Ingress PoP -->
+          <text class="dg-label" x="430" y="100" text-anchor="middle">Cato PoP — London</text>
+          <text class="dg-tiny" x="430" y="115" text-anchor="middle">single-pass engine</text>
+          <circle class="pulse-ring" cx="430" cy="175" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="430" cy="175" r="30"/>
+
+          <!-- Backbone lane and egress PoP -->
+          <path class="lane lane-allow" d="M 462 175 L 662 175"/>
+          <text class="dg-label" x="690" y="100" text-anchor="middle">Cato PoP — egress</text>
+          <text class="dg-tiny" x="690" y="115" text-anchor="middle">nearest the app</text>
+          <circle class="dg-pop" cx="690" cy="175" r="26"/>
+
+          <!-- Lanes to destinations -->
+          <path class="lane lane-allow" d="M 716 168 C 760 150, 770 119, 790 119"/>
+          <path class="lane lane-allow" d="M 716 182 C 760 200, 770 239, 790 239"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="790" y="90" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="865" y="114" text-anchor="middle">SaaS app</text>
+          <text class="dg-sub" x="865" y="132" text-anchor="middle">Microsoft 365</text>
+
+          <rect class="dg-node" x="790" y="210" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="865" y="234" text-anchor="middle">Private app</text>
+          <text class="dg-sub" x="865" y="252" text-anchor="middle">London DC Socket</text>
+
+          <!-- Numbered measurement points -->
+          <g aria-label="measurement point 1, device">
+            <circle cx="110" cy="70" r="11" fill="var(--green-600)"/>
+            <text x="110" y="74.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">1</text>
+          </g>
+          <g aria-label="measurement point 2, last mile">
+            <circle cx="290" cy="152" r="11" fill="var(--green-600)"/>
+            <text x="290" y="156.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">2</text>
+          </g>
+          <g aria-label="measurement point 3, backbone">
+            <circle cx="560" cy="150" r="11" fill="var(--green-600)"/>
+            <text x="560" y="154.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">3</text>
+          </g>
+          <g aria-label="measurement point 4, application">
+            <circle cx="865" cy="70" r="11" fill="var(--green-600)"/>
+            <text x="865" y="74.5" text-anchor="middle" style="font-family:var(--font);font-size:12px;font-weight:700;fill:#fff">4</text>
+          </g>
+
+          <!-- Scored segments -->
+          <text class="dg-tiny" x="480" y="305" text-anchor="middle">Experience Monitoring scores each segment on its own — the one off-green node is the fault domain</text>
+
+          <rect class="dg-node" x="40" y="322" width="190" height="60" rx="10"/>
+          <circle cx="62" cy="352" r="7" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
+          <text class="dg-label" x="80" y="347">1 Device</text>
+          <text class="dg-sub" x="80" y="366">CPU · memory · Wi-Fi</text>
+
+          <rect class="dg-node" x="270" y="322" width="190" height="60" rx="10"/>
+          <circle cx="292" cy="352" r="7" fill="var(--status-warn)" stroke="#fff" stroke-width="2"/>
+          <text class="dg-label" x="310" y="347">2 Last mile — Fair</text>
+          <text class="dg-sub" x="310" y="366">tunnel loss · RTT · jitter</text>
+
+          <rect class="dg-node" x="500" y="322" width="190" height="60" rx="10"/>
+          <circle cx="522" cy="352" r="7" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
+          <text class="dg-label" x="540" y="347">3 Backbone</text>
+          <text class="dg-sub" x="540" y="366">PoP to PoP</text>
+
+          <rect class="dg-node" x="730" y="322" width="190" height="60" rx="10"/>
+          <circle cx="752" cy="352" r="7" fill="var(--status-good)" stroke="#fff" stroke-width="2"/>
+          <text class="dg-label" x="770" y="347">4 Application</text>
+          <text class="dg-sub" x="770" y="366">TTFB · TCP · TLS</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> User and site traffic through the engine, measured at every hop</span>
+        </div>
+        <div class="diagram-caption">The decision this capability makes is a score per segment. Loss at ② with ③ and ④ clean is the ISP's circuit; a slow ④ with ①–③ green is the application's side of the fence. Either way the verdict is measured, not negotiated.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🎯</div><div><h4>Fault domain in one view</h4><p>Device, Wi-Fi, LAN gateway, last mile, PoP and application scored side by side in Connection Details — the conversation starts at the failing node, not at “whose fault is it?”.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧑‍💻</div><div><h4>Per-user, per-app truth</h4><p>Every sanctioned application a user touches carries its own Good / Fair / Poor score against that app's AI baseline, so “slow” resolves to which app, how much and since when.</p></div></div>
+        <div class="benefit"><div class="b-icon">📄</div><div><h4>Evidence for ISP disputes</h4><p>Overlay and underlay probes separate the circuit from the tunnel, and Path Analysis keeps hop-by-hop loss and latency historically — “no fault found” becomes a documented circuit case.</p></div></div>
+        <div class="benefit"><div class="b-icon">📈</div><div><h4>Proactive, not reactive</h4><p>Synthetic probes on your terms, anomaly stories when a site-and-app pair drifts from its 14-day baseline, and scheduled Site Experience reports — degradation surfaces before users call it in.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Minutes 40 to 45, step by step</h2>
+      <p>
+        Five minutes of screen time. The prospect has just watched a private application published
+        without inbound rules; this segment proves the platform can also tell them how that
+        application, and every other one, actually feels to the user. Practically: confirm the
+        demo tenant has a DEM licence before the call, and pre-select the user you will drill so
+        the chain is already loaded.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Open the scored view and sort worst-first</h4>
+          <p><span class="path">Home → Experience Monitoring</span></p>
+          <p><strong>Say:</strong> “Account Experience is Good, so there is no global problem —
+          anything degraded is local and findable. The feed on the right is the platform raising
+          link-quality stories by itself, and the table is the helpdesk queue before it happens.”</p>
+          <p><strong>Show:</strong> the summary bar, the Account Experience graph beside the story
+          feed, then the Sites tab sorted by experience with a Poor site at the top; flip to Remote
+          Users to show the same scoring per person. [1.5 min]</p>
+          <figure class="shot">
+            <img src="../assets/img/em-home-sites.png" alt="CMA Experience Monitoring landing page over the last two days: a summary bar with 24 sites (17 connected, 2 degraded, 5 disconnected), WAN and internet application experience counts, and app integration status; an account experience score graph beside a feed of link-quality SLA and connector-down stories; and the Sites tab table where one data-centre site is scored Poor with 601 milliseconds average time to first byte, another site is Good, and two sites show no score.">
+            <figcaption><strong>Beat 1, on screen.</strong> Point at the feed first — <em>Link quality
+            SLA exceeded</em> stories raised by the platform, not by users — then at the Sites table,
+            where one data-centre site sits at <strong>Poor</strong> (601 ms average TTFB across 455
+            apps) while another scores Good. Worst-first has already found tomorrow's tickets.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Drill one user to the failing node</h4>
+          <p><span class="path">Home → Experience Monitoring</span> <span class="path">User / site drill-down → Path Analysis</span></p>
+          <p><strong>Say:</strong> “Here is one user — Marcus, an office user with the Client on his laptop behind
+          the site's Socket. His path is decomposed into nodes,
+          each scored on its own against published thresholds. Everything is green except one. That
+          is the fault domain: not the laptop, not the circuit, not Cato, not the app.”</p>
+          <p><strong>Show:</strong> the user's drill-down page, the score timeline with its connect
+          and disconnect events, then the <strong>Connection Details</strong> node chain; hover the
+          amber node for its averages. [1.5 min]</p>
+          <figure class="shot">
+            <img src="../assets/img/em-connection-details.png" alt="CMA user drill-down: a User Application Experience Score timeline with connect and disconnect events, above the Path Analysis Connection Details tab showing the node chain device, Wi-Fi, LAN gateway, last mile, London PoP, application. Each node has its own scored row: device hardware Good at 19.81 percent average CPU, Wi-Fi Fair at minus 67.43 dBm average signal strength shown amber, LAN gateway Good with zero packet loss and 3 milliseconds distance, last mile Good with zero probe loss and 15 milliseconds round trip, and the application Good.">
+            <figcaption><strong>Beat 2, on screen.</strong> The node chain with exactly one amber
+            node: <strong>Wi-Fi at −67.43 dBm</strong>, just past the −67 dBm Good threshold, scores
+            Fair — while device hardware (19.81% CPU), LAN gateway (0% loss, 3 ms), last mile (0%
+            loss, 15 ms) and the application stay green. The verdict is this user's Wi-Fi, and the
+            thresholds that say so are published.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Walk the path hop by hop</h4>
+          <p><span class="path">User / site drill-down → Path Analysis</span></p>
+          <p><strong>Say:</strong> “When the amber sits on the last mile rather than the Wi-Fi, this is the
+          next click — on the same office user, or on his site.
+          Every hop from the device to the PoP, with per-hop loss and latency, kept historically.
+          If the loss starts before the PoP it is the local network or the ISP; if it starts on the
+          application route it is beyond Cato. Either way, here is the evidence.”</p>
+          <p><strong>Show:</strong> the site or office-user drill-down, then the <strong>Traceroute</strong>
+          tab — the Last Mile Routes diagram
+          with the hop that turns red before a clean Cato PoP — then the <strong>Command Line</strong>
+          tab for the same route as a table. [1 min]</p>
+          <figure class="shot">
+            <img src="../assets/img/em-traceroute.png" alt="CMA Path Analysis Traceroute tab over a historical window, device to London PoP: a Last Mile Routes diagram from office user through the Socket across a chain of hop nodes, most ringed green with one red ring and one amber collapsed group of four hops, ending at a green Cato PoP node. Above it, the experience score timeline lists BGP routing and Site Socket Bypass events.">
+            <figcaption><strong>Path Analysis → Traceroute.</strong> The last-mile route from the site's
+            Socket to the London PoP, replayed over a historical window so intermittent faults cannot hide.
+            Point at where the colour starts: green hops, then one red hop and an amber collapsed
+            group <em>before</em> a clean Cato PoP — the drop is inside the ISP's network.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="../assets/img/em-command-line.png" alt="CMA Path Analysis Command Line tab: a last-mile hops table in traceroute style with nine hops from the local gateway to the Cato PoP in London, showing per-hop IP, location, loss percentage, packets sent and received, and average, best and worst latency. Hop 2 in Preston shows 24.3 percent loss and 269 milliseconds average over 1010 probes, two London hops show around 3 percent loss, and the final Cato PoP hop shows zero loss at 6 milliseconds average.">
+            <figcaption><strong>Path Analysis → Command Line.</strong> The same route as the circuit
+            ticket would need it: hop 2, the first hop inside the ISP, at <strong>24.3% loss and
+            269 ms average over 1,010 probes</strong>, while the local gateway at hop 1 and the Cato
+            PoP at hop 9 (0% loss, 6 ms) are clean. This is what “is it slow because of Cato?” looks
+            like when the answer is no — and when the answer is a documented circuit case.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Close on the proactive loop</h4>
+          <p><span class="path">Home → Experience Monitoring Probes</span> <span class="path">Home → Reports</span></p>
+          <p><strong>Say:</strong> “Everything so far was passive — real traffic, scored. On top of
+          it you define ICMP, TCP, HTTP/S and DNS probes for the applications you care about, scoped
+          by site or user group; the anomaly engine baselines each site-and-app pair and raises a
+          story when it drifts; and the Site Experience report arrives on a schedule. The monthly
+          service review writes itself.”</p>
+          <p><strong>Show:</strong> the probe policy with a Site rule and a User rule, then the Site
+          Experience template in the Reports catalogue. If time is short, say it and skip the
+          click. [1 min]</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-home-em-probes.png" alt="CMA Home Experience Monitoring Probes policy tab with both enablement toggles on, one User rule (remote connection origin) and one Site rule, each carrying reachability, path-trace and per-application probes including a ChatGPT probe on ports 443 and 80">
+            <figcaption><strong>Home → Experience Monitoring Probes.</strong> The proactive half in one
+            screen: a User rule for remote users and a Site rule for Sockets, each carrying reachability,
+            path-trace and per-application probes. Probes map to the application whose pages should show
+            their metrics, so the synthetic data lands beside the passive score.</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <div class="callout warn">
+        <div class="co-title">If running late</div>
+        <p>Per the cut plan: drop the Path Analysis drill (step 3) and show the score only — Beat 1
+        and the Connection Details chain in Beat 2 carry the proof point on their own. Never cut this
+        segment if the audience is network- or operations-led; it is the one they came for.</p>
+      </div>
+
+      <p>
+        <strong>Transition.</strong> Close the console and turn to the room with the bridge-out:
+        “One console, seven capabilities, thirty-five minutes of screen time. What would you want to
+        see proven on your own traffic?” Parked questions come first, then next steps and the PoV
+        scope on <a href="demo-platform-60.html">the flow page</a>.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Four likely questions</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“Do we need another agent for this?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">No — the Cato Client on the device and the
+          Socket at the site already supply the telemetry, so there is nothing extra to deploy. The
+          DEM pages and features do need a separate DEM licence, and the device, Wi-Fi and LAN
+          gateway nodes need a recent Client on the endpoint.
+          <a href="management-dem.html#solution">Licensing and prerequisites →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“How do you know it is the ISP and not your tunnel?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">The last mile is measured two ways: overlay
+          probes inside the DTLS tunnel and underlay probes sent outside it, Socket-to-PoP or
+          Client-to-PoP. When both show loss the circuit is the problem, not the tunnel — and Path
+          Analysis shows which hop it starts at.
+          <a href="management-dem.html#probes">Probes and path analysis →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“What are the scores actually based on?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Application scores are judged against an AI
+          baseline per application built from real traffic — Time to First Byte, TCP Connect, TLS
+          Connect, HTTP latency and HTTP/S error rate — so a Europe-hosted app reached from Sydney is
+          judged against what that path should deliver. Node scores use published thresholds, and
+          scoring counts successful outbound TCP flows only.
+          <a href="management-dem.html#solution">How each node is scored →</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Can it tell us before the users do?”</h3>
+          <p style="font-size:.92rem;color:var(--ink-2)">Yes — the Experience Anomaly engine
+          baselines TTFB for each site-and-application pair over 14 days, then evaluates every day's
+          traffic against it and raises stories with a criticality rating and playbook. Pair that
+          with a recurring Site Experience report and the review arrives on a schedule, not on a
+          ticket. <a href="management-dem.html#probes">Anomaly stories and reports →</a></p>
+        </div>
+      </div>
+      <p>
+        For a remote worker's per-app drill-down in depth — the summary strip, the Select
+        Application widget and the Devices panel — hand off to
+        <a href="access-remote-worker.html">Remote Worker Experience</a>.
+      </p>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-cato-experience-monitoring" target="_blank" rel="noopener">What is Cato Experience Monitoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/experience-monitoring-connection-details" target="_blank" rel="noopener">Connection Details and node scoring</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-traceroute-for-path-analysis-in-experience-monitoring" target="_blank" rel="noopener">Traceroute path analysis in Experience Monitoring</a></li>
+            <li><a href="https://www.catonetworks.com/platform/cato-management-application-cma/" target="_blank" rel="noopener">Cato Management Application — platform page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-Minute Platform Demo</a> — the flow page</li>
+            <li><a href="demo-app-connectors.html">Previous — Segment 6: App Connectors</a></li>
+            <li><a href="demo-platform-60.html#questions">Next — the close: parked questions and next steps on the flow page</a></li>
+            <li><a href="management-dem.html">Proactive Digital Experience Monitoring</a> — depth page</li>
+            <li><a href="access-remote-worker.html">Remote Worker Experience</a> — depth page</li>
+            <li><a href="management-pov-framework.html">Running a Cato PoV</a> — for the next-steps slot</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

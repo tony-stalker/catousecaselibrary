@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: Secure Web Gateway — Cato Use Case Library</title>
+<meta name="description" content="Five minutes on internet access control — category and application rules, user-aware policy, TLS inspection as the enabler, and the event that proves the decision.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-swg">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 1 · Secure Web Gateway</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: Secure Web Gateway</h1>
+    <p class="lede">
+      Segment 1 of <a href="demo-platform-60.html">the 60-minute platform demo</a> — minutes 10 to 15.
+      Five minutes of console time on internet access control: one global Internet Firewall rulebase
+      for users and sites, category and application rules that know who the user is, TLS inspection as
+      the thing that makes those decisions real, and the event that records every verdict. The
+      prospect leaves knowing that the same three questions — who, where, should they — are asked
+      of every flow, and that the answer is written down.
+    </p>
+    <div class="meta-row">
+      <span class="tag">SWG</span><span class="tag">Internet Firewall</span><span class="tag">URL Filtering</span>
+      <span class="tag">TLS Inspection</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The sentence they must leave with</h2>
+      <p>
+        <strong>Internet policy is one rulebase, written against people and applications, enforced in
+        the cloud for every site and every user — and every decision it makes is an event you can
+        read.</strong>
+      </p>
+      <p>
+        In Cato's architecture, policy is a cloud object rather than a device configuration. The
+        Internet Firewall is defined once in the Cato Management Application and enforced by the
+        Single Pass Cloud Engine in every PoP, so whichever PoP a site's socket or a user's client
+        reaches, the identical rule set is already there. Rules are scoped to user groups synced from
+        the identity provider and to device-posture profiles, not to subnets or appliances — and there
+        is no per-site, per-appliance or per-region policy anywhere in the product. That is why this
+        segment opens the console: it is the simplest place to show the single-engine idea the scene
+        slides promised.
+      </p>
+      <p>
+        The second idea to land is the dependency. Without TLS inspection, URL filtering falls back to
+        domain-level decisions; full-path categorisation, file-type control and content-aware verdicts
+        need the decrypted stream. Cato's guidance is to stage inspection — pilot user groups or test
+        sites before full deployment, bypassing only what genuinely cannot be inspected — so the
+        message is not "turn it on" but "here is how we reach high coverage without an outage story".
+        Everything the later segments show (CASB actions, DLP, GenAI governance) reaches full fidelity
+        only on decrypted traffic, which is why the prerequisite is introduced here, in segment one.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Say it in three beats</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from the scene slides</div>
+        <p>“Every decision the platform makes starts with the same three questions: who is this user,
+        where are they going, and should they? Let's start with the internet.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — one global policy for users and sites</h4>
+          <p><strong>Say:</strong> this is the whole estate's internet policy, and there is no box
+          behind it. The same ordered rulebase applies to a user at their desk behind the Bristol
+          Office socket, the same user on the Cato Client at home, and a colleague in Madrid.</p>
+          <p><strong>Show:</strong> the Internet Firewall rulebase — a category rule (for example a
+          block on risky categories with a live hit count) beside a rule whose source is a named user
+          or group rather than an IP range. Point at the Source column: people and groups from the
+          directory, not subnets.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — TLS inspection makes the decision real</h4>
+          <p><strong>Say:</strong> category and application verdicts only reach full fidelity on
+          decrypted traffic, so inspection is the prerequisite for everything that follows. It is
+          staged: bypass the sensitive categories and the things that cannot be inspected, then
+          inspect wave by wave.</p>
+          <p><strong>Show:</strong> the TLS Inspection policy — bypass rules at the top, phased
+          inspect rules scoped to a pilot group beneath them, two actions only: Inspect and Bypass.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — the event that records the decision</h4>
+          <p><strong>Say:</strong> every rule match is an event carrying the user, the application or
+          category, the rule and the action — the audit trail the appliance estate never produced in
+          one place.</p>
+          <p><strong>Show:</strong> Monitor → Events filtered to the category rule from beat 1: site-
+          and client-sourced rows, each with a named user, the same rule name and the same verdict.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to Threat Prevention</div>
+        <p>“That was policy you wrote. Now the threats you did not see coming — same engine, same
+        flow, no extra appliance.”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>Who, where, should they — in one pass</h2>
+      <p>
+        A remote user on the Cato Client and a user behind a branch socket both reach their nearest
+        PoP. The single-pass engine decrypts what the TLS Inspection policy tells it to, identifies
+        the user and the application or category, matches the Internet Firewall top-down, and acts —
+        Allow, Prompt or Block. Whatever it decides, it writes an event.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Secure Web Gateway decisions in the Cato single-pass engine</title>
+          <desc id="dg1-desc">A remote user on the Cato Client and a branch office socket both connect to a Cato PoP. The single-pass engine applies TLS inspection by category, then the Internet Firewall matches on user and application or category. Business SaaS is allowed, social media is prompted, gambling is blocked, and every decision is written to Monitor → Events.</desc>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="34" y="140" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="164" text-anchor="middle">Priya — Cato Client</text>
+          <text class="dg-sub" x="119" y="182" text-anchor="middle">Home broadband</text>
+
+          <rect class="dg-node" x="34" y="236" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="119" y="260" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="119" y="278" text-anchor="middle">X1500 socket · users</text>
+
+          <!-- Sources to PoP -->
+          <path class="lane lane-static" d="M 206 169 C 236 169, 246 203, 268 205"/>
+          <path class="lane lane-static" d="M 206 265 C 236 265, 246 224, 268 222"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="300" cy="213" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="213" r="30"/>
+          <text class="dg-label" x="300" y="140" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">Cato PoP — London</text>
+          <text class="dg-tiny" x="300" y="156" text-anchor="middle" style="paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round;">nearest PoP · same policy</text>
+          <text class="dg-tiny" x="300" y="266" text-anchor="middle">Global Private Backbone</text>
+
+          <!-- PoP to engine -->
+          <path class="lane lane-static" d="M 334 213 L 396 213"/>
+
+          <!-- Single-pass engine -->
+          <rect class="dg-node-dark" x="400" y="133" width="200" height="160" rx="10"/>
+          <text class="dg-label-inv" x="500" y="160" text-anchor="middle">Single-pass engine</text>
+          <text class="dg-sub-inv" x="500" y="188" text-anchor="middle">1 · TLS inspection</text>
+          <text class="dg-sub-inv" x="500" y="205" text-anchor="middle">staged by category</text>
+          <text class="dg-sub-inv" x="500" y="234" text-anchor="middle">2 · Internet Firewall</text>
+          <text class="dg-sub-inv" x="500" y="251" text-anchor="middle">who · where · action</text>
+          <text class="dg-sub-inv" x="500" y="278" text-anchor="middle">Allow · Prompt · Block</text>
+
+          <!-- Decisions to destinations -->
+          <path class="lane lane-allow" d="M 602 165 C 660 160, 700 100, 754 82"/>
+          <path class="lane lane-limit" d="M 602 213 C 660 213, 700 213, 754 213"/>
+          <path class="lane lane-block" d="M 602 262 C 640 275, 670 320, 702 346"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 702 338 L 726 362"/><path class="lane-x" d="M 726 338 L 702 362"/>
+          </g>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node-green" x="756" y="52" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="76" text-anchor="middle">Business SaaS</text>
+          <text class="dg-sub" x="841" y="94" text-anchor="middle">Allow — category rule</text>
+
+          <rect class="dg-node" x="756" y="184" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="208" text-anchor="middle">Social media</text>
+          <text class="dg-sub" x="841" y="226" text-anchor="middle">Prompt — user decides</text>
+
+          <rect class="dg-node" x="756" y="320" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="841" y="344" text-anchor="middle">Gambling</text>
+          <text class="dg-sub" x="841" y="362" text-anchor="middle">Block — risky category</text>
+
+          <!-- Telemetry to Events -->
+          <path class="lane lane-info" d="M 500 295 L 500 346"/>
+          <rect class="dg-node" x="400" y="350" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="500" y="374" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-sub" x="500" y="392" text-anchor="middle">user · rule · action</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Allowed</span>
+          <span class="key"><span class="swatch limit"></span> Prompt — user acknowledges</span>
+          <span class="key"><span class="swatch block"></span> Blocked</span>
+          <span class="key"><span class="swatch info"></span> Event written for every verdict</span>
+        </div>
+        <div class="diagram-caption">Site and remote user hit the same engine at the nearest PoP. TLS inspection (staged by category) feeds the Internet Firewall's user- and category-aware match; the verdict goes to the destination and the record goes to Events.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🌍</div><div><h4>One rulebase, every PoP</h4><p>The Internet Firewall is defined once in the CMA and enforced by the single-pass engine in every PoP — nothing deployed, synced or patched at the edge, and geography stops being a policy boundary.</p></div></div>
+        <div class="benefit"><div class="b-icon">🪪</div><div><h4>Rules target people, not addresses</h4><p>Sources are user groups synced from the IdP and device-posture profiles. When the directory moves someone between departments, the directory change alone changes their access.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Inspection as a policy decision</h4><p>TLS inspection runs at scale in the PoP — enabling it is a rule, not a hardware upgrade. The policy is inspect by default, bypass by exception, staged by cohort and category.</p></div></div>
+        <div class="benefit"><div class="b-icon">🧾</div><div><h4>Every verdict is attributed</h4><p>Events carry the user name, the matched rule, the action and the destination — for a site-sourced flow as much as for a remote client, so one filter answers who reached what, when, under which rule.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Five minutes on the console</h2>
+      <p>
+        Three screens, in this order, then the bridge out. Stay on the rulebase screens rather than opening rule editors —
+        the point is the shape of the policy, not the dialog. Times are cumulative within the segment.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>The global rulebase — one category rule, one user rule <span class="tag">0:00 – 2:00</span></h4>
+          <p><span class="path">Security → Internet Firewall</span></p>
+          <p><strong>Say:</strong> “This is the internet policy for every site and every remote user —
+          ordered, first match wins, and there is no second copy anywhere. Rules are written against
+          people and categories, not subnets.”</p>
+          <p><strong>Show:</strong> scroll the rulebase slowly. Stop on a category block with a large
+          hit count, then on a rule scoped to a named user or group — and on a Prompt rule if one is
+          present, because it is the action a firewall-only audience has never had — and the one a
+          proxy audience knows as Caution. Point at the Hit Count
+          column: these are live decisions, not a design document.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-internet-fw-rulebase.png" alt="CMA Security → Internet Firewall rulebase from a demo tenant: thirteen ordered rules with user-, device- and category-scoped sources, Block, Allow, Prompt and RBI actions, and live hit-count bars" loading="lazy">
+            <figcaption>The screen to stay on (demo tenant, fictional identities): a category block on risky categories with its hit count, a Prompt rule beneath it, user-scoped rules with named people as Source, and the QUIC block pair that TLS inspection created. Everything the segment needs is visible without opening a rule.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>The prerequisite — TLS inspection, staged <span class="tag">2:00 – 3:00</span></h4>
+          <p><span class="path">Security → TLS Inspection</span></p>
+          <p><strong>Say:</strong> “Those category and application verdicts are only as good as what
+          the engine can see. Inspection is a policy decision here, not a sizing exercise — and it is
+          staged: bypass what cannot be inspected, pilot a group, then expand category by category.”</p>
+          <p><strong>Show:</strong> the ordered policy with its two actions, Inspect and Bypass. Point
+          at the sensitive-category and platform bypasses at the top, then at the phased inspect rules
+          scoped to a pilot group. Mention, without clicking, that the implicit final rule inspects
+          everything unmatched.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-tls-inspection-policy.png" alt="CMA Security → TLS Inspection policy from a demo tenant: bypass rules for sensitive categories, embedded operating systems, devices and source networks ordered first, then phased Inspect rules scoped to test networks and a finance group, then broad Inspect rules for popular cloud apps" loading="lazy">
+            <figcaption>Staging in one screen (demo tenant): bypasses first, then “Inspection Phase 1” and “Phase 2” scoped to a test network and one user group, then the broad inspect rules. This is the shape to describe — a rollout plan expressed as rule order.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>The proof — events filtered to the rule <span class="tag">3:00 – 4:30</span></h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p><strong>Say:</strong> “Every match you just saw counted is a record: who, what
+          application or category, which rule, what happened. Same rule name, same verdict, whether
+          the person was in the office or at home.”</p>
+          <p><strong>Show:</strong> filter Events to the tenant's risky-category block rule from step 1,
+          whatever it is named in your tenant. Read one row aloud
+          — user name, category, rule, action — then point at the Source column: a site-sourced row
+          and an SDP-user row for the same rule. If a remote user is in the list, that is the
+          “configured once, applied everywhere” moment in one screen.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-events-ifw-site-sdp.png" alt="Two stacked CMA Events views filtered to one Internet Firewall rule, Default Block for Risky Categories: site-sourced Block events from two office sites each attributed to a named user, and the same rule's SDP-user Block events for one remote user" loading="lazy">
+            <figcaption>One filter, one rule name, both origins (demo tenant, fictional identities): site-sourced blocks with named users above, the same rule blocking a remote Client user below. Rule, verdict and identity attribution identical on each path.</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <p>
+        <strong>Transition (4:30 – 5:00).</strong> Leave Events open — the next segment returns to it.
+        Close with the bridge line, verbatim: “That was policy you wrote. Now the threats you did not
+        see coming — same engine, same flow, no extra appliance.” Then move to
+        <a href="demo-threat-prevention.html">Segment 2 — Threat Prevention</a>.
+      </p>
+
+      <div class="callout warn">
+        <div class="co-title">If running late</div>
+        <p>This segment is not on the cut list — the running order shortens CASB, DLP and DEM first.
+        If you are already behind at minute 10, skip the TLS Inspection screen and say the staging
+        sentence over the rulebase instead; never skip the Events proof.</p>
+      </div>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Four questions this segment provokes</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“What happens to traffic no rule matches?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The Internet Firewall matches top-down and ends in an implicit any-any allow, so unmatched traffic passes. That is why block rules sit above any broader allows, and why a new rule is run as Allow with event tracking first so a week of events shows who it would affect before the action is flipped.</p>
+          <p style="font-size:.9rem"><a href="security-consistent.html#pov">Consistent Security Everywhere — PoV runbook</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Do we have to decrypt everything on day one?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">No. The documented pilot pattern is a bypass rule with Source = Any and, above it, an inspect rule naming only the pilot users, scoped to high-confidence sets, with the downstream engines tracking rather than blocking so breakage surfaces as events. Certificate-pinned apps and client-certificate sites get a narrow, owned bypass rule; Android, Linux and unidentified operating systems are bypassed by default rules you cannot edit.</p>
+          <p style="font-size:.9rem"><a href="security-tls-inspection.html#solution">TLS Inspection: Staged Rollout Playbook</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Our proxy has a Caution page — is there an equivalent?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Yes: Internet Firewall actions are Allow, Prompt and Block, and a proxy's Caution maps to Prompt. The user experience differs, so demonstrate it to the security team before it becomes an acceptance criterion — and expect a policy review to retire a good share of the old Caution rules.</p>
+          <p style="font-size:.9rem"><a href="migration-zscaler-policy.html#swg-policy">Zscaler Policy Migration — SWG policy mapping</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Why does inspection matter if we only want URL filtering?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Without the decrypted stream, URL filtering falls back to domain-level decisions; full-path categorisation, file-type control and content-aware verdicts need inspection. In an appliance estate turning it on can push a correctly sized box off a performance cliff, so it quietly stays off — in the PoP it is a policy decision.</p>
+          <p style="font-size:.9rem"><a href="security-tls-inspection.html#objective">TLS Inspection — why it matters</a> · <a href="security-firewall-refresh.html#decision-tree">Firewall Refresh — decision tree</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://knowledge.catonetworks.com/docs/what-is-the-cato-internet-firewall" target="_blank" rel="noopener">What is the Cato Internet Firewall</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/managing-the-internet-firewall-policy" target="_blank" rel="noopener">Managing the Internet Firewall Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/best-practices-for-tls-inspection" target="_blank" rel="noopener">Best Practices for TLS Inspection</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/configuring-tls-inspection-policy-for-the-account" target="_blank" rel="noopener">Configuring the TLS Inspection Policy</a></li>
+            <li><a href="https://www.catonetworks.com/solutions/next-generation-firewall/" target="_blank" rel="noopener">Next-generation firewall — solution page</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-Minute Platform Demo</a> — the running order this segment belongs to</li>
+            <li><a href="demo-threat-prevention.html">Next: Segment 2 — Threat Prevention</a></li>
+            <li><a href="security-consistent.html">Consistent Security Everywhere</a> — the Internet Firewall policy demo in depth</li>
+            <li><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></li>
+            <li><a href="migration-zscaler-policy.html">Zscaler Policy Migration</a> — how SWG concepts map</li>
+            <li><a href="security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>

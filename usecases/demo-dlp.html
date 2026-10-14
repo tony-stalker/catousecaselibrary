@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Segment: DLP — Cato Use Case Library</title>
+<meta name="description" content="Five minutes on data protection — data types, profiles and one inline rule: a sensitive upload stopped and the incident visible in events and the Data Protection Dashboard.">
+<script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+</head>
+<body data-uc="demo-dlp">
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">
+      <svg class="logo-ring" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#12a380" stroke-width="7"/></svg>
+      <span>Cato Networks<small>Use Case Library</small></span>
+    </a>
+    <span class="crumb">/ <a href="../index.html#cat-platform-demo">Platform Demo</a> / Segment 4: DLP</span>
+    <span class="spacer"></span>
+    <a class="nav-link" href="../index.html">← All use cases</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="meta-row" style="margin-bottom:14px">
+      <span class="chip chip-cat-platform-demo">Platform Demo</span>
+      <span class="badge badge-new">New</span>
+    </div>
+    <h1>Demo Segment: DLP</h1>
+    <p class="lede">
+      Segment 4 of the 60-minute platform demo, minutes 25–30. CASB has just shown the prospect
+      which applications their users adopted; this segment shows what is inside the upload. Five
+      minutes of screen time on data types, one profile, one inline Data Control rule, and the
+      incident it produces — who, what data type, where, and the action taken — in the same
+      console and from the same single-pass engine as every segment before it.
+    </p>
+    <div class="meta-row">
+      <span class="tag">DLP</span><span class="tag">Data Types</span><span class="tag">Data Protection Dashboard</span>
+      <span class="tag">Inline</span><span class="tag">Demo Segment</span>
+    </div>
+    <div class="meta-row" style="margin-top:18px">
+      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+    </div>
+  </div>
+</header>
+
+<div class="main with-toc">
+  <aside class="toc" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <div id="toc-links"></div>
+  </aside>
+
+  <main>
+    <section id="objective" class="reveal">
+      <div class="section-kicker">Why this segment</div>
+      <h2>The one sentence they must leave with</h2>
+      <p>
+        <strong>The same engine that already sees every upload can read what is inside it and
+        stop sensitive data leaving — no new deployment, one policy, one event stream.</strong>
+      </p>
+      <p>
+        Because every user and site already sends its traffic through the Cato PoP, DLP is not a
+        second product bolted on beside the proxy: it is a Data Control rule switched on where the
+        traffic already is. Inline, the engine classifies the application, recognises the activity
+        (upload, download, share) and scans the content against predefined data types — regional PII,
+        payment-card numbers — and machine-learning document classifiers for families such as HR,
+        Finance, Legal and Medical. The depth page
+        <a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a> carries the full
+        scenario table and the licence boundary: Application Control is in the CASB licence, Data
+        Control rules additionally need the DLP licence.
+      </p>
+      <p>
+        The proof point of this segment is not the rule, it is the incident. A DLP event in most
+        tools tells the analyst which rule and which user; it does not show what matched. Cato's
+        Data Incident pane carries the full chain — user, application, activity, file, matched data
+        types, action — and, where forensics are enabled, encrypted evidence written to storage the
+        customer owns, retrievable under role-based access and logged to the Audit Trail
+        (<a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a>).
+        That is the slide the security lead photographs.
+      </p>
+    </section>
+
+    <section id="story" class="reveal">
+      <div class="section-kicker">The five-minute story</div>
+      <h2>Bridge in, three beats, bridge out</h2>
+      <div class="callout">
+        <div class="co-title">Bridge in — from CASB (B3)</div>
+        <p>“CASB tells you which application. DLP tells you what is inside the upload.”</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h4>Beat 1 — the vocabulary already exists</h4>
+          <p><strong>Say:</strong> “You do not write regular expressions on day one. The platform ships
+          a catalogue of predefined data types — card numbers, regional identifiers, postal
+          addresses by country — and ML classifiers that recognise a contract or an HR document by
+          what it is, not by a pattern. A profile is just the handful of types you care about.”</p>
+          <p><strong>Show:</strong> <span class="path">Security → Data Types &amp; Profiles</span> — the
+          DLP Profiles tab with a predefined <em>Credit cards</em> profile and a predefined
+          <em>PII</em> profile beside a user-defined keyword profile.</p>
+        </li>
+        <li>
+          <h4>Beat 2 — one rule, in line, where the traffic already is</h4>
+          <p><strong>Say:</strong> “This is the same rulebase you saw for CASB. One row says: this
+          profile, uploaded by these users, to any cloud application — block, tell the user why,
+          raise an event. Nothing else changed.”</p>
+          <p><strong>Show:</strong> <span class="path">Security → DLP Configuration</span> — the Data
+          Control rule that blocks uploads containing credit-card numbers, with its source group,
+          activity, profile and action.</p>
+        </li>
+        <li>
+          <h4>Beat 3 — the incident, not the rule</h4>
+          <p><strong>Say:</strong> “Here is what the analyst sees: who, which application, which
+          file, which data type matched, what we did about it — and the evidence locked behind a
+          role-gated button whose use is logged. That is the difference between a DLP alert and an
+          investigation.”</p>
+          <p><strong>Show:</strong> <span class="path">Monitor → Events</span> → the Data Incident pane
+          for a blocked upload, then <span class="path">Monitor → Data Protection Dashboard</span>
+          for the rules firing across the estate.</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <div class="co-title">Bridge out — to ZTNA (B4)</div>
+        <p>“So far every flow was a user going out. Now the other direction: users reaching your private applications.”</p>
+      </div>
+    </section>
+
+    <section id="solution" class="reveal">
+      <div class="section-kicker">What the engine does</div>
+      <h2>Content inspection as one more decision in the single pass</h2>
+      <p>
+        The upload leaves the user's device through the Cato Client (or the branch Socket), is
+        decrypted at the PoP under the TLS inspection policy, and passes the same single-pass
+        engine as the SWG, threat-prevention and CASB decisions before it. DLP adds one question —
+        does the content match a profile? — and the answer decides the action for that activity
+        on that destination. The event, the incident and the evidence come out of the same flow.
+      </p>
+
+      <div class="diagram-card">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="dg1-title dg1-desc">
+          <title id="dg1-title">Inline DLP decision at the Cato PoP</title>
+          <desc id="dg1-desc">A branch site and a Cato Client user send uploads to a Cato PoP. The PoP decrypts under TLS inspection and evaluates a Data Control rule: content matching the Credit cards profile is allowed to sanctioned storage, blocked on its way to personal cloud storage with the user notified, and a data incident with secured evidence is written to Monitor → Events.</desc>
+
+          <!-- Sources (left) -->
+          <rect class="dg-node" x="14" y="60" width="152" height="52" rx="10"/>
+          <text class="dg-label" x="90" y="82" text-anchor="middle">Bristol Office</text>
+          <text class="dg-sub" x="90" y="100" text-anchor="middle">Socket X1500</text>
+
+          <g>
+            <circle cx="90" cy="300" r="23" fill="var(--status-good)"/>
+            <circle cx="90" cy="293" r="6.5" fill="#fff"/>
+            <path d="M 77 313 a 13 10 0 0 1 26 0 z" fill="#fff"/>
+            <text class="dg-label" x="90" y="342" text-anchor="middle">Marcus · Cato Client</text>
+            <text class="dg-sub" x="90" y="358" text-anchor="middle">Upload: client-list.xlsx</text>
+          </g>
+
+          <!-- Static links into the PoP -->
+          <path class="lane lane-static" d="M 166 86 C 220 86, 250 150, 272 182"/>
+          <path class="lane lane-static" d="M 113 300 C 180 300, 240 250, 272 218"/>
+
+          <!-- Cato PoP -->
+          <circle class="pulse-ring" cx="300" cy="200" r="34" fill="none" stroke="var(--green-300)" stroke-width="3"/>
+          <circle class="dg-pop" cx="300" cy="200" r="30"/>
+          <text class="dg-label" x="300" y="138" text-anchor="middle">Cato PoP</text>
+          <text class="dg-tiny" x="300" y="153" text-anchor="middle">TLS inspection · single-pass engine</text>
+
+          <!-- PoP to rule -->
+          <path class="lane lane-static" d="M 332 200 L 418 200"/>
+
+          <!-- Data Control rule -->
+          <rect class="dg-node-dark" x="420" y="160" width="190" height="80" rx="10"/>
+          <text class="dg-label-inv" x="515" y="186" text-anchor="middle">Data Control rule</text>
+          <text class="dg-sub-inv" x="515" y="205" text-anchor="middle">Credit cards profile · Upload</text>
+          <text class="dg-sub-inv" x="515" y="222" text-anchor="middle">Block · notify · event</text>
+
+          <!-- Outcomes -->
+          <path class="lane lane-allow" d="M 612 185 C 680 185, 700 69, 768 69"/>
+          <path class="lane lane-block" d="M 612 200 C 660 200, 700 200, 736 200"/>
+          <g aria-label="blocked">
+            <path class="lane-x" d="M 730 188 L 754 212"/><path class="lane-x" d="M 754 188 L 730 212"/>
+          </g>
+          <path class="lane lane-info" d="M 612 215 C 680 215, 700 331, 768 331"/>
+
+          <!-- Destinations (right) -->
+          <rect class="dg-node" x="770" y="40" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="64" text-anchor="middle">Sanctioned storage</text>
+          <text class="dg-sub" x="855" y="82" text-anchor="middle">SharePoint · allowed</text>
+
+          <rect class="dg-node" x="770" y="171" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="195" text-anchor="middle">Personal storage</text>
+          <text class="dg-sub" x="855" y="213" text-anchor="middle">Blocked · user notified</text>
+
+          <rect class="dg-node-green" x="770" y="302" width="170" height="58" rx="10"/>
+          <text class="dg-label" x="855" y="326" text-anchor="middle">Monitor → Events</text>
+          <text class="dg-sub" x="855" y="344" text-anchor="middle">Data incident · evidence</text>
+
+          <text class="dg-tiny" x="515" y="262" text-anchor="middle">Same engine as SWG · IPS · CASB — one more decision</text>
+        </svg>
+        <div class="dg-legend">
+          <span class="key"><span class="swatch allow"></span> Sanctioned destination — allowed</span>
+          <span class="key"><span class="swatch block"></span> Sensitive content to unsanctioned storage — blocked</span>
+          <span class="key"><span class="swatch info"></span> Incident telemetry — Events, dashboard, evidence</span>
+        </div>
+        <div class="diagram-caption">The upload is decrypted once at the PoP; the Data Control rule reads the content against a profile and decides per activity and per destination. The incident and its evidence are outputs of the same pass, not a second system.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="benefit"><div class="b-icon">🔍</div><div><h4>Discovery without deployment</h4><p>Traffic already traverses the PoP — DLP is a policy switched on where the traffic is, not an agent, a log upload or an extra proxy.</p></div></div>
+        <div class="benefit"><div class="b-icon">📚</div><div><h4>Predefined types and classifiers</h4><p>A Data Catalog of country-specific data types with tunable occurrence thresholds, plus ML document classifiers for HR, Finance, Legal, Medical and more — profiles are assembled, not authored from scratch.</p></div></div>
+        <div class="benefit"><div class="b-icon">🎚️</div><div><h4>Activity-level control</h4><p>Not a crude allow or deny: permit read-only use of an application while blocking uploads or shares that carry a matched profile, scoped per user group.</p></div></div>
+        <div class="benefit"><div class="b-icon">🔒</div><div><h4>Same engine for SaaS and on-prem</h4><p>One DLP policy follows the data whether the application lives in M365 or in the London DC behind a Socket — one console, one event stream.</p></div></div>
+      </div>
+    </section>
+
+    <section id="demo" class="reveal">
+      <div class="section-kicker">Demo runbook</div>
+      <h2>Five minutes on screen</h2>
+      <div class="callout warn">
+        <div class="co-title">Prerequisite — stage this before the day</div>
+        <p>TLS inspection must be enabled for the demo user: Data Control rules only see the traffic
+        TLS inspection actually decrypts, so with it off there are no activities and no content to
+        scan. Stage it per <a href="security-tls-inspection.html">TLS Inspection: Staged Rollout
+        Playbook</a>, and pre-stage a blocked incident so you are not waiting on a live upload in
+        the room. The DLP licence must be active on the demo tenant.</p>
+      </div>
+      <p style="font-size:.94rem;color:var(--ink-2)">Menu paths below use the library's standard
+      names. On a current-navigation tenant the same screens sit under <span class="path">Security →
+      App &amp; Data Inline</span> (for DLP Configuration) and <span class="path">Security →
+      Security Monitoring → Data Protection Dashboard</span>, as the screenshots' breadcrumbs show.</p>
+
+      <ol class="steps">
+        <li>
+          <h4>Open the vocabulary <span class="tag">1 min</span></h4>
+          <p><span class="path">Security → Data Types &amp; Profiles</span></p>
+          <p><strong>Say:</strong> “Profiles are built from a catalogue you did not have to write —
+          regional data types with occurrence thresholds, and ML classifiers that recognise a
+          document by family.”</p>
+          <p><strong>Show:</strong> The DLP Profiles tab — the predefined <em>Credit cards</em> and
+          <em>PII</em> content profiles and their data-type chips, with a user-defined keyword
+          profile beside them. Click the Data Types tab only if asked; the Data Catalog list is
+          long and this segment has five minutes.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-sec-data-types.png" alt="CMA Security → Data Types & Profiles, DLP Profiles tab, Content Profile selected: a table of profiles with Name, Description, Type and Data Types columns — Credit cards (Predefined; credit card numbers, near-phrase and magnetic-track types), Sample Keyword Profile (User defined; a keyword type), Words longer than 8 chars (User defined; a regex type) and PII (Predefined; person identifiers, credit card types, driver's licences)" loading="lazy">
+            <figcaption>Beat 1 on screen (demo tenant): the DLP Profiles tab with two predefined content profiles — <em>Credit cards</em> and <em>PII</em> — each a bundle of universal and regional data-type chips, beside two user-defined profiles built from a keyword and a regex. Point at the Type column: predefined is the catalogue, user-defined is the customer's own.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Show the one inline rule <span class="tag">1.5 min</span></h4>
+          <p><span class="path">Security → DLP Configuration</span></p>
+          <p><strong>Say:</strong> “This is the same rulebase CASB used two minutes ago. Row three
+          says: these departments, uploading to any cloud application, content matching the
+          credit-card profile — block, high severity, event. The user is told why. Write it against
+          an unsanctioned-storage category and you have the rule most customers promote to block
+          first.”</p>
+          <p><strong>Show:</strong> The Data rule <em>Block uploading credit card numbers</em> — source
+          groups, Any Cloud Application, activity Upload, profile Credit cards, action Block —
+          sitting above the monitor-mode rows that gather evidence. Mention, without opening it,
+          that a rule evaluates at most 20 data types across its profiles and files are scanned up
+          to 50 MB.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-app-data-inline-policy.png" alt="CMA App & Data Inline Protection, Application Control Policy tab, Application Control and Data Control toggles on. A rule group of nine App and Data rules with Type, Name, Source, Application, Criteria, Severity, Action and Tracking columns, including the Data rule 'GenAI Sensitive Data' (Marketing and Finance users, Generative AI Tools, Upload, Credit cards and PII profiles, High, Block) and the Data rule 'Block uploading credit card numbers' (four departments, Any Cloud Application, Upload, Credit cards profile, High, Block), beside App rules that allow a named Microsoft tenant, block personal OneDrive tenants and monitor Gmail attachments" loading="lazy">
+            <figcaption>Beat 2 on screen (demo tenant, fictional groups): App and Data rules in one rulebase. The two <em>Data</em> rows are the DLP story — a profile, an upload activity, a destination class and a Block action — and the <em>App</em> rows around them are the CASB story from the previous segment, which is the point: one policy, two kinds of decision.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Open the incident <span class="tag">1.5 min</span></h4>
+          <p><span class="path">Monitor → Events</span></p>
+          <p><strong>Say:</strong> “A DLP alert that says ‘rule fired’ is not an investigation. Here is
+          who, which application, which file, which data type matched and what we did — and the
+          evidence is locked behind a button that is role-gated and logged to the Audit Trail.”</p>
+          <p><strong>Show:</strong> Filter to the DLP rule, open the pre-staged block event and walk the
+          Data Incident pane top to bottom: action, user, application, activity type, file name,
+          rule, DLP profile, matched data types. Stop at the <em>Evidence is Secured</em> panel —
+          do not click View Evidence unless the room asks; the lock is the point. <em>Presenter note:</em>
+          the public KB documents auditing of configuration changes; per-view evidence logging is
+          design intent, so press View Evidence once on the demo tenant before the day and confirm
+          the entry appears under <span class="path">Administration → Audit Trail</span> before you
+          say it is logged.</p>
+          <figure class="shot">
+            <img src="../assets/img/dlp-incident-cma.png" alt="CMA Data Incident detail pane: header row Time, User, Violation CC-UK, Action Block; Details listing Action Block, user name and email, Application Microsoft Copilot, App Activity Type Upload, Application Risk 2, File Type Microsoft Office Documents, File Name 'Document with CC Information.doc', Full Path URL, Rule 'Copilot restrict PII', DLP Profiles CC-UK, Matched Data Types 'Credit card numbers [Universal]'; below, a Forensics section with a locked 'Evidence is Secured' panel and a View Evidence button" loading="lazy">
+            <figcaption>Beat 3 on screen (demo tenant, demo identity): a blocked upload of a document containing credit-card numbers to Microsoft Copilot — rule <em>Copilot restrict PII</em>, profile <em>CC-UK</em>, matched data type <em>Credit card numbers</em> — with the forensics panel locked beneath it. The destination here is a GenAI app; the pane is identical for a personal cloud drive.</figcaption>
+          </figure>
+        </li>
+        <li>
+          <h4>Zoom out to the dashboard <span class="tag">1 min</span></h4>
+          <p><span class="path">Monitor → Data Protection Dashboard</span></p>
+          <p><strong>Say:</strong> “And across the estate: which rules fire most, how many events were
+          blocked versus monitored, and when. Monitor rules at the top are the evidence you gather
+          before you promote anything to block.”</p>
+          <p><strong>Show:</strong> The Inline Protection tab — Top Violating Rules with a monitor-mode
+          upload rule leading, a personal-OneDrive block enforcing beneath it, and the violations
+          timeline. The dashboard reads back up to 90 days; the drill from a rule row into a single
+          incident is the path you just walked in reverse.</p>
+          <figure class="shot">
+            <img src="../assets/img/cma-sec-dp-dash.png" alt="CMA Monitor → Data Protection Dashboard, Inline Protection tab, Last 2 Days: Top Violating Rules table — Non-sanctioned apps Monitor uploads 3.39K, Log Any Cloud Application Granular Activities 484, OneDrive Block personal OneDrive tenants 285, Monitor PII data uploads to Generative AI tools 24, Cato Patient Portal Controls 4 — beside an Events Violations Over Time area chart, with Events by Actions, Events by Severity and Events Violations by Countries panels below" loading="lazy">
+            <figcaption>Beat 3, wide shot (demo tenant): the Inline Protection dashboard — monitor-mode upload rules accumulating events above an enforced personal-OneDrive block, with the violations timeline beside them. This is where a customer's own PoV starts its drill-down.</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+      <p>
+        <strong>Transition.</strong> Close on the dashboard, not the incident, so the last frame is
+        the estate rather than one user, then turn to the room: “So far every flow was a user going
+        out. Now the other direction: users reaching your private applications.” Open
+        <a href="demo-ztna.html">Segment 5: ZTNA</a>. If you are running late, the cut plan folds
+        this segment's incident view into the CASB events screen — show the Data Incident pane
+        there and skip the dashboard.
+      </p>
+    </section>
+
+    <section id="questions" class="reveal">
+      <div class="section-kicker">If they ask</div>
+      <h2>Four questions this segment provokes</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">“How do we stop this drowning us in false positives?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Run new rules in monitor with events on,
+          review the match report with the people who own the data, and tune before anything
+          blocks — raise a noisy data type's occurrence threshold, require co-occurrence with an
+          All (AND) profile, or step up to Exact Data Matching against their actual records. The
+          PoV on the depth page is built around exactly that review.</p>
+          <p style="font-size:.9rem"><a href="security-data-casb-dlp.html#pov">Data Security with CASB &amp; DLP — PoV runbook</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Can an analyst see what actually matched?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Yes, with DLP Forensics: an encrypted
+          snippet — or the full file, up to 20 MB — is written to an S3 bucket in the customer's
+          own AWS account, encrypted with a per-account key. Viewing it is governed by a dedicated
+          permission and logged to the Audit Trail (verify the view entry on your own tenant before
+          asserting it), so seeing the event does not mean seeing the data.</p>
+          <p style="font-size:.9rem"><a href="security-dlp-forensics.html#evidence">Data Breach Investigation with DLP Forensics — anatomy of a data incident</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Our concern is documents, not card numbers”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">The predefined ML document classifiers
+          recognise document families — Legal, Contracts, HR, Finance, Medical among them — so a
+          profile can match a contract or a power of attorney by what it is rather than by a
+          pattern inside it. Be honest about the edge: classification is class-aware, not
+          matter-aware, and OCR image scanning does not apply to ML classifier types.</p>
+          <p style="font-size:.9rem"><a href="security-legal-confidentiality.html">Law Firms: Client Confidentiality &amp; Ethical Walls</a></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">“Is this in the CASB licence, and what else do we need?”</h3>
+          <p style="font-size:.94rem;color:var(--ink-2)">Application Control is included in the
+          CASB licence; Data Control rules additionally require the DLP licence. Operationally the
+          prerequisite is TLS inspection on the users in scope, and Client notifications for a
+          block need Windows Client v5.10+ or macOS v5.7+ — stage both before promising a blocked
+          upload with a message on screen.</p>
+          <p style="font-size:.9rem"><a href="security-tls-inspection.html">TLS Inspection: Staged Rollout Playbook</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" class="reveal">
+      <div class="section-kicker">Go deeper</div>
+      <h2>Resources</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Documentation</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="https://www.catonetworks.com/platform/data-loss-prevention-dlp/" target="_blank" rel="noopener">Data Loss Prevention — platform page</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/creating-dlp-content-profiles" target="_blank" rel="noopener">Creating DLP Content Profiles</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/creating-the-data-control-policy" target="_blank" rel="noopener">Creating the Data Control Policy</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/using-the-data-protection-inline-dashboard" target="_blank" rel="noopener">Using the Data Protection Inline Dashboard</a></li>
+            <li><a href="https://knowledge.catonetworks.com/docs/investigating-dlp-violations-with-forensic-evidence" target="_blank" rel="noopener">Investigating DLP Violations with Forensic Evidence</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">In this library</h3>
+          <ul style="margin:0;padding-left:20px;font-size:.94rem">
+            <li><a href="demo-platform-60.html">The 60-minute platform demo — running order</a></li>
+            <li><a href="demo-casb.html">Previous — Segment 3: CASB</a></li>
+            <li><a href="demo-ztna.html">Next — Segment 5: ZTNA</a></li>
+            <li><a href="security-data-casb-dlp.html">Data Security with CASB &amp; DLP</a></li>
+            <li><a href="security-dlp-forensics.html">Data Breach Investigation with DLP Forensics</a></li>
+            <li><a href="security-legal-confidentiality.html">Law Firms: Client Confidentiality &amp; Ethical Walls</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="pager" id="pager" aria-label="More use cases"></nav>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Cato Networks — internal SE / partner enablement.</span>
+    <span><a href="../index.html">Use Case Library home</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/deck-brand.js"></script>
+<script src="../assets/js/deck-content.js"></script>
+<script src="../assets/js/deck-diagrams.js"></script>
+<script src="../assets/js/deck-export.js"></script>
+</body>
+</html>
