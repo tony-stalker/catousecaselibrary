@@ -99,6 +99,9 @@ def strip_internal_links(text: str, ids) -> str:
         text = re.sub(r'<a href="(?:\.\./usecases/|usecases/)?%s\.html(?:#[^"]*)?"[^>]*>(.*?)</a>' % re.escape(pid), r'\1', text, flags=re.DOTALL)
     return text
 
+# the index "Running a first demo?" Start-here card is SE-only end to end (its links are all
+# Platform Demo pages + the deck builder, which is stripped) — drop the whole card
+INTERNAL_CARD_RE = re.compile(r'\n?[ \t]*<div class="card">\s*<h3[^>]*>🎬 Running a first demo\?</h3>.*?</div>(?=\s*(?:<div class="card">|</div>))', re.DOTALL)
 INTERNAL_NAV_RE = re.compile(r'\n?[ \t]*<a class="nav-link" href="#cat-platform-demo">[^<]*</a>')
 INTERNAL_FILTER_RE = re.compile(r'\n?[ \t]*<button class="filter-btn" data-cat="Platform Demo">[^<]*</button>')
 
@@ -140,6 +143,7 @@ def main():
         (OUT / "usecases" / page.name).write_text(strip_internal_links(transform(page.read_text()), skip))
         n += 1
     index_src = INTERNAL_FILTER_RE.sub("", INTERNAL_NAV_RE.sub("", (SRC / "index.html").read_text()))
+    index_src = INTERNAL_CARD_RE.sub("", index_src).replace("five guided journeys", "four guided journeys")
     (OUT / "index.html").write_text(strip_internal_links(transform(index_src), skip))
 
     # assets (css/js/img) — catalog.js gets the wording pass too
