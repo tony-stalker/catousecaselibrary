@@ -48,7 +48,7 @@ window.UC_DECKS = {
     ],
     "gain": [
       "Same identity, policy, protection and performance — office, home or hotel",
-      "Traffic enters the nearest of 80+ PoPs — no backhaul latency",
+      "Traffic enters the nearest of 100+ PoPs — no backhaul latency",
       "One rule base for office and remote; always-on, nothing to toggle"
     ],
     "demo": [
@@ -855,7 +855,7 @@ window.UC_DECKS = {
       "China on a DIY VPN overlay means performance and regulatory risk"
     ],
     "gain": [
-      "The network is already in-region — 80+ PoPs with the full security stack",
+      "The network is already in-region — 100+ PoPs with the full security stack",
       "Connected on day one: zero-touch socket, or Client and IPsec while hardware ships",
       "China joins compliantly through Cato's in-country presence with licensed local partners"
     ],

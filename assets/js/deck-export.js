@@ -8,9 +8,11 @@
    Content: window.UC_CATALOG (title / summary / category) + window.UC_DECKS
    (per-id pain / gain / demo / hook, filled in by the assembler in
    assets/js/deck-content.js). Brand media: window.DECK_BRAND (authentic Cato
-   lockup PNGs, base64). Topology diagrams: window.UC_DECK_DIAGRAMS (generated
-   assets/js/deck-diagrams.js — per-id native-shape lists + brand logo PNGs);
-   when absent, decks build exactly as before, with no diagram slides.
+   lockup PNGs, base64). Diagrams: window.UC_DECK_DIAGRAMS (generated
+   assets/js/deck-diagrams.js — a manifest {id: {w, h, title, caption, desc}})
+   plus one picture file per page, assets/js/deck-pics/<id>.js, loaded on demand
+   when a deck is generated (2x PNG of the page's main diagram, rendered by
+   _extract/build-diagrams.py). When absent, decks build with no diagram slides.
    Everything is file:// safe — no fetch, no CDNs. */
 (function () {
   "use strict";
@@ -344,147 +346,37 @@
     } };
   }
 
-  /* ---------- native-shapes topology diagram ----------
-     DG_FILL / DG_INK and diagramXml are copied from planner-export.js (that
-     file is stripped from the prospect build, so no import) and extended for
-     the generated UC_DECK_DIAGRAMS schema: t:"ellipse", t:"poly" sampled
-     lanes (arrowhead on the last segment only), faded alpha, dashed lines,
-     and t:"img" brand logos resolved from UC_DECK_DIAGRAMS.logos. */
+  /* ---------- diagram slide: the page's main diagram as a picture ----------
+     The picture is the kit-rendered SVG at 2x (UC_DECK_PICS[id], loaded on
+     demand from assets/js/deck-pics/<id>.js); it is fitted into the content
+     area preserving its aspect ratio. */
 
-  /* [fill, stroke, dash?, strokeWidthPx?] — null fill means noFill */
-  var DG_FILL = {
-    "dg-node": ["FFFFFF", "DDE6E2"], "dg-node-dark": ["0C2936", "123849"],
-    "dg-node-green": ["E9F7F2", "6CC9AE"],
-    "pt-green": ["E9F7F2", "6CC9AE"], "pt-cloud": ["EEF8F4", "0E8A6D", 0, 2],
-    "pt-navy": ["0C2936", "123849"], "pt-plain": ["FBFDFC", "B9C6C1"],
-    "pt-amber": ["FDF6E9", "D99A2B"], "pt-purple": ["F5F1FA", "8661C5"],
-    "pt-bluedash": ["FFFFFF", "2F6FB2", 1, 1.5], "pt-chip": ["FFFFFF", "6CC9AE", 0, 1.2],
-    "pt-pop": [null, "0E8A6D", 0, 4.5],
-    /* .dg-backbone in style.css: fill none, dashed green-300 ring */
-    "dg-backbone": [null, "6CC9AE", 1, 1.6]
-  };
-  /* [colour, bold, fontPx] */
-  var DG_INK = {
-    "dg-label": ["0D1A16", 1, 14.5], "dg-sub": ["45524D", 0, 12.5],
-    "dg-tiny": ["6F7D77", 0, 11], "dg-label-inv": ["EAF6F1", 1, 14.5],
-    "dg-sub-inv": ["B9D2C9", 0, 12.5],
-    "pt-t-green": ["0B6E57", 1, 13.5], "pt-t-ink": ["0D1A16", 1, 13.5],
-    "pt-t-inv": ["EAF6F1", 1, 13.5], "pt-t-amber": ["9A6A12", 1, 13.5],
-    "pt-t-purple": ["5B3F94", 1, 13.5], "pt-t-blue": ["2F6FB2", 1, 13.5],
-    "pt-t-big": ["0B6E57", 1, 16], "pt-sub": ["45524D", 0, 11.5],
-    "pt-sub-inv": ["B9D2C9", 0, 11.5], "pt-chip-t": ["0B6E57", 1, 10]
-  };
-
-  /* d = one UC_DECK_DIAGRAMS.diagrams entry; picRels = { brand: relId }
-     for the diagram logos this slide embeds (rels.dg from pptx()). */
-  function diagramXml(d, picRels) {
-    if (!(d.w > 0) || !(d.h > 0)) return "";
-    var ax = MARGIN, ay = 1850000, aw = W - 2 * MARGIN, ah = H - ay - 900000;
-    var sc = Math.min(aw / d.w, ah / d.h);
-    var ox = ax + (aw - d.w * sc) / 2, oy = ay + (ah - d.h * sc) / 2;
-    function X(v) { return Math.round(ox + v * sc); }
-    function Y(v) { return Math.round(oy + v * sc); }
-    function E(v) { return Math.max(1, Math.round(v * sc)); }
-    var out = "", id = 100;
-
-    /* one straight segment; poly lanes emit several of these */
-    function lineXml(x1, y1, x2, y2, sh, arrow, alpha) {
-      var col = sh.green ? "0E8A6D" : sh.blue ? "2F6FB2"
-        : sh.red ? "D03B3B" : sh.amber ? "D98A00" : "6F7D77";
-      var fl = (x1 > x2 ? ' flipH="1"' : "") + (y1 > y2 ? ' flipV="1"' : "");
-      id++;
-      return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-l' + id + '"/>'
-        + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
-        + "<a:xfrm" + fl + '><a:off x="' + Math.min(X(x1), X(x2)) + '" y="' + Math.min(Y(y1), Y(y2)) + '"/>'
-        + '<a:ext cx="' + Math.abs(X(x2) - X(x1)) + '" cy="' + Math.abs(Y(y2) - Y(y1)) + '"/></a:xfrm>'
-        + '<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
-        + '<a:ln w="' + Math.max(9525, E(sh.sw || 1.6)) + '">'
-        + '<a:solidFill><a:srgbClr val="' + col + '">' + alpha + "</a:srgbClr></a:solidFill>"
-        + (sh.dash ? '<a:prstDash val="dash"/>' : "")
-        + (arrow ? '<a:tailEnd type="triangle" w="med" len="med"/>' : "")
-        + "</a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
-    }
-
-    (d.shapes || []).forEach(function (sh) {
-      var alpha = sh.faded ? '<a:alpha val="38000"/>' : "";
-      if (sh.t === "rect" || sh.t === "circle" || sh.t === "ellipse") {
-        id++;
-        var f = DG_FILL[sh.cls] || DG_FILL["dg-node"];
-        var rx0 = sh.t === "rect" ? sh.x : (sh.t === "circle" ? sh.cx - sh.r : sh.cx - sh.rx);
-        var ry0 = sh.t === "rect" ? sh.y : (sh.t === "circle" ? sh.cy - sh.r : sh.cy - sh.ry);
-        var rw = sh.t === "rect" ? sh.w : (sh.t === "circle" ? sh.r * 2 : sh.rx * 2);
-        var rh = sh.t === "rect" ? sh.h : (sh.t === "circle" ? sh.r * 2 : sh.ry * 2);
-        out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-r' + id + '"/>'
-          + "<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr>"
-          + '<a:xfrm><a:off x="' + X(rx0) + '" y="' + Y(ry0) + '"/>'
-          + '<a:ext cx="' + E(rw) + '" cy="' + E(rh) + '"/></a:xfrm>'
-          + (sh.t === "rect"
-            ? '<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 14000"/></a:avLst></a:prstGeom>'
-            : '<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>')
-          + (f[0] ? '<a:solidFill><a:srgbClr val="' + f[0] + '">' + alpha + "</a:srgbClr></a:solidFill>" : "<a:noFill/>")
-          + '<a:ln w="' + Math.max(9525, E(f[3] || 1.5)) + '"><a:solidFill><a:srgbClr val="' + f[1] + '">' + alpha
-          + "</a:srgbClr></a:solidFill>" + (f[2] ? '<a:prstDash val="dash"/>' : "") + "</a:ln></p:spPr>"
-          + "<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>";
-      } else if (sh.t === "line") {
-        out += lineXml(sh.x1, sh.y1, sh.x2, sh.y2, sh, sh.arrow, alpha);
-      } else if (sh.t === "poly") {
-        var pts = sh.pts || [];
-        for (var pi = 0; pi + 1 < pts.length; pi++) {
-          out += lineXml(pts[pi][0], pts[pi][1], pts[pi + 1][0], pts[pi + 1][1], sh,
-            sh.arrow && pi === pts.length - 2, alpha);
-        }
-      } else if (sh.t === "img") {
-        var rel = picRels && picRels[sh.brand];
-        if (!rel) return;                 /* no media for this brand — skip cleanly */
-        id++;
-        out += '<p:pic><p:nvPicPr><p:cNvPr id="' + id + '" name="logo-' + xesc(sh.brand) + '"/>'
-          + "<p:cNvPicPr/><p:nvPr/></p:nvPicPr>"
-          + '<p:blipFill><a:blip r:embed="' + rel + '"/><a:stretch><a:fillRect/></a:stretch></p:blipFill>'
-          + '<p:spPr><a:xfrm><a:off x="' + X(sh.x) + '" y="' + Y(sh.y) + '"/>'
-          + '<a:ext cx="' + E(sh.w) + '" cy="' + E(sh.h) + '"/></a:xfrm>'
-          + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>';
-      } else if (sh.t === "text") {
-        if (!sh.text) return;
-        id++;
-        var k = DG_INK[sh.cls] || DG_INK["dg-sub"];
-        var px = k[2];
-        var sz = Math.max(600, Math.round(px * sc / 12700 * 100));
-        var bw = Math.round(Math.max(sh.text.length * px * 0.62, 20) * sc) + 200000;
-        var bh = Math.round(px * 1.6 * sc);
-        var bx = Math.round(sh.anchor === "middle" ? X(sh.x) - bw / 2 : X(sh.x));
-        var by = Y(sh.y) - Math.round(px * 1.05 * sc);
-        out += '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="dg-t' + id + '"/>'
-          + '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr>'
-          + '<a:xfrm><a:off x="' + bx + '" y="' + by + '"/><a:ext cx="' + bw + '" cy="' + bh + '"/></a:xfrm>'
-          + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
-          + '<p:txBody><a:bodyPr wrap="none" anchor="ctr" lIns="0" tIns="0" rIns="0" bIns="0"/><a:lstStyle/>'
-          + '<a:p><a:pPr algn="' + (sh.anchor === "middle" ? "ctr" : "l") + '"><a:buNone/></a:pPr>'
-          + '<a:r><a:rPr lang="en-GB" sz="' + sz + '"' + (k[1] ? ' b="1"' : "") + ' dirty="0">'
-          + '<a:solidFill><a:srgbClr val="' + k[0] + '">' + alpha + "</a:srgbClr></a:solidFill></a:rPr>"
-          + "<a:t>" + xesc(sh.text) + "</a:t></a:r></a:p></p:txBody></p:sp>";
-      }
-    });
-    return out;
+  function picXml(relId, x, y, w, h, name) {
+    nextId++;
+    return '<p:pic><p:nvPicPr><p:cNvPr id="' + nextId + '" name="' + name + '"/>'
+      + "<p:cNvPicPr/><p:nvPr/></p:nvPicPr>"
+      + '<p:blipFill><a:blip r:embed="' + relId + '"/><a:stretch><a:fillRect/></a:stretch></p:blipFill>'
+      + '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/>'
+      + '<a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>'
+      + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>';
   }
 
-  /* "How it fits together" slide — the use-case topology as native shapes */
   function diagramSlide(uc, diag, note) {
-    /* diagram brand logos this slide embeds, encounter order, dedup'd;
-       only brands present in the generated logos registry count */
-    var logos = (window.UC_DECK_DIAGRAMS && window.UC_DECK_DIAGRAMS.logos) || {};
-    var dbrands = [];
-    (diag.shapes || []).forEach(function (sh) {
-      if (sh.t === "img" && logos[sh.brand] && logos[sh.brand].png
-        && dbrands.indexOf(sh.brand) < 0) dbrands.push(sh.brand);
-    });
-    return { brands: ["green"], dbrands: dbrands, notes: note, build: function (rels) {
+    return { brands: ["green"], pics: [uc.id], notes: note, build: function (rels) {
       var body = box(MARGIN, 620000, W - 2 * MARGIN, 340000,
         para(String(uc.title).toUpperCase(), { sz: 1000, color: C.dim }));
       body += box(MARGIN, 980000, W - 2 * MARGIN, 700000,
         para(diag.title || "How it fits together", { sz: 2600, b: true, color: C.ink }));
-      body += diagramXml(diag, rels.dg || {});
+      var top = 1750000, bottom = H - (diag.caption ? 1000000 : 760000);
+      var areaW = W - 2 * MARGIN, areaH = bottom - top;
+      var rel = rels.pic && rels.pic[uc.id];
+      if (rel && diag.w && diag.h) {
+        var k = Math.min(areaW / diag.w, areaH / diag.h);
+        var pw = Math.round(diag.w * k), ph = Math.round(diag.h * k);
+        body += picXml(rel, MARGIN + Math.round((areaW - pw) / 2), top + Math.round((areaH - ph) / 2), pw, ph, "diagram");
+      }
       if (diag.caption) {
-        body += box(MARGIN, H - 620000, W - 2 * MARGIN - 1500000, 350000,
+        body += box(MARGIN, H - 900000, W - 2 * MARGIN - 1500000, 350000,
           para(diag.caption, { sz: 1000, color: C.dim }));
       }
       body += greenLogoCorner(rels);
@@ -711,17 +603,16 @@
       files.push({ name: "ppt/theme/theme2.xml", data: THEME2 });
     }
 
-    /* Media parts: Cato lockups (slide.brands) + diagram brand logos
-       (slide.dbrands, resolved from the generated UC_DECK_DIAGRAMS.logos
-       registry). Per slide, images take rId2..rId(1+n) in encounter order
-       — lockups first, then diagram logos — and the notesSlide rel (if
-       any) lands at rId(2+n), so ids can never collide. Each unique media
-       part is embedded once per package. */
+    /* Media parts: Cato lockups (slide.brands) + diagram pictures (slide.pics,
+       resolved from UC_DECK_PICS loaded on demand). Per slide, images take
+       rId2..rId(1+n) in encounter order — lockups first, then pictures — and
+       the notesSlide rel (if any) lands at rId(2+n), so ids can never collide.
+       Each unique media part is embedded once per package. */
     var BRAND = window.DECK_BRAND || {};
-    var DLOGOS = (window.UC_DECK_DIAGRAMS && window.UC_DECK_DIAGRAMS.logos) || {};
+    var PICS = window.UC_DECK_PICS || {};
     var mediaAdded = {};
     slides.forEach(function (s, i) {
-      var picRels = { dg: {} }, extra = "", nImg = 0;
+      var picRels = { pic: {} }, extra = "", nImg = 0;
       function imgRel(target) {
         nImg++;
         var rid = "rId" + (1 + nImg);
@@ -737,12 +628,13 @@
           files.push({ name: "ppt/media/cato-" + b + ".png", data: b64bytes(BRAND[b].png) });
         }
       });
-      (s.dbrands || []).forEach(function (b) {
-        if (!DLOGOS[b] || !DLOGOS[b].png) return;
-        picRels.dg[b] = imgRel("../media/dlogo-" + b + ".png");
-        if (!mediaAdded["dlogo-" + b]) {
-          mediaAdded["dlogo-" + b] = true;
-          files.push({ name: "ppt/media/dlogo-" + b + ".png", data: b64bytes(DLOGOS[b].png) });
+      (s.pics || []).forEach(function (id) {
+        var pic = PICS[id];
+        if (!pic || !pic.png) return;
+        picRels.pic[id] = imgRel("../media/dpic-" + id + ".png");
+        if (!mediaAdded["dpic-" + id]) {
+          mediaAdded["dpic-" + id] = true;
+          files.push({ name: "ppt/media/dpic-" + id + ".png", data: b64bytes(pic.png.replace(/^data:[^,]*,/, "")) });
         }
       });
       if (noteTexts[i]) {
@@ -802,7 +694,7 @@
     }
     var diag = window.UC_DECK_DIAGRAMS && window.UC_DECK_DIAGRAMS.diagrams
       && window.UC_DECK_DIAGRAMS.diagrams[uc.id];
-    if (diag && Array.isArray(diag.shapes) && diag.shapes.length) {
+    if (diag && diag.w && diag.h && window.UC_DECK_PICS && window.UC_DECK_PICS[uc.id]) {
       var dnote = trim(diag.desc) || trim(diag.caption)
         || "Walk the picture left to right — where traffic originates, where it is inspected, where it lands.";
       out.push(diagramSlide(uc, diag, dnote));
@@ -816,6 +708,28 @@
   var COVER_NOTE = "Introductions, then set the scene: everything we look at today is one "
     + "platform, one policy set, one console — the Cato Management Application. "
     + "Tailor the agenda to what this audience cares about.";
+
+  /* diagram pictures live in one file per page (they are large); load the
+     ones this deck needs, then build. Missing files simply mean no diagram
+     slide for that page. */
+  function picsBase() {
+    var tag = document.querySelector('script[src$="deck-export.js"]');
+    return tag ? tag.getAttribute("src").replace(/deck-export\.js$/, "deck-pics/") : "assets/js/deck-pics/";
+  }
+  function ensurePics(ids) {
+    var man = (window.UC_DECK_DIAGRAMS && window.UC_DECK_DIAGRAMS.diagrams) || {};
+    window.UC_DECK_PICS = window.UC_DECK_PICS || {};
+    var need = (ids || []).filter(function (id) { return man[id] && !window.UC_DECK_PICS[id]; });
+    return Promise.all(need.map(function (id) {
+      return new Promise(function (resolve) {
+        var sc = document.createElement("script");
+        sc.src = picsBase() + id + ".js";
+        sc.onload = resolve;
+        sc.onerror = function () { window.UC_DECK_PICS[id] = null; resolve(); };
+        document.head.appendChild(sc);
+      });
+    }));
+  }
 
   function buildDeck(ids, title, opts) {
     var compact = !!(opts && opts.compact);
@@ -850,14 +764,17 @@
     forUseCase: function (id) {
       var uc = findUc(id);
       if (!uc) return;
-      download(buildDeck([id], null), safeName(uc.title) + ".pptx");
+      ensurePics([id]).then(function () { download(buildDeck([id], null), safeName(uc.title) + ".pptx"); });
     },
     forSelection: function (ids, title, opts) {
       if (!ids || !ids.length) return;
       var name = title || "Cato SASE demonstration";
-      download(buildDeck(ids, name, opts), safeName(name) + ".pptx");
+      ensurePics(ids).then(function () { download(buildDeck(ids, name, opts), safeName(name) + ".pptx"); });
     },
-    _blob: buildDeck            /* exposed for the verify harness */
+    /* exposed for the verify harness: resolves to the Blob once pictures are loaded */
+    _blob: function (ids, title, opts) {
+      return ensurePics(ids).then(function () { return buildDeck(ids, title, opts); });
+    }
   };
 
   /* ---------- page wiring (internal SE library only) ---------- */

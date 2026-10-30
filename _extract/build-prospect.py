@@ -115,8 +115,11 @@ def _strip_section(m):
             '      <h2>What this looks like live</h2>\n      '
             + "\n      ".join(figs) + "\n    </section>\n")
 
+CAPTURE_RE = re.compile(r'\n?[ \t]*<!--\s*capture-wanted:.*?-->', re.DOTALL)
+
 def transform(text: str) -> str:
     text = SECTION_RE.sub(_strip_section, text)
+    text = CAPTURE_RE.sub("", text)   # app.js draws placeholder mock-ups from these; prospects get neither
     text = DECK_BTN_RE.sub("", text)
     text = WHATSNEW_LINK_RE.sub("", text)
     text = PLANNER_LINK_RE.sub("", text)

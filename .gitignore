@@ -4,3 +4,4 @@ __pycache__/
 ubuntu.txt
 feedback-log.txt
 .claude/
+_extract/diagram-kit/kit-host.html

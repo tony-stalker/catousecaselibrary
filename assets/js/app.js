@@ -207,6 +207,93 @@
     activate(location.hash === "#pov" ? "pov" : "demo");
   }
 
+  /* ---------- capture placeholders ----------
+     Every <!-- capture-wanted: «CMA Area → Screen — what it shows» --> marker (the
+     shopping list in _extract/CAPTURE-LIST.md) is rendered as a clearly labelled,
+     illustrative mock console in its place until the real capture is embedded.
+     Markers are removed by build-prospect.py, so prospects never see these. */
+  var PH_SECTIONS = ["Home", "Monitor", "Network", "Security", "Access", "Assets", "Resources", "Administration", "Account", "AI Security"];
+  function phHash(str) { var h = 0; for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0; return h; }
+  function phParse(raw) {
+    var t = raw.replace(/^[\s«"]+|[\s»"]+$/g, "").replace(/^CMA\s+/i, "");
+    var parts = t.split(/\s+[—–-]\s+/);
+    var path = parts.length > 1 ? parts[0] : "", detail = parts.length > 1 ? parts.slice(1).join(" — ") : t;
+    var segs = path.split(/\s*(?:→|->|>)\s*/).filter(Boolean);
+    var kind = /^Cato Client|^Client\b|device —|^Cato Client device/i.test(t) ? "client" : /console|terminal|nslookup|S3|SIEM|Sentinel|Splunk/i.test(path || t) && !segs.length ? "external" : "console";
+    var section = null;
+    PH_SECTIONS.forEach(function (sct) { if (!section && segs.length && segs[0].toLowerCase().indexOf(sct.toLowerCase()) === 0) section = sct; });
+    if (!section && !segs.length) { var m = /^(Audit Trail|Events|Posture|Reports|Experience Monitoring|Private Access Policy|Applications Portal|Connection Details|App Connector)/i.exec(t); if (m) segs = [m[1]]; }
+    return { kind: kind, section: section, segs: segs, title: segs.length ? segs[segs.length - 1] : (kind === "client" ? "Cato Client" : "Console view"), detail: detail, seed: phHash(t) };
+  }
+  function phSvg(p) {
+    var e = esc, W = 960, H = 540, s = '<svg class="ph" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-hidden="true" focusable="false">';
+    s += '<rect class="ph-bg" x="0" y="0" width="' + W + '" height="' + H + '" rx="12"/>';
+    if (p.kind === "client") {
+      s += '<rect class="ph-desk" x="0" y="0" width="' + W + '" height="' + H + '" rx="12"/>';
+      s += '<rect class="ph-win" x="280" y="90" width="400" height="360" rx="14"/>';
+      s += '<circle class="ph-ring" cx="480" cy="170" r="34"/><circle class="ph-ring-core" cx="480" cy="170" r="12"/>';
+      s += '<text class="ph-h" x="480" y="236" text-anchor="middle">' + e(p.title.slice(0, 32)) + '</text>';
+      s += '<text class="ph-s" x="480" y="262" text-anchor="middle">' + e(p.detail.slice(0, 44)) + '</text>';
+      s += '<rect class="ph-row" x="320" y="290" width="320" height="14" rx="7"/><rect class="ph-row" x="320" y="314" width="260" height="14" rx="7"/><rect class="ph-row" x="320" y="338" width="290" height="14" rx="7"/>';
+      s += '<rect class="ph-btn" x="380" y="390" width="200" height="34" rx="17"/>';
+    } else {
+      /* top bar + sidebar + content */
+      s += '<rect class="ph-top" x="0" y="0" width="' + W + '" height="48"/>';
+      s += '<circle class="ph-logo" cx="34" cy="24" r="10"/><rect class="ph-top-t" x="56" y="17" width="150" height="14" rx="7"/>';
+      s += '<rect class="ph-side" x="0" y="48" width="190" height="' + (H - 48) + '"/>';
+      var y = 84;
+      PH_SECTIONS.slice(0, 8).forEach(function (sct) {
+        var on = p.section === sct;
+        if (on) s += '<rect class="ph-side-on" x="10" y="' + (y - 18) + '" width="170" height="30" rx="8"/>';
+        s += '<text class="ph-nav' + (on ? ' on' : '') + '" x="26" y="' + (y + 3) + '">' + e(sct) + '</text>';
+        y += 40;
+      });
+      var crumb = p.segs.length ? p.segs.join("  ›  ") : (p.kind === "external" ? p.title : "Cato Management Application");
+      s += '<text class="ph-crumb" x="222" y="86">' + e(crumb.slice(0, 70)) + '</text>';
+      s += '<text class="ph-h" x="222" y="124">' + e(p.title.slice(0, 48)) + '</text>';
+      s += '<text class="ph-s" x="222" y="150">' + e(p.detail.slice(0, 92)) + '</text>';
+      var widgets = 2 + (p.seed % 2), wx = 222, ww = Math.floor((W - 222 - 30 - (widgets - 1) * 16) / widgets);
+      for (var i = 0; i < widgets; i++) {
+        var x = wx + i * (ww + 16);
+        s += '<rect class="ph-card" x="' + x + '" y="176" width="' + ww + '" height="96" rx="10"/>';
+        s += '<rect class="ph-row" x="' + (x + 16) + '" y="194" width="' + Math.round(ww * 0.4) + '" height="12" rx="6"/>';
+        s += '<rect class="ph-val" x="' + (x + 16) + '" y="218" width="' + Math.round(ww * 0.28) + '" height="22" rx="6"/>';
+        s += '<path class="ph-spark" d="M' + (x + 16) + ' 258 l' + Math.round(ww * 0.2) + ' -10 l' + Math.round(ww * 0.2) + ' 6 l' + Math.round(ww * 0.2) + ' -16 l' + Math.round(ww * 0.25) + ' 8"/>';
+      }
+      var rows = 4 + (p.seed % 4), ry = 296;
+      s += '<rect class="ph-card" x="222" y="' + (ry - 10) + '" width="' + (W - 252) + '" height="' + (rows * 30 + 44) + '" rx="10"/>';
+      s += '<rect class="ph-head" x="238" y="' + (ry + 4) + '" width="' + (W - 284) + '" height="22" rx="6"/>';
+      for (var r = 0; r < rows; r++) {
+        var yy = ry + 40 + r * 30, w1 = 120 + ((p.seed >>> (r + 2)) % 90), w2 = 80 + ((p.seed >>> (r + 5)) % 140);
+        s += '<rect class="ph-row" x="238" y="' + yy + '" width="' + w1 + '" height="12" rx="6"/>';
+        s += '<rect class="ph-row" x="' + (238 + w1 + 24) + '" y="' + yy + '" width="' + w2 + '" height="12" rx="6"/>';
+        s += '<rect class="ph-pill' + ((r + p.seed) % 3 === 0 ? ' warn' : '') + '" x="' + (W - 160) + '" y="' + (yy - 4) + '" width="72" height="20" rx="10"/>';
+      }
+    }
+    return s + '</svg>';
+  }
+  function initCapturePlaceholders() {
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_COMMENT), found = [];
+    while (walker.nextNode()) { if (/capture-wanted:/i.test(walker.currentNode.nodeValue)) found.push(walker.currentNode); }
+    found.forEach(function (c) {
+      var raw = c.nodeValue.replace(/^\s*capture-wanted:\s*/i, "");
+      var p = phParse(raw);
+      var fig = document.createElement("figure");
+      fig.className = "shot shot-placeholder";
+      fig.setAttribute("aria-label", "Illustrative mock-up, not a real capture");
+      fig.innerHTML = '<div class="ph-frame">' + phSvg(p) + '<span class="ph-badge">Illustrative mock-up · capture pending</span></div>'
+        + '<figcaption><strong>Illustrative mock-up</strong> of ' + esc(p.segs.length ? p.segs.join(" → ") : p.title) + ': ' + esc(p.detail) + '. A real console capture will replace this.</figcaption>';
+      var host = c.parentNode;
+      /* a marker sitting directly inside a list item or paragraph: place the figure after that block */
+      var block = host;
+      while (block && block !== document.body && /^(LI|P|TD|TH|SPAN|STRONG|EM|A|H[1-6])$/.test(block.tagName)) block = block.parentNode;
+      if (block !== host && block && block !== document.body) {
+        var inner = c.parentNode; while (inner.parentNode !== block) inner = inner.parentNode;
+        if (inner.nextSibling) block.insertBefore(fig, inner.nextSibling); else block.appendChild(fig);
+      } else host.insertBefore(fig, c.nextSibling);
+    });
+  }
+
   /* ---------- lightbox for screenshots and diagrams ---------- */
   function initLightbox() {
     var shots = $$("figure.shot img");
@@ -449,6 +536,7 @@
     initIndex();
     initPage();
     initRunbookTabs();
+    initCapturePlaceholders();
     initLightbox();
     initReveal();
     initPhasePlayers();

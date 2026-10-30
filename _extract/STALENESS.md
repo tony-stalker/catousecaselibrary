@@ -24,7 +24,7 @@ build time (July 2026) from the sources cited on each page.
 | Socket v15 BGP community 32768 requirement | migration-methodology | When v15 is universal — drop the caveat |
 | Cyber Essentials (Willow) & NCSC CAF versions | security-uk-public-sector | Annually (IASME/NCSC refresh) |
 | DORA applies from 17 Jan 2025 | security-finance-dora | Stable as history |
-| "80+ PoPs" and PoP lists | network-global-expansion, others | Semi-annually — count grows |
+| "100+ PoPs" (updated 30 Oct 2026 from Cato pages; was 80+) and PoP lists | network-global-expansion, access-hybrid-workforce, management-visibility, deck-content, the kit spotlight header | Semi-annually — count grows |
 | Cloud Interconnect provider list & PoP availability/lead times | network-cloud-interconnect | Semi-annually vs KB |
 | Cato Terraform provider parallelism=1 caveat (+ 5-retry/1–30 s backoff defaults) | migration-cloudflare, management-api-automation | Semi-annually |
 | Sophos forced-refresh calendar (XG EOL 31 Mar 2025; SFOS v22 Dec 2025 XGS-only; Workspace Protection GA Feb 2026; standalone ZTNA SKUs ended 1 May 2026; +10% XGS prices took effect 1 Jul 2026 — reframed past-tense Jul 2026 review) | migration-sophos | Quarterly — Sophos partner news moves fast |
