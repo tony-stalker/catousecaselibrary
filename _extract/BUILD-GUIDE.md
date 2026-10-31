@@ -103,6 +103,122 @@ on load, `popstate` and `hashchange`, so any filtered view is a shareable link:
 Each render still dispatches `uc:cards-rendered` on `document` (deck-export.js re-injects its
 card buttons on it). The prospect build needs no change: everything lives in app.js / style.css.
 
+## Index layout: folds, sticky filter dock, Start-here cards (A13, Oct 2026)
+- **Folds.** "Start here" and "Build a demo presentation" are `<details class="fold" data-fold="«key»">`
+  blocks (`start-here`, `deck-builder`) whose `<summary class="category-h fold-h">` holds the `h2`,
+  a `.cat-count` and an empty `.fold-state` pill (CSS draws Show/Hide). app.js `initFolds` stores the
+  reader's choice as `localStorage["uc-fold:«key»"]` = `"1"`/`"0"`, written only on a summary click
+  (Enter/Space included). With nothing stored a fold is open on the first visit and closed on later
+  ones (`uc-visited`), except that the deck fold stays open while `uc-deck-selection` holds ids.
+  A hash or in-page link that targets something inside a closed fold (`#start-here`, `#deck-builder`)
+  opens it without storing a preference. To add a fold, copy the markup and pick a new `data-fold` key.
+- **Deck-builder injection point.** deck-export.js `wireIndexBuilder` inserts `#deck-builder` after
+  the FIRST `.grid-2` in the document (`grid.parentNode.insertBefore(card, grid.nextSibling)`). On the
+  index that is the empty `div.grid-2.deck-slot[hidden]` inside `#deck-fold`, so the builder lands in
+  its fold. Keep the Start-here grid `.grid-3.start-grid` (never `.grid-2`) and keep no other
+  `.grid-2` above the deck fold. The fold summary mirrors the builder's "n selected" count
+  (`.deck-fold-count`), and the fold hides itself when no builder was injected.
+- **Start-here cards** are `div.card.start-card > h3 + p.start-lede + ol` (no inline styles). Six cards
+  fill a 3 × 2 grid (2 columns at 821–1100px, 1 below). A card for SE-only material carries
+  `data-se-only`: build-prospect.py drops those cards ("Running a first demo?", "Running a PoV?") and
+  the whole `#deck-fold`, and rewrites "six guided journeys" → "four". CSS lays four cards out 2 × 2.
+  Update the `.cat-count` text (and the prospect replacement) when you add or remove a card.
+- **Filter dock.** `#filter-dock` wraps the search `.filter-bar`, `#vertical-bar` and `#result-count`.
+  It is `position: sticky` under the topnav (`--dock-top`), with a zero-height `.filter-sentinel`
+  just above it. When stuck, `initFilterDock` adds `.is-stuck` (compact single rows; the chip strips
+  scroll sideways and keep the active chip in view). Under 640px the index topnav stops being sticky,
+  the dock sticks at 0 and the vertical row hides while stuck. Category headings get
+  `scroll-margin-top` from `--dock-h`. A filter or search change made while stuck scrolls back to the
+  top of the results. app.js creates the sentinel itself if the markup lacks it.
+
+## Keyboard & dialogs: runbook tabs, lightbox, phase player (A16, Oct 2026)
+All of this is runtime behaviour in app.js / style.css; pages need no new markup. Keep to the shapes below
+so it keeps working.
+- **Runbook tabs.** A page with both `section#demo` and `section#pov` gets an injected `.rb-tabs` tablist:
+  buttons `#rb-tab-demo` / `#rb-tab-pov` with `aria-controls`, the sections become `role="tabpanel"`
+  (`aria-labelledby`, `tabindex="0"`). ArrowLeft/Right cycle, Home/End jump. The choice is remembered
+  library-wide in `localStorage["uc-rb-tab"]`; a hash pointing at either section, or at any id inside
+  one (`#pov`, `#pov-criteria`), wins on load, on `hashchange` and on in-page link clicks. Keep both
+  section ids exactly `demo` / `pov`; ids inside them must be unique on the page.
+- **Lightbox.** Openers are every `figure.shot img` and every `.diagram-card` that holds an `<svg>`
+  (not phase players). Each becomes a Tab stop (`tabindex="0"` on the img, or on the card's first svg,
+  described by a shared hidden "Press Enter to enlarge." hint) and opens on click, Enter or Space. The
+  dialog is modal (`aria-modal`, named from the img `alt` or the svg `<title>`), with a visible × that
+  takes focus, Esc / backdrop close, Tab trapped, page scroll locked, and focus returned to the item last
+  shown. ArrowLeft/Right and ‹ › step through the openers visible on the page ("n / N"; a hidden tab's
+  are skipped). Screenshots larger than the screen get a **1:1** toggle (or click the image) and pan by
+  scrolling. **Caption sources**, first match wins: the `figcaption` of the screenshot's `figure`; for a
+  diagram a `.diagram-caption` / `figcaption` inside the card, then one as the card's next sibling, then
+  the `figcaption` of a `<figure>` that wraps the card, then a following `ol.spot-steps` (spotlight, shown
+  as a numbered list). So write every screenshot with a `figcaption`, and give every diagram a caption in
+  one of those places; the alt / `<title>` should name the picture, the caption say what to look at.
+- **Phase player.** `.phase-player[data-autoplay="«ms»"]` autoplays only on screen and never under
+  `prefers-reduced-motion` (the ▶/❚❚ button is hidden then, and when there is no `data-autoplay`). The
+  button is a toggle, `aria-label="Pause autoplay"` + `aria-pressed` (true = paused); a pause is stored
+  per page and player in `localStorage["uc-phase-paused:«page-id»:«n»"]` and survives scrolling and
+  reloads until play is pressed. Dots carry `aria-pressed` on the shown phase; stepping by dot, ‹ ›, the
+  arrow keys or Home/End halts autoplay for the rest of the visit without storing it. The player's
+  accessible name is its section's `h2`, so keep the player inside a `section` with a heading.
+- **Feedback dialog** (hosted mode): `role="dialog"`, `aria-modal`, labelled by its heading, Tab trapped,
+  Esc / Cancel / backdrop close, page scroll locked, focus back on the button that opened it.
+- `.sr-only` is available in style.css for visually hidden text.
+
+## Page reading aids, pager, related strip & print (A25, Oct 2026)
+All runtime in app.js (`initToc`, `initPage`, `initRelated`, `initReadingAids`) and style.css; the page
+skeleton is unchanged (`aside.toc > .toc-title + #toc-links`, empty `nav#pager`, `footer.footer`).
+- **TOC labels.** Each `main section[id]` with an `h2` gets a link. The label is `h2[data-toc]` (or
+  `section[data-toc]`) when present, else the h2 text; a text longer than 42 chars is cut at a word
+  boundary with "…" and the full heading goes in the link's `title`. Give an h2 longer than ~40 chars a
+  short `data-toc="…"` (2–5 words, e.g. `<h2 data-toc="SWG policy">URL filtering, web security …</h2>`).
+- **TOC on narrow screens.** app.js wraps the links in `details.toc-details` (the `.toc-title` div becomes
+  its `summary`). Above 900px it is held open and the summary is inert; at ≤ 900px `aside.toc` gets
+  `.toc-collapsible` and becomes a sticky bar under the topnav (`--toc-top` = topnav height) reading
+  "On this page · «current section»"; it opens as a list and closes on a link click or Esc. Without JS the
+  TOC stays hidden below 900px as before. Scroll-spy is an IntersectionObserver band (20–35% from the top;
+  first section in document order wins; the last section lights at the page bottom); the current link
+  carries `.active` + `aria-current="location"`.
+- **Pager** is category-scoped in catalog order and does not wrap: `← Previous | n of N in «Category» |
+  Next →`; the middle links to `../index.html?cat=«Category»`, and an end gets an empty `.pager-gap`.
+  Catalog order within a category is therefore the reading order — insert new entries where they belong.
+- **Related pages** (`aside.related-strip`, inserted before `footer.footer`): up to 4 `a.uc-card.uc-card-mini`
+  scored shared tags ×2 + same category ×1 + same vertical ×3; the vendor playbook ↔ policy deep-dive pair
+  (`migration-x` / `migration-x-policy`) always leads; the two pager neighbours are skipped; Platform Demo
+  pages are suggested only from Platform Demo pages. Catalog `tags` drive it, so tag precisely. Keep the
+  hand-written "In this library" card in `#resources` for curated links; the strip is the automatic
+  complement. deck-export.js only decorates cards inside `#uc-sections`, so these cards get no **+**.
+- **Read progress / back to top.** `.read-progress` (3px, fixed at the top edge, `aria-hidden`) and a
+  `button.to-top` ("↑ Top", bottom-left, shown past 600px scroll, moves focus to the h1; lifts above an open
+  deck tray at ≤ 480px). The footer gets bottom padding (`body.has-reading-aids`) so the button never covers it.
+- **Print.** Hidden: topnav, TOC, pager, buttons, progress bar, top button, deck tray, related strip. Both
+  runbooks print (the PoV starts on a new page when tabs were active). A print-only `.print-header`
+  ("Cato Use Case Library · «Category» · «Title»", date from its `data-printed` attribute, refreshed on
+  `beforeprint`) tops page 1; a no-JS print shows the library name from `body[data-uc]::before`.
+  `@page` margin 14mm; sections may break (only cards, steps, figures, callouts, stat rows, diagrams stay
+  whole); tables split between rows with a repeated header; external links in `#resources` print their URL;
+  `beforeprint` switches lazy images to eager. To check: Playwright `page.emulate_media(media="print")`
+  then `page.pdf()`.
+
+## Colour contrast & focus (A17, Oct 2026)
+- **Text tokens:** body/caption text ≥ 4.5:1, large text and non-text indicators (focus rings,
+  semantic borders) ≥ 3:1, in light AND dark. Current figures: `--ink-3` #5e6c66 is 5.05:1 on
+  `--page` / 5.39:1 on `--surface` (dark #7e948c 5.36 / 4.75); `--green-700` is the colour for small
+  green text (`.section-kicker`, `.deck-picker-cat`, links) at 5.7:1. `--green-600` (#0e8a6d, the brand
+  green) is an accent/fill and ring colour only, never small text: it is 3.95:1 on `--page`.
+- **Filled buttons/badges:** white on `--green-600` is only 4.31:1, so light `.btn-primary`,
+  `.deck-tray-go` and the placeholder `.ph-badge` fill with `--green-700` (hover `--green-800`).
+  In dark mode the fill is `--green-600` with dark ink `#04231b` (7.1:1); never white on the dark greens.
+- **Focus:** a global `:focus-visible` ring (2px `--green-600`, offset 2px) covers every control;
+  on navy surfaces (`.topnav`, `.hero`, `.deck-tray`, `.lightbox`, `.shot-frame`) it switches to mint
+  `#7ee0bf`. A component may restyle the ring but must never set `outline: none` unless the same
+  element has its own visible `:focus-visible` style. The diagram kit's generated `outline:none`
+  on hotspot groups is paired by `.x-*:focus-visible` rules just above the `dg-kit:start` marker.
+- **Dark-mode screenshots** keep their white background but are dimmed (`brightness(.92)`) so
+  captures do not glare; the lightbox shows them undimmed.
+- `.callout.warn` uses a darker amber bar (#b87400, 3.5:1) than `--status-warn`, which stays the
+  reserved status colour for fills.
+- To recheck after a token change: compute the WCAG ratio for each pair above (both themes);
+  the A17 table lives in the A17 change notes and the planned `_extract/a11y-check.py` (A22).
+
 ## Design rules
 - UK English (organisation, utilise, licence). Confident SE-to-SE tone: crisp, concrete, no fluff.
 - Never invent statistics. Numbers must come from your content brief / digest. Real breach

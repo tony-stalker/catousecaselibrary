@@ -5,8 +5,9 @@ sales engineers and partners — business objective, how the platform solves it,
 custom diagram, and a step-by-step demo runbook for every scenario. No build step,
 no CDNs, no server: unzip or clone, open `index.html`, everything works from `file://`.
 Full-text search across every page, light and dark themes (topnav toggle, follows
-system preference), animated phased-migration journeys, and Demo/PoV runbook tabs
-library-wide: 57 KB-grounded PoV runbooks (success criteria, config walkthrough,
+system preference), animated phased-migration journeys (pause is remembered), a keyboard-friendly
+lightbox (captions, 1:1 zoom, ←/→ through a page's figures), and Demo/PoV runbook tabs (arrow keys,
+last choice remembered) library-wide: 57 KB-grounded PoV runbooks (success criteria, config walkthrough,
 what-good-looks-like, troubleshooting, gotchas & exit — authoring contract in
 `_extract/POV-GUIDE.md`; wanted demo-tenant captures in `_extract/CAPTURE-LIST.md`).
 
@@ -29,7 +30,10 @@ what-good-looks-like, troubleshooting, gotchas & exit — authoring contract in
 Vertical filter: Retail · Finance · Public Sector · Healthcare · Manufacturing ·
 Education · BPO · Legal.
 
-Start at `index.html` → the **Start here** journeys, search box, or clickable tags.
+Start at `index.html` → the **Start here** journeys (six, including *Running a PoV?*), search box, or
+clickable tags. Start here and the deck builder fold away (your choice is remembered per browser,
+and both start folded after the first visit), and the search/filter bar sticks, compacted, to the
+top of the window while you scroll the grid.
 Search is tokenised and ranked: each word is a prefix match (`ztn` finds ZTNA), a page must match
 every word, and hits score title ×6 · tags ×4 · summary ×2 · category ×2 · page text ×1, so a query
 shows one flat **Best matches** list (category chip on each card, `<mark>` highlights, a
@@ -39,6 +43,10 @@ shorthand (`vpn replacement` → ZTNA, `sdwan` → SD-WAN; synonym hits score at
 empty state offers the six most-used tags.
 Filters live in the URL (`index.html?q=ZTNA&cat=Access&vert=Finance`, or `#cat-security`), so a
 filtered view is a shareable link; press `/` on any page to jump to the search box, Esc or × clears it.
+Use-case pages carry reading aids: a read-progress bar, an "↑ Top" button, a TOC that highlights the
+current section (a sticky "On this page" drop-down under 900px), a category-scoped pager ("3 of 8 in
+Management") and a "Related pages" strip picked from the catalogue by shared tags. Printing a page gives
+a header line (library · category · title · date), both runbooks, and documentation URLs spelled out.
 `whatsnew.html` lists every change.
 
 `planner.html` is an internal SE tool: describe an opportunity's existing estate and it composes

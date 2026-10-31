@@ -12,6 +12,40 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+
+  /* dialog helpers shared by the lightbox and the feedback dialog: Tab stays inside the open
+     dialog, the page behind does not scroll (scrollbar gap padded so nothing shifts), and focus
+     goes back to whatever opened it. */
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  function trapTab(box, e) {
+    if (e.key !== "Tab") return;
+    var f = $$(FOCUSABLE, box).filter(function (el) { return !el.hidden && el.getClientRects().length; });
+    if (!f.length) { e.preventDefault(); return; }
+    var first = f[0], last = f[f.length - 1], a = document.activeElement;
+    if (e.shiftKey && (a === first || !box.contains(a))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (a === last || !box.contains(a))) { e.preventDefault(); first.focus(); }
+  }
+  var scrollLocks = 0, savedOverflow = "", savedPad = "";
+  function lockScroll() {
+    if (scrollLocks++) return;
+    var de = document.documentElement, gap = window.innerWidth - de.clientWidth;
+    savedOverflow = de.style.overflow;
+    savedPad = document.body.style.paddingRight;
+    de.style.overflow = "hidden";
+    if (gap > 0) document.body.style.paddingRight = gap + "px";
+  }
+  function unlockScroll() {
+    if (!scrollLocks || --scrollLocks) return;
+    document.documentElement.style.overflow = savedOverflow;
+    document.body.style.paddingRight = savedPad;
+  }
+  function restoreFocus(el) {
+    if (!el || !el.focus || !document.documentElement.contains(el)) return;
+    try { el.focus({ preventScroll: false }); } catch (e) { el.focus(); }
+  }
+
   var STATUS = {
     ready: { cls: "badge-ready", label: "Field-ready" },
     wip:   { cls: "badge-wip",   label: "In development" },
@@ -239,7 +273,9 @@
         "<h3>" + (words ? hl(uc.title, words) : esc(uc.title)) + "</h3>" +
         "<p>" + (words ? hl(uc.summary, words) : esc(uc.summary)) + "</p>" +
         '<div class="uc-tags">' + (uc.vertical ? '<span class="tag tag-vert">' + esc(uc.vertical) + "</span>" : "") +
-        uc.tags.map(function (t) {
+        uc.tags.filter(function (t) {   // the vertical chip already shows a tag that repeats it
+          return !uc.vertical || t.toLowerCase() !== uc.vertical.toLowerCase();
+        }).map(function (t) {
           var on = words && tagHit(t, words);
           return '<span class="tag' + (on ? " tag-hit" : "") + '">' + esc(t) + "</span>";
         }).join("") + "</div>" +
@@ -407,7 +443,9 @@
       var next = readUrl();
       state.q = next.q; state.cat = next.cat; state.vert = next.vert;
       render();
-      if (scroll && next.scrollCat) scrollToCat(next.scrollCat);
+      // deferred: on load, deck-export.js (a later DOMContentLoaded listener) still has to inject
+      // the deck builder above the grid, which would push the heading down after we scrolled
+      if (scroll && next.scrollCat) { var sc = next.scrollCat; setTimeout(function () { scrollToCat(sc); }, 0); }
       if (next.focus && searchBox) {
         searchBox.focus();
         if (searchBox.scrollIntoView) searchBox.scrollIntoView({ block: "center" });
@@ -466,6 +504,143 @@
     applyUrl(true);
   }
 
+  /* ---------- index folds: Start here + deck builder (A13) ----------
+     <details class="fold" data-fold="«key»"> blocks remember open/closed in localStorage
+     ("uc-fold:«key»" = "1"/"0"), written only when the reader clicks the summary. With nothing
+     stored a fold is open on the first visit and closed on later ones ("uc-visited"), except the
+     deck builder, which stays open while a deck selection exists ("uc-deck-selection", owned by
+     deck-export.js). In-page links / hashes that point into a closed fold open it first
+     (#start-here, #deck-builder — deck-export scrolls to #deck-builder on "Edit" links). The deck
+     fold's summary mirrors the builder's "n selected" count; the fold hides itself when no
+     builder was injected (prospect build, or deck-export.js absent). Pre-A13 markup: no-op. */
+  function initFolds() {
+    var folds = $$("details.fold[data-fold]");
+    if (!folds.length) return;
+    function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function put(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    var visited = get("uc-visited") === "1";
+    put("uc-visited", "1");
+    var hasSel = false;
+    try { var sel = JSON.parse(get("uc-deck-selection") || "null"); hasSel = !!(sel && sel.ids && sel.ids.length); } catch (e) {}
+    folds.forEach(function (d) {
+      var key = d.getAttribute("data-fold"), saved = get("uc-fold:" + key);
+      d.open = saved === "1" ? true : saved === "0" ? false : (!visited || (key === "deck-builder" && hasSel));
+      var sum = d.querySelector("summary");
+      // the click lands before the native toggle, so the new state is the inverse of the current one
+      if (sum) sum.addEventListener("click", function () { put("uc-fold:" + key, d.open ? "0" : "1"); });
+    });
+    function foldFor(id) {
+      if (!id || !/^[\w-]+$/.test(id)) return null;
+      var t = document.getElementById(id);
+      var d = t ? t.closest("details.fold") : null;
+      return d || $('details.fold[data-fold="' + id + '"]');   // #deck-builder exists only after deck-export runs
+    }
+    function openFor(hash) {
+      var d = foldFor(String(hash || "").replace(/^#/, ""));
+      if (d && !d.open) d.open = true;   // a navigation, not a preference — not stored
+    }
+    openFor(location.hash);
+    window.addEventListener("hashchange", function () { openFor(location.hash); });
+    // same-hash clicks fire no hashchange; open before the default scroll runs
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (a) openFor(a.getAttribute("href"));
+    });
+
+    var deckFold = $("details.fold[data-fold='deck-builder']");
+    if (!deckFold) return;
+    var out = $(".deck-fold-count", deckFold);
+    function mirror() {
+      var c = $(".deck-builder .deck-count", deckFold), t = c ? c.textContent : "";
+      if (/^0\b/.test(t)) t = "";   // only worth showing once something is picked
+      if (out && out.textContent !== t) out.textContent = t;
+    }
+    // deck-export.js wires the builder in its own DOMContentLoaded listener, after this one
+    setTimeout(function () {
+      if (!$(".deck-builder", deckFold)) { deckFold.hidden = true; return; }
+      mirror();
+      if ("MutationObserver" in window) {
+        new MutationObserver(mirror).observe($(".deck-builder", deckFold), { subtree: true, childList: true, characterData: true });
+      }
+    }, 0);
+  }
+
+  /* ---------- index: sticky, compact filter dock (A13) ----------
+     #filter-dock (search + category row + vertical row + result count) is position: sticky
+     under the topnav (--dock-top = the topnav's height while the topnav is itself sticky; on
+     phones the index topnav scrolls away and the dock sticks at 0). A zero-height
+     .filter-sentinel just above the dock tells us when it is stuck → .is-stuck switches the
+     compact single-row layout. --dock-h (compact height) feeds the scroll-margin of the
+     category headings. When a filter/search re-renders the grid while stuck, the page scrolls
+     back to the top of the results so they are not left above the viewport. */
+  function initFilterDock() {
+    var dock = $("#filter-dock");
+    if (!dock) return;
+    var nav = $(".topnav"), root = document.documentElement;
+    var sentinel = $(".filter-sentinel");
+    if (!sentinel) {
+      sentinel = document.createElement("div");
+      sentinel.className = "filter-sentinel";
+      sentinel.setAttribute("aria-hidden", "true");
+      dock.parentNode.insertBefore(sentinel, dock);
+    }
+    document.body.classList.add("has-filter-dock");
+    var top = 0;
+    function isStuck() { return sentinel.getBoundingClientRect().top < top - 1; }
+    // compact rows scroll sideways — keep each row's active chip in view (scrollLeft only, never the page)
+    function revealActive() {
+      $$(".filter-cats, .vertical-bar", dock).forEach(function (strip) {
+        var a = $(".filter-btn.active", strip);
+        if (!a || strip.scrollWidth <= strip.clientWidth) return;
+        var l = a.offsetLeft, r = l + a.offsetWidth;   // the stuck strip is position: relative
+        if (l < strip.scrollLeft) strip.scrollLeft = l - 8;
+        else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth + 8;
+      });
+    }
+    function check() {
+      var stuck = isStuck();
+      if (stuck !== dock.classList.contains("is-stuck")) {
+        dock.classList.toggle("is-stuck", stuck);
+        if (stuck) revealActive();
+      }
+    }
+    // compact height → --dock-h; full − compact → --dock-shrink, added as margin-bottom while
+    // stuck so the dock's in-flow footprint never changes (no content jump as it compacts)
+    function measure() {
+      top = nav && getComputedStyle(nav).position === "sticky" ? nav.offsetHeight : 0;
+      root.style.setProperty("--dock-top", top + "px");
+      var was = dock.classList.contains("is-stuck");
+      dock.classList.remove("is-stuck");
+      var full = dock.offsetHeight;
+      dock.classList.add("is-stuck");
+      var compact = dock.offsetHeight;
+      if (!was) dock.classList.remove("is-stuck");
+      root.style.setProperty("--dock-h", compact + "px");
+      root.style.setProperty("--dock-shrink", Math.max(0, full - compact) + "px");
+      check();
+    }
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { ticking = false; check(); });
+    }, { passive: true });
+    var rt = null;
+    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(measure, 100); });
+    document.addEventListener("uc:cards-rendered", function () {
+      measure();   // per-button counts and the result line change the dock's full height
+      if (!dock.classList.contains("is-stuck")) return;
+      revealActive();
+      // land the first result just under the compact dock (past the in-flow footprint it
+      // reserves), but never above the point where the dock would un-stick (+2)
+      var py = window.pageYOffset, grid = $("#uc-sections");
+      var unstick = sentinel.getBoundingClientRect().top + py - top + 2;
+      var y = grid ? Math.max(unstick, grid.getBoundingClientRect().top + py - top - dock.offsetHeight - 12) : unstick;
+      if (py > y) window.scrollTo({ top: y, left: 0, behavior: "instant" });   // no smooth glide per keystroke
+    });
+    measure();
+  }
+
   /* ---------- "/" focuses search ----------
      On index the shortcut focuses #uc-search; elsewhere it jumps to index.html?focus=search
      (the brand link in .topnav already carries the right relative path to index). Ignored while
@@ -480,7 +655,8 @@
         e.preventDefault();
         box.focus();
         if (box.select) box.select();
-        if (box.scrollIntoView) box.scrollIntoView({ block: "center" });
+        // a stuck filter dock is already on screen — scrolling "to" it would jump to its in-flow spot
+        if (box.scrollIntoView && !box.closest(".is-stuck")) box.scrollIntoView({ block: "center" });
         return;
       }
       var brand = $(".topnav a.brand");
@@ -491,44 +667,145 @@
     });
   }
 
-  /* ---------- use-case pages: TOC, scroll-spy, pager ---------- */
+  /* ---------- use-case pages: TOC, scroll-spy, pager, related, reading aids (A25) ----------
+     TOC: built from main > section[id] > h2; the label is h2[data-toc] (or section[data-toc]) when
+     authored, else the h2 text, shortened at a word boundary past TOC_MAX chars (full text in the
+     link's title). The links sit in a <details class="toc-details"> inside aside.toc: forced open
+     (summary inert) above 900px, collapsed into a sticky "On this page · «current»" bar at ≤ 900px.
+     Scroll-spy (IntersectionObserver): the first section in document order crossing a band at
+     20–35% of the viewport is current; the last current one stays lit while the band is between
+     sections, and the final section lights once the page is scrolled to the bottom.
+     Pager: category-scoped, no wrap ("n of N in «Category»" links to index.html?cat=…).
+     Related strip: up to 4 catalog cards before the footer (see initRelated). */
+  var TOC_MAX = 42;
+  function tocLabel(sec, h) {
+    var short = (h && h.getAttribute("data-toc")) || sec.getAttribute("data-toc");
+    var full = (h ? h.textContent : "").replace(/\s+/g, " ").trim();
+    if (short) return { text: short, title: full };
+    if (full.length <= TOC_MAX) return { text: full, title: "" };
+    var cut = full.slice(0, TOC_MAX + 1);
+    var sp = cut.lastIndexOf(" ");
+    cut = (sp > 20 ? cut.slice(0, sp) : full.slice(0, TOC_MAX)).replace(/[\s,;:·—–&-]+$/, "");
+    return { text: cut + "…", title: full };
+  }
+  function catEntry(pageId) {
+    for (var i = 0; i < CAT.length; i++) if (CAT[i].id === pageId) return CAT[i];
+    return null;
+  }
+  function indexHref(params) { return "../index.html" + (params ? "?" + params : ""); }
+  function catHref(cat) { return indexHref("cat=" + encodeURIComponent(cat)); }
+
+  function initToc() {
+    var toc = $("#toc-links");
+    var sections = $$("main section[id]").filter(function (s) { return $("h2", s); });
+    if (!toc || !sections.length) return;
+    var aside = toc.closest("aside.toc") || toc.parentNode;
+    toc.innerHTML = sections.map(function (s) {
+      var l = tocLabel(s, $("h2", s));
+      return '<a href="#' + esc(s.id) + '" data-t="' + esc(s.id) + '"' + (l.title ? ' title="' + esc(l.title) + '"' : "") + ">" + esc(l.text) + "</a>";
+    }).join("");
+    var links = {};
+    $$("a[data-t]", toc).forEach(function (a) { links[a.getAttribute("data-t")] = a; });
+
+    // wrap the links in a <details>; the authored .toc-title div becomes its summary
+    var det = toc.closest("details.toc-details");
+    var cur = null;
+    if (!det) {
+      det = document.createElement("details");
+      det.className = "toc-details";
+      var sum = document.createElement("summary");
+      sum.className = "toc-title";
+      var oldTitle = $(".toc-title", aside);
+      sum.innerHTML = '<span class="toc-name">' + esc(oldTitle ? oldTitle.textContent.trim() : "On this page") + "</span>" +
+        '<span class="toc-current" aria-hidden="true"></span>';
+      if (oldTitle && oldTitle.parentNode) oldTitle.parentNode.removeChild(oldTitle);
+      det.appendChild(sum);
+      toc.parentNode.insertBefore(det, toc);
+      det.appendChild(toc);
+    }
+    cur = $(".toc-current", det);
+    var summary = $("summary", det);
+    var mq = window.matchMedia ? window.matchMedia("(max-width: 900px)") : null;
+    function narrow() { return !!(mq && mq.matches); }
+    function applyMode() {
+      det.open = !narrow();
+      aside.classList.toggle("toc-collapsible", narrow());
+    }
+    applyMode();
+    if (mq) {
+      if (mq.addEventListener) mq.addEventListener("change", applyMode);
+      else if (mq.addListener) mq.addListener(applyMode);
+    }
+    summary.addEventListener("click", function (e) { if (!narrow()) e.preventDefault(); });
+    if (!narrow()) summary.setAttribute("tabindex", "-1");
+    if (mq) {
+      var syncTab = function () { if (narrow()) summary.removeAttribute("tabindex"); else summary.setAttribute("tabindex", "-1"); };
+      if (mq.addEventListener) mq.addEventListener("change", syncTab); else if (mq.addListener) mq.addListener(syncTab);
+    }
+    // narrow: picking a link or pressing Esc folds the bar away again
+    toc.addEventListener("click", function (e) {
+      if (narrow() && e.target.closest && e.target.closest("a[data-t]")) det.open = false;
+    });
+    det.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && narrow() && det.open) { det.open = false; summary.focus(); }
+    });
+    // the sticky bar sits under the sticky topnav: expose its height as --toc-top
+    var nav = $(".topnav");
+    function setTop() {
+      var h = 0;
+      if (nav) {
+        var pos = window.getComputedStyle(nav).position;
+        if (pos === "sticky" || pos === "fixed") h = nav.offsetHeight;
+      }
+      document.documentElement.style.setProperty("--toc-top", h + "px");
+    }
+    setTop();
+    window.addEventListener("resize", setTop);
+
+    var active = null;
+    function setActive(id) {
+      var a = links[id];
+      if (!a || a === active) return;
+      if (active) { active.classList.remove("active"); active.removeAttribute("aria-current"); }
+      active = a;
+      a.classList.add("active");
+      a.setAttribute("aria-current", "location");
+      if (cur) cur.textContent = a.textContent;
+    }
+    setActive(sections[0].id);
+    if (!("IntersectionObserver" in window)) return;
+    var inBand = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { inBand[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < sections.length; i++) {
+        if (inBand[sections[i].id]) { setActive(sections[i].id); return; }
+      }
+    }, { rootMargin: "-20% 0px -65% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+    // page bottom: the last visible section may never reach the band
+    var foot = document.createElement("div");
+    foot.className = "toc-end-sentinel";
+    foot.setAttribute("aria-hidden", "true");
+    var mainEl = sections[0].closest("main") || sections[0].parentNode;
+    mainEl.appendChild(foot);
+    new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      for (var i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].getClientRects().length) { setActive(sections[i].id); return; }
+      }
+    }).observe(foot);
+  }
+
   function initPage() {
     var body = document.body;
     var pageId = body.getAttribute("data-uc");
     if (!pageId) return;
 
-    // Build TOC from h2[id]
-    var toc = $("#toc-links");
-    var heads = $$("section[id] > h2, h2[id]").map(function (h) {
-      return h.closest("section[id]") || h;
-    });
-    var sections = $$("main section[id]");
-    if (toc && sections.length) {
-      toc.innerHTML = sections.map(function (s) {
-        var h = $("h2", s);
-        return h ? '<a href="#' + s.id + '" data-t="' + s.id + '">' + esc(h.textContent) + "</a>" : "";
-      }).join("");
-      if ("IntersectionObserver" in window) {
-        var links = {};
-        $$("a[data-t]", toc).forEach(function (a) { links[a.getAttribute("data-t")] = a; });
-        var current = null;
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) {
-            if (e.isIntersecting) {
-              if (current) current.classList.remove("active");
-              current = links[e.target.id];
-              if (current) current.classList.add("active");
-            }
-          });
-        }, { rootMargin: "-15% 0px -70% 0px" });
-        sections.forEach(function (s) { io.observe(s); });
-      }
-    }
+    initToc();
 
     // Hero status badge: the HTML carries the authored badge as a fallback; once the catalog
     // entry has aged past the "New" window, swap a badge-new span for the field status badge.
-    var me = null;
-    for (var i = 0; i < CAT.length; i++) if (CAT[i].id === pageId) { me = CAT[i]; break; }
+    var me = catEntry(pageId);
     if (me) {
       var heroBadge = $(".hero .badge.badge-new");
       if (heroBadge && !isNew(me)) {
@@ -538,34 +815,170 @@
       }
     }
 
-    // Prev / next pager from catalog order
-    var pager = $("#pager");
-    if (pager && CAT.length) {
-      var idx = CAT.findIndex(function (u) { return u.id === pageId; });
-      if (idx !== -1) {
-        var prev = CAT[(idx - 1 + CAT.length) % CAT.length];
-        var next = CAT[(idx + 1) % CAT.length];
-        pager.innerHTML =
-          '<a class="prev" href="../' + esc(prev.file) + '"><div class="dir">← Previous</div><div class="pt">' + esc(prev.title) + "</div></a>" +
-          '<a class="next" href="../' + esc(next.file) + '"><div class="dir">Next →</div><div class="pt">' + esc(next.title) + "</div></a>";
-      }
+    // Prev / next within the page's category, in catalog order — no wrap at the ends
+    var pager = $("#pager"), neighbours = {};
+    if (pager && me) {
+      var peers = CAT.filter(function (u) { return u.category === me.category; });
+      var k = peers.indexOf(me);
+      var prev = peers[k - 1], next = peers[k + 1];
+      if (prev) neighbours[prev.id] = 1;
+      if (next) neighbours[next.id] = 1;
+      var gap = '<span class="pager-gap" aria-hidden="true"></span>';
+      pager.classList.add("pager-cat");
+      pager.innerHTML =
+        (prev ? '<a class="prev" href="../' + esc(prev.file) + '"><div class="dir">← Previous</div><div class="pt">' + esc(prev.title) + "</div></a>" : gap) +
+        '<a class="pager-pos" href="' + esc(catHref(me.category)) + '" title="All ' + esc(me.category) + ' use cases">' +
+          '<span class="pp-n">' + (k + 1) + " of " + peers.length + '</span><span class="pp-cat">in ' + esc(me.category) + "</span></a>" +
+        (next ? '<a class="next" href="../' + esc(next.file) + '"><div class="dir">Next →</div><div class="pt">' + esc(next.title) + "</div></a>" : gap);
+    }
+    if (me) initRelated(me, neighbours);
+    initReadingAids(me);
+  }
+
+  /* ---------- related-pages strip (A25) ----------
+     Up to 4 catalog entries, scored: shared tags ×2 + same category ×1 + same vertical ×3; the
+     vendor playbook ↔ policy deep-dive pair (migration-x / migration-x-policy) always leads. Pager
+     neighbours are skipped (they are linked just above). Platform Demo pages are only suggested
+     from other Platform Demo pages. Injected as aside.related-strip before footer.footer. */
+  function pairOf(a, b) { return a + "-policy" === b || b + "-policy" === a; }
+  function initRelated(me, skip) {
+    if ($(".related-strip")) return;
+    var myTags = {};
+    me.tags.forEach(function (t) { myTags[t.toLowerCase()] = 1; });
+    var scored = [];
+    CAT.forEach(function (u, i) {
+      if (u === me || skip[u.id]) return;
+      if (u.category === "Platform Demo" && me.category !== "Platform Demo") return;
+      var shared = u.tags.filter(function (t) { return myTags[t.toLowerCase()]; });
+      var sc = shared.length * 2 + (u.category === me.category ? 1 : 0) +
+        (u.vertical && u.vertical === me.vertical ? 3 : 0) + (pairOf(me.id, u.id) ? 100 : 0);
+      if (!shared.length && u.category !== me.category && !pairOf(me.id, u.id)) return;
+      scored.push({ u: u, sc: sc, shared: shared, i: i });
+    });
+    scored.sort(function (a, b) { return b.sc - a.sc || a.i - b.i; });
+    var pick = scored.slice(0, 4);
+    if (!pick.length) return;
+    var peers = CAT.filter(function (u) { return u.category === me.category; }).length;
+    var strip = document.createElement("aside");
+    strip.className = "related-strip";
+    strip.setAttribute("aria-labelledby", "related-h");
+    strip.innerHTML =
+      '<div class="related-inner">' +
+        '<div class="related-head"><div><div class="section-kicker">Keep exploring</div><h2 id="related-h">Related pages</h2></div>' +
+        '<a class="related-all" href="' + esc(catHref(me.category)) + '">All ' + peers + " " + esc(me.category) + " use cases →</a></div>" +
+        '<div class="related-grid">' + pick.map(function (r) {
+          var u = r.u, st = statusOf(u);
+          var tags = (r.shared.length ? r.shared : u.tags).slice(0, 3);
+          return '<a class="uc-card uc-card-mini" href="../' + esc(u.file) + '">' +
+            '<div class="uc-top"><span class="' + catChipClass(u.category) + '">' + esc(u.category) + "</span>" +
+            '<span class="badge ' + st.cls + '">' + st.label + "</span></div>" +
+            "<h3>" + esc(u.title) + "</h3><p>" + esc(u.summary) + "</p>" +
+            '<div class="uc-tags">' + tags.map(function (t) {
+              return '<span class="tag' + (myTags[t.toLowerCase()] ? " tag-hit" : "") + '">' + esc(t) + "</span>";
+            }).join("") + "</div></a>";
+        }).join("") + "</div>" +
+      "</div>";
+    var footer = $("footer.footer") || $("footer");
+    if (footer) footer.parentNode.insertBefore(strip, footer);
+    else {
+      var main = $(".main") || $("main");
+      if (main) main.parentNode.insertBefore(strip, main.nextSibling);
     }
   }
 
-  /* ---------- runbook tabs: Demo / PoV ---------- */
+  /* ---------- reading aids + print header (A25) ----------
+     .read-progress: 3px bar fixed at the top edge, scaleX = scroll fraction (aria-hidden).
+     .to-top: "↑ Top" button, bottom-left, shown once scrolled past 600px; moves focus to the h1.
+     .print-header: print-only line "Cato Use Case Library · «Category» · «Title»" with the date
+     from its data-printed attribute (refreshed on beforeprint); without JS, CSS prints the library
+     name from body::before. beforeprint also makes lazy images eager so they reach the PDF. */
+  function initReadingAids(me) {
+    var bar = document.createElement("div");
+    bar.className = "read-progress";
+    bar.setAttribute("aria-hidden", "true");
+    bar.innerHTML = '<span class="read-progress-fill"></span>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    var fill = bar.firstChild;
+
+    var top = document.createElement("button");
+    top.type = "button";
+    top.className = "to-top";
+    top.hidden = true;
+    top.setAttribute("aria-label", "Back to top");
+    top.innerHTML = '<span aria-hidden="true">↑</span> Top';
+    document.body.appendChild(top);
+    document.body.classList.add("has-reading-aids");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    top.addEventListener("click", function () {
+      try { window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } catch (e) { window.scrollTo(0, 0); }
+      var h1 = $(".hero h1") || $("h1");
+      if (h1) {
+        if (!h1.hasAttribute("tabindex")) h1.setAttribute("tabindex", "-1");
+        try { h1.focus({ preventScroll: true }); } catch (e2) { h1.focus(); }
+      }
+    });
+
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var de = document.documentElement;
+      var max = de.scrollHeight - window.innerHeight;
+      var y = window.pageYOffset || de.scrollTop || 0;
+      var f = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+      fill.style.transform = "scaleX(" + f.toFixed(4) + ")";
+      var show = y > 600;
+      if (top.hidden === show) top.hidden = !show;
+    }
+    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+
+    // print header
+    var title = me ? me.title : (($(".hero h1") || {}).textContent || document.title.replace(/\s+—\s+Cato Use Case Library$/, ""));
+    var ph = document.createElement("div");
+    ph.className = "print-header";
+    ph.setAttribute("aria-hidden", "true");
+    ph.innerHTML = '<span class="prh-lib">Cato Use Case Library</span>' +
+      (me ? '<span class="prh-cat">' + esc(me.category) + "</span>" : "") +
+      '<span class="prh-title">' + esc(String(title).trim()) + "</span>";
+    function stamp() {
+      var d = new Date();
+      var s;
+      try { s = d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
+      catch (e) { s = d.toISOString().slice(0, 10); }
+      ph.setAttribute("data-printed", "Printed " + s);
+    }
+    stamp();
+    document.body.insertBefore(ph, bar.nextSibling);
+    document.body.classList.add("has-print-header");
+    window.addEventListener("beforeprint", function () {
+      stamp();
+      $$('img[loading="lazy"]').forEach(function (img) { img.loading = "eager"; });
+    });
+  }
+
+  /* ---------- runbook tabs: Demo / PoV ----------
+     WAI-ARIA tabs with automatic activation: ArrowLeft/Right cycle, Home/End jump, the active tab
+     is the only Tab stop (roving tabindex). The choice is remembered library-wide in
+     localStorage["uc-rb-tab"] ("demo" | "pov"); a hash that targets either section, or anything
+     inside it, wins over the stored choice. No-JS and print stack both sections. */
   function initRunbookTabs() {
     var demo = $("section#demo"), pov = $("section#pov");
     if (!demo || !pov) return;
+    var KEY = "uc-rb-tab";
     var bar = document.createElement("div");
     bar.className = "rb-tabs";
     bar.setAttribute("role", "tablist");
     bar.setAttribute("aria-label", "Runbooks");
     var tabs = [
-      { id: "demo", label: "🎬 Demo runbook", sec: demo },
-      { id: "pov", label: "🧪 PoV runbook", sec: pov }
+      { id: "demo", icon: "🎬", label: "Demo runbook", sec: demo },
+      { id: "pov", icon: "🧪", label: "PoV runbook", sec: pov }
     ];
-    var btns = {};
-    function activate(id) {
+    var btns = {}, current = null;
+    function activate(id, opts) {
+      opts = opts || {};
+      current = id;
       tabs.forEach(function (t) {
         var on = t.id === id;
         t.sec.classList.toggle("rb-hidden", !on);
@@ -574,28 +987,56 @@
         btns[t.id].setAttribute("aria-selected", on ? "true" : "false");
         btns[t.id].setAttribute("tabindex", on ? "0" : "-1");
       });
+      if (opts.remember) lsSet(KEY, id);
+      if (opts.focus) btns[id].focus();
     }
     tabs.forEach(function (t) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "rb-tab";
+      b.id = "rb-tab-" + t.id;
       b.setAttribute("role", "tab");
-      b.textContent = t.label;
-      b.addEventListener("click", function () { activate(t.id); });
+      b.setAttribute("aria-controls", t.id);
+      b.innerHTML = '<span aria-hidden="true">' + t.icon + "</span> " + esc(t.label);
+      b.addEventListener("click", function () { activate(t.id, { remember: true }); });
       bar.appendChild(b);
       btns[t.id] = b;
+      t.sec.setAttribute("role", "tabpanel");
+      t.sec.setAttribute("aria-labelledby", b.id);
+      t.sec.setAttribute("tabindex", "0");   // panels open on a heading, not a focusable element
+    });
+    bar.addEventListener("keydown", function (e) {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      var ids = tabs.map(function (t) { return t.id; }), i = ids.indexOf(current), n = null;
+      if (e.key === "ArrowRight") n = (i + 1) % ids.length;
+      else if (e.key === "ArrowLeft") n = (i - 1 + ids.length) % ids.length;
+      else if (e.key === "Home") n = 0;
+      else if (e.key === "End") n = ids.length - 1;
+      if (n === null) return;
+      e.preventDefault();
+      activate(ids[n], { remember: true, focus: true });
     });
     demo.parentNode.insertBefore(bar, demo);
+    function tabFor(hash) {   // which panel holds the element a "#…" fragment points at
+      if (!hash || hash.length < 2 || hash.charAt(0) !== "#") return null;
+      var el = null;
+      try { el = document.getElementById(decodeURIComponent(hash.slice(1))); } catch (e) {}
+      if (!el) return null;
+      for (var k = 0; k < tabs.length; k++) if (tabs[k].sec === el || tabs[k].sec.contains(el)) return tabs[k].id;
+      return null;
+    }
     // TOC links and in-page anchors switch to the right tab before the browser scrolls
     document.addEventListener("click", function (e) {
-      var a = e.target.closest && e.target.closest('a[href="#demo"], a[href="#pov"]');
-      if (a) activate(a.getAttribute("href").slice(1));
+      var a = e.target.closest && e.target.closest('a[href^="#"]');
+      var id = a && tabFor(a.getAttribute("href"));
+      if (id && id !== current) activate(id, { remember: true });
     });
     window.addEventListener("hashchange", function () {
-      if (location.hash === "#pov") activate("pov");
-      else if (location.hash === "#demo") activate("demo");
+      var id = tabFor(location.hash);
+      if (id && id !== current) activate(id, { remember: true });
     });
-    activate(location.hash === "#pov" ? "pov" : "demo");
+    var stored = lsGet(KEY);
+    activate(tabFor(location.hash) || (stored === "pov" || stored === "demo" ? stored : "demo"));
   }
 
   /* ---------- capture placeholders ----------
@@ -685,47 +1126,192 @@
     });
   }
 
-  /* ---------- lightbox for screenshots and diagrams ---------- */
+  /* ---------- lightbox for screenshots and diagrams ----------
+     Openers: every `figure.shot img` and every `.diagram-card` holding an SVG (phase players
+     excluded). Each opener is a Tab stop (the img, or the card's SVG) and opens on click, Enter
+     or Space. The dialog is modal: visible × button (focused on open), Esc / backdrop close,
+     Tab trapped, page scroll locked, focus returned to the item last shown. ArrowLeft/Right step
+     through the openers visible on the page ("n / N"; a hidden runbook tab's are skipped). Caption under the enlarged view: the figure's
+     figcaption, or the card's .diagram-caption (inside the card, as a following sibling, or as a
+     figcaption of a wrapping <figure>), or the spotlight's ol.spot-steps. Screenshots larger
+     than the viewport get a 1:1 toggle (button, or click the image) and pan by scrolling. */
   function initLightbox() {
     var shots = $$("figure.shot img");
-    var diagrams = $$(".diagram-card");
+    var diagrams = $$(".diagram-card").filter(function (d) {
+      return d.querySelector("svg") && !d.querySelector(".phase-player") && !d.closest(".phase-player");
+    });
     if (!shots.length && !diagrams.length) return;
+    var items = shots.concat(diagrams).sort(function (a, b) {
+      return a.compareDocumentPosition(b) & 4 ? -1 : 1;   // document order
+    });
+    function targetOf(el) { return el.tagName === "IMG" ? el : el.querySelector("svg"); }
+
+    var hint = document.createElement("span");
+    hint.id = "lb-hint";
+    hint.className = "sr-only";
+    hint.textContent = "Press Enter to enlarge.";
+    document.body.appendChild(hint);
+
     var lb = document.createElement("div");
     lb.className = "lightbox";
     lb.setAttribute("role", "dialog");
-    lb.setAttribute("aria-label", "Enlarged view — click or press Escape to close");
-    var stage = document.createElement("div");
-    stage.className = "lightbox-stage";
-    lb.appendChild(stage);
+    lb.setAttribute("aria-modal", "true");
+    lb.innerHTML =
+      '<div class="lb-bar"><span class="lb-count" aria-live="polite"></span>' +
+      '<button type="button" class="lb-btn lb-zoom" aria-pressed="false" title="Actual size">1:1</button>' +
+      '<button type="button" class="lb-btn lb-prev" aria-label="Previous" title="Previous (←)"><span aria-hidden="true">‹</span></button>' +
+      '<button type="button" class="lb-btn lb-next" aria-label="Next" title="Next (→)"><span aria-hidden="true">›</span></button>' +
+      '<button type="button" class="lb-btn lb-close" aria-label="Close" title="Close (Esc)"><span aria-hidden="true">×</span></button></div>' +
+      '<div class="lightbox-stage"></div><div class="lb-caption" hidden></div>';
     document.body.appendChild(lb);
-    function close() { lb.classList.remove("open"); stage.innerHTML = ""; }
-    function open(node) { stage.innerHTML = ""; stage.appendChild(node); lb.classList.add("open"); }
-    shots.forEach(function (s) {
-      s.addEventListener("click", function () {
+    var stage = $(".lightbox-stage", lb), cap = $(".lb-caption", lb), count = $(".lb-count", lb),
+        closeBtn = $(".lb-close", lb), prevBtn = $(".lb-prev", lb), nextBtn = $(".lb-next", lb), zoomBtn = $(".lb-zoom", lb);
+    zoomBtn.setAttribute("aria-label", "Actual size");
+    var cur = -1, isOpen = false, gallery = [];   // gallery: the openers visible when it opened (not in a hidden tab)
+
+    function squish(t) { return String(t || "").replace(/\s+/g, " ").trim(); }
+    function captionOf(el) {   // → { text } or { steps: [..] } or null
+      if (el.tagName === "IMG") {
+        var fig = el.closest("figure"), fc = fig && $("figcaption", fig);
+        return fc && squish(fc.textContent) ? { text: squish(fc.textContent) } : null;
+      }
+      var c = $(".diagram-caption, figcaption", el);
+      var nx = el.nextElementSibling;
+      if (!c && nx && nx.matches(".diagram-caption, figcaption")) c = nx;
+      if (!c && el.parentElement && el.parentElement.tagName === "FIGURE") c = $(":scope > figcaption", el.parentElement);
+      if (c && squish(c.textContent)) return { text: squish(c.textContent) };
+      if (nx && nx.matches("ol.spot-steps")) {
+        return { steps: $$("li", nx).map(function (li) {
+          var t = li.cloneNode(true);
+          $$(".spot-n", t).forEach(function (n) { n.remove(); });
+          return squish(t.textContent);
+        }) };
+      }
+      return null;
+    }
+    function nameOf(el) {
+      if (el.tagName === "IMG") return el.alt ? "Enlarged screenshot: " + el.alt : "Enlarged screenshot";
+      var svg = el.querySelector("svg"), t = svg && svg.querySelector("title");
+      var n = (t && t.textContent.trim()) || (svg && svg.getAttribute("aria-label")) || "";
+      return n ? "Enlarged diagram: " + n : "Enlarged diagram";
+    }
+    function setZoom(on, ev) {
+      var img = $("img", stage);
+      if (!img || (on && !img.classList.contains("can-zoom"))) on = false;
+      var fx = 0.5, fy = 0.5;
+      if (on && ev && img) {
+        var r = img.getBoundingClientRect();
+        fx = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
+        fy = Math.min(1, Math.max(0, (ev.clientY - r.top) / r.height));
+      }
+      lb.classList.toggle("lb-zoomed", on);
+      zoomBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      if (on) {
+        stage.scrollLeft = fx * stage.scrollWidth - stage.clientWidth / 2;
+        stage.scrollTop = fy * stage.scrollHeight - stage.clientHeight / 2;
+      }
+    }
+    function render(n) {
+      cur = (n + gallery.length) % gallery.length;
+      var el = gallery[cur];
+      setZoom(false);
+      stage.innerHTML = "";
+      if (el.tagName === "IMG") {
         var img = document.createElement("img");
-        img.src = s.src;
-        img.alt = s.alt || "";
-        open(img);
-      });
-    });
-    diagrams.forEach(function (d) {
-      if (!d.querySelector("svg")) return;
-      if (d.querySelector(".phase-player") || d.closest(".phase-player")) return; // interactive: not a lightbox target
-      d.classList.add("zoomable");
-      d.setAttribute("title", "Click to enlarge");
-      d.addEventListener("click", function () {
-        var clone = d.cloneNode(true);
+        img.src = el.currentSrc || el.src;
+        img.alt = el.alt || "";
+        var check = function () {
+          var big = img.naturalWidth > img.clientWidth * 1.15 || img.naturalHeight > img.clientHeight * 1.15;
+          img.classList.toggle("can-zoom", big);
+          zoomBtn.hidden = !big;
+          keepFocus();
+        };
+        zoomBtn.hidden = true;
+        img.addEventListener("load", check);
+        img.addEventListener("click", function (e) { setZoom(!lb.classList.contains("lb-zoomed"), e); });
+        stage.appendChild(img);
+        if (img.complete) check();
+      } else {
+        zoomBtn.hidden = true;
+        var clone = el.cloneNode(true);
         clone.classList.remove("reveal", "zoomable");
         clone.classList.add("in");
         clone.removeAttribute("title");
-        // duplicate ids from the page would be invalid — the dialog carries its own label
-        clone.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
-        clone.querySelectorAll("[aria-labelledby]").forEach(function (el) { el.removeAttribute("aria-labelledby"); });
-        open(clone);
+        $$(".diagram-caption, figcaption", clone).forEach(function (c) { c.remove(); });   // shown below instead
+        var csvg = clone.querySelector("svg");
+        if (csvg) {
+          csvg.removeAttribute("tabindex");
+          csvg.removeAttribute("aria-describedby");
+          var t = csvg.querySelector("title");
+          if (t && t.textContent.trim()) csvg.setAttribute("aria-label", t.textContent.trim());
+        }
+        // duplicate ids from the page would be invalid — the clone is named by aria-label instead.
+        // (url(#…) fills defined in a page sprite outside the card still resolve.)
+        clone.querySelectorAll("[id]").forEach(function (x) { x.removeAttribute("id"); });
+        clone.querySelectorAll("[aria-labelledby]").forEach(function (x) { x.removeAttribute("aria-labelledby"); });
+        stage.appendChild(clone);
+      }
+      var c = captionOf(el);
+      cap.innerHTML = !c ? "" : c.steps
+        ? '<ol class="lb-steps">' + c.steps.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol>"
+        : esc(c.text);
+      cap.hidden = !c;
+      lb.classList.toggle("lb-nocap", !c);
+      lb.setAttribute("aria-label", nameOf(el));
+      var many = gallery.length > 1;
+      count.textContent = many ? (cur + 1) + " / " + gallery.length : "";
+      prevBtn.hidden = nextBtn.hidden = !many;
+      keepFocus();
+    }
+    function keepFocus() {
+      var a = document.activeElement;
+      if (isOpen && (!a || !lb.contains(a) || a.hidden)) closeBtn.focus();
+    }
+    function open(el) {
+      gallery = items.filter(function (x) { return x === el || x.getClientRects().length; });
+      if (!isOpen) { isOpen = true; lockScroll(); lb.classList.add("open"); }
+      render(gallery.indexOf(el));
+      closeBtn.focus();
+    }
+    function close() {
+      if (!isOpen) return;
+      isOpen = false;
+      lb.classList.remove("open", "lb-zoomed");
+      stage.innerHTML = "";
+      unlockScroll();
+      restoreFocus(targetOf(gallery[cur]));
+    }
+    items.forEach(function (el) {
+      var tgt = targetOf(el);
+      if (el.tagName !== "IMG") {
+        el.classList.add("zoomable");
+        el.setAttribute("title", "Click to enlarge");
+      }
+      el.addEventListener("click", function () { open(el); });
+      if (!tgt) return;
+      if (!tgt.hasAttribute("tabindex")) tgt.setAttribute("tabindex", "0");
+      var db = tgt.getAttribute("aria-describedby");
+      if (!db || db.split(/\s+/).indexOf("lb-hint") === -1) tgt.setAttribute("aria-describedby", (db ? db + " " : "") + "lb-hint");
+      tgt.addEventListener("keydown", function (e) {
+        if ((e.key === "Enter" || e.key === " " || e.key === "Spacebar") && !e.altKey && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          open(el);
+        }
       });
     });
-    lb.addEventListener("click", close);
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    closeBtn.addEventListener("click", close);
+    prevBtn.addEventListener("click", function () { render(cur - 1); });
+    nextBtn.addEventListener("click", function () { render(cur + 1); });
+    zoomBtn.addEventListener("click", function () { setZoom(!lb.classList.contains("lb-zoomed")); });
+    lb.addEventListener("click", function (e) { if (e.target === lb || e.target === stage) close(); });   // backdrop only
+    document.addEventListener("keydown", function (e) {
+      if (!isOpen) return;
+      if (e.key === "Escape") { e.preventDefault(); close(); }
+      else if (e.key === "Tab") trapTab(lb, e);
+      else if (lb.classList.contains("lb-zoomed")) return;   // arrows pan the 1:1 view
+      else if (e.key === "ArrowLeft" && gallery.length > 1) { e.preventDefault(); render(cur - 1); }
+      else if (e.key === "ArrowRight" && gallery.length > 1) { e.preventDefault(); render(cur + 1); }
+    });
   }
 
   /* ---------- reveal-on-scroll ---------- */
@@ -770,15 +1356,16 @@
       inner.appendChild(bugBtn);
       inner.appendChild(fbBtn);
     }
-    var overlay = null;
+    var overlay = null, opener = null;
     function openDialog(type) {
       closeDialog();
+      opener = document.activeElement;
       overlay = document.createElement("div");
       overlay.className = "fb-overlay";
       var title = type === "bug" ? "Report a bug" : "Send feedback";
       overlay.innerHTML =
-        '<form class="fb-dialog" novalidate>' +
-        "<h3>" + title + "</h3>" +
+        '<form class="fb-dialog" novalidate role="dialog" aria-modal="true" aria-labelledby="fb-title">' +
+        '<h3 id="fb-title">' + title + "</h3>" +
         '<label>Your name <span class="fb-req">*</span><br>' +
         '<input class="fb-name" type="text" maxlength="80" autocomplete="name" required></label>' +
         '<label>' + (type === "bug" ? "What went wrong? Include the page and what you expected." : "What should we improve?") +
@@ -790,6 +1377,7 @@
         '<div class="fb-status" aria-live="polite"></div>' +
         "</form>";
       document.body.appendChild(overlay);
+      lockScroll();
       var form = $(".fb-dialog", overlay);
       var status = $(".fb-status", overlay);
       $(".fb-cancel", overlay).addEventListener("click", closeDialog);
@@ -816,10 +1404,19 @@
         });
       });
     }
-    function escClose(e) { if (e.key === "Escape") closeDialog(); }
+    function escClose(e) {
+      if (e.key === "Escape") { e.preventDefault(); closeDialog(); }
+      else if (overlay) trapTab($(".fb-dialog", overlay), e);
+    }
     function closeDialog() {
-      if (overlay) { overlay.remove(); overlay = null; }
       document.removeEventListener("keydown", escClose);
+      if (!overlay) return;
+      overlay.remove();
+      overlay = null;
+      unlockScroll();
+      var o = opener;
+      opener = null;
+      restoreFocus(o);
     }
   }
 
@@ -848,20 +1445,31 @@
     else inner.appendChild(btn);
   }
 
-  /* ---------- phased migration player ---------- */
+  /* ---------- phased migration player ----------
+     Autoplay (data-autoplay="«ms»") runs only while the player is on screen and never under
+     prefers-reduced-motion. The ▶/❚❚ button is a toggle (aria-pressed="true" = paused); a pause is
+     remembered per page and player in localStorage["uc-phase-paused:«page»:«n»"] and survives
+     scrolling away and reloads until the reader presses play again. Stepping by dot, ‹ ›, or the
+     arrow keys (Home/End too) also halts autoplay for the rest of the visit, without storing. */
   function initPhasePlayers() {
     var players = $$(".phase-player");
     if (!players.length) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    players.forEach(function (pl) {
+    var pageKey = document.body.getAttribute("data-uc") || location.pathname.replace(/^.*\//, "");
+    players.forEach(function (pl, pIndex) {
       var phases = $$(".phase", pl);
       if (phases.length < 2) return;
       pl.classList.add("ready");
       pl.setAttribute("tabindex", "0");
       pl.setAttribute("role", "group");
       pl.setAttribute("aria-roledescription", "phased walkthrough");
+      var sec = pl.closest("section"), h2 = sec && $("h2", sec);
+      if (!pl.hasAttribute("aria-label")) pl.setAttribute("aria-label", (h2 && h2.textContent.trim()) || "Phased walkthrough");
       var i = 0, timer = null;
       var autoMs = parseInt(pl.getAttribute("data-autoplay") || "0", 10);
+      var KEY = "uc-phase-paused:" + pageKey + ":" + pIndex;
+      var userPaused = lsGet(KEY) === "1";   // stored: explicit pause button
+      var halted = false;                    // this visit only: the reader stepped manually
       var caption = pl.querySelector(".phase-caption");
       var steps = pl.querySelector(".phase-steps");
       var dots = [];
@@ -874,9 +1482,9 @@
         var b = document.createElement("button");
         b.type = "button";
         b.className = "phase-dot";
-        b.setAttribute("aria-label", title);
-        b.innerHTML = '<span class="phase-dot-n">' + idx + "</span><span class=\"phase-dot-t\">" + esc(title) + "</span>";
-        b.addEventListener("click", function () { stop(); show(idx); updatePlay(); });
+        b.setAttribute("aria-label", "Phase " + idx + ": " + title);
+        b.innerHTML = '<span class="phase-dot-n" aria-hidden="true">' + idx + '</span><span class="phase-dot-t" aria-hidden="true">' + esc(title) + "</span>";
+        b.addEventListener("click", function () { manual(); show(idx); });
         if (steps) steps.appendChild(b);
         dots.push(b);
       });
@@ -885,35 +1493,55 @@
         phases.forEach(function (ph, idx) { ph.classList.toggle("active", idx === i); });
         dots.forEach(function (d, idx) {
           d.classList.toggle("active", idx === i);
-          d.setAttribute("aria-current", idx === i ? "step" : "false");
+          d.setAttribute("aria-pressed", idx === i ? "true" : "false");
         });
         if (caption) caption.textContent = capOf(phases[i]);
       }
       function next() { show(i + 1); }
       function prev() { show(i - 1); }
-      function start() { if (timer || !autoMs || reduce) return; timer = setInterval(next, autoMs); }
+      function canPlay() { return autoMs > 0 && !reduce; }
+      function start() { if (timer || !canPlay()) return; timer = setInterval(next, autoMs); }
       function stop() { if (timer) { clearInterval(timer); timer = null; } }
-      function updatePlay() {
-        if (!pp) return;
-        pp.textContent = timer ? "❚❚" : "▶";
-        pp.setAttribute("aria-label", timer ? "Pause" : "Play walkthrough");
-      }
-      // controls sit inside a .diagram-card on some pages — don't let clicks bubble to a zoom handler
-      pl.addEventListener("click", function (e) { if (e.target.closest(".phase-nav, .phase-dot")) e.stopPropagation(); });
+      function manual() { halted = true; stop(); updatePlay(); }
       var pv = pl.querySelector(".phase-prev"),
           nx = pl.querySelector(".phase-next"),
           pp = pl.querySelector(".phase-play");
-      if (pv) pv.addEventListener("click", function () { stop(); prev(); updatePlay(); });
-      if (nx) nx.addEventListener("click", function () { stop(); next(); updatePlay(); });
-      if (pp) { if (reduce) { pp.style.display = "none"; } else pp.addEventListener("click", function () { if (timer) stop(); else start(); updatePlay(); }); }
+      function updatePlay() {
+        if (!pp) return;
+        var playing = !!timer;
+        pp.innerHTML = '<span aria-hidden="true">' + (playing ? "❚❚" : "▶") + "</span>";
+        pp.setAttribute("aria-label", "Pause autoplay");
+        pp.setAttribute("aria-pressed", playing ? "false" : "true");
+        pp.title = playing ? "Pause" : "Play walkthrough";
+      }
+      // controls sit inside a .diagram-card on some pages — don't let clicks bubble to a zoom handler
+      pl.addEventListener("click", function (e) { if (e.target.closest(".phase-nav, .phase-dot")) e.stopPropagation(); });
+      if (pv) pv.addEventListener("click", function () { manual(); prev(); });
+      if (nx) nx.addEventListener("click", function () { manual(); next(); });
+      if (pp) {
+        if (!canPlay()) pp.style.display = "none";
+        else pp.addEventListener("click", function () {
+          if (timer) { stop(); userPaused = true; lsSet(KEY, "1"); }
+          else { userPaused = false; halted = false; lsSet(KEY, null); start(); }
+          updatePlay();
+        });
+      }
       pl.addEventListener("keydown", function (e) {
-        if (e.key === "ArrowRight") { stop(); next(); updatePlay(); e.preventDefault(); }
-        else if (e.key === "ArrowLeft") { stop(); prev(); updatePlay(); e.preventDefault(); }
+        var k = e.key;
+        if (k === "ArrowRight") { manual(); next(); }
+        else if (k === "ArrowLeft") { manual(); prev(); }
+        else if (k === "Home") { manual(); show(0); }
+        else if (k === "End") { manual(); show(phases.length - 1); }
+        else return;
+        e.preventDefault();
       });
       show(0);
-      if (autoMs && !reduce && "IntersectionObserver" in window) {
+      if (canPlay() && "IntersectionObserver" in window) {
         var io = new IntersectionObserver(function (ents) {
-          ents.forEach(function (en) { if (en.isIntersecting) start(); else stop(); updatePlay(); });
+          ents.forEach(function (en) {
+            if (en.isIntersecting && !userPaused && !halted) start(); else stop();
+            updatePlay();
+          });
         }, { threshold: 0.4 });
         io.observe(pl);
       }
@@ -939,6 +1567,8 @@
     initTheme();
     initFeedback();
     initIndex();
+    initFolds();
+    initFilterDock();
     initSlashShortcut();
     initPage();
     initRunbookTabs();

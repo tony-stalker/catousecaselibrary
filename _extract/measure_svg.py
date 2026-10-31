@@ -10,7 +10,7 @@ BASE = ROOT.as_uri() + "/"
 JS = """
 (() => {
   const out = [];
-  document.querySelectorAll('.diagram-card svg').forEach(svg => {
+  document.querySelectorAll('.diagram-card svg:not(.x-fig):not(.x-sw)').forEach(svg => {  // kit diagrams (svg.x-fig) are checked by build-diagrams.py --check
     const vb = svg.viewBox.baseVal;
     const rects = [...svg.querySelectorAll('rect')].map(r => ({
       x: r.x.baseVal.value, y: r.y.baseVal.value,

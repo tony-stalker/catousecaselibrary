@@ -257,7 +257,7 @@ coding-agent guardrails) · cma-ai-guards (guard estate across Proxy/API/AI-Gate
 · cma-ai-engine-profiles (detector configuration) · cma-ai-playground (test detections before enforcing) ·
 cma-ai-interaction-explorer (per-invocation guard detection log) · cma-ai-uip *(embedded)*.
 
-**Security area (7 first-time subjects):** cma-sec-lan-fw (LAN Firewall, site/VLAN-scoped rule + AI insights band)
+**Security area (7 first-time subjects):** cma-sec-lan-fw (LAN Firewall, site/VLAN-scoped rule + AI insights band) *(embedded 31 Oct → security-retail-pci)*
 · cma-sec-ips (IPS per-scope Block actions, Socket-LAN monitor option) · cma-sec-anti-malware (AM + NG-AM + Sandbox
 toggles, default rules) · cma-sec-data-types (DLP Profiles tab, predefined vs user-defined) · cma-sec-threats-dash
 (all engines blocking, per-signature breakdown, timeline) · cma-sec-dp-dash *(embedded)* · cma-sec-genai-apps-dash
@@ -267,9 +267,9 @@ they opened the rule Edit panel and are inferior to the existing cma-*-rulebase 
 **Network / Access / Monitoring:** cma-net-sites (estate, connectivity + socket-version widgets) · cma-net-ip-alloc
 (allocated egress IPs vs licence pool) · cma-net-routing (routing table, static/directly-connected) · cma-acc-users
 *(embedded)* · cma-acc-posture (Device Posture profiles — Resources → Objects → Device Posture) · cma-acc-client-conn
-*(embedded)* · cma-acc-directory *(embedded)* · cma-acc-split-tunnel (one exclusion rule) · cma-home-events (4M events,
-identity-attributed) · cma-home-app-analytics (bandwidth, top users/apps) · cma-home-em-probes *(embedded)* ·
-cma-home-reports (Reports catalogue + PDF preview) · cma-home-devices *(embedded)* · cma-home-stories (Stories
+*(embedded)* · cma-acc-directory *(embedded)* · cma-acc-split-tunnel (one exclusion rule) · cma-home-events *(embedded)* (4M events,
+identity-attributed) · cma-home-app-analytics *(embedded)* (bandwidth, top users/apps) · cma-home-em-probes *(embedded)* ·
+cma-home-reports *(embedded)* (Reports catalogue + PDF preview) · cma-home-devices *(embedded)* · cma-home-stories *(embedded)* (Stories
 Workbench, criticality banding) · cma-home-topology (radial PoP topology).
 
 Removed as unusable: audit-trail (real-employee email — hygiene), acc-app-portal (misnavigated to Access Overview),
@@ -619,3 +619,236 @@ fictional data on a lab device. HEIC originals in `_extract/media/` (Screenshot 
   **Embedded** → ai-genai-security (PoV Week 2, Anonymize and Monitor) + ai-legal-genai
   (walkthrough step "Add the Anonymize rule for client identifiers"). Candidate reuse:
   security-ai, ai-eu-ai-act (transparency evidence).
+
+## Embedded 31 Oct 2026 (A08 orphan sweep, migration-a group)
+
+- **cma-acc-overview.png** (1816×893; personal-tenant staging batch, 29–30 Jul 2026 — captioned "example tenant") —
+  Access → Access Overview, Last Month: 12 remote users connected now, 25 unique users, 129 of 500 remote-user
+  licences (26%), remote users per day / per country / per PoP, users matching Client Connectivity Policy rules
+  (default allow 25 allowed; contractor browser-only rule 1 blocked) and a Windows FW posture profile (20). No
+  identities on screen. **Embedded** → migration-anyconnect ("What good output looks like", evidence-week wave
+  adoption beside the headend session count). Candidate reuse: migration-directaccess, access-remote-worker.
+- **cma-net-routing.png** (3024×1502, demo-tenant batch 23 Jul) — Network → Routing Table, Queried PoP Auto, Site/SDP
+  Sites, Show all routes off: one row per site range (Name, IP/Subnet, Next Hop, Routing Type, Origin PoP, metric
+  details); every visible row is Directly Connected / STATIC (IPsec site homed to Milan, Sockets to Tel Aviv, an Azure
+  vSocket to Santa Clara). NO BGP-learned rows. **Embedded** → migration-cisco, migration-fortinet, migration-versa
+  ("What good output looks like", placed above the Routing Table want). Captions say "(demo tenant)" and state the
+  estate shows only static ranges; the BGP-learned want markers were KEPT because this shot does not satisfy them.
+- **cma-home-events.png** (3024×1502, demo-tenant batch 23 Jul) — Home → Events, last 2 days, 4M events, expanded
+  Internet Firewall event (Action Monitor, fictional user, HTTP(S), destination, device, Windows). **Embedded** →
+  migration-zscaler + migration-forcepoint ("What good output looks like", parity-week event attribution), captions
+  "(demo tenant, fictional identities)" and "this one a Monitor verdict"; the Block/Prompt-filtered Events want
+  markers were KEPT.
+- Considered for this group, not embedded: cma-acc-split-tunnel (anyconnect's split-tunnel ACL maps to WAN Firewall
+  parity rules, not to Cato's Split Tunnel Policy) · cma-sec-wan-fw (rule Edit panel open — inferior to
+  cma-wan-fw-rulebase) · cma-sec-genai-apps-dash (GenAI-only; versa's want is the general Cloud Apps dashboard) ·
+  ztna-posture-flows (marketing diagram, no matching want) · cma-sec-internet-fw / cma-sec-tls /
+  cma-sec-app-data-inline (Edit-panel re-shoots; the rulebase embeds already on these pages are better).
+
+## cma-sec-lan-fw.png (assets/img — CMA screenshot, 23 Jul 2026, demo tenant; 3024×1502)
+- **Shows:** Security → LAN Firewall, Published Revision, LAN Firewall Enabled toggle, LAN Firewall / LAN Firewall Settings tabs, collapsed "Autonomous LAN Firewall Insights" band. One rule: #1 "Terminal server local" — Site RnD, Source VLAN 67, Direction →, Destination Any, Service/Port Any, Network column Transport LAN / NAT N/A (Action and Track columns are off-screen right). Below it a collapsed "Default rules (2 - 2)" group. Mostly whitespace under the table.
+- **Quality:** good (sparse; one rule only — does not show Allow/Event or the expanded default block)
+- **Recommend:** USED — security-retail-pci.html PoV "What good output looks like" (31 Oct 2026, A08): the site + source-VLAN rule grammar above the Default rules group; a narrowed capture-wanted marker still asks for the Allow · Event columns and the expanded ANY-ANY Block. Candidate for other LAN-segmentation wants (ransomware, healthcare-nhs) where the rule grammar, not a populated rulebase, is the point.
+
+## Embedded 31 Oct 2026 — orphan captures placed on the migration-*-policy pages (A08)
+
+- **cma-sec-lan-fw.png** (3024×1502, demo-tenant batch 23 Jul) — LAN Firewall, enabled, published revision:
+  one rule "Terminal server local" scoped to a site with source VLAN 67 → Any, Transport LAN, above a
+  collapsed Default rules group; Autonomous LAN Firewall Insights band. **Embedded** →
+  migration-palo-alto-policy (after the PAN-OS mapping table: intra-site zone rules → Socket LAN
+  Firewall) + migration-fortinet-policy (after the FortiOS mapping table: inter-VLAN policies → Socket
+  LAN Firewall). Captions say "(example tenant)".
+- **cma-home-events.png** (3024×1502, demo-tenant batch 23 Jul) — Home → Events, last 2 days, 4M events
+  histogram, expanded Internet Firewall event with Action: Monitor, fictional user, HTTP(S), device and
+  OS fields. **Embedded** → migration-zscaler-policy (demo step "Close on the evidence loop"), caption
+  "(example tenant, fictional identities)".
+- Considered, not embedded: cma-net-ip-alloc (fits migration-iboss-policy's allocated-IP gotcha — the
+  pool reads 3 licences / 2 allocated — but shows two unredacted public egress IPs; redact first) ·
+  cma-sec-rpf (empty rulebase, "No data") · cma-acc-split-tunnel (cisco-asa-policy defers remote access
+  to migration-anyconnect).
+
+## Embedded 31 Oct 2026 — security-b group (A08 orphan sweep + catalogue back-fill)
+
+- **ztna-posture-flows.png** (2206×1335; illustrative deck-style diagram from the 18 Jul 2026 baseline, not a CMA
+  capture) — three remote users on a Cato PoP / global private backbone: compliant + authorised (green flows to
+  Azure public-cloud resources, internet/SaaS cloud with Salesforce, SAP, Box and Office 365 marks, and on-site
+  servers behind an X1500 Socket); not compliant + authorised (orange: internet/SaaS allowed, red X towards Azure
+  and on-site); not compliant + not authorised (red flow crossed out before the PoP). **Embedded** →
+  security-iso27001 (solution, "What happens when a device fails" — the Allow WAN and Internet / Allow Internet
+  only / no tunnel model), caption says "illustrative diagram, not a capture".
+- **cma-home-reports.png** (3024×1502, demo-tenant batch 23 Jul) — Home → Reports, Catalog tab (Saved Reports,
+  Generated PDFs beside it): User Activity report + Threat coverage (User Defined), Application Analytics, Executive
+  Report, GenAI Report, Internet Firewall Hit Count, Last Mile Link Report, MDR Report (System Defined); preview of
+  the User Activity report listing five fictional users; New Template / Edit / Generate. The Posture Compliance
+  Report row is NOT visible (list cut off). **Embedded** → security-iso27001 (demo step "The report that generates
+  itself"), caption "(example tenant, fictional identities)"; the capture-wanted marker for a generated PCR page
+  stays. Also on management-pov-framework.
+- **cma-sec-lan-fw.png** — back-filled: also embedded on security-ransomware (PoV "What good output looks like",
+  east-west containment inside a site) and security-healthcare-nhs (IoMT slice, before the WAN Firewall
+  supplier rulebase), both captioned "(demo tenant)"; the pilot-specific LAN Firewall markers stay on both pages.
+- **cma-sec-genai-apps-dash.png** (3024×1502, demo-tenant batch) — back-filled: Security → GenAI Apps, 52
+  unsanctioned vs 7 sanctioned GenAI apps over two days with events by action. **Embedded** →
+  security-data-casb-dlp (demo step "Open with discovery", the shadow-IT gap scoped to AI tools), caption "(demo tenant, fictional data)".
+- Considered for the security-b pages, not embedded: cma-sec-tls and cma-sec-wan-fw (rule Edit drawer open over the
+  rulebase — answers neither the TLS end-of-PoV rulebase marker nor the legal ethical-wall rule-pair marker) ·
+  cma-home-events (one Internet Firewall Monitor event — the ransomware, legal, UK public sector and NHS Events
+  markers each ask for a specific filtered event) · client-login-refused (username login error, not a posture
+  failure — does not answer the ISO "Client blocked dialog after a failed posture check" marker) ·
+  cma-sec-app-data-inline (security-data-casb-dlp already carries cma-app-data-inline-policy).
+
+## Embedded 31 Oct 2026 — orphan captures placed on the network-* pages (A08)
+
+- **cma-net-routing.png** (3024×1502, demo-tenant batch 23 Jul) — Network → Routing Table, Queried PoP Auto,
+  Site/SDP filter on Sites: one row per site range (Name, IP/Subnet, Next Hop, Routing Type, Origin PoP, metric
+  details). Every visible row is Directly Connected / STATIC — an IPsec site in Cyprus via Milan, Socket sites in
+  Israel via Tel Aviv, an Azure vSocket site via Santa Clara. No BGP-learned routes. **Embedded** →
+  network-mpls-migration (co-existence routing step, after the routing table): caption "(demo tenant)" and says
+  this estate shows only directly connected ranges — during co-existence, search it for the MPLS-site prefix.
+- **cma-ci-configured.png** (1920×624, lab tenant) — Site Configuration → Cloud Interconnect for a
+  London cloud DC site: one AWS Direct Connect connection (eu-west-2, account/connection IDs redacted), Equinix
+  fabric with S-VLAN, 50 Mbps, Manchester PoP, /30 network settings; Connection Status Cloud Provider + Fabric
+  green, BGP + Connectivity red; Test Connection link. **Embedded** → network-cloud-interconnect (Track B step
+  "Verify the circuit when it lands", "(lab tenant)", the 50 Mbps called out as a lab value below the Enforcement Model 500 Mbps minimum).
+- **cma-home-app-analytics.png** (3024×1502, demo-tenant batch 23 Jul) — Home → App Analytics, last 2 days, no
+  filter: bandwidth histogram, Top Users/Hosts (fictional identities), Top Applications donut (61.7 GB: HTTP(S),
+  ChatGPT, Microsoft General, Google Applications, CMA), Top Sites map. **Embedded** → network-sdwan (demo step "Prove it with
+  analytics"), caption "(demo tenant, fictional identities)"; also on management-visibility and
+  management-pov-framework.
+- Considered, withdrawn: **cma-net-ip-alloc** had been placed on network-ipsec-asa's "Allocate Cato IPs" step,
+  but it shows two unredacted allocated egress IPs while that page states every address is a documentation-range
+  placeholder — removed 31 Oct 2026; redact the IP column first, then it fits that step (3 licences / 2 allocated).
+  cma-sec-wan-fw (rule Edit panel open, named users) and cma-sec-rpf (empty rulebase) — no fit on network pages.
+
+## Embedded 31 Oct 2026 — orphan captures placed on the management-* pages (A08)
+
+- **cma-home-events.png** (3024×1502, demo-tenant batch 23 Jul) — Home → Events, Last 2 Days: events-over-time
+  bars on a 0–100,000 axis with three daytime peaks, **4 M events** total, Time Series Granularity 30 minutes and
+  the event-type tick boxes (Security … Posture); Events tab below with one expanded Internet Firewall event
+  (Action: Monitor, fictional user). **Embedded** → management-data-lake (demo step "Open on the Events chart and find
+  the peaks", replacing the events-over-time capture-wanted marker), caption "(demo tenant, fictional
+  identities)" with the 30-minute-granularity warning. The Popular Fields / Event Integrations / S3 markers on
+  that page stay open — this frame does not show them.
+- **cma-home-reports.png** (3024×1502, demo-tenant batch 23 Jul) — Home → Reports, Catalog tab: User Activity report
+  and Threat coverage (User Defined) above system templates Application Analytics, Executive Report, GenAI Report,
+  Internet Firewall Hit Count, Last Mile Link Report, MDR Report; Generate button; branded User Activity preview.
+  **Embedded** → management-pov-framework (frame step "Wrap-up & the decision meeting" — the page's first
+  screenshot), caption "(demo tenant, fictional identities)".
+- **cma-home-app-analytics.png** (3024×1502, demo-tenant batch 23 Jul) — Home → App Analytics, Last 2 Days:
+  traffic-over-time bars, Top Users/Hosts (five fictional users/hosts with GB), Top Applications donut 61.7 GB
+  (HTTP(S), ChatGPT, Microsoft General, Google Applications, Cato Management Application), Top Sites map; Sites …
+  Destinations tabs beneath, unfiltered. **Embedded** → management-pov-framework (week-one step "Hold the first
+  weekly sync", the quick-win screen) + management-visibility (PoV "What good output looks like" for criterion one,
+  replacing the App Analytics Users-tab capture-wanted marker; caption says "unfiltered" and tells the SE to add
+  the pilot-site filter). Both captions "(demo tenant, fictional identities)". Also used on network-sdwan.
+- Considered for the management group, not embedded: no orphan answers the remaining wants (terraform plan/apply
+  terminal and a Cato event in a SIEM on api-automation; Detection & Response Policy rule + SIEM event on
+  soc-xdr; an attributed Audit Trail of mixed network/security changes on vendor-consolidation — the old
+  audit-trail capture was removed for a real-employee email; Popular Fields, Event Integrations dialog and S3
+  bucket listing on data-lake). cma-acc-overview was weighed for management-visibility's identity step but shows
+  aggregate counts, not a named user.
+
+## Embedded 31 Oct 2026 — migration-policy group (A08 follow-up)
+
+- **cma-sec-app-data-inline.png** (3024×1502, demo-tenant batch 23 Jul 2026) — Security → App & Data Inline
+  Protection, Published Revision: Application Control Policy / Tenant Restriction tabs, Application Control and
+  Data Control toggles both on, "Posture Recommendations (3)" button, rulebase collapsed into two sections —
+  Department Specific Rules (1–9) and Company Wide Rules (10–28). No identities or rule contents on screen
+  (sparse: the populated view is cma-app-data-inline-policy.png). **Embedded** → migration-cloudflare-policy
+  (Domain 3 CASB, after the mapping table: where the sanctioned-app intent lands), caption "(example tenant)".
+- Re-checked and still not embedded: cma-sec-tls, cma-sec-wan-fw, cma-sec-internet-fw — each has a rule Edit
+  panel covering half the frame and shows tenant site names (e.g. a "Southern Califo…" site chip) and real-looking
+  host names; the existing cma-*-rulebase captures are better on every policy page.
+
+## Embedded 31 Oct 2026 — orphan captures placed on the access-* pages (A08)
+
+- **cma-acc-overview.png** (1816×893, personal lab tenant, 29–30 Jul 2026) — also **Embedded** →
+  access-third-party (demo step "Gate the front door"): the Users Matching Policy Rules widget shows the
+  default allow rule (25, Access allowed) beside "Contractor Access - Browser Access Portal Only"
+  (1, Access blocked), so the Client refusal that leaves the portal as the only way in is visible on the
+  dashboard. Caption "(lab tenant, fictional identities)"; path chip Access → Access Overview.
+- **cma-events-scim-disabled.png** (1106×504, personal lab tenant + Entra developer sandbox, 29–30 Jul 2026;
+  account ID redacted) — expanded System event, Sub-Type SCIM Provisioning, Action Succeeded, message
+  "User … updated. Current status: disabled", millisecond timestamp, user ID, display name and sandbox
+  e-mail. **Embedded** → access-third-party (demo step "Kill a leaver mid-pilot", third figure after the
+  user record and the IdP sign-in refusal): the Cato-side timestamp for the measured window.
+- **client-login-refused.png** (470×670, personal lab tenant, Cato Client V6.8.3) — Client window with a
+  "Login Error — Incorrect username" dialogue (Details / OK) for the SCIM-disabled user. **Embedded** →
+  access-identity-design (PoV step "Run the leaver drill"), shown at max-width 320px under the Entra
+  deprovision log; caption "(lab tenant, fictional identity)". Not a posture-failure dialogue — it does
+  NOT satisfy access-hybrid-workforce's "Cato Client blocked dialog — failed device check" want.
+- **cma-acc-split-tunnel.png** (3024×1502, demo-tenant batch 23 Jul 2026) — Access → Split Tunnel Policy,
+  published revision, policy enabled, one rule "Azure Fabric Access for Azure Windows VM" (description:
+  Azure Instance Metadata Service, Azure WireServer / Guest Agent, DNS; users, platforms, source networks
+  and countries Any). **Embedded** → access-hybrid-workforce (PoV step "Decide egress — and keep the
+  default"): what a single scoped, self-describing exclusion looks like. Caption "(demo tenant)".
+- Considered, not embedded: **ztna-posture-flows.png** (2206×1335, unreferenced conceptual drawing, no
+  catalog provenance) — PoP + backbone with three users: compliant/authorised reaches cloud, on-site and
+  internet; non-compliant/authorised reaches internet only (Azure and one on-site server crossed out);
+  non-compliant/unauthorised blocked at the PoP. Every access page already carries its own SVG diagram,
+  the drawing has a pixelated Azure logo and third-party SaaS logos, and its "non-compliant still gets
+  internet" outcome differs from access-hybrid-workforce's posture gate (failed check = no tunnel). Left
+  for a page whose design matches that outcome.
+
+## Embedded 31 Oct 2026 — migration-b group (A08 orphan sweep)
+
+- **cma-net-routing.png** (3024×1502, demo-tenant batch 23 Jul) — Network → Routing Table, Queried PoP Auto,
+  Site/SDP = Sites, "Show all routes" off: one row per site range, every visible row Directly Connected /
+  STATIC (IPsec site via Milan, Socket X1600/X1600 LTE sites via Tel Aviv, an Azure vSocket site via Santa
+  Clara). No BGP-learned routes. **Embedded** → migration-edgeconnect PoV "What good output looks like",
+  in place of the routing-table marker (marker REMOVED in review 31 Oct 2026, per the A08 audit: the caption
+  carries the BGP-learned expectation, and the page's Site Settings → BGP marker still asks for a BGP-learned
+  capture). Caption "(demo tenant)" says the estate shows only directly connected ranges and that in
+  the pilot the EC prefixes should appear as BGP-learned, then drop and return during the rollback drill.
+- **cma-acc-split-tunnel.png** (3024×1502, demo-tenant batch 23 Jul) — Access → Split Tunnel Policy, published
+  revision, policy enabled, one rule "Azure Fabric Access for Azure Windows VM" (description: Azure Instance
+  Metadata Service & Azure WireServer / Guest Agent / DNS; users, platforms, source networks, countries Any).
+  **Embedded** → migration-cloudflare demo step "Swap the cohort's agent" (where harvested WARP split-tunnel
+  exclusions land), caption "(demo tenant)". Also on access-hybrid-workforce.
+- Considered for the migration-b pages, not embedded: cma-net-ip-alloc (cisco-asa "two allocated IPs" step —
+  two unredacted public egress IPs; redact first) · cma-home-events on cloudflare/iboss/symantec/checkpoint
+  (each Events marker asks for a specific filtered verdict; the unfiltered Monitor event already sits on
+  migration-sophos and migration-sonicwall) · cma-sec-tls / cma-sec-wan-fw / cma-sec-internet-fw (rule Edit
+  drawer open; the cma-*-rulebase embeds already on these pages are better) · cma-sec-app-data-inline
+  (migration-symantec already carries cma-app-data-inline-policy) · ztna-posture-flows and client-login-refused
+  (neither shows the CCP-rule + posture-failure message migration-cloudflare's marker asks for) ·
+  cma-acc-overview (no live want on these pages; already on migration-anyconnect).
+- Already in the working tree before this pass: **cma-home-events.png** embedded → migration-sophos and migration-sonicwall
+  PoV "What good output looks like", caption "(demo tenant, fictional identities)", beside the narrowed
+  per-rule Events markers (kept).
+
+## Embedded 31 Oct 2026 — orphan AI Security captures placed on the AI group pages (A08)
+
+All from the demo-tenant / lab capture batches (14 Sep and 23 Jul 2026); fictional catodemomode.com identities;
+every caption says "(example tenant)" / "(example tenant, fictional identities)".
+
+- **cma-sec-genai-apps-dash.png** (3024×1502) — Security → GenAI Apps, last 2 days: 58 GenAI apps, 7 sanctioned /
+  52 unsanctioned, 0 high-risk, 31 users, 3 data violations, 14.1 GB; category tabs; Events by Action donut (363:
+  171 Block, 192 Allow); Top GenAI Applications (ChatGPT, OpenAI sanctioned; an AI media generator and Grammarly
+  unsanctioned). **Embedded** → security-ai (demo step 1 "Discover shadow AI"; KB "Using the GenAI Apps Dashboard",
+  upd. 25 Oct 2026, confirms the Security > GenAI Apps path). Also on security-data-casb-dlp.
+- **cma-ai-users-monitoring.png** (3024×1502) — AI Security → AI Users, last 2 days, five fictional users with
+  interactions, sparklines, violation hits/rates and last seen. Smaller sibling of cma-ai-users. **Embedded** →
+  security-ai (PoV step "Walk the dashboards with the customer").
+- **cma-ai-local-agents-inventory.png** (1920×851) — AI Security → Local Agents → Agent Inventory (Agents / Tools
+  And MCPs / Skills tabs): 5 agents, 5 users; Claude Code (MCP tools, AI Scout + Claude Code Hooks), Windsurf, Codex
+  (Codex Hooks + AI Scout), two Cursor rows; Findings all empty. **Embedded** → ai-agentic-security (demo step
+  "Review the discovered agent estate"). Supersedes cma-ai-local-agents.png (same view caught mid-load, greyed rows).
+- **cma-ai-agent-sessions.png** (3024×1502) — AI Security → Agent Sessions, last 2 days: Interactions by
+  Application donut (76, all Codex), Interactions Over Time spike, one Codex session (76 interactions, 3 tools, no
+  violated rules, Codex Hooks). **Embedded** → ai-agentic-security (demo step "Investigate a live agent session").
+- **cma-ai-guards.png** (3024×1502) — AI Security → Guards: 8 guards, Proxy / AI Gateway (LiteLLM) / API modes, all
+  hosted on Cato's cloud, invocations 85 → 0, created dates. **Embedded** → ai-homegrown-apps (demo step "Show the
+  Guard and how the app connects").
+- **cma-ai-engine-profiles.png** (1600×795) — AI Security → Engine Profiles: named profiles with descriptions and
+  applied-detector chips (PII, jailbreak/prompt injection, obfuscation, secrets, salary/compensation, coding-agent
+  detectors). **Embedded** → ai-homegrown-apps (demo step "Walk the policy that decides outcomes").
+- **cma-ai-playground.png** (1600×795) — AI Security → Playground (Engine Playground): profile toggles on the left,
+  preset scenarios (Personal Information, Jailbreak & Prompt Injection, Base64 Obfuscation attack, API Keys & Secrets
+  in Code) and Custom Session on the right; 0 active profiles. **Embedded** → ai-homegrown-apps (demo step "Prove
+  the detections in the Playground").
+- **cma-ai-homegrown-agents.png** (3024×1502) — AI Security → Homegrown Agents: 1 agent, 32 invocations, 30
+  violations; source guard is the AI Gateway (integration) guard. **Embedded** → ai-homegrown-apps (PoV step 1, the
+  July 2026 gateway model where virtual keys map to Homegrown Agents).
+- Considered, not embedded: **cma-ai-agent-mcp-servers.png** (1920×851, Local Agents → instance → MCP tab) — the
+  whole table carries a browser text-selection highlight from capture; re-shoot before use (ai-agentic-security
+  demo step 3 drill-down) · **cma-ai-local-agents.png** — rows greyed mid-load, superseded by the inventory capture.

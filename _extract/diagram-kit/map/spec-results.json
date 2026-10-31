@@ -1,0 +1,1542 @@
+[
+ {
+  "id": "access-third-party",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "access-third-party",
+   "applied": [
+    "F1 major: added anchors.mgmt [782,132]. The step-4 marker now sits on the CMA box's top edge, and 'Terraform & API' is fully visible in both themes.",
+    "F2 major: removed the 244\u2192234 stub and xmark above lane 2. Lane 2's denial is now on its own row at the PoP's right border: fl('M462 256L494 256','fl-down') + xmark(BR,256). It mirrors lane 3's left-border cross and sits next to the PoP text 'posture check failed \u00b7 WAN blocked'. Skipped the optional 'WAN blocked' label beside the xmark because the 72-unit gap holds the Azure and SaaS legs, and the PoP text already ties the cross to the outcome.",
+    "F3 major: changed the bottom strip to 'Client Connectivity Policy \u2192 WAN Firewall \u00b7 posture profiles on rules \u2014 first match, implicit block'. Confirmed against the page: posture profiles are attached to the Client Connectivity and WAN rules, and both policies are first-match over an implicit block. The new strip fits inside 760.",
+    "F4 minor: spread out the lane-1 fan. London exits at y 142 and runs straight. Azure exits at y 150 and bends late (C BR+52/BR+40). SaaS exits at y 158, turns down early (C BR+22) and ends at y 362. All three legs are now distinct, the SaaS leg is clear of the Azure node and arrowhead, and nothing crosses the lane-2 xmark or the https leg.",
+    "F5 minor: added ['tun','Cato Client tunnel to the PoP'] as the first legend entry.",
+    "F6 minor: added anchors.cloud [1362,408]. The step-3 cloud marker now sits on the lit Azure leg between the right PoP and Azure, clear of the '4 Public & private cloud' heading and of the AWS and GCP clouds. Note: in this build the spotlight anchor y-values have about a 116-unit offset from the rendered crop.",
+    "F7 minor: chips are now ['IdP identity \u00b7 group','Device posture','Re-checked in session','WAN Firewall rules'] under 'CHECKED ON EVERY SESSION'. They fit the 108-wide chips with no overflow warning."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "access-hybrid-workforce",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "access-hybrid-workforce",
+   "applied": [
+    "major: London PoP to London DC flow now starts at the pin's right shoulder (fl 'M382 170C450 150 470 64 550 64'). London PoP title and subtitle moved to x=345, so the curve clears 'inspection'. It also stays clear of the 'local egress' pill, so that pill did not need to move.",
+    "major: added spotlight anchors {saas: [302, 310]}. The step-3 marker now sits clear of the 'Smart egress \u00b7 direct-to-cloud' subtitle in both themes.",
+    "major: Dubai PoP title and subtitle moved to x=592, off the ring band. The subtitle fits inside the viewBox with no auto-fit warning.",
+    "minor: GLOBAL PRIVATE BACKBONE label moved into the empty centre of the ring. The suggested (430,286) put its last 'E' against the Dubai pin head, so I used (405,288), which is clear of the pin and the band.",
+    "minor: legend tun entry reworded to 'Cato Client or Socket tunnel' so it also covers the DC Socket leg."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "access-offshore-bpo",
+  "approach": "prior",
+  "findings": 2,
+  "fix": {
+   "id": "access-offshore-bpo",
+   "applied": [
+    "major: added spotlight `anchors: {saas: [302, 310]}` (step-4 marker clear of the \"Smart egress\" subtitle). The marker now sits to the right of the SaaS cloud, and 'direct-to-cloud' reads in full in both themes.",
+    "minor: Personal storage now has a dashed border. I wrapped the nd in `<g style=\"stroke-dasharray:5 4\">` (the management-vendor-consolidation pattern), removed the no-op `cls: 'dash'`, and kept the globe icon solid by giving its `<use>` an inline `stroke-dasharray:none`, so the text layout did not change."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "access-byod-clientless",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "access-byod-clientless",
+   "applied": [
+    "major: website->RBI flow relabelled 'page code' (lcls p); 'risky link' replaced with 'runs in the PoP'; added T(350,372,'pixels only to the device') under the RBI node. This matches the page, where RBI returns risky web content to the device as pixels only.",
+    "minor: IdP sign-in redirect redrawn as 'fl-https fl-dim', so fl-flow now means RBI only, as the legend says",
+    "minor: dropped the fl-tun stub from the PoP to the backbone ring because no legend row covers it",
+    "minor: added spotlight anchors {mgmt:[782,132], saas:[302,310]}. Markers 3 and 4 now clear the 'direct-to-cloud' and 'Terraform & API' subtitles in both themes",
+    "minor: removed the duplicate T(104,322,'no client \u00b7 no enrolment') and kept the bottom mono line"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "access-remote-worker",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "access-remote-worker",
+   "applied": [
+    "major/strip verdicts: confirmed against the page figcaption (Office 365 Fair at 486 ms TTFB while HTTP(S) and Microsoft General are Good, so 'the last mile is not the story'). Flipped cell 2 Last mile to Good/g and cell 4 App side to Fair/y, so cells 1-3 are Good and 4 is Fair. Also updated the code comment to describe Brandon's case. desc and steps unchanged.",
+    "minor/mgmt marker: added anchors mgmt:[782,132] (same override as demo-swg.js). Marker 4 now sits above the CMA card edge, clear of 'Terraform & API', in both themes.",
+    "minor/backbone marker: the suggested [1160,445] put marker 3 on the right PoP pin head, so I worked out the ring geometry (cx800 cy500 rx500 ry66) and set backbone:[1262,528]. The marker now sits on the ring band right of the popR pin tip, clear of the '100+ PoPs \u00b7 99.999% SLA' text and the '6 Global private backbone' heading. Checked on zoomed crops in light and dark."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "access-identity-design",
+  "approach": "prior",
+  "findings": 2,
+  "fix": {
+   "id": "access-identity-design",
+   "applied": [
+    "major/spotlight: added anchors: {mgmt: [782, 132]} (step-1 marker clear of the CMA subtitle). In both themes the step-1 marker now sits on the top-right corner of the CMA tile. It does not cover the subtitle, so 'Terraform & API' reads in full, and it is clear of the Cato XOps and Managed services text.",
+    "minor/main Bristol lane: the Priya tunnel now starts at the node edge, fl('M226 275C330 275 350 300 450 300', ...). In both themes the line runs from Priya's node across the Bristol Office boundary to the PoP, with no gap. Label position is unchanged and still clear."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-ai",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "security-ai",
+   "applied": [
+    "F1 spotlight: added anchors {mgmt: [782, 132]}. The step-4 pill now sits on the CMA box's top edge and no longer covers 'Terraform & API' (checked in light and dark).",
+    "F2 on-ramp icons: each label now sits in the slot whose icon fits it. Inline (cpu) -> Cato Client / inline in the PoP, Proxy (route) -> Hooks / apps \u00b7 coding agents, API (plug) -> APIs / agent discovery, LLM gateway (code) -> IDE integration / homegrown apps. Browser plugin / employees is left as drawn. The swap pairs are gone, so edit order no longer matters, and the comment says so.",
+    "F3 wording: checked against the page. Line 232 says 'One policy engine governs all three surfaces' and lines 151-153 say AI security is 'another set of policies evaluated by ... SPACE'. Changed the chip to 'one engine \u00b7 three surfaces'. Step 2 now reads 'against one set of AI policies: monitor, anonymise or block.' (100 chars). The desc now says '...all reach Cato AI Security, a set of policies evaluated by SPACE, whose detectors, profiles and actions govern...'.",
+    "F4 partly applied: added the edit ['PII \u00b7 PHI','PII \u00b7 payment data']. The page's DLP step (lines 282-283) names PII and payment data and never mentions PHI. 'Code sharing' and 'Data protection' are also supported by the page (Code Sharing profile, Data Protection Dashboard). Prompt injection, Jailbreak, Secrets, Content moderation, OWASP Top 10, 'Custom, in plain language' and the 'Detectors + custom' feature chip stay as figure facts backed by the KB and Cato announcements, as the README allows. They support the page's 'runtime guardrails' and 'Guardrails' and contradict nothing on it. A comment in the spec flags this for the coordinator."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-threat-landscape",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "ai-threat-landscape",
+   "applied": [
+    "major spotlight.hl: replaced 'backbone' with 'ai'. Checked first: the page has 0 hits for 'backbone', and the GenAI cloud sits in data-c=\"ai\" in kit-host. The GenAI cloud under marker 3 and the AI agents & apps tile now light up in both themes.",
+    "major spotlight.flows: removed {p:'atk'}. Checked first: spotlight() never adds the .attack class, so the atk-view group and the red link stay hidden and only a green ucl overlay is drawn. The stray green line into the left PoP is gone. Note for the coordinator: other specs that light 'atk' (security-ransomware, demo-threat-prevention and others) probably have the same artefact.",
+    "minor pill: moved to pill(RX + RW / 2, Y[2] + 46, 'anonymise \u00b7 monitor', 'y'). It is now centred under 'Data stays home' and clear of the PoP box and the outcome box.",
+    "minor bad(): added a stroke argument c = 'var(--danger)' and passed 'var(--amber)' for 'Shadow AI & data leak'. The governed lane is now amber, not a red blocked-attack box, in light and dark (the brief and carry-over rule both ask for this).",
+    "minor steps[2].t: changed to 'Shadow-AI prompts and uploads are discovered, then coached, anonymised or blocked per rule \u2014 not banned.' The suggested text was 113 characters, over the 110 limit, so I dropped 'outright' (now 104). This matches the page's 'Engage User (a coaching interstitial), Anonymise \u2026, or Block'.",
+    "minor legend: the first entry is now ['attack', 'AI-assisted attack path \u2014 blocked at the PoP'], so the two red xmarks have a legend meaning. The https, flow, net and live entries are unchanged."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-ai-visibility",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-ai-visibility",
+   "applied": [
+    "major / spotlight step-4 marker: added `anchors: {mgmt: [782, 132]}` with the comment '// step-4 marker on the CMA box's top edge, clear of its subtitle'. The preview shows the marker on the CMA box's top-right edge, and 'Terraform & API' is fully visible in both themes.",
+    "minor / W1 sub-label: changed 'kickoff \u00b7 TLSi \u00b7 plugin' to 'kickoff \u00b7 IdP \u00b7 extension'. The page backs this: 'Week 1 \u2014 Kickoff and deployment: a 30-minute deployment call: IdP integration, SASE/proxy integrations and (where agreed) browser-extension deployment'. TLSi is a prerequisite ('agree these before week 1', 'Week 0 \u2014 prerequisites').",
+    "minor / legend vs week-strip arrows: the W1-W4 connectors are no longer fl-net. They are now a plain `<path class=\"fl\">` with stroke var(--ink-3), width 1.4 and marker-end arr-n. That kind is not in the legend. fl-dim alone was not used because it only sets opacity and has no stroke of its own. fl-net is kept only for the PoP to AI Security Dashboard line.",
+    "minor / PoP subtitle and chip: changed the popBox sub to 'GenAI traffic already crosses it' (page: 'employee GenAI traffic already traverses the Cato PoP'). Changed the chipRow to `chipRow(PX + 6, 116, [...], 80, 20, 4, 'g')`, so 'TLS inspection' now has side padding and the row still sits inside the 260-wide PoP box.",
+    "minor / step-3 marker on a dim GenAI cloud: followed the recommendation to leave hl unchanged ('ai' not added, because agents and homegrown apps are out of scope) and keep marks:['genai']. FLAG FOR COORDINATOR, a kit-level fix outside this spec: in kit-host the overview's GenAI cloud is in data-c=\"ai\". Move it into 'saas' or give it its own 'genai' component, so pages about end-user AI can light it. ai-genai-security and ai-legal-genai have the same dim cloud."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-genai-security",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "ai-genai-security",
+   "applied": [
+    "major: Replaced the plugin's red 'blocked in-browser' fl-down line with an fl-https line from Browser plugin to Shadow AI apps (M406 465C520 465 540 330 574 330, arr-m), labelled 'block \u00b7 anonymise \u00b7 engage' (m keep). xmark(548,318) now belongs only to the PoP's blocked line. The pill sat on the plugin node's right edge at the suggested lx 490/ly 452, so I moved it under the curve to lx 512/ly 488. It now clears the plugin node and the PoP's red curve in both themes.",
+    "major: Spotlight step 2 marks changed from 'genai' to 'popL'. The page text confirms inspection happens at the PoP, and the overview GenAI cloud is in data-c='ai', which hl leaves dimmed. hl stays without 'ai'.",
+    "minor: Step 4 text is now 'Every decision is attributed and lands in the Overview dashboard and AI Users page as evidence.' The page has 'AI Security Overview dashboard' and 'AI Users page'.",
+    "minor: Added ['net', 'Decision events to the dashboards'] to the legend before 'live', so it covers the two fl-net arrows. The page says 'Each decision lands in the dashboards and events as evidence'.",
+    "minor: Added anchors: {mgmt: [720, 134]} to the spotlight. The '4' pill now sits on the CMA card's top border, clear of the title, the 'Terraform & API' sub-line and the XOps card in both PNGs.",
+    "minor: Browser plugin sub-line changed to 'same outcomes, in the browser'. The page says 'enforces the same outcomes'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-agentic-security",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "ai-agentic-security",
+   "applied": [
+    "F1 (major, facts/legibility): checked against the page. It says 'threats can be alerted, logged or blocked depending on integration and enforcement mode', and for local agents it says 'blocking and redaction but not a distinct monitor mode'. Changes: tier is now 'ON A MATCH'. There are four pills: alert (b, x 296), log (m, x 358), block (r, x 420) and redact (y, x 484). The redact pill stays inside the box. The suggested note 'action depends on agent type and enforcement mode' rendered from x 250 to 520, touching both box borders, so I shortened it to 'action varies by agent type and mode', which is centred with clear margins.",
+    "F2 (major, legibility): added a spotlight anchor for mgmt. The suggested [780, 26] put the marker off-canvas because the spotlight crop starts at y=116 (SPOT_VB '0 116 1600 784'). [770, 150] nearly touched 'API'. Final anchor is mgmt [730, 144]: the marker sits right of the CMA title, on the box's top edge, clear of the title and subtitle in both themes.",
+    "F3 (minor, story): checked. The page says 'local-agent discovery is endpoint scanning and managed discovery is platform APIs \u2014 this inventory is not derived from network traffic', and the brief says no tunnels. Dropped cl-aws and us1; 'cloud' and 'users' stay lit with their step markers. I did not swap in us3 (agent HTTPS \u2192 SPACE) because it would also draw local-agent discovery as network traffic. Flows are now ag1, ag2, m2.",
+    "F4 (minor, facts): step 4 now reads 'Every session is recorded in Agent Sessions with violations tagged inline; Local Agents holds the inventory.' (107 chars, under the 110 limit).",
+    "F5 (minor): the bottom lens text now reads 'Agent Sessions \u2014 runtime behaviour: what it did, whether policy intervened'. It fits within the viewBox.",
+    "F6 (minor): the note now reads 'payload arrived in a tool message', matching the page's narration line.",
+    "F7 (minor, legibility): the blocked line is now fl('M520 248L560 248', 'fl-down', {dur: 1.2}) with xmark(568, 248) on the Risky action node's left border. The red dashed line is visible in both themes."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-homegrown-apps",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "ai-homegrown-apps",
+   "applied": [
+    "F1 (fl-net line crosses 'EVIDENCE \u00b7 AUDIT TRAIL'): confirmed in both themes. Applied the first suggested fix, tier(448, 426, 'AUDIT TRAIL'). The label now starts right of the x=436 line and ends before the ALERTING label at x 560.",
+    "F2 (step-4 marker covers the CMA subtitle 'Terraform & API'): confirmed. Added anchors.mgmt = [782, 132], the same override demo-ztna uses. The marker now sits on the CMA box's top edge, clear of the subtitle.",
+    "F3 (step-3 cloud marker sits against the '4' heading): confirmed, with a different coordinate from the one suggested. The suggested [1296, 262] changes nothing because kit-host.html already uses it as the default 'cloud' anchor (line 3363), and that position is the one next to the '4'. Used anchors.cloud = [1263, 396] instead, which puts the marker on the cl-aws path between the right-hand PoP and AWS. Checked in both spotlight PNGs: it is clear of the '4' heading, the PoP pin and the Azure line.",
+    "F4 (title): the map entry title is 'A Cato Guard in the homegrown AI interaction path' and the page uses 'interaction path'. Set the title to match.",
+    "F5 (attacker tile drawn with cls 'hot'): removed {cls: 'hot'}. The map brief allowed cls 'hot' as an option, but in the render it made the attacker the most emphasised box on the left. The attacker tile now matches the Priya tile, and the red dashed fl-down lane, the xmark and the 'blocked at the Guard' pill show the verdict."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-legal-genai",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "ai-legal-genai",
+   "applied": [
+    "spotlight.hl: 'saas' replaced with 'ai'. kit-host.html line 1816 puts the GenAI cloud in data-c=\"ai\". The preview now lights the GenAI cloud under marker 3 and dims the SaaS and Internet clouds.",
+    "Step 1 reworded to the page's pilot line: \"Fee-earners' prompts already cross a Cato PoP \u2014 office behind a Socket, laptops on the Cato Client.\" The page says 'laptops on the Cato Client' in the pilot section, and troubleshooting says to confirm 'every pilot laptop runs the Cato Client'. 'Nothing deployed' only describes discovery.",
+    "Removed the 'TLS inspection at account level' pill and the 'UIP rules precede TLS bypass rules' and 'QUIC block rule stays enabled' chips, because the map's carry-over lists these as prose facts, not diagram labels. The tier is renamed 'DLP BACKSTOP' and keeps the single 'DLP Legal profile \u00b7 Generative AI Tools' chip. The ethical-walls lines moved up to y 300/316.",
+    "Footnote now uses the page's prerequisites wording: 'Legal profile ML classifiers detect agreements, patents, court documents and powers of attorney \u2014 set to monitor or block per stage.' This removes the clash with the 'blocked \u00b7 notified' lane.",
+    "Added anchors {mgmt: [782, 132]} to the spotlight, following the demo-swg.js pattern. Marker 4 no longer covers the 'Terraform & API' subtitle in either theme."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "ai-eu-ai-act",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "ai-eu-ai-act",
+   "applied": [
+    "major: bottom-left note line 2 now reads \"they stay with the customer's governance programme.\" The word 'compliant' is gone and line 1 is kept. Page line 184 ('Cato does not make anyone AI Act compliant') supports this.",
+    "major: spotlight.hl swaps 'saas' for 'ai' (6 components). The GenAI cloud under marker 3 is now lit in both themes, along with the AI agents & apps box (GenAI use tile).",
+    "minor: left tier shortened to 'WHERE AI IS USED' and the PoP tier moved to PX+20. The headers no longer run together, and the EU-only label no longer sits over London HQ. PX/PY/PW/PH are now declared before the tier line to avoid a TDZ error.",
+    "minor: all three inbound fl-tun paths now end at one entry point, the left edge of Shadow AI Discovery (PX+25, 134). Static fl-net arrows chain Discovery to Access to Interaction to show the pipeline. All three outbound paths fan out from the right edge of the User Interaction Policy box (PX+245, 270) to 98/188/278. The red blocked stub grew from about 24 to about 50 units.",
+    "minor: added spotlight.anchors = {mgmt: [722, 146]}. The suggested [782, 128] put the pill on the canvas top edge, where it was partly clipped. At [722, 146] the pill sits inside the CMA card to the right of the title and clears 'Terraform & API' in both themes, checked on a zoomed crop.",
+    "minor: title set to the map title 'EU AI Act readiness from the network: inventory, control, evidence'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-visibility",
+  "approach": "prior",
+  "findings": 2,
+  "fix": {
+   "id": "management-visibility",
+   "applied": [
+    "major: added spotlight `anchors: {mgmt: [782, 132]}` (step-3 marker on the CMA box's top edge, clear of its subtitle). In both light and dark previews the step-3 marker now sits on the top edge and 'Terraform & API' is fully readable. This is the same override demo-ztna.js uses.",
+    "minor: diagrams[0].title set to 'All edges feed one management and analytics plane'. This matches the page's current SVG <title> (dg1-title) and the map entry, and is consistent with the CMA subtitle and the desc."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-api-automation",
+  "approach": "prior",
+  "findings": 8,
+  "fix": {
+   "id": "management-api-automation",
+   "applied": [
+    "F1 step 3: rewrote it to 'New sites reach the topology map within minutes; one tagged script changes policy at every site.' The page says 'one script, every site' and 'on the topology map within minutes'. 'pop' stays lit in hl, so it stays in marks: ['pop','branch'].",
+    "F2 Option B: kept 4 steps with one marker each. Added anchors {mgmt:[700,132], api:[782,132]}, and step 2 now marks ['api']. The '1 \u00b7 2' pill is gone (separate 1 and 2 markers on the CMA box's top edge, clear of 'Terraform & API'), checked in both themes. For the coordinator: '.x-mark rect' still has no style in style.css. This spec no longer draws that pill, so it is a fix for the kit CSS only.",
+    "F3 step 2: now uses the map and page wording, 'applies the change with one audit entry per mutation'. Step 1 also now uses the map wording.",
+    "F4 Git node subtitle: 'sites.tf' changed to 'main.tf', the file the page names.",
+    "F5 'HTTPS \u00b7 x-api-key' pill: moved left to x=292 (the suggested 300 still nearly touched the ring band). It now sits above the CI runner, clear of the ring and of the 'merge' pill.",
+    "F6 right column widened to RX=576, RW=170. The LIVE WAN tier() heading was hard-coded at 586, not tied to RX as the finding assumed, so I moved it to 576 by hand.",
+    "F7 legend: renamed to ['https', 'Pipeline: Git \u2192 CI \u2192 API']."
+   ],
+   "rejected": [
+    "F8 Glasgow \u2192 Leeds Office: rejected. The map sets keepCaption:true, and the page caption that is kept says 'The API fans out to create branch sites \u2014 Bristol Office, Glasgow, Madrid Office'. Glasgow is also on the map's carry-over list. Swapping it would make the diagram disagree with its own caption. The small story inconsistency with the runbook line ('alongside London DC, Glasgow') is the coordinator's call."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-dem",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "management-dem",
+   "applied": [
+    "major: spotlight anchors now {mgmt: [782, 132], saas: [302, 310]}. The step-4 badge sits on the CMA top edge and 'Terraform & API' is fully readable in both themes.",
+    "minor: the sub-heading now reads 'Every hop the traffic actually takes, scored per user, site and application', following page line 127. It fits at 760 wide.",
+    "minor: the legend now matches the drawn lines: ['net', 'LAN \u00b7 Wi-Fi \u00b7 underlay probe outside the tunnel'], ['tun', 'Last mile \u2014 Client DTLS tunnel (overlay probe)']. 'hot', 'flow' and 'live' are unchanged.",
+    "minor: step 1 shortened to keep the remote-user focus: 'The Cato Client on the device already supplies the telemetry; no extra agents to deploy.' I dropped the suggested 'or probes', since the page says only 'no extra agents'. hl and marks are unchanged."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-vendor-consolidation",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "management-vendor-consolidation",
+   "applied": [
+    "major: the ring is now RG {cx 380, cy 279, rx 150, ry 62} and is drawn before the retired lines and the PoP box, so the 'Cato PoP' title is clear in both themes and the converging lines sit on top of the ring band instead of disappearing under it. The ring bottom stays clear of the 'Global Private Backbone' label and the pill.",
+    "minor: the retired lines now use {np: 0, arrow: 'arr-n'}. The arrowheads render on fl-dim and land on the PoP box's left edge (x=290), above the ring band.",
+    "minor: moved the CMA flow label instead of removing it, because the map brief asks for it. At the suggested midpoint (512, 362) it overlapped the 'Global Private Backbone' text, so it now sits at lx 592, ly 348, right beside where the PoP-to-CMA curve drops between the Client and CMA nodes. It reads as a label on that flow, not a loose caption.",
+    "minor: added anchors {mgmt: [782, 132], backbone: [1230, 590]}. The step-4 marker now sits on the CMA top edge clear of 'Terraform & API', and the step-3 backbone marker sits below the ring, clear of the '100+ PoPs \u00b7 99.999% SLA' text and the '6 Global private backbone' label.",
+    "minor: step 3 marks are now ['backbone', 'branch', 'users'], so the branch shows a combined '1 \u00b7 3' pill."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-soc-xdr",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "management-soc-xdr",
+   "applied": [
+    "major: SRC row 3 changed from 'Cloud & SaaS' / 'vSocket \u00b7 IPsec \u00b7 CASB' to 'Cloud instances' / 'every flow \u00b7 via a PoP'. The page prose only says 'every site, user and cloud instance already traverses a Cato PoP'. 'vSocket', 'IPsec', 'SaaS' and 'CASB' appear only in the page's old diagram text, never in the prose.",
+    "minor: SRC rows 1-2 changed to 'Socket \u00b7 every flow' and 'Cato Client cohort'. These follow the page's wording ('every flow from every site', 'pilot socket and client cohort'). 'all ports' and 'ZTNA' appear only in the old diagram text.",
+    "minor: attack node sub-line changed from 'malware \u00b7 exfiltration' to 'IPS \u00b7 Anti-Malware hits'. The page names the IPS and Anti-Malware sensors, and the EICAR download is the blocked example. I used the sensor names rather than the suggested 'exploit attempts' because 'exploit' does not appear on the page. The 'blocked \u00b7 evidence recorded' pill is unchanged.",
+    "minor: PoP line shortened to 'inspects each flow once'. This matches the spotlight step wording and leaves visible clearance inside the 132-unit PoP box in both themes."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-pov-framework",
+  "approach": "prior",
+  "findings": 2,
+  "fix": {
+   "id": "management-pov-framework",
+   "applied": [
+    "major: added `anchors: {mgmt: [782, 132]}` to the spotlight block. The combined '1 \u00b7 4' pill now sits on the CMA card's top edge in both themes, and the subtitle 'one console \u00b7 policies \u00b7 users \u00b7 RBAC \u00b7 Terraform & API' reads in full. Preview printed no warnings. The pill is still dim in the dark theme, but that is how the kit styles the combined pill, not something this spec sets."
+   ],
+   "rejected": [
+    "minor (Next-steps register draws solid instead of dashed): this spec is correct and was left as is. assets/css/style.css has only .x-nd.x-hot, .x-nd.x-soft and .x-nd.x-pop, with no .x-nd.x-dash rule, so the problem is in the kit and affects every spec using cls 'dash'. The coordinator should have port_css.js / glue.css carry over `.x-nd.x-dash{stroke-dasharray:5 4}`. The solid border is acceptable until then."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-data-lake",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "management-data-lake",
+   "applied": [
+    "F1 (major) excess lane cut through the tier label: renamed the tier to 'EVENT SOURCES \u00b7 POLICY TRACKING'. It now ends at about x=231, clear of the excess lane at GC=263.",
+    "F2 (major) export fan piled up: the lake is now 136 wide at LX=342, so its right edge is at 478. The left column was tightened to make room (SW=160, GX=200, GW=126), which leaves 78 vb before EX=556. The control points are now C LX+LW+30 / EX-30, and the five starting points are spread 18 vb apart down the lake's right edge. The curves now fan out and enter each box nearly horizontally.",
+    "F3 pill changed to 'Excess may be discarded', matching the page wording and the legend.",
+    "F4 eventsFeed API subtitle changed to 'pull \u00b7 gzip: storage up to \u221295%', matching the page ('reduces the required storage by up to 95%').",
+    "F5 added spotlight anchors {mgmt: [782, 132]}. The '3' marker now sits on the CMA box's top edge, and 'Terraform & API' is visible.",
+    "F6 marks now follow the map: step 1 is ['branch','users','pop'] and step 2 is ['xops']. The PoP shows '1' and XOps shows '2 \u00b7 4'.",
+    "F7 used the finding's second option, because the combined tier would have run past the 760 viewBox. A tier 'CONSUME \u00b7 IN THE CMA' now sits over the CMA Events page node. An extra 20 vb gap (XG) puts 'EXPORT \u00b7 FREE OF CHARGE' over the four external destinations only, and the footer note was moved down by XG."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "management-asset-discovery",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "management-asset-discovery",
+   "applied": [
+    "spotlight: added anchors {mgmt: [782, 132]}; the '3 \u00b7 4' marker now sits on the CMA top edge, clear of 'Terraform & API' (both themes)",
+    "legend net entry relabelled to 'Device LAN traffic \u00b7 API export to CMDB'; kept the 'flow' entry because fl-flow is drawn",
+    "pill moved from x 330 to 405; 'no agents \u00b7 no active scans' now sits under the Socket and PoP, clear of the lines converging on the Socket",
+    "title set to 'Passive device discovery at the Socket feeding one Device Inventory', matching the map title and the page's dg1-title (keepCaption is true in the map)"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-methodology",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-methodology",
+   "applied": [
+    "major: replaced cloudTop() with ring({cx:384,cy:72,rx:250,ry:30}) labelled 'CATO GLOBAL BACKBONE' plus fpin(384,100,20,'PoP',{halo}) labelled 'Cato PoP'. The PoP tip stays at y=100, so the Bristol, popDown, Glasgow and hot paths still meet it, and no SPACE or single-pass text remains",
+    "minor: moved the card-2 APAC eBGP label to lx 528, outside the grey peering curve and away from the red rejected path",
+    "minor: step 3 marks are now ['backbone','mgmt'], so the lit CMA has a marker for the rollback route change (matches the map)",
+    "minor: footnote now reads 'routed ranges or eBGP \u00b7 community 32768 isolation needs socket v15' (page line 185). Moved it 14 units left so it no longer crosses the dashed Glasgow/MPLS line at x=600"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-zscaler",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "migration-zscaler",
+   "applied": [
+    "major: the inside-tunnel claim now sits on the branch, matching the page (on-site the ZCC tunnel rides inside the Socket tunnel; remote, the ZCC and Cato tunnels run side by side). New pill under Branch: pill(114,176,'ZCC rides inside Socket tunnel','m'). The remote pill now reads 'ZCC + Cato tunnels side by side'. Remote user sub-line is now 'Cato Client + ZCC \u00b7 dual tunnels'.",
+    "minor: added anchors {saas:[302,310]} to the spotlight. In both spotlight PNGs, step marker 3 now sits right of the SaaS cloud, and the '7 Internet & SaaS' subtitle shows in full.",
+    "minor: changed the Remote user to PoP tunnel to fl('M180 300C180 252 240 238 290 238','fl-tun',{dur:1.3}). It now leaves the top of the node and arcs above the ring without touching it.",
+    "minor: removed the duplicate tier 'INTERIM \u00b7 BEING RETIRED' and the cls:'dash' option, which did nothing (style.css only has .x-dash-card, not .nd.dash). Added the brief's pill(650,426,'interim','y') on the ZIA top edge and an R(546,426,200,60,'dash-card',10) overlay so the ZIA node now has a dashed outline. Added R to the K destructure.",
+    "minor: title changed to 'Phased co-existence of Cato and Zscaler ZIA during migration'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-palo-alto",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-palo-alto",
+   "applied": [
+    "Handoff line split around the pill and the caption: fl('M130 140V156M130 202V212','fl-net',{np:0}). 'over LAN transit VLAN' is no longer cut through in either theme.",
+    "Legacy WAN cloud enlarged to cloud(124, 462, 1.3, ...) with the text unchanged. 'MPLS \u00b7 Internet \u00b7 GP VPN' now sits clear of the outline. The default-route line was changed to 'M110 268V424' so it ends on the new cloud top (worked out from the CLOUD path at about y 428 for x=110), and the render shows it meeting the outline.",
+    "Interconnect-to-Legacy-WAN amber link: kept the endpoint (172,500). With the k=1.3 cloud it lands on the bottom-right outline (local x\u224897 \u2192 y\u224869.7 \u2192 global y\u2248500.6), and the render shows the dashes meeting the cloud.",
+    "Legend gains ['flow','Direct PoP breakout'] between tun and ha, so the green breakout line has a key. fl-net lines left without an entry because they are labelled on the diagram."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-netskope",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "migration-netskope",
+   "applied": [
+    "Ring narrowed: RG rx 150 -> 115 (x 265-495). Preview confirms the Wave 1 -> PoP fl-tun curve and the PoP -> London 'WAN FW \u00b7 ZTNA' fl-flow curve now clear the backbone band in both themes; PoP pin and 'Global Private Backbone' label unchanged.",
+    "Legend: ['flow', 'Brokered private access over the Cato WAN'] -> ['flow', 'On-net private apps via WAN Firewall']. Verified that the page never says 'brokered' and describes private apps as 'on-net' behind a Socket/vSocket with 'WAN Firewall and posture rules' (lines 176, 195).",
+    "Bristol straddling both bands: used the finding's second option, pill(114, 296, 'parallel per VLAN', 'm') under Bristol Office, which the page supports (line 192: 'run the legacy tunnel for not-yet-migrated VLANs while the Socket takes the migrated ones'). Also moved the TARGET tier label from y 314 to 320 so it does not crowd the new pill (pill bottom is about y 305). The tier text ends at about x 217, so it stays clear of the Bristol green curve and the popBox."
+   ],
+   "rejected": [
+    "Finding 3, first option (tier label at y 300 with Bristol at nd(14, 236, 200, 68)): rejected because the tier label is drawn at x=14. At y 300 it would sit inside the moved Bristol box (y 236-304) and overlap the node text. The pill option fixes the same problem without creating an overlap."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cisco",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-cisco",
+   "applied": [
+    "Finding 1 (applied): added pinTop to the K destructure and a static fl-lan connector (np:0) from the bottom of the Cato PoP box (y=70) down to the top of the ring PoP pin. Box and pin now read as one PoP, joined in both light and dark renders. The pin tip is computed once and shared by the connector and the pin.",
+    "Finding 2 (applied): changed spotlight step 3 ('Migrated sites get DNS and web security inline at the PoP, so Umbrella is bypassed.') from marks ['pop'] to ['pop', 'saas'], matching the map entry and the lit eg-www/eg-saas flows.",
+    "Finding 3 (applied): changed diagrams[0].title to the map title, 'Regional co-existence of Cato and a Cisco Viptela overlay during migration'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-fortinet",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-fortinet",
+   "applied": [
+    "Finding 2 (rollback label): moved the caption onto the dashed rollback arc using fl(...,{label:'Rollback \u2014 re-enable the spoke \u00b7 BGP reconverges', lx:380, ly:506, lcls:'m'}) and removed the separate T() footer at y 548. The path now ends at y 356, so the arrowhead touches the FortiGate hub box. The full wording stays in desc.",
+    "Finding 3 (title): changed the title to 'eBGP regional-hub co-existence between Cato and a FortiGate SD-WAN estate', which matches the map title and the page's current SVG <title>.",
+    "Finding 4 (PoP join): re-routed Branch A's tunnel through the gap between the ring and the site box so it lands on the ring at x 352, just left of the PoP pin. Moved the hub Socket tunnel to land at x 410, just right of the pin. Both tunnels now arrive at the pin. Moved 'Global private backbone' to the right of the ring (556,198, start-anchored) so the Socket tunnel no longer crosses it."
+   ],
+   "rejected": [
+    "Finding 1 (legend 'net' covers the eBGP link): false positive. The eBGP link in the spec is drawn as fl('M340 322H420','fl-lan',{np:0}), a solid 2px stroke, not as 'fl-net', which is a 3/5 dashed stroke. The rollback arrow is the only fl-net line, so the legend entry ['net','Rollback \u2014 re-enable the FortiGate spoke'] is accurate and the rendered previews show the eBGP link as solid and visually distinct."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-forcepoint",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "migration-forcepoint",
+   "applied": [
+    "F1 (major) Cohort B title clipped: both cohort nodes widened to w:184. Cohort flows now start at x198 ('M198 114H350', 'M198 334C250 334 290 322 350 322') with lx 274. Middle column moved right by 10: Forcepoint nd x350, pill cx 435, popBox x350, RG.cx 435, fpin 435, backbone label x435. Onward flows start at x520. In the preview 'Cohort B \u2014 migrated' clears the border in both themes and both pills clear the nodes.",
+    "F2 (major) step-3 marker covered the saas subtitle and was the wrong anchor: step 3 now uses marks ['pop'] and renders as a '2 \u00b7 3' pill on SPACE. The page places TLS inspection ownership at the Cato PoP ('One TLS inspection owner per cohort \u2014 never decrypt the same flow twice'). The 'Smart egress \u00b7 direct-to-cloud' subtitle is now clear. Kit-level issue for the coordinator, not caused by this spec: in the dark spotlight PNG the shared '2 \u00b7 3' pill has dark text on a near-black fill and is barely legible. The light version is fine.",
+    "F3 (minor) step 2 said 'nearest': 'nearest' does not appear on the page, which says cohorts 'steer transparently to the Cato PoP'. Changed to '... to the Cato PoP.'",
+    "F5 (minor) dead fl-dim connector: deleted fl('M99 368V400','fl-dim',{np:0}). It drew nothing, and the page says the endpoint agent covers USB, print and clipboard 'throughout', so the DLP note should not be tied to cohort B only.",
+    "F6 (minor) us2 path not used: dropped {p:'us2'}. The flows are now us1, br1, eg-www and eg-saas, matching the Client/Socket steering story. On the page, clientless access appears only for third parties and BYOD.",
+    "F7 (minor) footnote stated the alternative as the rule: changed it to the page's headline line, 'One TLS inspection owner per cohort \u2014 never decrypt the same flow twice'."
+   ],
+   "rejected": [
+    "F4 (minor) dashed interim nodes render solid. Confirmed: style.css has no .x-nd.x-dash rule (kit-host.html has '.nd.dash{stroke-dasharray:5 4}'). The spec-level overlay was not applied. An R(...,'dash-r') overlay only dashes together with chip-r ('.x-chip-r.x-dash-r'), and any dashed overlay would sit on top of the solid .nd stroke, so the border would still read as solid. It would also double up once the kit rule is ported. cls:'dash' is left in place so it takes effect when the coordinator ports .nd.dash in port_css.js. The amber flows and pills already show the interim state."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-anyconnect",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "migration-anyconnect",
+   "applied": [
+    "title: set to 'AnyConnect concentrator hairpin versus Cato Client via the nearest PoP', which matches the page's existing <title> (usecases/migration-anyconnect.html line 153) and the map brief",
+    "IdP side box tied to Marcus's tunnel: added a non-animated fl-tun connector fl('M218 479C252 479 262 460 262 414', 'fl-tun', {np: 0}) from the right edge of the 'SAML SSO + MFA at IdP' box up into the green lane at y=410. It reads as a step on the way to the PoP and doesn't overlap the Marcus card or the PoP pin in either theme"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-directaccess",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-directaccess",
+   "applied": [
+    "major spotlight.flows: replaced {p:'r-CR'} with {p:'r-LC'}. The lit path now runs users -> SPACE -> left PoP -> SaaS. Kept us1, dc1 (rev) and eg-saas, and still left out us3 because the page never mentions browser or agent access.",
+    "major backbone block: added fl('M440 330V418','fl-tun',{np:0}) to tie the Nearest Cato PoP box to the backbone pin. Dropped the 'No NLS, PKI or IP-HTTPS gateway left to keep alive' caption from under the ring, since the DA gateway node, the step-2 text and the page already say it.",
+    "minor spotlight anchors: added anchors: {saas: [302, 310]} so the step-3 marker no longer covers the 'Smart egress - direct-to-cloud' subtitle (checked in both themes).",
+    "minor named-apps pill: moved it next to the PoP -> Datacentre apps curve (lx 392, ly 242) and relabelled it 'named apps \u00b7 backbone'. That is a shorter form of the finding's 'named apps \u00b7 over the backbone': the full text would be about 200 units wide and would overlap the curve and the datacentre site box. In the render the pill ends just left of the curve, clear of the site box.",
+    "minor diagrams[0].title: now uses the map title 'DirectAccess gateway hairpin versus Cato Client via the nearest PoP'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-versa",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-versa",
+   "applied": [
+    "Rollback lever: changed to fl('M210 300C250 300 234 430 258 430', 'fl-net fl-dim', {np: 0, arrow: 'arr-n'}). The arrowhead is now grey and the line is dashed grey, which matches the map's rule that a rollback lever is dashed grey with fl-dim and np:0. The legend's 'net' entry still covers it.",
+    "Title: restored to 'eBGP hub co-existence between Cato and a Versa MP-BGP overlay during migration'. This matches the page SVG <title> (dg1-title). The map's diagram has no title field.",
+    "Bristol tunnel: added s += fpin(236, fB - 2, 16, 'PoP') after the flows, so the migrated branch ends on a PoP and not on the bare backbone. pinTop is about 120 and x=236 is outside the popBox span (x 290-470), so the pin does not overlap the popBox. Checked in both the light and dark previews."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cloudflare",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "migration-cloudflare",
+   "applied": [
+    "Bristol interim (amber) leg now starts level with its 'Magic WAN IPsec \u2014 interim' sub-line: fl('M214 322C262 322 282 266 308 242', 'fl-ha', {dur: 1.8}). The Socket (green) leg moved down to M214 342C248 342 252 352 280 352 to widen the gap. In the preview both legs leave beside their own sub-lines and separate cleanly.",
+    "Tier labels now use the carry-over wording with em dashes: 'RETAINED \u2014 NOT PART OF THIS MIGRATION' and 'MIGRATION SCOPE \u2014 ZERO TRUST + WAN'. These match the page's current SVG. The em dash renders cleanly in the mono tier style in both light and dark."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-iboss",
+  "approach": "draw",
+  "findings": 1,
+  "fix": {
+   "id": "migration-iboss",
+   "applied": [
+    "Rollback rail class changed from 'fl-net' to 'fl-net fl-dim' (np:0, arrow:true kept). Plain 'fl-dim' is only an opacity modifier (.fl-dim{opacity:.4}) and the rail did not render in either theme. 'fl-net fl-dim' is the kit idiom used by migration-versa, migration-methodology and the journey specs, and the dashed grey rail is visible in both light and dark previews.",
+    "Legend entry text replaced with the map/page wording '\u27f2 Dashed \u2014 rollback rail back to PAC'. The key stays 'net' because 'dim' is not in build-diagrams.py LEGEND_KINDS and would fall back to a solid green 'flow' swatch; 'net' gives the dashed grey swatch that matches the line."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-checkpoint",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-checkpoint",
+   "applied": [
+    "major: Legacy cohort pill changed to pill(623, 534, 'via Check Point', 'y'). Page lines 77/111/462 confirm Harmony SASE is a separate stack outside the Quantum rulebase. The amber arrow to the Quantum gateway is kept.",
+    "minor: cloud label changed to 'Internet'. The page never says 'legacy WAN'; it calls this 'the existing internet path' (line 564).",
+    "minor: site tag shortened to 'BRANCH / DC SITE'. The Socket tunnel now starts at the Socket's top-right (sX 352, M270 254C270 228 320 sY+8 ...). The cohort tunnel is rerouted outside the site corner (M50 452C30 250 40 176 ...); the node was already at nd(14, 452, ...). In the preview neither line crosses the tag, and the cohort line stays left of the site's dashed edge.",
+    "minor: spotlight step 2 restored to the map's em-dash wording: 'A transit-VLAN handoff \u2014 static or eBGP, routes tagged community 32768 \u2014 moves subnets one prefix at a time.'",
+    "minor: title set to the map and page title: 'Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-edgeconnect",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-edgeconnect",
+   "applied": [
+    "spotlight.anchors: added backbone: [1074, 592]. In both themes the step-2 marker now sits under the '100+ PoPs \u00b7 99.999% SLA' ring text without covering it. It is also above the '6 Global private backbone' label and does not touch it, so the slide-right fallback was not needed.",
+    "spotlight.steps[1].t: restored the map wording exactly ('...inspected at the PoP, not chained.'). It matches map line 2328 and is backed by the page text 'unmigrated sites keep their EC\u2192SSE service chains untouched'.",
+    "main: moved the Glasgow-to-EC-hub fl-ha path down to 'M210 500H400Q420 500 420 480V460' and its pill to (310, 500). The vertical leg now crosses the dashed MANCHESTER HUB edge cleanly and the arrowhead lands on the EC hub inside the box. The path stays clear of the Glasgow node and the Orchestrator control-plane line in light and dark."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-symantec",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-symantec",
+   "applied": [
+    "spotlight.anchors {saas: [302, 310]} added with the comment 'step-3 marker clear of the \"Smart egress\" subtitle'. The step-3 marker now sits on the SaaS cloud, and 'Smart egress \u00b7 direct-to-cloud' reads in full in both themes.",
+    "spotlight.steps[2].t changed to 'One TLS inspection owner per cohort; Symantec DLP Endpoint and Discover stay for USB, print and data at rest.' This matches the page, which lists 'Symantec DLP Endpoint + Discover' as separate products and says 'USB/print/clipboard channels and data-at-rest scanning'.",
+    "Removed {p:'us2'} from spotlight.flows. The page never mentions clientless, browser or extension access, and cohort B uses the Cato Client with Always-On. Flows are now us1, br1, eg-www, eg-saas.",
+    "Deleted the invisible fl('M107 368V400','fl-dim',{np:0}) connector. The soft DLP hybrid node now stands on its own as a note.",
+    "Added pill(160, 80, 'interim', 'y keep') on Cohort A's top edge to match the 'EOL' pill on ProxySG. Kept cls:'dash' on both nodes. The pill renders cleanly in both themes with no overlap."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-sophos",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-sophos",
+   "applied": [
+    "major: Branch A tunnel rerouted (aX 270, path M84 440C84 280 160 ${aY+14} ${aX} ${aY-2}); in both previews it now stays left of the HQ site box and clear of the site tag and the Priya pill and flow",
+    "minor: title set to the map/page title 'Co-existence between a Sophos XGS/SD-RED estate and Cato during phased migration'",
+    "minor: added {p: 'dc1'} to spotlight.flows next to dc2, so the HQ Socket tunnel is lit along with the IPsec handoff (matches page line 374, 'Deploy the parallel Socket(s)')"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cisco-asa",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-cisco-asa",
+   "applied": [
+    "major/legibility: moved the Socket->PoP fl-tun uplink and its sX/sY consts before site(...). The tag-bg pill now covers the line and its particles where they cross the 'LONDON DC \u2014 PARALLEL DEPLOYMENT' tag. Checked in both themes.",
+    "minor/facts: replaced pill(712,252,'EOS','y') with pill(676,252,'out of support','y'), the page's own wording for the 5500-X family ('EOS' reads as end-of-sale, which the page uses only for Firepower 2100). The pill sits inside the viewBox on the ASA box's top border.",
+    "minor/title: title now matches the map entry and page SVG title exactly: 'Co-existence between a perimeter ASA estate and Cato during phased migration'."
+   ],
+   "rejected": [
+    "minor/legend fl-net: false positive. The spec draws the L3 handoff with 'fl-lan', a solid 2px grey line with no particles. Only the rollback uses 'fl-net', a dashed 3/5 grey line with an arrow. The rendered PNGs show the solid handoff and the dashed rollback clearly apart, so the 'net' legend swatch (dashed) matches only the rollback. The map brief allows a dashed grey rollback with np:0 and an arrow, and fl-net meets that. No change needed."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-sonicwall",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-sonicwall",
+   "applied": [
+    "major: moved 'Global private backbone' to T(200, 150, \u2026, 'end'), left of the ring. At x 212 the 'e' touched the ring's outer band, so it went a further 12 units left. Re-routed the HQ Socket to PoP tunnel to leave the Socket's right side: sX = 430, path M460 304C494 304 478 236 ${sX} ${sY - 2}. In both themes it now misses the PoP pin, the L3 handoff pill and the HQ site tag. The new tunnel brushed the left end of the 'IPsec IKEv2 on-ramp (interim)' label, so I moved that label from lx 560 / ly 244 to lx 586 / ly 248. It still sits on the amber on-ramp curve and clears the 'SSL-VPN portal retired' pill.",
+    "minor: changed the legend net entry to 'LAN handoff \u00b7 rollback \u2014 re-plug the TZ', so it covers both grey dashed fl-net lines. The README defines fl-net as LAN/underlay, so this fits the L3 handoff.",
+    "minor: moved the rollback caption up to sit just under the dashed arc, at T(378, 518, \u2026). At 380/520 it nearly touched the 'on Cato \u00b7 via nearest PoP' pill on the left, so I nudged it. Gaps checked in the preview: clear of the left pill, about 12 units to the 'migrates in a later wave' pill."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-journey-mpls",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "migration-journey-mpls",
+   "applied": [
+    "Finding 1 (DC lanes vanishing in Waves): changed `else if (ph === 2)` to `else if (ph < 4)` in draw(). The London DC MPLS lane and the AWS-via-DC lane now stay dormant through phase-3 (DCs on-net) and phase-4 (Waves), the same as the Bristol and Leeds lanes, and are removed with everything else at phase-5 (Retired). Checked in the phase-4 light and dark previews and in the phase-5 light preview.",
+    "Finding 2 (unreadable merged '1 \u00b7 2' pill), with a change to the suggested fix: step 2 now marks ['cloud'] only, so step 1 is the only step on 'dc'. The suggested ['cloud', 'backbone'] was tried first. Because step 4 also marks 'backbone', it produced a merged '2 \u00b7 4' pill on the backbone with the same unreadable near-black look in dark mode. With 'cloud' only, no two steps share an anchor and every marker is a single readable number (1 dc, 2 cloud, 3 branch and pop, 4 backbone). Checked in the spotlight light and dark previews."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-journey-sdwan",
+  "approach": "draw",
+  "findings": 1,
+  "fix": {
+   "id": "migration-journey-sdwan",
+   "applied": [
+    "Phase 5 (P.off branch): added a faint red stub where the eBGP handoff was, fl(handoff, 'fl-down fl-dim', {np: 0}). It runs between the Cato Socket and the decommissioned legacy hub and does not touch the 'overlay & controllers retired' label. Checked in both the light and dark previews.",
+    "Restored the fourth legend entry ['down', 'Retired & decommissioned'], so the legend again matches the page legend and the sibling journey specs."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-journey-firewall",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-journey-firewall",
+   "applied": [
+    "Finding 1 (major, STORY): step 1 marks changed from ['dc'] to ['backbone'], so the Frankfurt hub is no longer shown on the Data centre & HQ tile. The page says the hub is 'the regional interconnect, not the DC'. Step 2 marks changed from ['cloud','mgmt'] to ['dc','cloud'], so the London DC and AWS steps sit on their own components. hl, mods and flows are unchanged.",
+    "Finding 2 (major, LEGIBILITY): fixed by the step-2 change above. mgmt is no longer marked, so no marker lands on the CMA subtitle, and 'Terraform & API' reads in full in both themes. No anchors override was needed.",
+    "Finding 3 (minor, LEGIBILITY): step 3 marks changed from ['branch','pop'] to ['branch']. The SPACE pin now carries only marker 4 as a normal amber badge, and the dark theme has no combined '3 \u00b7 4' pill."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-journey-vpn",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "migration-journey-vpn",
+   "applied": [
+    "Legend 'net' entry changed to 'Legacy VPN, hand-off & hairpin (faded = dormant rollback)' to match the page wording (lines 348-349 of the page: 'Legacy full-tunnel VPN, hand-off & hairpin' / 'VPN tunnel dormant (rollback)'). It now covers the cohort tunnels, the headends-to-London DC hand-off and the phase-0 DC-to-Azure hairpin, which all use fl-net. The legend still has five entries."
+   ],
+   "rejected": [
+    "Spotlight two-step pills '1 \u00b7 4' (dc) and '2 \u00b7 3' (users) render dark and unreadable instead of amber. I confirmed this in migration-journey-vpn-spotlight-dark.png, where the single marks '1' and '3' render amber. The cause is in the kit/ported CSS, which is outside this task's edit scope (only the spec file may be changed). The spec's marks are correct, so I left them as they are. The coordinator should fix the g.mark pill rect/text fill in the kit CSS."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-journey-zscaler",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-journey-zscaler",
+   "applied": [
+    "major: edgeCls is now ['fl-net','fl-net','fl-net fl-dim','fl-net fl-dim',null]. Phase 1 (Rail first) draws the branch GRE/IPsec and Priya's ZCC lanes into ZIA as live grey fl-net (dur 2.4), the same as phase 0. This matches the brief ('Everything on the left unchanged') and the page ('users have not felt a thing').",
+    "major: 'ZCC inside the tunnel' moved to an amber pill(300, 40, \u2026, 'y') beside the branch-to-PoP Socket lane in phases 2\u20133. Priya's amber lane is relabelled 'ZCC side by side' (lx 318 / ly 346). Spotlight step 2 now reads 'Pilot: the branch Socket and Priya's Cato Client swing to the PoP; on-site, ZCC rides inside the tunnel.' (104 chars). This matches the carry-over fact and the page body: on-site ZCC rides inside the Socket tunnel, and when remote it runs alongside the Cato SDP client. In the preview the new pill is clear of the branch lane, the PoP sub pill and the ring.",
+    "minor: the ZS_LEGEND net entry now reads 'Legacy Zscaler: GRE/IPsec, ZCC, ZPA (live / dormant)', so it covers every grey lane. Rendered with no overflow warning.",
+    "minor: phase 3 (Waves) now draws the branch and Priya lanes into ZIA as dormant 'fl-net fl-dim' with {np: 0} (the edge option is now n >= 2 ? {np:0} : {dur:2.4}). Every ZIA lane is visibly dormant in Waves and disappears only in phase 4.",
+    "minor: the Internet & SaaS node is now cls: n >= 3 ? 'pop' : 'soft', matching icls. It turns mint when its sub becomes 'egress via Cato'. It stays soft during the pilot because pilot egress is not the whole fleet."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-zscaler-policy",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-zscaler-policy",
+   "applied": [
+    "Finding 1 (legend): I checked the page. The amber fl-ha line is drawn only on the DEPLOY\u2192ENFORCE promotion link, and the flow lines include the four domain fan-in lines into EXPORT. Changed the legend to ['flow', 'Policy flow \u2014 exported, then only survivors are mapped'] and ['ha', 'Promotion \u2014 monitor to block, per rule, on event evidence']. The main PNG has no legend, and the preview printed no warnings.",
+    "Finding 2 (spec-side part only): moved the mgmt anchor from [782,132] to [782,138], not the suggested 135. In the crop at 135 the halo still touched the top edge of the frame. At 138 the halo clears the frame top in both themes, stays on the CMA box's top edge, and stays clear of the 'Terraform & API' subtitle.",
+    "Finding 3 (EDM pill): the page says EDM/IDM indexes do not export and EDM is rebuilt from source. Changed the pill to pill(630, 138, 'EDM / IDM do not export \u00b7 EDM rebuilt', 'y'). It fits inside the 760 viewBox, still sits on the ZIA DLP drop line above the bus, and the preview printed no overflow warning."
+   ],
+   "rejected": [
+    "Finding 2 (kit part): not fixed, because the near-black two-step '1 \u00b7 2' and '3 \u00b7 4' markers in the dark theme are styled in the kit (make-kit-host.py / glue.css). I may only edit this spec. In the dark spotlight PNG both pills are still hard to read. The coordinator needs to style '.mark rect' the same way as '.mark circle'."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-palo-alto-policy",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "migration-palo-alto-policy",
+   "applied": [
+    "Spotlight: added anchors {mgmt: [782, 132]} (same as demo-ztna). The shared '1 \u00b7 2' pill now sits on the CMA box's top edge, and 'Terraform & API' is readable in both themes.",
+    "Main diagram, WHAT DOES NOT CARRY OVER, TLS Inspection sub-line changed to 'rebuilt, not ported \u00b7 Android not by default'. This matches the page's 'decryption is rebuilt, not ported' and keeps the Android certificate-pinning fact. It fits without overflow.",
+    "Spotlight step 2 now names all three placements the page gives (mapping-table row 'Intra-site zone rules on one PA -> Socket LAN Firewall', and line 376): 'Zones become rule placement: internet-bound rules on the Internet Firewall, east-west on the WAN Firewall, local flows on the Socket LAN Firewall.'",
+    "MAP TO CMA sub-lines now include the LAN firewall. The suggested 'WAN \u00b7 Internet \u00b7 LAN FW' raised no WARN, but in the preview it ran into the box edges, so the text is split over three lines: 'WAN \u00b7 Internet \u00b7 LAN' / 'firewalls \u00b7 CASB' / 'DLP \u00b7 TLSi'. These fit inside the box in light and dark."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-netskope-policy",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "migration-netskope-policy",
+   "applied": [
+    "major (dark-theme combined markers): confirmed in spotlight-dark.png. The '1 \u00b7 2' and '3 \u00b7 4' pills were nearly invisible because the kit fills the pill <rect> with no fill rule. The CSS fix is at kit level and outside this spec, so the coordinator should still add `.x-mark rect{fill: var(--x-amber);}`. As a spec-only workaround I gave each step its own circle using custom anchors: anchors {mgmt:[764,132], mgmt2:[800,132], pop:[856,334], pop4:[892,334]}. Step 2 now marks ['mgmt2'] and step 4 marks ['pop4']. Re-previewed: amber circles 1 and 2 sit on the CMA top edge, and 3 and 4 sit beside the 'Cato PoP' label clear of it. All are readable in light and dark.",
+    "minor (legend): the first legend entry was ['flow', 'Policy pipeline \u2014 export, review and map']. It now reads ['flow', 'Policy pipeline and evidence loop \u2014 export, map, prove'], so it also covers the dimmed fl-flow drops to 'Events & hit counts' and the OPTIMISE loop."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cisco-policy",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-cisco-policy",
+   "applied": [
+    "major/spotlight: added anchors: {mgmt: [782, 132]} after steps. The '1 \u00b7 2' pill now sits on the CMA box's top edge, and the subtitle reads in full through 'Terraform & API' in both themes.",
+    "minor/main pill: changed the wording from 'amber \u2192 green' to 'monitor \u2192 block', which matches the page's 'Monitor, then block' wording. The suggested (603, 262) would have covered 'no blocking' and 'rule by rule': the node boxes run to y=272 and the gap between DEPLOY and ENFORCE is only 22 units wide. So the CMA popBox height went from 142 to 162 and the pill moved to (603, 287). It now sits directly under the DEPLOY\u2192ENFORCE arrow, inside the CMA box, above the evidence-drop dots and clear of both dashed drops (x=528 and x=678).",
+    "minor/tier labels: '2 \u00b7 REVIEW & MAP' became '2 \u00b7 REVIEW' over RATIONALISE, and '2 \u00b7 MAP' was added over MAP TO CMA (X[2]). Phase 2 now visibly covers both boxes, and the four-phase naming EXPORT \u2192 REVIEW & MAP \u2192 DEPLOY \u2192 OPTIMISE is kept."
+   ],
+   "rejected": [
+    "minor/dark combined step pills: no change in this spec, as the finding itself says. This is a kit-wide styling issue in glue.css: in dark mode the combined step markers ('1 \u00b7 2', '3 \u00b7 4') show dark text on a dark fill with low contrast. migration-edgeconnect-policy and this spec show the same thing. Flagged to the coordinator."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-fortinet-policy",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-fortinet-policy",
+   "applied": [
+    "F2 (major): added anchors: {mgmt: [782, 132]} to spotlight. The '1 \u00b7 2' pill now sits on the CMA card's top edge, so 'Terraform & API' is no longer covered and the pill is clear of the XOps '9'. Checked in both previews.",
+    "F3 (minor): the footnote now reads 'execute backup full-config exports flat text \u00b7 objects first via GraphQL API or Terraform, then rules'. This matches page lines 104, 555 and 693 (flat-text config, objects before rules). The 'Export:' prefix is gone and the line fits the 760 width.",
+    "F4 (minor): moved the amber pill to pill(640, 210) and shortened the tier label to '3 \u00b7 DEPLOY'. pill(603, 212) would have overlapped the tier label even in its shortened form, so I shifted the pill to x=640. It now sits above DEPLOY\u2192ENFORCE, clear of the tier label, the ENFORCE ok mark and the fan-in bus. The two evidence lines visibly start at the DEPLOY and ENFORCE boxes. The DEPLOY box still says 'monitor action', so the meaning of 'monitor-first' is kept."
+   ],
+   "rejected": [
+    "F1 (major) is real but it is a kit bug, so it does not belong in this spec. The 2026-10-31 previews still draw the grouped '1 \u00b7 2' and '3 \u00b7 4' pills black in both themes, and in dark they can't be read. The cause is the unclassed filled <rect> in the grouped-marker branch of kit-host.html mountSpec (around line 3365) and/or the exported SVG CSS. kit-host.html line 243 already has '.mark circle,.mark rect{fill:var(--amber)}', so the export path is not picking it up. I am only allowed to edit the spec, and the finding itself says no spec change is needed once the kit is fixed. The spec-only workaround would be extra anchors per step, repeated in every *-policy sibling, so I left it out to keep the siblings consistent. The coordinator needs to fix the kit and then re-preview."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-forcepoint-policy",
+  "approach": "draw",
+  "findings": 8,
+  "fix": {
+   "id": "migration-forcepoint-policy",
+   "applied": [
+    "F1 (major) step 2 now reads 'Survivors map to CMA rulebases; structured fingerprints rebuilt as EDM, ML redesigned or retained.' The page limits EDM to structured fingerprints.",
+    "F2 first footnote changed to '... \u00b7 unstructured & ML \u2192 redesign or retain'. I kept the existing opener 'data types map directly' instead of the suggested 'classifiers map directly', because ML classifiers do not map directly. The page's bucket is 'predefined, regex, dictionary \u2192 Cato data types'.",
+    "F3 the Hybrid side() sub is now 'USB \u00b7 print \u00b7 clipboard \u00b7 Cato posture-checks it'. I removed 'posture check requires the agent' from the second footnote.",
+    "F3/carry the second footnote now reads 'Quota has no time-based equivalent \u00b7 OCR is not supported with EDM profiles', matching the page's wording.",
+    "F4 the Discarded sub changed from 'untriaged DLP policies' to 'DLP: no triaged incident'.",
+    "F5 the DEPLOY subs are now ['monitor mode', 'log only'], and step 3 ends 'monitor-first and log-only.'",
+    "F6 the pill '4 heritages \u2192 1 CMA rulebase' moved to pill(600, 30), into the empty right side of the tier row. It no longer covers the Forcepoint ONE drop line.",
+    "F7 the pill relabelled to 'Web: Confirm \u2192 Prompt'."
+   ],
+   "rejected": [
+    "F8 is not a problem in this spec. The dark-theme contrast of the combined step pill ('1 \u00b7 2' / '3 \u00b7 4') and the mgmt pill covering 'Terraform & API' both come from the kit's multi-step badge styling, so the coordinator needs to fix them in the kit."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-checkpoint-policy",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-checkpoint-policy",
+   "applied": [
+    "EXPORT sub-line 'mgmt_cli \u00b7 Web API' -> 'mgmt_cli \u00b7 Mgmt API' (page only says Management API)",
+    "DEPLOY sub-lines -> ['monitor mode first', 'log, don't block'] and spotlight step 3 -> 'The PoP applies the converted rules to every site and user, monitor-first: log, don't block.' (page wording)",
+    "First domain box -> ['Access + NAT', 'ordered \u00b7 inline layers', 'firewall'] so NAT no longer reads as a layer kind; used 'Access + NAT' instead of the suggested 'Access layers + NAT' because the longer title ran against the right edge of the 168-wide box in the preview",
+    "Legend fl-net entry -> 'Events and hit counts \u2014 the OPTIMISE evidence loop' to match the drawn loop back to RATIONALISE",
+    "Fan-in bus pill removed (a centred pill(192,102) still covered the x=98 and x=286 drops); text moved to a right-aligned line T(746,20,'same pipeline per domain \u00b7 offset in time','f-s','end') on the tier-label row, so all four drops visibly meet the bus in both themes"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cisco-asa-policy",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-cisco-asa-policy",
+   "applied": [
+    "DEPLOY node sub changed to ['allow-and-track', 'log only'] to match the page's own figure. Spotlight step 3 now reads 'The PoP applies the converted rules to every site and user, monitor-first: logged, not blocked.' I checked: 'no user impact' does not appear on the page.",
+    "Spotlight step 1 reworded to 'ACLs export with hitcnt over a 30\u201390 day window and NAT via show nat detail; DAP has no export path and is restated from intent.' I checked: on the page, hitcnt and the counting window apply only to ACLs, NAT comes from show nat detail, and DAP has no export path.",
+    "Added anchors: {mgmt: [782, 132]} to the spotlight block. The merged '1 \u00b7 2' marker now sits on the top edge of the CMA box and no longer covers 'Terraform & API' in the light theme. Same fix as demo-ztna."
+   ],
+   "rejected": [
+    "Finding 4 (dark-theme merged-step pill styling): not applied here because it is a kit-wide fix in kit-host.html, outside the one spec file I may edit. The finding itself is correct: in the dark spotlight PNG, the '1 \u00b7 2' and '3 \u00b7 4' pills still render as dark chips with dark text and are hard to read. The coordinator needs to fix this in the kit."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-cloudflare-policy",
+  "approach": "draw",
+  "findings": 8,
+  "fix": {
+   "id": "migration-cloudflare-policy",
+   "applied": [
+    "F1 (major) phase boundaries: the phase-3 tier is now '3 \u00b7 DEPLOY' and a new tier(614,216,'4 \u00b7 OPTIMISE') sits above ENFORCE. The return loop label is now 'prune rules that never fire' (lcls 'm' kept; it fits with no overflow). The page says 'OPTIMISE, flipping monitor to enforce on event evidence' and 'If a rule never fires on either platform, it should not have been migrated.'",
+    "F2 step 1 reworded to 'Gateway, Magic Firewall and DLP rules export to HCL with hit counts; CASB findings are recorded in discovery; dead rules are discarded.' The page says cf-terraforming covers Gateway and Magic Firewall, and the sanctioned-app register and findings backlog are recorded in discovery.",
+    "F3 step 2: 'TLS rules' changed to 'TLS inspection exceptions'. The page maps Do-Not-Inspect lists to TLS Inspection exceptions.",
+    "F4 pill text changed to 'monitor \u2192 block on evidence' (page: 'Flip to enforce per rule when the events prove the rule...'). I did not add a warn mark, to keep DEPLOY uncluttered. KIT ISSUE for the coordinator: nd cls:'dash' renders a solid stroke in both themes (DEPLOY and Discarded).",
+    "F5 legend 'flow' entry changed to 'Policy pipeline \u2014 export \u2192 rationalise \u2192 map \u2192 deploy'.",
+    "F6 fan-in: the bus drop now runs on x=100. FW path is 'M100 110V226' with the arrow; the other three domains use `M${cx} 110V156Q${cx} 166 ${cx-10} 166H110Q100 166 100 176`. The duplicate fl('M110 176V226') is removed. The double kink is gone and the arrow lands on EXPORT.",
+    "F7 footnote changed to 'Out of scope \u2014 stays on Cloudflare: WAF, CDN and redirect rules \u00b7 authoritative DNS'. It fits inside the 760 width.",
+    "F8 added anchors {mgmt: [782, 132]}, so the '1 \u00b7 2' marker now sits on the top-right corner of the CMA card, clear of the 'Terraform & API' sub-line. KIT BUG for the coordinator: in dark theme the combined step markers ('1 \u00b7 2', '3 \u00b7 4') render near-black and low-contrast on the dark canvas, while single-number markers are fine."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-edgeconnect-policy",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-edgeconnect-policy",
+   "applied": [
+    "spotlight.steps[1].t: now reads 'Up to seven overlays collapse into three or four intents, then map to network rules, bandwidth and firewall.' (108 characters). The page has both 'seven overlays are usually three or four genuine intents' and 'network rules for steering, bandwidth profiles for priority', so the intents and the CMA constructs are now separate ideas.",
+    "Domain title changed from 'Intent overlays \u00d77' to 'Intent overlays \u2014 up to 7'. It fits the 172-wide box with no overflow warning. CLEAN-UP sub-line changed to '\u2264 7 BIOs \u2192 3\u20134 intents'. Both now match the page's 'up to seven Business Intent Overlays'.",
+    "spotlight.mods changed to ['sdwan', 'sse']. SD-WAN is now lit in both themes, which fits the overlay to network rule and bandwidth profile mapping."
+   ],
+   "rejected": [
+    "Dark-mode '1 \u00b7 2' and '3 \u00b7 4' combined-step pills: the problem is real (the dark spotlight PNG shows them as dim grey pills) but nothing in this spec can fix it. The finding itself says to make no spec change. It belongs to the coordinator, in the kit's combined-marker style or in glue.css."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-iboss-policy",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "migration-iboss-policy",
+   "applied": [
+    "Discarded node sub-line changed from 'zero-hit \u00b7 duplicate \u00b7 stale' to 'zero-hit \u00b7 disabled \u00b7 duplicate'. The prose (line 140) says 'dead, disabled and duplicate'. 'stale' appears only in the old inline diagram that this spec replaces. The new line fits the 168-wide box.",
+    "DEPLOY node sub-line changed from 'no user impact' to 'track events \u00b7 no blocks', which matches the page's 'tracking events with no block action' and the legend. It fits the 128-wide box with no overflow WARN.",
+    "TLSi pill reworded to 'PAC + SSL bypass lists seed TLS bypass rules' and moved from pill(600,192) to pill(378,192), centred over MAP TO CMA, which matches the page's mapping 'SSL decryption scope + bypass lists -> TLS Inspection policy + bypass rules'. The preview shows it clear of the y166 bus and the y216 tier labels '2 \u00b7 REVIEW & MAP' and '3 \u00b7 DEPLOY'."
+   ],
+   "rejected": [
+    "Combined step-marker pills ('1 \u00b7 2', '3 \u00b7 4') are hard to read in the dark spotlight theme. This is a kit-level CSS issue in glue.css or kit-host, not a spec defect, and the finding itself says no spec change is needed. Left for the coordinator, since this worker may only edit specs/migration-iboss-policy.js."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-sonicwall-policy",
+  "approach": "draw",
+  "findings": 6,
+  "fix": {
+   "id": "migration-sonicwall-policy",
+   "applied": [
+    "Rule-zero footnote split into two lines: 'Rule zero: CVE-2024-40766 (CVSS 9.3 \u00b7 CISA KEV 9 Sep 2024) \u00b7 MySonicWall cloud-backup breach (every user, 8 Oct 2025)' and 'Essential Credential Reset: local users \u00b7 TOTP bindings \u00b7 IPsec keys'. The page confirms CVSS 9.3, KEV 9 Sep 2024, 100% of cloud-backup users and 8 Oct 2025.",
+    "Licence/DPI-SSL footnote split into 'CGSS/AGSS \u00b7 EPSS/APSS licence bundles decide today's per-box protections' and 'DPI-SSL was rationed by connection limits, so Cato TLSi is often the first full inspection', using the page's word 'rationed'. The five footnotes now sit at y 494/508/522/536/550, and the OPTIMISE return lane and label moved from y 470 to y 462.",
+    "spotlight.steps[0] now reads 'Access rules, NAT, CFS/App Control and security services export via TSR, API or NSM; counters cleared at discovery cull dead access rules after 30 days.' The page confirms the Rx/Tx counters exist only on Access Rules and are cleared, then re-read after 30 days.",
+    "The 'classic or policy mode' pill moved from x 640 (above CASB/DLP) to x 270, next to the tier label over the Access rules column. The page ties classic/policy mode to the access-rule model.",
+    "The 'ha' legend entry now reads 'Monitor first \u2014 incl. greenfield CASB/DLP discovery inputs', so it covers the amber greenfield lane.",
+    "Spotlight markers: added an anchors override so the steps 1-2 marker sits on the CMA box's top edge, clear of the 'Terraform & API' sub-line. I went further than the finding: the spec now uses the per-step anchor workaround already in migration-netskope-policy.js. Steps 2 and 4 now mark 'mgmt2' and 'pop4', with anchors {mgmt:[764,132], mgmt2:[800,132], pop:[856,334], pop4:[892,334]}. Each step gets its own circle instead of a shared '1 \u00b7 2' / '3 \u00b7 4' pill, and the dark theme renders those circles readably. KIT-WIDE ISSUE FOR THE COORDINATOR: when two steps share an anchor, the kit draws a pill that the dark-theme CSS leaves unfilled (near-black with unreadable text). Fix it in kit-host.html, or apply the same per-step-anchor workaround to the other specs that share an anchor, e.g. migration-edgeconnect-policy, migration-cisco-policy, migration-cisco-asa-policy, migration-iboss-policy and migration-cloudflare-policy."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-sophos-policy",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-sophos-policy",
+   "applied": [
+    "F1 (major): added anchors: {mgmt: [782, 132]} to the spotlight block. The '1 \u00b7 2' pill now sits on the CMA box's top edge, and the subtitle 'Terraform & API' shows in full. KIT ISSUE FOR THE COORDINATOR: in the dark theme, two-step pills ('1 \u00b7 2' on mgmt and '3 \u00b7 4' on pop) still render as a dark chip that is almost unreadable. This comes from the kit and the spec cannot fix it.",
+    "F2: changed the MAP TO CMA sub-line to ['FW \u00b7 SWG \u00b7 TLS rules', 'policies \u2192 layers']. Checked against the page: CASB and DLP 'have no real SFOS ancestor, so they are built greenfield'.",
+    "F3: changed the NAT sub-line to 'masquerade dissolves \u00b7 DNAT \u2192 remote port forwarding' (page: 'the published service moves to remote port forwarding'; map carry fact agrees). Changed the TLS heading to 'XGS 4.8\u20135\u00d7 TLS sizing' (page: 'XGS marketing leads with 4.8\u20135\u00d7 TLS-inspection throughput gains'). Both fit their columns.",
+    "F4: changed the loop label to 'OPTIMISE loop', which matches the map brief, and removed 'phase 4' from the code comment.",
+    "F5: changed the pipeline geometry to W = 124 and X = [14, 160, 306, 452, 598], which makes the gaps 22 units. The amber DEPLOY \u2192 ENFORCE segment is now visible in both themes. All the attached lanes (greenfield arrows into DEPLOY, evidence drops, OPTIMISE return into RATIONALISE, discard branch) still land inside their boxes. 'dedupe per-box objects' still fits."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-symantec-policy",
+  "approach": "draw",
+  "findings": 5,
+  "fix": {
+   "id": "migration-symantec-policy",
+   "applied": [
+    "major: added anchors {mgmt: [782, 132]} to the spotlight. The '1 \u00b7 2' pill now sits on the CMA box's top edge, and 'Terraform & API' is fully readable in both themes.",
+    "minor: reworded step 1 to 'Policy exports with Reporter hits and DLP incident history; every layer is triaged: intent, plumbing or dead.' (109 chars). Checked against the page: Reporter and access-log hit data are the evidence for CPL, and Enforce incident history is the evidence for DLP.",
+    "minor: moved the '4 consoles \u2192 1 CMA rulebase' pill to (250, 192). It now sits in the band under the fan-in bus, clear of the EXPORT arrow at x 110 and above the '2 \u00b7 REVIEW & MAP' label.",
+    "minor: moved the 'IWA / BCAAA \u2192 SCIM' pill to x 378, in line with the 'coach \u2192 Prompt' pill and the MAP TO CMA box."
+   ],
+   "rejected": [
+    "minor (dark-theme combined '1 \u00b7 2' / '3 \u00b7 4' pills hard to read): the finding is right, and the dark preview still shows the problem, but it comes from the kit's glue.css combined-marker style and not from this spec. Nothing in migration-symantec-policy.js can fix it. The coordinator should fix it in glue.css for all *-policy specs."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "migration-versa-policy",
+  "approach": "draw",
+  "findings": 6,
+  "fix": {
+   "id": "migration-versa-policy",
+   "applied": [
+    "DEPLOY sub-line 'no user impact' -> \"watch, don't block\" (page wording); step 3 now ends 'monitor-first: watch, don't block.'",
+    "ENFORCE sub-line 'one rule at a time' -> 'on event evidence'",
+    "Spotlight markers de-duplicated (spec-only workaround): step 1 -> branch, step 2 -> mgmt, step 3 -> users, step 4 -> pop; no combined pills, all four circles legible in both themes. The kit CSS fix (.x-mark rect fill) is still open for the coordinator, outside this spec.",
+    "Step 3 now starts 'Cato applies the converted rules...' (89 chars), which avoids saying the PoP enforces LAN rules",
+    "Evidence lines moved off the pill: origins M496 274 and M716 274; both dashed lines now visibly leave the DEPLOY and ENFORCE boxes",
+    "MAP TO CMA sub-line 'objects via API \u00b7 TF' -> 'API \u00b7 Terraform'"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-sdwan",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "network-sdwan",
+   "applied": [
+    "Legacy MPLS node wrapped in inline <g style=\"stroke-dasharray:5 4\"> group, so it now renders dashed in both themes",
+    "Broadband and 4G/LTE tunnels both start at the X1600's right edge (M194 222 / M194 236); broadband pill moved to lx 250, ly 206, above its line",
+    "Backbone stack moved up: heading at y82, 'full mesh of PoPs \u00b7 Tier-1 carrier diversity' at y98, 'TCP acceleration \u00b7 packet-loss mitigation' at y114; y304 line deleted",
+    "steps[2].t reworded to 'Traffic crosses the global private backbone: Tier-1 carrier diversity, 99.999 % uptime SLA between PoPs.'",
+    "Added anchors.cloud override. The suggested [1290, 212] put the marker in empty space by the top-right box edge because the spotlight render is cropped vertically, so I used [1288, 318]: just left of the AWS cloud, above the cl-aws flow, and well clear of the '4' badge on Public & private cloud",
+    "diagrams[0].title set to the map/page title 'Glasgow branch on-net over dual last miles and the Cato global private backbone'"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-agility-mna",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "network-agility-mna",
+   "applied": [
+    "major: steps no longer share an anchor. Step 2 is now marks ['branch','popL'] and step 4 is ['pop'] (SPACE); step 1 keeps ['mgmt'] alone. The spotlight preview now shows single amber circle markers 1, 2, 2, 3, 3 and 4 with no merged pill, readable in light and dark. KIT BUG for the coordinator (confirmed): assets/css/style.css has '.x-mark circle{fill:var(--x-amber)}' but no '.x-mark rect' rule, so any page with two steps on one anchor draws its merged 'n \u00b7 m' pill unstyled (black in light, near-invisible in dark). Add '.x-mark rect{fill:var(--x-amber)}' or make port_css.js keep it.",
+    "minor: Sheffield Plant and Aberdeen Depot changed from cls 'dash' to cls 'soft'. Confirmed that style.css has only the .x-nd.x-soft/.x-pop/.x-hot modifiers. The soft tinted fill now sets the two shipped sites apart from the green-bordered live Leeds node in both themes.",
+    "minor: diagrams[0].title set to 'M&A onboarding: acquired sites deployed through the Cato API onto the global backbone', which matches the map entry and the page's current SVG <title id=\"dg1-title\">."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-mpls-migration",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "network-mpls-migration",
+   "applied": [
+    "block: London DC rebuilt on one DC LAN bus. Socket, firewall and MPLS CE moved to x=296, w=200 and hang off the fl-lan bus at x=278. The firewall-path fl-lan and fl-hot verticals are gone. The transit leg now runs down the left of the bus (M296 270H270V444H296) and skips the firewall. CE to MPLS lines now start at x=496. The socket sub-label still fits. The page confirms this: 'reached via the DC LAN and the existing MPLS CE router', 'next hop = MPLS CE on the DC LAN', and the asymmetric-routing fix says 'not through the firewall'.",
+    "major: desc rewritten as suggested (transits the London DC socket and, across the DC LAN, the MPLS CE router).",
+    "minor: title is now 'MPLS co-existence: Bristol on Cato, Leeds on MPLS, London DC bridging both'.",
+    "minor: the hot CE to MPLS leg is labelled 'to Leeds' (lx 540, ly 478).",
+    "minor (legend/LAN): kept the 'DC LAN \u00b7 one L3 segment' text at 380,508 under the bus column as the bus label. No legend change, because the build has no 'lan' legend kind."
+   ],
+   "rejected": [
+    "minor (spotlight dark merged markers): no spec change. This is a kit/glue.css dark-theme contrast problem: in the dark spotlight PNG the merged '1 \u00b7 2' and '2 \u00b7 4' pills are dark text on a dark fill. The coordinator should fix it in glue.css. Changing step 4 to ['backbone'] would only move the merge to '3 \u00b7 4' on backbone, because step 3 already marks backbone, so it would not reduce merging."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-cloud-datacenter",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "network-cloud-datacenter",
+   "applied": [
+    "major: moved the 'same policy \u00b7 same visibility' pill to pill(330, 432, ...). It now sits clear of the 'L2 cross-connect' label and the fl-priv line in both themes",
+    "minor: changed the legend to ['tun', 'Socket / vSocket tunnels \u00b7 DTLS'] so it also covers the physical Socket X1600/X1500 tunnels drawn in fl-tun",
+    "minor: changed the title to the map/page SVG title 'Cloud datacentres connected to the Cato WAN by vSocket, IPsec and cross-connect'",
+    "minor: moved spotlight anchors.cloud to [1470, 468]. Step 4's marker now sits among the lit clouds, right of GCP and below Azure, and clears the shapes and lanes",
+    "minor: changed spotlight flow dc1 from rev: true to {p: 'dc1'}. In the README, dc1 runs DC -> SPACE and rev reverses it, so the lane now runs DC to PoP as the main figure and story do",
+    "minor: widened the boxes to BX = 560, BW = 190. The notes and titles now have room before the cloud glyph and the box edge, and the flow end points follow BX"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-global-app-performance",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "network-global-app-performance",
+   "applied": [
+    "major: moved the SYD -> LDN latency pill off the London PoP-to-London DC curve. Used pill(362, 142, ...) instead of the suggested 372, which left only a few pixels of gap. The pill now ends clearly before the green tunnel in both themes and stays above the 'Sydney PoP' title.",
+    "minor: added spotlight anchors: {saas: [302, 310]} with the comment '// step-4 marker clear of the 'Smart egress' subtitle'. The '4' marker no longer covers 'direct-to-cloud' in either theme.",
+    "minor: set diagrams[0].title to 'Sydney to London application traffic over the Cato global private backbone' to match the map entry."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-cloud-connectivity",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "network-cloud-connectivity",
+   "applied": [
+    "major: the three faint Azure/AWS/GCP to Cloud Interconnect curves changed from 'fl-priv fl-dim' to 'fl-flow fl-dim' (np:0). They now render as thin faint lines in both themes, and OCI to Cloud Interconnect (FastConnect) is the only heavy private-link line on the left.",
+    "minor: spotlight anchor override added, anchors: {cloud: [1500, 470]}. The suggested [1480, 352] was tried first, but it put the '1 \u00b7 2' pill right on top of the Azure cloud next to the cl-az line. At [1500, 470] the pill sits in the clear gap right of GCP, between Azure and Private, touches no flow line, and leaves the '4' component badge uncovered in both themes.",
+    "minor: diagrams[0].title now uses the map title: 'Azure, AWS, GCP and OCI reaching the Cato backbone via vSocket, IPsec or Cloud Interconnect'.",
+    "minor: the FastConnect label moved from lx 232 to lx 242. The pill now sits clearly in the gap between the OCI tile and the Cloud Interconnect box."
+   ],
+   "rejected": [
+    "minor (kit-wide): the dark-theme combined step-marker pills ('1 \u00b7 2', '2 \u00b7 3') are unreadable. Confirmed in the dark spotlight PNG, but the cause is the .mark styling in the kit (glue.css/kit-host), and this task may only edit this spec, so nothing was changed here. The coordinator should fix the dark combined-marker fill and text colour kit-wide."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-cloud-interconnect",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "network-cloud-interconnect",
+   "applied": [
+    "steps[3].t -> 'The interconnect site is just a site: same policy, visibility and backbone routing as every other site.' (matches page lead line 39 and line 267 'every other site'); marks kept ['backbone','branch','users']",
+    "steps[1].t -> 'A private datacentre or colo cage joins by physical cross-connect or the same fabric; no socket, no tunnel.' (page line 145: 'cross-connect or the exchange fabric into the nearest Cato PoP'; stat tile line 224 lists them as two patterns)",
+    "Contrast lane softened: tier 'TODAY \u00b7 THE PATH THIS REPLACES' -> 'TODAY \u00b7 TUNNEL OVER THE INTERNET'; legend ha -> 'IPsec over the internet \u2014 today's path, kept as fallback'; desc '... replacing IPsec over the public internet' -> '... moving these flows off IPsec over the public internet'; code comment updated. Page line 79 says the interconnect complements the tunnel story and does not replace it, and lines 410/538 keep the IPsec tunnel as the fallback/failover. Amber fl-ha lane unchanged"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-ipsec-asa",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "network-ipsec-asa",
+   "applied": [
+    "spotlight anchors.cloud moved to [1446, 306]: the step-4 marker now sits right of the AWS cloud, clear of the 'AWS' label, the subtitle and the Azure cloud.",
+    "spotlight anchors.saas [302, 310] added: the step-4 marker no longer covers the 'Smart egress \u00b7 direct-to-cloud' subtitle.",
+    "spotlight anchors.backbone [1077, 586] added (optional part of finding 7): the step-4 halo is now clear of the '99.999% SLA' ring text.",
+    "PoP labels moved down and inwards (primary at LX+8, secondary at MX-14, y 268/282/296). Moving them in as suggested made the two headings collide ('...London PoP Secondary \u2014 Manchester...'). To fix that, the headings became 'Primary PoP' and 'Secondary PoP', and 'London \u00b7 allocated IP' and 'Manchester \u00b7 allocated IP' became the subtitles. The carry-over facts are kept (London primary, Manchester secondary, both allocated IPs). Both groups now sit clear of the tube and of each other in both themes.",
+    "feed() rewritten as feed(x0, y0, y): London DC is fed from (520, by(RG,520)), AWS from (RX-4, RG.cy) and SaaS from (520, fy(RG,520)), with controls C(x0+16,y0) (BX-16,y) (BX-2,y). The control x values now increase, so the S-hook is gone and the three feeds fan out.",
+    "Added a legend entry ['flow', 'Secure internet egress at the PoP'] so the fl-flow egress line has one.",
+    "Changed the title to 'Cisco ASA site connected to Cato over dual IPsec tunnels' to match the map entry and the page's SVG <title>."
+   ],
+   "rejected": [
+    "Step 3 marked on 'popR' (optional part of finding 7). The page does support it (line 599: 'routes fail over to the secondary tunnel at the alternate PoP'), but it merges with step 2 into a '2 \u00b7 3' pill. In this render pipeline that pill draws as a black rectangle instead of amber: white text in light, and almost unreadable dark-amber text on black in dark. The kit CSS sets '.mark rect{fill:amber}', but the fill is not applied, and the kit is outside the one file I may edit. So step 3 stays on the central 'pop' (SPACE) pin, which shows as a clean amber '3'."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-global-expansion",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "network-global-expansion",
+   "applied": [
+    "spotlight: added anchors {backbone: [1172, 566]}. The step-1 marker now sits on the ring to the right of the '99.999% SLA' text, clear of it in both themes, so 'backbone' stays in step 1's marks",
+    "pin(): the London sub-line 'FWaaS \u00b7 IPS \u00b7 ZTNA \u00b7 WAN opt.' is drawn 14 units right of the pin (x + 14 for LON only). The 'F' no longer touches the ring's inner stroke. LON stays at 170, so the DC flow and the hot-arc start are unchanged",
+    "Shanghai fl-priv now ends on the ring front at x=235, between the London and Madrid pins and away from both: M102 446C102 400 235 372 235 fy(RG,235)+6. The 'licensed local partner' pill moved to lx 214 / ly 386 and 'in-country presence' to (214, 408). Both sit on the line and clear the Shanghai node. China no longer appears to land on the London PoP, as the carry-over facts require",
+    "Removed tier(14, 14, 'CATO GLOBAL PRIVATE BACKBONE'). It repeated the ring heading and mislabelled the sites row",
+    "diagrams[0].title changed to the map's planned title, 'A growing global footprint joining the Cato backbone through nearest PoPs', which matches the page's <title id=dg1-title>"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "network-resilient-site-design",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "network-resilient-site-design",
+   "applied": [
+    "major: ring pulled in to rx 200 with P1=270 and P2=490. The PoP labels now sit outside the ring tube: PoP 1 is end-anchored at x 162 and PoP 2 starts at x 598, about 10 units further out than suggested because at 172/588 they still touched the tube's outer stroke. The xmark stays at (198,184), which the preview shows is still on the re-routed ISP A curve.",
+    "major: mirrored cabling is now on the diagram. The frame tagline reads 'HA pair \u00b7 both Sockets cabled to every ISP + LTE' and clears the Site LAN node. The LTE/5G modem node is resized to (560,286,150,74) with a third sub-line, 'cabled to both Sockets'. The 528->560 stub is kept as the physical cable.",
+    "minor: the legend 'ha' entry now reads 'HA keepalive \u00b7 LTE last resort (idle, minimal system traffic)', so it covers both amber lines. The standby tunnel stays out of the legend because its mono label names it."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-platform-60",
+  "approach": "draw",
+  "findings": 1,
+  "fix": {
+   "id": "demo-platform-60",
+   "applied": [
+    "Verified: old private-app egress curve (M404 280C470 320 520 429 578 429) passed through the ring's right end (rx 160 \u2192 x 220\u2013540, y 368\u2013428). Narrowed ring to rx 140 (spans x 240\u2013520, still wider than PoP box x 250\u2013510) and re-routed exit to fl('M406 282C500 300 540 360 578 420', 'fl-flow', {arrow: true, dur: 1.8}); preview shows a clean exit above the ring in light and dark, arrowhead landing on the 'Private app' box (y 400\u2013458)."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-swg",
+  "approach": "draw",
+  "findings": 1,
+  "fix": {
+   "id": "demo-swg",
+   "applied": [
+    "spotlight.steps[1]: reworded to 'The Internet Firewall matches user, application or category top-down; staged TLS inspection makes it exact.' (marks ['pop'] kept). The page backs this: user identity comes from IdP-synced groups (lines 70, 218), and decryption only affects how exact category and application verdicts are (lines 77-83, 318)."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-threat-prevention",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "demo-threat-prevention",
+   "applied": [
+    "spotlight.flows: removed {p:'atk'}. flows is now [us1, br1, eg-www, spine]. In both spotlight PNGs the unlabelled green line from the bottom-left into the left PoP is gone.",
+    "spotlight.steps[2].t: changed to 'Clean traffic continues; malware, exploits and C2 beacons are blocked at the PoP and recorded as events.' (104 chars). This matches the page's 'blocked at the PoP and recorded as an attributed event'."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-casb",
+  "approach": "draw",
+  "findings": 2,
+  "fix": {
+   "id": "demo-casb",
+   "applied": [
+    "major: added spotlight anchors {mgmt: [782, 132], saas: [302, 310]}, the same values as demo-swg and demo-dem. In both themes the CMA subtitle now shows all of 'Terraform & API' and the Internet & SaaS subtitle shows all of 'Smart egress \u00b7 direct-to-cloud'.",
+    "minor: brought the spec back in line with the map plan by adding the eg-genai flow (flows us1, br1, eg-saas, eg-genai, m1) and setting step 3 marks to ['saas', 'genai'], as the page's shadow-AI and GenAI lines call for. The genai marker sits above the GenAI cloud and does not cover the 'AI tools \u00b7 LLMs' sub-label, so no genai anchor override was needed. The eg-genai flow is now drawn lit. The GenAI cloud itself still looks faded because the kit files it under the 'ai' component, not 'saas'. Adding 'ai' to hl would also light the AI agents & apps panel, which is not part of the CASB story. The map plan and the sibling ai-genai-security spec also leave 'ai' out of hl, so I did not add it."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-dlp",
+  "approach": "draw",
+  "findings": 3,
+  "fix": {
+   "id": "demo-dlp",
+   "applied": [
+    "Added spotlight anchors {mgmt: [782, 132], saas: [302, 310]}, the same values demo-swg.js uses. In both previews marker 4 now sits clear of the CMA subtitle, so 'Terraform & API' shows, and marker 3 sits clear of the 'Smart egress \u00b7 direct-to-cloud' subtitle.",
+    "Changed both connectors to a class the legend does not name. Marcus to client-list.xlsx is now 'fl-lan fl-dim' with np:0, and the chips-to-Data-Control-rule arrow is now 'fl-lan' with np:0 and arrow 'arr-n'. I did not use the suggested bare 'fl-dim': kit-host.html defines .fl-dim as opacity only, with no stroke, so those lines would not have drawn at all. fl-lan gives a solid neutral ink-3 line that does not match any legend entry (tun, flow, down, net). fl-net now appears only on the PoP-to-Events path.",
+    "Reworded step 1 to 'Marcus uploads a spreadsheet through the Cato Client; the Bristol Office Socket sends the same kind of flow.' This matches the page ('through the Cato Client (or the branch Socket)') and the map wording."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-ztna",
+  "approach": "draw",
+  "findings": 1,
+  "fix": {
+   "id": "demo-ztna",
+   "applied": [
+    "Events link fl('M240 403C230 440 230 496 200 496') changed from 'fl-flow fl-dim' to 'fl-down' (red blocked line, which the 'down' legend entry covers); arrow 'arr-n' kept because the kit has no red arrow marker. The preview shows the curve clear of the 'no tunnel' pill in both themes.",
+    "Rule 1 'no match' fall-through fl('M474 230V290') changed from 'fl-flow fl-dim' to 'fl-flow'. Only the two Policy-inputs lines are still fl-dim, so the dim legend entry and the page caption ('thin grey lines are the control plane'), which I checked in usecases/demo-ztna.html, now match the lines drawn."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-app-connectors",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "demo-app-connectors",
+   "applied": [
+    "major: cut spotlight to 3 steps (users / pop / dc), step 2 reworded to 'The PoP evaluates the Private Access Policy: Marcus gets a synthetic IP; the contractor\u2019s lookup is denied.', step 4 deleted, so there are no combined pills; the dark spotlight now shows amber 1/2/3. Note for the coordinator: assets/css/style.css has `.x-mark circle` but no `.x-mark rect` (port_css.js drops the `.mark rect` selector), which breaks every combined pill in the kit",
+    "minor: Internal app sub-line changed from 'app.example.intranet' to 'internal address' (the page says the internal address and the published domain are separate); the published name stays only on the left pill",
+    "minor: removed 'backbone' from hl and {p:'r-CR'} from flows (the page never mentions a backbone or a second PoP); hl is now users/pop/dc/mgmt and flows are us1, us2, dc1 rev, m1",
+    "minor: popBox height 320->290, site height 310->280, footer T y 512->470, viewBox 760x560->760x500; the bottom gaps are gone"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "demo-dem",
+  "approach": "draw",
+  "findings": 4,
+  "fix": {
+   "id": "demo-dem",
+   "applied": [
+    "spotlight.anchors: added backbone: [1262, 528] (same override as access-remote-worker.js). In both spotlight PNGs the amber '2' marker now sits on the ring's right edge, clear of '100+ PoPs \u00b7 99.999% SLA' and not touching the right PoP pin.",
+    "diagrams[0] egress PoP to Private app flow: changed arrow: true to arrow: 'arr-ms' and ended the path at x 582 instead of 580. Both main PNGs now show a small arrowhead whose tip just touches the Private app box, with no blob on the London DC boundary.",
+    "spotlight.steps[3].t: changed to 'Experience Monitoring scores each segment on its own; the one off-green node is the fault domain.' This matches the map's carry-over verdict, the step text in the map, the diagram's verdict line and its desc.",
+    "spotlight.steps[2].t: changed to 'Each application is scored against an AI baseline built from real traffic for that application.' This follows the page at line 77 ('application scores are judged against an AI baseline built from real traffic for that application'). Marks stay ['saas','dc']."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-retail-pci",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "security-retail-pci",
+   "applied": [
+    "major: added spotlight anchors {mgmt: [782, 132], saas: [302, 310]} (same as demo-swg/demo-dem); the step 3 and 4 markers now sit clear of 'Smart egress \u00b7 direct-to-cloud' and 'Terraform & API' in both themes",
+    "minor: footer is now start-anchored at T(22, 462, ..., 'f-m', 'start'); it sits inside the canvas under the store box and nothing else is on that row",
+    "minor: moved the WAN pills off the store boundary and the ring. Broadband is at lx 404, ly 178 (nudged 4 units past the suggested 400 to leave a margin from x 336). LTE / 5G is at lx 412, ly 322, below the ring and under 'Global private backbone'. Neither pill crosses x 336",
+    "minor: Socket subs are now ['zero-touch install', 'one per store'] and the 'LAN firewall' pill stays, so the label no longer appears twice (page lines 121-123 support both wordings)"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-firewall-refresh",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-firewall-refresh",
+   "applied": [
+    "major: added anchors {mgmt: [782, 132]} to the spotlight, so the step-3 marker now sits on the CMA box's top edge and '& API' shows in both themes",
+    "minor: added the legend entry ['flow', 'Inspected egress to internet & SaaS'] for the PoP to Internet & SaaS fl-flow line (the page says all enforcement runs in the PoP single-pass engine)",
+    "minor: widened the London DC block to site(532,300,218,150), nd(544,326,196,62) and pill(642,418); 'Unpatched app server' now has padding inside the node border and the carry-over wording is unchanged",
+    "minor: changed the Bristol tunnel to 'M204 89C258 89 268 200 376 232'; it now passes left of the 'Single-pass: FWaaS \u00b7 IPS \u00b7 TLS' pill instead of under its left cap",
+    "minor: removed {p: 'atk'} from spotlight.flows; kit-host hides .lk/.pt-g[data-p=\"atk\"] unless the overview has the .attack class, so it lit nothing. Step 4 still marks 'dc'"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-finance-dora",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "security-finance-dora",
+   "applied": [
+    "Spotlight: added anchors {mgmt: [782, 132]} so the step-4 marker sits on the CMA box's top edge. 'Terraform & API' is now readable in both themes.",
+    "draw(): moved the 'telemetry \u00b7 every flow' label from (528,400) to (494,318). It now sits beside the dashed telemetry line, clear of the line and of the ONE EVIDENCE PLANE tier label.",
+    "draw(): put the 'London PoP' label beside the dimmed pin head at T(PL-30, TL-36, 'nd-t', 'end'), level with 'Manchester PoP'. Only 'carrier fault \u2014 out of path' (f-s) is left beside the xmark at (PL-18, 208), so the pin is named and the X reads as the fault. Also fixed the indentation of the Manchester label line.",
+    "Spotlight step 2: changed 'Sockets and Clients' to lower case 'sockets and clients', matching the page caption (HTML line 246)."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-consistent",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "security-consistent",
+   "applied": [
+    "F1 (major, caption colour cue): confirmed. The kept page caption says 'thin grey lines' but fl-flow renders mint. Added a diagram caption override that says '(thin arrowed lines)' and otherwise keeps the page caption text word for word.",
+    "F2 (tunnels not tied to PoPs): confirmed. Used Option A, rebuilt as a larger ring (cx 420, rx 280, cy 236, ry 120). The four pins now stand on the front arc (tip = fy), so every edge tunnel ends at its pin tip. The 'One policy set' card moved inside the ring, as on the original page diagram, with short arrowed lines to each PoP label. 'Global Private Backbone' and its sub-label now sit above the ring, clear of every line. The untrue 'meet under the pin heads' comment is fixed.",
+    "F3 (Priya on the Dubai PoP): confirmed. The page puts Priya at home near Glasgow. Reordered the tiles to London DC, Priya at home, Glasgow, Madrid Office, Azure vSocket. Tunnels now run London DC to London, Priya and Glasgow to Manchester (offsets -8 and +8), Madrid to Frankfurt, and Azure to Dubai. No region is stated for the Azure hub, so no fact is contradicted.",
+    "F4 (verdict detached, X on the tube): confirmed. In the new layout the threat cloud sits left of the ring. The dashed attack path crosses the tube to xmark(226,297), which is inside the ring between the tube and the London pin halo and clear of the 'London PoP' label. The pill moved to pill(130,345), just under the X and the attack path, well clear of the frame edge and the ring. The suggested coordinates were not used because the geometry changed. The intent is applied.",
+    "F5 (step 2 marks): confirmed. Step 2 marks are now ['branch','dc','cloud','users'], matching the map. The users anchor shows the '2 \u00b7 3' pill. Kit-level note for the coordinator: in the DARK spotlight preview that combined '2 \u00b7 3' pill has very low contrast (dark fill with dark text, nearly invisible). It renders fine in light. This is glue/kit styling, not this spec.",
+    "F6 (lit 'atk' reads as a green allowed flow): confirmed in both spotlight previews. Removed {p:'atk'} from spotlight.flows and kept step 4 marked on popL. The same issue appears in demo-threat-prevention, management-soc-xdr, security-inbound-ips and security-ransomware, so a kit fix (style atk red in the spotlight) may be the better global answer."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-ot-iot",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "security-ot-iot",
+   "applied": [
+    "F1 (major): widened the Maintenance vendor node to 196 so the title no longer clips. The ZTNA flow now starts at the new edge (M216 54H642) with its label at lx 429.",
+    "F2: HMI to PLC now goes through the Socket (M550 400H602V500H552), with the vertical leg along the Socket's inner left edge. The blocked xmarks moved to x=572 (382 and 532). The page backs this: its alt text says 'HMI to PLC is allowed through the Socket'.",
+    "F3: removed the arrowheads from the four within-level links, so they show no direction. Added the one IT/OT allow the page names ('historian allowed northbound to enterprise apps'): fl-walk M225 264V190 with an arrow and a pill (225,252) reading 'historian \u2192 ERP \u00b7 allowed' (g). Moved the IT/OT BOUNDARY text to x=420 so the new line does not cross it.",
+    "F4: replaced the Socket subline 'plant-floor gateway' with 'on the plant floor', wording the page uses ('on the plant floor itself').",
+    "F5: the vendor leg inside the plant (Socket to Jump server) is now fl-https, the same as the outside leg. Legend is now ['https','Vendor over ZTNA \u2014 jump server only'] plus ['tun','Socket \u2194 PoP tunnel']. The PoP link stays fl-tun. I kept 'hot' for the allowed entry because build-diagrams.py LEGEND_KINDS has no 'walk' kind.",
+    "F6 (spec part): added anchors: {mgmt: [782, 132]}, the convention other specs use, so the step-4 marker sits on the CMA box's top edge and no longer covers 'Terraform & API'. Checked in both spotlight PNGs."
+   ],
+   "rejected": [
+    "F6 (kit part): the merged '1 \u00b7 2' marker on Branch sites still renders as a near-unreadable black pill in the dark spotlight. This is a kit style bug that also affects other pages (e.g. management-asset-discovery), and only the spec file may be edited here. The coordinator needs to fix the merged-marker dark style in the kit. Both steps stay on 'branch' because the page backs both."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-dlp-forensics",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-dlp-forensics",
+   "applied": [
+    "PoP->CMA 'DLP event + metadata' line changed from fl-sig to fl-flow (arrow arr-m and label kept); flow legend entry reworded to 'DLP event and encrypted evidence from the PoP' (down/priv/https/live unchanged)",
+    "spotlight.flows reduced to [{p:'us1'},{p:'m1'}]: removed eg-genai (the page says the blocked upload never reaches the GenAI app) and cl-aws (the page describes the evidence path as an S3 API integration with AWS Assume Role, not a vSocket tunnel); 'saas' and 'cloud' stay lit",
+    "anchors.mgmt = [782,132]: the step-4 marker now sits on the CMA box's top edge, clear of the 'Terraform & API' subtitle",
+    "anchors.cloud = [1443,331]: the step-3 marker now sits just right of the AWS cloud, clear of the heading's '4' badge, the AWS label, and the Azure cloud. The suggested [1378,318] covered the AWS label in the preview, so I moved it",
+    "diagrams[0].title set to the map/page SVG title 'DLP forensics flow \u2014 blocked upload, encrypted evidence, governed retrieval'"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-inbound-ips",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-inbound-ips",
+   "applied": [
+    "Step 3 marker moved from 'saas' to 'popL' (shares the London-PoP pill as '1 \u00b7 3'); page line 252 confirms payloads are 'dropped at the PoP edge'",
+    "Allow-list pill shortened to 'Allow list \u00b7 IP \u00b7 country' so it fits inside the 180-unit popBox (page line 253: 'by source IP or country')",
+    "Legitimate https lane split: M346 268H446 to the PoP edge, plus a separate lane M446 278H581 under the tunnel to the Socket; tunnel labels moved to y 296/310/324 (page line 170: clean traffic forwarded down the DTLS tunnel)",
+    "'dropped by inbound IPS' pill centred at x 356; xmark moved to (390,358) and attack path ends at 388,354"
+   ],
+   "rejected": [
+    "spotlight.flows {p:'atk'} renders as a green lane: this comes from the kit, not the spec, so the spec cannot fix it. The flow stays because the path is correct. Coordinator: style the 'atk' link with fl-attack in the spotlight export. Also: in the dark spotlight the combined '1 \u00b7 3' marker pill on popL has low contrast (dark pill on a dark background), which is also kit marker styling."
+   ],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-compliance",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-compliance",
+   "applied": [
+    "steps[2].marks -> ['mgmt','xops'] and steps[3].marks -> ['mgmt']; the spotlight now shows a '3 \u00b7 4' pill on mgmt and '3' on XOps (the page's evidence comes from CMA screens: Monitor \u2192 Events, Reports, Audit Trail, Export)",
+    "steps[3].t -> 'That single, correlated record is the evidence source for ISO 27001, NIS2 and SOC 2 auditors.' (matches the page caption's 'evidence source' and its 'never claim compliant' rule)",
+    "steps[0].t -> '...the same CASB and DLP policy applies to every edge.' (the page puts enforcement at the PoP, line 174)",
+    "Engine\u2192CMA curves changed from 'fl-sig'/arr-ms to 'fl-flow'/arr-m, so every line drawn matches the single 'flow' legend entry (LEGEND_KINDS has no 'sig' kind)",
+    "Backbone ring raised and slimmed to ring({cx: PC, cy: 64, rx: 92, ry: 12}) with its label at y=40; it no longer overlaps the top border of the PoP box in either theme"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-iso27001",
+  "approach": "prior",
+  "findings": 3,
+  "fix": {
+   "id": "security-iso27001",
+   "applied": [
+    "spotlight.anchors {mgmt: [782, 132]} added: the step-1 marker now sits on the CMA box's top edge, and the subtitle reads in full ('... Terraform & API') in both themes",
+    "Reports & evidence -> Auditor arrow changed from fl-flow to fl-net {arrow: 'arr-n', dur: .8}: the whole evidence chain from the CMA evidence plane to the Auditor now uses the 'Telemetry & evidence' style the legend gives it",
+    "spotlight.steps[3] marks changed to ['mgmt', 'xops']: the page puts Events (Home -> Events), the Audit Trail (Account -> Audit Trail) and the Posture Compliance Report (Home -> Reports) in the CMA, and the CMA now shows a '1 \u00b7 4' pill"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-data-casb-dlp",
+  "approach": "prior",
+  "findings": 7,
+  "fix": {
+   "id": "security-data-casb-dlp",
+   "applied": [
+    "F1 major: added spotlight anchors {saas: [302, 310]}. The 3 \u00b7 4 pill no longer covers the 'Smart egress \u00b7 direct-to-cloud' subtitle in either theme. In dark it is still a low-contrast dark pill, but that is the kit's own combined-pill style in glue.css, which this spec cannot change.",
+    "F2 major: added 'ai' to hl, making 6 components. Checked first: kit-host.html puts the GenAI cloud in data-c=\"ai\", and the page backs it ('shadow IT and shadow AI'). The GenAI cloud under the step-3 marker is now lit, and so is the AI agents & apps card.",
+    "F3 minor: Sanctioned SaaS cloud now k 1.2 and GenAI cloud k 1.3. Green flow now ends at 585,128 and the out-of-band arc ends on the cloud edge (M398 222C410 60 550 44 628 84). The text sits inside both outlines and the arrowhead no longer touches 'M365'.",
+    "F4 minor: red 'blocked by DLP' path now starts below the amber lane (M396 266C460 290 520 420 548 440), with its label at 530,392. It stays clear of the 'controlled \u00b7 warning' pill and the CASB pill.",
+    "F5 minor: Remote users flow changed from fl-https to fl-tun. Added the legend entry ['tun', 'Socket / Client tunnel to the PoP'] before 'flow'.",
+    "F6 minor: third chip shortened to 'Upload \u00b7 download \u00b7 share'. It now fits inside the chip in both themes.",
+    "F7 minor: out-of-band arc drawn as 'fl-priv fl-dim', so it reads as a secondary grey arc. The legend kind 'priv' is unchanged."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-ransomware",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "security-ransomware",
+   "applied": [
+    "spotlight: added anchors {saas: [302, 316]}. Marker 3 now sits clear to the right of the SaaS cloud, off the 'Internet & SaaS' heading, and 'direct-to-cloud' reads in full (checked in light and dark)",
+    "spotlight.flows: removed {p:'atk'}. Without the hidden attacker cloud it showed as an unlabelled green flow coming from off the left edge",
+    "main: attacker changed to cloud(54, 122, .82, ...) and the attack path now starts at M54 154C54 184 90 AY. 'ransomware gang' fits inside the outline in both themes",
+    "main: widened the geometry as proposed. vb is '0 0 790 340', X = 110 + i*112, boxes are 108 wide (W const), the lane is L(20,36,770,36) and the header and footer are centred at x 395. 'Lateral movement' was still squeezed at 108, and 'NGAM + Sandbox' overflowed its box edges in the render. So I also used the finding's alternative: every stage and control box title is now drawn at 11px (a box() helper: nd with an empty title plus T with class 'nd-t' and a style font-size). All 12 titles now sit unsqueezed with padding, and no label was shortened",
+    "diagrams[0].title set to 'Cato controls breaking the ransomware kill chain at every stage' (matches the map entry and the page SVG <title>)",
+    "spotlight: added 'cloud' to hl (6 components) and {p:'cl-aws'} to flows. The page says 'Every flow from every site, remote user and cloud instance traverses a Cato PoP', so step 1 stays as written and the AWS flow and cloud panel are now lit"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-tls-inspection",
+  "approach": "prior",
+  "findings": 4,
+  "fix": {
+   "id": "security-tls-inspection",
+   "applied": [
+    "F1 legend/fl-tun stub: relabelled legend to ['tun','All HTTPS traffic \u2014 enters the staged policy']; shrank cloud to cloud(66,RY,0.9,...) so the input stub is L(120,RY,146,RY) (26 units). Follow-up: the cloud label became 'HTTPS traffic' because 'All HTTPS traffic' overran the smaller cloud. The bypass drop line moved to x=66 and now starts at y=218, under the cloud.",
+    "F2 footer: dropped the T(380,414,'Nothing is decrypted until\u2026') line, which repeated the page paragraph. The canvas was then trimmed from 760x440 to 760x392 to remove the empty band.",
+    "F3 tier label: moved to tier(139,54,'INTERNET FIREWALL \u00b7 AUTO-CREATED RULES'), directly above the QUIC xmark/text block.",
+    "F4 inter-stage arrows: the three stage-to-stage fl-flow arrows now use {np:0, arrow:'arr-m'}. There is no live dot in the 26-unit gaps; the cloud input and bypass lane keep their live dots."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-uk-public-sector",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-uk-public-sector",
+   "applied": [
+    "spotlight.anchors {mgmt:[782,132], saas:[302,310]} added: step-3 pill now sits clear of the 'Smart egress \u00b7 direct-to-cloud' subtitle and step-4 pill clear of '\u2026 Terraform & API' (both themes)",
+    "steps[0].t changed to the map wording 'connect through a UK Cato PoP.' (page never claims a single PoP)",
+    "legend: added ['flow','Egress to cloud & internet services'] after the https entry so the drawn fl-flow egress line has a key",
+    "backbone label moved to T(512,204,'Global Private Backbone','f-m','start') beside the ring's right end; 'UK PoP' moved to y124 and 'full stack on every flow' to y139, so the PoP labels now sit directly over the pin with no overlap in either theme",
+    "legend ipsec entry now matches the carry-over node text: ['ipsec','Depots & schools \u2014 branch Sockets \u00b7 IPsec']"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-healthcare-nhs",
+  "approach": "prior",
+  "findings": 6,
+  "fix": {
+   "id": "security-healthcare-nhs",
+   "applied": [
+    "major: the PoP-to-NHS & cloud egress now starts at the PoP: fl('M520 236C590 222 632 182 652 150', 'fl-flow', {dur: 1, arrow: 'arr-m'}). In both themes it passes about 20 units above the Pathology supplier box and clears the FWaaS pill.",
+    "major: the evidence lane is now fl-net (grey dashed), so it matches the caption that says 'grey lane'. I used the grey arr-n arrowhead instead of the mint arr-m, so the arrow matches the grey line. I added ['net', 'Evidence lane to the CMA'] to the legend before 'live'.",
+    "minor: added spotlight anchors {mgmt: [782, 132], saas: [302, 310]}. In the spotlight preview the step-3 and step-4 markers now clear the 'Smart egress' subtitle and 'Terraform & API'.",
+    "minor: added ['ha', 'LTE fallback'] to the legend for the amber LTE stub.",
+    "minor: renamed the right-column tier from 'NHS & CLOUD SERVICES' to 'SERVICES \u00b7 SUPPLIER \u00b7 CMA'. The suggested 'SERVICES \u00b7 SUPPLIER \u00b7 EVIDENCE' overflowed the right edge and raised an edge WARN, so I used CMA instead of EVIDENCE.",
+    "minor: moved the Block pill from (236,306) to (240,287). It now sits inside the hospital site, just below the xmark and the arc's lower end, without touching the arc or the site's right and bottom edges. The suggested (240,274) covered the arc's lower curve."
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ },
+ {
+  "id": "security-legal-confidentiality",
+  "approach": "prior",
+  "findings": 5,
+  "fix": {
+   "id": "security-legal-confidentiality",
+   "applied": [
+    "major: added spotlight anchors {mgmt: [782, 132], saas: [302, 310]}. In both themes the step 3 badge now sits clear of 'Smart egress \u00b7 direct-to-cloud' and the step 4 badge clear of 'Terraform & API'",
+    "minor: changed the spotlight flow {p: 'eg-www'} to {p: 'eg-saas'}, so the lit egress line now ends at the SaaS cloud that carries the step 3 marker (page line 255: DLP blocks content bound for personal cloud storage)",
+    "minor: pointed the cross-wall blocked line at Matter B (M446 235C488 235 505 194 526 194) with xmark(538,194). The pill stays at (622,150), and the xmark is clear of the green Matter B arrow. This matches the page desc (line 158) and runbook line 419",
+    "minor: rerouted the inbound team flows to Matter A M208 95C226 95 222 200 245 222 and Matter B M208 171C220 171 214 236 236 242. They no longer cross, stay left of x 230, and the live dots do not touch the ethical-wall policy box",
+    "minor: changed diagrams[0].title to the map title, which is also the page figure title (line 157): 'Identity-based ethical wall between two matter teams, with DLP and an evidence lane'"
+   ],
+   "rejected": [],
+   "warnings": 0
+  }
+ }
+]

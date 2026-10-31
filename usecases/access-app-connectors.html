@@ -44,7 +44,7 @@
       <span class="tag">M&amp;A</span><span class="tag">Cloud</span>
     </div>
     <div class="meta-row" style="margin-top:18px">
-      <a class="btn btn-ghost" href="javascript:window.print()">🖨 Print / PDF</a>
+      <button type="button" class="btn btn-ghost" onclick="window.print()"><span aria-hidden="true">🖨</span> Print / PDF</button>
     </div>
   </div>
 </header>
@@ -170,7 +170,7 @@
       <h3>The four objects you configure</h3>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>Object</th><th>Where</th><th>What it defines</th></tr></thead>
+          <thead><tr><th scope="col">Object</th><th scope="col">Where</th><th scope="col">What it defines</th></tr></thead>
           <tbody>
             <tr><td><strong>App Connector</strong></td><td>Access → App Connectors (create: Access → App Connector → New)</td><td>The outbound-only DTLS endpoint deployed in the same environment as the application (datacentre, cloud VPC or LAN). Socket software — physical X1500 or a virtual image — with a name, country, type, group and optional preferred PoPs. Forwards only sessions that policy explicitly authorised; accepts no inbound connections and needs no routing changes.</td></tr>
             <tr><td><strong>App Connector Group</strong></td><td>Chosen or created when you create a connector</td><td>The logical connectivity layer between the Cato Cloud and a set of Private Apps: up to 10 connectors that provide high availability, load distribution and operational separation. Applications attach to the group, never to an individual connector, and each application is published through one group at a time.</td></tr>
@@ -184,7 +184,7 @@
       <h3>Deployment options for the connector</h3>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>Platform</th><th>Prerequisites and notes (from the KB)</th></tr></thead>
+          <thead><tr><th scope="col">Platform</th><th scope="col">Prerequisites and notes (from the KB)</th></tr></thead>
           <tbody>
             <tr><td><strong>Physical — X1500</strong></td><td>All X1500 models; X1600 and X1700 are not currently supported as physical connectors. No serial number to enter: cable the device, and when it reaches Cato the CMA prompts you through Notifications → Activate New Socket → Assign to: App Connector. HA pair of physical connectors is listed as "Coming Soon".</td></tr>
             <tr><td><strong>AWS</strong></td><td>Virtual type in CMA; image from AWS Marketplace ("Cato Networks App Connector"). New or existing VPC with three subnets — MGMT, WAN, LAN — each a minimum /28; existing internal security group; key pair; paste the serial number from CMA. Deploy with IMDSv2; reboot the instance after deployment to initiate the connection. A Terraform module exists for AWS.</td></tr>
@@ -232,7 +232,7 @@
       <h3>Known limitations to say out loud</h3>
       <div class="table-wrap">
         <table class="data">
-          <thead><tr><th>Limitation</th><th>Consequence for the design</th></tr></thead>
+          <thead><tr><th scope="col">Limitation</th><th scope="col">Consequence for the design</th></tr></thead>
           <tbody>
             <tr><td>No QoS or Network Rules on connector traffic; it gets the lowest network priority</td><td>Do not position Private Access for latency-critical or bandwidth-guaranteed workloads — that is a site with a bandwidth profile.</td></tr>
             <tr><td>Socket v26: only apps in the connector's LAN subnet are supported</td><td>Place the connector in the same subnet as the app, or plan for one connector per subnet for now.</td></tr>
@@ -245,13 +245,15 @@
       </div>
 
       <div class="callout warn">
-        <div class="co-title">Early availability — check before you promise</div>
-        <p>The core Private Access and App Connector KB pages (What Is Cato Private Access, Working with
-        App Connectors, Monitoring App Connectors, Configuring Private Applications, Configuring the
-        Private Access Policy) carry the note <em>"Please contact feature-releases@catonetworks.com for
-        more information about enabling and using this feature."</em> Treat it as request-enabled, not
-        default-on: confirm it is enabled on the tenant — and that Socket v26.0.23570 or higher is
-        available to the account — before a demo or PoV date is agreed.</p>
+        <div class="co-title">Availability — check the tenant before you promise</div>
+        <p>Until mid-October 2026 the core Private Access and App Connector KB pages (What Is Cato
+        Private Access, Working with App Connectors, Monitoring App Connectors, Configuring Private
+        Applications, Configuring the Private Access Policy) carried a request-enablement note
+        pointing to feature-releases@catonetworks.com; their 14 Oct 2026 revisions no longer do.
+        The Socket prerequisite stands: connectors need Socket v26.0.23570 or higher, and if the
+        account does not have it the KB says to ask Support to provide it. Confirm the App Connectors
+        and Private Apps screens are present on the tenant, and that version is available to the
+        account, before a demo or PoV date is agreed.</p>
         <p style="margin-top:8px"><strong>Licensing (Base Products):</strong> sites "are licensed based on
         bandwidth and support all site types, including physical sites (Sockets), IPsec, Cloud
         Interconnect, and App Connector deployments". The Bandwidth Pool covers "App Connector
@@ -271,7 +273,7 @@
         <p>Have one Private App already published through a group with two connected connectors, one
         Allow rule for a pilot group, and two test identities: Priya (in the group, compliant device)
         and Marcus (not in the group). The whole demo is the contrast between their two DNS lookups.
-        Confirm the feature is enabled on the demo tenant first — see Early availability above.</p>
+        Confirm the App Connectors screens are present on the demo tenant first — see Availability above.</p>
       </div>
 
       <ol class="steps">
@@ -347,7 +349,7 @@
       <div class="table-wrap">
         <table class="data">
           <thead>
-            <tr><th>Success criterion</th><th>What we prove</th><th>Evidence artefact</th><th>Where it lives</th></tr>
+            <tr><th scope="col">Success criterion</th><th scope="col">What we prove</th><th scope="col">Evidence artefact</th><th scope="col">Where it lives</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -387,9 +389,10 @@
       <div class="callout">
         <div class="co-title">Prerequisites — agree before week one</div>
         <ul style="margin:6px 0 0;padding-left:20px">
-          <li><strong>Feature enabled and Socket version available.</strong> Private Access with App
-          Connectors is request-enabled; confirm with feature-releases@catonetworks.com and that
-          Socket v26.0.23570+ is available to the account before the kick-off date is set.</li>
+          <li><strong>Feature present and Socket version available.</strong> Confirm the App
+          Connectors and Private Apps screens are on the customer's tenant and that Socket
+          v26.0.23570+ is available to the account (Support provides it if not) before the kick-off
+          date is set.</li>
           <li><strong>An IdP.</strong> "Private Access requires authenticated user identity, and
           unauthenticated users can't access private applications." The pilot group exists in the IdP
           and syncs to Cato — design choices in <a href="access-identity-design.html">Identity
@@ -497,8 +500,9 @@
       <div class="callout warn">
         <div class="co-title">Say these out loud before week one</div>
         <ul style="margin:6px 0 0;padding-left:20px">
-          <li><strong>Request-enabled feature.</strong> If the tenant does not have it, the PoV does not
-          start. Confirm enablement and Socket version first, then book the kick-off.</li>
+          <li><strong>Tenant readiness.</strong> If the tenant does not show App Connectors, or the
+          account cannot get Socket v26.0.23570+, the PoV does not start. Confirm both first, then
+          book the kick-off.</li>
           <li><strong>User-initiated only.</strong> If the pilot app needs to call back to the user's
           device, or another server needs to reach it, that app is a site use case — pick a different
           app or scope a site.</li>
@@ -564,6 +568,7 @@
 </footer>
 
 <script src="../assets/js/catalog.js"></script>
+<script src="../assets/js/platform-facts.js"></script>
 <script src="../assets/js/app.js"></script>
 <script src="../assets/js/deck-brand.js"></script>
 <script src="../assets/js/deck-content.js"></script>

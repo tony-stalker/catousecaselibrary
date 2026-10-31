@@ -7,6 +7,657 @@ window.UC_DECK_DIAGRAMS = {
    "title": "Private Access through App Connectors",
    "caption": "Grey links are the second connector's tunnel and LAN path, shown as the non-selected path for this session: the PoP probes every connector in the group, selects the optimal one per session, and moves new sessions to the next best one if the current one becomes unreachable.",
    "desc": "Users reach private applications in cloud and in the data centre through outbound-only App Connectors; the PoP enforces the Private Access Policy before any session is brokered."
+  },
+  "access-byod-clientless": {
+   "w": 1400,
+   "h": 921,
+   "title": "Clientless ZTNA for unmanaged devices",
+   "caption": "Three on-ramps, one enforcement point: portal, Browser Extension and Enterprise Browser all terminate at the Cato PoP. The unmanaged device never joins the network — and DLP keeps files from landing on it.",
+   "desc": "Portal, Browser Extension and Enterprise Browser all terminate at the Cato PoP, so an unmanaged device reaches only published apps and inspected SaaS while RBI renders risky pages as pixels and DLP keeps files off the endpoint."
+  },
+  "access-hybrid-workforce": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Same user, same policy, nearest front door",
+   "caption": "Same user, same policy, nearest front door: London and Reading enter the London PoP; Dubai enters the Dubai PoP and crosses the backbone — all converging on the same rules and the same apps.",
+   "desc": "Whether Priya is at her London desk, at home in Reading or in a Dubai hotel she enters the nearest Cato PoP and hits the same identity-driven policy, with SaaS egressing locally and private apps reached over the backbone."
+  },
+  "access-identity-design": {
+   "w": 1400,
+   "h": 958,
+   "title": "One identity plane, every enforcement point",
+   "caption": "Thin grey lines are the control plane: SCIM-provisioned groups become policy objects, and users authenticate to the IdP with SSO and MFA. Every data lane ends at the same identity-scoped policy — the amber lane is the coverage gap this design closes.",
+   "desc": "SCIM builds users and groups in the CMA, SSO with MFA authenticates the remote Client, the Identity Agent or AD Query names office users behind the Socket, and the PoP enforces the same group-scoped policy on all of them; the amber lane is the coverage gap the design closes."
+  },
+  "access-offshore-bpo": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Offshore developers and BPO agents on Cato",
+   "caption": "Developers and agents onramp at the nearest PoP; the backbone carries repo, VDI and CRM traffic to in-region hosting, while DLP stops source code leaving approved apps.",
+   "desc": "Developers and agents onramp at the nearest PoP where ZTNA, RBI and DLP are enforced; the backbone carries repo, VDI and CRM traffic to in-region hosting while DLP stops source code and PII leaving approved apps."
+  },
+  "access-remote-worker": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Where a remote worker's experience is measured",
+   "caption": "One platform observes every hop of Brandon's path — so a Fair score can be pinned to a segment. Loss at ② with a clean ③ and ④ is his ISP; a slow ④ with ①–③ green is the application's side of the fence.",
+   "desc": "Because Brandon's Client, his nearest PoP and the backbone are one platform, every segment of his path is instrumented, so a Fair score can be pinned to his device, his ISP, the backbone or the application."
+  },
+  "access-third-party": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Least-privileged third-party access",
+   "caption": "Access decisions combine user authorisation with live device posture. The same user gets different access as their device state changes.",
+   "desc": "Three identical-looking connections get three different outcomes: identity and live device posture at the PoP decide whether a contractor reaches named apps, internet only, or nothing at all."
+  },
+  "ai-agentic-security": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Securing local, managed and custom AI agents",
+   "caption": "All three agent types feed one control point: Agent Policy and AI-FW Guards evaluate every interaction, pass governed actions through, block violations, and record the full session for audit.",
+   "desc": "Local coding agents found by Scout, managed agents discovered through platform APIs and custom agents proxied through the AI Firewall meet one control point, where Agent Policy and Guards inspect prompts, outputs, tool calls and tool messages, pass governed actions, alert on or block violations and record every session for audit."
+  },
+  "ai-eu-ai-act": {
+   "w": 1400,
+   "h": 1032,
+   "title": "EU AI Act readiness from the network: inventory, control, evidence",
+   "caption": "Every AI interaction from EU sites, remote users — and UK users whose AI output is used in the EU — crosses a PoP where the User Interaction Policy decides per prompt: allow with inspection, monitor or anonymise, or block. Each decision lands in the CMA (grey lane) as attributable, exportable evidence.",
+   "desc": "AI traffic from EU sites, the hybrid workforce and UK users whose output is used in the Union crosses a Cato PoP where Shadow AI Discovery builds the deployer's inventory and the User Interaction Policy allows, anonymises or blocks per prompt, with attributable events, the Audit Trail and SIEM export as supporting evidence while risk classification stays with governance."
+  },
+  "ai-genai-security": {
+   "w": 1400,
+   "h": 958,
+   "title": "GenAI Security for End Users: one policy, three verdicts",
+   "caption": "Every prompt is evaluated by the User Interaction Policy at the PoP — and, via the browser plugin, on managed devices Cato traffic never crosses. Each decision lands in the dashboards and events as evidence.",
+   "desc": "Office, remote and off-net users reach sanctioned, embedded and shadow GenAI through the Cato PoP or the browser plugin, where the User Interaction Policy decides per prompt — allow and log, anonymise sensitive values, or block — and every decision lands in the dashboards as evidence."
+  },
+  "ai-homegrown-apps": {
+   "w": 1400,
+   "h": 1032,
+   "title": "A Cato Guard in the homegrown AI interaction path",
+   "caption": "Every prompt and response passes the Guard before it reaches a model. The AI Security Engine's detectors decide the outcome — redact and forward, or block and alert — and the full session lands in the Interaction Explorer.",
+   "desc": "Every prompt and response from a homegrown chatbot, copilot or RAG app passes a Cato AI Security Guard — Proxy, API or AI Gateway — whose engine redacts PII and forwards benign prompts to the model, blocks injection and jailbreaks, alerts the SOC and records the whole session in the Interaction Explorer."
+  },
+  "ai-legal-genai": {
+   "w": 1400,
+   "h": 1032,
+   "title": "GenAI for fee-earners with privilege intact",
+   "caption": "Every prompt crosses the PoP, where the User Interaction Policy redacts client identifiers for the sanctioned assistant, anonymises personal-tier use, or blocks GenAI for an ethical-walled team — each decision logged as client-facing evidence.",
+   "desc": "Fee-earners' prompts cross the Cato PoP where the User Interaction Policy, scoped per IdP group like the firm's ethical walls, redacts client identifiers for the sanctioned assistant, anonymises personal-tier use and blocks GenAI for a restricted matter team, with each decision logged as client-facing evidence."
+  },
+  "ai-threat-landscape": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Three AI attack classes, one single-pass engine",
+   "caption": "Three attack classes, one inspection point. The deepfake itself stays a human-process problem — everything around it, and everything the other two classes need from the network, meets a Cato control.",
+   "desc": "Deepfake fraud, AI-orchestrated attacks and shadow-AI data leakage each cross the same Cato PoP: the first two are broken at the network kill chain by SWG, DNS security, anti-malware, ZTNA and IPS virtual patching, the third is discovered and governed rather than banned, and XDR correlates whatever survives into one story."
+  },
+  "demo-app-connectors": {
+   "w": 1400,
+   "h": 921,
+   "title": "The PoP brokers; DNS is the gate; the connector forwards",
+   "caption": "The connector dials out; the PoP decides. The thin grey lines are the control plane: the policy objects the broker evaluates, and the connector's local forwarding to the application it was deployed beside.",
+   "desc": "Two users type the same published name: the PoP evaluates the Private Access Policy, Cato DNS returns a synthetic IP for the authorised user, whose session is brokered over the App Connector’s outbound DTLS tunnel, while the unauthorised user’s lookup is denied and the application stays invisible."
+  },
+  "demo-casb": {
+   "w": 1400,
+   "h": 866,
+   "title": "Classify the application, score it, control the activity",
+   "caption": "One engine, three outcomes: the application is identified and scored inline, the tenant and the activity decide the action, and every decision feeds the Cloud Apps Dashboard and the event stream.",
+   "desc": "The same single-pass engine identifies each cloud application inline, scores its risk and checks the tenant, then the activity decides the action: sanctioned tenant allowed, personal tenant blocked, risky application restricted, with every decision feeding the Cloud Apps Dashboard."
+  },
+  "demo-dem": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Same engine, seen from the telemetry side",
+   "caption": "The decision this capability makes is a score per segment. Loss at ② with ③ and ④ clean is the ISP's circuit; a slow ④ with ①–③ green is the application's side of the fence. Either way the verdict is measured, not negotiated.",
+   "desc": "Because the Client, the Socket, the PoP and the private backbone are one platform, every hop from the device through the last mile and backbone to the application is measured and scored separately; the one off-green segment is the fault domain."
+  },
+  "demo-dlp": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Content inspection as one more decision in the single pass",
+   "caption": "The upload is decrypted once at the PoP; the Data Control rule reads the content against a profile and decides per activity and per destination. The incident and its evidence are outputs of the same pass, not a second system.",
+   "desc": "An upload is decrypted once at the PoP and the Data Control rule reads its content against a profile; the sanctioned destination is allowed, the sensitive upload to personal storage is blocked with the user notified, and the incident with its evidence comes out of the same pass."
+  },
+  "demo-platform-60": {
+   "w": 1400,
+   "h": 884,
+   "title": "One engine, seven angles",
+   "caption": "The scene-setting picture: two ways in, one engine, three ways out. Segments 1–6 are decisions the engine makes on the flow; segment 7 is what the engine tells you about it afterwards.",
+   "desc": "Two ways in and three ways out of one single-pass engine in the Cato PoP; segments one to six are decisions the engine makes on the flow and segment seven is what it reports about them afterwards."
+  },
+  "demo-swg": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Who, where, should they — in one pass",
+   "caption": "Site and remote user hit the same engine at the nearest PoP. TLS inspection (staged by category) feeds the Internet Firewall's user- and category-aware match; the verdict goes to the destination and the record goes to Events.",
+   "desc": "A remote Client user and a branch Socket site hit the same single-pass engine at the nearest PoP, where staged TLS inspection feeds a user- and category-aware Internet Firewall whose Allow, Prompt or Block verdict is recorded as an event."
+  },
+  "demo-threat-prevention": {
+   "w": 1400,
+   "h": 921,
+   "title": "One pass, every engine, one verdict",
+   "caption": "Both sources, one engine, one verdict. The block never depends on where the user sits, and the event it produces is the same record the dashboard and the XDR story are built from.",
+   "desc": "A remote user and a branch site reach one PoP engine that inspects each flow once against IPS, anti-malware, sandbox and DNS security; clean traffic continues, threats are blocked at the PoP, and the resulting events build the Threats Dashboard and XDR stories."
+  },
+  "demo-ztna": {
+   "w": 1400,
+   "h": 995,
+   "title": "Identity and posture decide; the WAN Firewall enforces",
+   "caption": "One identity, two devices, two outcomes. The failing device is stopped at the Client Connectivity Policy and never reaches the PoP or the WAN Firewall. The thin grey lines are the control plane: SCIM-provisioned groups and the posture profile are the objects the rules reference, and the implicit block sits beneath rule 1 for any tunnel that matches nothing.",
+   "desc": "One identity on two devices: the compliant laptop passes the Client Connectivity Policy and WAN Firewall rule 1 to reach the ERP behind the London DC Socket, while the device that fails posture never gets a tunnel and leaves a block event; the implicit block sits beneath the single allow."
+  },
+  "management-api-automation": {
+   "w": 1400,
+   "h": 792,
+   "title": "Network as code: Git to CI to the Cato GraphQL API",
+   "caption": "Site and policy definitions merge in Git; a CI runner drives the GraphQL API to create sites and apply policy, while the events feed streams continuously into the SIEM.",
+   "desc": "Site and policy definitions live in Git; a CI runner executes Terraform and catocli against the Cato GraphQL API, which creates branch sites and applies a tagged, revertable WAN policy update while the eventsFeed API streams events into the SIEM."
+  },
+  "management-asset-discovery": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Passive device discovery at the Socket feeding one Device Inventory",
+   "caption": "Every device behind the Socket is discovered passively from its own traffic — no agents, no active scans — then classified into one inventory that feeds device-attribute firewall policy and can sync outward to a CMDB via the Cato API.",
+   "desc": "A mixed estate of agentless devices behind a Cato Socket is discovered passively from its own traffic and classified in the Cato Cloud into one Device Inventory of category, type, model, OS, manufacturer, name, MAC and IP, which feeds device-attribute firewall policy and can export to a CMDB via the GraphQL API."
+  },
+  "management-data-lake": {
+   "w": 1400,
+   "h": 1032,
+   "title": "The event pipeline: generation, rate limit, retention, export",
+   "caption": "Policies decide which events exist; Data Lake units set the hourly peak the platform retains. Everything past the gate is queryable in the CMA for the retention window and exportable free of charge — so the trimming that protects a SIEM budget happens in policy and integration filters, not downstream.",
+   "desc": "Cato services generate events according to policy tracking; an hourly rate gate sized in Data Lake units of 2.5 million events per hour admits them into the Data Lake, where they are held for the 3, 6 or 12-month variant and consumed through the CMA, an S3 or Azure Blob feed, the eventsFeed API or a SIEM, all free of charge."
+  },
+  "management-dem": {
+   "w": 1400,
+   "h": 866,
+   "title": "Hop-by-hop experience monitoring, laptop to SaaS app",
+   "caption": "One degraded node, the rest green: the failing segment is visible, not inferred. Here the fault is the ISP last mile — 4.2% loss scores Fair (amber) against the documented 1–5% band — not the laptop, not Cato, not the app.",
+   "desc": "A user-to-application path is measured at every hop — laptop, home router, ISP last mile, Cato PoP, backbone, second PoP, SaaS app — and only the ISP last mile is amber at 4.2% loss, isolating the fault to one segment."
+  },
+  "management-pov-framework": {
+   "w": 1400,
+   "h": 737,
+   "title": "The Cato PoV pipeline",
+   "caption": "Success criteria agreed at the workshop carry through every stage — every weekly cycle lands evidence against a criterion, and the decision meeting reads the register, not memories.",
+   "desc": "Five stages run left to right, from scope workshop, build and test cycles to wrap-up and decision, joined by a success-criteria thread; a weekly sync loop and accumulating evidence sit around the test cycles, and unscoped asks are cut off into a next-steps register."
+  },
+  "management-soc-xdr": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cato XDR: from full telemetry to a ranked story queue",
+   "caption": "Every flow already traverses the PoP, so XDR starts with full network telemetry — no agents to roll out, no logs to ship. Signals become one ranked story queue; the fix goes back into policy from the same console.",
+   "desc": "Every flow already traverses a Cato PoP, so Cato XDR starts with full network telemetry and correlates it (with the endpoint alerts the customer owns) into ML-scored, MITRE ATT&CK-mapped incident stories in one ranked queue for the SOC analyst and Cato MDR, with the policy fix applied from the same console and stories fed to the SIEM and ticketing tools."
+  },
+  "management-vendor-consolidation": {
+   "w": 1400,
+   "h": 1032,
+   "title": "The appliance estate collapses into the Cato platform",
+   "caption": "Seven product families collapse into the PoP. What's left to own and operate: a Socket at the branch, a Client on the device, and one console.",
+   "desc": "Seven legacy product families — MPLS circuits, edge routers, branch firewalls, VPN concentrators, an SWG proxy, CASB/DLP add-ons and an SD-WAN overlay — converge into a single pass at the Cato PoP on the global private backbone, leaving a Socket at the branch, the Client on the device and the CMA as the one console."
+  },
+  "management-visibility": {
+   "w": 1400,
+   "h": 1032,
+   "title": "All edges feed one management and analytics plane",
+   "caption": "Because all edges send all traffic through the PoPs, the telemetry was never split across boxes — the context feed into the console is the same single-pass data, not a collector you deploy.",
+   "desc": "Sites, remote users and cloud datacentres connect through Cato PoPs on the global private backbone; the Single Pass Cloud Engine inspects every flow once, and that single context feeds one Cato Management Application plane of dashboards, analytics, events and XDR stories."
+  },
+  "migration-anyconnect": {
+   "w": 1400,
+   "h": 1032,
+   "title": "AnyConnect concentrator hairpin versus Cato Client via the nearest PoP",
+   "caption": "Two users, two architectures: AnyConnect backhauls every flow through an internet-exposed headend; the Cato Client terminates at the nearest PoP and reaches datacentre and cloud applications directly — posture-checked for the life of the session.",
+   "desc": "AnyConnect backhauls every flow through an internet-exposed ASA/FTD headend; the Cato Client terminates at the nearest PoP with SAML SSO, MFA and continuous posture, and reaches datacentre and cloud applications directly over the backbone."
+  },
+  "migration-checkpoint": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff",
+   "caption": "Parallel build: the socket sits alongside the Quantum gateway, which keeps the default\n          gateway role. The transit-VLAN handoff moves subnets to Cato one prefix at a time while\n          user cohorts swap from Endpoint Security VPN (or the Harmony SASE agent) to the Cato\n          Client in waves. Rollback at every step is a route withdrawal, not a rebuild.",
+   "desc": "The Socket sits alongside the Quantum gateway, which keeps the default gateway role; a transit-VLAN handoff moves subnets to Cato one prefix at a time while user cohorts swap from Endpoint Security VPN or the Harmony SASE agent to the Cato Client, and rollback at every step is a route withdrawal."
+  },
+  "migration-checkpoint-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Check Point policy conversion pipeline",
+   "caption": "The four SmartConsole policy domains are exported once via the Management API, rationalised\n          against hit-count evidence — zero-hit rules and layer debt exit the pipeline here — and only\n          the surviving intent is mapped to CMA constructs. Every mapped rule deploys in monitor\n          (amber) and is promoted to enforcement (green) when events and hit counts prove it behaves\n          as intended.",
+   "desc": "The four SmartConsole policy domains are exported via the Management API, rationalised against hit-count evidence, and only surviving intent is mapped to CMA; every mapped rule deploys in monitor and is promoted to enforcement on evidence."
+  },
+  "migration-cisco": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Regional co-existence of Cato and a Cisco Viptela overlay during migration",
+   "caption": "Regional co-existence: the migrated spoke rides the Cato backbone with DNS and web security enforced at the PoP; the legacy spoke stays on the Viptela overlay and Umbrella. eBGP at the regional interconnect (with OMP ↔ BGP redistribution) keeps routing symmetric, and spoke cutover withdraws routes automatically.",
+   "desc": "The migrated spoke rides the Cato backbone with DNS and web security enforced at the PoP; the legacy spoke stays on the Viptela overlay and Umbrella, and eBGP at the regional interconnect with OMP-to-BGP redistribution keeps routing symmetric so spoke cutover withdraws routes automatically."
+  },
+  "migration-cisco-asa": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Co-existence between a perimeter ASA estate and Cato during phased migration",
+   "caption": "Interim co-existence: a parallel Socket at the DC takes migrated subnets over an L3\n          handoff while the ASA HA pair keeps its legacy IPsec mesh and comes up as a Cato IPsec\n          IKEv2 site — so un-migrated branches like Leeds reach Cato-side resources, and partner\n          tunnels keep terminating somewhere familiar until they are re-homed. Rollback at any\n          point is restoring the default gateway and static routes to the ASA, which stays racked\n          and configured through the soak window.",
+   "desc": "A parallel Socket at the DC takes migrated subnets over an L3 handoff while the ASA HA pair keeps its legacy IPsec mesh and comes up as a Cato IPsec IKEv2 site, so un-migrated branches reach Cato-side resources; rollback is restoring the default gateway and static routes to the ASA."
+  },
+  "migration-cisco-asa-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cisco ASA policy migration pipeline",
+   "caption": "The ACLs, NAT table and posture artefacts are exported once and rationalised against\n          the hit-count window — zero-hit ACEs and dead objects exit at review, with sign-off,\n          and are never translated. The greenfield domains skip EXPORT entirely: SWG, CASB, DLP\n          and TLS inspection enter at DEPLOY as Cato best-practice baselines in monitor mode.\n          Both streams are promoted to enforcement only when events and hit counts prove the\n          behaviour is intended.",
+   "desc": "The ACLs, NAT table and posture artefacts are rationalised against the hit-count window before anything is mapped, while SWG, CASB, DLP and TLS inspection enter at DEPLOY as Cato baselines in monitor mode; both streams are promoted to enforcement only on evidence."
+  },
+  "migration-cisco-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cisco policy conversion pipeline",
+   "caption": "The four-phase pipeline applied to every Cisco policy domain: export each rule base, rationalise on hit counts (dead rules never reach Cato), map the survivors to CMA constructs, deploy in monitor mode, and enforce only once events and hit counts prove parity.",
+   "desc": "The four-phase pipeline applied to every Cisco policy domain: export each rule base, rationalise on hit counts, map the survivors to CMA constructs, deploy in monitor mode and enforce only once events and hit counts prove parity."
+  },
+  "migration-cloudflare": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane",
+   "caption": "Scoped migration: user cohorts swap agents one wave at a time, the site runs Magic WAN and\n          Socket paths in parallel, and private apps move from cloudflared to SDP app-by-app — while\n          the public web estate never leaves Cloudflare.",
+   "desc": "User cohorts swap agents one wave at a time, the site runs Magic WAN and Socket paths in parallel, and private apps move from cloudflared connectors to SDP app segments, while the public web estate stays on Cloudflare's CDN, WAF, authoritative DNS and Magic Transit."
+  },
+  "migration-cloudflare-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cloudflare Zero Trust policy pipeline",
+   "caption": "The policy pipeline: each Cloudflare domain is exported with hit counts, stripped of dead\n          rules, mapped to CMA constructs, deployed in monitor and enforced only when the events\n          and hit counts prove the translation.",
+   "desc": "Each Cloudflare Zero Trust policy domain is exported with hit counts, stripped of dead rules, mapped to CMA constructs, deployed in monitor and enforced only when events and hit counts prove the translation."
+  },
+  "migration-directaccess": {
+   "w": 1400,
+   "h": 1032,
+   "title": "DirectAccess gateway hairpin versus Cato Client via the nearest PoP",
+   "caption": "Two users, two architectures: DirectAccess hairpins a domain-joined Windows laptop through a deprecated gateway; the Cato Client terminates a laptop and a phone at the nearest PoP and reaches datacentre and cloud applications directly — posture-checked and IdP-authenticated for the life of the session.",
+   "desc": "DirectAccess hairpins a domain-joined Windows laptop over IP-HTTPS through a deprecated gateway backed by NLS and PKI; the Cato Client connects a laptop and a phone to the nearest PoP with IdP SSO, MFA and continuous posture, reaching datacentre and cloud applications directly."
+  },
+  "migration-edgeconnect": {
+   "w": 1400,
+   "h": 1032,
+   "title": "eBGP hub co-existence between Cato and an EdgeConnect fabric during migration",
+   "caption": "Option-F co-existence at an EdgeConnect hub: a parallel Socket exchanges routes with the EC hub over eBGP, and AS-path length anchors each region's traffic to its local hub. A migrated spoke is inspected at the PoP — its SSE tunnel is retired, not rebuilt. Cutover per spoke is a routing event; rollback is its mirror image. Orchestrator is retired only after the final wave.",
+   "desc": "A parallel Socket at the EdgeConnect hub exchanges routes with the EC hub over eBGP and AS-path length anchors each region's traffic to its local hub; a migrated spoke is inspected at the PoP and its SSE tunnel is retired rather than rebuilt, while Orchestrator and the SSE tenant retire only after the final wave."
+  },
+  "migration-edgeconnect-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "EdgeConnect policy pipeline — overlays to intent",
+   "caption": "The four policy domains ride one pipeline: export (Orchestrator backup and templates on one side, the SSE tenant's console on the other), clean-up where seven overlays collapse into their genuine intents and dead rules are cut, mapping to CMA constructs, deployment in monitor mode, and promotion to enforcement on event evidence. The greenfield domains carry discovery inputs rather than rulebases — they skip translation, not the monitor-first discipline.",
+   "desc": "The four EdgeConnect policy domains ride one pipeline: Orchestrator and SSE-tenant exports, a clean-up where up to seven overlays collapse into their genuine intents and dead rules are cut, mapping to CMA constructs, monitor-mode deployment and promotion on evidence; the greenfield CASB and DLP domains skip translation, not monitor-first."
+  },
+  "migration-forcepoint": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Dual steering planes during the Forcepoint-to-Cato transition",
+   "caption": "The two steering planes are independent: cohort A's PAC still sends web traffic to Forcepoint while cohort B steers transparently to the Cato PoP. Exactly one platform owns TLS inspection per cohort, and the Forcepoint DLP endpoint agent stays for its exclusive channels.",
+   "desc": "Cohort A still steers explicitly through its GPO-pushed PAC to the policy-frozen Forcepoint cloud while cohort B steers transparently through the Cato Client and Sockets to the Cato PoP; one platform owns TLS inspection per cohort and the Forcepoint DLP endpoint agent stays for USB, print and clipboard."
+  },
+  "migration-forcepoint-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Forcepoint policy conversion pipeline",
+   "caption": "All four Forcepoint policy domains move through the same pipeline: export with hit data, discard the dead weight, map the survivors to CMA constructs, deploy watching, and enforce only when the event telemetry matches expectations.",
+   "desc": "All four Forcepoint policy domains move through one pipeline: export with hit data, discard the dead weight, map the survivors to CMA constructs, deploy in monitor and enforce only when the event telemetry matches expectations."
+  },
+  "migration-fortinet": {
+   "w": 1400,
+   "h": 1032,
+   "title": "eBGP regional-hub co-existence between Cato and a FortiGate SD-WAN estate",
+   "caption": "Interim co-existence: the parallel socket at each FortiGate regional hub exchanges routes over eBGP.\n          Routes crossing regions carry an extra AS hop, so best-path selection anchors traffic to its local hub\n          and paths stay symmetric. Spoke cutover: disable the FortiGate spoke → bring up the Cato site → routes\n          propagate to both domains. Rollback is the mirror image.",
+   "desc": "A parallel Socket at each FortiGate regional hub exchanges routes over eBGP; routes crossing regions carry an extra AS hop so best-path selection anchors traffic to its local hub, and spoke cutover or rollback is BGP reconverging."
+  },
+  "migration-fortinet-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "FortiOS policy conversion pipeline",
+   "caption": "The four FortiOS policy domains are exported once, rationalised against hit-count evidence —\n          dead rules and any-any debt exit the pipeline here — and only the surviving intent is mapped\n          to CMA constructs. Every mapped rule deploys in monitor (amber) and is promoted to\n          enforcement (green) when events and hit counts prove it behaves as intended.",
+   "desc": "The four FortiOS policy domains are exported once, rationalised against hit-count evidence, and only surviving intent is mapped to CMA constructs; every mapped rule deploys in monitor and is promoted to enforcement when events prove it."
+  },
+  "migration-iboss": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Wave-based steering cutover from iboss to Cato",
+   "caption": "Wave-based steering cutover: migrated cohorts and sites steer transparently to the nearest Cato PoP while remaining waves stay on PAC/connector steering into iboss. SaaS allowlists carry both vendors' egress IPs during transition, and any wave can roll back with a single change re-pointing to the hosted PAC.",
+   "desc": "Migrated cohorts and sites steer transparently to the nearest Cato PoP while remaining waves stay on PAC and connector steering into iboss; SaaS allowlists carry both vendors' egress IPs during transition, and any wave rolls back with a single change re-pointing to the hosted PAC."
+  },
+  "migration-iboss-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "iboss policy pipeline — per domain, per cohort",
+   "caption": "The policy pipeline, run per domain and per cohort wave: export, rationalise on hit counts (dead rules die here, not in the CMA), map to CMA constructs, deploy in monitor, enforce on evidence — with events and hit counts feeding the OPTIMISE phase.",
+   "desc": "The policy pipeline run per domain and per cohort wave: export, rationalise on hit counts, map to CMA constructs, deploy in monitor and enforce on evidence, with events and hit counts feeding the Optimise phase."
+  },
+  "migration-journey-firewall": {
+   "w": 1400,
+   "h": 729,
+   "title": "Firewall refresh to FWaaS — phase 4: Renewal cancelled",
+   "caption": "The topology is fixed across all five phases — branches on the left, the Frankfurt hub bridging the middle, the London DC and AWS eu-west-2 on the right, the appliance vendor's support-and-renewal cycle in the lower band and the Cato backbone above; only the element each phase changes moves. The refresh-to-FWaaS story from the full firewall-refresh page, watched as a progression.",
+   "desc": "Madrid's monitor run signs off; every edge, DC and cloud enforces one rulebase in the PoP, the renewal is cancelled and the hardware is removed."
+  },
+  "migration-journey-mpls": {
+   "w": 1400,
+   "h": 729,
+   "title": "MPLS exit — phase 4: Retired",
+   "caption": "The topology is fixed across all five phases — branches on the left, the legacy MPLS core in the lower band, the Cato backbone above, and the hub, DC and cloud estate on the right; only the element each phase changes moves. The MPLS-to-Cato co-existence pattern from the full MPLS migration page, watched as a progression.",
+   "desc": "The last circuit is switched off and the MPLS contract cancelled; every site, DC and cloud rides the Cato backbone with one routing table."
+  },
+  "migration-journey-sdwan": {
+   "w": 1400,
+   "h": 729,
+   "title": "Legacy SD-WAN to Cato — phase 4: Overlay retired",
+   "caption": "The topology is fixed across all five phases; only the element each phase changes moves. This is the eBGP-hub co-existence pattern from the Migration Methodology, watched as a progression.",
+   "desc": "The legacy hub appliance, its overlay links, controllers and licences are decommissioned; every site, DC and cloud runs on one Cato fabric."
+  },
+  "migration-journey-vpn": {
+   "w": 1400,
+   "h": 729,
+   "title": "VPN retirement — phase 4: Headends off",
+   "caption": "The cast never moves — cohorts on the left, the headend estate and London DC in the lower band, Azure and the Cato backbone above; each phase changes only the lanes and fills. The cohort-wave pattern from the AnyConnect and DirectAccess playbooks, watched as a progression.",
+   "desc": "Tunnel-groups are disabled and the concentrators at London DC decommissioned; every user rides always-on, posture-checked ZTNA to both app estates."
+  },
+  "migration-journey-zscaler": {
+   "w": 1400,
+   "h": 729,
+   "title": "Zscaler to Cato — phase 4: ZIA / ZCC retired",
+   "caption": "The topology is fixed across all five phases — the branch and Priya on the left, the Zscaler ZIA cloud in the lower band, the Cato backbone above, and the three destinations on the right: Internet &amp; SaaS, London DC and AWS eu-west-2. Only the lanes between them move. The dual-agent co-existence pattern from the full Zscaler migration page, watched as a progression.",
+   "desc": "ZCC is uninstalled and ZIA and ZPA decommissioned: internet from the PoP, private apps over the London DC Socket and the AWS vSocket — one client, one platform."
+  },
+  "migration-methodology": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Interconnect hub co-existence topology",
+   "caption": "During phased migration the interconnect hub carries traffic between networks: Bristol (migrated) reaches Leeds (legacy MPLS) via the Cato backbone, the hub socket and the L3 switch that owns the routing decision.",
+   "desc": "During phased migration one interconnect hub holds both legacy CPE and a Cato Socket, and its L3 switch owns the routing decision, so a migrated branch still reaches a branch on legacy MPLS across the hub."
+  },
+  "migration-netskope": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cohort-based Netskope-to-Cato co-existence",
+   "caption": "Cohort-based swap: each wave uninstalls the Netskope Client and installs the Cato Client\n          in one window — never both tunnels at once. The site runs parallel paths per VLAN; the\n          NPA Publisher stays dormant as the private-app rollback until every app it fronts is\n          accepted on Cato.",
+   "desc": "Each wave uninstalls the Netskope Client and installs the Cato Client in one window; the site runs parallel paths per VLAN, and private apps move from NPA Publishers to routed reachability behind a Socket while the Publisher stays dormant as the rollback."
+  },
+  "migration-netskope-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Netskope policy conversion pipeline",
+   "caption": "The four-phase PS pipeline applied to a Netskope estate: export each policy domain,\n          rationalise on usage evidence (the clean-up filter), map the survivors to CMA\n          constructs, deploy monitor-first, and let events and hit counts gate the flip to\n          enforcement — the Optimise loop.",
+   "desc": "The four-phase PS pipeline applied to a Netskope estate: export each domain, rationalise on usage evidence, map the survivors to CMA constructs, deploy monitor-first and let events and hit counts gate the flip to enforcement."
+  },
+  "migration-palo-alto": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Phased co-existence of a Palo Alto firewall and a Cato Socket",
+   "caption": "Parallel-socket co-existence: the PA stays default gateway while migrated subnets hand off to the socket per prefix over eBGP or statics; an interconnect hub keeps the legacy and Cato islands talking; GlobalProtect cohorts move to the Cato Client wave by wave. Rollback at any point is a route withdrawal, not a project.",
+   "desc": "The PA firewall stays default gateway while a parallel Socket takes migrated subnets per prefix over an eBGP or static handoff on a LAN transit VLAN; an interconnect hub keeps the legacy and Cato islands talking and GlobalProtect cohorts move to the Cato Client in waves."
+  },
+  "migration-palo-alto-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "PAN-OS policy conversion pipeline",
+   "caption": "All four PAN-OS policy domains run the same pipeline. In four-phase terms: EXPORT → REVIEW &amp; MAP (rationalise + map) → DEPLOY (monitor-first) → OPTIMISE (enforce and tune) — with events and hit counts as the evidence loop throughout.",
+   "desc": "Every PAN-OS policy domain runs the same pipeline — export with usage data, rationalise on hit counts, map to the WAN and Internet Firewalls, CASB, DLP and TLS Inspection, deploy monitor-first and enforce on evidence."
+  },
+  "migration-sonicwall": {
+   "w": 1400,
+   "h": 1032,
+   "title": "SonicWall TZ/NSa co-existence during phased migration",
+   "caption": "Interim co-existence for a TZ-heavy estate: the SSL-VPN cohorts move to ZTNA first,\n          retiring the exploited WAN-facing portal; TZ branches swap to parallel Sockets in waves\n          sequenced by the end-of-support calendar; and the NSa hub runs an interim IPsec IKEv2\n          on-ramp carrying un-migrated branch traffic to Cato-side resources, with default routes\n          filtered. Rollback at any point is re-plugging the TZ — its site-to-site VPN\n          re-establishes to the hub.",
+   "desc": "SSL-VPN cohorts move to ZTNA first, retiring the exploited WAN-facing portal; TZ branches swap to parallel Sockets in waves and the NSa hub runs an interim IPsec IKEv2 on-ramp for un-migrated branch traffic with default routes filtered, so rollback is re-plugging the TZ and its site-to-site VPN re-establishes."
+  },
+  "migration-sonicwall-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "SonicOS policy pipeline — rotate, never port",
+   "caption": "The four SonicOS policy domains are exported once — via NSM in one pass where it exists\n          — then rationalised against per-rule counters, where dead rules exit the pipeline. At\n          the mapping stage the estate's secrets exit too: local accounts, pre-shared keys and\n          TOTP seeds are rotated and replaced by IdP identity, never recreated. Every mapped rule\n          deploys in monitor (amber) and is promoted to enforcement (green) when events and hit\n          counts prove it behaves as intended.",
+   "desc": "The four SonicOS policy domains are exported once and rationalised against per-rule counters, where dead rules exit; at mapping every secret in the export exits too, rotated and replaced by IdP identity, and each mapped rule deploys in monitor before promotion on evidence."
+  },
+  "migration-sophos": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Co-existence between a Sophos XGS/SD-RED estate and Cato during phased migration",
+   "caption": "Interim co-existence: a parallel Socket at the HQ exchanges routes with the XGS hub over an\n          IPsec or eBGP handoff, carrying un-migrated branch traffic to Cato-side resources. SD-RED\n          sites swap to zero-touch Sockets first; XGS branches follow in waves. Rollback at any point\n          is re-plugging the RED or re-adding the site's SD-WAN connection-group membership.",
+   "desc": "A parallel Socket at HQ exchanges routes with the XGS hub over an IPsec or eBGP handoff carrying un-migrated branch traffic; SD-RED sites swap to zero-touch Sockets first, remote users move from Sophos Connect to the Cato Client, and rollback is re-plugging the RED so its tunnel re-establishes."
+  },
+  "migration-sophos-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "SFOS policy pipeline — rulebases and greenfield",
+   "caption": "The four Sophos policy domains are exported once — the greenfield pair carrying\n          discovery inputs rather than rulebases — rationalised against usage evidence, where\n          dead rules and any-any debt exit the pipeline, and only the surviving intent is mapped\n          to CMA constructs. Every mapped rule deploys in monitor (amber) and is promoted to\n          enforcement (green) when events and hit counts prove it behaves as intended.",
+   "desc": "The two SFOS rulebase domains are exported as XML and rationalised on usage, the greenfield CASB and DLP pair enters with discovery inputs, and everything that survives is mapped to CMA, deployed in monitor and promoted to enforcement when events prove it."
+  },
+  "migration-symantec": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Dual steering planes during the Symantec-to-Cato transition",
+   "caption": "The two steering planes are independent: cohort A's PAC still sends web traffic to the EOL-marked ProxySG/WSS estate while cohort B steers transparently to the Cato PoP — and the old WCCP redirect from migrated sites is retired. Exactly one platform owns TLS inspection per cohort, and the Symantec DLP endpoint agent stays for its exclusive channels.",
+   "desc": "Cohort A's PAC still sends web traffic to the EOL-marked ProxySG/WSS estate while cohort B steers transparently to the Cato PoP and the old WCCP redirect from migrated sites is retired; one platform owns TLS inspection per cohort and the Symantec DLP endpoint agent stays for its exclusive channels."
+  },
+  "migration-symantec-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Symantec policy pipeline — CPL to intent",
+   "caption": "All four Symantec policy domains move through the same pipeline: export the CPL corpus and portal policy with Reporter/access-log hit data, discard the dead layers and proxy plumbing, map the survivors to CMA constructs, deploy watching, and enforce only when the event telemetry matches expectations.",
+   "desc": "All four Symantec policy domains move through one pipeline: export the CPL corpus and portal policy with Reporter and access-log hit data, discard dead layers and proxy plumbing, map the survivors to CMA, deploy in monitor and enforce only at telemetry parity."
+  },
+  "migration-versa": {
+   "w": 1400,
+   "h": 1032,
+   "title": "eBGP hub co-existence between Cato and a Versa MP-BGP overlay during migration",
+   "caption": "Option-F co-existence at a Versa hub: a parallel Socket at the hub site exchanges routes with the VOS hub over eBGP, and AS-path length anchors each region's traffic to its local hub. Cutover per spoke is a routing event; rollback is its mirror image. The Director/Controller head-end is retired only after the final wave.",
+   "desc": "A parallel Socket at the Versa hub exchanges routes with the VOS hub over eBGP and AS-path length anchors each region's traffic to its local hub; cutover per spoke is a routing event, rollback its mirror image, and the Director/Controller head-end is retired only after the final wave."
+  },
+  "migration-versa-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Versa policy pipeline — templates to one rulebase",
+   "caption": "The four policy domains ride one pipeline: export (a provider change ticket in carrier-managed estates), clean-up on hit counts, mapping to CMA constructs, deployment in monitor mode, and promotion to enforcement on event evidence. The greenfield domains carry discovery inputs rather than rulebases — they skip translation, not the monitor-first discipline.",
+   "desc": "The four policy domains ride one pipeline: export (a provider change ticket in carrier-managed estates), clean-up on hit counts, mapping to CMA constructs, deployment in monitor mode and promotion on evidence; the greenfield domains skip translation, not monitor-first."
+  },
+  "migration-zscaler": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Phased co-existence of Cato and Zscaler ZIA during migration",
+   "caption": "Phased co-existence: sites and users connect to the nearest Cato PoP; internet traffic is tunnelled on to ZIA over parallel IKEv2 IPsec while policies are converted, then flipped to direct breakout from the Cato PoP — no big-bang cutover.",
+   "desc": "Sites and users connect to the nearest Cato PoP; internet traffic is tunnelled on to ZIA over parallel IKEv2 IPsec while policies are converted, then flipped to direct breakout from the Cato PoP — no big-bang cutover."
+  },
+  "migration-zscaler-policy": {
+   "w": 1400,
+   "h": 1032,
+   "title": "ZIA policy conversion pipeline",
+   "caption": "All four ZIA policy domains move through the same pipeline: export everything, discard what hit counts cannot justify, map the survivors to CMA constructs, deploy in monitor, and promote to enforce only on event evidence.",
+   "desc": "All four ZIA policy domains move through one pipeline: export everything, discard what hit counts cannot justify, map the survivors to CMA constructs, deploy in monitor and promote to enforce only on event evidence."
+  },
+  "network-agility-mna": {
+   "w": 1400,
+   "h": 1032,
+   "title": "M&A onboarding: acquired sites deployed through the Cato API onto the global backbone",
+   "caption": "Terraform pushes site definitions through the Cato API; Sockets at the acquired sites connect to the nearest PoP and the two estates become one network. Dashed lines are control plane: API site creation and Entra ID user provisioning.",
+   "desc": "Terraform pushes acquired-site definitions through the Cato API, zero-touch Sockets connect each site to the nearest PoP, Entra ID provisions the acquired users and groups, and the acquired estate reaches London DC and the HQ lab site over the global private backbone."
+  },
+  "network-cloud-connectivity": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Azure, AWS, GCP and OCI reaching the Cato backbone via vSocket, IPsec or Cloud Interconnect",
+   "caption": "Azure, AWS and GCP can use any of the three doors; OCI has two — IPsec or FastConnect into Cloud Interconnect, there being no OCI vSocket. Every door lands on the same PoP, backbone and policy set.",
+   "desc": "Four clouds on the left reach one Cato PoP through three doors — vSocket for Azure, AWS and GCP, IPsec from any native gateway, and a private layer-2 Cloud Interconnect circuit — and every door lands on the same backbone, policy set and console; OCI has no vSocket option."
+  },
+  "network-cloud-datacenter": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cloud datacentres connected to the Cato WAN by vSocket, IPsec and cross-connect",
+   "caption": "Glasgow reaches every cloud DC across the private backbone. Whether the last hop is a vSocket tunnel, an IPsec tunnel or a physical cross-connect, the policy and visibility are identical.",
+   "desc": "Glasgow and London DC reach every cloud datacentre across the global private backbone: an Azure VNet and an AWS VPC attach by vSocket HA pairs, Azure Virtual WAN by IPsec, and an AWS region by a layer-2 cross-connect at the PoP, all under the same policy and visibility."
+  },
+  "network-cloud-interconnect": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cloud Interconnect: one layer-2 circuit into the PoP",
+   "caption": "Public clouds land their private-link services on the exchange fabric; private DCs cross-connect directly. One VLAN-coordinated layer-2 circuit carries both into the Cato PoP and onto the backbone — no socket appliance, no IPsec tunnel in the path.",
+   "desc": "Public clouds via their private-link services and a private datacentre via physical cross-connect converge on an exchange fabric such as Equinix Fabric or Megaport; one VLAN-coordinated layer-2 circuit carries both into the Cato PoP and onto the global private backbone, moving these flows off IPsec over the public internet."
+  },
+  "network-global-app-performance": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Sydney to London application traffic over the Cato global private backbone",
+   "caption": "Sydney traffic enters the Sydney PoP and rides the backbone to London; M365 egresses at the PoP closest to the app instance. The 280&thinsp;ms label is illustrative — the point is consistency, not the number.",
+   "desc": "A Sydney IPsec site enters the Sydney PoP, where QoS prioritises voice, video and bulk traffic; the flow crosses a chain of backbone PoPs with consistent latency to the London PoP and on to the London DC socket and Microsoft 365 via smart egress, while the public-internet path beneath offers variable latency and no SLA."
+  },
+  "network-global-expansion": {
+   "w": 1400,
+   "h": 1032,
+   "title": "A growing global footprint joining the Cato backbone through nearest PoPs",
+   "caption": "A growing footprint: the London estate plus Madrid (zero-touch socket), Sydney (IPsec from day one) and a new plant on the Cato Client while its socket ships — each lands on its nearest PoP under the same policy. China joins compliantly via a licensed local partner.",
+   "desc": "The existing London DC connects to the London PoP; new sites join on their nearest PoPs — Madrid over a zero-touch Socket, Sydney over IPsec, and a new plant whose day-one users are on the Cato Client while its Socket is in transit — and a Shanghai office joins compliantly through a licensed local partner."
+  },
+  "network-ipsec-asa": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Cisco ASA site connected to Cato over dual IPsec tunnels",
+   "caption": "Both tunnels terminate on Cato-allocated IPs at two different PoPs. Failover happens between the tunnels you define — IPsec sites do not roam PoPs automatically, so the secondary tunnel is the resilience plan.",
+   "desc": "A branch LAN behind a Cisco ASA runs a primary IPsec tunnel to a Cato allocated IP at the nearest PoP and a standby secondary tunnel to an allocated IP at an alternate PoP; both PoPs join the global private backbone, which carries traffic to a London DC Socket, an AWS vSocket pair and secure internet egress."
+  },
+  "network-mpls-migration": {
+   "w": 1400,
+   "h": 1032,
+   "title": "MPLS co-existence: Bristol on Cato, Leeds on MPLS, London DC bridging both",
+   "caption": "The London DC socket advertises Leeds' prefix into the Cato cloud, so migrated sites reach un-migrated sites via the DC LAN and the existing MPLS router — no changes to the legacy network, no big-bang.",
+   "desc": "Bristol, already migrated to a Socket with broadband and 4G last miles, reaches London DC over the Cato cloud and reaches Leeds, still on MPLS, by transiting the London DC socket and, across the DC LAN, the MPLS CE router; nothing on the legacy network changes until Leeds migrates."
+  },
+  "network-resilient-site-design": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Critical site resilience, mid-incident",
+   "caption": "Failure domains, separated: a cut last mile re-homes flows to the surviving link; a dead Socket fails over to its HA peer after 3 s of missed keepalives; an unhealthy PoP is swapped for the secondary; and if no PoP is reachable at all, off-cloud recovery keeps WAN and internet traffic moving.",
+   "desc": "A critical site runs an HA pair of X1700 Sockets with VRRP keepalives, two diverse last miles and an LTE last-resort link: the primary last mile to PoP 1 has been cut and every flow has re-homed over the second last mile to PoP 2, while the standby Socket and the idle LTE link stay in reserve."
+  },
+  "network-sdwan": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Glasgow branch on-net over dual last miles and the Cato global private backbone",
+   "caption": "Glasgow comes on-net over two commodity last miles; the backbone carries traffic privately to the London DC socket and the AWS vSocket — the single MPLS circuit it replaces is retired.",
+   "desc": "A Glasgow branch joins the WAN over broadband and 4G/LTE active/active tunnels to its nearest PoP, crosses the SLA-backed global private backbone, and reaches the London DC socket and the AWS vSocket; the single MPLS circuit it replaces is retired."
+  },
+  "security-ai": {
+   "w": 1400,
+   "h": 1032,
+   "title": "One AI Security engine for users, apps and agents",
+   "caption": "One engine, three surfaces: employee prompts arrive through the Cato Client or the browser plugin, homegrown apps through IDE integration and hooks, autonomous agents through APIs. The same detectors and profile decide allow, anonymise, redirect, notify or block, and every interaction is logged for usage, risk and compliance reporting.",
+   "desc": "Employee prompts via the Cato Client and browser plugin, homegrown apps via IDE integration and hooks, and autonomous agents via APIs all reach Cato AI Security, a set of policies evaluated by SPACE, whose detectors, profiles and actions govern every interaction and log it for usage, risk and compliance reporting."
+  },
+  "security-ai-visibility": {
+   "w": 1400,
+   "h": 1032,
+   "title": "GenAI Visibility Assessment in monitor mode",
+   "caption": "All GenAI traffic — sanctioned or shadow — traverses the Cato PoP, where the AI Interaction Policy in monitor mode records every interaction into the AI Security Dashboard and GenAI Report across the four-week engagement.",
+   "desc": "Office, remote and browser-plugin GenAI traffic crosses the Cato PoP where TLS inspection, CASB/DLP and the AI Interaction Policy run in monitor mode for four weeks, so sanctioned and shadow AI use is classified and reported without anything being blocked."
+  },
+  "security-compliance": {
+   "w": 1400,
+   "h": 847,
+   "title": "From enforcement at the PoP to unified compliance evidence",
+   "caption": "Every flow is enforced once at the PoP by CASB, DLP, FWaaS and IPS. Every decision lands in one management plane — a single, correlated evidence source for ISO 27001, NIS2 and SOC 2.",
+   "desc": "CASB, DLP, FWaaS and IPS enforce policy on every flow at the Cato PoP; every decision lands in the Cato Management Application, one management plane and data lake, which produces unified audit evidence for ISO 27001, NIS2 and SOC 2."
+  },
+  "security-consistent": {
+   "w": 1400,
+   "h": 1032,
+   "title": "One global policy set enforced identically at every Cato PoP",
+   "caption": "One policy set, defined once in the CMA and distributed to every PoP (thin arrowed lines). London DC, Glasgow, the Azure vSocket, the Madrid office and a remote user all traverse the same enforcement stack — and a threat is stopped by the same rules wherever it appears.",
+   "desc": "A single policy set defined once in the CMA is distributed to every PoP on the backbone, so London DC, a Glasgow branch, an Azure vSocket, a Madrid office and a remote home worker all traverse the identical enforcement stack and a threat is blocked by the same rules wherever it appears."
+  },
+  "security-data-casb-dlp": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Inline CASB and DLP at the Cato PoP",
+   "caption": "Inline CASB + DLP decide per app and per activity; the grey arc is the out-of-band API integration governing data already stored in the sanctioned tenant.",
+   "desc": "Office and remote-user traffic reaches a Cato PoP running inline CASB and DLP: sanctioned SaaS is allowed and monitored, an unsanctioned GenAI app is restricted with a warning, an attempt to exfiltrate card data is blocked, and an out-of-band API integration scans data already at rest in the sanctioned tenant."
+  },
+  "security-dlp-forensics": {
+   "w": 1400,
+   "h": 1032,
+   "title": "DLP forensics flow — blocked upload, encrypted evidence, governed retrieval",
+   "caption": "The blocked upload never reaches the GenAI app. The encrypted snippet lands in the customer's own S3 bucket; the analyst retrieves it through the CMA under RBAC, and every view is written to the audit trail.",
+   "desc": "A user's upload of credit-card PII to Microsoft Copilot is blocked by the PoP DLP engine; an encrypted forensic snippet is written to the customer's own S3 bucket under a per-account key, and a SOC analyst retrieves it from the CMA Data Incident under RBAC with every view audited."
+  },
+  "security-finance-dora": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Self-healing backbone with a single evidence plane",
+   "caption": "When a carrier path or PoP degrades, sockets and clients automatically reconnect to the next-best PoP. Every flow still crosses the full security stack — and feeds one telemetry plane (grey) for XDR, Audit Trail and Experience Monitoring evidence.",
+   "desc": "A financial entity's London data centre, Bristol branch and hybrid workforce ride the Cato private backbone; when the London PoP path fails, traffic re-routes automatically to the Manchester PoP and still crosses the full security stack, while one telemetry plane feeds XDR stories, the Audit Trail and Experience Monitoring."
+  },
+  "security-firewall-refresh": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Firewall refresh to FWaaS: enforcement at the Cato PoP",
+   "caption": "Sockets terminate the last mile; the PoP does the firewalling. The EOL estate is retired, not refreshed — and unpatched assets stay shielded by IPS while ops patch on their own schedule.",
+   "desc": "Branch Sockets with no local firewalls connect to a Cato PoP whose single-pass engine inspects traffic to the internet and the London data centre; the EOL firewall estate is retired rather than refreshed, and an exploit against an unpatched application server is blocked at the PoP by IPS virtual patching."
+  },
+  "security-healthcare-nhs": {
+   "w": 1400,
+   "h": 1032,
+   "title": "A segmented NHS-style trust estate",
+   "caption": "Hospital VLANs, community sites and remote clinicians cross one PoP-enforced policy; inside the hospital, the LAN Firewall blocks IoMT-to-corporate traffic at the Socket. The grey lane is the evidence path into the CMA — the raw material of a DSPT submission.",
+   "desc": "An acute hospital with clinical, IoMT and corporate VLANs behind a Socket running the LAN Firewall, a community clinic, a GP-style site and remote clinicians all cross one UK Cato PoP to NHS and cloud services; IoMT-to-corporate traffic is blocked on the Socket, a pathology supplier reaches only named systems over ZTNA, and an evidence lane feeds the CMA."
+  },
+  "security-inbound-ips": {
+   "w": 1400,
+   "h": 921,
+   "title": "Inbound protection: allocated IP, PoP IPS and Remote Port Forwarding",
+   "caption": "Only the allocated IP is public. Requests terminate at the PoP, where SPACE and inbound IPS scrub them; Remote Port Forwarding carries clean traffic down the socket’s outbound DTLS tunnel.",
+   "desc": "A legitimate user and an attacker both reach an allocated IP at the London PoP; the attacker’s SQLi, XSS and RCE payloads are dropped by inbound IPS at the PoP edge, while the legitimate request is remote-port-forwarded over the Socket’s outbound DTLS tunnel to an on-prem web server with no inbound ports open."
+  },
+  "security-iso27001": {
+   "w": 1400,
+   "h": 903,
+   "title": "The ISMS loop with posture as the gate",
+   "caption": "The ISMS loop with posture as the gate: the SoA selects the controls, the Client enforces the endpoint baseline every ten minutes, the PoP enforces the rest on every flow, and every decision lands in one evidence plane — from which the Posture Compliance Report and the Audit Trail feed the auditor, and the review cycle feeds policy.",
+   "desc": "The ISMS policy and SoA select the controls; the Cato Client re-evaluates the Device Posture Profile every ten minutes and refuses or disconnects a failing device; compliant devices reach the PoP where ZTNA, FWaaS, DLP and IPS are enforced on every flow; every decision lands in the CMA evidence plane whose reports feed the Stage 2 auditor, and clause 9 review and clause 10 improvement close the loop back into policy."
+  },
+  "security-legal-confidentiality": {
+   "w": 1400,
+   "h": 1032,
+   "title": "Identity-based ethical wall between two matter teams, with DLP and an evidence lane",
+   "caption": "Both matter teams share one office and one LAN — the wall is identity, not geography. The same rules follow the remote fee-earner through the Cato Client. The grey lane is the evidence path: every allow and block lands in the CMA.",
+   "desc": "Two matter teams on the same office LAN and a remote fee-earner cross a Cato PoP enforcing an identity-based ethical wall: each team reaches only its own DMS workspace, a cross-wall attempt is blocked, DLP blocks a privileged document bound for personal cloud storage, and every decision lands in the CMA as evidence."
+  },
+  "security-ot-iot": {
+   "w": 1400,
+   "h": 1105,
+   "title": "Purdue-model segmentation on the Socket",
+   "caption": "Purdue-model segmentation enforced by the Cato Socket's LAN firewall: traffic flows freely within a level, cross-level traffic must match a device-attribute rule, and everything else — including a PLC dialling out to the internet — is dropped.",
+   "desc": "Four Purdue bands with an IT/OT boundary are spanned by a Cato Socket running the LAN firewall: traffic flows within a level, HMI to PLC is allowed by a device-attribute rule, a maintenance vendor reaches only the jump server over ZTNA, and a PLC attempting to reach the internet is blocked."
+  },
+  "security-ransomware": {
+   "w": 1400,
+   "h": 603,
+   "title": "Cato controls breaking the ransomware kill chain at every stage",
+   "caption": "Six stages, six independent controls — and XDR correlates every blocked attempt into a single incident story.",
+   "desc": "A six-stage ransomware kill chain — delivery, exploit, payload, C2, lateral movement, exfiltration — is blocked at every stage by a Cato control running in the PoP: SWG and DNS security, IPS virtual patching, NGAM with sandboxing, IPS and DNS for C2, segmentation and DLP, while legitimate traffic flows unaffected."
+  },
+  "security-retail-pci": {
+   "w": 1400,
+   "h": 884,
+   "title": "Segmented retail store connected through a Cato PoP",
+   "caption": "The Socket's LAN firewall separates POS from guest, staff and IoT inside every store. Only the POS VLAN reaches the payment path; guest and IoT get internet-only breakout — and the pattern repeats identically across hundreds of stores.",
+   "desc": "A store’s four VLANs sit behind one zero-touch Socket whose LAN firewall blocks guest traffic into the POS VLAN; broadband with LTE/5G standby carries the store to the nearest PoP, where only the POS VLAN reaches the payment processor, guest and IoT get internet-only breakout, and the CMA holds one policy and the audit evidence for every store."
+  },
+  "security-tls-inspection": {
+   "w": 1400,
+   "h": 722,
+   "title": "Staged TLS inspection rollout funnel",
+   "caption": "Staging discipline: certificates before decryption, a quiet pilot before expansion, owned bypasses before enforcement. The solid lane is the governed exception path — never a silent one.",
+   "desc": "All HTTPS traffic passes a staged funnel — root certificate fleet-wide, a monitor-first pilot cohort, category-by-category expansion, then full enforcement — with a gate between each stage, a governed bypass lane for pinned, mTLS and legacy applications, and QUIC blocked so browsers fall back to inspectable TCP."
+  },
+  "security-uk-public-sector": {
+   "w": 1400,
+   "h": 847,
+   "title": "One estate, one policy, one evidence lane",
+   "caption": "HQ, depots, schools and remote workers all cross the same PoP-enforced policy. The grey lane is the evidence path: policy, posture and event data flow into the CMA, ready for a CE Plus assessor or a CAF-based review.",
+   "desc": "A council HQ, depots and schools, and remote and field staff all connect through a UK Cato PoP where one policy — FWaaS, IPS, anti-malware, ZTNA and DLP — is enforced before traffic reaches cloud and internet services, while a grey evidence lane carries policy, posture and event data into the CMA for a Cyber Essentials Plus assessor and a CAF assessment."
   }
  }
 };

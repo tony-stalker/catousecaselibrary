@@ -55,82 +55,108 @@
 </header>
 
 <main class="main">
-  <div class="category-h"><h2 id="start-here">Start here</h2><span class="cat-count">five guided journeys</span></div>
-  <div class="grid-2" style="margin-bottom:30px">
-    <div class="card">
-      <h3 style="margin-top:0">🧭 New to the library?</h3>
-      <p style="font-size:.92rem;color:var(--ink-2);margin:6px 0 10px">The core platform story in four pages:</p>
-      <ol style="margin:0;padding-left:20px;font-size:.94rem">
-        <li><a href="usecases/network-sdwan.html">SD-WAN: Global Private Access</a></li>
-        <li><a href="usecases/security-consistent.html">Consistent Security Everywhere</a></li>
-        <li><a href="usecases/management-visibility.html">Operational &amp; Executive Visibility</a></li>
-        <li><a href="usecases/access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
-      </ol>
+  <!-- Start here + deck builder are <details> folds; app.js (initFolds) remembers each one's
+       open/closed state in localStorage ("uc-fold:<data-fold>"). deck-export.js inserts its
+       #deck-builder card right after the first .grid-2 in the document — the hidden .deck-slot
+       inside #deck-fold — so the Start-here grid is .grid-3 and must stay so. -->
+  <details class="fold" id="start-fold" data-fold="start-here" open>
+    <summary class="category-h fold-h"><h2 id="start-here">Start here</h2><span class="cat-count">six guided journeys</span><span class="fold-state" aria-hidden="true"></span></summary>
+    <div class="grid-3 start-grid">
+      <div class="card start-card">
+        <h3>🧭 New to the library?</h3>
+        <p class="start-lede">The core platform story in four pages:</p>
+        <ol>
+          <li><a href="usecases/network-sdwan.html">SD-WAN: Global Private Access</a></li>
+          <li><a href="usecases/security-consistent.html">Consistent Security Everywhere</a></li>
+          <li><a href="usecases/management-visibility.html">Operational &amp; Executive Visibility</a></li>
+          <li><a href="usecases/access-hybrid-workforce.html">Securing the Hybrid Workforce</a></li>
+        </ol>
+      </div>
+      <div class="card start-card">
+        <h3>🔁 Displacing an incumbent?</h3>
+        <p class="start-lede">Method first, then the vendor playbook:</p>
+        <ol>
+          <li><a href="usecases/migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
+          <li><a href="usecases/migration-methodology.html#playbooks">Pick the vendor playbook (and its policy deep-dive)</a></li>
+          <li><a href="usecases/security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
+          <li><a href="usecases/management-vendor-consolidation.html">Vendor Consolidation &amp; Network TCO</a></li>
+          <li>Watch it animated: <a href="usecases/migration-journey-mpls.html">MPLS</a> · <a href="usecases/migration-journey-sdwan.html">SD-WAN</a> · <a href="usecases/migration-journey-vpn.html">VPN</a> · <a href="usecases/migration-journey-firewall.html">Firewall</a> · <a href="usecases/migration-journey-zscaler.html">Zscaler</a></li>
+        </ol>
+      </div>
+      <div class="card start-card">
+        <h3>📋 Compliance conversation?</h3>
+        <p class="start-lede">Framework mapping, by regulation and sector:</p>
+        <ol>
+          <li><a href="usecases/security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
+          <li><a href="usecases/security-iso27001.html">Becoming ISO/IEC 27001:2022 Compliant: Device Posture &amp; Evidence</a></li>
+          <li><a href="usecases/security-finance-dora.html">Financial Services Resilience (DORA)</a></li>
+          <li><a href="usecases/security-retail-pci.html">Retail Store Networks &amp; PCI DSS 4.0</a></li>
+          <li><a href="usecases/security-uk-public-sector.html">UK Public Sector: Cyber Essentials &amp; NCSC CAF</a></li>
+          <li><a href="usecases/security-healthcare-nhs.html">UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE</a></li>
+          <li><a href="usecases/security-legal-confidentiality.html">Law Firms: Confidentiality &amp; Ethical Walls</a></li>
+          <li><a href="usecases/ai-eu-ai-act.html">EU AI Act: Visibility, Control &amp; Evidence</a></li>
+        </ol>
+      </div>
+      <div class="card start-card">
+        <h3>🤖 AI security?</h3>
+        <p class="start-lede">From discovery to enforcement, in order:</p>
+        <ol>
+          <li><a href="usecases/security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
+          <li>Why it matters: <a href="usecases/ai-threat-landscape.html">AI Threat Landscape — real attacks &amp; defences</a></li>
+          <li><a href="usecases/security-ai-visibility.html">GenAI Visibility Assessment</a></li>
+          <li><a href="usecases/ai-genai-security.html">GenAI Security for End Users</a></li>
+          <li><a href="usecases/ai-agentic-security.html">Securing Agentic AI</a> · <a href="usecases/ai-homegrown-apps.html">Homegrown AI Apps</a></li>
+        </ol>
+      </div>
+      <div class="card start-card" data-se-only>
+        <h3>🎬 Running a first demo?</h3>
+        <p class="start-lede">One hour, seven capabilities, one console — the running order and a five-minute segment for each:</p>
+        <ol>
+          <li><a href="usecases/demo-platform-60.html">The 60-Minute Platform Demo</a> — timings, bridge lines, staging checklist</li>
+          <li><a href="usecases/demo-swg.html">SWG</a> · <a href="usecases/demo-threat-prevention.html">Threat Prevention</a> · <a href="usecases/demo-casb.html">CASB</a> · <a href="usecases/demo-dlp.html">DLP</a></li>
+          <li><a href="usecases/demo-ztna.html">ZTNA</a> · <a href="usecases/demo-app-connectors.html">App Connectors</a> · <a href="usecases/demo-dem.html">DEM</a></li>
+          <li>Deck: the <a href="#deck-builder">Build a demo presentation</a> card has a “Platform demo (60 min)” preset in compact mode</li>
+        </ol>
+      </div>
+      <div class="card start-card" data-se-only>
+        <h3>🧪 Running a PoV?</h3>
+        <p class="start-lede">The framework first, then a worked PoV runbook for each pillar:</p>
+        <ol>
+          <li><a href="usecases/management-pov-framework.html">Running a Cato PoV</a> — scope, success criteria, weekly cadence, wrap-up</li>
+          <li><a href="usecases/network-sdwan.html#pov">SD-WAN PoV runbook</a> — baseline week, staged failover, measured performance</li>
+          <li><a href="usecases/security-consistent.html#pov">Security PoV runbook</a> — one rule, same verdicts for site and remote users</li>
+          <li><a href="usecases/access-hybrid-workforce.html#pov">Hybrid workforce PoV runbook</a> — a pilot cohort on the Cato Client</li>
+        </ol>
+      </div>
     </div>
-    <div class="card">
-      <h3 style="margin-top:0">🔁 Displacing an incumbent?</h3>
-      <p style="font-size:.92rem;color:var(--ink-2);margin:6px 0 10px">Method first, then the vendor playbook:</p>
-      <ol style="margin:0;padding-left:20px;font-size:.94rem">
-        <li><a href="usecases/migration-methodology.html">Migration Methodology &amp; Co-existence Patterns</a></li>
-        <li><a href="usecases/migration-methodology.html#playbooks">Pick the vendor playbook (and its policy deep-dive)</a></li>
-        <li><a href="usecases/security-firewall-refresh.html">Firewall Refresh to FWaaS</a></li>
-        <li><a href="usecases/management-vendor-consolidation.html">Vendor Consolidation &amp; Network TCO</a></li>
-        <li>Watch it animated: <a href="usecases/migration-journey-mpls.html">MPLS</a> · <a href="usecases/migration-journey-sdwan.html">SD-WAN</a> · <a href="usecases/migration-journey-vpn.html">VPN</a> · <a href="usecases/migration-journey-firewall.html">Firewall</a> · <a href="usecases/migration-journey-zscaler.html">Zscaler</a></li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0">📋 Compliance conversation?</h3>
-      <p style="font-size:.92rem;color:var(--ink-2);margin:6px 0 10px">Framework mapping, by regulation and sector:</p>
-      <ol style="margin:0;padding-left:20px;font-size:.94rem">
-        <li><a href="usecases/security-compliance.html">Achieving Compliance (ISO 27001 · NIS2 · SOC 2)</a></li>
-        <li><a href="usecases/security-iso27001.html">Becoming ISO/IEC 27001:2022 Compliant: Device Posture &amp; Evidence</a></li>
-        <li><a href="usecases/security-finance-dora.html">Financial Services Resilience (DORA)</a></li>
-        <li><a href="usecases/security-retail-pci.html">Retail Store Networks &amp; PCI DSS 4.0</a></li>
-        <li><a href="usecases/security-uk-public-sector.html">UK Public Sector: Cyber Essentials &amp; NCSC CAF</a></li>
-        <li><a href="usecases/security-healthcare-nhs.html">UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE</a></li>
-        <li><a href="usecases/security-legal-confidentiality.html">Law Firms: Confidentiality &amp; Ethical Walls</a></li>
-        <li><a href="usecases/ai-eu-ai-act.html">EU AI Act: Visibility, Control &amp; Evidence</a></li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0">🤖 AI security?</h3>
-      <p style="font-size:.92rem;color:var(--ink-2);margin:6px 0 10px">From discovery to enforcement, in order:</p>
-      <ol style="margin:0;padding-left:20px;font-size:.94rem">
-        <li><a href="usecases/security-ai.html">AI Security: Users, Applications &amp; Agentic AI</a></li>
-        <li>Why it matters: <a href="usecases/ai-threat-landscape.html">AI Threat Landscape — real attacks &amp; defences</a></li>
-        <li><a href="usecases/security-ai-visibility.html">GenAI Visibility Assessment</a></li>
-        <li><a href="usecases/ai-genai-security.html">GenAI Security for End Users</a></li>
-        <li><a href="usecases/ai-agentic-security.html">Securing Agentic AI</a> · <a href="usecases/ai-homegrown-apps.html">Homegrown AI Apps</a></li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0">🎬 Running a first demo?</h3>
-      <p style="font-size:.92rem;color:var(--ink-2);margin:6px 0 10px">One hour, seven capabilities, one console — the running order and a five-minute segment for each:</p>
-      <ol style="margin:0;padding-left:20px;font-size:.94rem">
-        <li><a href="usecases/demo-platform-60.html">The 60-Minute Platform Demo</a> — timings, bridge lines, staging checklist</li>
-        <li><a href="usecases/demo-swg.html">SWG</a> · <a href="usecases/demo-threat-prevention.html">Threat Prevention</a> · <a href="usecases/demo-casb.html">CASB</a> · <a href="usecases/demo-dlp.html">DLP</a></li>
-        <li><a href="usecases/demo-ztna.html">ZTNA</a> · <a href="usecases/demo-app-connectors.html">App Connectors</a> · <a href="usecases/demo-dem.html">DEM</a></li>
-        <li>Deck: the <a href="#deck-builder">Build a demo presentation</a> card has a “Platform demo (60 min)” preset in compact mode</li>
-      </ol>
-    </div>
-  </div>
+  </details>
 
-  <div class="filter-bar" role="search">
-    <span class="search-wrap">
-      <input id="uc-search" type="search" placeholder="Search full page text — e.g. ZTNA, MPLS, DLP, ransomware… (press / to focus)" aria-label="Search use cases">
-      <button type="button" class="search-clear" aria-label="Clear search" title="Clear search (Esc)" hidden>&times;</button>
-    </span>
-    <button class="filter-btn active" data-cat="All">All</button>
-    <button class="filter-btn" data-cat="Access">Access</button>
-    <button class="filter-btn" data-cat="Management">Management</button>
-    <button class="filter-btn" data-cat="Network">Network</button>
-    <button class="filter-btn" data-cat="Security">Security</button>
-    <button class="filter-btn" data-cat="AI Security">AI Security</button>
-    <button class="filter-btn" data-cat="Migration">Migration</button>
-    <button class="filter-btn" data-cat="Platform Demo">Platform Demo</button>
+  <details class="fold deck-fold" id="deck-fold" data-fold="deck-builder" open>
+    <summary class="category-h fold-h"><h2 id="deck-builder-h">Build a demo presentation</h2><span class="cat-count deck-fold-count"></span><span class="fold-state" aria-hidden="true"></span></summary>
+    <div class="grid-2 deck-slot" hidden></div>
+  </details>
+
+  <div class="filter-sentinel" aria-hidden="true"></div>
+  <div class="filter-dock" id="filter-dock">
+    <div class="filter-bar" role="search">
+      <span class="search-wrap">
+        <input id="uc-search" type="search" placeholder="Search full page text — e.g. ZTNA, MPLS, DLP, ransomware… (press / to focus)" aria-label="Search use cases">
+        <button type="button" class="search-clear" aria-label="Clear search" title="Clear search (Esc)" hidden>&times;</button>
+      </span>
+      <span class="filter-cats" role="group" aria-label="Filter by category">
+        <button class="filter-btn active" data-cat="All">All</button>
+        <button class="filter-btn" data-cat="Access">Access</button>
+        <button class="filter-btn" data-cat="Management">Management</button>
+        <button class="filter-btn" data-cat="Network">Network</button>
+        <button class="filter-btn" data-cat="Security">Security</button>
+        <button class="filter-btn" data-cat="AI Security">AI Security</button>
+        <button class="filter-btn" data-cat="Migration">Migration</button>
+        <button class="filter-btn" data-cat="Platform Demo">Platform Demo</button>
+      </span>
+    </div>
+    <div class="filter-bar vertical-bar" id="vertical-bar" aria-label="Filter by industry vertical"></div>
+    <p class="result-count" id="result-count" aria-live="polite"></p>
   </div>
-  <div class="filter-bar" id="vertical-bar" aria-label="Filter by industry vertical" style="margin-top:-10px"></div>
-  <p class="result-count" id="result-count" aria-live="polite"></p>
 
   <div id="uc-sections"><noscript>
     <div class="card">This library needs JavaScript for search and filtering. Open the pages in

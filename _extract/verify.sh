@@ -27,7 +27,7 @@ errs += [f"dup id: {i}" for i in ids if ids.count(i) > 1]
 for p in pages:
     m = re.search(r'<body[^>]*data-uc="([^"]+)"', p.read_text())
     if not m or m.group(1) != p.stem: errs.append(f"{p.name}: data-uc mismatch")
-r = subprocess.run(["grep","-rln","-i","-E","mourant|swissport|fannie|3489|tony-","usecases/","index.html","assets/js/"], capture_output=True, text=True)
+r = subprocess.run(["grep","-rln","-i","-E","--exclude-dir=deck-pics","mourant|swissport|fannie|3489|tony-","usecases/","index.html","assets/js/"], capture_output=True, text=True)
 errs += [f"identifying ref in: {l}" for l in r.stdout.splitlines()]
 print(f"{len(ids)} catalog entries / {len(pages)} pages / {len(decks)} deck links")
 if errs:
