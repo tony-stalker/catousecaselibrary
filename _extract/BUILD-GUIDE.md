@@ -9,7 +9,16 @@ opened from `file://` — no CDNs, no webfonts, no fetch(). All shared CSS/JS al
    head block, topnav, hero, TOC, section anatomy, pager, footer and script includes exactly
    (adjusting content, ids and relative deck links).
 2. `assets/js/catalog.js` — find YOUR page's entry: use its exact `id` (→ `<body data-uc="...">`),
-   `file`, `title`, `summary` (hero lede can expand on it), `tags`, `status`, `deck`.
+   `file`, `title`, `summary` (hero lede can expand on it), `tags`, `status`, `added`, `deck`.
+   - `status` is `"ready"` (demo runbook complete; captures, if any, from the demo tenant) or
+     `"wip"` (source incomplete — the page must flag its gaps). Never write `"new"`.
+   - `added` is the page's first-commit date, `"YYYY-MM-DD"`. For a brand-new page put today's
+     date; after the first commit it can be confirmed with
+     `git log --diff-filter=A --format=%as -- usecases/«id».html | tail -1`.
+   - The **90-day rule**: app.js derives the blue "New" badge from `added` (≤ 90 days old) on
+     index cards and in the hero, then falls back to `status`. The hero may be authored with
+     `badge-new` "New" for a fresh page — app.js swaps it for the status badge at runtime once
+     the page ages out, so the HTML is only the no-JS fallback.
 3. `assets/css/style.css` — the class inventory. Use ONLY classes that exist there.
 4. `_extract/image-catalog.md` — descriptions of available screenshots/diagrams in `assets/img/`.
 
@@ -21,7 +30,8 @@ opened from `file://` — no CDNs, no webfonts, no fetch(). All shared CSS/JS al
 - `.topnav` with breadcrumb: `/ <a href="../index.html#cat-«category»">«Category»</a> / «Short name»`.
 - `.hero`: category chip (`chip-cat-access|management|network|security|ai-security|migration` —
   the class and `#cat-…` anchor use the category lowercased with spaces → dashes), status badge
-  (`badge-ready` "Field-ready" | `badge-wip` "In development" | `badge-new` "New"), h1, `.lede`
+  (`badge-ready` "Field-ready" | `badge-wip` "In development" | `badge-new` "New" — the last
+  only while the catalog `added` date is within 90 days; see the status notes above), h1, `.lede`
   (2–4 sentences: the problem + what this use case demonstrates), tag row, button row.
   - If catalog `deck` is non-null: `<a class="btn btn-ghost" href="../«URL-ENCODED deck path»" download>⬇ Original deck (PPTX)</a>`
     (encode spaces as %20). Always include the `🖨 Print / PDF` button.
@@ -41,7 +51,57 @@ opened from `file://` — no CDNs, no webfonts, no fetch(). All shared CSS/JS al
   7. `id="resources"` — `.grid-2` cards: "Documentation" (allowed URLs only, below) and
      "In this library" (2–3 related pages from catalog.js, relative hrefs like `security-ai.html`).
 - `<nav class="pager" id="pager">` (empty — JS fills), footer, then:
-  `<script src="../assets/js/catalog.js"></script><script src="../assets/js/app.js"></script>`
+  `<script src="../assets/js/catalog.js"></script><script src="../assets/js/platform-facts.js"></script><script src="../assets/js/app.js"></script>`
+  (`platform-facts.js` must load before `app.js`; app.js no-ops without it, so older pages
+  that lack the include still render.)
+
+## Platform facts (`assets/js/platform-facts.js` — single source, Oct 2026)
+Headline platform numbers (PoP count, backbone SLA, customer count, Gartner MQ position) live
+ONLY in `assets/js/platform-facts.js` as `window.UC_FACTS`, each with its source URL and check
+date. Never type them as bare literals. Reference a fact by wrapping the current value in an
+element carrying `data-fact="«key»"`; app.js replaces that element's text at load and the authored
+value is the no-JS fallback:
+- prose / figcaption: `… across <span data-fact="pops">100+</span> PoPs …`
+- SVG diagram text: `<text class="dg-sub" …><tspan data-fact="pops">100+</tspan> PoPs</text>`
+  (wrap only the number so label-fit rules still hold; the rest of the sentence stays literal).
+- stat tile: `<div class="stat-value" data-fact="backboneSla">99.999%</div>`
+Keys: `pops`, `backboneSla`, `customers`, `mq` (full MQ line), `mqShort`, `mqCitation` (the
+Gartner citation line — add it wherever `mq` is quoted), `asOfLabel` (e.g. "30 Oct 2026").
+`alt=""` text cannot carry an attribute hook — write the alt from the figure's purpose rather than
+a number. The file ships unchanged in the prospect edition. Index carries the "Platform at a
+glance" strip (`.facts-strip`); use-case pages do not repeat it.
+
+## Index URL state & linking into the library (app.js, Oct 2026)
+The index mirrors its filters into the query string with `history.replaceState` and restores them
+on load, `popstate` and `hashchange`, so any filtered view is a shareable link:
+- `index.html?q=«text»` — search box text (also what a clicked card tag sets);
+  `&cat=«Category»` (exact catalog category, e.g. `AI%20Security`); `&vert=«Vertical»`.
+  Empty values are omitted; unknown values fall back to All.
+- `index.html#cat-«slug»` (slug = category lowercased, spaces → dashes) selects that category
+  filter AND scrolls to its heading — the breadcrumb `../index.html#cat-«category»` and the index
+  topnav links rely on this. The index rewrites the hash to `?cat=…` once applied.
+- `index.html?focus=search` focuses the search box (then drops the param). The `/` key does this
+  from any page: on index it focuses `#uc-search`; on use-case pages it follows the `.topnav a.brand`
+  href (`../index.html`) with `?focus=search` — keep the brand link pointing at index.
+- Search v2 (A11, index only): app.js tokenises the query (`[a-z0-9-]` words, same grammar as
+  `build-search.py`), prefix-matches each token against title / tags / summary / category and the
+  page's sorted word list in `search-index.js`, requires every token to hit, and scores
+  title ×6 · tags ×4 · summary ×2 · category ×2 · body ×1 (+4 when the query equals a tag exactly).
+  With a query the index renders ONE flat `.uc-results` grid under `h2#search-results` sorted by
+  score, with `<mark>` in title/summary, `.tag-hit` on matching tags and a `.uc-matched` line;
+  without a query the per-category sections (`h2#cat-«slug»`) render as before. Filter buttons
+  carry a `.btn-count` hit count while a query is active; the empty state (`.uc-empty`) offers the
+  six most frequent catalog tags as `button.tag`. `assets/js/search-synonyms.js` (`window.UC_SYNONYMS`,
+  loaded before app.js on index only) expands a token or phrase to its group at half weight — add a
+  group when SEs type a term differently from how pages spell it; avoid words common to most pages.
+  Catalog `title`, `summary` and `tags` are therefore ranking signals: put the terms an SE would type
+  in the tags, not only in the body.
+- Search box: `.search-wrap > input#uc-search + button.search-clear` (× appears when the query is
+  non-empty; Esc also clears). app.js wraps a bare `#uc-search` at runtime, so older markup works.
+- Link into a filtered view from a page with a relative href such as
+  `../index.html?q=ZTNA` or `../index.html?cat=Security&vert=Finance`.
+Each render still dispatches `uc:cards-rendered` on `document` (deck-export.js re-injects its
+card buttons on it). The prospect build needs no change: everything lives in app.js / style.css.
 
 ## Design rules
 - UK English (organisation, utilise, licence). Confident SE-to-SE tone: crisp, concrete, no fluff.

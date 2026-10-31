@@ -17,10 +17,35 @@
     wip:   { cls: "badge-wip",   label: "In development" },
     new:   { cls: "badge-new",   label: "New" }
   };
+  // Status model: "New" is derived from catalog `added` (first commit, YYYY-MM-DD) for the
+  // first NEW_DAYS days, then the badge falls back to the entry's field status. A legacy
+  // status of "new" (pages predating `added`) counts as ready once it has aged out.
+  var NEW_DAYS = 90;
+  function ageDays(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+    var t = Date.parse(iso + "T00:00:00Z");
+    if (isNaN(t)) return null;
+    return Math.floor((Date.now() - t) / 86400000);
+  }
+  function isNew(uc) {
+    var age = ageDays(uc.added);
+    if (age === null) return uc.status === "new";
+    return age <= NEW_DAYS;
+  }
+  function statusOf(uc) {
+    if (isNew(uc)) return STATUS.new;
+    return STATUS[uc.status === "new" ? "ready" : uc.status] || STATUS.ready;
+  }
+  window.UC_STATUS = { of: statusOf, isNew: isNew, newDays: NEW_DAYS };
   function catSlug(c) { return c.toLowerCase().replace(/\s+/g, "-"); }
   function catChipClass(c) { return "chip chip-cat-" + catSlug(c); }
 
-  /* ---------- index page: render + filter cards ---------- */
+  /* ---------- index page: render + filter cards ----------
+     URL contract (A12): the index mirrors its filter state into the query string with
+     history.replaceState — index.html?q=«text»&cat=«Category»&vert=«Vertical» — restores it on
+     load and on popstate, and honours #cat-«slug» (the topnav / breadcrumb anchors) as the
+     category filter plus a scroll to that heading. index.html?focus=search focuses the search
+     box (used by the "/" shortcut on use-case pages). Empty values are omitted from the URL. */
   function initIndex() {
     var grid = $("#uc-sections");
     if (!grid) return;
@@ -28,50 +53,369 @@
     var searchBox = $("#uc-search");
     var state = { q: "", cat: "All", vert: "All" };
     var CATS = ["Access", "Management", "Network", "Security", "AI Security", "Migration", "Platform Demo"];
-
-    function matches(uc) {
-      if (state.cat !== "All" && uc.category !== state.cat) return false;
-      if (state.vert !== "All" && uc.vertical !== state.vert) return false;
-      if (!state.q) return true;
-      var hay = (uc.title + " " + uc.summary + " " + uc.tags.join(" ") + " " + uc.category + " " + (uc.vertical || "") + " " + ((window.UC_SEARCH && window.UC_SEARCH[uc.id]) || "")).toLowerCase();
-      return state.q.toLowerCase().split(/\s+/).every(function (t) { return hay.indexOf(t) !== -1; });
+    function catFromSlug(slug) {
+      for (var i = 0; i < CATS.length; i++) if (catSlug(CATS[i]) === slug) return CATS[i];
+      return null;
     }
 
-    function cardHTML(uc) {
-      var st = STATUS[uc.status] || STATUS.ready;
+    /* ---- search v2 (A11): tokenised, prefix-matched, scored ----
+       Query → tokens (same [a-z0-9-] grammar as build-search.py). Each token is a prefix match
+       against the words of a field; a page matches when EVERY token hits in some field. Score =
+       title ×6 + tags ×4 + summary ×2 + category/vertical ×2 + body ×1 (body = the sorted word
+       list in search-index.js, binary-searched). window.UC_SYNONYMS (search-synonyms.js) expands a
+       token or phrase to its group; synonym hits count at half weight so the typed word wins. */
+    var WEIGHTS = { title: 6, tags: 4, summary: 2, cat: 2, body: 1 };
+    var FIELD_LABEL = { title: "title", tags: "tags", summary: "summary", cat: "category", body: "page text" };
+    var FIELD_ORDER = ["title", "tags", "summary", "cat", "body"];
+    function tokens(s) {
+      var out = [];
+      String(s || "").toLowerCase().replace(/[a-z0-9][a-z0-9-]*/g, function (w) {
+        w = w.replace(/^-+|-+$/g, "");
+        if (w) out.push(w);
+        return w;
+      });
+      return out;
+    }
+    // field words for title/tags/summary carry a hyphen-stripped twin so "sdwan" prefix-matches "SD-WAN"
+    function fieldWords(s) {
+      var ws = tokens(s), out = ws.slice();
+      ws.forEach(function (w) { if (w.indexOf("-") !== -1) out.push(w.replace(/-/g, "")); });
+      return out;
+    }
+    var fieldCache = {};
+    function fieldsOf(uc) {
+      var f = fieldCache[uc.id];
+      if (f) return f;
+      f = fieldCache[uc.id] = {
+        title: fieldWords(uc.title),
+        tags: fieldWords(uc.tags.join(" ")),
+        summary: fieldWords(uc.summary),
+        cat: fieldWords(uc.category + " " + (uc.vertical || "")),
+        tagsExact: uc.tags.map(function (t) { return tokens(t).join(" "); })
+      };
+      return f;
+    }
+    var bodyCache = {};
+    function bodyWords(id) {   // read UC_SEARCH lazily — it may be loaded after app.js
+      if (bodyCache[id]) return bodyCache[id];
+      var src = window.UC_SEARCH && window.UC_SEARCH[id];
+      if (!src) return null;
+      var arr = src.split(" ");
+      for (var i = 1; i < arr.length; i++) if (arr[i - 1] > arr[i]) { arr.sort(); break; }
+      return (bodyCache[id] = arr);
+    }
+    function prefixInSorted(arr, t) {   // binary search for the first word >= t, then check the prefix
+      var lo = 0, hi = arr.length;
+      while (lo < hi) { var mid = (lo + hi) >> 1; if (arr[mid] < t) lo = mid + 1; else hi = mid; }
+      return lo < arr.length && arr[lo].slice(0, t.length) === t;
+    }
+    function prefixIn(list, t) {
+      for (var i = 0; i < list.length; i++) if (list[i].slice(0, t.length) === t) return true;
+      return false;
+    }
+
+    // synonym groups → phrase map (every key and term points at its group's full term list)
+    var SYN = {}, SYN_PHRASES = [];
+    (function () {
+      var groups = window.UC_SYNONYMS || {};
+      Object.keys(groups).forEach(function (key) {
+        var terms = [key].concat(groups[key] || []).map(function (t) { return tokens(t).join(" "); })
+          .filter(function (t, i, a) { return t && a.indexOf(t) === i; });
+        terms.forEach(function (t) {
+          var mine = SYN[t] || (SYN[t] = []);
+          terms.forEach(function (x) { if (x !== t && mine.indexOf(x) === -1) mine.push(x); });
+          if (t.indexOf(" ") !== -1 && SYN_PHRASES.indexOf(t) === -1) SYN_PHRASES.push(t);
+        });
+      });
+      SYN_PHRASES.sort(function (a, b) { return b.split(" ").length - a.split(" ").length || b.length - a.length; });
+    })();
+    // query → [{words:[...], alts:[{words:[...], syn:true}]}] — multi-word synonym phrases in the
+    // query collapse to one token so "zero trust" is a single requirement, not two common words
+    function parseQuery(q) {
+      var ws = tokens(q), joined = " " + ws.join(" ") + " ", found = [];
+      SYN_PHRASES.forEach(function (p) {
+        var at = joined.indexOf(" " + p + " ");
+        if (at === -1) return;
+        found.push(p);
+        joined = joined.slice(0, at + 1) + "\u0000".repeat(p.length) + joined.slice(at + 1 + p.length);
+      });
+      var out = [];
+      found.forEach(function (p) { out.push(mkToken(p.split(" "), p)); });
+      joined.split(" ").forEach(function (w) { if (w && w.indexOf("\u0000") === -1) out.push(mkToken([w], w)); });
+      return out;
+    }
+    function mkToken(words, key) {
+      var alts = [{ words: words, syn: false }];
+      var stripped = words.join("").replace(/-/g, "");
+      if (words.length === 1 && words[0].indexOf("-") !== -1 && stripped) alts.push({ words: [stripped], syn: false });
+      (SYN[key] || []).forEach(function (t) { alts.push({ words: t.split(" "), syn: true }); });
+      return { words: words, alts: alts };
+    }
+    // one word against one page: which fields prefix-match it
+    function wordFields(uc, w) {
+      var f = fieldsOf(uc), hit = {};
+      if (prefixIn(f.title, w)) hit.title = true;
+      if (prefixIn(f.tags, w)) hit.tags = true;
+      if (prefixIn(f.summary, w)) hit.summary = true;
+      if (prefixIn(f.cat, w)) hit.cat = true;
+      var body = bodyWords(uc.id);
+      if (body && prefixInSorted(body, w)) hit.body = true;
+      return hit;
+    }
+    // score a page against the parsed query; null when a token finds nothing
+    function scorePage(uc, parsed) {
+      var total = 0, fields = {}, hlWords = [];
+      for (var i = 0; i < parsed.length; i++) {
+        var best = 0, bestFields = null, bestWords = null;
+        parsed[i].alts.forEach(function (alt) {
+          var perField = null, any = true;
+          alt.words.forEach(function (w) {
+            var h = wordFields(uc, w);
+            if (!Object.keys(h).length) any = false;
+            if (perField === null) perField = h;
+            else FIELD_ORDER.forEach(function (k) { if (!h[k]) delete perField[k]; });
+          });
+          if (!any || !perField) return;
+          var s = 0;
+          FIELD_ORDER.forEach(function (k) { if (perField[k]) s += WEIGHTS[k]; });
+          if (!s) { s = 0.5; perField = { body: true }; } // words hit, but in different fields each
+          if (alt.syn) s *= 0.5;
+          if (s > best) { best = s; bestFields = perField; bestWords = alt.words; }
+        });
+        if (!best) return null;
+        total += best;
+        FIELD_ORDER.forEach(function (k) { if (bestFields[k]) fields[k] = true; });
+        hlWords = hlWords.concat(bestWords);
+      }
+      // exact tag facet: the query (as typed, e.g. a clicked card tag) equals one of the page's tags
+      var qn = parsed.map(function (t) { return t.words.join(" "); }).join(" ");
+      if (fieldsOf(uc).tagsExact.indexOf(qn) !== -1) total += 4;
+      return { score: total, fields: fields, words: hlWords };
+    }
+    var scoreCache = { q: null, map: {} };
+    function hitsFor(q) {   // every page's hit record for q (cached per query string)
+      if (scoreCache.q === q) return scoreCache.map;
+      var parsed = parseQuery(q), map = {};
+      if (parsed.length) CAT.forEach(function (uc) { var r = scorePage(uc, parsed); if (r) map[uc.id] = r; });
+      else CAT.forEach(function (uc) { map[uc.id] = { score: 0, fields: {}, words: [] }; });
+      scoreCache = { q: q, map: map };
+      return map;
+    }
+    function facetOk(uc, cat, vert) {
+      if (cat !== "All" && uc.category !== cat) return false;
+      if (vert !== "All" && uc.vertical !== vert) return false;
+      return true;
+    }
+    function matches(uc) {
+      if (!facetOk(uc, state.cat, state.vert)) return false;
+      if (!state.q) return true;
+      return !!hitsFor(state.q)[uc.id];
+    }
+    // <mark> the matched words (whole word, case-insensitive) in an escaped text
+    function hl(text, words) {
+      var s = esc(text);
+      if (!words || !words.length) return s;
+      var uniq = words.filter(function (w, i, a) { return w && a.indexOf(w) === i; })
+        .sort(function (a, b) { return b.length - a.length; })
+        .map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); });
+      var re = new RegExp("(^|[^a-z0-9])((?:" + uniq.join("|") + ")[a-z0-9-]*)", "gi");
+      return s.replace(re, function (m, pre, word) { return pre + "<mark>" + word + "</mark>"; });
+    }
+    function tagHit(tag, words) {
+      var tw = fieldWords(tag);
+      return words.some(function (w) { return prefixIn(tw, w); });
+    }
+
+    function cardHTML(uc, hit) {
+      var st = statusOf(uc), words = hit ? hit.words : null;
+      var matchedIn = "";
+      if (hit && hit.fields) {
+        var list = FIELD_ORDER.filter(function (k) { return hit.fields[k]; }).map(function (k) { return FIELD_LABEL[k]; });
+        if (list.length) matchedIn = '<span class="uc-matched">matched in: ' + list.join(" · ") + "</span>";
+      }
       return '<a class="uc-card" href="' + esc(uc.file) + '">' +
         '<div class="uc-top"><span class="' + catChipClass(uc.category) + '">' + esc(uc.category) + "</span>" +
         '<span class="badge ' + st.cls + '">' + st.label + "</span></div>" +
-        "<h3>" + esc(uc.title) + "</h3>" +
-        "<p>" + esc(uc.summary) + "</p>" +
+        "<h3>" + (words ? hl(uc.title, words) : esc(uc.title)) + "</h3>" +
+        "<p>" + (words ? hl(uc.summary, words) : esc(uc.summary)) + "</p>" +
         '<div class="uc-tags">' + (uc.vertical ? '<span class="tag tag-vert">' + esc(uc.vertical) + "</span>" : "") +
-        uc.tags.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("") + "</div>" +
+        uc.tags.map(function (t) {
+          var on = words && tagHit(t, words);
+          return '<span class="tag' + (on ? " tag-hit" : "") + '">' + esc(t) + "</span>";
+        }).join("") + "</div>" +
+        matchedIn +
         '<span class="uc-cta">Open use case →</span></a>';
+    }
+    // six most-used catalog tags, for the empty state
+    function popularTags(n) {
+      var freq = {};
+      CAT.forEach(function (u) { u.tags.forEach(function (t) { freq[t] = (freq[t] || 0) + 1; }); });
+      return Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a] || a.localeCompare(b); }).slice(0, n);
+    }
+
+    /* search box: clear button (wraps the input when index.html has no .search-wrap yet) */
+    var clearBtn = null;
+    if (searchBox) {
+      var wrap = searchBox.closest(".search-wrap");
+      if (!wrap) {
+        wrap = document.createElement("span");
+        wrap.className = "search-wrap";
+        searchBox.parentNode.insertBefore(wrap, searchBox);
+        wrap.appendChild(searchBox);
+      }
+      clearBtn = $(".search-clear", wrap);
+      if (!clearBtn) {
+        clearBtn = document.createElement("button");
+        clearBtn.type = "button";
+        clearBtn.className = "search-clear";
+        clearBtn.setAttribute("aria-label", "Clear search");
+        clearBtn.title = "Clear search (Esc)";
+        clearBtn.innerHTML = "&times;";
+        wrap.appendChild(clearBtn);
+      }
+      clearBtn.addEventListener("click", function () {
+        state.q = "";
+        searchBox.value = "";
+        render();
+        syncUrl();
+        searchBox.focus();
+      });
+      searchBox.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && searchBox.value) {
+          e.preventDefault();
+          e.stopPropagation(); // the lightbox listens for Escape on document
+          state.q = "";
+          searchBox.value = "";
+          render();
+          syncUrl();
+        }
+      });
+    }
+
+    // per-button result counts while a query is active: how many hits that button would show
+    // (query ∧ the other facet). Rendered as a trailing <span class="btn-count">, removed when q is empty.
+    function paintCounts() {
+      var hits = state.q ? hitsFor(state.q) : null;
+      function setCount(b, n) {
+        var c = $(".btn-count", b);
+        if (n === null) { if (c) c.parentNode.removeChild(c); return; }
+        if (!c) { c = document.createElement("span"); c.className = "btn-count"; b.appendChild(c); }
+        c.textContent = n;
+        b.classList.toggle("is-empty", n === 0);
+      }
+      $$(".filter-btn[data-cat]").forEach(function (b) {
+        var cat = b.getAttribute("data-cat");
+        setCount(b, hits ? CAT.filter(function (u) { return hits[u.id] && facetOk(u, cat, state.vert); }).length : null);
+      });
+      $$(".filter-btn[data-vert]").forEach(function (b) {
+        var v = b.getAttribute("data-vert");
+        setCount(b, hits ? CAT.filter(function (u) { return hits[u.id] && facetOk(u, state.cat, v); }).length : null);
+      });
+    }
+    function paintButtons() {
+      $$(".filter-btn[data-cat]").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-cat") === state.cat); });
+      $$(".filter-btn[data-vert]").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-vert") === state.vert); });
+      if (searchBox && searchBox.value.trim() !== state.q) searchBox.value = state.q;
+      if (clearBtn) clearBtn.hidden = !state.q;
+      paintCounts();
+    }
+    function emptyHTML() {
+      var filters = [];
+      if (state.cat !== "All") filters.push(state.cat);
+      if (state.vert !== "All") filters.push(state.vert);
+      var what = state.q ? "match “" + esc(state.q) + "”" : "are tagged " + esc(filters.join(" + "));
+      if (state.q && filters.length) what += " in " + esc(filters.join(" + "));
+      return '<div class="card uc-empty"><p>No use cases ' + what + ". Try a shorter word, a different spelling, or clear the filters.</p>" +
+        '<p class="uc-empty-label">Popular tags</p><div class="uc-tags">' +
+        popularTags(6).map(function (t) { return '<button type="button" class="tag">' + esc(t) + "</button>"; }).join("") +
+        "</div></div>";
     }
 
     function render() {
+      paintButtons();
       var shown = CAT.filter(matches);
       var html = "";
-      CATS.forEach(function (cat) {
-        var items = shown.filter(function (u) { return u.category === cat; });
-        if (!items.length) return;
-        html += '<div class="category-h"><h2 id="cat-' + catSlug(cat) + '">' + cat + " use cases</h2>" +
-                '<span class="cat-count">' + items.length + " of " +
-                CAT.filter(function (u) { return u.category === cat; }).length + "</span></div>" +
-                '<div class="uc-grid">' + items.map(cardHTML).join("") + "</div>";
-      });
-      if (!shown.length) {
-        html = '<div class="card" style="text-align:center;color:var(--ink-2)">No use cases match “' +
-               esc(state.q) + '”. Try a different term or clear the filters.</div>';
+      if (state.q) {
+        // one flat list ranked by score (ties keep catalog order); the category chip on each card
+        // replaces the per-category headings, so the best title match is always first
+        var hits = hitsFor(state.q);
+        var ranked = shown.map(function (u, i) { return { u: u, i: i, s: hits[u.id].score }; })
+          .sort(function (a, b) { return b.s - a.s || a.i - b.i; });
+        if (ranked.length) {
+          html = '<div class="category-h"><h2 id="search-results">Best matches</h2>' +
+                 '<span class="cat-count">' + ranked.length + " for “" + esc(state.q) + "”" +
+                 (state.cat !== "All" ? " in " + esc(state.cat) : "") +
+                 (state.vert !== "All" ? " · " + esc(state.vert) : "") + "</span></div>" +
+                 '<div class="uc-grid uc-results">' + ranked.map(function (r) { return cardHTML(r.u, hits[r.u.id]); }).join("") + "</div>";
+        }
+      } else {
+        CATS.forEach(function (cat) {
+          var items = shown.filter(function (u) { return u.category === cat; });
+          if (!items.length) return;
+          html += '<div class="category-h"><h2 id="cat-' + catSlug(cat) + '">' + cat + " use cases</h2>" +
+                  '<span class="cat-count">' + items.length + " of " +
+                  CAT.filter(function (u) { return u.category === cat; }).length + "</span></div>" +
+                  '<div class="uc-grid">' + items.map(function (u) { return cardHTML(u, null); }).join("") + "</div>";
+        });
       }
+      if (!shown.length) html = emptyHTML();
       grid.innerHTML = html;
       var rc = $("#result-count");
-      if (rc) rc.textContent = shown.length + " of " + CAT.length + " use cases";
+      if (rc) rc.textContent = shown.length + " of " + CAT.length + " use cases" + (state.q ? ", ranked by relevance" : "");
       // deck-export.js (stripped from the prospect build) re-injects its card buttons on this
       document.dispatchEvent(new CustomEvent("uc:cards-rendered"));
     }
 
-    if (searchBox) searchBox.addEventListener("input", function () { state.q = this.value.trim(); render(); });
+    /* ---- URL state ---- */
+    var canHistory = !!(window.history && history.replaceState);
+    function syncUrl() {
+      if (!canHistory) return;
+      var parts = [];
+      if (state.q) parts.push("q=" + encodeURIComponent(state.q));
+      if (state.cat !== "All") parts.push("cat=" + encodeURIComponent(state.cat));
+      if (state.vert !== "All") parts.push("vert=" + encodeURIComponent(state.vert));
+      var url = location.pathname + (parts.length ? "?" + parts.join("&") : "");
+      // keep a non-category hash (e.g. #deck-builder); a #cat- hash is now expressed as ?cat=
+      if (location.hash && !/^#cat-/.test(location.hash)) url += location.hash;
+      if (url !== location.pathname + location.search + location.hash) {
+        try { history.replaceState(history.state, "", url); } catch (e) {}
+      }
+    }
+    function readUrl() {
+      var p = {};
+      location.search.replace(/^\?/, "").split("&").forEach(function (kv) {
+        if (!kv) return;
+        var i = kv.indexOf("="), k = decodeURIComponent(i === -1 ? kv : kv.slice(0, i));
+        try { p[k] = decodeURIComponent((i === -1 ? "" : kv.slice(i + 1)).replace(/\+/g, " ")); } catch (e) { p[k] = ""; }
+      });
+      var next = { q: (p.q || "").trim(), cat: "All", vert: "All", scrollCat: null, focus: p.focus === "search" };
+      if (p.cat && CATS.indexOf(p.cat) !== -1) next.cat = p.cat;
+      else if (p.cat) { var bySlug = catFromSlug(catSlug(p.cat)); if (bySlug) next.cat = bySlug; }
+      var m = /^#cat-([a-z0-9-]+)$/.exec(location.hash || "");
+      if (m) { var fromHash = catFromSlug(m[1]); if (fromHash) { next.cat = fromHash; next.scrollCat = fromHash; } }
+      if (p.vert) {
+        var known = CAT.some(function (u) { return u.vertical === p.vert; });
+        if (known) next.vert = p.vert;
+      }
+      return next;
+    }
+    function scrollToCat(cat) {
+      var h = document.getElementById("cat-" + catSlug(cat));
+      if (h && h.scrollIntoView) h.scrollIntoView({ block: "start" });
+    }
+    function applyUrl(scroll) {
+      var next = readUrl();
+      state.q = next.q; state.cat = next.cat; state.vert = next.vert;
+      render();
+      if (scroll && next.scrollCat) scrollToCat(next.scrollCat);
+      if (next.focus && searchBox) {
+        searchBox.focus();
+        if (searchBox.scrollIntoView) searchBox.scrollIntoView({ block: "center" });
+      }
+      syncUrl(); // normalises #cat-… → ?cat=… and drops ?focus=search
+    }
+
+    if (searchBox) searchBox.addEventListener("input", function () { state.q = this.value.trim(); render(); syncUrl(); });
     // clickable tags: filter the library by the clicked tag instead of opening the card
     grid.addEventListener("click", function (e) {
       var t = e.target;
@@ -81,14 +425,14 @@
       state.q = t.textContent.trim();
       if (searchBox) searchBox.value = state.q;
       render();
+      syncUrl();
       if (searchBox) searchBox.focus();
     });
     $$(".filter-btn[data-cat]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        $$(".filter-btn[data-cat]").forEach(function (b) { b.classList.remove("active"); });
-        btn.classList.add("active");
         state.cat = btn.getAttribute("data-cat");
         render();
+        syncUrl();
       });
     });
     // vertical filter row, built from catalog entries that declare a vertical
@@ -103,14 +447,48 @@
         }).join("");
       $$(".filter-btn[data-vert]").forEach(function (btn) {
         btn.addEventListener("click", function () {
-          $$(".filter-btn[data-vert]").forEach(function (b) { b.classList.remove("active"); });
-          btn.classList.add("active");
           state.vert = btn.getAttribute("data-vert");
           render();
+          syncUrl();
         });
       });
     }
-    render();
+    // topnav "#cat-…" links (same-document hash navigation) select that category and scroll to it
+    // (browsers fire popstate alongside hashchange — coalesce so the grid renders once)
+    var pendingApply = null;
+    function scheduleApply() {
+      if (pendingApply) return;
+      pendingApply = setTimeout(function () { pendingApply = null; applyUrl(true); }, 0);
+    }
+    window.addEventListener("hashchange", scheduleApply);
+    // back/forward between states this page wrote (or a hash the user navigated through)
+    window.addEventListener("popstate", scheduleApply);
+    applyUrl(true);
+  }
+
+  /* ---------- "/" focuses search ----------
+     On index the shortcut focuses #uc-search; elsewhere it jumps to index.html?focus=search
+     (the brand link in .topnav already carries the right relative path to index). Ignored while
+     typing in a field or with a modifier held. */
+  function initSlashShortcut() {
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+      var t = e.target, tag = t && t.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+      var box = $("#uc-search");
+      if (box) {
+        e.preventDefault();
+        box.focus();
+        if (box.select) box.select();
+        if (box.scrollIntoView) box.scrollIntoView({ block: "center" });
+        return;
+      }
+      var brand = $(".topnav a.brand");
+      var href = brand ? brand.getAttribute("href") : null;
+      if (!href || !/index\.html$/.test(href)) return;
+      e.preventDefault();
+      location.href = href + "?focus=search";
+    });
   }
 
   /* ---------- use-case pages: TOC, scroll-spy, pager ---------- */
@@ -144,6 +522,19 @@
           });
         }, { rootMargin: "-15% 0px -70% 0px" });
         sections.forEach(function (s) { io.observe(s); });
+      }
+    }
+
+    // Hero status badge: the HTML carries the authored badge as a fallback; once the catalog
+    // entry has aged past the "New" window, swap a badge-new span for the field status badge.
+    var me = null;
+    for (var i = 0; i < CAT.length; i++) if (CAT[i].id === pageId) { me = CAT[i]; break; }
+    if (me) {
+      var heroBadge = $(".hero .badge.badge-new");
+      if (heroBadge && !isNew(me)) {
+        var st = statusOf(me);
+        heroBadge.className = "badge " + st.cls;
+        heroBadge.textContent = st.label;
       }
     }
 
@@ -530,10 +921,25 @@
     });
   }
 
+  /* ---------- platform facts (assets/js/platform-facts.js — single source) ----------
+     Any element carrying data-fact="«key»" (HTML or SVG <text>/<tspan>) has its text replaced
+     with window.UC_FACTS[key]; the authored text stays as the no-JS fallback. No-op when the
+     facts file is not loaded (pages predating the include) or a key is unknown. */
+  function initFacts() {
+    var F = window.UC_FACTS;
+    if (!F) return;
+    $$("[data-fact]").forEach(function (el) {
+      var v = F[el.getAttribute("data-fact")];
+      if (typeof v === "string" && el.textContent !== v) el.textContent = v;
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    initFacts();
     initTheme();
     initFeedback();
     initIndex();
+    initSlashShortcut();
     initPage();
     initRunbookTabs();
     initCapturePlaceholders();

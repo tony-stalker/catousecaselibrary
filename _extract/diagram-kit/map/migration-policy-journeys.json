@@ -1,0 +1,2683 @@
+{
+ "category": "Migration — policy conversions, journeys and methodology",
+ "notes": "Every page is {draw: true}: no source figure in the 34-figure catalogue tells a migration story (they are product/feature figures), so each brief is grounded in the page's current SVG labels and prose. Journey pages carry 5 slots (phase-1..phase-5) in 'diagrams' with identical node geometry described once in each brief. migration-methodology carries 'main' (interconnect hub) and 'card-1' (Option F multi-region). 'diagram' is the main/first slot for convenience; 'diagrams' is authoritative where present.",
+ "pages": {
+  "migration-methodology": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Discovery first: which device owns the routing decision — L3 switch, legacy firewall or Cato Socket?",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "An interconnect hub holds legacy CPE and a Socket; migrated sites reach legacy ones across its handoff.",
+      "marks": [
+       "dc",
+       "backbone"
+      ]
+     },
+     {
+      "t": "Sites move in waves; rollback is a route change — re-add the dummy range or withdraw the BGP prefix.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Multi-region estates keep eBGP per regional hub so AS-PATH anchors each flow and its return symmetric.",
+      "marks": [
+       "popL",
+       "popR"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Interconnect-hub co-existence, 760×560. TOP: cloudTop() — 'CATO SASE CLOUD' ring + PoP pin (y 0–110). LEFT (x≈20–200): two migrated/migrating branch nd boxes: 'Bristol branch' / sub 'Migrated · X1500' (cls:'pop', mint) at y≈170 and 'Glasgow branch' / sub 'Migrating next' (cls:'dash') at y≈270. CENTRE: a site() boundary 'LONDON DC — INTERCONNECT HUB' (x≈250–510, y≈170–430) containing three nd boxes stacked: 'Cato Socket X1700' / sub 'Hub interconnect' (cls:'pop', icon socket) at top; 'L3 switch' / sub 'Route decision (DG)' (cls:'hot', icon switch) in the middle; 'Legacy CPE / router' / sub 'MPLS termination' (cls:'soft', icon route) at bottom. BOTTOM-RIGHT (x≈560–740): cloud(…, k≈.7, 'MPLS', 'Legacy WAN') at y≈330 dimmed, and two legacy branch nd boxes 'Leeds branch' / sub '192.168.3.0/24 · MPLS' and 'Manchester branch' / sub '192.168.4.0/24 · MPLS' (cls:'soft') to the right at y≈170 and y≈260. FLOWS: Bristol → PoP pin fl-tun (encrypted tunnel); PoP → hub Socket fl-tun; Socket → L3 switch fl-net; L3 switch → CPE fl-net; CPE → MPLS cloud fl-net; MPLS cloud → Leeds and Manchester fl-net fl-dim (np:0). Glasgow: dashed fl-dim to MPLS (current) and a dashed fl-tun fl-dim toward the PoP labelled 'next wave'. HIGHLIGHT: one fl-hot path with particles tracing Bristol → PoP → Socket → L3 switch → CPE → MPLS → Leeds, labelled 'Migrated ↔ legacy via the hub'. pill() on the L3 switch: 'routing decision' (y). Small f-m note under the hub: 'routed ranges or eBGP · community 32768 isolates'. ≤ 12 nodes; nothing overlaps."
+   },
+   "title": "Interconnect hub during phased migration",
+   "desc": "During phased migration one interconnect hub holds both legacy CPE and a Cato Socket, and its L3 switch owns the routing decision, so a migrated branch still reaches a branch on legacy MPLS across the hub.",
+   "legend": [
+    [
+     "hot",
+     "Migrated ↔ legacy traffic via the hub"
+    ],
+    [
+     "tun",
+     "Cato tunnels"
+    ],
+    [
+     "net",
+     "Existing links"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Leeds 192.168.3.0/24 and Manchester 192.168.4.0/24 on MPLS",
+    "Hub Socket is X1700; Bristol migrated on X1500",
+    "L3 switch at the hub owns the routing decision (default gateway)",
+    "BGP route isolation: Cato ASN + community 32768 (socket v15)",
+    "~20 sites practical ceiling for parallel connectivity everywhere; ~300 sites proven with routed-range pre-staging",
+    "Option F diagram: London PoP / Singapore PoP; FortiGate SD-WAN legacy hubs; eBGP per region; longer AS-PATH rejected",
+    "Six multi-region options A–F; asymmetric routing is the failure mode"
+   ],
+   "picSlot": "main",
+   "diagrams": [
+    {
+     "slot": "main",
+     "draw": true,
+     "vb": "0 0 760 560",
+     "brief": "Interconnect-hub co-existence, 760×560. TOP: cloudTop() — 'CATO SASE CLOUD' ring + PoP pin (y 0–110). LEFT (x≈20–200): two migrated/migrating branch nd boxes: 'Bristol branch' / sub 'Migrated · X1500' (cls:'pop', mint) at y≈170 and 'Glasgow branch' / sub 'Migrating next' (cls:'dash') at y≈270. CENTRE: a site() boundary 'LONDON DC — INTERCONNECT HUB' (x≈250–510, y≈170–430) containing three nd boxes stacked: 'Cato Socket X1700' / sub 'Hub interconnect' (cls:'pop', icon socket) at top; 'L3 switch' / sub 'Route decision (DG)' (cls:'hot', icon switch) in the middle; 'Legacy CPE / router' / sub 'MPLS termination' (cls:'soft', icon route) at bottom. BOTTOM-RIGHT (x≈560–740): cloud(…, k≈.7, 'MPLS', 'Legacy WAN') at y≈330 dimmed, and two legacy branch nd boxes 'Leeds branch' / sub '192.168.3.0/24 · MPLS' and 'Manchester branch' / sub '192.168.4.0/24 · MPLS' (cls:'soft') to the right at y≈170 and y≈260. FLOWS: Bristol → PoP pin fl-tun (encrypted tunnel); PoP → hub Socket fl-tun; Socket → L3 switch fl-net; L3 switch → CPE fl-net; CPE → MPLS cloud fl-net; MPLS cloud → Leeds and Manchester fl-net fl-dim (np:0). Glasgow: dashed fl-dim to MPLS (current) and a dashed fl-tun fl-dim toward the PoP labelled 'next wave'. HIGHLIGHT: one fl-hot path with particles tracing Bristol → PoP → Socket → L3 switch → CPE → MPLS → Leeds, labelled 'Migrated ↔ legacy via the hub'. pill() on the L3 switch: 'routing decision' (y). Small f-m note under the hub: 'routed ranges or eBGP · community 32768 isolates'. ≤ 12 nodes; nothing overlaps.",
+     "title": "Interconnect hub during phased migration",
+     "desc": "During phased migration one interconnect hub holds both legacy CPE and a Cato Socket, and its L3 switch owns the routing decision, so a migrated branch still reaches a branch on legacy MPLS across the hub.",
+     "legend": [
+      [
+       "hot",
+       "Migrated ↔ legacy traffic via the hub"
+      ],
+      [
+       "tun",
+       "Cato tunnels"
+      ],
+      [
+       "net",
+       "Existing links"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "card-1",
+     "draw": true,
+     "vb": "0 0 760 560",
+     "brief": "Multi-region co-existence, Option F (VRF / eBGP regional handoff), 760×560. TOP BAND: ring({cx:380, cy:90, rx:300, ry:40}, 'Cato Global Backbone') with two fpin() PoPs on it: 'London PoP' at x≈200 and 'Singapore PoP' at x≈560. MIDDLE ROW (y≈230): two Cato hub nd boxes (cls:'pop'): 'EMEA Cato hub site' / sub 'Socket · eBGP handoff' at x≈60–240 and 'APAC Cato hub site' / sub 'Socket · eBGP handoff' at x≈520–700. LOWER ROW (y≈360): two legacy hub nd boxes (cls:'soft'): 'EMEA legacy hub' / sub 'FortiGate SD-WAN' under the EMEA Cato hub, 'APAC legacy hub' / sub 'FortiGate SD-WAN' under the APAC Cato hub. BOTTOM (y≈470): 'Legacy site' / sub 'EMEA · MPLS' (cls:'soft') bottom-left under the EMEA legacy hub; 'Migrated site' / sub 'APAC · Socket' (cls:'pop') bottom-right under the APAC Cato hub (a short fl-tun from it up to the APAC Cato hub). LINKS: each Cato hub → its PoP fl-tun; each Cato hub ↔ its legacy hub a short vertical fl-net labelled 'eBGP' (lcls f-m); EMEA legacy hub ↔ APAC legacy hub a long horizontal fl-net fl-dim labelled 'Legacy inter-region WAN'; Legacy site → EMEA legacy hub fl-net. HIGHLIGHT: fl-hot with particles: Legacy site → EMEA legacy hub → (eBGP) EMEA Cato hub → London PoP → along the ring → Singapore PoP → APAC Cato hub → Migrated site, labelled 'Symmetric — anchored to its regional hub'. REJECTED PATH: fl-down dashed (np:0) from Migrated site → APAC Cato hub → APAC legacy hub → inter-region WAN → EMEA legacy hub, with xmark() mid-path and f-m label 'Longer AS-PATH — not selected' (and a small 'Asymmetric return via APAC hub' note). 8 nodes + 2 pins; generous spacing.",
+     "title": "Option F — regional eBGP handoff keeps routing symmetric",
+     "desc": "Each region keeps its own eBGP handoff between the Cato hub site and the legacy hub; cross-region routes carry a longer AS-PATH, so BGP best-path anchors traffic and its return to the same regional hub and avoids asymmetric routing.",
+     "legend": [
+      [
+       "hot",
+       "Symmetric flow — anchored to its regional hub"
+      ],
+      [
+       "down",
+       "Cross-region return — rejected by best-path"
+      ],
+      [
+       "net",
+       "Links & eBGP peerings"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-journey-mpls": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "cloud",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Manchester becomes the bridge: the first Socket goes in beside the MPLS CE and peers eBGP with it.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "London DC and AWS eu-west-2 come on-net first; branches still on MPLS reach them across the handoff.",
+      "marks": [
+       "cloud",
+       "backbone"
+      ]
+     },
+     {
+      "t": "Bristol and Leeds swing up to the PoP in waves; Glasgow rides the emptying MPLS cloud until its turn.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "The last circuit is switched off — every site, DC and cloud rides the Cato backbone, one routing table.",
+      "marks": [
+       "backbone"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "phase-1",
+    "draw": true,
+    "vb": "0 0 960 500",
+    "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 0 — no ring, no PoP (upper band empty). All six nodes cls:'soft'; subs: Bristol/Leeds/Glasgow 'on MPLS', 'AWS eu-west-2' sub 'via London DC', 'London DC' sub 'private apps · on MPLS', 'Manchester hub' sub 'colo interconnect'. fl-net lanes from each branch, Manchester and London DC down into the MPLS cloud; AWS reached by a fl-net lane from London DC (hairpin)."
+   },
+   "title": "MPLS exit — phase 0: Legacy",
+   "desc": "Baseline: three branches, the Manchester colo interconnect and the London DC all hub-and-spoke through the MPLS cloud, and AWS eu-west-2 is reached through the DC.",
+   "legend": [
+    [
+     "tun",
+     "On the Cato backbone"
+    ],
+    [
+     "ha",
+     "Interim path via the Manchester handoff"
+    ],
+    [
+     "net",
+     "Legacy MPLS (live / dormant)"
+    ],
+    [
+     "down",
+     "Retired & decommissioned"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Sites: Bristol, Leeds, Glasgow branches; Manchester colo interconnect hub; London DC (HA Socket pair); AWS eu-west-2 (vSocket)",
+    "Manchester Socket peers eBGP with the MPLS CE on the colo LAN",
+    "AWS reached via London DC in phases 0–1",
+    "Phase 4 label: 'every site, DC and cloud any-to-any · one routing table'"
+   ],
+   "picSlot": "phase-5",
+   "diagrams": [
+    {
+     "slot": "phase-1",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 0 — no ring, no PoP (upper band empty). All six nodes cls:'soft'; subs: Bristol/Leeds/Glasgow 'on MPLS', 'AWS eu-west-2' sub 'via London DC', 'London DC' sub 'private apps · on MPLS', 'Manchester hub' sub 'colo interconnect'. fl-net lanes from each branch, Manchester and London DC down into the MPLS cloud; AWS reached by a fl-net lane from London DC (hairpin).",
+     "title": "MPLS exit — phase 0: Legacy",
+     "desc": "Baseline: three branches, the Manchester colo interconnect and the London DC all hub-and-spoke through the MPLS cloud, and AWS eu-west-2 is reached through the DC.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "Interim path via the Manchester handoff"
+      ],
+      [
+       "net",
+       "Legacy MPLS (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-2",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 1 — ring and 'Cato PoP' pin appear (mint). Manchester hub turns cls:'pop', sub 'Socket + eBGP handoff'; a fl-tun lane up to the PoP and its fl-net lane down into MPLS both live, with a pill 'eBGP handoff' (g) on the MPLS-side lane. Everything else unchanged from phase 0.",
+     "title": "MPLS exit — phase 1: Hub bridge",
+     "desc": "The first Socket goes in at the Manchester colo beside the MPLS CE and peers eBGP with it, so the hub is dual-homed with both paths live.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "Interim path via the Manchester handoff"
+      ],
+      [
+       "net",
+       "Legacy MPLS (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-3",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 2 — London DC cls:'pop' sub 'Socket HA · private apps'; AWS eu-west-2 cls:'pop' sub 'vSocket'; each gains a fl-tun to the PoP while their legacy lanes become fl-net fl-dim (dormant). An fl-ha amber path with particles: branches → MPLS → Manchester handoff → PoP → London DC / AWS, labelled 'interim path via the Manchester handoff'.",
+     "title": "MPLS exit — phase 2: DCs on-net",
+     "desc": "London DC gains an HA Socket pair and AWS eu-west-2 a vSocket; branches still on MPLS reach both across the Manchester handoff.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "Interim path via the Manchester handoff"
+      ],
+      [
+       "net",
+       "Legacy MPLS (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-4",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 3 — Bristol and Leeds cls:'pop' sub 'on Cato', fl-tun lanes to the PoP, their MPLS lanes fl-net fl-dim. Glasgow still 'on MPLS' with the amber fl-ha path through the handoff. MPLS cloud sub changes to 'emptying out' and is drawn dimmed.",
+     "title": "MPLS exit — phase 3: Waves",
+     "desc": "Bristol and Leeds cut over to the PoP in waves while Glasgow still reaches everything through the handoff.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "Interim path via the Manchester handoff"
+      ],
+      [
+       "net",
+       "Legacy MPLS (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-5",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on a ring() 'Cato Global Backbone' spanning x 120–840 (hidden/dimmed in phase 0 but the slot is reserved). LOWER BAND (y 380–480): cloud(480, 430, .9, 'MPLS', 'carrier core'). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Leeds' (y≈250), 'Glasgow' (y≈330). RIGHT COLUMN (x≈760–920) three estate nd boxes: 'AWS eu-west-2' (y≈170), 'London DC' (y≈250), 'Manchester hub' (y≈330). Every node keeps these exact coordinates in all phases; only subs, cls and lanes change. Colour grammar: cls:'pop' mint = on the Cato backbone, cls:'soft' grey = legacy MPLS, cls:'dash' = dormant; lanes fl-tun = Cato, fl-net = MPLS live, fl-net fl-dim = dormant MPLS, fl-ha amber = interim path via the Manchester handoff, fl-down + xmark = retired. PHASE 4 — Glasgow cls:'pop' sub 'on Cato' with fl-tun; Manchester hub sub 'on Cato'. MPLS cloud dimmed, cls:'bad'-style red cross via xmark() and sub 'decommissioned'; all MPLS lanes removed or fl-dim. Ring label beneath: 'every site, DC and cloud any-to-any · one routing table'.",
+     "title": "MPLS exit — phase 4: Retired",
+     "desc": "The last circuit is switched off and the MPLS contract cancelled; every site, DC and cloud rides the Cato backbone with one routing table.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "Interim path via the Manchester handoff"
+      ],
+      [
+       "net",
+       "Legacy MPLS (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-journey-sdwan": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "cloud",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-az"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A Cato Socket runs in parallel at the London hub and an eBGP handoff exchanges routes between the fabrics.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "Slough DC comes up on HA Sockets and the Azure vWAN hub on a vSocket — the low-risk wins first.",
+      "marks": [
+       "cloud",
+       "backbone"
+      ]
+     },
+     {
+      "t": "Bristol and Glasgow swing up to the backbone in waves; AS-path length keeps every flow symmetric.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "The legacy hub appliance, overlay and licences are decommissioned — one Cato fabric remains.",
+      "marks": [
+       "backbone"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "phase-1",
+    "draw": true,
+    "vb": "0 0 960 500",
+    "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 0 — no ring or PoP; Cato Socket box drawn cls:'dash' and empty (slot reserved, no label) or omitted. Legacy hub sub 'incumbent overlay core'. Bristol/Glasgow sub 'branch · on overlay', Slough DC sub 'apps · via London hub', Azure vWAN hub sub 'reached via the hub' — all cls:'soft' with fl-net lanes into the Legacy SD-WAN hub."
+   },
+   "title": "Legacy SD-WAN to Cato — phase 0: Legacy overlay",
+   "desc": "Baseline: Bristol and Glasgow, the Slough DC and the Azure vWAN hub are all anchored to the legacy hub appliance at the London hub site; no Cato yet.",
+   "legend": [
+    [
+     "tun",
+     "On the Cato backbone"
+    ],
+    [
+     "ha",
+     "eBGP handoff — routes exchanged"
+    ],
+    [
+     "net",
+     "Legacy SD-WAN overlay (live / dormant)"
+    ],
+    [
+     "down",
+     "Retired & decommissioned"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Generic incumbent — 'Legacy SD-WAN hub' never names a vendor",
+    "London hub site with parallel Socket + eBGP handoff; Slough DC (HA Sockets); Azure vWAN hub (vSocket); Bristol & Glasgow branches",
+    "AS-path length anchors symmetry; rollback is reconvergence"
+   ],
+   "picSlot": "phase-5",
+   "diagrams": [
+    {
+     "slot": "phase-1",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 0 — no ring or PoP; Cato Socket box drawn cls:'dash' and empty (slot reserved, no label) or omitted. Legacy hub sub 'incumbent overlay core'. Bristol/Glasgow sub 'branch · on overlay', Slough DC sub 'apps · via London hub', Azure vWAN hub sub 'reached via the hub' — all cls:'soft' with fl-net lanes into the Legacy SD-WAN hub.",
+     "title": "Legacy SD-WAN to Cato — phase 0: Legacy overlay",
+     "desc": "Baseline: Bristol and Glasgow, the Slough DC and the Azure vWAN hub are all anchored to the legacy hub appliance at the London hub site; no Cato yet.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "eBGP handoff — routes exchanged"
+      ],
+      [
+       "net",
+       "Legacy SD-WAN overlay (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-2",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 1 — ring + PoP appear; 'Cato Socket' / 'parallel at London hub' (cls:'pop') lit with fl-tun up to the PoP; fl-ha amber horizontal link Legacy hub ↔ Socket with pill 'eBGP handoff'. Branches, DC and Azure unchanged.",
+     "title": "Legacy SD-WAN to Cato — phase 1: Parallel Socket at the hub",
+     "desc": "A Cato Socket stands beside the legacy appliance at the London hub and an eBGP handoff peers the two fabrics; legacy still carries all production.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "eBGP handoff — routes exchanged"
+      ],
+      [
+       "net",
+       "Legacy SD-WAN overlay (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-3",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 2 — Slough DC cls:'pop' sub 'Socket HA · on Cato'; Azure vWAN hub cls:'pop' sub 'vSocket · on Cato'; fl-tun to the PoP; their overlay lanes fl-net fl-dim. Branch traffic still fl-net into the legacy hub, crossing the amber handoff to reach them.",
+     "title": "Legacy SD-WAN to Cato — phase 2: DC and cloud on-net",
+     "desc": "Slough DC comes up on HA Sockets and the Azure vWAN hub on a vSocket; branches still on the overlay reach them across the hub eBGP handoff.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "eBGP handoff — routes exchanged"
+      ],
+      [
+       "net",
+       "Legacy SD-WAN overlay (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-4",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 3 — Bristol and Glasgow cls:'pop' sub 'migrated · Cato' with fl-tun to the PoP; overlay lanes fl-dim. Legacy hub sub 'emptying out', drawn dimmed. Handoff still amber (rollback path).",
+     "title": "Legacy SD-WAN to Cato — phase 3: Branch waves",
+     "desc": "Bristol and Glasgow cut over in waves; anything still on the overlay stays anchored to its own hub by AS-path length, and the handoff remains as the rollback path.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "eBGP handoff — routes exchanged"
+      ],
+      [
+       "net",
+       "Legacy SD-WAN overlay (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-5",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840). LOWER BAND: 'London hub' is a site() boundary (x 330–630, y 330–480) holding two nd boxes side by side: 'Legacy SD-WAN hub' / sub 'incumbent overlay core' (left, x≈350) and 'Cato Socket' / sub 'parallel at London hub' (right, x≈490); a short horizontal fl-net between them carries pill 'eBGP handoff'. LEFT COLUMN (x≈40–200): 'Bristol' (y≈190) and 'Glasgow' (y≈290). RIGHT COLUMN (x≈760–920): 'Slough DC' (y≈190) and 'Azure vWAN hub' (y≈290). All coordinates fixed across phases. Colour grammar: cls:'pop' = on Cato; cls:'soft' = on the overlay; fl-tun = Cato; fl-net = overlay live; fl-net fl-dim = overlay dormant; fl-ha amber = eBGP handoff / routes exchanged; fl-down + xmark = retired. PHASE 4 — Legacy SD-WAN hub dimmed with xmark(), sub 'decommissioned' and f-m note 'overlay & controllers retired'; handoff removed; Cato Socket sub 'the only hub now'. PoP note 'every site any-to-any · one fabric'.",
+     "title": "Legacy SD-WAN to Cato — phase 4: Overlay retired",
+     "desc": "The legacy hub appliance, its overlay links, controllers and licences are decommissioned; every site, DC and cloud runs on one Cato fabric.",
+     "legend": [
+      [
+       "tun",
+       "On the Cato backbone"
+      ],
+      [
+       "ha",
+       "eBGP handoff — routes exchanged"
+      ],
+      [
+       "net",
+       "Legacy SD-WAN overlay (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-journey-firewall": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "cloud",
+     "pop",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Frankfurt interconnect hub takes the first Socket; its imported rules run in FWaaS in monitor mode.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "The London DC HA Socket and an AWS vSocket join; cloud egress moves onto the one forming CMA rulebase.",
+      "marks": [
+       "cloud",
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Branches cut enforcement to FWaaS in waves; signed-off appliances drop to powered-on standby.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "Madrid signs off, the renewal is cancelled — one global policy for every edge, enforced in the PoP.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "phase-1",
+    "draw": true,
+    "vb": "0 0 960 500",
+    "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 0 — no PoP. All six edges cls:'soft' with fl-net lanes down to the 'NGFW vendor' band. Subs: Bristol/Glasgow 'NGFW · local rules', Madrid 'NGFW · rules drifted', Frankfurt hub 'NGFW · regional interconnect', London DC 'HA firewall pair', AWS eu-west-2 'virtual NGFW · own rules'."
+   },
+   "title": "Firewall refresh to FWaaS — phase 0: Appliance estate",
+   "desc": "Baseline: branches, the Frankfurt interconnect hub, the London DC and the AWS VPC each enforce on their own NGFW, all tied to the vendor's support and renewal cycle.",
+   "legend": [
+    [
+     "tun",
+     "Enforcing in FWaaS"
+    ],
+    [
+     "ha",
+     "Monitor-first — appliance still enforcing"
+    ],
+    [
+     "net",
+     "Vendor support tie (live / dormant)"
+    ],
+    [
+     "down",
+     "Retired — renewal cancelled"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Edges: Bristol, Glasgow, Madrid branches; Frankfurt hub (regional interconnect, NOT the DC) is the bridge; London DC HA firewall pair → Socket HA; AWS eu-west-2 vSocket",
+    "The NGFW vendor is never named",
+    "Phase 3: London DC 'FWaaS + LAN Firewall' (east-west segmentation to LAN Firewall on the Socket)",
+    "Monitor-first (amber) → enforcing (green) colour grammar"
+   ],
+   "picSlot": "phase-5",
+   "diagrams": [
+    {
+     "slot": "phase-1",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 0 — no PoP. All six edges cls:'soft' with fl-net lanes down to the 'NGFW vendor' band. Subs: Bristol/Glasgow 'NGFW · local rules', Madrid 'NGFW · rules drifted', Frankfurt hub 'NGFW · regional interconnect', London DC 'HA firewall pair', AWS eu-west-2 'virtual NGFW · own rules'.",
+     "title": "Firewall refresh to FWaaS — phase 0: Appliance estate",
+     "desc": "Baseline: branches, the Frankfurt interconnect hub, the London DC and the AWS VPC each enforce on their own NGFW, all tied to the vendor's support and renewal cycle.",
+     "legend": [
+      [
+       "tun",
+       "Enforcing in FWaaS"
+      ],
+      [
+       "ha",
+       "Monitor-first — appliance still enforcing"
+      ],
+      [
+       "net",
+       "Vendor support tie (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired — renewal cancelled"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-2",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 1 — PoP appears, sub 'FWaaS · monitor-first'. Frankfurt hub sub 'Socket · FWaaS monitor', gains an fl-ha amber lane to the PoP while its grey lane to the vendor band stays live; pill 'eBGP handoff' (g) on the hub. Others unchanged.",
+     "title": "Firewall refresh to FWaaS — phase 1: Hub bridges",
+     "desc": "The Frankfurt hub takes the first Socket; its imported rules run in FWaaS in monitor mode while the appliance still enforces, and its eBGP handoff bridges the two estates.",
+     "legend": [
+      [
+       "tun",
+       "Enforcing in FWaaS"
+      ],
+      [
+       "ha",
+       "Monitor-first — appliance still enforcing"
+      ],
+      [
+       "net",
+       "Vendor support tie (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired — renewal cancelled"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-3",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 2 — Frankfurt cls:'pop' sub 'on FWaaS · eBGP bridge' with fl-tun green to the PoP, its vendor lane fl-dim. London DC sub 'Socket HA · FWaaS monitor' with amber lane; AWS eu-west-2 cls:'pop' sub 'vSocket · same rulebase' with fl-tun, its vendor lane fl-dim. PoP sub 'one CMA rulebase forming'.",
+     "title": "Firewall refresh to FWaaS — phase 2: DC & cloud",
+     "desc": "Frankfurt cuts over; the London DC HA Socket starts its monitor run beside the firewall pair and AWS eu-west-2 lands a vSocket on the same forming CMA rulebase.",
+     "legend": [
+      [
+       "tun",
+       "Enforcing in FWaaS"
+      ],
+      [
+       "ha",
+       "Monitor-first — appliance still enforcing"
+      ],
+      [
+       "net",
+       "Vendor support tie (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired — renewal cancelled"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-4",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 3 — Bristol and Glasgow cls:'pop' sub 'on FWaaS', fl-tun; London DC cls:'pop' sub 'FWaaS + LAN Firewall', fl-tun; Madrid sub 'Socket · FWaaS monitor' with amber lane and live grey tie. Vendor band sub 'appliances standby'; signed-off ties fl-dim. PoP sub 'one CMA rulebase'.",
+     "title": "Firewall refresh to FWaaS — phase 3: Branch waves",
+     "desc": "Bristol and Glasgow cut enforcement to FWaaS, the DC splits internet and WAN policy to FWaaS and east-west to LAN Firewall, and Madrid starts its monitor run; signed-off appliances drop to standby.",
+     "legend": [
+      [
+       "tun",
+       "Enforcing in FWaaS"
+      ],
+      [
+       "ha",
+       "Monitor-first — appliance still enforcing"
+      ],
+      [
+       "net",
+       "Vendor support tie (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired — renewal cancelled"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-5",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 with sub text beneath that changes per phase ('FWaaS · monitor-first' → 'one CMA rulebase forming' → 'one CMA rulebase' → 'one global policy'). LOWER BAND (y 400–480): a wide soft nd 'NGFW vendor' / sub 'renewal quote due' at x 300–660 representing the support-and-renewal cycle (the incumbent appliance vendor, unnamed). LEFT COLUMN (x≈40–200) three branch nd boxes: 'Bristol' (y≈170), 'Glasgow' (y≈250), 'Madrid' (y≈330). CENTRE (x≈400–560, y≈250): 'Frankfurt hub' / sub 'NGFW · regional interconnect' — the bridge between bands. RIGHT COLUMN (x≈760–920): 'London DC' (y≈190), 'AWS eu-west-2' (y≈310). Fixed coordinates in every phase. Colour grammar: each edge has one 'enforcement' lane: fl-net grey down to the NGFW vendor band = appliance enforcing with live support tie; fl-ha amber up to the PoP = FWaaS monitor-first while the appliance still enforces; fl-tun green up to the PoP = enforcing in FWaaS; fl-net fl-dim = dormant support tie (standby appliance); fl-down + xmark = retired. PHASE 4 — Madrid cls:'pop' sub 'on FWaaS', fl-tun. Vendor band dimmed with xmark(), label 'NGFW vendor' / sub 'support contract' and f-m note 'renewal cancelled'; all grey ties removed. PoP sub 'one global policy'.",
+     "title": "Firewall refresh to FWaaS — phase 4: Renewal cancelled",
+     "desc": "Madrid's monitor run signs off; every edge, DC and cloud enforces one rulebase in the PoP, the renewal is cancelled and the hardware is removed.",
+     "legend": [
+      [
+       "tun",
+       "Enforcing in FWaaS"
+      ],
+      [
+       "ha",
+       "Monitor-first — appliance still enforcing"
+      ],
+      [
+       "net",
+       "Vendor support tie (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired — renewal cancelled"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-journey-vpn": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "dc",
+     "cloud",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-az"
+     },
+     {
+      "p": "r-CR"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The rail goes in first: a Socket at London DC and a vSocket in Azure put both app estates on Cato.",
+      "marks": [
+       "dc",
+       "cloud"
+      ]
+     },
+     {
+      "t": "The pilot cohort swaps to the Cato Client — ZTNA to named apps — while the headends stay live for the rest.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Departmental waves follow the pilot's checklist; contractors and BYOD go clientless in the browser.",
+      "marks": [
+       "users",
+       "pop"
+      ]
+     },
+     {
+      "t": "Tunnel-groups are disabled and the concentrators decommissioned — nothing is left listening on the internet.",
+      "marks": [
+       "dc"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "phase-1",
+    "draw": true,
+    "vb": "0 0 960 500",
+    "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 0 — no ring/PoP. All three cohorts cls:'soft' sub 'full-tunnel VPN' ('Contractors' sub 'BYOD · same VPN') with fl-net lanes into 'VPN headends'. Headends → London DC fl-net ('private apps · on-prem'); London DC → Azure fl-net labelled 'hairpin via the DC' ('Azure' sub 'cloud apps · via DC')."
+   },
+   "title": "VPN retirement — phase 0: Legacy",
+   "desc": "Baseline: every employee and contractor full-tunnels to the headends at London DC, one tunnel grants the whole network, and Azure apps are reached by hairpinning through the DC.",
+   "legend": [
+    [
+     "tun",
+     "On Cato — Client ZTNA & Socket rail"
+    ],
+    [
+     "https",
+     "Clientless browser access"
+    ],
+    [
+     "ha",
+     "Interim — still on the VPN, Cato rail live"
+    ],
+    [
+     "net",
+     "Legacy full-tunnel VPN (live / dormant)"
+    ],
+    [
+     "down",
+     "Retired & decommissioned"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Three cohorts: Pilot, Wave cohorts, Contractors (BYOD)",
+    "VPN headends terminate at London DC; Azure apps hairpin via the DC in phase 0",
+    "Rail first: Socket at London DC + vSocket in Azure (phase 1) before any cohort moves",
+    "Contractors go clientless (browser) — no agent",
+    "The VPN vendor is never named on this page"
+   ],
+   "picSlot": "phase-5",
+   "diagrams": [
+    {
+     "slot": "phase-1",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 0 — no ring/PoP. All three cohorts cls:'soft' sub 'full-tunnel VPN' ('Contractors' sub 'BYOD · same VPN') with fl-net lanes into 'VPN headends'. Headends → London DC fl-net ('private apps · on-prem'); London DC → Azure fl-net labelled 'hairpin via the DC' ('Azure' sub 'cloud apps · via DC').",
+     "title": "VPN retirement — phase 0: Legacy",
+     "desc": "Baseline: every employee and contractor full-tunnels to the headends at London DC, one tunnel grants the whole network, and Azure apps are reached by hairpinning through the DC.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Client ZTNA & Socket rail"
+      ],
+      [
+       "https",
+       "Clientless browser access"
+      ],
+      [
+       "ha",
+       "Interim — still on the VPN, Cato rail live"
+      ],
+      [
+       "net",
+       "Legacy full-tunnel VPN (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-2",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 1 — ring + PoP appear. London DC cls:'pop' sub 'Socket · private apps' and Azure cls:'pop' sub 'vSocket · cloud apps', each with fl-tun to the PoP; the DC→Azure hairpin lane removed. Cohort lanes to the headends turn fl-ha amber (still on the VPN, rail live).",
+     "title": "VPN retirement — phase 1: Cato rail",
+     "desc": "The app side goes on Cato before any user moves: a Socket at London DC and a vSocket in Azure put both app estates on the backbone and collapse the Azure hairpin.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Client ZTNA & Socket rail"
+      ],
+      [
+       "https",
+       "Clientless browser access"
+      ],
+      [
+       "ha",
+       "Interim — still on the VPN, Cato rail live"
+      ],
+      [
+       "net",
+       "Legacy full-tunnel VPN (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-3",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 2 — Pilot cohort cls:'pop' sub 'Cato Client' with fl-tun to the PoP; its headend lane fl-net fl-dim (dormant). PoP sub 'ZTNA · per-app policy'. Wave cohorts and Contractors unchanged (amber).",
+     "title": "VPN retirement — phase 2: Pilot cohort",
+     "desc": "MDM swaps the pilot cohort to the Cato Client for ZTNA to named apps in both locations; its VPN tunnel falls dormant as the rollback path.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Client ZTNA & Socket rail"
+      ],
+      [
+       "https",
+       "Clientless browser access"
+      ],
+      [
+       "ha",
+       "Interim — still on the VPN, Cato rail live"
+      ],
+      [
+       "net",
+       "Legacy full-tunnel VPN (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-4",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 3 — Wave cohorts cls:'pop' sub 'Cato Client' with fl-tun; Contractors cls:'pop' sub 'clientless · browser' with fl-https to the PoP. All headend lanes fl-dim; headends sub 'draining · standby'. PoP sub 'per-app policy · least privilege'.",
+     "title": "VPN retirement — phase 3: Cohort waves",
+     "desc": "Departmental waves repeat the pilot's swap and contractors and BYOD move to clientless browser access; the headends drain to standby.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Client ZTNA & Socket rail"
+      ],
+      [
+       "https",
+       "Clientless browser access"
+      ],
+      [
+       "ha",
+       "Interim — still on the VPN, Cato rail live"
+      ],
+      [
+       "net",
+       "Legacy full-tunnel VPN (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-5",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); the PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): a wide soft nd 'VPN headends' / sub 'terminate at London DC' with a pill beneath ('one tunnel = whole network'). LEFT COLUMN (x≈40–210) three cohort nd boxes with user icons: 'Pilot cohort' (y≈170), 'Wave cohorts' (y≈250), 'Contractors' (y≈330). RIGHT COLUMN (x≈760–920): 'Azure' (y≈170) and 'London DC' (y≈290). Fixed coordinates in every phase. Colour grammar: fl-net grey from a cohort into the headends = legacy full-tunnel VPN; fl-net fl-dim = VPN tunnel dormant (rollback); fl-tun green to the PoP = Cato Client ZTNA or Socket rail; fl-https (purple/blue) to the PoP = clientless browser access; fl-ha amber = interim (cohort still on VPN while the Cato rail is live); fl-down + xmark = retired. PHASE 4 — VPN headends dimmed with xmark(), sub 'switched off' and f-m note 'decommissioned'; all legacy lanes removed. PoP sub 'always-on ZTNA · posture-checked'.",
+     "title": "VPN retirement — phase 4: Headends off",
+     "desc": "Tunnel-groups are disabled and the concentrators at London DC decommissioned; every user rides always-on, posture-checked ZTNA to both app estates.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Client ZTNA & Socket rail"
+      ],
+      [
+       "https",
+       "Clientless browser access"
+      ],
+      [
+       "ha",
+       "Interim — still on the VPN, Cato rail live"
+      ],
+      [
+       "net",
+       "Legacy full-tunnel VPN (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-journey-zscaler": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "dc",
+     "cloud",
+     "saas",
+     "pop"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The private-app rail goes in first — a London DC Socket and an AWS vSocket — while ZIA fronts the internet.",
+      "marks": [
+       "dc",
+       "cloud"
+      ]
+     },
+     {
+      "t": "Pilot cutover: the branch Socket and Priya's Cato Client swing to the PoP; ZCC rides inside the tunnel.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Cohorts swap in waves with the dual-agent bridge; ZIA drains to standby, kept one flip away over IPsec.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "ZCC uninstalled, ZIA and ZPA decommissioned — internet and private apps from one client on one platform.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "phase-1",
+    "draw": true,
+    "vb": "0 0 960 500",
+    "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 0 — no ring/PoP. Branch sub 'GRE/IPsec to ZIA', Priya sub 'ZCC to ZIA' — both fl-net into the ZIA cloud; ZIA → 'Internet & SaaS' fl-net (sub 'egress via ZIA'); ZIA → London DC and AWS fl-net labelled 'ZPA / backhaul' (subs 'private apps'). All cls:'soft'."
+   },
+   "title": "Zscaler to Cato — phase 0: On Zscaler",
+   "desc": "Baseline: GRE/IPsec from the branch and ZCC on Priya's laptop into ZIA for internet, with ZPA and backhaul carrying them to the private apps in London DC and AWS eu-west-2.",
+   "legend": [
+    [
+     "tun",
+     "On Cato — Sockets, vSockets, PoP egress"
+    ],
+    [
+     "ha",
+     "Interim co-existence (ZIA / dual agent)"
+    ],
+    [
+     "net",
+     "Legacy ZPA / backhaul (live / dormant)"
+    ],
+    [
+     "down",
+     "Retired & decommissioned"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Zscaler (ZIA/ZPA/ZCC) is the named incumbent — text only, no logo",
+    "Priya is the remote user persona (keep the name)",
+    "No separate hub site: the London DC Socket is the anchor",
+    "Dual-agent bridge: ZCC inside the Socket tunnel on-site; ZCC and Cato SDP side by side when remote",
+    "Interim IKEv2 IPsec from Cato to ZIA as fallback"
+   ],
+   "picSlot": "phase-5",
+   "diagrams": [
+    {
+     "slot": "phase-1",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 0 — no ring/PoP. Branch sub 'GRE/IPsec to ZIA', Priya sub 'ZCC to ZIA' — both fl-net into the ZIA cloud; ZIA → 'Internet & SaaS' fl-net (sub 'egress via ZIA'); ZIA → London DC and AWS fl-net labelled 'ZPA / backhaul' (subs 'private apps'). All cls:'soft'.",
+     "title": "Zscaler to Cato — phase 0: On Zscaler",
+     "desc": "Baseline: GRE/IPsec from the branch and ZCC on Priya's laptop into ZIA for internet, with ZPA and backhaul carrying them to the private apps in London DC and AWS eu-west-2.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Sockets, vSockets, PoP egress"
+      ],
+      [
+       "ha",
+       "Interim co-existence (ZIA / dual agent)"
+      ],
+      [
+       "net",
+       "Legacy ZPA / backhaul (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-2",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 1 — ring + PoP appear. London DC cls:'pop' sub 'private apps · Socket', AWS cls:'pop' sub 'private apps · vSocket', each with fl-tun to the PoP labelled 'private-app rail'. Everything on the left unchanged — still fl-net into ZIA.",
+     "title": "Zscaler to Cato — phase 1: Rail first",
+     "desc": "The private-app rail goes green before any user moves: a Socket in London DC and a vSocket in AWS eu-west-2, while ZIA still fronts the internet.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Sockets, vSockets, PoP egress"
+      ],
+      [
+       "ha",
+       "Interim co-existence (ZIA / dual agent)"
+      ],
+      [
+       "net",
+       "Legacy ZPA / backhaul (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-3",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 2 — Branch cls:'pop' sub 'Cato Socket', Priya cls:'pop' sub 'ZCC + Cato Client'; both fl-tun to the PoP. PoP sub 'SWG · CASB · TLSi at the PoP'; PoP → 'Internet & SaaS' fl-tun (sub 'pilot via Cato PoP'). fl-ha amber dashed from the PoP down to ZIA labelled 'interim IPsec fallback' and an amber pill on Priya's lane 'ZCC inside the tunnel'. ZIA's legacy lanes fl-dim.",
+     "title": "Zscaler to Cato — phase 2: Pilot cutover",
+     "desc": "Pilot cutover: the branch Socket and Priya's Cato Client swing to the PoP for private apps and SWG, ZCC rides inside the tunnel and interim IPsec keeps ZIA one flip away.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Sockets, vSockets, PoP egress"
+      ],
+      [
+       "ha",
+       "Interim co-existence (ZIA / dual agent)"
+      ],
+      [
+       "net",
+       "Legacy ZPA / backhaul (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-4",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 3 — same as phase 2 but ZIA sub 'draining to standby', all ZIA lanes fl-net fl-dim, the amber fallback kept; 'Internet & SaaS' sub 'egress via Cato'.",
+     "title": "Zscaler to Cato — phase 3: Waves",
+     "desc": "The remaining cohorts swap in waves with the same dual-agent bridge while ZIA drains to standby.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Sockets, vSockets, PoP egress"
+      ],
+      [
+       "ha",
+       "Interim co-existence (ZIA / dual agent)"
+      ],
+      [
+       "net",
+       "Legacy ZPA / backhaul (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    },
+    {
+     "slot": "phase-5",
+     "draw": true,
+     "vb": "0 0 960 500",
+     "brief": "SHARED GEOMETRY (identical in all five phases): 960×500 viewBox. UPPER BAND (y 20–120): 'Cato PoP' fpin at x≈480 on ring() 'Cato Global Backbone' (x 120–840); PoP sub changes per phase. LOWER BAND (y 380–480, x 300–660): cloud(480, 430, .9, 'Zscaler ZIA', 'internet security · ZPA') with a f-m note 'ZPA / backhaul' beside it. LEFT COLUMN (x≈40–210): 'Branch site' (y≈190, icon building) and 'Priya · remote' (y≈300, icon laptop). RIGHT COLUMN (x≈760–920) three destinations: 'Internet & SaaS' (y≈170, icon globe), 'London DC' (y≈260, icon server), 'AWS eu-west-2' (y≈350). Fixed coordinates. Colour grammar: fl-net grey = legacy GRE/IPsec/ZCC into ZIA and ZPA/backhaul to the apps; fl-net fl-dim = dormant; fl-tun green = Cato Sockets, vSockets, Client and PoP egress; fl-ha amber = interim co-existence (ZCC inside the tunnel, interim IPsec to ZIA); fl-down + xmark = retired. PHASE 4 — ZIA cloud dimmed with xmark(), sub 'decommissioned'; amber fallback removed; Priya sub 'Cato Client only'; PoP sub 'one client · one platform'.",
+     "title": "Zscaler to Cato — phase 4: ZIA / ZCC retired",
+     "desc": "ZCC is uninstalled and ZIA and ZPA decommissioned: internet from the PoP, private apps over the London DC Socket and the AWS vSocket — one client, one platform.",
+     "legend": [
+      [
+       "tun",
+       "On Cato — Sockets, vSockets, PoP egress"
+      ],
+      [
+       "ha",
+       "Interim co-existence (ZIA / dual agent)"
+      ],
+      [
+       "net",
+       "Legacy ZPA / backhaul (live / dormant)"
+      ],
+      [
+       "down",
+       "Retired & decommissioned"
+      ]
+     ],
+     "keepCaption": true
+    }
+   ]
+  },
+  "migration-zscaler-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "ZIA firewall, URL filtering, Cloud App Control and DLP are exported via API and culled on hit counts.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Survivors land in the Internet Firewall, TLS Inspection, App Control (CASB) and DLP — never the WAN Firewall.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the ZIA estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'ZIA POLICY DOMAINS': 'ZIA Firewall' / sub 'FW Control rules'; 'URL Filtering & SSL' / sub 'web security · ATP'; 'Cloud App Control' / sub 'CASB · tenant profiles'; 'ZIA DLP' / sub 'engines · dictionaries'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'API + portal' → nd 'RATIONALISE' / sub 'cull on hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'IFW · TLSi · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead & shadowed rules' / sub 'discarded' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "ZIA policy conversion pipeline",
+   "desc": "All four ZIA policy domains move through one pipeline: export everything, discard what hit counts cannot justify, map the survivors to CMA constructs, deploy in monitor and promote to enforce only on event evidence.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Four ZIA domains: Firewall Filtering, URL Filtering & SSL Inspection (ATP), Cloud App Control & tenant profiles, DLP engines/dictionaries",
+    "EDM/IDM indexes do not export — EDM rebuilt from source",
+    "ZPA → WAN Firewall is on the main playbook, not this page",
+    "60-day Autonomous Firewall Insights window"
+   ],
+   "picSlot": "main"
+  },
+  "migration-palo-alto-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Panorama rulebase, URL profiles, SaaS Security and Enterprise DLP export with usage data; zero-hit rules go.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Zones become rule placement: internet-bound rules on the Internet Firewall, east-west on the WAN Firewall.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the PAN-OS estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'PAN-OS POLICY DOMAINS': 'FW rulebase' / sub 'App-ID · zones'; 'URL Filtering' / sub 'category profiles'; 'SaaS Security' / sub 'inline · API'; 'Enterprise DLP' / sub 'data profiles'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'Panorama CSV · XML' → nd 'RATIONALISE' / sub 'cull on hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'WAN FW · IFW · CASB · DLP · TLSi' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules discarded' / sub 'zero-hit · shadowed · disabled' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "PAN-OS policy conversion pipeline",
+   "desc": "Every PAN-OS policy domain runs the same pipeline — export with usage data, rationalise on hit counts, map to the WAN and Internet Firewalls, CASB, DLP and TLS Inspection, deploy monitor-first and enforce on evidence.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Expedition EOL 31 Dec 2024 — no conversion tool",
+    "application-default must be re-pinned to explicit ports",
+    "Security profile groups become account-level IPS/NGAM — duplicate rules collapse",
+    "TLSi not supported on Android"
+   ],
+   "picSlot": "main"
+  },
+  "migration-netskope-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Cloud Firewall, Real-time Protection, inline CASB and DLP profiles export via console and API v2, then culled.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Survivors map to the Internet Firewall, App Control and Tenant Restrictions, Data Control and TLS bypasses.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the Netskope estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'NETSKOPE POLICY DOMAINS': 'Cloud Firewall' / sub 'egress port & protocol'; 'Real-time Protection' / sub 'web categories · threats'; 'Inline CASB' / sub 'activities · instances'; 'DLP profiles' / sub 'EDM · ML classifiers'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'console + API v2' → nd 'RATIONALISE' / sub 'dedupe · hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'IFW · CASB · DLP rules' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead · duplicate · shadowed' / sub 'rules discarded' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Add a small f-m note under the pipeline: 'API Data Protection stays running — retired last'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Netskope policy conversion pipeline",
+   "desc": "The four-phase PS pipeline applied to a Netskope estate: export each domain, rationalise on usage evidence, map the survivors to CMA constructs, deploy monitor-first and let events and hit counts gate the flip to enforcement.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Never dual-tunnel: cohort-by-cohort client swap",
+    "API Data Protection (out-of-band) keeps running and is retired last",
+    "EDM datasets rebuilt from source; OCR does not apply to EDM profiles",
+    "User Alert → Prompt loses written-justification capture",
+    "SSL do-not-decrypt list seeds Cato TLS bypasses"
+   ],
+   "picSlot": "main"
+  },
+  "migration-cisco-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "ASA/FTD ACLs (with hitcnt) and Umbrella web, app and DLP policy are exported and culled on hit counts.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Survivors split by posture — WAN Firewall allowlist, Internet Firewall blocklist — plus CASB, DLP and TLSi.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the Cisco estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'CISCO POLICY DOMAINS': 'ASA / FTD firewall' / sub 'ACLs · object-groups'; 'Umbrella web policy' / sub 'dest lists · categories'; 'Umbrella app control' / sub 'discovery · app blocks'; 'Umbrella DLP' / sub 'real-time rules'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'CSV · API · CLI' → nd 'RATIONALISE' / sub 'hit-count clean-up' (cls:'hot') → nd 'MAP TO CMA' / sub 'WAN FW · IFW · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules discarded' / sub 'zero-hit ACEs · stale lists' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Add a f-m note under MAP: 'per-site web policy moves at Socket-swap time'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Cisco policy conversion pipeline",
+   "desc": "The four-phase pipeline applied to every Cisco policy domain: export each rule base, rationalise on hit counts, map the survivors to CMA constructs, deploy in monitor mode and enforce only once events and hit counts prove parity.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "show access-list hitcnt is the usage evidence",
+    "Umbrella network identities are keyed to egress IP — per-site web policy moves in the Socket swap window",
+    "NAT does not travel; inbound publishing becomes remote port forwarding",
+    "Warn → Prompt"
+   ],
+   "picSlot": "main"
+  },
+  "migration-fortinet-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "FortiOS policies with UTM pairs, webfilter, CASB and DLP sensors export as flat text, culled on hit counts.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Profile pairs become layers: firewall rules plus account-level IPS/NGAM and a TLS Inspection rule in CMA.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the FortiOS estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'FORTIOS POLICY DOMAINS': 'FW policies' / sub '+ UTM profile pairs'; 'Webfilter profiles' / sub 'FortiGuard categories'; 'Inline CASB' / sub 'SaaS app controls'; 'DLP profiles' / sub 'sensors · dictionaries'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'full-config · FMG' → nd 'RATIONALISE' / sub 'rationalise on hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules · any-any debt' / sub 'never translated' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "FortiOS policy conversion pipeline",
+   "desc": "The four FortiOS policy domains are exported once, rationalised against hit-count evidence, and only surviving intent is mapped to CMA constructs; every mapped rule deploys in monitor and is promoted to enforcement when events prove it.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "execute backup full-config — flat-text export",
+    "Interface pairs (srcintf/dstintf) have no equivalent — recover intent",
+    "Objects first via GraphQL API / Terraform, then rules",
+    "warn/continue → Prompt; browsing quotas have no construct"
+   ],
+   "picSlot": "main"
+  },
+  "migration-forcepoint-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "SMC rules, Web Security categories, Forcepoint ONE and DLP policies export with 90 days of hit evidence.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Survivors map to the firewalls, CASB, TLSi and DLP; fingerprints rebuilt as EDM, ML classifiers redesigned.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the Forcepoint estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'FORCEPOINT POLICY DOMAINS': 'NGFW / SMC' / sub 'access rules · NAT'; 'Web Security' / sub 'category policy'; 'Forcepoint ONE' / sub 'CASB / app policy'; 'DLP policies' / sub 'classifiers · incidents'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'CSV · XML · reports' → nd 'RATIONALISE' / sub 'zero-hit rules out' (cls:'hot') → nd 'MAP TO CMA' / sub 'to CMA rulebases' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules discarded' / sub '90-day hit counts' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Add a small side() note beside DLP mapping: 'endpoint channels (USB · print · clipboard) retained on the endpoint agent — hybrid'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Forcepoint policy conversion pipeline",
+   "desc": "All four Forcepoint policy domains move through one pipeline: export with hit data, discard the dead weight, map the survivors to CMA constructs, deploy watching and enforce only when telemetry matches expectations.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Four heritages (Stonesoft SMC, Websense, Bitglass/ONE, TRITON DLP) → one CMA rulebase",
+    "Structured fingerprints → EDM rebuilt from source; unstructured fingerprints and ML classifiers → redesign or retain",
+    "Honest hybrid: endpoint DLP channels stay on the Forcepoint agent with a Cato posture check",
+    "Confirm → Prompt; Quota has no equivalent",
+    "OCR not supported with EDM profiles"
+   ],
+   "picSlot": "main"
+  },
+  "migration-checkpoint-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Access layers, App Control/URLF, Harmony SASE controls and the DLP blade export via mgmt_cli with hit counts.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Ordered and inline layers flatten to one first-match rulebase per firewall; implicit cleanups become explicit.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the SmartConsole estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'SMARTCONSOLE POLICY DOMAINS': 'Access layers' / sub 'ordered · inline · NAT'; 'App Control · URLF' / sub '+ HTTPS Inspection'; 'Inline CASB intent' / sub 'Harmony SASE (if any)'; 'DLP blade' / sub 'data types · rules'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'mgmt_cli · Web API' → nd 'RATIONALISE' / sub 'rationalise on hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'zero-hit rules · layer debt' / sub 'never translated' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Check Point policy conversion pipeline",
+   "desc": "The four SmartConsole policy domains are exported via the Management API, rationalised against hit-count evidence, and only surviving intent is mapped to CMA; every mapped rule deploys in monitor and is promoted to enforcement on evidence.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "mgmt_cli show access-rulebase … show-hits true (limit 500, paginate)",
+    "Layer semantics are the number-one gotcha — translate the effective policy, never the structure",
+    "Inline-layer implicit cleanup becomes an explicit block on the default-allow Internet Firewall",
+    "Ask/Inform (UserCheck) → Prompt",
+    "Harmony SASE tenant kept warm as rollback until the last cohort"
+   ],
+   "picSlot": "main"
+  },
+  "migration-cisco-asa-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "ACLs, the NAT table and AnyConnect/DAP artefacts export with hitcnt over a 30–90 day counting window.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "East-west ACEs land on the WAN Firewall allowlist; NAT dissolves; SWG, CASB and DLP start as Cato baselines.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the ASA estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'ASA POLICY DOMAINS': 'Interface ACLs' / sub 'ACEs · object-groups'; 'NAT table' / sub 'PAT · static · twice NAT'; 'AnyConnect · DAP' / sub 'posture — no export'; 'SWG · CASB · DLP' / sub 'absent on ASA' [GREENFIELD — cls:'dash']. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'show run · hitcnt' → nd 'RATIONALISE' / sub 'cull on hitcnt · flatten' (cls:'hot') → nd 'MAP TO CMA' / sub 'WAN FW · IFW · posture' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'zero-hit ACEs · dead objects' / sub 'culled with sign-off' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. GREENFIELD: the 'SWG · CASB · DLP' box skips EXPORT — a dashed fl-ha lane runs straight to DEPLOY labelled 'greenfield — Cato baselines'. The NAT table box carries a small f-m note 'mostly dissolves — PAT is a PoP property'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "ASA policy pipeline — rationalise, map, greenfield",
+   "desc": "The ACLs, NAT table and posture artefacts are exported once and rationalised against the hit-count window, while the greenfield domains — SWG, CASB, DLP and TLS inspection — enter at DEPLOY as Cato baselines in monitor mode; both streams are promoted only on evidence.",
+   "legend": [
+    [
+     "ha",
+     "Monitor first — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforce — promoted on evidence"
+    ],
+    [
+     "down",
+     "Discarded — culled at review with sign-off"
+    ],
+    [
+     "dim",
+     "Telemetry — validates every stage"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "ASA-only scope — no Umbrella, no Cisco SD-WAN",
+    "hitcnt counters reset on reload — diff over a 30–90 day window; zero-hit is not dead (DR, break-glass) → parked disabled group",
+    "packet-tracer golden-flow harness",
+    "DAP/HostScan has no export path",
+    "CVE-2025-20362 (ASA WebVPN zero-days) motivates retiring internet-listening endpoints",
+    "Three NAT sections: manual/twice, object, after-auto"
+   ],
+   "picSlot": "main"
+  },
+  "migration-cloudflare-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Gateway DNS, network and HTTP policies, Magic Firewall, CASB posture and DLP export to HCL, culled on hits.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Survivors map to WAN and Internet Firewall, RBI Isolate, Tenant Restrictions, Data Control and TLS exceptions.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the Cloudflare estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'CLOUDFLARE POLICY DOMAINS': 'FW rules' / sub 'Gateway net · Magic FW'; 'SWG policy' / sub 'Gateway HTTP · DNS'; 'CASB posture' / sub 'API findings · Shadow IT'; 'DLP profiles' / sub 'Gateway DLP (tier-gated)'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'cf-terraforming → HCL' → nd 'RATIONALISE' / sub '0-hit & shadowed out' (cls:'hot') → nd 'MAP TO CMA' / sub 'WAN FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules discarded' / sub 'zero-hit · shadowed' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Add a f-m note under the domain column: 'WAF · CDN · DNS records stay on Cloudflare — out of scope'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Cloudflare Zero Trust policy pipeline",
+   "desc": "Each Cloudflare Zero Trust policy domain is exported with hit counts, stripped of dead rules, mapped to CMA constructs, deployed in monitor and enforced only when events and hit counts prove the translation.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Three Gateway policy types (DNS, network, HTTP) + Magic Firewall as a fourth engine",
+    "DLP and Browser Isolation are paid add-ons — scope depends on the invoice",
+    "Isolate → RBI policy action",
+    "WAF, CDN, redirect rules and DNS records stay on Cloudflare",
+    "cf-terraforming HCL export is the workbook"
+   ],
+   "picSlot": "main"
+  },
+  "migration-edgeconnect-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Orchestrator backups and templates export overlays and zone rules; the chained SSE tenant exports web policy.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Seven overlays collapse into genuine intents — network rules, bandwidth profiles and firewall rules in CMA.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the EdgeConnect estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'EDGECONNECT POLICY DOMAINS': 'Intent overlays ×7' / sub 'topology, QoS, breakout'; 'Zone firewall + IDPS' / sub 'Orchestrator rulebase'; 'SWG — in SSE tenant' / sub 'Zscaler · Netskope · HPE'; 'CASB / DLP — none' / sub 'greenfield builds' [GREENFIELD — cls:'dash']. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'Orch · SSE console' → nd 'RATIONALISE' / sub 'collapse overlays' (cls:'hot') → nd 'MAP TO CMA' / sub 'net rules · BW · FW' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules & spare overlays' / sub 'never translated' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. GREENFIELD: the 'CASB / DLP — none' box skips EXPORT with a dashed fl-ha lane straight to DEPLOY labelled 'discovery inputs → best-practice build'. The SWG box has a f-m note 'exported from the SSE console, not Orchestrator'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "EdgeConnect policy pipeline — overlays to intent",
+   "desc": "The four policy domains ride one pipeline: Orchestrator and SSE-tenant exports, a clean-up where seven overlays collapse into their genuine intents and dead rules are cut, mapping to CMA constructs, monitor-mode deployment and promotion on evidence; the greenfield domains skip translation, not monitor-first.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Up to seven Business Intent Overlays; usually three or four genuine intents",
+    "Service chaining to Zscaler / Netskope / HPE Aruba SSE — web policy lives in the SSE tenant",
+    "BIO → network rule + bandwidth profile (P10 real-time, P20 business-critical, P255 default)",
+    "Boost-dependent flows re-baselined, not translated",
+    "First-Packet iQ stats seed the sanctioned-app conversation"
+   ],
+   "picSlot": "main"
+  },
+  "migration-iboss-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "iboss firewall, per-OU web policy, CASB and DLP rules export per domain and are triaged on hit counts.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "OU tiers become SCIM-group rule blocks; SafeSearch and YouTube move to Content Restrictions; PAC seeds TLSi.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the iboss estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'IBOSS POLICY DOMAINS': 'FW rules' / sub 'cloud firewall'; 'Web policy' / sub 'categories · SSL'; 'CASB controls' / sub 'apps · tenants'; 'DLP rules' / sub 'patterns'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'per-domain dumps' → nd 'RATIONALISE' / sub 'hit-count triage' (cls:'hot') → nd 'MAP TO CMA' / sub 'to CMA constructs' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'zero-hit · duplicate · stale' / sub 'rules discarded' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Under the pipeline add tier() text 'RUN PER DOMAIN · PER COHORT WAVE (OU / year group / school)' and a f-m note 'PAC stays hosted — rollback is one GPO/MDM change'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "iboss policy pipeline — per domain, per cohort",
+   "desc": "The policy pipeline run per domain and per cohort wave: export, rationalise on hit counts, map to CMA constructs, deploy in monitor and enforce on evidence, with events and hit counts feeding the Optimise phase.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Cohort = OU / year group / school; the iboss PAC stays hosted and frozen — rollback is one GPO/MDM change",
+    "DoH bypasses Content Restrictions — block DNS-over-HTTPS in the same change",
+    "Default licence includes 3 allocated egress IPs; dual-list both vendors' IPs on the SaaS side",
+    "iboss CA and Cato CA side by side from day one",
+    "350+ DLP data types"
+   ],
+   "picSlot": "main"
+  },
+  "migration-sonicwall-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Access rules, CFS/App Control, security services and NAT export via TSR, API or NSM, culled on Rx/Tx counters.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Zone matrices become scopes in one global rulebase; every secret in the export is rotated, never recreated.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips to block; the rotation log is auditable evidence.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the SonicOS estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'SONICOS POLICY DOMAINS': 'Access rules + NAT' / sub 'zone matrix · per box'; 'CFS · App Control' / sub 'web policy · DPI-SSL'; 'Security services' / sub 'GAV · IPS · Capture ATP'; 'CASB / DLP greenfield' / sub 'nothing to export' [GREENFIELD — cls:'dash']. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub '.exp · TSR · API · NSM' → nd 'RATIONALISE' / sub 'rationalise on hit counts' (cls:'hot') → nd 'MAP TO CMA' / sub 'FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules · zero-hit debt' / sub 'never translated' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. GREENFIELD: the 'CASB / DLP — greenfield' box skips EXPORT with a dashed fl-ha lane straight to DEPLOY labelled 'discovery inputs'. RULE ZERO: a second fl-down branch leaves MAP TO CMA to a dashed red nd 'local accounts · PSKs · TOTP seeds' / sub 'rotated at cutover — never recreated' with a key icon and xmark(). Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "SonicOS policy pipeline — rotate, never port",
+   "desc": "The four SonicOS policy domains are exported once and rationalised against per-rule counters, where dead rules exit; at mapping the estate's secrets exit too — local accounts, pre-shared keys and TOTP seeds are rotated and replaced by IdP identity — and every mapped rule deploys in monitor before promotion on evidence.",
+   "legend": [
+    [
+     "ha",
+     "Monitor first — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforce — promoted on evidence"
+    ],
+    [
+     "down",
+     "Never migrates — dead rules and every secret"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Rule zero: CVE-2024-40766 (CVSS 9.3, CISA KEV 9 Sep 2024); MySonicWall cloud-backup breach (17 Sep 2025; all cloud-backup users affected, 8 Oct 2025); Essential Credential Reset — local users, TOTP bindings, IPsec keys",
+    "SSLVPN-zone rules are re-authored as ZTNA, never translated",
+    "Clear counters at discovery, re-read after 30 days",
+    "CGSS/AGSS vs EPSS/APSS licence bundles decide per-box protections",
+    "DPI-SSL rationed by connection limits — Cato TLSi often the first full inspection"
+   ],
+   "picSlot": "main"
+  },
+  "migration-sophos-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "SFOS rules, NAT, web and app control export as XML and are culled on usage; CASB and DLP enter as greenfield.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Attached policies become layers — firewall rules plus account-level IPS/NGAM; Heartbeat rules become posture.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the SFOS estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'SFOS POLICY DOMAINS': 'FW rules + NAT' / sub 'per-box rule tables'; 'Web & app control' / sub 'web policy · TLS rules'; 'CASB — greenfield' / sub 'usage data seeds it' [GREENFIELD — cls:'dash']; 'DLP — greenfield' / sub 'workshop-led build' [GREENFIELD — cls:'dash']. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'XML export · API' → nd 'RATIONALISE' / sub 'rationalise on usage' (cls:'hot') → nd 'MAP TO CMA' / sub 'FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules · any-any debt' / sub 'never translated' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. GREENFIELD: both greenfield boxes skip EXPORT with dashed fl-ha lanes straight to DEPLOY labelled 'discovery inputs → best-practice build'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "SFOS policy pipeline — rulebases and greenfield",
+   "desc": "The four Sophos policy domains are exported once — the greenfield pair carrying discovery inputs rather than rulebases — rationalised against usage evidence, mapped to CMA constructs, deployed in monitor and promoted to enforcement when events prove intent.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Security Heartbeat-conditioned rules have no equivalent — Device Posture + Client Connectivity Policy",
+    "SFOS 18+ decoupled NAT table; masquerade dissolves, DNAT → remote port forwarding",
+    "Warn → Prompt",
+    "XGS 4.8–5× TLS throughput claim — Cato removes the sizing exercise",
+    "Entra ID SSO/SCIM is the typical identity source"
+   ],
+   "picSlot": "main"
+  },
+  "migration-symantec-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "CPL, WSS, CloudSOC and DLP policies export with Reporter hit data and are triaged: intent, plumbing or dead.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Only intent crosses — firewall rules, App Control, TLS bypasses, DLP data types; IWA/BCAAA gives way to SCIM.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the Symantec estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'SYMANTEC POLICY DOMAINS': 'ProxySG CPL' / sub 'VPM · Local layers'; 'WSS / Cloud SWG' / sub 'portal · UPE policy'; 'CloudSOC CASB' / sub 'Securlets · inline'; 'Symantec DLP' / sub 'policies · incidents'. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'CPL files · reports' → nd 'RATIONALISE' / sub 'intent vs plumbing' (cls:'hot') → nd 'MAP TO CMA' / sub 'FW · SWG · CASB · DLP' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead CPL · proxy plumbing' / sub 'auth exemptions · WCCP' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. Add a f-m note under EXPORT: 'Reporter EOL Mar 2025 — archive hit data in week one'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Symantec policy pipeline — CPL to intent",
+   "desc": "All four Symantec policy domains move through the same pipeline: export the CPL corpus and portal policy with Reporter and access-log hit data, discard dead layers and proxy plumbing, map the survivors to CMA, deploy watching and enforce only at telemetry parity.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "No automated CPL-to-Cato converter exists",
+    "On-prem Reporter EOL announced Mar 2025 — archive the evidence base early",
+    "Triage every CPL layer: business intent / proxy plumbing / dead",
+    "IDM and VML have no equivalent — redesign or retain; EDM rebuilt from source",
+    "Endpoint Prevent channels retained on the endpoint agent (hybrid)",
+    "Four consoles (VPM/CPL, WSS, CloudSOC, DLP Enforce) → one CMA rulebase"
+   ],
+   "picSlot": "main"
+  },
+  "migration-versa-policy": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Director templates and per-appliance configs export (provider tickets if carrier-managed), culled on hits.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Zone rules split by destination into WAN/Internet/LAN policies; per-rule UTM becomes global IPS/NGAM layers.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The PoP enforces the converted rulebase for every site and user — monitor-first, no user impact.",
+      "marks": [
+       "pop",
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Events and hit counts prove each rule before it flips from monitor to block.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Policy pipeline for the VOS estate, 760×560, left-to-right. LEFT COLUMN (x≈14–170): four nd() boxes stacked under a tier() label 'VOS POLICY DOMAINS': 'VOS security policy' / sub 'FW rules + UTM profiles'; 'URL-filter profiles' / sub 'SWG intent'; 'CASB — none today' / sub 'Analytics app data' [GREENFIELD — cls:'dash']; 'DLP — none today' / sub 'workshop-led build' [GREENFIELD — cls:'dash']. PIPELINE ROW (y≈250, left→right, ≤ 7 boxes): nd 'EXPORT' / sub 'Director · CLI' → nd 'RATIONALISE' / sub 'rationalise on hits' (cls:'hot') → nd 'MAP TO CMA' / sub 'to CMA constructs' → nd 'DEPLOY — monitor' / sub 'log-only · no user impact' → nd 'ENFORCE' / sub 'flip to block per rule' (cls:'pop'). Link the row with fl-flow + arrow; particles flow left→right. DISCARD BRANCH: from RATIONALISE a fl-down path (dashed red) drops to a small nd cls:'dash' labelled 'dead rules discarded' / sub 'zero Analytics hits' at y≈400 with xmark(); nothing leaves it. MONITOR → ENFORCE: the DEPLOY→ENFORCE link is fl-ha (amber) with pill 'amber → green' ; the ENFORCE box has mark 'ok'. EVIDENCE LOOP: a soft side() box 'Events & hit counts' / sub 'Monitor → Events' under ENFORCE (y≈440); fl-dim arrows from DEPLOY and ENFORCE into it and one fl-dim return arrow back to RATIONALISE labelled 'OPTIMISE loop'. Domain boxes feed EXPORT with fl-flow (np:0) fan-in lines. GREENFIELD: both greenfield boxes skip EXPORT with dashed fl-ha lanes straight to DEPLOY labelled 'discovery inputs → best-practice build'. EXPORT carries a f-m note 'via provider tickets in managed estates'. Node count ≤ 12. Text never filled with lane colour. UK English. No console screenshots; no vendor logos — the incumbent is named in text only.",
+    "vb": "0 0 760 560",
+    "slot": "main"
+   },
+   "title": "Versa policy pipeline — templates to one rulebase",
+   "desc": "The four policy domains ride one pipeline: export (a provider change ticket in carrier-managed estates), clean-up on hit counts, mapping to CMA constructs, deployment in monitor mode and promotion on evidence; the greenfield domains skip translation, not monitor-first.",
+   "legend": [
+    [
+     "ha",
+     "Monitor-first deployment — log, don't block"
+    ],
+    [
+     "hot",
+     "Enforced — promoted on event evidence"
+    ],
+    [
+     "down",
+     "Discarded at rationalisation — never reaches CMA"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Effective policy = Director template stack + per-device bind data — regenerate per appliance and diff",
+    "Carrier-managed: exports arrive via provider change tickets — raise in week one",
+    "Per-rule UTM (IPS/AV/URLF) → global layers",
+    "alert/inform → allow + track",
+    "Legacy-FTP-Allow style zero-hit rules retired at clean-up"
+   ],
+   "picSlot": "main"
+  }
+ }
+}

@@ -3,15 +3,15 @@
 # Usage: bash _extract/verify.sh          (from the library root)
 # Runs: link check, catalog consistency, identifying-reference sweep,
 #       CDN-load check, SVG text measurement, console-error render, mobile fit,
-#       search-index freshness.
+#       search-index freshness, planner rules, deck export, deck content + catalog counts.
 set -u
 cd "$(dirname "$0")/.." || exit 1
 FAIL=0
 
-echo "== 1/9 link check"
+echo "== 1/10 link check"
 python3 _extract/checklinks.py index.html planner.html whatsnew.html usecases/*.html || FAIL=1
 
-echo "== 2/9 catalog consistency + hygiene"
+echo "== 2/10 catalog consistency + hygiene"
 python3 - <<'EOF' || FAIL=1
 import re, subprocess, sys
 from pathlib import Path
@@ -35,7 +35,7 @@ if errs:
 print("OK")
 EOF
 
-echo "== 3/9 external resource loads (CDN) + theme snippet"
+echo "== 3/10 external resource loads (CDN) + theme snippet"
 if grep -rn -E 'src="http|<link[^>]*href="http|@import|url\(http' index.html planner.html usecases/*.html assets/css/style.css; then
   echo "FAIL: external resource loads found"; FAIL=1
 else
@@ -49,7 +49,7 @@ for f in index.html planner.html whatsnew.html usecases/*.html; do
 done
 [ "$SNIPMISS" = 0 ] && echo "OK — theme snippet on all pages" || FAIL=1
 
-echo "== 4/9 SVG text measurement (must be silent — any output is a regression) + diagram kit freshness"
+echo "== 4/10 SVG text measurement (must be silent — any output is a regression) + diagram kit freshness"
 python3 _extract/measure_svg.py || FAIL=1
 if [ -f _extract/diagram-kit/kit-host.html ]; then
   python3 _extract/build-diagrams.py --check || FAIL=1
@@ -57,10 +57,10 @@ else
   echo "SKIP diagram kit check (no kit-host.html — run _extract/diagram-kit/make-kit-host.py)"
 fi
 
-echo "== 5/9 render + console errors (index)"
+echo "== 5/10 render + console errors (index)"
 python3 _extract/shoot.py index.html /tmp/verify-index.png | tail -1 | grep -q "no console errors" && echo "OK" || { echo "FAIL: console errors"; FAIL=1; }
 
-echo "== 6/9 mobile fit (390px, all pages)"
+echo "== 6/10 mobile fit (390px, all pages)"
 python3 - <<'EOF' || FAIL=1
 from playwright.sync_api import sync_playwright
 import pathlib, sys
@@ -84,10 +84,10 @@ if bad:
 print("OK — all pages fit")
 EOF
 
-echo "== 7/9 search index freshness (full-text search)"
+echo "== 7/10 search index freshness (full-text search)"
 python3 _extract/build-search.py --check || FAIL=1
 
-echo "== 8/9 planner rules integrity"
+echo "== 8/10 planner rules integrity"
 python3 - <<'EOF' || FAIL=1
 import re, sys
 from pathlib import Path
@@ -191,13 +191,19 @@ print("OK — %d phases / %d steps / %d links / 3 diagrams / %d-slide summary de
 EOF
 
 if [ "${1:-}" = "--external" ]; then
-  echo "== 9/9 external links (optional, network-dependent)"
+  echo "== external links (optional, network-dependent)"
   python3 _extract/checkexternal.py || FAIL=1
 fi
 
 echo
 
-echo "== 9/9 deck export (preset decks build, notes + pictures present)"
+echo "== 9/10 deck export (preset decks build, notes + pictures present)"
 python3 _extract/decktest.py || FAIL=1
+
+echo "== staleness (warn-only)"
+python3 _extract/staleness-check.py || true   # register overdue rows + rot wording; never fails the run (--strict does)
+
+echo "== 10/10 deck content + catalog counts"
+python3 _extract/check-deck-content.py || FAIL=1
 
 if [ "$FAIL" -eq 0 ]; then echo "VERIFY: ALL CHECKS PASSED"; else echo "VERIFY: FAILURES FOUND (see above)"; exit 1; fi

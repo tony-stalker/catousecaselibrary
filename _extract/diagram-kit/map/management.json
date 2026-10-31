@@ -1,0 +1,716 @@
+{
+ "category": "management",
+ "pages": {
+  "management-visibility": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "cloud",
+     "pop",
+     "xops",
+     "mgmt"
+    ],
+    "mods": [],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Sites, remote users and cloud datacentres all connect through the nearest Cato PoP.",
+      "marks": [
+       "branch",
+       "users",
+       "cloud"
+      ]
+     },
+     {
+      "t": "SPACE processes every flow once, with identity, device, application and risk context attached.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "That one data set lands in the Cato Management Application: topology, analytics, events, stories.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "XOps turns millions of raw events into correlated, MITRE-mapped incident stories.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Left-to-right, 760x560. LEFT column, three edge nodes (nd, ic): 'Sites — Socket SD-WAN' sub 'London DC · Manchester DC' (ic building); 'Remote users' sub 'Cato Client · Priya, Marcus' (ic users); 'Cloud datacentres' sub 'AWS · Azure vSockets' (ic cpu). CENTRE: a ring() labelled 'Global Private Backbone — 100+ PoP locations' with a popBox on it: 'Cato PoP' sub 'SPACE — every flow inspected once'. Each edge sends an fl-tun (particles) into the PoP. RIGHT: one large nd cls 'pop' titled 'Cato Management Application' sub 'One management & analytics plane', containing four tiles: 'Dashboards & topology' / 'Sites · users · tunnels · link health'; 'App & user analytics' / 'Usage · risk · shadow IT · DEM'; 'Unified event stream' / 'Network + security + access'; 'XDR incident stories' / 'Correlated · MITRE-mapped · Gen-AI'. PoP -> CMA is ONE fl-flow with label 'single-pass context feed · identity · device · app · risk' (it is the same data, not a collector). No blocked flows. 8 nodes + 4 tiles. Story: all edges feed one plane because every flow is processed once."
+   },
+   "title": "All edges feed one management and analytics plane",
+   "desc": "Sites, remote users and cloud datacentres connect through Cato PoPs on the global private backbone; the Single Pass Cloud Engine inspects every flow once, and that single context feeds one Cato Management Application plane of dashboards, analytics, events and XDR stories.",
+   "legend": [
+    [
+     "tun",
+     "Traffic — all edges, all ports & protocols"
+    ],
+    [
+     "flow",
+     "Single-pass context feed — identity · device · app · risk"
+    ],
+    "live"
+   ],
+   "keepCaption": false,
+   "carry": [
+    "Backbone label: Global Private Backbone — 100+ PoP locations",
+    "SPACE — every flow inspected once",
+    "Four CMA panels and their sub-lines exactly as listed in the brief",
+    "Edges: London DC · Manchester DC; Cato Client · Priya, Marcus; AWS · Azure vSockets",
+    "Caption: current one refers to 'the grey link' — reword to: 'Because all edges send all traffic through the PoPs, the telemetry was never split across boxes — the context feed into the console is the same single-pass data, not a collector you deploy.'"
+   ]
+  },
+  "management-api-automation": {
+   "spotlight": {
+    "hl": [
+     "mgmt",
+     "pop",
+     "backbone",
+     "branch",
+     "xops"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "br3"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Site and policy definitions live in Git; a CI runner executes Terraform and catocli on merge.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The Cato GraphQL API, the same API the CMA runs on, applies the change with one audit entry per mutation.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "New branch sites appear on the topology within minutes; policy reaches every PoP and every edge.",
+      "marks": [
+       "pop",
+       "branch"
+      ]
+     },
+     {
+      "t": "The eventsFeed API streams security and connectivity events into the SIEM continuously.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Left-to-right pipeline, 760x560. LEFT: nd 'Git repository' sub 'sites.tf · policy as code' (ic code) -> fl-https labelled 'merge' -> nd 'CI runner' sub 'terraform · catocli' (ic route) -> fl-https labelled 'HTTPS · x-api-key' -> CENTRE: popBox 'Cato GraphQL API' sub 'api.catonetworks.com', sitting on a ring() labelled 'Cato cloud · Global Private Backbone'. RIGHT, fanned out from the API with fl-tun (particles): three site nodes 'Bristol Office' / 'cato_socket_site', 'Glasgow' / 'cato_socket_site', 'Madrid Office' / 'cato_socket_site' (ic building); and one policy node 'WAN policy update' sub 'tagged · revertable' (ic firewall) via fl-flow. BOTTOM-RIGHT: from the API a separate fl-flow labelled 'eventsFeed API' to nd 'SIEM' sub 'Splunk · Sentinel · S3' (ic console). Optional small pill under the API: 'same API the CMA runs on' (cls m). 8 nodes. Nothing blocked. Story: code -> pipeline -> API -> live WAN, plus a continuous events feed out."
+   },
+   "title": "Network as code: Git to CI to the Cato GraphQL API",
+   "desc": "Site and policy definitions live in Git; a CI runner executes Terraform and catocli against the Cato GraphQL API, which creates branch sites and applies a tagged, revertable WAN policy update while the eventsFeed API streams events into the SIEM.",
+   "legend": [
+    [
+     "https",
+     "Pipeline → API (HTTPS, x-api-key)"
+    ],
+    [
+     "tun",
+     "Sites created and connected"
+    ],
+    [
+     "flow",
+     "Policy change · events feed"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "api.catonetworks.com",
+    "Terraform resource name cato_socket_site",
+    "eventsFeed API label on the SIEM lane",
+    "WAN policy update — tagged · revertable",
+    "Site archetypes Bristol Office, Glasgow, Madrid Office",
+    "SIEM names limited to those on the page: Splunk, Sentinel (S3 is an Event Integration target on the page)"
+   ]
+  },
+  "management-dem": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "saas",
+     "xops",
+     "mgmt"
+    ],
+    "mods": [],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Cato Client on the device and the Socket at the site already supply the telemetry; no extra agents.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Device, Wi-Fi, LAN gateway, last mile, PoP and application are each scored Good, Fair or Poor.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The backbone carries the flow PoP to PoP, so Cato observes every hop the traffic actually takes.",
+      "marks": [
+       "backbone",
+       "saas"
+      ]
+     },
+     {
+      "t": "Experience Monitoring shows the one failing segment; XOps anomaly stories raise it before users call.",
+      "marks": [
+       "mgmt",
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Horizontal hop chain, 760x560, seven nodes on one baseline (y~250), each with a verdict mark() and a pill beneath. 1 nd 'Laptop' sub 'CPU · memory' (ic laptop) — mark ok, pill 'device healthy' (g). 2 nd 'Home router' sub 'Wi-Fi · LAN gw' (ic wifi) — mark ok, pill 'Wi-Fi healthy' (g). 3 nd 'ISP last mile' sub 'broadband uplink' (ic globe) — mark WARN, pill 'loss 4.2% · Fair' (y). 4 fpin/popBox 'Cato PoP' sub 'closest to user' — mark ok, pill 'ingress healthy' (g). 5 ring() segment labelled 'Global Private Backbone' between the two PoPs, fl-hot along it. 6 fpin/popBox 'Cato PoP' sub 'closest to app' — mark ok, pill 'egress healthy' (g). 7 cloud 'SaaS app' sub 'Microsoft Teams' — mark ok, pill 'app responding' (g). Lines: 1->2 and 2->3 fl-net (LAN / Wi-Fi); 3->4 fl-tun labelled 'Client tunnel · overlay probe' with a thin parallel fl-dim labelled 'underlay probe · outside the tunnel'; 4->5->6 fl-hot (backbone); 6->7 fl-flow. A single f-m tier above the chain: 'EVERY HOP SCORED INDEPENDENTLY · GOOD / FAIR / POOR'. Below the chain a small note (f-s): 'Fair = 1–5% loss on the last mile · one amber node, the rest green'. Nothing blocked; one degraded segment. 7 nodes."
+   },
+   "title": "Hop-by-hop digital experience monitoring from laptop to SaaS app",
+   "desc": "A user-to-application path is measured at every hop — laptop, home router, ISP last mile, Cato PoP, backbone, second PoP, SaaS app — and only the ISP last mile is amber at 4.2% loss, isolating the fault to one segment.",
+   "legend": [
+    [
+     "net",
+     "Device · Wi-Fi · LAN gateway"
+    ],
+    [
+     "tun",
+     "Last mile — Client tunnel (overlay + underlay probes)"
+    ],
+    [
+     "hot",
+     "Cato backbone — PoP to PoP"
+    ],
+    [
+     "flow",
+     "PoP → application"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "loss 4.2% on the ISP last mile scores Fair (amber) — documented 1–5% band",
+    "Node sub-labels: CPU · memory; Wi-Fi · LAN gw; broadband uplink; closest to user; closest to app",
+    "SaaS app named Microsoft Teams (page names Teams)",
+    "Overlay vs underlay probe distinction is on the page — keep both labels",
+    "Caption keeps its 4.2% / 1–5% reference"
+   ]
+  },
+  "management-vendor-consolidation": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "backbone",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "m1"
+     },
+     {
+      "p": "m2"
+     }
+    ],
+    "steps": [
+     {
+      "t": "MPLS, routers, firewalls, VPN head-ends, SWG, CASB/DLP and an SD-WAN overlay: seven families, seven consoles.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Every flow is inspected once at the nearest PoP; SD-WAN and the security service edge become one pass.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The backbone replaces MPLS, a Socket replaces router plus firewall, the Client replaces the VPN head-end.",
+      "marks": [
+       "backbone",
+       "users"
+      ]
+     },
+     {
+      "t": "Network and security are configured, monitored and audited in one console, the CMA.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Convergence picture, 760x560. LEFT column under tier 'WHAT YOU RETIRE': seven nd cls 'dash' (retired look), each title + sub: 'MPLS circuits' / 'per-site carriage'; 'Edge routers' / 'refresh & config drift'; 'Branch firewalls' / 'patch & EOL treadmill'; 'VPN concentrators' / 'remote-access head-end'; 'SWG / web proxy' / 'own licence & console'; 'CASB / DLP add-ons' / 'point-product bolt-ons'; 'SD-WAN overlay' / 'another vendor & console'. From each a converging fl-dim (static, np:0, arrow) into the CENTRE: popBox 'Cato PoP' sub 'SD-WAN + security — one pass' on a ring() labelled 'Global Private Backbone'. RIGHT column under tier 'WHAT YOU RUN INSTEAD': nd 'Cato Socket' sub 'replaces router + firewall' (ic building, fl-tun from PoP); nd 'Cato Client' sub 'replaces VPN concentrator' (ic laptop, fl-tun from PoP); nd cls 'pop' 'CMA — one console' sub 'all policy, one audit trail' (ic console, fl-flow from PoP labelled 'policy · analytics · audit'). Pill under the PoP: 'seven product families → one single pass' (g). 11 nodes. Nothing blocked; retired items dimmed, not red."
+   },
+   "title": "The appliance estate collapses into the Cato platform",
+   "desc": "Seven legacy product families — MPLS, edge routers, branch firewalls, VPN concentrators, SWG, CASB/DLP add-ons and an SD-WAN overlay — converge into a single pass at the Cato PoP on the global private backbone, leaving a Socket at the branch, the Client on the device and the CMA as the one console.",
+   "legend": [
+    [
+     "net",
+     "Retired — absorbed into the PoP"
+    ],
+    [
+     "tun",
+     "What remains: Socket and Client"
+    ],
+    [
+     "flow",
+     "One console — policy, analytics, audit"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "All seven retired families with their sub-lines",
+    "SD-WAN + security — one pass",
+    "replaces router + firewall; replaces VPN concentrator; all policy, one audit trail",
+    "Legend kind dim is not in LEGEND_KINDS — use net or flow with the Retired label if dim is unavailable"
+   ]
+  },
+  "management-soc-xdr": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "cloud",
+     "pop",
+     "xops",
+     "msvc"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "spine"
+     },
+     {
+      "p": "atk"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Every flow from every site, user and cloud already traverses a PoP, so XDR starts with full telemetry.",
+      "marks": [
+       "branch",
+       "users",
+       "cloud"
+      ]
+     },
+     {
+      "t": "The single-pass engine inspects once; attack traffic is blocked at the PoP and its evidence recorded.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "XDR correlates the signals into one ranked story queue, ML-scored and mapped to MITRE ATT&CK.",
+      "marks": [
+       "xops"
+      ]
+     },
+     {
+      "t": "The analyst pivots story → events → fix in the same console; Cato MDR works the same queue 24×7.",
+      "marks": [
+       "msvc"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "fig": "xops",
+    "edits": [
+     [
+      "prioritised, explained incident stories",
+      "ranked stories · ML score · MITRE ATT&CK"
+     ],
+     [
+      "MDR option",
+      "MDR · 24×7"
+     ],
+     [
+      "SOC & NOC",
+      "SOC analyst"
+     ],
+     [
+      "one shared view",
+      "one ranked queue"
+     ],
+     [
+      "Management",
+      "Policy fix"
+     ],
+     [
+      "policy & fixes",
+      "same console"
+     ],
+     [
+      "QRadar · Chronicle",
+      "story events · opt-in"
+     ],
+     [
+      "PagerDuty",
+      "Jira · webhooks"
+     ],
+     [
+      "detection · GenAI stories",
+      "ML criticality score"
+     ],
+     [
+      "Apps & AI",
+      "SaaS apps"
+     ],
+     [
+      "SaaS · agents",
+      "SaaS · CASB"
+     ]
+    ],
+    "drop": [],
+    "title": "Cato XDR: from full network telemetry to a ranked incident story",
+    "desc": "Telemetry from every edge lands in one data lake, where Cato XDR correlates signals into criticality-ranked, MITRE-mapped incident stories for the SOC analyst, backed by Cato MDR 24×7, with the policy fix applied from the same console and stories fed to the SIEM and endpoint connectors."
+   },
+   "title": "Cato XDR: from full network telemetry to a ranked incident story",
+   "desc": "Telemetry from every edge lands in one data lake, where Cato XDR correlates signals into criticality-ranked, MITRE-mapped incident stories for the SOC analyst, backed by Cato MDR 24×7, with the policy fix applied from the same console and stories fed to the SIEM and endpoint connectors.",
+   "legend": [
+    [
+     "flow",
+     "Telemetry in · stories and events out"
+    ],
+    [
+     "net",
+     "Guided remediation → policy fix"
+    ],
+    "live"
+   ],
+   "keepCaption": false,
+   "carry": [
+    "LOST on the xops figure: the current diagram's red attack lane (\"Attack traffic — blocked at PoP · recorded\") and the explicit \"Cato PoP · single-pass engine\" node; the spotlight step 2 and the atk flow carry that fact instead. If the builder prefers to keep it, draw: true using the current 10-node layout (Sites & DCs / Remote users / Cloud & SaaS → PoP → XDR → Incident story → SOC analyst; MDR 24×7; Policy fix back to PoP; attack lane fl-attack blocked with xmark).",
+    "Keep from fig: SIEM tile Splunk · Sentinel (page names both); EDR tile CrowdStrike / Defender · SentinelOne (page names all three plus Cato EPP); Endpoints EPP · EDR",
+    "ITSM tile ServiceNow / tickets · changes stays (page lists ServiceNow webhooks)",
+    "Caption replacement: \"Every flow already traverses the PoP, so XDR starts with full network telemetry — no agents to roll out, no logs to ship. Signals become one ranked story queue; the fix goes back into policy from the same console.\"",
+    "Catalogue PNG for xops rendered with black fills in this session — label texts verified from kit-host.html FIGS source instead"
+   ]
+  },
+  "management-pov-framework": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "mgmt"
+    ],
+    "mods": [],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Scope workshop: success criteria are agreed and written down before anything is built.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Build the pilot: one branch Socket plus a remote cohort on the Cato Client, with the IdP syncing.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Test cycles work the register on the pilot's own traffic; evidence is captured weekly as it lands.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Wrap-up puts findings next to the criteria in a decision meeting booked at the workshop.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Process pipeline, 760x560, NOT a platform picture. Five stage nodes (nd) on one baseline (y~300), left to right, joined by fl-flow with arrows: 'Scope workshop' / 'Success criteria agreed'; 'Build' / 'Prereqs · IdP · TLSi'; 'Test cycles' / 'Register worked wk 1–N'; 'Wrap-up' / 'Findings vs criteria'; 'Decision' / 'Go · next steps'. A continuous fl-hot (green thread) runs beneath all five from stage 1 to stage 5 with label 'success criteria agreed once · travel with the PoV'. ABOVE stage 3: a circular fl-flow loop (particles) with label 'Weekly 30-min sync — findings recorded as they land'. BELOW stage 3: chipRow cls g 'wk 1' 'wk 2' 'wk 3' '…' with tier 'EVIDENCE ACCUMULATES WEEKLY'. From stage 3 an fl-ha (amber) branch leaves downward-right, labelled 'Unscoped asks — \"can it also…?\"', ends at an xmark() then a dashed nd cls 'dash' 'Next-steps register' sub 'parked, not the PoV'. Small f-s note near the xmark: 'cut here → parked in writing'. 6 nodes. Only the drift branch is cut; nothing else blocked."
+   },
+   "title": "The Cato PoV pipeline",
+   "desc": "Five stages run left to right — scope workshop, build, test cycles, wrap-up and decision — joined by a success-criteria thread, with a weekly sync loop and accumulating evidence around the test cycles and unscoped asks cut off into a next-steps register.",
+   "legend": [
+    [
+     "hot",
+     "Agreed scope — the success-criteria thread"
+    ],
+    [
+     "ha",
+     "Unscoped drift — cut and parked"
+    ],
+    [
+     "flow",
+     "Weekly sync · stage hand-off"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Stage labels and sub-lines exactly as listed",
+    "Weekly 30-min sync wording",
+    "Register worked wk 1–N",
+    "Unscoped asks — \"can it also…?\" and the next-steps register",
+    "Not a migration-journey page: single main slot, no phases"
+   ]
+  },
+  "management-data-lake": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "xops",
+     "mgmt"
+    ],
+    "mods": [],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Tracked policy hits, connections and detections from every edge become events at the PoP.",
+      "marks": [
+       "branch",
+       "users",
+       "pop"
+      ]
+     },
+     {
+      "t": "Data Lake units set the hourly peak: 2.5M events per hour each, licensed on the busiest hour.",
+      "marks": [
+       "xops"
+      ]
+     },
+     {
+      "t": "Retained events are queryable in the CMA Events page for the 3, 6 or 12-month variant, then deleted.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Export to S3, Azure Blob, the eventsFeed API or a SIEM carries no additional Cato cost.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Left-to-right pipeline, 760x560. LEFT column, three source nodes (nd): 'Firewall policies' / 'Internet · WAN · LAN' (ic firewall); 'Security services' / 'IPS · CASB · RBI' (ic shield); 'Sites & SDP users' / 'Sockets · Cato Clients' (ic building). Each -> fl-flow into a GATE node (nd cls hot) 'Hourly rate gate' with subs '2.5M events/h per unit', 'licensed on the peak'. From the gate upward a short fl-down to an xmark() and pill (r) 'excess over the peak: discarded rest of hour'. Gate -> fl-flow -> CENTRE nd cls pop 'Cato Data Lake' with subs '3 / 6 / 12-month units', 'first unit included', 'deleted after retention' (ic db). RIGHT: tier 'EXPORT DESTINATIONS · FREE OF CHARGE' over five small nodes fed by fl-net from the lake: 'CMA Events page' / 'Home → Events'; 'AWS S3 push feed' / '60 s / 9.5 MB · .GZ'; 'Azure Blob feed' / 'feed target · mechanics not published'; 'eventsFeed API' / 'pull · gzip up to 95%'; 'SIEM ingestion' / 'filtered, trimmed feed'. Small f-m note under the destinations: 'up to 3 Event Integrations per account'. 10 nodes. Only the excess lane is red."
+   },
+   "title": "The event pipeline — generation, rate limiting, retention, export",
+   "desc": "Cato services generate events according to policy tracking; an hourly rate gate sized in Data Lake units of 2.5 million events per hour admits them into the Data Lake, where they are held for the 3, 6 or 12-month variant and consumed through the CMA, an S3 or Azure Blob feed, the eventsFeed API or a SIEM, all free of charge.",
+   "legend": [
+    [
+     "flow",
+     "Event generation — within the licensed hourly rate"
+    ],
+    [
+     "down",
+     "Beyond the hourly peak — may be discarded"
+    ],
+    [
+     "net",
+     "Export & ingestion — no additional Cato cost"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "2.5M events/h per unit, licensed on the peak",
+    "excess over the peak discarded for the remainder of the hour",
+    "3 / 6 / 12-month units; one variant applies to all units; deleted after retention",
+    "first unit included (page: it only stands alone — do not say \"free\" without that caveat in prose)",
+    "S3 cadence 60 s / 9.5 MB · .GZ",
+    "Azure Blob: feed target · mechanics not published",
+    "eventsFeed gzip reduces storage by up to 95%",
+    "Up to three Event Integrations per account"
+   ]
+  },
+  "management-asset-discovery": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "pop",
+     "mgmt"
+    ],
+    "mods": [],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     }
+    ],
+    "steps": [
+     {
+      "t": "PLCs, cameras, printers, medical devices and BYOD kit sit behind the Socket; none can run an agent.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "The engine fingerprints each device from its own traffic: category, type, model, OS, manufacturer.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "One live Device Inventory in the CMA spans every site; identification can take up to 12 hours.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The same attributes become device-attribute firewall rules, or sync to a CMDB via the GraphQL API.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Left-to-right, 760x560. LEFT: site() boundary 'MIXED DEVICE ESTATE' containing six small nodes: 'PLC' / 'OT controller' (ic factory); 'IP camera' / 'Surveillance' (ic cam); 'Printer' / 'Office endpoint' (ic wifi); 'Medical device' / 'Clinical IoMT' (ic cpu); 'Badge reader' / 'Access control' (ic key); 'BYOD laptop' / 'Unmanaged' (ic laptop). Each -> fl-net (static) into nd 'Cato Socket' subs 'Passive sensor', 'Agentless' (socketIcon). Pill under it (m): 'no agents · no active scans'. Socket -> fl-tun labelled 'discovery' -> popBox 'Cato PoP' sub 'Cato Cloud'. PoP -> fl-flow -> CENTRE-RIGHT nd cls pop 'Device Inventory' with subs 'Category · Type · Model', 'OS · OS version', 'Manufacturer', 'Device name', 'MAC · IP address'. From the inventory two lanes: fl-hot (green, particles) labelled 'device group' -> nd 'Device-attribute rules' sub 'LAN · WAN · Internet FW' (ic firewall); fl-net (static, np:0) labelled 'API export' -> nd 'CMDB / ITSM' sub 'via GraphQL API' (ic db). 11 nodes. Nothing blocked — this page stops at inventory; enforcement is the sibling page."
+   },
+   "title": "Passive device discovery at the Socket feeding one Device Inventory",
+   "desc": "A mixed estate of agentless devices behind a Cato Socket is discovered passively from its own traffic, classified in the Cato Cloud into one Device Inventory of category, type, model, OS, manufacturer, name, MAC and IP, which feeds device-attribute firewall policy and can export to a CMDB via the GraphQL API.",
+   "legend": [
+    [
+     "hot",
+     "Discovered devices → device-attribute policy"
+    ],
+    [
+     "tun",
+     "Passive discovery — Socket to PoP"
+    ],
+    [
+     "net",
+     "Inventory export via GraphQL API"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "All nine inventory attributes as grouped on the current diagram",
+    "Six device archetypes with sub-lines, incl. Clinical IoMT",
+    "Passive sensor · Agentless; no agents, no active scans",
+    "LAN · WAN · Internet FW; via GraphQL API",
+    "Do NOT use fig iot: it adds RISK/Segment/Block rows and an anomaly-blocked lane the page deliberately does not claim (enforcement belongs to Manufacturing OT/IoT)"
+   ]
+  }
+ }
+}

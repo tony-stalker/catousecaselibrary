@@ -8,6 +8,39 @@
 <script>try{var t=localStorage.getItem("uc-theme");if(!t&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230e8a6d' stroke-width='7'/%3E%3C/svg%3E">
+<style>
+  .wn-intro { color: var(--ink-2); margin: 0 0 22px; font-size: .95rem; }
+  .wn-month { margin: 0 0 18px; }
+  .wn-month > summary {
+    list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 14px;
+    padding: 10px 0; border-bottom: 2px solid var(--hairline);
+  }
+  .wn-month > summary::-webkit-details-marker { display: none; }
+  .wn-month > summary::before {
+    content: "▸"; font-size: 1rem; color: var(--green-600); transition: transform .15s; align-self: center;
+  }
+  .wn-month[open] > summary::before { transform: rotate(90deg); }
+  .wn-month > summary h2 { margin: 0; font-size: 1.35rem; }
+  .wn-month > summary .wn-n { color: var(--ink-3); font-size: .9rem; }
+  .wn-month > summary:focus-visible { outline: 2px solid var(--green-600); outline-offset: 4px; }
+  .wn-week { margin: 18px 0 8px; }
+  .wn-week h3 { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; }
+  .wn-card { margin: 0 0 14px; }
+  .wn-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  .wn-head .section-kicker { margin: 0; }
+  .wn-chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .wn-chips .chip { font-size: .68rem; padding: 2px 9px; }
+  .wn-chip-lib { background: var(--green-050); color: var(--green-700); }
+  .wn-card h4 { margin: 6px 0 0; font-size: 1.08rem; }
+  .wn-card h4 .wn-anchor { color: inherit; text-decoration: none; }
+  .wn-card h4 .wn-anchor:hover { color: var(--green-700); }
+  .wn-card ul { margin: 8px 0 0; padding-left: 20px; font-size: .94rem; color: var(--ink-2); }
+  .wn-card li + li { margin-top: 3px; }
+  .wn-card p { margin: 8px 0 0; font-size: .94rem; color: var(--ink-2); }
+  .wn-card code { font-size: .88em; }
+  :root[data-theme="dark"] .wn-chip-lib { background: #0e3a2d; color: #7ee0bf; }
+  @media print { .wn-month { display: block; } .wn-month > summary::before { content: ""; } }
+</style>
 </head>
 <body>
 <nav class="topnav" aria-label="Primary">
@@ -24,811 +57,834 @@
 <header class="hero">
   <div class="hero-inner">
     <h1>What's new</h1>
-    <p class="lede">Every change to the library, newest first. Regenerated from the change history
-    with <code>python3 _extract/whatsnew.py</code> after each update.</p>
+    <p class="lede">Every change to the library, newest first, grouped by month and week. Regenerated from the
+    change history with <code>python3 _extract/whatsnew.py</code> after each update.</p>
   </div>
 </header>
 <main class="main">
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">14 October 2026</div>
-      <h3 style="margin:4px 0 0">Platform Demo category + Private Access with App Connectors (14 Oct 2026)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New Access page access-app-connectors (KB-grounded brief in _extract/research-briefs/app-connectors.md,</li><li>New Platform Demo category (SE-only, excluded from the prospect edition): demo-platform-60 running</li><li>Deck builder: &#x27;Platform demo (60 min)&#x27; preset, Compact mode (divider + what-we&#x27;ll-show), agenda minute</li><li>build-prospect.py strips the Platform Demo category (pages, catalog, nav, filter, links)</li><li>Index Start-here card, README (94 pages / 7 categories), STALENESS rows, 21 capture wants,</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 September 2026</div>
-      <h3 style="margin:4px 0 0">Diagrams: stylesheet depth pass — dot-grid canvas, node shadows, PoP glow, tinted backbone (light + dark)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>.diagram-card svg sits on a faint dot-grid canvas with an inset frame; green frame on hover</li><li>dg-node / dg-node-green / dg-node-dark and the pt-* topology nodes get layered drop-shadows</li><li>dg-pop / pt-pop rings glow and gain a filled core; dg-backbone ellipses carry a faint tint</li><li>lanes 2.6 -&gt; 2.8 so they hold up against the shadows</li><li>every value is a --dg-* token with a dark-theme counterpart; BUILD-GUIDE documents them</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 September 2026</div>
-      <h3 style="margin:4px 0 0">Staleness sweep (27 Sep 2026): DSPT 2026-27 v9, ASA and AI Act reframed as past; search index + what&#x27;s-new</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>security-healthcare-nhs: DSPT 2026-27 (version 9) released 1 Sep 2026, aligned to</li><li>migration-anyconnect: ASA 5506/5508/5516-X end of support (31 Aug 2026) now past tense.</li><li>ai-eu-ai-act: general applicability on 2 Aug 2026 reads as past throughout.</li><li>STALENESS.md: the three September rows closed with their next triggers.</li><li>README: www.sophos.com is a known false positive in the external link check.</li><li>Rebuilt search index and whatsnew.html (missed after the Agents Overview swap).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 September 2026</div>
-      <h3 style="margin:4px 0 0">ai-agentic-security: replace User Access Policy screenshot with Agents Overview dashboard</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The User Access Policy figure was outside the agentic workflow. Swapped in a</li><li>fresh Agents Overview capture (Claude Code Hooks interceptor, violation</li><li>breakdown, high-risk skills, top MCPs) in the same slot.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">ai-agentic-security: AI Scout scheduling — Windows scheduled task and macOS cron (SE field config)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>PoV &quot;Deploy Scout to the pilot group&quot; step now carries the SE&#x27;s two-hourly</li><li>schedule verbatim: a PowerShell Register-ScheduledTask block (SYSTEM,</li><li>StartWhenAvailable, RunOnlyIfNetworkAvailable) and a crontab one-liner</li><li>logging to /var/log/ai-scout.log. Intro states honestly where it differs from</li><li>the KB&#x27;s Scout article (KB schedules the installation script every 6 h so each</li><li>run also updates Scout; its Windows installer registers its own task — check</li><li>for a duplicate), and that the paths match the KB&#x27;s uninstall locations.</li><li>Troubleshooting card gains the schedule check and the AI Security → Scout</li><li>First Seen / Last Seen check; Scout article linked under Resources.</li><li>STALENESS row records what is field config vs KB-corroborated; search index</li><li>regenerated.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">AI pages: Internet Firewall / default QUIC rule prerequisite everywhere the UIP is staged</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Adds the KB&#x27;s second User Interaction Policy prerequisite (Internet Firewall</li><li>inspecting traffic with the default QUIC rule enabled) to the PoV prerequisites</li><li>and the TLS-related troubleshooting card on ai-legal-genai, security-ai,</li><li>ai-eu-ai-act, ai-threat-landscape and security-ai-visibility, matching the</li><li>wording shipped on ai-genai-security. Corrects the QUIC mechanism on every</li><li>page: browsers prefer QUIC and fall back to TCP when it is blocked, so the text</li><li>now says &quot;allowed to use QUIC&quot; / &quot;can talk QUIC&quot;. ai-eu-ai-act and</li><li>ai-threat-landscape troubleshooting cards no longer blame a TLSi bypass rule</li><li>(interaction rules take precedence over bypass rules per the KB). Search index</li><li>regenerated.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">ai-genai-security: add the Internet Firewall / default QUIC rule prerequisite</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The User Interaction Policy KB lists a second prerequisite beside account-level</li><li>TLS inspection: the Internet Firewall must inspect the traffic and the default</li><li>QUIC rule must be enabled. Added to the PoV prerequisites callout and to the</li><li>&quot;Prompts not being evaluated&quot; troubleshooting card (QUIC over UDP is never</li><li>TLS-inspected, so the policy never sees the prompt). Search index regenerated.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 September 2026</div>
-      <h3 style="margin:4px 0 0">Embed Claude-desktop anonymised-prompt capture on ai-genai-security and ai-legal-genai</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New composite assets/img/genai-anonymised-prompt-claude.png (two frames of one</li><li>Claude desktop-app reply, seam marked): the User Interaction Policy&#x27;s Anonymize</li><li>action masked name, email and bank account number in-flight and the model&#x27;s own</li><li>reply confirms it only received placeholders. Captions scoped to what the image</li><li>and KB support (account-level TLSi prerequisite; DOB pass-through stated as</li><li>observed, not as a detector-catalogue fact; native app so no browser plugin in</li><li>the path). Adjacent prose de-ambiguated (&quot;both figures&quot;, device not browser).</li><li>Also: image-catalog batch entry (HEIC originals to _extract/media), STALENESS</li><li>row updated — 26 Sep sweep of 190 KB links found 18 AI Security docs now</li><li>login-gated (redirect to auth.catonetworks.com; .md route 404s), links left in</li><li>place; search index regenerated.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">24 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">24 September 2026</div>
-      <h3 style="margin:4px 0 0">ISO 27001: high-level deck and Annex A one-pager, linked from the page</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Nine-slide branded deck with speaker notes (python-pptx; the judged</li><li>Annex A tick-matrix one-pager is slide 5) plus the standalone one-pager,</li><li>under &#x27;4 - Security use cases/ISO 27001&#x27;. Page hero gains the download</li><li>button; catalog deck path set (14 deck links).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">24 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">24 September 2026</div>
-      <h3 style="margin:4px 0 0">New page: ISO 27001:2022 with Cato — posture-enforced controls, audit evidence</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Device posture as the enforcement anchor (eleven check types, continuous</li><li>checks, the Posture Compliance Report&#x27;s ISO 27001:2022 mapping), a 21-row</li><li>Annex A mapping table ending in CMA evidence artefacts, supplier due</li><li>diligence via the Trust Center. Brief _extract/research-briefs/iso27001.md;</li><li>22 live re-verifications. Also corrects the stale 27001:2013 line on the</li><li>compliance page. 85 pages; 9 capture wants added.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Planner: Data Lake sizing card driven by the shared estimator</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Two optional band selects in the Opportunity fieldset (populated from</li><li>UC_DATALAKE.bands so planner and page can never drift); the high-event</li><li>+1 is read from the CASB control checkbox. When bands are chosen the</li><li>plan output gains a Data Lake sizing card - floor/ceiling peak, units</li><li>to license on the 3-month variant (all-chargeable framing), rough</li><li>export volume - linking to the full estimator for retention and tuning.</li><li>No bands selected = no card, existing behaviour untouched.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Data-lake estimator: 3K-7K SDP band follows the KB worked example (2.5M)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The KB&#x27;s table jumps 1M -&gt; 5M at 3K users, but its own worked example</li><li>prices 5,000 clients at 2.5M. Per maintainer directive the estimator now</li><li>uses 2.5M for the 3K-7K band - a mid-size user estate on modest bandwidth</li><li>stays inside the included unit, and the estimator reproduces the KB</li><li>example&#x27;s arithmetic exactly (7.5M, three units with CASB/RBI). The</li><li>table&#x27;s 5M stays quoted on-page as the conservative alternative; brief</li><li>and STALENESS updated; 29 tests green.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Data-lake page: relocate field-calibration text; add real-world tuning examples</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The field-calibration callout had been injected inside the estimator&#x27;s</li><li>bandwidth fieldset (breaking the form layout) - removed; a compact</li><li>paragraph now sits between the KB procedure and the estimator fold, and</li><li>the result cards&#x27; notes were trimmed to one-liners so the three cards</li><li>balance. New &#x27;Tuning in practice&#x27; block: the two-lever distinction</li><li>(Allow-with-no-Event reduces Data Lake units; integration filters only</li><li>trim the SIEM bill) plus a worked-examples table - recursive DNS to</li><li>public resolvers, NMS ICMP/SNMP polling, Windows Update/Teams/Zoom bulk,</li><li>and a what-not-to-touch row - all KB-named traffic classes. Calculator</li><li>notes gained the tables-assume-all-events tuning reminder.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Data-lake calculator: floor/ceiling range + all-chargeable licensing (field feedback)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Two field corrections from the library maintainer: (1) the included unit</li><li>only stands alone - licensing any units makes all units chargeable,</li><li>including the first (consistent with the KB&#x27;s &#x27;all event retention is</li><li>chargeable&#x27;); the engine now reports units-to-license on that basis with</li><li>the KB additive procedure quoted separately. (2) A real ~42 Gbps / ~43K-</li><li>user estate with WAN FW+SWG+ATP+CASB peaks ~31M events/hour - the KB&#x27;s</li><li>additive tables double-count because bandwidth and SDP users are largely</li><li>the same traffic. The estimator now quotes a floor (max of the two</li><li>bands, field-calibrated) to ceiling (KB additive) range; presales leans</li><li>on the floor. Brief + page callout + STALENESS updated; 31-test suite</li><li>green.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">16 September 2026</div>
-      <h3 style="margin:4px 0 0">New page: Event Logs &amp; the Cato Data Lake (84th) with unit calculator</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>management-data-lake: generation -&gt; rate limit -&gt; retention -&gt; export</li><li>pipeline with diagram; KB band tables + storage table reproduced with</li><li>both KB-internal discrepancies flagged honestly; folding calculator</li><li>(assets/js/datalake-calc.js, UC_DATALAKE.estimate, 40-test node suite)</li><li>sizes units from the KB&#x27;s 5-step procedure + free unit + single service</li><li>+1 rule, with user-measured extras for unquantified licences and</li><li>integrations; export section covers S3 push feed, Blob, eventsFeed,</li><li>gzip and the SIEM trimming workflow. Brief:</li><li>_extract/research-briefs/data-lake.md (raw-curl sources); adversarial</li><li>fact-check applied (8 fixes; 4 findings resolved as brief gaps against</li><li>raw KB). Catalog/deck-content/README/STALENESS/capture-lists updated;</li><li>4 capture wants seeded (107/85).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">ai-genai-security: highlight the AI Security engine only; DLP moves to DLP pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>&gt; security-data-casb-dlp match-report step; incident pane already lived</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Embed browser-plugin personal-GenAI detection shot on ai-genai-security</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>the third plugin outcome beside engage-user and block. Catalogued;</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Decider: collapse the interactive helper into a details fold</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The guided pick now sits behind a summary bar (deck-picker idiom); the</li><li>static which-wins-when table stays visible. Decider CSS moved from the</li><li>page style block into style.css as a shared component.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Decider: per-cloud profile lines + cloud-specific ceiling gates</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Fixes GCP showing Azure-led wording and empty neutral cards: the shared</li><li>Azure/GCP vSocket ceiling gate is split per cloud, and every live card now</li><li>opens with a brief-verified profile line for the selected cloud (vSocket</li><li>sizes/HA, cloud VPN gateway facts, interconnect product per provider).</li><li>All 10 decider scenarios still pass.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">15 September 2026</div>
-      <h3 style="margin:4px 0 0">Add on-ramp decision helper to network-cloud-connectivity</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New #decider section: rule-driven vSocket vs IPsec vs Cloud Interconnect</li><li>guidance (cloud, throughput, egress, encryption, HA, timeline, features)</li><li>with ranked verdict cards, plus a static which-wins-when table. Engine in</li><li>assets/js/onramp-decider.js (UC_DECIDER.score unit-tested, 10 scenarios);</li><li>deliberately no pricing - every reason string traces to the cloud-</li><li>connectivity research brief; adversarial fact-check fixes applied</li><li>(no invented deploy times, dated lead-time quotes, brief-exact figures).</li><li>Cross-link from network-cloud-interconnect resources. STALENESS row added.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">14 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">14 September 2026</div>
-      <h3 style="margin:4px 0 0">Embed 35 CMA captures across 24 pages (two-tenant capture session)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>47 capture-wanted markers served: demo-tenant browse shots (topology cards,</li><li>EM drill-downs, events composites, Stories Workbench, AI Security suite,</li><li>device inventory, certificate/DNS/IPS policy pages) plus personal-tenant</li><li>staged shots (Cloud Interconnect config + BGP peer, RPF/NAT/routed-range</li><li>evidence, report scheduling, DLP forensics settings, API keys + audit).</li><li>All lab shots carry #555 redactions per image-catalog notes.</li><li>Capture lists regenerated: 151 -&gt; 104 wanted, 91 -&gt; 85 staging.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Intro decks: merge the divider into the cover on single-use-case decks</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>An untitled one-use-case deck opened with two near-identical navy title</li><li>slides; the cover now carries the category kicker and hook line, its</li><li>speaker note opens with the divider talk track, and the divider is</li><li>skipped. Multi and custom-titled decks unchanged.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Cloud connectivity page: platform-capability matrix from SE field deck</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Which Cato capabilities each on-ramp receives — full stack everywhere,</li><li>SD-WAN/QoS/DEM family vSocket-only, with the deck&#x27;s own footnotes</li><li>(downstream-only QoS, unencrypted L2, HA models, BGP-only interconnect).</li><li>Provenance recorded in the brief; STALENESS row added.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">New page: cloud on-ramp comparison — vSocket vs IPsec vs Cloud Interconnect</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Azure/AWS/GCP/OCI. Ten-dimension comparison table + per-cloud matrix,</li><li>scenario guidance, all cells traced to a dated KB-sourced brief</li><li>(_extract/research-briefs/cloud-connectivity.md) with 23 live</li><li>re-verifications. Fully integrated: deck, notes, diagram slide, search,</li><li>STALENESS, counts; 83 pages.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">12 September 2026</div>
-      <h3 style="margin:4px 0 0">Fix six dead external links found by the --external audit</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Cato KB AI-security docs (renamed), Cato SWG product page, SonicWall</li><li>SonicOS 7 statistics doc, removed AI-gateway KB article (delinked),</li><li>HPE-Juniper close now cited to the SEC 8-K copy. All replacements</li><li>fetch-verified before swapping.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">New page: AI Threat Landscape — nine real incidents, honest Cato mapping</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Web-researched, dated and source-linked brief (_extract/research-briefs/</li><li>ai-attacks.md); page claims fact-checked against it and five load-bearing</li><li>claims re-verified against the live sources. Deck content, speaker notes,</li><li>diagram slide, search index, STALENESS register and counts all integrated;</li><li>82 pages.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Demo decks: native-shapes diagram slide per use case</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>All 81 pages&#x27; primary diagrams extracted into generated deck-diagrams.js</li><li>(committed extractor tool; journey pages captured at their final phase) and</li><li>rendered as editable PowerPoint shapes between the why and demo slides, with</li><li>the page&#x27;s diagram desc as the speaker note. Red/amber lane colours carried</li><li>through. Verified visually against the source pages and structurally to the</li><li>327-slide maximal deck.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Planner: authentic Cato mark on During/After topologies; README refresh</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Cato lockup (deck-extracted, never synthesised) on the Cato SASE Cloud box</li><li>on-screen, in the PPTX export and on the drawio during/after pages. README:</li><li>81 pages, presentation builder documented.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">11 September 2026</div>
-      <h3 style="margin:4px 0 0">Demo decks: presenter speaker notes on every slide</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Notes slides (divider hook, why-it-matters talk track, per-step demo cues)</li><li>authored from the pages for all 81 use cases; hand-written notesSlide/</li><li>notesMaster OOXML; verified by python-pptx readback, adversarial content</li><li>review and a rel-id/Content_Types code review on the 246-slide maximal deck.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Presentation builder: pick from the library, order the demo flow</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Cards gain add-to-presentation buttons so the index search/filters become</li><li>the picker; selection renders as numbered chips with drag/arrow reordering</li><li>(slide order = chip order); presets mirror the Start-here journeys; pages</li><li>get an add toggle and a floating generate tray; selection persists.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Move the API/CLI/Terraform command reference into the demo runbook</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">API automation: complete generic Terraform config to add a site</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Full main.tf (provider wiring, CATO_TOKEN env var, socket site with DHCP,</li><li>WAN rule) — terraform-validated against provider v0.0.97, which also</li><li>caught the required application attribute missing from the wf_rule block.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">API automation page: concrete curl, catocli and Terraform commands</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Verified against the catocli README/parsers and the catonetworks/cato</li><li>provider docs; command reference in the solution section plus inline</li><li>commands in the demo runbook steps.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">04 September 2026</div>
-      <h3 style="margin:4px 0 0">Add per-use-case demo decks and a presentation builder</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Every use-case page gets an &#x27;Intro deck (.pptx)&#x27; button and the index a</li><li>&#x27;Build a demo presentation&#x27; picker — concise Cato-branded decks (cover,</li><li>hook divider, Today/With-Cato, CMA demo rail, closer) generated client-side</li><li>with the authentic Cato lockup from the source decks. Internal SE tool:</li><li>stripped from the prospect build.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">29 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">29 August 2026</div>
-      <h3 style="margin:4px 0 0">Add Cisco ASA and SonicWall: playbooks, policy pages, planner coverage</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Two new vendor pairs close the gaps Tony flagged (library at 81 pages,</li><li>methodology table at 15 vendors):</li><li>migration-cisco-asa + -policy — perimeter-ASA estates. The displacement</li><li>moment is documented, not asserted: the whole 5500-X family at or past</li><li>last-day-of-support on a software train frozen at 9.16, CISA ED 25-03</li><li>ordering end-of-support units disconnected, the NCSC RayInitiator</li><li>analysis (UK hook), and the Firepower re-platforming cost avoided by</li><li>going SASE. Policy page maps ACEs/object-groups to Cato rules with</li><li>hit-count rationalisation and frames SWG/CASB/DLP honestly as</li><li>greenfield uplift. Links network-ipsec-asa (IKEv2 mechanics),</li><li>migration-anyconnect (RA play) and migration-cisco (full estates).</li><li>migration-sonicwall + -policy — TZ/NSa estates. Grounded in</li><li>CVE-2024-40766 and both Akira waves (including patched-Gen-7 boxes hit</li><li>via Gen 6 password carry-over), the MySonicWall cloud-backup breach</li><li>(treat exported configs and their credentials as compromised — rotate,</li><li>never port), the SMA 100 forced retirement and the Gen 6 cliff.</li><li>SSL-VPN cohorts move to ZTNA first: the exploited surface goes first.</li><li>Planner: the cisco-asa option references the new pages; a new sonicwall</li><li>firewall option (49 options) composes plans with the same sequencing</li><li>and cautions; SonicWall wordmark in the logo registry, brand map and</li><li>page diagrams. Both built from dated, sourced briefs in</li><li>_extract/migration-briefs/ and adversarially fact-checked against them.</li><li>Four new demo-tenant capture wants added to both capture lists.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">28 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">28 August 2026</div>
-      <h3 style="margin:4px 0 0">Vendor marks everywhere the incumbent is drawn</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>A 13-brand logo registry (assets/js/planner-logos.js, generated) drives</li><li>vendor marks across the library: the planner&#x27;s Before/During topology</li><li>shows the picked estate&#x27;s actual marks (Cisco covers Viptela, Umbrella,</li><li>ASA and AnyConnect; Fortinet covers FortiGate, FortiClient and Secure</li><li>SD-WAN, and so on), carried through to the PowerPoint as real embedded</li><li>pictures (media parts + per-slide rels + p:pic) and to the .drawio as</li><li>image cells. All 27 vendor playbook and policy pages carry their</li><li>vendor&#x27;s mark on the incumbent diagram elements, on a white plaque</li><li>where the ground is dark.</li><li>Sources: the Zscaler swirl from the library&#x27;s own deck media, six</li><li>Simple Icons CC0 marks recoloured to official brand hexes, and six from</li><li>Wikimedia Commons / vendor press assets — icon marks auto-cropped out</li><li>of wordmark composites by saturation masking (Check Point orb,</li><li>Forcepoint arrow, Netskope molecule, Versa V); Sophos, iboss and HPE</li><li>Aruba stay wordmarks rendered wider. No synthesised logos anywhere.</li><li>New assets: assets/img/logo-*.png x13; planner-logos.js is stripped</li><li>from the prospect build like the rest of the planner.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Journeys: real estates and real clouds</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Every animated journey now connects the estate as it actually is: a hub</li><li>location that is not always the DC (Manchester colo on MPLS, London hub</li><li>on SD-WAN, Frankfurt regional interconnect on firewall), on-prem DCs on</li><li>HA Sockets, and cloud DCs on vSockets (AWS eu-west-2, Azure vWAN),</li><li>migrating in the order a real programme runs — bridge first, DCs and</li><li>cloud as the low-risk wins, branch waves, incumbent last. Page prose,</li><li>captions, aria-labels and phase tables all retold to match; every page</li><li>adversarially verified (screenshots, geometry stability, story</li><li>coherence) with one fix: phase-0 VPN lanes were amber before any</li><li>replacement existed.</li><li>The incumbents are now drawn as clouds, not ellipses — and the Zscaler</li><li>ZIA cloud carries the real Zscaler mark (extracted from the Zscaler</li><li>migration deck&#x27;s own media) on a light branded cloud that works in both</li><li>themes. Cloud-DC boxes carry small aws/Azure marks from the same deck.</li><li>New assets: assets/img/logo-zscaler.png, icon-cloud-{aws,azure}.png.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Journeys: adopt the HLD topology palette across all five animated journeys</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The pt- palette moves from planner.html into style.css (with its dark</li><li>block) so the planner and the journey pages share one definition, and the</li><li>five phase-players are restyled to it: pt-plain for not-yet-migrated</li><li>sites with ink titles, pt-green with green titles for anything on Cato,</li><li>pt-t-inv text on the navy incumbent clouds, amber for an element being</li><li>displaced while its replacement runs beside it (the legacy SD-WAN hub),</li><li>purple for internet/SaaS destinations (Zscaler journey). Geometry,</li><li>lanes, captions and aria-labels untouched, so the cross-fade animation</li><li>still reads as motion. BUILD-GUIDE documents the palette for new pages.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner topology: the HLD design language — colour semantics, chips and legends</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The three scenes now follow the Cato HLD diagram style: green = Cato and</li><li>migrated estate, navy = the incumbent still carrying traffic, amber = what</li><li>is being displaced, purple = internet and SaaS, dashed blue = identity and</li><li>telemetry on their own rail. The SASE cloud carries PoP rings on the</li><li>backbone and capability chips composed from the estate&#x27;s actual picks</li><li>(FWaaS/SWG floor, plus ZTNA/TLSi/IPS/CASB/DLP/RBI/Sandboxing as selected);</li><li>arrows are labelled and During/After carry a legend. Dark theme has its</li><li>own palette block.</li><li>The exports keep pace: the PPTX mapper learns the new classes, dashed</li><li>borders, per-class stroke widths and ellipses (PoP rings render as native</li><li>shapes), and the .drawio export uses the same colours with dashed blue</li><li>identity/SIEM cells and labelled coloured edges.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner rules: drop trial-licence prerequisites and the Socket v15 route-community line</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>A migration plan is post-sale — trial licences are PoV framing and do not</li><li>gate any phase. Removed from the common option (clause trimmed), Zscaler,</li><li>Palo Alto and greenfield-security options. Also removed the hybrid-MPLS</li><li>prerequisite about Socket v15 keeping learned legacy routes local with</li><li>community 32768, per Tony&#x27;s review.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner once-over: 31 verified fixes before first deploy</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Content (planner-rules.js): 22 near-duplicate steps/risks/prereqs across</li><li>combinable options aligned to one verbatim string each so dedupe collapses</li><li>them; Forcepoint no longer retires the Content Gateway while cohorts are</li><li>still PAC-steered to it; HostScan/ISE posture naming reconciled; dashes,</li><li>en dashes and kick-off made consistent.</li><li>Engine (planner.js): summary() gains a plain-text mode ending the</li><li>entity-double-escape on the title slide, in Markdown and in the .pptx;</li><li>proper nouns and acronyms keep their capitals; per-slide reflow guard</li><li>(the shared 800 budget starved the tail of big full-detail decks); the</li><li>rebalance pass can actually run (it measured a display:none slide) and</li><li>verifies each move; grouped continuations always open with a &#x27;(cont.)&#x27;</li><li>heading clone so the deck and the PowerPoint keep attribution; slides</li><li>measure with footer placeholders (they were packed one line too tall);</li><li>deck repacks on window resize; keyboard nav survives the rail buttons;</li><li>@page follows the live view so the document prints portrait.</li><li>Exports: the .pptx now draws the three topology diagrams as native</li><li>PowerPoint shapes; xesc stops rewriting em dashes and curly quotes;</li><li>.drawio labels keep their line breaks.</li><li>Integration: deploy.sh and package.sh now actually ship planner.html</li><li>(the nav link 404&#x27;d on the deployed site); build-prospect.py rebuilds</li><li>the search index from the transformed output; verify.sh checks 1 and 3</li><li>cover planner.html, and check 8 measures a maximal estate at full</li><li>detail; the Playwright path is resolved portably (chromium.py) instead</li><li>of a hardcoded home path; planner.html and whatsnew.html load app.js so</li><li>they get the theme toggle and feedback buttons; .claude/ untracked.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner: Excel export, and a deck that packs to the space it has</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Excel export writes a real .xlsx (same store-only ZIP as the .pptx): a tab</li><li>per heading — Summary, Plan, Prerequisites, Risks, Evidence, Use cases —</li><li>with Status, Owner, dates, mitigation and notes columns left empty so the</li><li>plan can leave the planner and become the tracker the migration is run</li><li>from. Frozen header row and autofilter on every tab.</li><li>The deck was 40+ slides because it chunked at a fixed six bullets and</li><li>half of every slide went to waste. Slides are now packed by measurement:</li><li>each section is emitted whole, then fitted against the real stage height</li><li>one column, then two, and only split when two will not hold it. Splits</li><li>are balanced so a full slide is not followed by a stub. A Summary/Full</li><li>control decides depth: Summary caps phase steps and renders</li><li>prerequisites, risks and evidence as where they concentrate rather than</li><li>listing every item — the document and workbook carry the record.</li><li>A worked estate goes from 40 slides to 16 with no continuations and no</li><li>overflow. verify.sh now measures overflow the way reflow does and fails</li><li>if the summary deck grows past 24 slides.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner: before/during/after topology, plus corrected and completed rules</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Diagrams are generated client-side as inline SVG from the same selections</li><li>that drive the plan, using the library&#x27;s dg-* classes so they inherit the</li><li>theme. The during state draws the routed handoff explicitly, since</li><li>co-existence is the state the wave plan actually lives in. Also exports</li><li>.drawio XML (three pages) so the diagram can be edited, not just viewed.</li><li>Rules corrected against a cross-dimension review: nine claims that the</li><li>pages did not support are fixed or removed, twelve ordering violations</li><li>resolved (notably Always-On being enabled a phase before users leave the</li><li>legacy VPN client), duplicates collapsed, and a new always-applied</li><li>&quot;common&quot; dimension carries the ten steps every migration needs that no</li><li>single dimension owned.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Planner: deck mode, PDF-as-deck printing and a real .pptx export</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>48 steps in one column is a document, not something you present. Adds a</li><li>Present toggle that renders the plan as 16:9 slides with keyboard</li><li>navigation, chunking long phases so nothing overflows its stage, and a</li><li>landscape print stylesheet that pages one slide at a time for PDF.</li><li>PowerPoint export writes a genuine .pptx with no third-party library: a</li><li>.pptx is a ZIP of OOXML, and a store-only ZIP is a header format we can</li><li>write directly. Keeps the library dependency-free and file:// safe.</li><li>Validated structurally and with python-pptx.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Add the Migration Planner: opportunity estate -&gt; sequenced methodology</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>An internal, deterministic tool. Describe what is being displaced (WAN</li><li>transport, SD-WAN vendor, proxy/SSE, firewall, remote access, controls to</li><li>match, drivers) and it composes a nine-phase plan in dependency order,</li><li>with prerequisites, risks and evidence grouped by where they came from,</li><li>plus links into the pages that carry the detail.</li><li>The rules in assets/js/planner-rules.js were extracted from the library&#x27;s</li><li>own pages and are its whole judgement; the engine only merges, dedupes</li><li>and orders. verify.sh gains an eighth check that every page id and phase</li><li>key a rule references still exists, and that the planner actually</li><li>composes a plan with resolvable links.</li><li>Excluded from the prospect build: page, JS and nav link all stripped.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">27 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed the Data Protection Dashboard on ai-legal-genai</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The recommended AI DLP rules ranked by matches with the Legal profile</li><li>registering its first classifier hit. Caption names the one place the</li><li>lab has moved ahead of the runbook: a PII rule promoted to Block.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed a closed D&amp;R story on management-soc-xdr</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Closes two wants at once: criticality, MITRE tag and evidences on one</li><li>screen, and the analyst verdict, severity and classification with the</li><li>closure timeline. Related events tie the story back to the DLP monitor</li><li>rules that raised it.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed AI Security events and one expanded event on ai-eu-ai-act</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Corrects the earlier note: AI Security events do reach Monitor -&gt; Events</li><li>and are exportable, they are just sparse next to Data Control. The</li><li>expanded event shows the field set carries no prompt text or matched</li><li>value, which is why the stories view stays the richer artefact.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Restore source persona name on the AI anomaly story</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Confirmed a demo persona, so the redaction is unnecessary and the</li><li>attribution is the point of the figure.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed UIP rule editor, events export dialog and an AI usage-anomaly story</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Three hand-back captures across ai-eu-ai-act, security-data-casb-dlp and</li><li>security-finance-dora. Also rewrites the AI-Security-events-export want:</li><li>prompt-level UIP detections surface as XDR stories, not as exportable</li><li>Monitor-&gt;Events rows.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed UIP rulebase with detection count on security-ai</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Interim: the Code Sharing Monitor rule shows its first detection. A</li><li>higher-count re-shoot is expected once the counters catch up (~24h lag),</li><li>to be swapped in at the same filename.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed UIP interception-type figure on security-ai-visibility</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>One cohort covered by Network, Browser Plugin and API Integration rules,</li><li>monitor-family actions, counts accruing. The demo-mode rulebase was not</li><li>used: it is all Block with its one Monitor rule at zero, which would</li><li>contradict the monitor-first runbook on security-ai.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed browser plugin block notice — ai-genai-security now has no open wants</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Gemini blocked by the plugin on an off-net device, paired with the</li><li>engage-user notice. Closes the last capture-wanted on the page.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed AI Security Browser Plugin engage-user notice on ai-genai-security</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Plugin enforcing in Edge on DeepSeek from an off-net device. This is the</li><li>engage-user outcome, not block or anonymise, so the caption says so and a</li><li>narrowed want stays open for the block/mask variant.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Swap in filtered AI DLP events grid — eight rows, all four rules</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The tenant&#x27;s pre-existing GenAI rule carries a typo and can&#x27;t be renamed</li><li>(DLP rules now require a profile, so editing trips validation). Filtered</li><li>out of the view instead; captions corrected to eight uploads.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">26 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed AI DLP match report: events grid + gated forensics on ai-genai-security</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>The four monitor rules built in the lab tenant fired on the test-payload</li><li>kit. Two figures replace the Reports-bucket capture-wanted: the events</li><li>grid as the data owners review it (all actions Allow), and the forensics</li><li>panel behind its access-logged consent gate.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">05 August 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">05 August 2026</div>
-      <h3 style="margin:4px 0 0">Embed Reports-session captures: generated report PDFs + Reports UI, 9 embeds across 7 pages</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">30 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">30 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed browser-driven posture/policy captures: 10 embeds across 9 pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Live session against the personal lab tenant (nothing saved to the tenant —</li><li>unsaved-dialog captures for the ISE-baseline profile and Sophos OPSWAT check):</li><li>posture profiles (corp 7-check + AM/DE/OS baseline), Sophos vendor list,</li><li>Client Connectivity rule with posture profile + action, My Policy Changes</li><li>publish receipt, EM probes policy, SDP Users Overview. 164 wanted / 103</li><li>staging remain.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">30 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">30 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed first personal-tenant staging batch: 10 captures across 5 access pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>15 HEIC drops processed (SCIM leaver lifecycle, browser-extension DLP upload</li><li>block, Always-On pilot rule, Applications Portal both sides), 13 kept, 10</li><li>embedded at 9 want-slots. Privacy pass: real email/IPs, tenant slug and</li><li>account ID redacted; Azure top bar and client chrome cropped.</li><li>Adds _extract/regen-capture-lists.py so both capture lists regenerate</li><li>mechanically (183→174 wanted, 120→113 staging).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">29 July 2026</div>
-      <h3 style="margin:4px 0 0">Document live hosting + deploy step in README</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">29 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">29 July 2026</div>
-      <h3 style="margin:4px 0 0">Add self-hosting (Azure Ubuntu) + report-bug/feedback buttons</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>_extract/server.py: stdlib-only server — static library + POST /api/feedback</li><li>_extract/deploy.sh: one-command deploy to 10.7.0.4:/srv/usecaselibrary via</li><li>app.js initFeedback(): Report bug / Feedback buttons in the top nav, shown</li><li>style.css: .fb-* button/overlay/dialog styles (token-based, dark-safe)</li><li>.gitignore: ubuntu.txt (credentials) and feedback-log.txt stay untracked</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed 6 more valid demo-tenant captures (16 total from the 23 Jul run)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>AI Discovery + Overview (ai-legal-genai), Coding Agent Policy rulebase</li><li>(ai-agentic-security), Guards Policy + Interaction Explorer (ai-homegrown-apps),</li><li>Stories Workbench (management-visibility) — honest captions describing what the</li><li>landing capture shows. Regenerated capture lists: 183 wanted / 120 need staging.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate capture lists after today&#x27;s embeds; add self-serve how-to headers</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Drops the 10 items embedded 23 Jul; adds a hand-back workflow header so the</li><li>lists work for capturing in a personal tenant. Now 189 wanted / 125 needing staging.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed 10 demo-tenant CMA captures into PoV runbooks; catalogue the batch</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Browser-captured the demo tenant for the PoV capture-wanted list: 51 shots,</li><li>of which 10 genuine matches are embedded (asset-discovery device summary,</li><li>AI UIP rulebase, Client Connectivity cohort rule x2, DLP inline dashboard x2,</li><li>Access Users roster, SCIM directories, EM probes policy, Session Explorer).</li><li>Remaining captures catalogued in image-catalog.md for reuse. Removed 9</li><li>unusable shots (one exposed a real employee email; others misnavigated,</li><li>modal-obscured, empty or duplicate). 129 state-specific wants that need</li><li>tenant staging are listed by setup bucket in _extract/CAPTURE-STAGING.md;</li><li>199-item wanted list grouped by CMA area in _extract/CAPTURE-LIST.md.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Add lane-info (dark blue) diagram variant; SOC/XDR alert lane uses it</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New telemetry/alert lane class with dark-mode lift and legend swatch,</li><li>documented in BUILD-GUIDE; homegrown-apps legend now separates the block</li><li>from the SOC alert.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Complete PoV runbook rollout: 46 new KB-grounded PoV sections (57 total)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Waves 1-4 add a PoV runbook to every applicable use case: all 13 vendor</li><li>playbooks + focused plays, Access/Management/Network/Security estates, the</li><li>compliance verticals (PCI, CE/CAF, NHS with a clinical golden rule) and all</li><li>seven AI Security pages (visibility-led where the KB is thin). Every claim</li><li>verified against knowledge.catonetworks.com on the day of authoring;</li><li>monitor-first and safe-test discipline throughout.</li><li>Integration fixes from the batch&#x27;s drift findings: ASA IKEv2 tiles (6</li><li>tunnels/role, 60s teardown, AS-path-prepend preference), EM tunnel</li><li>threshold 20ms + probes path chips, App Analytics QoE claim moved to EM,</li><li>Chromebook now in the Client OS list (iboss caveat softened), MAC-detection</li><li>nuance restored on firewall-refresh, agentic + homegrown KB links replaced</li><li>after the July-2026 AI docs churn, homegrown-apps body updated to the</li><li>Guards-consolidated gateway model.</li><li>_extract/CAPTURE-LIST.md consolidates 199 wanted demo-tenant captures by</li><li>CMA area; STALENESS gains library-wide PoV and AI-churn rows.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed AI Security captures: User Access Policy rulebase (EU AI Act page), Anonymize-in-flight prompt (GenAI security page)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Tenant chrome and avatar cropped from the source captures; originals</li><li>archived in _extract/media. Also drops stray agent working shots.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">23 July 2026</div>
-      <h3 style="margin:4px 0 0">Add Demo/PoV runbook tabs: component + 11 KB-grounded pilot PoV runbooks</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Tab component: app.js injects a Demo/PoV tab bar when a page has both</li><li>section#demo and section#pov (deep links, hashchange, TOC clicks switch</li><li>tabs; no-JS and print stack; prospect build strips #pov, figures salvaged).</li><li>Contract + content anatomy in _extract/POV-GUIDE.md; verify.sh measures</li><li>hidden panels for mobile fit and anchors the CDN check to &lt;link&gt; tags.</li><li>Pilot PoV runbooks (success criteria -&gt; config walkthrough -&gt; evidence -&gt;</li><li>troubleshooting -&gt; gotchas/exit, all claims KB-verified 23 Jul 2026):</li><li>network-sdwan, security-consistent, management-visibility,</li><li>access-hybrid-workforce, security-tls-inspection, security-data-casb-dlp,</li><li>network-mpls-migration, migration-{zscaler,palo-alto,fortinet,sophos}.</li><li>Vendor playbooks have no demo section so their PoV stacks untabbed (tabs</li><li>appear automatically if a demo runbook is added later). 37 wanted demo-</li><li>tenant captures marked in-page as capture-wanted comments.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">22 July 2026</div>
-      <h3 style="margin:4px 0 0">Monthly staleness review — July 2026 (#1)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Verified due/watch rows (Fortinet &amp; Sophos CISA KEV counts, Cisco ASA/AnyConnect</li><li>EOL dates, Gartner SASE MQ, DSPT v9 edition) against primary sources — all</li><li>unchanged except the Sophos Workspace Protection/XGS price-rise calendar, which</li><li>had fully elapsed and needed a future-to-past tense reframe on migration-sophos.</li><li>Regenerated the search index and logged the full review in</li><li>_extract/staleness-reports/2026-07.md.</li><li>Co-authored-by: Claude &lt;noreply@anthropic.com&gt;</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">22 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">22 July 2026</div>
-      <h3 style="margin:4px 0 0">Add EU AI Act use case: visibility, control and evidence for deployers</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Researched and adversarially fact-checked against primary sources (EUR-Lex,</li><li>AI Act Explorer, Consilium, Cato KB). Covers the 2 Aug 2026 applicability</li><li>honestly alongside the Digital Omnibus delays (Annex III -&gt; Dec 2027, OJ</li><li>publication pending); maps deployer obligations to Shadow AI Discovery,</li><li>User Interaction Policy and audit evidence with explicit not-legal-advice</li><li>and log-retention caveats. Linked from the index compliance card; six new</li><li>staleness rows track the moving dates.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Fix dark mode on journey diagrams: lift navy SVG fills, brighten dormant lanes</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>var(--navy-800)-filled clouds/cores sat at surface luminance on dark and</li><li>vanished; .dg-node-dark, lane-limit amber and static/standby lanes lifted too.</li><li>Also insert the missing theme-bootstrap snippet on migration-journey-vpn and</li><li>access-remote-worker (authored in parallel with the snippet sweep) and add a</li><li>verify.sh check so a missing snippet fails loudly.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add prepared config for monthly staleness-review cloud routine (blocked on GitHub connection)</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed new CMA captures: BW Management + Network Rules (edgeconnect-policy), em-home-users fleet view (hybrid-workforce)</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add lite dist edition: package.sh lite (no decks, buttons stripped, 12M)</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add 6 pages, full-text search and dark mode (ultracode batch)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New pages: Sophos playbook + policy migration (UK mid-market XGS angle,</li><li>fact-checked against CISA KEV / Sophos partner news), UK Healthcare vertical</li><li>(CAF-aligned DSPT v8, sector blueprint), per-user remote-worker experience</li><li>(finally uses em-remote-user.png), and two animated journeys (VPN-to-ZTNA,</li><li>firewall refresh to FWaaS). Methodology table gains the Sophos row; the</li><li>focused-plays note now includes DirectAccess.</li><li>Features: full-text search (_extract/build-search.py -&gt; search-index.js,</li><li>verify.sh check 7) and dark mode (data-theme tokens, topnav toggle, head</li><li>bootstrap snippet on every page, print stays light, shoot.py --dark).</li><li>Also fixes the dead .tag-vert navy chip style (specificity).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Redesign all three journey diagrams on a unified vertical metaphor</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>MPLS, SD-WAN and Zscaler journey pages rebuilt to one visual language:</li><li>UPPER band = Cato (PoP + green backbone), LOWER band = the legacy core</li><li>(dims across phases, struck through with one red X when retired), LEFT =</li><li>sites/users. Each site&#x27;s link visibly swings up to Cato one per phase,</li><li>with a single pulse-ring highlighting the change. All three share one</li><li>viewBox, node coordinates, legend (4 keys) and caption — a coherent set.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Polish journey diagrams: fix MPLS filled lanes + legend, SD-WAN stray X</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>MPLS journey: bare .lane-static curves were filling black (missing the</li><li>.lane fill:none) — now class=&#x27;lane lane-static&#x27; like the others, plus a</li><li>legend and caption note to match the SD-WAN/Zscaler pages.</li><li>SD-WAN journey: phase 4 had a stray red X floating in empty space (a</li><li>&#x27;retired overlay link&#x27; X with no link drawn) — removed; the hub X now</li><li>spans the retired node cleanly like the Zscaler retired-node pattern.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add animated phased-migration journey pages (MPLS, SD-WAN, Zscaler)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New reusable .phase-player component (app.js initPhasePlayers + style.css):</li><li>cross-fading phase stepper with dots, prev/next/play-pause, keyboard,</li><li>reduced-motion and no-JS fallbacks. Three journey pages each walk a</li><li>5-phase migration, all phase SVGs sharing one viewBox with stable node</li><li>positions so the transition reads as progression.</li><li>Also fixed: phase-player controls inside a diagram-card were bubbling</li><li>clicks into the lightbox (opened a static clone) — interactive players</li><li>are now excluded from zoom and control clicks stop propagating.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Fix DirectAccess migration: DA and Cato Client adapters clash — swap, don&#x27;t stack</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Step 3 wrongly implied a device could run DirectAccess and the Cato Client</li><li>in parallel. DirectAccess installs its own always-on tunnel adapter that</li><li>conflicts with the Cato Client adapter, giving unpredictable connectivity.</li><li>Reworded the pilot step, co-existence intro and cohort mechanics to an</li><li>atomic per-device swap, plus a &#x27;one tunnel at a time&#x27; warning.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add Microsoft DirectAccess to Cato migration use case</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Focused remote-access play (sibling to the AnyConnect page): DirectAccess</li><li>is deprecated and on the Windows Server removal path, Windows-only and</li><li>domain-joined-only, with NLS/PKI/IP-HTTPS plumbing — replaced by Cato SDP</li><li>always-on ZTNA. Lifecycle wording verified verbatim at learn.microsoft.com.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add Asset Discovery &amp; Device Inventory (IoT/OT) use case</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Management-category visibility counterpart to the OT/IoT security page:</li><li>the IoT/OT licence as passive agentless discovery into one live Device</li><li>Inventory, feeding device-attribute policy. KB-grounded (9 attributes,</li><li>passive detection, up-to-12h identification caveat, enrichment connectors).</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Prospect generator: preserve figures when stripping demo sections</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Add prospect-edition generator (single-source, two editions)</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Legal diagram: distinguish per-team flows through the ethical wall</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New lane identity variants (.lane-alt long-dash, .lane-dot dotted) keep</li><li>allowed-green semantics while making each flow traceable end-to-end;</li><li>legend split into per-flow keys.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Genericise remaining lab site references; LAN Firewall is a global policy</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>22 pages + BUILD-GUIDE: Bracknell Lab/Mobile Office/Reading Office/</li><li>LAN Firewall navigation corrected to Security -&gt; LAN Firewall (global</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Retail diagram: differentiate LTE standby from restricted traffic</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>New .lane-standby style (grey dotted, non-animated) + own legend key —</li><li>standby failover no longer shares the amber restricted-lane treatment.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Sector blueprints: starter rulebases + scenarios on all 7 vertical pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Retail, Finance, Public Sector, Manufacturing, BPO, Education, Legal —</li><li>each vertical page gains a &#x27;Sector blueprint&#x27; section: an illustrative</li><li>CMA-style starter rulebase (monitor-first) and 4 sector scenarios.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">20 July 2026</div>
-      <h3 style="margin:4px 0 0">Verticals filter + Legal vertical: law-firm confidentiality and GenAI pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>catalog gains a vertical field (Retail, Finance, Public Sector,</li><li>security-legal-confidentiality: SRA 6.3/6.5 + Bolkiah-anchored ethical</li><li>ai-legal-genai: privilege-safe GenAI adoption, client-identifier</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">README: proper repo landing page (contents, maintenance workflow, conventions)</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">Embed real CMA screenshots: DEM page and policy worked examples</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>12 demo-tenant captures (fictional identities verified): Experience</li><li>Monitoring home/Connection Details/traceroute/command-line on the DEM</li><li>page; Internet FW, WAN FW, App &amp; Data Inline, DLP classifiers/catalogue</li><li>and TLS Inspection views paired with the before/after tables across the</li><li>policy pages and the TLS playbook. HEIC originals archived in _extract.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">Regenerate what&#x27;s-new</h3>
-      
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">Ops: external link checker, silent SVG pass, what&#x27;s-new page, packager, DEM refresh</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>verify.sh --external: curl-based checker (Cato TLS inspection breaks python</li><li>All residual SVG label bleeds fixed; measure_svg ignores band rects -&gt; silent</li><li>whatsnew.html generated from git history, linked from index nav</li><li>_extract/package.sh builds shareable dist zip (catalog-referenced decks only)</li><li>management-dem verified against 18 KB docs: corrected CMA path to</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">19 July 2026</div>
-      <h3 style="margin:4px 0 0">Add worked before/after policy-translation examples to all 12 policy pages</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Each policy page gains a &#x27;Worked example&#x27; section: vendor-authentic rule</li><li>tables (or CPL/ACL extracts) translated into CMA-style rulebases with</li><li>translation notes — clearly labelled illustrative, not screenshots.</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">18 July 2026</div>
-      <h3 style="margin:4px 0 0">Expansion: 11 new pages, library ops, index navigation (63 pages)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Design/reference pages: TLS inspection staged rollout, identity integration</li><li>New vendor migrations: Check Point, HPE Aruba EdgeConnect, Symantec</li><li>Library ops: verify.sh health check, STALENESS.md register</li><li>Index: &#x27;Start here&#x27; journeys, clickable tag filtering</li></ul>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-kicker">18 July 2026</div>
-      <h3 style="margin:4px 0 0">Baseline: verified 52-page use-case library (6 categories)</h3>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:.94rem;color:var(--ink-2)"><li>Full verification passed: links, catalogue consistency, SVG measure,</li><li>console, mobile, UK English, no customer/account references.</li></ul>
-    </div>
+  <p class="wn-intro">97 changes across 4 months. Chips show which categories a change touched;
+  page names link to the use case. Open a month to see its weeks. Bookkeeping commits (67 “Regenerate what's-new”) are left out; <code>--all</code> includes them.</p>
+  <details class="wn-month" id="m-2026-10" open>
+    <summary><h2>October 2026</h2><span class="wn-n">4 changes</span></summary>
+    <section class="wn-week">
+      <h3>Week commencing 26 October</h3>
+      <article class="card wn-card" id="c-dc967bb">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-30">30 October 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-access">Access</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-dc967bb">Diagram kit: build tooling, picture-based deck slides, capture placeholders, 100+ PoPs</a></h4>
+        <ul><li>_extract/build-diagrams.py + _extract/diagram-kit/ (make-kit-host, export_svg, port_css, glue, README): renders per-page specs with the platform-overview drawing kit into static SVG (x- prefixed, light/dark tokens, auto-fitted labels), a &#x27;Where this sits&#x27; spotlight section, deck pictures</li><li>deck-export.js: diagram slide is now the page&#x27;s main diagram as a 2x PNG, loaded on demand from assets/js/deck-pics/&lt;id&gt;.js; extract-deck-diagrams.py retired; manifest = deck-diagrams.js</li><li>app.js: capture-wanted markers render as labelled illustrative mock consoles (stripped from prospect)</li><li>verify.sh: diagram kit --check in step 4, deck export smoke test (decktest.py) as step 9</li><li>First page on the kit: <a href="usecases/access-app-connectors.html" title="Private Access with App Connectors">access-app-connectors</a> (spotlight + App Connector figure, DTLS wording)</li><li>&#x27;80+ PoPs&#x27; -&gt; &#x27;100+ PoPs&#x27; (Cato pages, 30 Oct 2026); STALENESS row updated</li></ul>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 12 October</h3>
+      <article class="card wn-card" id="c-da35fbc">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-14">14 October 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-da35fbc">server.py: Cache-Control no-cache so released JS/pages always revalidate</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-bf31284">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-14">14 October 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-bf31284">build-prospect: drop the first-demo Start-here card from the prospect index</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-9195ea8">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-14">14 October 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-access">Access</span><span class="chip chip-cat-platform-demo">Platform Demo</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-9195ea8">Platform Demo category + Private Access with App Connectors (14 Oct 2026)</a></h4>
+        <ul><li>New Access page <a href="usecases/access-app-connectors.html" title="Private Access with App Connectors">access-app-connectors</a> (KB-grounded brief in _extract/research-briefs/app-connectors.md, adversarially fact-checked; early-availability and user-initiated-only boundaries stated)</li><li>New Platform Demo category (SE-only, excluded from the prospect edition): <a href="usecases/demo-platform-60.html" title="The 60-Minute Platform Demo">demo-platform-60</a> running order + seven five-minute segments (SWG, threat prevention, CASB, DLP, ZTNA, App Connectors, DEM) sharing one spine of timings and bridge lines</li><li>Deck builder: &#x27;Platform demo (60 min)&#x27; preset, Compact mode (divider + what-we&#x27;ll-show), agenda minute slots; deck-content entries for all nine pages; demo slide holds up to 7 steps</li><li>build-prospect.py strips the Platform Demo category (pages, catalog, nav, filter, links)</li><li>Index Start-here card, README (94 pages / 7 categories), STALENESS rows, 21 capture wants, search index + deck diagrams regenerated; verify.sh 8/8</li></ul>
+      </article>
+    </section>
+  </details>
+  <details class="wn-month" id="m-2026-09">
+    <summary><h2>September 2026</h2><span class="wn-n">33 changes</span></summary>
+    <section class="wn-week">
+      <h3>Week commencing 21 September</h3>
+      <article class="card wn-card" id="c-428c723">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-27">27 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-428c723">Diagrams: stylesheet depth pass — dot-grid canvas, node shadows, PoP glow, tinted backbone (light + dark)</a></h4>
+        <p>All 191 inline SVG diagrams share the dg-/pt- classes, so the uplift is CSS-only:</p><ul><li>.diagram-card svg sits on a faint dot-grid canvas with an inset frame; green frame on hover</li><li>dg-node / dg-node-green / dg-node-dark and the pt-* topology nodes get layered drop-shadows</li><li>dg-pop / pt-pop rings glow and gain a filled core; dg-backbone ellipses carry a faint tint</li><li>lanes 2.6 -&gt; 2.8 so they hold up against the shadows</li><li>every value is a --dg-* token with a dark-theme counterpart; BUILD-GUIDE documents them No markup changes; verify.sh (SVG measurement, mobile fit, console) passes.</li></ul>
+      </article>
+      <article class="card wn-card" id="c-411be42">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-27">27 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-security">Security</span><span class="chip chip-cat-migration">Migration</span><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-411be42">Staleness sweep (27 Sep 2026): DSPT 2026-27 v9, ASA and AI Act reframed as past; search index + what&#x27;s-new</a></h4>
+        <ul><li><a href="usecases/security-healthcare-nhs.html" title="UK Healthcare: NHS DSPT &amp; CAF-Aligned SASE">security-healthcare-nhs</a>: DSPT 2026-27 (version 9) released 1 Sep 2026, aligned to CAF v4.0, deadline 30 Jun 2027, mandatory-audit scope of 11 fixed outcomes + 1; the staleness callout now records what is verified and what is still to check (v9 outcome count, October audit guidance). Resources link to the v9 news posts.</li><li><a href="usecases/migration-anyconnect.html" title="AnyConnect to Cato Client">migration-anyconnect</a>: ASA 5506/5508/5516-X end of support (31 Aug 2026) now past tense.</li><li><a href="usecases/ai-eu-ai-act.html" title="EU AI Act: Visibility, Control &amp; Evidence">ai-eu-ai-act</a>: general applicability on 2 Aug 2026 reads as past throughout.</li><li>STALENESS.md: the three September rows closed with their next triggers.</li><li>README: www.sophos.com is a known false positive in the external link check.</li><li>Rebuilt search index and whatsnew.html (missed after the Agents Overview swap).</li></ul>
+      </article>
+      <article class="card wn-card" id="c-cf190f2">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-27">27 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-cf190f2"><a href="usecases/ai-agentic-security.html" title="Securing Agentic AI">ai-agentic-security</a>: replace User Access Policy screenshot with Agents Overview dashboard</a></h4>
+        <p>The User Access Policy figure was outside the agentic workflow. Swapped in a fresh Agents Overview capture (Claude Code Hooks interceptor, violation breakdown, high-risk skills, top MCPs) in the same slot.</p>
+      </article>
+      <article class="card wn-card" id="c-21c9bef">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-26">26 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-21c9bef"><a href="usecases/ai-agentic-security.html" title="Securing Agentic AI">ai-agentic-security</a>: AI Scout scheduling — Windows scheduled task and macOS cron (SE field config)</a></h4>
+        <p>PoV &quot;Deploy Scout to the pilot group&quot; step now carries the SE&#x27;s two-hourly schedule verbatim: a PowerShell Register-ScheduledTask block (SYSTEM, StartWhenAvailable, RunOnlyIfNetworkAvailable) and a crontab one-liner logging to /var/log/ai-scout.log. Intro states honestly where it differs from the KB&#x27;s Scout article (KB schedules the installation script every 6 h so each run also updates Scout; its Windows installer registers its own task — check for a duplicate), and that the paths match the KB&#x27;s uninstall locations. Troubleshooting card gains the schedule check and the AI Security → Scout First Seen / Last Seen check; Scout article linked under Resources. STALENESS row records what is field config vs KB-corroborated; search index regenerated.</p>
+      </article>
+      <article class="card wn-card" id="c-a44cfc8">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-26">26 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-a44cfc8">AI pages: Internet Firewall / default QUIC rule prerequisite everywhere the UIP is staged</a></h4>
+        <p>Adds the KB&#x27;s second User Interaction Policy prerequisite (Internet Firewall inspecting traffic with the default QUIC rule enabled) to the PoV prerequisites and the TLS-related troubleshooting card on <a href="usecases/ai-legal-genai.html" title="Law Firms: GenAI with Privilege Intact">ai-legal-genai</a>, <a href="usecases/security-ai.html" title="AI Security: Users, Applications &amp; Agentic AI">security-ai</a>, <a href="usecases/ai-eu-ai-act.html" title="EU AI Act: Visibility, Control &amp; Evidence">ai-eu-ai-act</a>, <a href="usecases/ai-threat-landscape.html" title="AI Threat Landscape: Real Attacks &amp; Defences">ai-threat-landscape</a> and <a href="usecases/security-ai-visibility.html" title="GenAI Visibility Assessment">security-ai-visibility</a>, matching the wording shipped on <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a>. Corrects the QUIC mechanism on every page: browsers prefer QUIC and fall back to TCP when it is blocked, so the text now says &quot;allowed to use QUIC&quot; / &quot;can talk QUIC&quot;. <a href="usecases/ai-eu-ai-act.html" title="EU AI Act: Visibility, Control &amp; Evidence">ai-eu-ai-act</a> and <a href="usecases/ai-threat-landscape.html" title="AI Threat Landscape: Real Attacks &amp; Defences">ai-threat-landscape</a> troubleshooting cards no longer blame a TLSi bypass rule (interaction rules take precedence over bypass rules per the KB). Search index regenerated.</p>
+      </article>
+      <article class="card wn-card" id="c-7c15c44">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-26">26 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-7c15c44"><a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a>: add the Internet Firewall / default QUIC rule prerequisite</a></h4>
+        <p>The User Interaction Policy KB lists a second prerequisite beside account-level TLS inspection: the Internet Firewall must inspect the traffic and the default QUIC rule must be enabled. Added to the PoV prerequisites callout and to the &quot;Prompts not being evaluated&quot; troubleshooting card (QUIC over UDP is never TLS-inspected, so the policy never sees the prompt). Search index regenerated.</p>
+      </article>
+      <article class="card wn-card" id="c-0e24d18">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-26">26 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-0e24d18">Embed Claude-desktop anonymised-prompt capture on <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a> and <a href="usecases/ai-legal-genai.html" title="Law Firms: GenAI with Privilege Intact">ai-legal-genai</a></a></h4>
+        <p>New composite assets/img/genai-anonymised-prompt-claude.png (two frames of one Claude desktop-app reply, seam marked): the User Interaction Policy&#x27;s Anonymize action masked name, email and bank account number in-flight and the model&#x27;s own reply confirms it only received placeholders. Captions scoped to what the image and KB support (account-level TLSi prerequisite; DOB pass-through stated as observed, not as a detector-catalogue fact; native app so no browser plugin in the path). Adjacent prose de-ambiguated (&quot;both figures&quot;, device not browser).</p><p>Also: image-catalog batch entry (HEIC originals to _extract/media), STALENESS row updated — 26 Sep sweep of 190 KB links found 18 AI Security docs now login-gated (redirect to auth.catonetworks.com; .md route 404s), links left in place; search index regenerated.</p>
+      </article>
+      <article class="card wn-card" id="c-332d56e">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-24">24 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-332d56e">ISO 27001: high-level deck and Annex A one-pager, linked from the page</a></h4>
+        <p>Nine-slide branded deck with speaker notes (python-pptx; the judged Annex A tick-matrix one-pager is slide 5) plus the standalone one-pager, under &#x27;4 - Security use cases/ISO 27001&#x27;. Page hero gains the download button; catalog deck path set (14 deck links).</p>
+      </article>
+      <article class="card wn-card" id="c-23cfc2d">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-24">24 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-23cfc2d">New page: ISO 27001:2022 with Cato — posture-enforced controls, audit evidence</a></h4>
+        <p>Device posture as the enforcement anchor (eleven check types, continuous checks, the Posture Compliance Report&#x27;s ISO 27001:2022 mapping), a 21-row Annex A mapping table ending in CMA evidence artefacts, supplier due diligence via the Trust Center. Brief _extract/research-briefs/iso27001.md; 22 live re-verifications. Also corrects the stale 27001:2013 line on the compliance page. 85 pages; 9 capture wants added.</p>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 14 September</h3>
+      <article class="card wn-card" id="c-2c2c14b">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-16">16 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-2c2c14b">Planner: Data Lake sizing card driven by the shared estimator</a></h4>
+        <p>Two optional band selects in the Opportunity fieldset (populated from UC_DATALAKE.bands so planner and page can never drift); the high-event +1 is read from the CASB control checkbox. When bands are chosen the plan output gains a Data Lake sizing card - floor/ceiling peak, units to license on the 3-month variant (all-chargeable framing), rough export volume - linking to the full estimator for retention and tuning. No bands selected = no card, existing behaviour untouched.</p>
+      </article>
+      <article class="card wn-card" id="c-40dd530">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-16">16 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-40dd530">Data-lake estimator: 3K-7K SDP band follows the KB worked example (2.5M)</a></h4>
+        <p>The KB&#x27;s table jumps 1M -&gt; 5M at 3K users, but its own worked example prices 5,000 clients at 2.5M. Per maintainer directive the estimator now uses 2.5M for the 3K-7K band - a mid-size user estate on modest bandwidth stays inside the included unit, and the estimator reproduces the KB example&#x27;s arithmetic exactly (7.5M, three units with CASB/RBI). The table&#x27;s 5M stays quoted on-page as the conservative alternative; brief and STALENESS updated; 29 tests green.</p>
+      </article>
+      <article class="card wn-card" id="c-b1c2e81">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-16">16 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b1c2e81">Data-lake page: relocate field-calibration text; add real-world tuning examples</a></h4>
+        <p>The field-calibration callout had been injected inside the estimator&#x27;s bandwidth fieldset (breaking the form layout) - removed; a compact paragraph now sits between the KB procedure and the estimator fold, and the result cards&#x27; notes were trimmed to one-liners so the three cards balance. New &#x27;Tuning in practice&#x27; block: the two-lever distinction (Allow-with-no-Event reduces Data Lake units; integration filters only trim the SIEM bill) plus a worked-examples table - recursive DNS to public resolvers, NMS ICMP/SNMP polling, Windows Update/Teams/Zoom bulk, and a what-not-to-touch row - all KB-named traffic classes. Calculator notes gained the tables-assume-all-events tuning reminder.</p>
+      </article>
+      <article class="card wn-card" id="c-a09279d">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-16">16 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-a09279d">Data-lake calculator: floor/ceiling range + all-chargeable licensing (field feedback)</a></h4>
+        <p>Two field corrections from the library maintainer: (1) the included unit only stands alone - licensing any units makes all units chargeable, including the first (consistent with the KB&#x27;s &#x27;all event retention is chargeable&#x27;); the engine now reports units-to-license on that basis with the KB additive procedure quoted separately. (2) A real ~42 Gbps / ~43K- user estate with WAN FW+SWG+ATP+CASB peaks ~31M events/hour - the KB&#x27;s additive tables double-count because bandwidth and SDP users are largely the same traffic. The estimator now quotes a floor (max of the two bands, field-calibrated) to ceiling (KB additive) range; presales leans on the floor. Brief + page callout + STALENESS updated; 31-test suite green.</p>
+      </article>
+      <article class="card wn-card" id="c-c684e06">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-16">16 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-management">Management</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-c684e06">New page: Event Logs &amp; the Cato Data Lake (84th) with unit calculator</a></h4>
+        <p><a href="usecases/management-data-lake.html" title="Event Logs &amp; the Cato Data Lake">management-data-lake</a>: generation -&gt; rate limit -&gt; retention -&gt; export pipeline with diagram; KB band tables + storage table reproduced with both KB-internal discrepancies flagged honestly; folding calculator (assets/js/datalake-calc.js, UC_DATALAKE.estimate, 40-test node suite) sizes units from the KB&#x27;s 5-step procedure + free unit + single service +1 rule, with user-measured extras for unquantified licences and integrations; export section covers S3 push feed, Blob, eventsFeed, gzip and the SIEM trimming workflow. Brief: _extract/research-briefs/data-lake.md (raw-curl sources); adversarial fact-check applied (8 fixes; 4 findings resolved as brief gaps against raw KB). Catalog/deck-content/README/STALENESS/capture-lists updated; 4 capture wants seeded (107/85).</p>
+      </article>
+      <article class="card wn-card" id="c-35aeea8">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-15">15 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span><span class="chip chip-cat-security">Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-35aeea8"><a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a>: highlight the AI Security engine only; DLP moves to DLP pages</a></h4>
+        <p>Removed the Data Incident figure and the whole DLP-backstop thread (solution paragraph, demo step, success-criteria row, PoV week, match report/forensics figures, troubleshooting card, deck step, DLP tag and diagram label) - the page now covers UIP + browser plugin only, with a cross-link to the DLP pages. Moves: forensics composite -&gt; security-dlp- forensics (serves the evidence-viewer want, lists 104-&gt;103); events grid -&gt; <a href="usecases/security-data-casb-dlp.html" title="Data Security with CASB &amp; DLP">security-data-casb-dlp</a> match-report step; incident pane already lived on <a href="usecases/security-dlp-forensics.html" title="Data Breach Investigation with DLP Forensics">security-dlp-forensics</a>.</p>
+      </article>
+      <article class="card wn-card" id="c-5f6c56f">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-15">15 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5f6c56f">Embed browser-plugin personal-GenAI detection shot on <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a></a></h4>
+        <p>Tony self-serve capture: extension dialog on chatgpt.com naming detected values (fictional Jane Doe payload) with discard countdown vs send-anyway</p><ul><li>the third plugin outcome beside engage-user and block. Catalogued; HEIC original archived in _extract/media/.</li></ul>
+      </article>
+      <article class="card wn-card" id="c-004623e">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-15">15 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-004623e">Decider: collapse the interactive helper into a details fold</a></h4>
+        <p>The guided pick now sits behind a summary bar (deck-picker idiom); the static which-wins-when table stays visible. Decider CSS moved from the page style block into style.css as a shared component.</p>
+      </article>
+      <article class="card wn-card" id="c-336c20a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-15">15 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-336c20a">Decider: per-cloud profile lines + cloud-specific ceiling gates</a></h4>
+        <p>Fixes GCP showing Azure-led wording and empty neutral cards: the shared Azure/GCP vSocket ceiling gate is split per cloud, and every live card now opens with a brief-verified profile line for the selected cloud (vSocket sizes/HA, cloud VPN gateway facts, interconnect product per provider). All 10 decider scenarios still pass.</p>
+      </article>
+      <article class="card wn-card" id="c-18ccf5a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-15">15 September 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-network">Network</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-18ccf5a">Add on-ramp decision helper to <a href="usecases/network-cloud-connectivity.html" title="Cloud Connectivity: vSocket vs IPsec vs Cloud Interconnect">network-cloud-connectivity</a></a></h4>
+        <p>New #decider section: rule-driven vSocket vs IPsec vs Cloud Interconnect guidance (cloud, throughput, egress, encryption, HA, timeline, features) with ranked verdict cards, plus a static which-wins-when table. Engine in assets/js/onramp-decider.js (UC_DECIDER.score unit-tested, 10 scenarios); deliberately no pricing - every reason string traces to the cloud- connectivity research brief; adversarial fact-check fixes applied (no invented deploy times, dated lead-time quotes, brief-exact figures). Cross-link from <a href="usecases/network-cloud-interconnect.html" title="Cloud Interconnect: Dedicated Circuits to Cloud &amp; DC">network-cloud-interconnect</a> resources. STALENESS row added.</p>
+      </article>
+      <article class="card wn-card" id="c-1851047">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-14">14 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-1851047">Embed 35 CMA captures across 24 pages (two-tenant capture session)</a></h4>
+        <p>47 capture-wanted markers served: demo-tenant browse shots (topology cards, EM drill-downs, events composites, Stories Workbench, AI Security suite, device inventory, certificate/DNS/IPS policy pages) plus personal-tenant staged shots (Cloud Interconnect config + BGP peer, RPF/NAT/routed-range evidence, report scheduling, DLP forensics settings, API keys + audit). All lab shots carry #555 redactions per image-catalog notes. Capture lists regenerated: 151 -&gt; 104 wanted, 91 -&gt; 85 staging.</p>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 7 September</h3>
+      <article class="card wn-card" id="c-dafdf07">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-12">12 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-dafdf07">Intro decks: merge the divider into the cover on single-use-case decks</a></h4>
+        <p>An untitled one-use-case deck opened with two near-identical navy title slides; the cover now carries the category kicker and hook line, its speaker note opens with the divider talk track, and the divider is skipped. Multi and custom-titled decks unchanged.</p>
+      </article>
+      <article class="card wn-card" id="c-35af0f2">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-12">12 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-35af0f2">Cloud connectivity page: platform-capability matrix from SE field deck</a></h4>
+        <p>Which Cato capabilities each on-ramp receives — full stack everywhere, SD-WAN/QoS/DEM family vSocket-only, with the deck&#x27;s own footnotes (downstream-only QoS, unencrypted L2, HA models, BGP-only interconnect). Provenance recorded in the brief; STALENESS row added.</p>
+      </article>
+      <article class="card wn-card" id="c-d0628d2">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-12">12 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-d0628d2">New page: cloud on-ramp comparison — vSocket vs IPsec vs Cloud Interconnect</a></h4>
+        <p>Azure/AWS/GCP/OCI. Ten-dimension comparison table + per-cloud matrix, scenario guidance, all cells traced to a dated KB-sourced brief (_extract/research-briefs/cloud-connectivity.md) with 23 live re-verifications. Fully integrated: deck, notes, diagram slide, search, STALENESS, counts; 83 pages.</p>
+      </article>
+      <article class="card wn-card" id="c-b083599">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-12">12 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b083599">Fix six dead external links found by the --external audit</a></h4>
+        <p>Cato KB AI-security docs (renamed), Cato SWG product page, SonicWall SonicOS 7 statistics doc, removed AI-gateway KB article (delinked), HPE-Juniper close now cited to the SEC 8-K copy. All replacements fetch-verified before swapping.</p>
+      </article>
+      <article class="card wn-card" id="c-4d33c67">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-11">11 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-4d33c67">New page: AI Threat Landscape — nine real incidents, honest Cato mapping</a></h4>
+        <p>Web-researched, dated and source-linked brief (_extract/research-briefs/ ai-attacks.md); page claims fact-checked against it and five load-bearing claims re-verified against the live sources. Deck content, speaker notes, diagram slide, search index, STALENESS register and counts all integrated; 82 pages.</p>
+      </article>
+      <article class="card wn-card" id="c-4fa69a8">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-11">11 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-4fa69a8">Demo decks: native-shapes diagram slide per use case</a></h4>
+        <p>All 81 pages&#x27; primary diagrams extracted into generated deck-diagrams.js (committed extractor tool; journey pages captured at their final phase) and rendered as editable PowerPoint shapes between the why and demo slides, with the page&#x27;s diagram desc as the speaker note. Red/amber lane colours carried through. Verified visually against the source pages and structurally to the 327-slide maximal deck.</p>
+      </article>
+      <article class="card wn-card" id="c-cb6dc3a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-11">11 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-cb6dc3a">Planner: authentic Cato mark on During/After topologies; README refresh</a></h4>
+        <p>Cato lockup (deck-extracted, never synthesised) on the Cato SASE Cloud box on-screen, in the PPTX export and on the drawio during/after pages. README: 81 pages, presentation builder documented.</p>
+      </article>
+      <article class="card wn-card" id="c-459a7a0">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-11">11 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-459a7a0">Demo decks: presenter speaker notes on every slide</a></h4>
+        <p>Notes slides (divider hook, why-it-matters talk track, per-step demo cues) authored from the pages for all 81 use cases; hand-written notesSlide/ notesMaster OOXML; verified by python-pptx readback, adversarial content review and a rel-id/Content_Types code review on the 246-slide maximal deck.</p>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 31 August</h3>
+      <article class="card wn-card" id="c-b77ef21">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-04">4 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b77ef21">Presentation builder: pick from the library, order the demo flow</a></h4>
+        <p>Cards gain add-to-presentation buttons so the index search/filters become the picker; selection renders as numbered chips with drag/arrow reordering (slide order = chip order); presets mirror the Start-here journeys; pages get an add toggle and a floating generate tray; selection persists.</p>
+      </article>
+      <article class="card wn-card" id="c-5a53073">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-04">4 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5a53073">Move the API/CLI/Terraform command reference into the demo runbook</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-2f3c931">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-04">4 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-2f3c931">API automation: complete generic Terraform config to add a site</a></h4>
+        <p>Full main.tf (provider wiring, CATO_TOKEN env var, socket site with DHCP, WAN rule) — terraform-validated against provider v0.0.97, which also caught the required application attribute missing from the wf_rule block.</p>
+      </article>
+      <article class="card wn-card" id="c-a719340">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-04">4 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-a719340">API automation page: concrete curl, catocli and Terraform commands</a></h4>
+        <p>Verified against the catocli README/parsers and the catonetworks/cato provider docs; command reference in the solution section plus inline commands in the demo runbook steps.</p>
+      </article>
+      <article class="card wn-card" id="c-025193a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-09-04">4 September 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-025193a">Add per-use-case demo decks and a presentation builder</a></h4>
+        <p>Every use-case page gets an &#x27;Intro deck (.pptx)&#x27; button and the index a &#x27;Build a demo presentation&#x27; picker — concise Cato-branded decks (cover, hook divider, Today/With-Cato, CMA demo rail, closer) generated client-side with the authentic Cato lockup from the source decks. Internal SE tool: stripped from the prospect build.</p>
+      </article>
+    </section>
+  </details>
+  <details class="wn-month" id="m-2026-08">
+    <summary><h2>August 2026</h2><span class="wn-n">23 changes</span></summary>
+    <section class="wn-week">
+      <h3>Week commencing 24 August</h3>
+      <article class="card wn-card" id="c-ac968cf">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-29">29 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-migration">Migration</span><span class="chip chip-cat-network">Network</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-ac968cf">Add Cisco ASA and SonicWall: playbooks, policy pages, planner coverage</a></h4>
+        <p>Two new vendor pairs close the gaps Tony flagged (library at 81 pages, methodology table at 15 vendors):</p><p><a href="usecases/migration-cisco-asa.html" title="Cisco ASA (5500-X Perimeter) to Cato">migration-cisco-asa</a> + -policy — perimeter-ASA estates. The displacement moment is documented, not asserted: the whole 5500-X family at or past last-day-of-support on a software train frozen at 9.16, CISA ED 25-03 ordering end-of-support units disconnected, the NCSC RayInitiator analysis (UK hook), and the Firepower re-platforming cost avoided by going SASE. Policy page maps ACEs/object-groups to Cato rules with hit-count rationalisation and frames SWG/CASB/DLP honestly as greenfield uplift. Links <a href="usecases/network-ipsec-asa.html" title="IPsec Site Design: Cisco ASA (IKEv1 / IKEv2)">network-ipsec-asa</a> (IKEv2 mechanics), <a href="usecases/migration-anyconnect.html" title="AnyConnect to Cato Client">migration-anyconnect</a> (RA play) and <a href="usecases/migration-cisco.html" title="Cisco (Umbrella, AnyConnect &amp; SD-WAN) to Cato">migration-cisco</a> (full estates).</p><p><a href="usecases/migration-sonicwall.html" title="SonicWall (TZ/NSa &amp; SonicOS) to Cato">migration-sonicwall</a> + -policy — TZ/NSa estates. Grounded in CVE-2024-40766 and both Akira waves (including patched-Gen-7 boxes hit via Gen 6 password carry-over), the MySonicWall cloud-backup breach (treat exported configs and their credentials as compromised — rotate, never port), the SMA 100 forced retirement and the Gen 6 cliff. SSL-VPN cohorts move to ZTNA first: the exploited surface goes first.</p><p>Planner: the cisco-asa option references the new pages; a new sonicwall firewall option (49 options) composes plans with the same sequencing and cautions; SonicWall wordmark in the logo registry, brand map and page diagrams. Both built from dated, sourced briefs in _extract/migration-briefs/ and adversarially fact-checked against them. Four new demo-tenant capture wants added to both capture lists.</p>
+      </article>
+      <article class="card wn-card" id="c-b09e436">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-28">28 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b09e436">Vendor marks everywhere the incumbent is drawn</a></h4>
+        <p>A 13-brand logo registry (assets/js/planner-logos.js, generated) drives vendor marks across the library: the planner&#x27;s Before/During topology shows the picked estate&#x27;s actual marks (Cisco covers Viptela, Umbrella, ASA and AnyConnect; Fortinet covers FortiGate, FortiClient and Secure SD-WAN, and so on), carried through to the PowerPoint as real embedded pictures (media parts + per-slide rels + p:pic) and to the .drawio as image cells. All 27 vendor playbook and policy pages carry their vendor&#x27;s mark on the incumbent diagram elements, on a white plaque where the ground is dark.</p><p>Sources: the Zscaler swirl from the library&#x27;s own deck media, six Simple Icons CC0 marks recoloured to official brand hexes, and six from Wikimedia Commons / vendor press assets — icon marks auto-cropped out of wordmark composites by saturation masking (Check Point orb, Forcepoint arrow, Netskope molecule, Versa V); Sophos, iboss and HPE Aruba stay wordmarks rendered wider. No synthesised logos anywhere. New assets: assets/img/logo-*.png x13; planner-logos.js is stripped from the prospect build like the rest of the planner.</p>
+      </article>
+      <article class="card wn-card" id="c-f6ff778">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f6ff778">Journeys: real estates and real clouds</a></h4>
+        <p>Every animated journey now connects the estate as it actually is: a hub location that is not always the DC (Manchester colo on MPLS, London hub on SD-WAN, Frankfurt regional interconnect on firewall), on-prem DCs on HA Sockets, and cloud DCs on vSockets (AWS eu-west-2, Azure vWAN), migrating in the order a real programme runs — bridge first, DCs and cloud as the low-risk wins, branch waves, incumbent last. Page prose, captions, aria-labels and phase tables all retold to match; every page adversarially verified (screenshots, geometry stability, story coherence) with one fix: phase-0 VPN lanes were amber before any replacement existed.</p><p>The incumbents are now drawn as clouds, not ellipses — and the Zscaler ZIA cloud carries the real Zscaler mark (extracted from the Zscaler migration deck&#x27;s own media) on a light branded cloud that works in both themes. Cloud-DC boxes carry small aws/Azure marks from the same deck. New assets: assets/img/logo-zscaler.png, icon-cloud-{aws,azure}.png.</p>
+      </article>
+      <article class="card wn-card" id="c-c4aadd8">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-c4aadd8">Journeys: adopt the HLD topology palette across all five animated journeys</a></h4>
+        <p>The pt- palette moves from planner.html into style.css (with its dark block) so the planner and the journey pages share one definition, and the five phase-players are restyled to it: pt-plain for not-yet-migrated sites with ink titles, pt-green with green titles for anything on Cato, pt-t-inv text on the navy incumbent clouds, amber for an element being displaced while its replacement runs beside it (the legacy SD-WAN hub), purple for internet/SaaS destinations (Zscaler journey). Geometry, lanes, captions and aria-labels untouched, so the cross-fade animation still reads as motion. BUILD-GUIDE documents the palette for new pages.</p>
+      </article>
+      <article class="card wn-card" id="c-d40abcb">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-d40abcb">Planner topology: the HLD design language — colour semantics, chips and legends</a></h4>
+        <p>The three scenes now follow the Cato HLD diagram style: green = Cato and migrated estate, navy = the incumbent still carrying traffic, amber = what is being displaced, purple = internet and SaaS, dashed blue = identity and telemetry on their own rail. The SASE cloud carries PoP rings on the backbone and capability chips composed from the estate&#x27;s actual picks (FWaaS/SWG floor, plus ZTNA/TLSi/IPS/CASB/DLP/RBI/Sandboxing as selected); arrows are labelled and During/After carry a legend. Dark theme has its own palette block.</p><p>The exports keep pace: the PPTX mapper learns the new classes, dashed borders, per-class stroke widths and ellipses (PoP rings render as native shapes), and the .drawio export uses the same colours with dashed blue identity/SIEM cells and labelled coloured edges.</p>
+      </article>
+      <article class="card wn-card" id="c-e605656">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-e605656">Planner rules: drop trial-licence prerequisites and the Socket v15 route-community line</a></h4>
+        <p>A migration plan is post-sale — trial licences are PoV framing and do not gate any phase. Removed from the common option (clause trimmed), Zscaler, Palo Alto and greenfield-security options. Also removed the hybrid-MPLS prerequisite about Socket v15 keeping learned legacy routes local with community 32768, per Tony&#x27;s review.</p>
+      </article>
+      <article class="card wn-card" id="c-6cbd63f">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-6cbd63f">Planner once-over: 31 verified fixes before first deploy</a></h4>
+        <p>Content (planner-rules.js): 22 near-duplicate steps/risks/prereqs across combinable options aligned to one verbatim string each so dedupe collapses them; Forcepoint no longer retires the Content Gateway while cohorts are still PAC-steered to it; HostScan/ISE posture naming reconciled; dashes, en dashes and kick-off made consistent.</p><p>Engine (planner.js): summary() gains a plain-text mode ending the entity-double-escape on the title slide, in Markdown and in the .pptx; proper nouns and acronyms keep their capitals; per-slide reflow guard (the shared 800 budget starved the tail of big full-detail decks); the rebalance pass can actually run (it measured a display:none slide) and verifies each move; grouped continuations always open with a &#x27;(cont.)&#x27; heading clone so the deck and the PowerPoint keep attribution; slides measure with footer placeholders (they were packed one line too tall); deck repacks on window resize; keyboard nav survives the rail buttons; @page follows the live view so the document prints portrait.</p><p>Exports: the .pptx now draws the three topology diagrams as native PowerPoint shapes; xesc stops rewriting em dashes and curly quotes; .drawio labels keep their line breaks.</p><p>Integration: deploy.sh and package.sh now actually ship planner.html (the nav link 404&#x27;d on the deployed site); build-prospect.py rebuilds the search index from the transformed output; verify.sh checks 1 and 3 cover planner.html, and check 8 measures a maximal estate at full detail; the Playwright path is resolved portably (chromium.py) instead of a hardcoded home path; planner.html and whatsnew.html load app.js so they get the theme toggle and feedback buttons; .claude/ untracked.</p>
+      </article>
+      <article class="card wn-card" id="c-8fbd17e">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-8fbd17e">Planner: Excel export, and a deck that packs to the space it has</a></h4>
+        <p>Excel export writes a real .xlsx (same store-only ZIP as the .pptx): a tab per heading — Summary, Plan, Prerequisites, Risks, Evidence, Use cases — with Status, Owner, dates, mitigation and notes columns left empty so the plan can leave the planner and become the tracker the migration is run from. Frozen header row and autofilter on every tab.</p><p>The deck was 40+ slides because it chunked at a fixed six bullets and half of every slide went to waste. Slides are now packed by measurement: each section is emitted whole, then fitted against the real stage height one column, then two, and only split when two will not hold it. Splits are balanced so a full slide is not followed by a stub. A Summary/Full control decides depth: Summary caps phase steps and renders prerequisites, risks and evidence as where they concentrate rather than listing every item — the document and workbook carry the record.</p><p>A worked estate goes from 40 slides to 16 with no continuations and no overflow. verify.sh now measures overflow the way reflow does and fails if the summary deck grows past 24 slides.</p>
+      </article>
+      <article class="card wn-card" id="c-96e33af">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-96e33af">Planner: before/during/after topology, plus corrected and completed rules</a></h4>
+        <p>Diagrams are generated client-side as inline SVG from the same selections that drive the plan, using the library&#x27;s dg-* classes so they inherit the theme. The during state draws the routed handoff explicitly, since co-existence is the state the wave plan actually lives in. Also exports .drawio XML (three pages) so the diagram can be edited, not just viewed.</p><p>Rules corrected against a cross-dimension review: nine claims that the pages did not support are fixed or removed, twelve ordering violations resolved (notably Always-On being enabled a phase before users leave the legacy VPN client), duplicates collapsed, and a new always-applied &quot;common&quot; dimension carries the ten steps every migration needs that no single dimension owned.</p>
+      </article>
+      <article class="card wn-card" id="c-f7a11be">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f7a11be">Planner: deck mode, PDF-as-deck printing and a real .pptx export</a></h4>
+        <p>48 steps in one column is a document, not something you present. Adds a Present toggle that renders the plan as 16:9 slides with keyboard navigation, chunking long phases so nothing overflows its stage, and a landscape print stylesheet that pages one slide at a time for PDF.</p><p>PowerPoint export writes a genuine .pptx with no third-party library: a .pptx is a ZIP of OOXML, and a store-only ZIP is a header format we can write directly. Keeps the library dependency-free and file:// safe. Validated structurally and with python-pptx.</p>
+      </article>
+      <article class="card wn-card" id="c-b85fb09">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b85fb09">Add the Migration Planner: opportunity estate -&gt; sequenced methodology</a></h4>
+        <p>An internal, deterministic tool. Describe what is being displaced (WAN transport, SD-WAN vendor, proxy/SSE, firewall, remote access, controls to match, drivers) and it composes a nine-phase plan in dependency order, with prerequisites, risks and evidence grouped by where they came from, plus links into the pages that carry the detail.</p><p>The rules in assets/js/planner-rules.js were extracted from the library&#x27;s own pages and are its whole judgement; the engine only merges, dedupes and orders. verify.sh gains an eighth check that every page id and phase key a rule references still exists, and that the planner actually composes a plan with resolvable links.</p><p>Excluded from the prospect build: page, JS and nav link all stripped.</p>
+      </article>
+      <article class="card wn-card" id="c-eefda42">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-27">27 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-eefda42">Embed the Data Protection Dashboard on <a href="usecases/ai-legal-genai.html" title="Law Firms: GenAI with Privilege Intact">ai-legal-genai</a></a></h4>
+        <p>The recommended AI DLP rules ranked by matches with the Legal profile registering its first classifier hit. Caption names the one place the lab has moved ahead of the runbook: a PII rule promoted to Block.</p>
+      </article>
+      <article class="card wn-card" id="c-3819727">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-management">Management</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-3819727">Embed a closed D&amp;R story on <a href="usecases/management-soc-xdr.html" title="SOC Modernisation with XDR &amp; MDR">management-soc-xdr</a></a></h4>
+        <p>Closes two wants at once: criticality, MITRE tag and evidences on one screen, and the analyst verdict, severity and classification with the closure timeline. Related events tie the story back to the DLP monitor rules that raised it.</p>
+      </article>
+      <article class="card wn-card" id="c-8ba4919">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-8ba4919">Embed AI Security events and one expanded event on <a href="usecases/ai-eu-ai-act.html" title="EU AI Act: Visibility, Control &amp; Evidence">ai-eu-ai-act</a></a></h4>
+        <p>Corrects the earlier note: AI Security events do reach Monitor -&gt; Events and are exportable, they are just sparse next to Data Control. The expanded event shows the field set carries no prompt text or matched value, which is why the stories view stays the richer artefact.</p>
+      </article>
+      <article class="card wn-card" id="c-347c3ec">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-347c3ec">Restore source persona name on the AI anomaly story</a></h4>
+        <p>Confirmed a demo persona, so the redaction is unnecessary and the attribution is the point of the figure.</p>
+      </article>
+      <article class="card wn-card" id="c-e153a99">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span><span class="chip chip-cat-security">Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-e153a99">Embed UIP rule editor, events export dialog and an AI usage-anomaly story</a></h4>
+        <p>Three hand-back captures across <a href="usecases/ai-eu-ai-act.html" title="EU AI Act: Visibility, Control &amp; Evidence">ai-eu-ai-act</a>, <a href="usecases/security-data-casb-dlp.html" title="Data Security with CASB &amp; DLP">security-data-casb-dlp</a> and <a href="usecases/security-finance-dora.html" title="Financial Services Resilience (DORA)">security-finance-dora</a>. Also rewrites the AI-Security-events-export want: prompt-level UIP detections surface as XDR stories, not as exportable Monitor-&gt;Events rows.</p>
+      </article>
+      <article class="card wn-card" id="c-4d3031b">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-4d3031b">Embed UIP rulebase with detection count on <a href="usecases/security-ai.html" title="AI Security: Users, Applications &amp; Agentic AI">security-ai</a></a></h4>
+        <p>Interim: the Code Sharing Monitor rule shows its first detection. A higher-count re-shoot is expected once the counters catch up (~24h lag), to be swapped in at the same filename.</p>
+      </article>
+      <article class="card wn-card" id="c-9770475">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-9770475">Embed UIP interception-type figure on <a href="usecases/security-ai-visibility.html" title="GenAI Visibility Assessment">security-ai-visibility</a></a></h4>
+        <p>One cohort covered by Network, Browser Plugin and API Integration rules, monitor-family actions, counts accruing. The demo-mode rulebase was not used: it is all Block with its one Monitor rule at zero, which would contradict the monitor-first runbook on <a href="usecases/security-ai.html" title="AI Security: Users, Applications &amp; Agentic AI">security-ai</a>.</p>
+      </article>
+      <article class="card wn-card" id="c-021d414">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-021d414">Embed browser plugin block notice — <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a> now has no open wants</a></h4>
+        <p>Gemini blocked by the plugin on an off-net device, paired with the engage-user notice. Closes the last capture-wanted on the page.</p>
+      </article>
+      <article class="card wn-card" id="c-f566be0">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f566be0">Embed AI Security Browser Plugin engage-user notice on <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a></a></h4>
+        <p>Plugin enforcing in Edge on DeepSeek from an off-net device. This is the engage-user outcome, not block or anonymise, so the caption says so and a narrowed want stays open for the block/mask variant.</p>
+      </article>
+      <article class="card wn-card" id="c-f8196ab">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f8196ab">Swap in filtered AI DLP events grid — eight rows, all four rules</a></h4>
+        <p>The tenant&#x27;s pre-existing GenAI rule carries a typo and can&#x27;t be renamed (DLP rules now require a profile, so editing trips validation). Filtered out of the view instead; captions corrected to eight uploads.</p>
+      </article>
+      <article class="card wn-card" id="c-1143316">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-26">26 August 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-1143316">Embed AI DLP match report: events grid + gated forensics on <a href="usecases/ai-genai-security.html" title="GenAI Security for End Users">ai-genai-security</a></a></h4>
+        <p>The four monitor rules built in the lab tenant fired on the test-payload kit. Two figures replace the Reports-bucket capture-wanted: the events grid as the data owners review it (all actions Allow), and the forensics panel behind its access-logged consent gate.</p>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 3 August</h3>
+      <article class="card wn-card" id="c-b85ca88">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-08-05">5 August 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b85ca88">Embed Reports-session captures: generated report PDFs + Reports UI, 9 embeds across 7 pages</a></h4>
+        
+      </article>
+    </section>
+  </details>
+  <details class="wn-month" id="m-2026-07">
+    <summary><h2>July 2026</h2><span class="wn-n">37 changes</span></summary>
+    <section class="wn-week">
+      <h3>Week commencing 27 July</h3>
+      <article class="card wn-card" id="c-6db227a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-30">30 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-6db227a">Embed browser-driven posture/policy captures: 10 embeds across 9 pages</a></h4>
+        <p>Live session against the personal lab tenant (nothing saved to the tenant — unsaved-dialog captures for the ISE-baseline profile and Sophos OPSWAT check): posture profiles (corp 7-check + AM/DE/OS baseline), Sophos vendor list, Client Connectivity rule with posture profile + action, My Policy Changes publish receipt, EM probes policy, SDP Users Overview. 164 wanted / 103 staging remain.</p>
+      </article>
+      <article class="card wn-card" id="c-ec091bc">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-30">30 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-ec091bc">Embed first personal-tenant staging batch: 10 captures across 5 access pages</a></h4>
+        <p>15 HEIC drops processed (SCIM leaver lifecycle, browser-extension DLP upload block, Always-On pilot rule, Applications Portal both sides), 13 kept, 10 embedded at 9 want-slots. Privacy pass: real email/IPs, tenant slug and account ID redacted; Azure top bar and client chrome cropped.</p><p>Adds _extract/regen-capture-lists.py so both capture lists regenerate mechanically (183→174 wanted, 120→113 staging).</p>
+      </article>
+      <article class="card wn-card" id="c-4ab3264">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-29">29 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-4ab3264">Document live hosting + deploy step in README</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-5759be9">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-29">29 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5759be9">Add self-hosting (Azure Ubuntu) + report-bug/feedback buttons</a></h4>
+        <ul><li>_extract/server.py: stdlib-only server — static library + POST /api/feedback appending &quot;timestamp | BUG/FEEDBACK | name | page | message&quot; to feedback-log.txt (name mandatory server-side; log and server.py never served over HTTP)</li><li>_extract/deploy.sh: one-command deploy to 10.7.0.4:/srv/usecaselibrary via rsync-over-ssh (expect + env password from git-ignored ubuntu.txt), installs systemd unit `usecaselibrary` on :8080 (Apache owns :80 on that host)</li><li>app.js initFeedback(): Report bug / Feedback buttons in the top nav, shown only when served over http(s); mandatory-name dialog, POSTs to /api/feedback</li><li>style.css: .fb-* button/overlay/dialog styles (token-based, dark-safe)</li><li>.gitignore: ubuntu.txt (credentials) and feedback-log.txt stay untracked</li></ul>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 20 July</h3>
+      <article class="card wn-card" id="c-76ce331">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-ai-security">AI Security</span><span class="chip chip-cat-management">Management</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-76ce331">Embed 6 more valid demo-tenant captures (16 total from the 23 Jul run)</a></h4>
+        <p>AI Discovery + Overview (<a href="usecases/ai-legal-genai.html" title="Law Firms: GenAI with Privilege Intact">ai-legal-genai</a>), Coding Agent Policy rulebase (<a href="usecases/ai-agentic-security.html" title="Securing Agentic AI">ai-agentic-security</a>), Guards Policy + Interaction Explorer (<a href="usecases/ai-homegrown-apps.html" title="Securing Homegrown AI Applications">ai-homegrown-apps</a>), Stories Workbench (<a href="usecases/management-visibility.html" title="Operational &amp; Executive Visibility">management-visibility</a>) — honest captions describing what the landing capture shows. Regenerated capture lists: 183 wanted / 120 need staging.</p>
+      </article>
+      <article class="card wn-card" id="c-83a89a2">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-83a89a2">Regenerate capture lists after today&#x27;s embeds; add self-serve how-to headers</a></h4>
+        <p>Drops the 10 items embedded 23 Jul; adds a hand-back workflow header so the lists work for capturing in a personal tenant. Now 189 wanted / 125 needing staging.</p>
+      </article>
+      <article class="card wn-card" id="c-f6c7be1">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f6c7be1">Embed 10 demo-tenant CMA captures into PoV runbooks; catalogue the batch</a></h4>
+        <p>Browser-captured the demo tenant for the PoV capture-wanted list: 51 shots, of which 10 genuine matches are embedded (asset-discovery device summary, AI UIP rulebase, Client Connectivity cohort rule x2, DLP inline dashboard x2, Access Users roster, SCIM directories, EM probes policy, Session Explorer). Remaining captures catalogued in image-catalog.md for reuse. Removed 9 unusable shots (one exposed a real employee email; others misnavigated, modal-obscured, empty or duplicate). 129 state-specific wants that need tenant staging are listed by setup bucket in _extract/CAPTURE-STAGING.md; 199-item wanted list grouped by CMA area in _extract/CAPTURE-LIST.md.</p>
+      </article>
+      <article class="card wn-card" id="c-5a75a6b">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5a75a6b">Add lane-info (dark blue) diagram variant; SOC/XDR alert lane uses it</a></h4>
+        <p>New telemetry/alert lane class with dark-mode lift and legend swatch, documented in BUILD-GUIDE; homegrown-apps legend now separates the block from the SOC alert.</p>
+      </article>
+      <article class="card wn-card" id="c-179338b">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-179338b">Complete PoV runbook rollout: 46 new KB-grounded PoV sections (57 total)</a></h4>
+        <p>Waves 1-4 add a PoV runbook to every applicable use case: all 13 vendor playbooks + focused plays, Access/Management/Network/Security estates, the compliance verticals (PCI, CE/CAF, NHS with a clinical golden rule) and all seven AI Security pages (visibility-led where the KB is thin). Every claim verified against knowledge.catonetworks.com on the day of authoring; monitor-first and safe-test discipline throughout.</p><p>Integration fixes from the batch&#x27;s drift findings: ASA IKEv2 tiles (6 tunnels/role, 60s teardown, AS-path-prepend preference), EM tunnel threshold 20ms + probes path chips, App Analytics QoE claim moved to EM, Chromebook now in the Client OS list (iboss caveat softened), MAC-detection nuance restored on firewall-refresh, agentic + homegrown KB links replaced after the July-2026 AI docs churn, homegrown-apps body updated to the Guards-consolidated gateway model.</p><p>_extract/CAPTURE-LIST.md consolidates 199 wanted demo-tenant captures by CMA area; STALENESS gains library-wide PoV and AI-churn rows.</p>
+      </article>
+      <article class="card wn-card" id="c-b47b53a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b47b53a">Embed AI Security captures: User Access Policy rulebase (EU AI Act page), Anonymize-in-flight prompt (GenAI security page)</a></h4>
+        <p>Tenant chrome and avatar cropped from the source captures; originals archived in _extract/media. Also drops stray agent working shots.</p>
+      </article>
+      <article class="card wn-card" id="c-5703c2f">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-23">23 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-network">Network</span><span class="chip chip-cat-security">Security</span><span class="chip chip-cat-management">Management</span><span class="chip chip-cat-access">Access</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5703c2f">Add Demo/PoV runbook tabs: component + 11 KB-grounded pilot PoV runbooks</a></h4>
+        <p>Tab component: app.js injects a Demo/PoV tab bar when a page has both section#demo and section#pov (deep links, hashchange, TOC clicks switch tabs; no-JS and print stack; prospect build strips #pov, figures salvaged). Contract + content anatomy in _extract/POV-GUIDE.md; verify.sh measures hidden panels for mobile fit and anchors the CDN check to &lt;link&gt; tags.</p><p>Pilot PoV runbooks (success criteria -&gt; config walkthrough -&gt; evidence -&gt; troubleshooting -&gt; gotchas/exit, all claims KB-verified 23 Jul 2026): <a href="usecases/network-sdwan.html" title="SD-WAN: Global Private Access">network-sdwan</a>, <a href="usecases/security-consistent.html" title="Consistent Security Everywhere">security-consistent</a>, <a href="usecases/management-visibility.html" title="Operational &amp; Executive Visibility">management-visibility</a>, <a href="usecases/access-hybrid-workforce.html" title="Securing the Hybrid Workforce">access-hybrid-workforce</a>, <a href="usecases/security-tls-inspection.html" title="TLS Inspection: Staged Rollout Playbook">security-tls-inspection</a>, <a href="usecases/security-data-casb-dlp.html" title="Data Security with CASB &amp; DLP">security-data-casb-dlp</a>, <a href="usecases/network-mpls-migration.html" title="MPLS to SASE Migration &amp; Co-existence">network-mpls-migration</a>, migration-{zscaler,palo-alto,fortinet,sophos}. Vendor playbooks have no demo section so their PoV stacks untabbed (tabs appear automatically if a demo runbook is added later). 37 wanted demo- tenant captures marked in-page as capture-wanted comments.</p>
+      </article>
+      <article class="card wn-card" id="c-94b4711">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-22">22 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-migration">Migration</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-94b4711">Monthly staleness review — July 2026 (#1)</a></h4>
+        <p>Verified due/watch rows (Fortinet &amp; Sophos CISA KEV counts, Cisco ASA/AnyConnect EOL dates, Gartner SASE MQ, DSPT v9 edition) against primary sources — all unchanged except the Sophos Workspace Protection/XGS price-rise calendar, which had fully elapsed and needed a future-to-past tense reframe on <a href="usecases/migration-sophos.html" title="Sophos (XGS Firewall &amp; Central) to Cato">migration-sophos</a>. Regenerated the search index and logged the full review in _extract/staleness-reports/2026-07.md.</p>
+      </article>
+      <article class="card wn-card" id="c-503eb00">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-22">22 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-503eb00">Add EU AI Act use case: visibility, control and evidence for deployers</a></h4>
+        <p>Researched and adversarially fact-checked against primary sources (EUR-Lex, AI Act Explorer, Consilium, Cato KB). Covers the 2 Aug 2026 applicability honestly alongside the Digital Omnibus delays (Annex III -&gt; Dec 2027, OJ publication pending); maps deployer obligations to Shadow AI Discovery, User Interaction Policy and audit evidence with explicit not-legal-advice and log-retention caveats. Linked from the index compliance card; six new staleness rows track the moving dates.</p>
+      </article>
+      <article class="card wn-card" id="c-75c3a59">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-migration">Migration</span><span class="chip chip-cat-access">Access</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-75c3a59">Fix dark mode on journey diagrams: lift navy SVG fills, brighten dormant lanes</a></h4>
+        <p>var(--navy-800)-filled clouds/cores sat at surface luminance on dark and vanished; .dg-node-dark, lane-limit amber and static/standby lanes lifted too. Also insert the missing theme-bootstrap snippet on <a href="usecases/migration-journey-vpn.html" title="VPN to ZTNA: Animated Phased Journey">migration-journey-vpn</a> and <a href="usecases/access-remote-worker.html" title="Remote Worker Experience: Per-User, Per-App Assurance">access-remote-worker</a> (authored in parallel with the snippet sweep) and add a verify.sh check so a missing snippet fails loudly.</p>
+      </article>
+      <article class="card wn-card" id="c-aa65209">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-aa65209">Add prepared config for monthly staleness-review cloud routine (blocked on GitHub connection)</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-cda5693">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-cda5693">Embed new CMA captures: BW Management + Network Rules (edgeconnect-policy), em-home-users fleet view (hybrid-workforce)</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-302edf2">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-302edf2">Add lite dist edition: package.sh lite (no decks, buttons stripped, 12M)</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-e75c2f9">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-e75c2f9">Add 6 pages, full-text search and dark mode (ultracode batch)</a></h4>
+        <p>New pages: Sophos playbook + policy migration (UK mid-market XGS angle, fact-checked against CISA KEV / Sophos partner news), UK Healthcare vertical (CAF-aligned DSPT v8, sector blueprint), per-user remote-worker experience (finally uses em-remote-user.png), and two animated journeys (VPN-to-ZTNA, firewall refresh to FWaaS). Methodology table gains the Sophos row; the focused-plays note now includes DirectAccess.</p><p>Features: full-text search (_extract/build-search.py -&gt; search-index.js, verify.sh check 7) and dark mode (data-theme tokens, topnav toggle, head bootstrap snippet on every page, print stays light, shoot.py --dark). Also fixes the dead .tag-vert navy chip style (specificity).</p>
+      </article>
+      <article class="card wn-card" id="c-92c4434">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-92c4434">Redesign all three journey diagrams on a unified vertical metaphor</a></h4>
+        <p>MPLS, SD-WAN and Zscaler journey pages rebuilt to one visual language: UPPER band = Cato (PoP + green backbone), LOWER band = the legacy core (dims across phases, struck through with one red X when retired), LEFT = sites/users. Each site&#x27;s link visibly swings up to Cato one per phase, with a single pulse-ring highlighting the change. All three share one viewBox, node coordinates, legend (4 keys) and caption — a coherent set.</p>
+      </article>
+      <article class="card wn-card" id="c-f80410e">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-f80410e">Polish journey diagrams: fix MPLS filled lanes + legend, SD-WAN stray X</a></h4>
+        <p>MPLS journey: bare .lane-static curves were filling black (missing the .lane fill:none) — now class=&#x27;lane lane-static&#x27; like the others, plus a legend and caption note to match the SD-WAN/Zscaler pages. SD-WAN journey: phase 4 had a stray red X floating in empty space (a &#x27;retired overlay link&#x27; X with no link drawn) — removed; the hub X now spans the retired node cleanly like the Zscaler retired-node pattern.</p>
+      </article>
+      <article class="card wn-card" id="c-b7ac089">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-b7ac089">Add animated phased-migration journey pages (MPLS, SD-WAN, Zscaler)</a></h4>
+        <p>New reusable .phase-player component (app.js initPhasePlayers + style.css): cross-fading phase stepper with dots, prev/next/play-pause, keyboard, reduced-motion and no-JS fallbacks. Three journey pages each walk a 5-phase migration, all phase SVGs sharing one viewBox with stable node positions so the transition reads as progression.</p><p>Also fixed: phase-player controls inside a diagram-card were bubbling clicks into the lightbox (opened a static clone) — interactive players are now excluded from zoom and control clicks stop propagating.</p>
+      </article>
+      <article class="card wn-card" id="c-187147a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-187147a">Fix DirectAccess migration: DA and Cato Client adapters clash — swap, don&#x27;t stack</a></h4>
+        <p>Step 3 wrongly implied a device could run DirectAccess and the Cato Client in parallel. DirectAccess installs its own always-on tunnel adapter that conflicts with the Cato Client adapter, giving unpredictable connectivity. Reworded the pilot step, co-existence intro and cohort mechanics to an atomic per-device swap, plus a &#x27;one tunnel at a time&#x27; warning.</p>
+      </article>
+      <article class="card wn-card" id="c-d5c2a68">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-d5c2a68">Add Microsoft DirectAccess to Cato migration use case</a></h4>
+        <p>Focused remote-access play (sibling to the AnyConnect page): DirectAccess is deprecated and on the Windows Server removal path, Windows-only and domain-joined-only, with NLS/PKI/IP-HTTPS plumbing — replaced by Cato SDP always-on ZTNA. Lifecycle wording verified verbatim at learn.microsoft.com.</p>
+      </article>
+      <article class="card wn-card" id="c-c55d559">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-c55d559">Add Asset Discovery &amp; Device Inventory (IoT/OT) use case</a></h4>
+        <p>Management-category visibility counterpart to the OT/IoT security page: the IoT/OT licence as passive agentless discovery into one live Device Inventory, feeding device-attribute policy. KB-grounded (9 attributes, passive detection, up-to-12h identification caveat, enrichment connectors).</p>
+      </article>
+      <article class="card wn-card" id="c-263d02a">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-263d02a">Prospect generator: preserve figures when stripping demo sections</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-9b63e82">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-9b63e82">Add prospect-edition generator (single-source, two editions)</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-4d7f61c">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-4d7f61c">Legal diagram: distinguish per-team flows through the ethical wall</a></h4>
+        <p>New lane identity variants (.lane-alt long-dash, .lane-dot dotted) keep allowed-green semantics while making each flow traceable end-to-end; legend split into per-flow keys.</p>
+      </article>
+      <article class="card wn-card" id="c-87bcfaa">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-87bcfaa">Genericise remaining lab site references; LAN Firewall is a global policy</a></h4>
+        <ul><li>22 pages + BUILD-GUIDE: Bracknell Lab/Mobile Office/Reading Office/ Dubai Office/AWS+Azure tenant site names replaced with generic archetypes; interconnect runbook no longer walks a tenant site</li><li>LAN Firewall navigation corrected to Security -&gt; LAN Firewall (global policy, scoped per site/VLAN, enforced on the Socket)</li></ul>
+      </article>
+      <article class="card wn-card" id="c-175517c">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-175517c">Retail diagram: differentiate LTE standby from restricted traffic</a></h4>
+        <p>New .lane-standby style (grey dotted, non-animated) + own legend key — standby failover no longer shares the amber restricted-lane treatment.</p>
+      </article>
+      <article class="card wn-card" id="c-8c1272f">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-8c1272f">Sector blueprints: starter rulebases + scenarios on all 7 vertical pages</a></h4>
+        <p>Retail, Finance, Public Sector, Manufacturing, BPO, Education, Legal — each vertical page gains a &#x27;Sector blueprint&#x27; section: an illustrative CMA-style starter rulebase (monitor-first) and 4 sector scenarios.</p>
+      </article>
+      <article class="card wn-card" id="c-d9dc0df">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-20">20 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-security">Security</span><span class="chip chip-cat-ai-security">AI Security</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-d9dc0df">Verticals filter + Legal vertical: law-firm confidentiality and GenAI pages</a></h4>
+        <ul><li>catalog gains a vertical field (Retail, Finance, Public Sector, Manufacturing, Education, BPO, Legal); index gets a second filter row and navy vertical chips on cards</li><li><a href="usecases/security-legal-confidentiality.html" title="Law Firms: Client Confidentiality &amp; Ethical Walls">security-legal-confidentiality</a>: SRA 6.3/6.5 + Bolkiah-anchored ethical walls, OCG evidence, DLP over privileged material</li><li><a href="usecases/ai-legal-genai.html" title="Law Firms: GenAI with Privilege Intact">ai-legal-genai</a>: privilege-safe GenAI adoption, client-identifier redaction, GenAI report as OCG evidence (SRA sources verified)</li></ul>
+      </article>
+    </section>
+    <section class="wn-week">
+      <h3>Week commencing 13 July</h3>
+      <article class="card wn-card" id="c-ae4e3ee">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-19">19 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-ae4e3ee">README: proper repo landing page (contents, maintenance workflow, conventions)</a></h4>
+        
+      </article>
+      <article class="card wn-card" id="c-7a19d71">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-19">19 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-7a19d71">Embed real CMA screenshots: DEM page and policy worked examples</a></h4>
+        <p>12 demo-tenant captures (fictional identities verified): Experience Monitoring home/Connection Details/traceroute/command-line on the DEM page; Internet FW, WAN FW, App &amp; Data Inline, DLP classifiers/catalogue and TLS Inspection views paired with the before/after tables across the policy pages and the TLS playbook. HEIC originals archived in _extract.</p>
+      </article>
+      <article class="card wn-card" id="c-ca67e99">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-19">19 July 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-management">Management</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-ca67e99">Ops: external link checker, silent SVG pass, what&#x27;s-new page, packager, DEM refresh</a></h4>
+        <ul><li>verify.sh --external: curl-based checker (Cato TLS inspection breaks python trust); 208 URLs -&gt; 0 dead after fixing a Cisco DevNet 404 and classifying bot-walled domains</li><li>All residual SVG label bleeds fixed; measure_svg ignores band rects -&gt; silent</li><li>whatsnew.html generated from git history, linked from index nav</li><li>_extract/package.sh builds shareable dist zip (catalog-referenced decks only)</li><li><a href="usecases/management-dem.html" title="Proactive Digital Experience Monitoring">management-dem</a> verified against 18 KB docs: corrected CMA path to Home -&gt; Experience Monitoring, fixed scored segment chain, added metrics/ scoring/probes/licensing sections</li></ul>
+      </article>
+      <article class="card wn-card" id="c-045c224">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-19">19 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-045c224">Add worked before/after policy-translation examples to all 12 policy pages</a></h4>
+        <p>Each policy page gains a &#x27;Worked example&#x27; section: vendor-authentic rule tables (or CPL/ACL extracts) translated into CMA-style rulebases with translation notes — clearly labelled illustrative, not screenshots.</p>
+      </article>
+      <article class="card wn-card" id="c-cf1f161">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-18">18 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-cf1f161">Expansion: 11 new pages, library ops, index navigation (63 pages)</a></h4>
+        <ul><li>Design/reference pages: TLS inspection staged rollout, identity integration design, resilient site design, PoV framework, UK public sector (CE/CAF)</li><li>New vendor migrations: Check Point, HPE Aruba EdgeConnect, Symantec (playbook + policy page each), methodology table extended to 12 vendors</li><li>Library ops: verify.sh health check, STALENESS.md register</li><li>Index: &#x27;Start here&#x27; journeys, clickable tag filtering</li></ul>
+      </article>
+      <article class="card wn-card" id="c-30ef484">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-07-18">18 July 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-30ef484">Baseline: verified 52-page use-case library (6 categories)</a></h4>
+        <p>Full verification passed: links, catalogue consistency, SVG measure, console, mobile, UK English, no customer/account references.</p>
+      </article>
+    </section>
+  </details>
 </main>
 <footer class="footer">
   <div class="footer-inner">

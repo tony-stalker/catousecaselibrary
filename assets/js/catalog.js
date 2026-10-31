@@ -1,6 +1,8 @@
 /* Cato Use Case Library — catalog of all use cases.
    Single source of truth: drives index cards, filtering, and prev/next pagers.
-   status: "ready" | "wip" | "new"   (wip = source deck incomplete, page flags gaps) */
+   status: "ready" | "wip"   (wip = source deck incomplete, page flags gaps; legacy "new" = ready)
+   added:  "YYYY-MM-DD" — first commit of the page. app.js shows the "New" badge while the entry
+           is ≤ 90 days old, then falls back to status. Never hand-write "new" as a status. */
 window.UC_CATALOG = [
   /* ---------------- 1 · Access ---------------- */
   {
@@ -11,6 +13,7 @@ window.UC_CATALOG = [
     summary: "Replace legacy VPN access for contractors and suppliers with identity-driven, posture-aware ZTNA — least-privileged access without appliances.",
     tags: ["ZTNA", "Device Posture", "FWaaS", "CASB", "DLP", "Client Connectivity Policy"],
     status: "ready",
+    added: "2026-07-18",
     deck: "1 - Access use cases/De-risking 3rd Party Supply Chain Access/De-risking 3rd Party Access Use Case.pptx"
   },
   {
@@ -20,7 +23,8 @@ window.UC_CATALOG = [
     title: "Securing the Hybrid Workforce",
     summary: "One consistent, optimised and secure access experience for users in the office, at home, or on the road — universal ZTNA in place of VPN concentrators.",
     tags: ["ZTNA", "Cato Client", "Always-On", "MFA/SSO"],
-    status: "new",
+    status: "ready",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -32,6 +36,7 @@ window.UC_CATALOG = [
     summary: "Secure thousands of offshore developers and BPO agents — ZTNA, RBI and DLP keep code and customer data in-country while the backbone keeps VDI usable.",
     tags: ["ZTNA", "RBI", "DLP", "VDI", "Offshore"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -42,6 +47,7 @@ window.UC_CATALOG = [
     summary: "Give unmanaged devices, BYOD users and third parties browser-based access — clientless portal, Browser Extension or Enterprise Browser — with RBI and CASB/DLP keeping data off the endpoint.",
     tags: ["Clientless ZTNA", "Enterprise Browser", "Browser Extension", "RBI", "CASB"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -52,6 +58,7 @@ window.UC_CATALOG = [
     summary: "Prove and improve every remote worker's day — always-on Cato Client, nearest-PoP egress, and per-user, per-app Experience Monitoring that turns \"the VPN is slow\" into an evidence-backed fix.",
     tags: ["Experience Monitoring", "DEM", "Cato Client", "Remote Access", "Last Mile"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
 
@@ -63,6 +70,7 @@ window.UC_CATALOG = [
     summary: "Publish private applications through outbound-only App Connectors — no inbound rules, no route advertisement, no readdressing — with an identity- and posture-driven Private Access Policy brokered at the PoP; the fast path for M&A, overlapping IP estates and quick ZTNA wins.",
     tags: ["ZTNA", "App Connectors", "Private Access", "M&A", "Cloud"],
     status: "new",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -73,6 +81,7 @@ window.UC_CATALOG = [
     summary: "The dependency every deployment shares — SCIM provisioning, Identity Agents, user awareness behind sockets, and SAML/MFA flows designed once, referenced everywhere.",
     tags: ["SCIM", "Entra ID", "User Awareness", "SSO / MFA", "Identity Agent"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -85,6 +94,7 @@ window.UC_CATALOG = [
     summary: "Single-pane-of-glass visibility across network, security, users and applications — from live troubleshooting to executive reporting.",
     tags: ["CMA", "Analytics", "DEM", "XDR", "Reporting"],
     status: "ready",
+    added: "2026-07-18",
     deck: "2 - Management use cases/Visibility/Cato SASE Platform - Visibility PoV.pptx"
   },
   {
@@ -95,6 +105,7 @@ window.UC_CATALOG = [
     summary: "Deploy and operate hundreds of sites as code — GraphQL API, catocli and the Cato Terraform provider for zero-touch rollout and CI/CD-driven policy.",
     tags: ["GraphQL API", "catocli", "Terraform", "Zero-Touch"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -104,7 +115,8 @@ window.UC_CATALOG = [
     title: "Proactive Digital Experience Monitoring",
     summary: "See what users actually experience — hop-by-hop path visibility from device to app, so IT finds the fault domain before the helpdesk ticket lands.",
     tags: ["DEM", "Experience Monitoring", "AIOps", "Last Mile"],
-    status: "new",
+    status: "ready",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -116,6 +128,7 @@ window.UC_CATALOG = [
     summary: "Retire the appliance estate — MPLS, edge firewalls, VPN concentrators, SWG and CASB point products collapse into one platform with one policy and one bill.",
     tags: ["TCO", "Consolidation", "Platform", "OpEx"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -126,6 +139,7 @@ window.UC_CATALOG = [
     summary: "From alert fatigue across a dozen consoles to correlated incident stories — native XDR on full network telemetry, with 24×7 MDR when the SOC needs depth.",
     tags: ["XDR", "MDR", "SOC", "MITRE ATT&CK", "Incident Response"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -137,6 +151,7 @@ window.UC_CATALOG = [
     summary: "A repeatable proof-of-value framework — scope, success criteria, test-case tables, weekly cadence and the wrap-up that converts evidence into a decision.",
     tags: ["PoV", "Success Criteria", "Test Cases", "Evaluation", "Framework"],
     status: "new",
+    added: "2026-07-18",
     deck: "2 - Management use cases/Visibility/Cato SASE Platform - Visibility PoV.pptx"
   },
 
@@ -148,6 +163,7 @@ window.UC_CATALOG = [
     summary: "How events are generated, what a Data Lake unit buys, how to size units from real history or the KB tables, and how to export the feed to S3, Azure Blob or a SIEM — free of charge.",
     tags: ["Data Lake", "Events", "Retention", "S3 Export", "SIEM"],
     status: "new",
+    added: "2026-09-16",
     deck: null
   },
 
@@ -159,6 +175,7 @@ window.UC_CATALOG = [
     summary: "You cannot secure what you cannot see — the IoT/OT licence turns every Socket into a passive discovery sensor, fingerprinting and classifying every device into one live inventory, no agents or disruptive scans.",
     tags: ["Asset Discovery", "Device Inventory", "IoT/OT Licence", "Fingerprinting", "Visibility"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
 
@@ -171,6 +188,7 @@ window.UC_CATALOG = [
     summary: "Bring off-net sites on-net over the global private backbone — active/active last miles, app-aware QoS, and a 99.999 % SLA between PoPs.",
     tags: ["SD-WAN", "Sockets", "Backbone", "QoS", "API / Terraform"],
     status: "ready",
+    added: "2026-07-18",
     deck: "3 - Network use cases/SDWAN use case overiview.pptx"
   },
   {
@@ -181,6 +199,7 @@ window.UC_CATALOG = [
     summary: "Onboard acquired companies in days, not quarters — API-driven site deployment, Entra ID integration and identity-aware policy from day one.",
     tags: ["M&A", "API", "Terraform", "Entra ID"],
     status: "ready",
+    added: "2026-07-18",
     deck: "3 - Network use cases/Agility use case overiview.pptx"
   },
   {
@@ -191,6 +210,7 @@ window.UC_CATALOG = [
     summary: "Migrate site-by-site from MPLS with full co-existence — new and legacy sites keep talking throughout, with no big-bang cutover.",
     tags: ["MPLS", "Migration", "Co-existence", "Routing"],
     status: "ready",
+    added: "2026-07-18",
     deck: "3 - Network use cases/Migration use case overiview.pptx"
   },
   {
@@ -201,6 +221,7 @@ window.UC_CATALOG = [
     summary: "Make AWS, Azure and GCP first-class sites on the WAN — vSocket, IPsec or cross-connect, with the same policy and visibility as physical sites.",
     tags: ["vSocket", "AWS", "Azure", "Cross-Connect"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -211,6 +232,7 @@ window.UC_CATALOG = [
     summary: "Predictable voice, video and SaaS performance for global users — backbone routing, TCP acceleration, packet-loss mitigation and app-aware QoS.",
     tags: ["UCaaS", "QoS", "Backbone", "Acceleration"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -221,7 +243,8 @@ window.UC_CATALOG = [
     title: "Cloud Connectivity: vSocket vs IPsec vs Cloud Interconnect",
     summary: "Choosing the right on-ramp per cloud — vSocket, IPsec or Cloud Interconnect for Azure, AWS, GCP and OCI, compared on availability, throughput, HA, encryption, routing, effort and cost.",
     tags: ["vSocket", "IPsec", "Cloud Interconnect", "Azure", "AWS", "GCP", "OCI"],
-    status: "new",
+    status: "ready",
+    added: "2026-09-12",
     deck: null
   },
   {
@@ -232,6 +255,7 @@ window.UC_CATALOG = [
     summary: "Bring public cloud and private datacentres onto the WAN over dedicated layer-2 circuits into the Cato PoP — exchange-fabric or physical cross-connect for deterministic latency and high throughput, no tunnels required.",
     tags: ["Cloud Interconnect", "Cross-Connect", "Equinix", "Megaport", "Private DC"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -242,6 +266,7 @@ window.UC_CATALOG = [
     summary: "Connect ASA-fronted sites to the nearest Cato PoP over IPsec — IKEv1 vs IKEv2 design choices, allocated IPs, dual-PoP HA and routing — as interim migration connectivity or for socketless sites.",
     tags: ["IPsec", "IKEv2", "IKEv1", "Cisco ASA", "Allocated IP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -252,6 +277,7 @@ window.UC_CATALOG = [
     summary: "Open offices and plants in new regions in weeks — nearest-PoP reach on day one, and compliant, performant China connectivity without building infrastructure.",
     tags: ["Global Expansion", "China", "PoPs", "Zero-Touch"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -263,6 +289,7 @@ window.UC_CATALOG = [
     summary: "Design sites that stay up — HA socket pairs, dual last miles, LTE/5G failover, BGP options and off-cloud behaviour, with the patterns to match site criticality.",
     tags: ["HA", "Last Mile", "LTE Failover", "BGP", "Site Design"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -276,6 +303,7 @@ window.UC_CATALOG = [
     summary: "Hundreds of stores, one platform — POS segmentation that shrinks PCI scope, zero-touch sockets with LTE failover, and audit evidence from a single console.",
     tags: ["Retail", "PCI DSS", "Segmentation", "LTE Failover"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -286,6 +314,7 @@ window.UC_CATALOG = [
     summary: "The appliance estate is end-of-life again — replace the refresh cycle with cloud-delivered FWaaS: no sizing, no patching, no EOL, always-current protection.",
     tags: ["FWaaS", "NGFW", "EOL", "Lifecycle"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -297,6 +326,7 @@ window.UC_CATALOG = [
     summary: "Meet DORA's ICT risk, resilience and reporting demands — a self-healing global backbone, unified telemetry for incident reporting, and managed detection depth.",
     tags: ["DORA", "Financial Services", "Resilience", "Reporting"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -307,6 +337,7 @@ window.UC_CATALOG = [
     summary: "One global policy, enforced identically for every user, device and site — configured once, applied everywhere via the single-pass cloud engine.",
     tags: ["FWaaS", "ZTNA", "IdP Policy", "Threat Prevention", "Device Posture"],
     status: "ready",
+    added: "2026-07-18",
     deck: "4 - Security use cases/Consistent Security Use case overiview.pptx"
   },
   {
@@ -318,6 +349,7 @@ window.UC_CATALOG = [
     summary: "Discover, classify and segment OT/IoT devices — Purdue-model segmentation and device-attribute policies down to a single Siemens PLC.",
     tags: ["OT/IoT", "LAN Firewall", "Segmentation", "Purdue Model"],
     status: "ready",
+    added: "2026-07-18",
     deck: "4 - Security use cases/Manufacturing Device Security Use case overiview.pptx"
   },
   {
@@ -328,6 +360,7 @@ window.UC_CATALOG = [
     summary: "Investigate DLP incidents with encrypted, customer-owned forensic evidence — real leak or false positive, answered directly from the CMA.",
     tags: ["DLP", "Forensics", "RBAC", "Audit", "S3"],
     status: "ready",
+    added: "2026-07-18",
     deck: "4 - Security use cases/Data Breach Investigation Use case.pptx"
   },
   {
@@ -338,6 +371,7 @@ window.UC_CATALOG = [
     summary: "Publish services safely without exposing them — remote port forwarding with inbound IPS scrubbing and virtual patching at the PoP edge.",
     tags: ["IPS", "Remote Port Forwarding", "Virtual Patching", "CVE"],
     status: "ready",
+    added: "2026-07-18",
     deck: "4 - Security use cases/Cato Inbound IPS Use Case.pptx"
   },
   {
@@ -348,6 +382,7 @@ window.UC_CATALOG = [
     summary: "Map Cato capabilities to compliance frameworks — CASB, DLP and unified audit evidence to cut compliance overhead and pass the audit.",
     tags: ["ISO 27001", "NIS2", "SOC 2", "CASB", "DLP"],
     status: "wip",
+    added: "2026-07-18",
     deck: "4 - Security use cases/WIP - Helping Achieve Compliance with Cato Networks.pptx"
   },
   {
@@ -357,7 +392,8 @@ window.UC_CATALOG = [
     title: "Becoming ISO/IEC 27001:2022 Compliant: Device Posture & Evidence",
     summary: "Go deep on ISO 27001:2022 — device posture checks as the continuously enforced endpoint control, an Annex A mapping table with the auditor's artefact per row, and the Posture Compliance Report, Audit Trail and event retention that turn operation into evidence.",
     tags: ["ISO 27001", "Device Posture", "Annex A", "Client Connectivity Policy", "Audit evidence"],
-    status: "new",
+    status: "ready",
+    added: "2026-09-24",
     deck: "4 - Security use cases/ISO 27001/Cato ISO 27001 High-Level Deck.pptx"
   },
   {
@@ -368,6 +404,7 @@ window.UC_CATALOG = [
     summary: "Discover shadow IT, control sanctioned SaaS, and stop sensitive data walking out — six field-proven CASB/DLP scenarios with the licence mapping.",
     tags: ["CASB", "DLP", "Shadow IT", "SaaS Governance"],
     status: "ready",
+    added: "2026-07-18",
     deck: "4 - Security use cases/Data_Security-Use_Cases.pptx"
   },
   {
@@ -378,6 +415,7 @@ window.UC_CATALOG = [
     summary: "Break the ransomware kill chain in the cloud — IPS, NGAM, sandboxing and DNS security inspecting every flow, with XDR correlating what remains.",
     tags: ["IPS", "Anti-Malware", "XDR", "DNS Security"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -389,6 +427,7 @@ window.UC_CATALOG = [
     summary: "The prerequisite everything else depends on — certificate deployment, category-by-category enablement, QUIC handling, pilot cohorts and breakage triage, done in the right order.",
     tags: ["TLS Inspection", "Certificates", "QUIC", "Staged Rollout", "Best Practice"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -400,6 +439,7 @@ window.UC_CATALOG = [
     summary: "Map Cato capabilities to Cyber Essentials Plus controls and the NCSC Cyber Assessment Framework — evidence-led conversations for councils, health, education and central government.",
     tags: ["Cyber Essentials", "NCSC CAF", "Public Sector", "UK", "Compliance"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -411,6 +451,7 @@ window.UC_CATALOG = [
     summary: "Meet the CAF-aligned Data Security and Protection Toolkit with one platform — segmented clinical networks, protected patient data, and audit-ready evidence for trusts, providers and their suppliers.",
     tags: ["Healthcare", "NHS DSPT", "CAF", "Compliance", "Segmentation"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -422,6 +463,7 @@ window.UC_CATALOG = [
     summary: "Meet outside-counsel guidelines and prove it — identity-based ethical walls, DLP over privileged material, and audit evidence for client security reviews, from one platform.",
     tags: ["Legal", "Ethical Walls", "OCG", "DLP", "Client Audits"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
 
@@ -434,6 +476,7 @@ window.UC_CATALOG = [
     summary: "Shadow-AI discovery, prompt-level auditing and guardrails — governing GenAI use by employees, homegrown apps and autonomous agents.",
     tags: ["GenAI", "Shadow AI", "Prompt Auditing", "Agentic AI"],
     status: "wip",
+    added: "2026-07-18",
     deck: "4 - Security use cases/AI_Security-Use_Cases.pptx"
   },
   {
@@ -443,7 +486,8 @@ window.UC_CATALOG = [
     title: "AI Threat Landscape: Real Attacks & Defences",
     summary: "Nine real, sourced incidents — deepfake fraud, AI-orchestrated intrusion and shadow-AI data leaks — and an honest map of where Cato breaks each attack class: kill-chain controls, machine-speed defence and GenAI governance.",
     tags: ["AI Attacks", "Deepfake", "Shadow AI", "Threat Intel", "XDR"],
-    status: "new",
+    status: "ready",
+    added: "2026-09-11",
     deck: null
   },
   {
@@ -454,6 +498,7 @@ window.UC_CATALOG = [
     summary: "Run the no-cost, four-week AI Security Visibility Assessment — shadow-AI discovery, prompt-level visibility and a board-ready risk report mapped to NIST AI RMF, ISO/IEC 42001 and the EU AI Act.",
     tags: ["GenAI", "Shadow AI", "Visibility Assessment", "DLP", "NIST AI RMF"],
     status: "wip",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -464,6 +509,7 @@ window.UC_CATALOG = [
     summary: "From shadow-AI discovery to prompt-level enforcement — the Cato AI Security engine's User Interaction Policy and browser plugin, so employees can use GenAI without leaking data.",
     tags: ["GenAI", "Shadow AI", "User Interaction Policy", "Browser Plugin"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -474,6 +520,7 @@ window.UC_CATALOG = [
     summary: "AI agents act on their own — inventory managed, local and custom agents, watch their sessions, and govern what they can touch with Scouts and agent controls.",
     tags: ["Agentic AI", "AI Agents", "Scouts", "MCP", "Session Monitoring"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -484,6 +531,7 @@ window.UC_CATALOG = [
     summary: "Protect the AI you build — AI Gateway integration, Guards and the Guards Interaction Policy, Outposts, and the AI Security Engine defending against prompt injection and jailbreaks at runtime.",
     tags: ["AI Guards", "AI Gateway", "Prompt Injection", "Outposts", "AI Security Engine"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
 
@@ -496,6 +544,7 @@ window.UC_CATALOG = [
     summary: "Let fee-earners use GenAI without waiving privilege — shadow-AI discovery, prompt-level redaction of client identifiers, and defensible audit trails for regulators and clients.",
     tags: ["Legal", "GenAI", "Privilege", "Shadow AI", "Interaction Policy"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -506,6 +555,7 @@ window.UC_CATALOG = [
     summary: "Support EU AI Act readiness from the network — discover the AI systems actually in use, enforce usage policy at prompt level, and keep the supporting audit evidence deployer obligations demand.",
     tags: ["EU AI Act", "Compliance", "Shadow AI", "AI Governance", "Audit Evidence"],
     status: "new",
+    added: "2026-07-22",
     deck: null
   },
 
@@ -518,6 +568,7 @@ window.UC_CATALOG = [
     summary: "How Cato Professional Services de-risks any migration — big-bang vs phased, parallel connectivity, interconnect hubs, routed ranges vs BGP handoff, and multi-region co-existence without asymmetric routing.",
     tags: ["Methodology", "Co-existence", "BGP", "Routed Ranges", "Multi-Region"],
     status: "ready",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -528,6 +579,7 @@ window.UC_CATALOG = [
     summary: "Watch an MPLS exit unfold phase by phase — DC socket first, sites migrating over the backbone while legacy sites stay reachable, then the circuit switched off. An animated walkthrough of the co-existence pattern.",
     tags: ["MPLS", "Phased Migration", "Co-existence", "Animated", "Journey"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -538,6 +590,7 @@ window.UC_CATALOG = [
     summary: "See an SD-WAN displacement step through its phases — parallel sockets at the hub, eBGP co-existence with the legacy fabric, spoke-by-spoke cutover, then the overlay retired. The eBGP hub pattern, animated.",
     tags: ["SD-WAN", "Phased Migration", "eBGP", "Animated", "Journey"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -548,6 +601,7 @@ window.UC_CATALOG = [
     summary: "Follow a Zscaler migration across its phases — interim ZIA co-existence, cohort client swaps, policy cutover, then ZIA and ZCC retired. The dual-agent transition, animated step by step.",
     tags: ["Zscaler", "Phased Migration", "SSE", "Animated", "Journey"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -558,6 +612,7 @@ window.UC_CATALOG = [
     summary: "Watch a VPN retirement unfold — concentrators giving way to cohort-based Cato Client rollout, app-by-app least-privilege policy, and the headends switched off. The remote-access transition, animated.",
     tags: ["VPN Replacement", "ZTNA", "Phased Migration", "Animated", "Journey"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -568,6 +623,7 @@ window.UC_CATALOG = [
     summary: "See an appliance refresh become an exit — branch firewalls absorbed into FWaaS site by site, policy converging in the CMA, and the renewal cancelled. The last hardware refresh, animated.",
     tags: ["FWaaS", "Firewall Refresh", "Phased Migration", "Animated", "Journey"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -578,6 +634,7 @@ window.UC_CATALOG = [
     summary: "Replace ZIA and ZPA with the Cato SASE Cloud — four-phase policy conversion, interim ZIA integration over IPsec, phased agent cutover, and a real-world migration story.",
     tags: ["Zscaler", "ZIA", "ZPA", "SSE", "Policy Conversion"],
     status: "ready",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -588,6 +645,7 @@ window.UC_CATALOG = [
     summary: "Retire PA appliances, Panorama and Prisma Access — policy translation from App-ID to Cato app-aware rules, GlobalProtect to Cato Client, and a phased edge cutover.",
     tags: ["Palo Alto", "NGFW", "Prisma Access", "GlobalProtect", "Panorama"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -598,6 +656,7 @@ window.UC_CATALOG = [
     summary: "Move SWG, CASB and ZTNA from Netskope's SSE overlay to the converged Cato platform — steering-client replacement, policy mapping and DLP profile migration.",
     tags: ["Netskope", "SWG", "CASB", "DLP", "NPA"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -608,6 +667,7 @@ window.UC_CATALOG = [
     summary: "Consolidate Umbrella DNS/SIG, AnyConnect VPN and Catalyst (Viptela) or Meraki SD-WAN into one platform — DNS security, remote access and WAN edge in a single policy.",
     tags: ["Cisco", "Umbrella", "AnyConnect", "Catalyst SD-WAN", "Meraki"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -618,6 +678,7 @@ window.UC_CATALOG = [
     summary: "Replace the FortiGate estate and FortiSASE — policy translation from FortiOS, SD-WAN co-existence via eBGP hub handoff, and staged branch cutover with simple rollback.",
     tags: ["Fortinet", "FortiGate", "FortiSASE", "SD-WAN", "eBGP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -628,6 +689,7 @@ window.UC_CATALOG = [
     summary: "Move from Forcepoint web security and NGFW to cloud-delivered SWG, CASB and DLP — proxy/PAC retirement, DLP policy mapping and appliance decommissioning.",
     tags: ["Forcepoint", "SWG", "DLP", "NGFW", "PAC"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -638,6 +700,7 @@ window.UC_CATALOG = [
     summary: "Retire the VPN concentrators — replace AnyConnect remote access with Cato SDP in cohort-based waves: always-on ZTNA, device posture and IdP MFA, with no headends to size or patch.",
     tags: ["AnyConnect", "Cato Client", "SDP", "VPN Replacement", "Device Posture"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -648,6 +711,7 @@ window.UC_CATALOG = [
     summary: "Retire a deprecated, Windows-only always-on VPN — replace DirectAccess (and its PKI, NLS and IP-HTTPS plumbing) with Cato SDP: cross-platform always-on ZTNA, device posture and IdP MFA, no infrastructure to keep alive.",
     tags: ["DirectAccess", "Cato Client", "SDP", "Always-On", "VPN Replacement"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -658,6 +722,7 @@ window.UC_CATALOG = [
     summary: "Move from Versa's VOS appliance estate and Director-managed SD-WAN to the Cato platform — policy translation, eBGP hub co-existence and staged branch cutover with simple rollback.",
     tags: ["Versa", "VOS", "Director", "SD-WAN", "eBGP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -668,6 +733,7 @@ window.UC_CATALOG = [
     summary: "Replace Cloudflare Access, Gateway, WARP and Magic WAN with the converged Cato platform — client swap by cohort, tunnel re-pointing and ZTNA policy mapping without the DIY glue.",
     tags: ["Cloudflare", "WARP", "Access", "Magic WAN", "ZTNA"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -679,6 +745,7 @@ window.UC_CATALOG = [
     summary: "Retire the iboss cloud proxy — replace PAC-file and agent steering with Cato Client and socket-based breakout, keeping URL filtering, TLS inspection and CASB in one console.",
     tags: ["iboss", "Proxy", "PAC", "SWG", "TLS Inspection"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -689,6 +756,7 @@ window.UC_CATALOG = [
     summary: "Retire the Check Point estate — Quantum gateways, SmartConsole policy and Harmony SASE mapped to the Cato platform with phased cutover and simple rollback.",
     tags: ["Check Point", "Quantum", "SmartConsole", "Harmony", "NGFW"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -699,6 +767,7 @@ window.UC_CATALOG = [
     summary: "Move from EdgeConnect SD-WAN and Orchestrator to the Cato platform — overlay co-existence, Boost/QoS intent translation and staged branch cutover.",
     tags: ["EdgeConnect", "Silver Peak", "Orchestrator", "SD-WAN", "HPE Aruba"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -709,6 +778,7 @@ window.UC_CATALOG = [
     summary: "Replace ageing Symantec web security — ProxySG/ASG appliances, WSS cloud and CloudSOC CASB — with cloud-delivered SWG, CASB and DLP on one platform.",
     tags: ["Symantec", "ProxySG", "WSS", "CloudSOC", "Broadcom"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -719,6 +789,7 @@ window.UC_CATALOG = [
     summary: "Retire the XG/XGS estate and SD-RED overlay — Sophos Firewall policy, Central-managed SD-WAN and remote access mapped to the Cato platform, sized for UK mid-market estates.",
     tags: ["Sophos", "XGS", "SD-RED", "Central", "UK Mid-Market"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -729,6 +800,7 @@ window.UC_CATALOG = [
     summary: "Retire the end-of-support ASA 5500-X perimeter — HA pairs, the IPsec site mesh and AnyConnect remote access moved to the Cato platform in phased, rollback-friendly waves that spend the forced refresh once.",
     tags: ["Cisco ASA", "5500-X", "AnyConnect", "IPsec", "End-of-Support"],
     status: "new",
+    added: "2026-08-29",
     deck: null
   },
   {
@@ -739,6 +811,7 @@ window.UC_CATALOG = [
     summary: "Displace the TZ/NSa estate after the SSL-VPN campaigns — remote-access cohorts to ZTNA first, branch waves to Sockets behind them, policy rebuilt clean and the MSP brought along, sized for UK mid-market estates.",
     tags: ["SonicWall", "TZ/NSa", "SonicOS", "SSL-VPN", "UK Mid-Market"],
     status: "new",
+    added: "2026-08-29",
     deck: null
   },
 
@@ -750,6 +823,7 @@ window.UC_CATALOG = [
     summary: "Translate ZIA and ZPA policy to Cato — firewall, URL filtering, Cloud App Control, and DLP moved through the four-phase export → map → deploy → optimise process.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -760,6 +834,7 @@ window.UC_CATALOG = [
     summary: "Translate PAN-OS security policy to Cato — App-ID rulebases, URL Filtering, SaaS security and Enterprise DLP mapped to the single-pass policy model, clean-up first.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -770,6 +845,7 @@ window.UC_CATALOG = [
     summary: "Translate Netskope Real-time Protection policy to Cato — SWG, inline and API CASB, and DLP profiles (EDM rebuilt from source) with monitor-then-block discipline.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -780,6 +856,7 @@ window.UC_CATALOG = [
     summary: "Translate Umbrella and ASA/FTD policy to Cato — destination lists and web policies, firewall ACLs, and Umbrella DLP mapped to CMA policy sets.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -790,6 +867,7 @@ window.UC_CATALOG = [
     summary: "Translate FortiOS policy to Cato — firewall policies and UTM profiles, web filtering, inline CASB and DLP profiles, rationalised on hit counts before mapping.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -800,6 +878,7 @@ window.UC_CATALOG = [
     summary: "Translate Forcepoint policy to Cato — web security categories, NGFW access rules, and the DLP estate (classifiers rationalised before mapping, hybrid where depth demands).",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -811,6 +890,7 @@ window.UC_CATALOG = [
     summary: "Translate iboss policy to Cato — URL and category rules, education-grade content controls, CASB and DLP patterns mapped to CMA policy with PAC-safe rollback.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -821,6 +901,7 @@ window.UC_CATALOG = [
     summary: "Translate VOS security policy to Cato — firewall and UTM profiles, URL filtering, and a greenfield best-practice build for CASB and DLP where Versa had none.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -831,6 +912,7 @@ window.UC_CATALOG = [
     summary: "Translate Cloudflare Gateway and Access policy to Cato — HTTP/DNS/network policies, API CASB findings and DLP profiles mapped to the converged CMA policy model.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -841,6 +923,7 @@ window.UC_CATALOG = [
     summary: "Translate SmartConsole policy to Cato — access layers and NAT, HTTPS inspection, URL filtering and DLP blades mapped to the CMA policy model, clean-up first.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -850,7 +933,8 @@ window.UC_CATALOG = [
     title: "EdgeConnect Policy Migration",
     summary: "Translate EdgeConnect Orchestrator config to Cato — business intent overlays, firewall zones and QoS classes re-expressed as CMA network rules and policy, plus greenfield SWG/CASB/DLP.",
     tags: ["Policy Migration", "FW Rules", "QoS", "Overlays", "Greenfield SSE"],
-    status: "new",
+    status: "ready",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -861,6 +945,7 @@ window.UC_CATALOG = [
     summary: "Translate Symantec policy to Cato — ProxySG CPL and WSS web policy, CloudSOC CASB and DLP rules mapped to the CMA model without lifting twenty years of proxy logic.",
     tags: ["Policy Migration", "CPL", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-18",
     deck: null
   },
   {
@@ -871,6 +956,7 @@ window.UC_CATALOG = [
     summary: "Translate Sophos Firewall policy to Cato — firewall and NAT rules, web policy, application control and SSL/TLS inspection re-expressed in the CMA model, with greenfield CASB and DLP.",
     tags: ["Policy Migration", "FW Rules", "SWG", "CASB", "DLP"],
     status: "new",
+    added: "2026-07-20",
     deck: null
   },
   {
@@ -881,6 +967,7 @@ window.UC_CATALOG = [
     summary: "Translate ASA policy to Cato — interface ACLs rationalised on hit counts and split into WAN and Internet firewall bases, the NAT table dissolved deliberately, AnyConnect posture restated as Device Posture, and SWG, CASB and DLP built greenfield from Cato baselines.",
     tags: ["Policy Migration", "FW Rules", "ACLs", "NAT", "Device Posture"],
     status: "new",
+    added: "2026-08-29",
     deck: null
   },
   {
@@ -891,6 +978,7 @@ window.UC_CATALOG = [
     summary: "Translate SonicOS policy to Cato — zone-matrix access rules and NAT, CFS web filtering, App Control and DPI-SSL re-expressed in the CMA model, with exported configs treated as compromised: rotate secrets, never port them.",
     tags: ["Policy Migration", "FW Rules", "CFS", "DPI-SSL", "App Control"],
     status: "new",
+    added: "2026-08-29",
     deck: null
   }
   ,
@@ -903,6 +991,7 @@ window.UC_CATALOG = [
     summary: "Running order, timing and transitions for a one-hour first demo — SWG, threat prevention, CASB, DLP, ZTNA, App Connectors and DEM in about 35 minutes of console time, with room kept for introductions, questions and next steps.",
     tags: ["Demo Flow", "Running Order", "Timing", "Transitions", "First Demo"],
     status: "new",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -912,7 +1001,8 @@ window.UC_CATALOG = [
     title: "Demo Segment: Secure Web Gateway",
     summary: "Five minutes on internet access control — category and application rules, user-aware policy, TLS inspection as the enabler, and the event that proves the decision.",
     tags: ["SWG", "Internet Firewall", "URL Filtering", "TLS Inspection", "Demo Segment"],
-    status: "new",
+    status: "ready",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -922,7 +1012,8 @@ window.UC_CATALOG = [
     title: "Demo Segment: Threat Prevention",
     summary: "Five minutes on IPS, anti-malware and the Threats Dashboard — a threat stopped in the cloud, the event behind it and the story that explains it.",
     tags: ["IPS", "Anti-Malware", "Threats Dashboard", "XDR", "Demo Segment"],
-    status: "new",
+    status: "ready",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -932,7 +1023,8 @@ window.UC_CATALOG = [
     title: "Demo Segment: CASB",
     summary: "Five minutes from shadow IT discovery to sanctioned-app control — the Cloud Apps Dashboard, risk scores, tenant restrictions and one Application Control rule.",
     tags: ["CASB", "Shadow IT", "Cloud Apps Dashboard", "Application Control", "Demo Segment"],
-    status: "new",
+    status: "ready",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -942,7 +1034,8 @@ window.UC_CATALOG = [
     title: "Demo Segment: DLP",
     summary: "Five minutes on data protection — data types, profiles and one inline rule: a sensitive upload stopped and the incident visible in events and the Data Protection Dashboard.",
     tags: ["DLP", "Data Types", "Data Protection Dashboard", "Inline", "Demo Segment"],
-    status: "new",
+    status: "ready",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -953,6 +1046,7 @@ window.UC_CATALOG = [
     summary: "Five minutes on identity-aware, posture-checked access from the Cato Client — the user, the device check, the rule that allows and the rule that denies.",
     tags: ["ZTNA", "Cato Client", "Device Posture", "Client Connectivity Policy", "Demo Segment"],
     status: "new",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -963,6 +1057,7 @@ window.UC_CATALOG = [
     summary: "Five minutes on publishing a private application without touching the network — connector, connector group, private app, policy, and the user reaching it by published domain.",
     tags: ["App Connectors", "Private Access", "ZTNA", "M&A", "Demo Segment"],
     status: "new",
+    added: "2026-10-14",
     deck: null
   },
   {
@@ -972,7 +1067,8 @@ window.UC_CATALOG = [
     title: "Demo Segment: Digital Experience Monitoring",
     summary: "Close on evidence — per-user, per-app experience scores, path analysis hop by hop, and the fault domain found before the helpdesk ticket lands.",
     tags: ["DEM", "Experience Monitoring", "Path Analysis", "Last Mile", "Demo Segment"],
-    status: "new",
+    status: "ready",
+    added: "2026-10-14",
     deck: null
   }
 ];

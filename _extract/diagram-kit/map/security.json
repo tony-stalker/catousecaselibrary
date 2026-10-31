@@ -1,0 +1,2135 @@
+{
+ "category": "security",
+ "pages": {
+  "security-retail-pci": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "pop",
+     "backbone",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Each store runs one zero-touch Socket; its LAN firewall keeps POS apart from guest, staff and IoT.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Broadband carries the store to the nearest PoP; LTE/5G stands by so the tills keep authorising.",
+      "marks": [
+       "popL"
+      ]
+     },
+     {
+      "t": "Only the POS VLAN reaches the payment processor; guest and IoT get internet-only breakout.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "One policy for every store, with events and the Audit Trail as the assessor evidence pack.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: site(…,'STORE 0412 · ONE OF HUNDREDS') containing four VLAN tiles stacked: 'POS / CDE VLAN' (sub 'tills · payment devices', icon 'file'), 'Guest Wi-Fi VLAN' ('captive portal', 'wifi'), 'Staff Wi-Fi VLAN' ('corporate SSID', 'laptop'), 'Cameras & IoT' ('CCTV · signage', 'cam'). All four feed a Socket device box labelled 'Cato Socket' with pill 'LAN firewall' (g) and sub 'zero-touch install'. Inside the site, a fl-walk fl-down from Guest Wi-Fi towards POS with xmark and pill 'Block' (r). From the Socket two WAN links rightwards to a fpin 'Cato PoP' (halo) under cloudTop-style header: upper fl-tun labelled 'Broadband · primary', lower fl-ha (amber) labelled 'LTE / 5G · standby'. The PoP carries pill 'FWaaS · IPS · always current' (g). Right of the PoP three destination nodes: 'Payment processor' ('acquirer / gateway', icon 'lock') reached by a fl-hot flow labelled 'cardholder path'; 'Internet & SaaS' ('guest breakout · updates', 'globe') reached by fl-flow; 'Cato CMA' ('one policy · every store', 'console') reached by fl-sig labelled 'events · audit trail'. Footer text: 'Same VLAN plan, same policy — repeated across the estate'. Nothing from POS goes to the internet node: draw POS→processor only; a dim fl-dim from IoT/guest to Internet. ≤13 nodes.",
+    "nodes": [
+     "POS / CDE VLAN",
+     "Guest Wi-Fi VLAN",
+     "Staff Wi-Fi VLAN",
+     "Cameras & IoT",
+     "Cato Socket",
+     "Cato PoP",
+     "Payment processor",
+     "Internet & SaaS",
+     "Cato CMA"
+    ],
+    "flows": [
+     [
+      "Socket→PoP",
+      "fl-tun",
+      "Broadband · primary"
+     ],
+     [
+      "Socket→PoP",
+      "fl-ha",
+      "LTE / 5G · standby"
+     ],
+     [
+      "POS→Payment processor",
+      "fl-hot",
+      "cardholder path"
+     ],
+     [
+      "Guest/IoT→Internet",
+      "fl-flow",
+      "internet only"
+     ],
+     [
+      "Guest→POS (in site)",
+      "fl-down + xmark",
+      "Block"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "events · audit trail"
+     ]
+    ]
+   },
+   "title": "Segmented retail store connected through a Cato PoP",
+   "desc": "A store's four VLANs sit behind one zero-touch Socket whose LAN firewall blocks guest traffic into the POS VLAN; broadband with LTE standby carries the store to the PoP, where only the POS VLAN reaches the payment processor and the CMA holds one policy and the audit evidence for every store.",
+   "legend": [
+    [
+     "hot",
+     "Cardholder data path — POS to processor"
+    ],
+    [
+     "flow",
+     "Restricted — internet only"
+    ],
+    [
+     "ha",
+     "LTE / 5G — standby until broadband fails"
+    ],
+    [
+     "down",
+     "Blocked — lateral movement into POS VLAN"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Store 0412 — one of hundreds (archetype label)",
+    "Four VLANs: POS/CDE, Guest Wi-Fi, Staff Wi-Fi, Cameras & IoT",
+    "LAN firewall on the Socket blocks guest → POS inside the store",
+    "Broadband primary + LTE/5G standby failover on the same Socket",
+    "Only POS VLAN reaches payment processor (acquirer / gateway); guest & IoT internet-only",
+    "CMA: one policy · every store; events · audit trail",
+    "Footer: Same VLAN plan, same policy — repeated across the estate"
+   ]
+  },
+  "security-firewall-refresh": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone",
+     "saas"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "atk"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Sockets at every site terminate the last mile; the EOL firewall estate is retired, not refreshed.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "All enforcement runs in the PoP single-pass engine: FWaaS, IPS, anti-malware and TLS inspection.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "One global rule base reaches every PoP in seconds; TLS inspection is a policy decision, not hardware.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "IPS virtual patching shields the unpatched app server in the DC while ops patch on their own timetable.",
+      "marks": [
+       "dc"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left column: two sites — 'Bristol Office' (sub 'Socket X1500 · no NGFW', icon 'building') and 'Glasgow' ('Socket X1600 · no NGFW'). Below them a greyed nd cls 'dash' 'EOL firewalls' with sub 'retired — no refresh' and an xmark, no flows attached (the incumbent is unnamed). Centre: ring 'Global Private Backbone' with a halo fpin 'Cato PoP' and pill 'Single-pass: FWaaS · IPS · TLS' (g). Both sites → PoP via fl-tun. Right top: cloud 'Internet & SaaS' ('M365 · Salesforce · WWW') reached from PoP by fl-flow (arrow). Right bottom: site 'London DC' containing nd 'Unpatched app server' (icon 'server') with pill 'shielded by virtual patching' (g); PoP → DC via fl-tun. Bottom-left: cloud cls 'bad' 'Attacker' ('new CVE exploit'); fl-attack from attacker to the PoP ending in xmark, pill 'Blocked · IPS virtual patching' (r). Left-to-right story: sites with no local firewall → PoP does the firewalling → clean traffic to SaaS and DC; attack dies at the PoP before the DC. ≤10 nodes.",
+    "nodes": [
+     "Bristol Office",
+     "Glasgow",
+     "EOL firewalls",
+     "Cato PoP",
+     "Internet & SaaS",
+     "London DC",
+     "Unpatched app server",
+     "Attacker"
+    ],
+    "flows": [
+     [
+      "Bristol→PoP",
+      "fl-tun"
+     ],
+     [
+      "Glasgow→PoP",
+      "fl-tun"
+     ],
+     [
+      "PoP→Internet & SaaS",
+      "fl-flow"
+     ],
+     [
+      "PoP→London DC",
+      "fl-tun"
+     ],
+     [
+      "Attacker→PoP",
+      "fl-attack + xmark",
+      "Blocked · IPS virtual patching"
+     ]
+    ]
+   },
+   "title": "Firewall refresh to FWaaS: enforcement at the Cato PoP",
+   "desc": "Branch Sockets with no local firewalls connect to a Cato PoP whose single-pass engine inspects traffic to the internet and the London data centre; the EOL firewall estate is retired rather than refreshed, and an exploit against an unpatched application server is blocked at the PoP by IPS virtual patching.",
+   "legend": [
+    [
+     "tun",
+     "Inspected & allowed by the single-pass engine"
+    ],
+    [
+     "attack",
+     "Exploit blocked — IPS virtual patching"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Bristol Office · Socket X1500 · no NGFW",
+    "Glasgow · Socket X1600 · no NGFW",
+    "EOL firewalls — retired, no refresh (vendor unnamed)",
+    "Internet & SaaS: M365 · Salesforce · WWW",
+    "London DC: unpatched app server shielded by virtual patching",
+    "PoP label: Single-pass: FWaaS · IPS · TLS",
+    "Attacker: new CVE exploit blocked at the PoP"
+   ]
+  },
+  "security-finance-dora": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "backbone",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "London DC, the Bristol branch and the hybrid workforce connect to the nearest PoP on the private backbone.",
+      "marks": [
+       "branch",
+       "dc",
+       "users"
+      ]
+     },
+     {
+      "t": "When a carrier path or PoP degrades, Sockets and Clients reconnect to the next-best PoP automatically.",
+      "marks": [
+       "backbone"
+      ]
+     },
+     {
+      "t": "Every flow still crosses the full security stack at the PoP on its way to core banking applications.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "One telemetry plane feeds XDR stories, the Audit Trail and Experience Monitoring — the DORA evidence.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left column three edges: 'London DC' ('Socket X1500 · core apps', 'server'), 'Bristol Office' ('Socket X1600 branch', 'building'), 'Hybrid workforce' ('Cato Client · ZTNA', 'users'). Centre: ring 'Global Private Backbone' with sub 'multiple Tier-1 carriers · full mesh'; two fpins on the ring: 'London PoP' (dim, sub 'carrier fault — out of path') with an xmark on its incoming path, and 'Manchester PoP' (halo, sub 'SPACE · full stack on-path'). Edge→London PoP paths drawn fl-down (red, np:0) with xmark; edge→Manchester PoP paths drawn fl-tun live (the re-route). Right: nd 'Core banking apps' ('cloud DC · SaaS · WWW', 'globe') reached from Manchester PoP by fl-flow. Bottom-right: nd 'CMA — evidence' ('XDR incident stories', 'Audit Trail · DEM scores', icon 'console') fed from the PoP by fl-sig (grey telemetry). Narrative left→right: edges → failed London path (red X) → Manchester PoP → core apps; telemetry down to CMA. ≤9 nodes.",
+    "nodes": [
+     "London DC",
+     "Bristol Office",
+     "Hybrid workforce",
+     "London PoP",
+     "Manchester PoP",
+     "Core banking apps",
+     "CMA — evidence"
+    ],
+    "flows": [
+     [
+      "edges→London PoP",
+      "fl-down + xmark",
+      "carrier fault — out of path"
+     ],
+     [
+      "edges→Manchester PoP",
+      "fl-tun",
+      "auto-steered"
+     ],
+     [
+      "Manchester PoP→Core banking apps",
+      "fl-flow"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "telemetry"
+     ]
+    ]
+   },
+   "title": "Self-healing backbone with a single evidence plane",
+   "desc": "A financial entity's London data centre, Bristol branch and hybrid workforce ride the Cato private backbone; when the London PoP path fails, traffic re-routes automatically to the Manchester PoP and still crosses the full security stack, while one telemetry plane feeds XDR stories, the Audit Trail and Experience Monitoring.",
+   "legend": [
+    [
+     "tun",
+     "Live traffic — auto-steered to the next PoP"
+    ],
+    [
+     "down",
+     "Failed element — link / PoP out of path"
+    ],
+    [
+     "flow",
+     "Telemetry — one evidence plane"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "London DC · Socket X1500 · core apps",
+    "Bristol Office · Socket X1600 branch",
+    "Hybrid workforce · Cato Client · ZTNA",
+    "Backbone: multiple Tier-1 carriers · full mesh",
+    "London PoP: carrier fault — out of path (red cross)",
+    "Manchester PoP: SPACE · full stack on-path",
+    "Core banking apps · cloud DC · SaaS · WWW",
+    "CMA — evidence: XDR incident stories · Audit Trail · DEM scores"
+   ]
+  },
+  "security-consistent": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "cloud",
+     "users",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "cl-az"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "r-RL"
+     },
+     {
+      "p": "atk"
+     }
+    ],
+    "steps": [
+     {
+      "t": "One policy set is defined once in the CMA and distributed to every PoP on the backbone.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "London DC, Glasgow, the Azure vSocket, Madrid and a home worker all cross the identical stack.",
+      "marks": [
+       "branch",
+       "dc",
+       "cloud",
+       "users"
+      ]
+     },
+     {
+      "t": "Rules target IdP groups and posture profiles, so a directory change alone changes access.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "A threat is stopped by the same IPS and anti-malware rules wherever it appears.",
+      "marks": [
+       "popL"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Top centre: nd cls 'pop' 'One policy set' with subs 'WAN FW · Internet FW · IPS' and 'AM · CASB · DLP' (icon 'console'). Below it a ring 'Global Private Backbone' carrying four small fpins evenly spaced: 'London PoP', 'Dubai PoP', 'Manchester PoP', 'Frankfurt PoP'; thin fl-sig (grey, np:0, arrow) lines from the policy card to each PoP. Ring sub-label 'every PoP runs the identical policy set'. Around the ring five edges, each tied by fl-tun to its nearest PoP: 'London DC' ('Socket X1500 · datacentre', 'server'), 'Glasgow' ('Socket X1600 · branch', 'building'), 'Azure vSocket' ('Azure hub · HA pair', 'cpu'), 'Madrid Office' ('Socket X1500 · branch', 'building'), 'Priya — at home' ('Cato Client · Windows', 'laptop'). Bottom-left: cloud cls 'bad' 'Threat traffic' with fl-attack to the London PoP ending in xmark and pill 'Blocked by IPS · Anti-Malware' (r). Story: policy once → every PoP → every edge; threat dies identically. ≤12 nodes.",
+    "nodes": [
+     "One policy set",
+     "London PoP",
+     "Dubai PoP",
+     "Manchester PoP",
+     "Frankfurt PoP",
+     "London DC",
+     "Glasgow",
+     "Azure vSocket",
+     "Madrid Office",
+     "Priya — at home",
+     "Threat traffic"
+    ],
+    "flows": [
+     [
+      "policy→each PoP",
+      "fl-sig (thin grey)",
+      "distributed"
+     ],
+     [
+      "each edge→nearest PoP",
+      "fl-tun",
+      "identical policy"
+     ],
+     [
+      "Threat traffic→London PoP",
+      "fl-attack + xmark",
+      "Blocked by IPS · Anti-Malware"
+     ]
+    ]
+   },
+   "title": "One global policy set enforced identically at every Cato PoP",
+   "desc": "A single policy set defined once in the CMA is distributed to every PoP on the backbone, so London DC, a Glasgow branch, an Azure vSocket, a Madrid office and a remote home worker all traverse the identical enforcement stack and a threat is blocked by the same rules wherever it appears.",
+   "legend": [
+    [
+     "tun",
+     "Identical policy — traffic allowed"
+    ],
+    [
+     "attack",
+     "Threat — blocked at the PoP"
+    ],
+    [
+     "flow",
+     "Policy distribution to every PoP"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Policy card: WAN FW · Internet FW · IPS / AM · CASB · DLP",
+    "Four PoPs named London, Dubai, Manchester, Frankfurt",
+    "London DC · Socket X1500 · datacentre",
+    "Glasgow · Socket X1600 · branch",
+    "Azure vSocket · Azure hub · HA pair",
+    "Madrid Office · Socket X1500 · branch",
+    "Priya — at home · Cato Client · Windows",
+    "Threat traffic blocked by IPS · Anti-Malware (red X at the PoP)"
+   ]
+  },
+  "security-ot-iot": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "pop",
+     "users",
+     "mgmt"
+    ],
+    "mods": [
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Socket passively discovers every plant device — category, type, model, OS, manufacturer — no agents.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Its LAN firewall enforces Purdue-level segmentation on the plant floor from device-attribute rules.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "WAN and internet policy is enforced at the PoP: a PLC dialling out to the internet is dropped.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "A maintenance vendor reaches only the jump server over ZTNA; every allow and block is an event in the CMA.",
+      "marks": [
+       "users",
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 600",
+    "brief": "Four horizontal Purdue bands (soft R with tier labels on the left): 'Level 4/5 · Enterprise · IT' (top), 'Level 3 · Operations', 'Level 2 · Control', 'Level 0/1 · Process' (bottom). Between bands 1 and 2 a dashed red/amber line with mono text 'IT / OT BOUNDARY — enforced by Cato'. Nodes per band: L4/5: 'Enterprise apps' ('ERP · email · SaaS', 'console'), 'IT users' ('corporate LAN', 'users'). L3: 'Historian' ('process data store', 'db'), 'Jump server' ('vendor access only', 'server'). L2: 'SCADA servers' ('supervisory control', 'console'), 'HMI' ('operator stations', 'laptop'). L0/1: 'Field devices' ('sensors · Level 0 instrumentation', 'cell'), 'PLC' ('Siemens S7-300', 'factory'). Right edge: a tall device box 'Cato Socket' spanning all bands with pills 'LAN Firewall' (g), 'micro-segmentation', 'device-attribute rules'; above it (top-right) a fpin 'Cato PoP' ('internet · WAN · FWaaS · IPS') linked by fl-tun. Top-left outside the bands: nd 'Maintenance vendor' ('remote user · ZTNA', 'user') with fl-https to the PoP and then fl-tun down to the Jump server only; a fl-down from vendor towards SCADA/Control with xmark. Flows: HMI→PLC fl-walk (green label 'HMI → PLC · allowed'); within-level fl-flow 'allowed within level'; PLC→internet (towards the PoP) fl-down with xmark pill 'PLC → internet · blocked'. ≤14 nodes incl. Socket, PoP, vendor.",
+    "nodes": [
+     "Maintenance vendor",
+     "Cato PoP",
+     "Enterprise apps",
+     "IT users",
+     "Historian",
+     "Jump server",
+     "SCADA servers",
+     "HMI",
+     "Field devices",
+     "PLC",
+     "Cato Socket"
+    ],
+    "flows": [
+     [
+      "HMI→PLC",
+      "fl-walk",
+      "HMI → PLC · allowed"
+     ],
+     [
+      "within level",
+      "fl-flow",
+      "allowed within level"
+     ],
+     [
+      "Vendor→Jump server",
+      "fl-https then fl-tun",
+      "vendor → jump server only"
+     ],
+     [
+      "Vendor→Control layer",
+      "fl-down + xmark",
+      "blocked"
+     ],
+     [
+      "PLC→internet",
+      "fl-down + xmark",
+      "PLC → internet · blocked"
+     ],
+     [
+      "Socket→PoP",
+      "fl-tun"
+     ]
+    ]
+   },
+   "title": "Purdue-model segmentation enforced by the Cato Socket LAN firewall",
+   "desc": "Four Purdue bands with an IT/OT boundary are spanned by a Cato Socket running the LAN firewall: traffic flows within a level, HMI to PLC is allowed by a device-attribute rule, a maintenance vendor reaches only the jump server over ZTNA, and a PLC attempting to reach the internet is blocked.",
+   "legend": [
+    [
+     "walk",
+     "Allowed — within level, or explicit policy"
+    ],
+    [
+     "https",
+     "Restricted — vendor reaches jump server only"
+    ],
+    [
+     "down",
+     "Blocked — no PLC internet egress, no vendor → control"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Purdue Levels 4/5, 3, 2, 0/1 with IT/OT boundary",
+    "PLC labelled Siemens S7-300",
+    "Jump server — vendor access only",
+    "HMI → PLC allowed; allowed within level",
+    "Vendor → jump server only; vendor → control blocked",
+    "PLC → internet blocked (red X)",
+    "Socket pills: LAN Firewall · micro-segmentation · device-attribute rules",
+    "PoP: Internet · WAN · FWaaS · IPS"
+   ]
+  },
+  "security-dlp-forensics": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "saas",
+     "cloud",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-genai"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya uploads a document with credit-card PII towards Microsoft Copilot.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "The PoP DLP engine blocks the upload inline and raises a DLP event with its metadata.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "An encrypted forensic snippet lands in the customer's own S3 bucket under a per-account key.",
+      "marks": [
+       "cloud"
+      ]
+     },
+     {
+      "t": "Marcus opens the Data Incident in the CMA and views the evidence under RBAC; every view is audited.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: nd 'Priya' ('uploads a document with PII', icon 'user'). fl-https from Priya to a centre halo fpin 'Cato PoP' with pill 'DLP engine · inline TLS inspection' (g) under a ring 'Global Private Backbone'. From the PoP a fl-down (red) towards top-right cloud cls 'ai' 'Microsoft Copilot' ('GenAI SaaS app') ending in xmark with pill 'Blocked by DLP rule' (r) and label 'upload: file with credit-card PII'. From the PoP two grey fl-sig lines: one to bottom-right nd 'Customer S3 bucket' ('your AWS account', 'per-account encryption key', icon 'lock') labelled 'encrypted forensic snippet'; one to bottom-centre nd cls 'pop' 'Cato Management App' ('Data Incident → View Evidence', icon 'console') labelled 'DLP event + metadata'. Right of the CMA: nd 'Marcus' ('SOC analyst · DLP investigator', 'user') with fl-https into the CMA labelled 'investigates from the CMA'; a dashed fl-priv line CMA→S3 labelled 'view evidence · RBAC + audit'. Story: upload → blocked at PoP → evidence to customer bucket → governed retrieval. ≤8 nodes.",
+    "nodes": [
+     "Priya",
+     "Cato PoP",
+     "Microsoft Copilot",
+     "Customer S3 bucket",
+     "Cato Management App",
+     "Marcus"
+    ],
+    "flows": [
+     [
+      "Priya→PoP",
+      "fl-https",
+      "upload: file with credit-card PII"
+     ],
+     [
+      "PoP→Copilot",
+      "fl-down + xmark",
+      "Blocked by DLP rule"
+     ],
+     [
+      "PoP→S3",
+      "fl-sig",
+      "encrypted forensic snippet"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "DLP event + metadata"
+     ],
+     [
+      "Marcus→CMA",
+      "fl-https",
+      "investigates from the CMA"
+     ],
+     [
+      "CMA↔S3",
+      "fl-priv dashed",
+      "view evidence · RBAC + audit"
+     ]
+    ]
+   },
+   "title": "DLP forensics flow — blocked upload, encrypted evidence, governed retrieval",
+   "desc": "A user's upload of credit-card PII to Microsoft Copilot is blocked by the PoP DLP engine, an encrypted forensic snippet is written to the customer's own S3 bucket under a per-account key, and a SOC analyst retrieves the evidence from the CMA Data Incident under RBAC with every view audited.",
+   "legend": [
+    [
+     "down",
+     "Sensitive upload blocked at the PoP"
+    ],
+    [
+     "flow",
+     "Encrypted evidence to customer-owned storage"
+    ],
+    [
+     "priv",
+     "Evidence retrieval — RBAC-governed, fully audited"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Priya uploads a document with credit-card PII",
+    "Microsoft Copilot — GenAI SaaS app (the destination named in the CMA screenshot)",
+    "Blocked by DLP rule; DLP event + metadata to CMA",
+    "Encrypted forensic snippet → customer S3 bucket, your AWS account, per-account encryption key",
+    "CMA: Data Incident → View Evidence",
+    "Marcus — SOC analyst · DLP investigator; view evidence · RBAC + audit"
+   ]
+  },
+  "security-inbound-ips": {
+   "spotlight": {
+    "hl": [
+     "saas",
+     "pop",
+     "backbone",
+     "branch"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "atk"
+     },
+     {
+      "p": "eg-www",
+      "rev": true
+     },
+     {
+      "p": "br1",
+      "rev": true
+     }
+    ],
+    "steps": [
+     {
+      "t": "An allocated static IP at the London PoP is the only address the published service exposes.",
+      "marks": [
+       "popL"
+      ]
+     },
+     {
+      "t": "Inbound requests terminate at the PoP, where SPACE and inbound IPS inspect and scrub every one.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "SQLi, XSS and RCE payloads are dropped at the PoP edge; CVE signatures arrive by virtual patching.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "Clean traffic is remote-port-forwarded down the Socket's outbound DTLS tunnel — no inbound ports open.",
+      "marks": [
+       "branch"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left column: nd 'Legitimate user' ('HTTPS to published service', icon 'user') top and cloud cls 'bad' 'Attacker' ('SQLi · XSS · RCE payloads') bottom. Both converge on a mono-tagged nd cls 'hot' 'Allocated IP' ('static IP · London PoP', 'the only address you publish', icon 'globe') sitting at the left edge of a popBox 'Cato PoP — London' ('SPACE · Inbound IPS · Virtual patching'). Legitimate path fl-https → allocated IP → inside the PoP → continues right. Attack path fl-attack → allocated IP → xmark inside the PoP with pill 'dropped by inbound IPS' (r). From the PoP a fl-tun rightwards labelled 'Remote Port Forward · outbound DTLS tunnel' with sub 'dialled out by the Socket' (arrow pointing towards the PoP to show direction of tunnel establishment, with particles flowing to the server) to a site 'ON-PREM LAB' containing sock 'Socket X1500' and nd 'Web server' ('no inbound ports', icon 'server'). Story left→right: internet → allocated IP → PoP scrub → tunnel → dark site. ≤8 nodes.",
+    "nodes": [
+     "Legitimate user",
+     "Attacker",
+     "Allocated IP",
+     "Cato PoP — London",
+     "Socket X1500",
+     "Web server"
+    ],
+    "flows": [
+     [
+      "Legitimate user→Allocated IP→PoP",
+      "fl-https",
+      "HTTPS to published service"
+     ],
+     [
+      "Attacker→Allocated IP→PoP",
+      "fl-attack + xmark",
+      "dropped by inbound IPS"
+     ],
+     [
+      "PoP→Socket→Web server",
+      "fl-tun",
+      "Remote Port Forward · outbound DTLS tunnel"
+     ]
+    ]
+   },
+   "title": "Inbound protection via allocated IP, PoP-based IPS and Remote Port Forwarding",
+   "desc": "A legitimate user and an attacker both reach an allocated IP at the London PoP; the attacker's SQLi, XSS and RCE payloads are dropped by inbound IPS at the PoP edge while the legitimate request is remote-port-forwarded over the Socket's outbound DTLS tunnel to an on-prem web server with no inbound ports open.",
+   "legend": [
+    [
+     "https",
+     "Legitimate request — forwarded to the on-prem service"
+    ],
+    [
+     "attack",
+     "Attack traffic — scrubbed by inbound IPS at the PoP"
+    ],
+    [
+     "tun",
+     "Outbound DTLS tunnel — dialled out by the Socket"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Allocated IP: static IP · London PoP · the only address you publish",
+    "PoP label: SPACE · Inbound IPS · Virtual patching",
+    "Attacker payloads: SQLi · XSS · RCE",
+    "Remote Port Forward over outbound DTLS tunnel dialled out by the Socket",
+    "Socket X1500; web server on-prem lab with no inbound ports"
+   ]
+  },
+  "security-compliance": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "mgmt",
+     "xops"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "spine"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Every flow from every edge is inspected once at the PoP by CASB, DLP, FWaaS and IPS.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Every enforcement decision lands as an event in one management plane and data lake.",
+      "marks": [
+       "mgmt",
+       "xops"
+      ]
+     },
+     {
+      "t": "That single correlated record is the evidence source for ISO 27001, NIS2 and SOC 2 auditors.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 460",
+    "brief": "Three lanes left→right with tier labels: 'ENFORCEMENT — EVERY PoP, EVERY EDGE' | 'ONE MANAGEMENT PLANE' | 'FRAMEWORKS & AUDITORS'. Left: four engine tiles stacked — 'CASB' ('SaaS access control', icon 'chat'), 'DLP' ('data protection', 'file'), 'FWaaS' ('firewall as a service', 'firewall'), 'IPS' ('threat prevention', 'shield') — grouped inside a popBox 'Cato PoP' ('Single Pass Cloud Engine') with a small ring tag 'Global Private Backbone' above. Centre: nd cls 'pop' 'Cato Management App' ('(CMA) one plane · audit · data lake', icon 'console'); a bundled fl-sig from the PoP box into the CMA labelled 'unified events'. Right: three nd 'ISO 27001:2022' ('ISMS certification'), 'NIS2' ('EU critical infrastructure'), 'SOC 2' ('trust-services audit') each reached from the CMA by fl-flow arrow labelled once 'unified audit evidence'. ≤9 nodes.",
+    "nodes": [
+     "CASB",
+     "DLP",
+     "FWaaS",
+     "IPS",
+     "Cato PoP",
+     "Cato Management App",
+     "ISO 27001:2022",
+     "NIS2",
+     "SOC 2"
+    ],
+    "flows": [
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "unified events"
+     ],
+     [
+      "CMA→frameworks",
+      "fl-flow",
+      "unified audit evidence"
+     ]
+    ]
+   },
+   "title": "From enforcement at the PoP to unified compliance evidence",
+   "desc": "CASB, DLP, FWaaS and IPS enforce policy on every flow at the Cato PoP; every decision lands in the Cato Management Application — one management plane and data lake — which produces unified audit evidence for ISO 27001, NIS2 and SOC 2.",
+   "legend": [
+    [
+     "flow",
+     "One data path: policy enforcement → unified events → audit evidence"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Engines: CASB · DLP · FWaaS · IPS in the Single Pass Cloud Engine",
+    "CMA: one plane · audit · data lake",
+    "Frameworks: ISO 27001:2022 (ISMS certification) · NIS2 (EU critical infrastructure) · SOC 2 (trust-services audit)",
+    "Label: unified audit evidence"
+   ]
+  },
+  "security-iso27001": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "mgmt",
+     "xops"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "spine"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The ISMS policy and Statement of Applicability select the Annex A controls to enforce.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "The Cato Client re-runs eleven device checks every ten minutes; a failing device gets no tunnel.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Compliant devices reach the PoP, where one policy — ZTNA, FWaaS, DLP, IPS — is enforced on every flow.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Events, the Audit Trail and the Data Lake feed the Posture Compliance Report for the Stage 2 auditor.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "A clockwise loop of six nodes with fl-flow arrows between them, drawn as a rounded rectangle path. Top-left: nd 'ISMS policy & SoA' ('risk-driven controls', icon 'file'). Top-centre: nd cls 'hot' 'Device Posture gate' ('11 checks · every 10 min', icon 'laptop'); under it a fl-down branch to a small xmark with pill 'fails a check → no tunnel / disconnect' (r) and mono 'posture event'. Top-right: fpin 'Cato PoP' ('one policy · every edge') with nd 'Enforced controls' ('ZTNA · FWaaS · DLP · IPS', 'shield'). Right-centre down to bottom-right: nd cls 'pop' 'CMA evidence plane' ('events · Audit Trail', 'Data Lake 3–12 months', icon 'db'). Bottom-centre: nd 'Reports & evidence' ('Posture Compliance Report', icon 'chart'). Bottom-left: nd 'Auditor · Stage 2' ('surveillance · recertification', icon 'users'). Closing arc from auditor back up to ISMS policy labelled 'clause 9 review · clause 10 improvement' (fl-flow fl-dim). Telemetry arcs PoP→CMA as fl-sig. ≤8 nodes.",
+    "nodes": [
+     "ISMS policy & SoA",
+     "Device Posture gate",
+     "Cato PoP",
+     "Enforced controls",
+     "CMA evidence plane",
+     "Reports & evidence",
+     "Auditor · Stage 2"
+    ],
+    "flows": [
+     [
+      "loop clockwise",
+      "fl-flow",
+      "enforcement path — compliant devices only"
+     ],
+     [
+      "posture gate→fail",
+      "fl-down + xmark",
+      "fails a check → no tunnel / disconnect"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "telemetry & evidence"
+     ],
+     [
+      "Auditor→ISMS",
+      "fl-flow fl-dim",
+      "clause 9 review · clause 10 improvement"
+     ]
+    ]
+   },
+   "title": "The ISMS loop with device posture as the enforcement gate",
+   "desc": "The ISMS policy and SoA select the controls; the Device Posture gate evaluates eleven checks every ten minutes and blocks or disconnects failing devices; compliant devices reach the PoP where ZTNA, FWaaS, DLP and IPS are enforced; decisions land in the CMA evidence plane whose reports feed the Stage 2 auditor, and review closes the loop back into policy.",
+   "legend": [
+    [
+     "flow",
+     "Enforcement path — compliant devices only"
+    ],
+    [
+     "down",
+     "Posture failure — blocked or disconnected"
+    ],
+    [
+     "dim",
+     "Telemetry & evidence"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Device Posture gate: 11 checks · every 10 min",
+    "fails a check → no tunnel / disconnect; posture event",
+    "Enforced controls: ZTNA · FWaaS · DLP · IPS",
+    "CMA evidence plane: events · Audit Trail · Data Lake 3–12 months",
+    "Reports: Posture Compliance Report",
+    "Auditor · Stage 2 · surveillance · recertification",
+    "clause 9 review · clause 10 improvement closing the loop"
+   ]
+  },
+  "security-data-casb-dlp": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "backbone"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-genai"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Office and remote users already send every flow through the Cato PoP — CASB and DLP are just switched on.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Inline, the PoP classifies each app, scores its risk and controls the activity per user and group.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Sanctioned SaaS is allowed and monitored; a risky GenAI app has uploads limited; card data out is blocked.",
+      "marks": [
+       "saas",
+       "genai"
+      ]
+     },
+     {
+      "t": "Out-of-band API integration governs data already at rest in the sanctioned SaaS tenant.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: 'Bristol Office' ('Socket X1500 — all traffic', 'building') and 'Remote users' ('Cato Client — Priya, Marcus', 'users'); fl-tun and fl-https respectively to a centre halo fpin 'Cato PoP' with pill 'CASB inline · DLP · TLS inspection' (g) under ring 'Global Private Backbone'. Right column three destinations: top cloud 'Sanctioned SaaS' ('M365 · Salesforce · Box') reached by fl-flow green pill 'allowed & monitored'; middle cloud cls 'ai' 'Unsanctioned GenAI app' ('high risk — uploads limited') reached by fl-ha (amber) with pill 'controlled · warning' (y); bottom nd 'Exfiltration attempt' ('PII/card → personal cloud') reached by fl-down ending in xmark pill 'blocked by DLP' (r). A grey dashed fl-priv arc from the PoP over the top to the Sanctioned SaaS cloud labelled 'out-of-band — API integration to the SaaS tenant' with sub 'scans data already at rest'. ≤7 nodes.",
+    "nodes": [
+     "Bristol Office",
+     "Remote users",
+     "Cato PoP",
+     "Sanctioned SaaS",
+     "Unsanctioned GenAI app",
+     "Exfiltration attempt"
+    ],
+    "flows": [
+     [
+      "Bristol→PoP",
+      "fl-tun"
+     ],
+     [
+      "Remote users→PoP",
+      "fl-https"
+     ],
+     [
+      "PoP→Sanctioned SaaS",
+      "fl-flow",
+      "allowed & monitored"
+     ],
+     [
+      "PoP→Unsanctioned GenAI",
+      "fl-ha",
+      "controlled with warning"
+     ],
+     [
+      "PoP→Exfiltration",
+      "fl-down + xmark",
+      "blocked by DLP"
+     ],
+     [
+      "PoP→SaaS tenant (arc)",
+      "fl-priv dashed",
+      "out-of-band API integration"
+     ]
+    ]
+   },
+   "title": "Inline CASB and DLP decisions at the Cato PoP, plus out-of-band SaaS API integration",
+   "desc": "Office and remote-user traffic reaches a Cato PoP running inline CASB and DLP: sanctioned SaaS is allowed and monitored, an unsanctioned GenAI app is restricted with a warning, an attempt to exfiltrate card data is blocked, and an out-of-band API integration scans data already at rest in the sanctioned tenant.",
+   "legend": [
+    [
+     "flow",
+     "Sanctioned — allowed & monitored"
+    ],
+    [
+     "ha",
+     "Unsanctioned / risky — controlled with warning"
+    ],
+    [
+     "down",
+     "Sensitive data out — blocked by DLP"
+    ],
+    [
+     "priv",
+     "Out-of-band API integration"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Bristol Office · Socket X1500 — all traffic",
+    "Remote users · Cato Client — Priya, Marcus",
+    "PoP: CASB inline · DLP · TLS inspection",
+    "Sanctioned SaaS: M365 · Salesforce · Box",
+    "Unsanctioned GenAI app: high risk — uploads limited",
+    "Exfiltration attempt: PII/card → personal cloud, blocked",
+    "Out-of-band API integration arc: scans data already at rest"
+   ]
+  },
+  "security-ransomware": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "xops"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "atk"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Every flow from every site, remote user and cloud instance crosses a PoP — there is no unexamined path.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "SPACE inspects it once against every engine: SWG, DNS, IPS, NGAM, sandbox, firewall and DLP.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Six kill-chain stages meet six independent controls, from delivery through C2 to exfiltration.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "XDR correlates every blocked attempt into one MITRE-mapped incident story in the data lake.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 420",
+    "brief": "Top lane: a long fl-flow green line left→right labelled 'Legitimate traffic — inspected in a single pass, delivered without detour'. Left: cloud cls 'bad' 'Attacker' ('ransomware gang'). Middle row, tier 'THE RANSOMWARE KILL CHAIN →': six equal stage nd boxes left→right: 'Delivery' ('phishing · drive-by'), 'Exploit' ('unpatched CVE'), 'Payload' ('malware executes'), 'C2' ('beacon to operator'), 'Lateral movement' ('spreads over WAN'), 'Exfiltration' ('data staged out'). A fl-attack red path runs from the attacker through the stages; at each stage an xmark sits on the path. Bottom row, directly under each stage, six green control nd boxes (cls 'pop', icon 'shield'): 'SWG + DNS' ('delivery blocked'), 'IPS' ('virtual patching'), 'NGAM + Sandbox' ('known & zero-day'), 'IPS + DNS' ('C2 cut off'), 'Segmentation' ('spread contained'), 'DLP' ('exfil stopped'), each joined up to its stage xmark by a short fl-hot. Footer sentence: 'All six controls run in the Cato PoP — one engine (SPACE), one policy, every flow: WAN, internet, cloud and remote user'. 13 nodes incl. attacker.",
+    "nodes": [
+     "Attacker",
+     "Delivery",
+     "Exploit",
+     "Payload",
+     "C2",
+     "Lateral movement",
+     "Exfiltration",
+     "SWG + DNS",
+     "IPS",
+     "NGAM + Sandbox",
+     "IPS + DNS",
+     "Segmentation",
+     "DLP"
+    ],
+    "flows": [
+     [
+      "legit lane",
+      "fl-flow",
+      "Legitimate traffic — unaffected"
+     ],
+     [
+      "Attacker→stages",
+      "fl-attack + xmark at every stage",
+      "kill chain blocked"
+     ],
+     [
+      "control→stage",
+      "fl-hot",
+      "blocks"
+     ]
+    ]
+   },
+   "title": "Cato controls breaking the ransomware kill chain at every stage",
+   "desc": "A six-stage ransomware kill chain — delivery, exploit, payload, C2, lateral movement, exfiltration — is blocked at every stage by a Cato control running in the PoP: SWG and DNS security, IPS virtual patching, NGAM with sandboxing, IPS and DNS for C2, segmentation and DLP, while legitimate traffic flows unaffected.",
+   "legend": [
+    [
+     "flow",
+     "Legitimate traffic — unaffected"
+    ],
+    [
+     "attack",
+     "Ransomware kill chain — blocked at every stage"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Six stages with subs: Delivery (phishing · drive-by), Exploit (unpatched CVE), Payload (malware executes), C2 (beacon to operator), Lateral movement (spreads over WAN), Exfiltration (data staged out)",
+    "Six controls: SWG + DNS · IPS virtual patching · NGAM + Sandbox · IPS + DNS · Segmentation · DLP",
+    "Footer: All six controls run in the Cato PoP — one engine (SPACE), one policy, every flow"
+   ]
+  },
+  "security-tls-inspection": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The root certificate is deployed fleet-wide and verified on every OS before a single flow is decrypted.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "A pilot cohort is inspected first with the downstream engines in monitor, so breakage lands as events.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Inspection expands category by category; pinned and mTLS apps get explicit, owned bypass rules.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "QUIC is blocked so browsers fall back to inspectable TCP 443; enforcement is the last gate.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 440",
+    "brief": "A left→right funnel of four stage nd boxes joined by fl-flow arrows, with small amber 'gate:' pills on each join: 'Root cert fleet-wide' ('MDM / GPO · verified', icon 'key') →[gate: certs verified]→ 'Pilot cohort' ('monitor-first inspect', icon 'users') →[gate: pilot quiet]→ 'Category expansion' ('inspect · wave by wave', icon 'globe') →[gate: bypasses owned]→ 'Full enforcement' ('inspect by default', icon 'lock', cls 'pop'). Feeding the funnel from the far left a wide fl-tun labelled 'All HTTPS traffic' with sub 'users · sites · cloud'. Below the funnel a parallel neutral lane: nd 'Bypass lane' ('pinned · mTLS · legacy', icon 'shield', cls 'dash') with a fl-priv dashed line running the full width labelled 'no decryption — explicit bypass rules' and sub 'time-bound · reviewed · audited'. Above the funnel a short red fl-down stub 'QUIC / UDP 443 blocked' ending in xmark with sub 'browsers fall back to TCP'. ≤7 nodes.",
+    "nodes": [
+     "All HTTPS traffic",
+     "Root cert fleet-wide",
+     "Pilot cohort",
+     "Category expansion",
+     "Full enforcement",
+     "Bypass lane",
+     "QUIC / UDP 443 blocked"
+    ],
+    "flows": [
+     [
+      "stage→stage",
+      "fl-flow with gate pills",
+      "gate: certs verified · pilot quiet · bypasses owned"
+     ],
+     [
+      "input",
+      "fl-tun",
+      "All HTTPS traffic"
+     ],
+     [
+      "bypass lane",
+      "fl-priv dashed",
+      "no decryption — explicit bypass rules"
+     ],
+     [
+      "QUIC",
+      "fl-down + xmark",
+      "browsers fall back to TCP"
+     ]
+    ]
+   },
+   "title": "Staged TLS inspection rollout funnel",
+   "desc": "All HTTPS traffic passes a staged funnel — root certificate fleet-wide, a monitor-first pilot cohort, category-by-category expansion, then full enforcement — with gates between stages, a governed bypass lane for pinned and exempt applications, and QUIC blocked so browsers fall back to inspectable TCP.",
+   "legend": [
+    [
+     "flow",
+     "Pilot — inspect, engines in monitor"
+    ],
+    [
+     "tun",
+     "Inspect — decrypt, scan, re-encrypt"
+    ],
+    [
+     "down",
+     "QUIC — blocked, falls back to TCP"
+    ],
+    [
+     "priv",
+     "Bypass lane — governed exception path"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Four stages: Root cert fleet-wide (MDM / GPO · verified) → Pilot cohort (monitor-first inspect) → Category expansion (inspect · wave by wave) → Full enforcement (inspect by default)",
+    "Gates: certs verified · pilot quiet · bypasses owned",
+    "Bypass lane: pinned · mTLS · legacy; no decryption — explicit bypass rules; time-bound · reviewed · audited",
+    "QUIC / UDP 443 blocked; browsers fall back to TCP",
+    "Input: All HTTPS traffic — users · sites · cloud"
+   ]
+  },
+  "security-uk-public-sector": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Council HQ, depots, schools and remote or field staff all connect through a UK Cato PoP.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "One policy — FWaaS, IPS, anti-malware, ZTNA and DLP — is enforced on every flow before it reaches services.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Traffic reaches government services, M365 and SaaS from one default-deny boundary for the whole estate.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "Policy, posture and event data flow into the CMA — the evidence a CE Plus assessor or CAF review asks for.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 460",
+    "brief": "Top: a soft wide R 'One policy umbrella' with sub 'FWaaS · IPS · Anti-Malware · ZTNA · DLP' sitting above a halo fpin 'UK PoP' ('full stack on every flow') on a ring 'Global Private Backbone'. Left column three edges with fl-tun/fl-ipsec/fl-https into the PoP: 'Council HQ' ('Socket · civic centre', 'building'), 'Depots & schools' ('branch Sockets · IPsec', 'building'), 'Remote & field staff' ('Cato Client · ZTNA', 'users'). Right: cloud 'Cloud & internet' ('gov services · M365 · SaaS') reached by fl-flow. Bottom: a grey evidence lane — fl-sig from the PoP to nd cls 'pop' 'CMA — evidence' ('policy · posture · events', 'Audit Trail · exports', icon 'console'), then two fl-flow fl-dim arrows to nd 'CE Plus assessor' ('verification evidence', 'users') and nd 'CAF assessment' ('objectives A–D', 'file'). ≤9 nodes.",
+    "nodes": [
+     "One policy umbrella",
+     "UK PoP",
+     "Council HQ",
+     "Depots & schools",
+     "Remote & field staff",
+     "Cloud & internet",
+     "CMA — evidence",
+     "CE Plus assessor",
+     "CAF assessment"
+    ],
+    "flows": [
+     [
+      "Council HQ→PoP",
+      "fl-tun"
+     ],
+     [
+      "Depots & schools→PoP",
+      "fl-ipsec"
+     ],
+     [
+      "Remote staff→PoP",
+      "fl-https"
+     ],
+     [
+      "PoP→Cloud & internet",
+      "fl-flow"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "evidence lane"
+     ],
+     [
+      "CMA→assessors",
+      "fl-flow fl-dim"
+     ]
+    ]
+   },
+   "title": "A public-body estate under one policy, with one evidence lane to assessors",
+   "desc": "A council HQ, depots and schools, and remote and field staff all connect through a UK Cato PoP where one policy — FWaaS, IPS, anti-malware, ZTNA and DLP — is enforced before traffic reaches cloud and internet services, while an evidence lane carries policy, posture and event data into the CMA for a Cyber Essentials Plus assessor and a CAF assessment.",
+   "legend": [
+    [
+     "tun",
+     "Estate traffic — one policy enforced at the PoP"
+    ],
+    [
+     "dim",
+     "Evidence lane — policy, posture and events to the CMA"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Umbrella: FWaaS · IPS · Anti-Malware · ZTNA · DLP",
+    "UK PoP — full stack on every flow",
+    "Council HQ · Socket · civic centre; Depots & schools · branch Sockets · IPsec; Remote & field staff · Cato Client · ZTNA",
+    "Cloud & internet: gov services · M365 · SaaS",
+    "CMA — evidence: policy · posture · events; Audit Trail · exports",
+    "CE Plus assessor — verification evidence; CAF assessment — objectives A–D"
+   ]
+  },
+  "security-healthcare-nhs": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "br3"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "An acute hospital, a community clinic, a GP-style site and remote clinicians all cross one UK PoP.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "Inside the hospital the Socket LAN Firewall blocks IoMT-to-corporate traffic — even if the circuit drops.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "The PoP enforces FWaaS, IPS, ZTNA and DLP on the way to NHS Spine, M365 and SaaS.",
+      "marks": [
+       "pop",
+       "saas"
+      ]
+     },
+     {
+      "t": "A pathology supplier reaches only named systems over ZTNA; policy, events and devices feed the CMA.",
+      "marks": [
+       "users",
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: site 'ACUTE HOSPITAL' containing three VLAN tiles — 'Clinical VLAN' ('EPR · PACS · pathology', icon 'server'), 'IoMT VLAN' ('pumps · imaging · legacy', 'cell'), 'Corporate VLAN' ('admin · back office', 'laptop') — feeding a device 'Socket · LAN Firewall' (pill 'LAN Firewall' g). Inside the site a fl-walk fl-down from IoMT VLAN to Corporate VLAN with xmark pill 'Block' (r). Below the hospital two small sites: 'Community clinic' ('X1600 · DSL + LTE', 'building') and 'GP-style small site' ('Socket · broadband', 'building'). Bottom-left: 'Remote clinicians' ('Cato Client · MFA', 'users') and 'Pathology supplier' ('ZTNA · least privilege', 'user'). Centre: ring 'Global Private Backbone' with halo fpin 'Cato PoP — UK' and pill 'FWaaS · IPS · ZTNA · DLP' (g). All sites fl-tun (clinic also a fl-ha LTE stub), clinicians fl-https, supplier fl-https cls hot to PoP. Right: cloud 'NHS & cloud services' ('Spine · M365 · SaaS') via fl-flow; supplier path continues from the PoP back to the Clinical VLAN as fl-hot labelled 'named systems only'. Bottom-right: nd cls 'pop' 'CMA — evidence' ('policy · events · devices', 'Audit Trail exports', 'console') fed by grey fl-sig. ≤14 nodes.",
+    "nodes": [
+     "Clinical VLAN",
+     "IoMT VLAN",
+     "Corporate VLAN",
+     "Socket · LAN Firewall",
+     "Community clinic",
+     "GP-style small site",
+     "Remote clinicians",
+     "Pathology supplier",
+     "Cato PoP — UK",
+     "NHS & cloud services",
+     "CMA — evidence"
+    ],
+    "flows": [
+     [
+      "sites→PoP",
+      "fl-tun"
+     ],
+     [
+      "clinic LTE",
+      "fl-ha",
+      "DSL + LTE"
+     ],
+     [
+      "clinicians→PoP",
+      "fl-https"
+     ],
+     [
+      "supplier→PoP→Clinical VLAN",
+      "fl-hot",
+      "named systems only"
+     ],
+     [
+      "IoMT→Corporate (in site)",
+      "fl-down + xmark",
+      "blocked by LAN Firewall on the Socket"
+     ],
+     [
+      "PoP→NHS & cloud",
+      "fl-flow"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "evidence lane"
+     ]
+    ]
+   },
+   "title": "A segmented NHS-style trust estate on the Cato platform",
+   "desc": "An acute hospital with clinical, IoMT and corporate VLANs behind a Socket LAN Firewall, a community clinic, a GP-style site and remote clinicians all connect through a UK Cato PoP to NHS and cloud services; IoMT-to-corporate traffic is blocked on the Socket, a pathology supplier reaches only named systems over ZTNA, and an evidence lane feeds the CMA.",
+   "legend": [
+    [
+     "tun",
+     "Trust estate — one policy at the PoP"
+    ],
+    [
+     "hot",
+     "Supplier ZTNA — named systems only"
+    ],
+    [
+     "down",
+     "East-west blocked by LAN Firewall on the Socket"
+    ],
+    [
+     "dim",
+     "Evidence lane to the CMA"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Acute hospital: Clinical VLAN (EPR · PACS · pathology), IoMT VLAN (pumps · imaging · legacy), Corporate VLAN (admin · back office) behind Socket · LAN Firewall",
+    "IoMT → Corporate blocked at the Socket",
+    "Community clinic · X1600 · DSL + LTE; GP-style small site · Socket · broadband",
+    "Remote clinicians · Cato Client · MFA; Pathology supplier · ZTNA · least privilege",
+    "Cato PoP — UK: FWaaS · IPS · ZTNA · DLP",
+    "NHS & cloud services: Spine · M365 · SaaS",
+    "CMA — evidence: policy · events · devices; Audit Trail exports"
+   ]
+  },
+  "security-legal-confidentiality": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "users",
+     "pop",
+     "dc",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Two matter teams share one office and one LAN; the remote fee-earner joins through the Cato Client.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "The PoP enforces an identity-based ethical wall: each IdP group reaches only its own DMS workspace.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "A cross-wall attempt is blocked, and DLP blocks a privileged document bound for personal cloud storage.",
+      "marks": [
+       "dc",
+       "saas"
+      ]
+     },
+     {
+      "t": "Every allow and block lands in the CMA — the questionnaire pack for client auditors.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: site 'ONE OFFICE · same floor · same LAN' containing 'Matter A team' ('IdP group · WALL-A', icon 'users') and 'Matter B team' ('IdP group · WALL-B', 'users'); below the site 'Remote fee-earner' ('Cato Client · anywhere', 'laptop'). All three → centre halo fpin 'Cato PoP' with pill 'WAN FW · ZTNA · DLP' (g) under ring 'Global Private Backbone'; a soft R above the PoP reads 'Identity-based ethical wall' with sub 'WAN FW · DMS app segments'. Right column: 'Matter A — DMS' ('privileged workspace', 'file'), 'Matter B — DMS' ('opposing matter', 'file'), 'Personal storage' ('consumer cloud drive', 'globe'). Flows out of the PoP: Matter A team → Matter A DMS fl-flow (green); Matter B team → Matter B DMS fl-flow (second green/blue tone); remote fee-earner → Matter A DMS fl-https; Matter A → Matter B DMS fl-down with xmark pill 'cross-wall attempt' (r); any team → Personal storage fl-down xmark pill 'DLP — privileged upload' (r). Bottom: nd cls 'pop' 'CMA — evidence' ('events · Audit Trail', 'questionnaire pack', 'console') fed by grey fl-sig. ≤9 nodes.",
+    "nodes": [
+     "Matter A team",
+     "Matter B team",
+     "Remote fee-earner",
+     "Cato PoP",
+     "Matter A — DMS",
+     "Matter B — DMS",
+     "Personal storage",
+     "CMA — evidence"
+    ],
+    "flows": [
+     [
+      "Matter A team→Matter A DMS",
+      "fl-flow",
+      "own workspace"
+     ],
+     [
+      "Matter B team→Matter B DMS",
+      "fl-flow",
+      "own workspace"
+     ],
+     [
+      "Remote fee-earner→PoP→Matter A DMS",
+      "fl-https",
+      "same wall, anywhere"
+     ],
+     [
+      "Matter A→Matter B DMS",
+      "fl-down + xmark",
+      "cross-wall attempt"
+     ],
+     [
+      "team→Personal storage",
+      "fl-down + xmark",
+      "DLP — privileged upload"
+     ],
+     [
+      "PoP→CMA",
+      "fl-sig",
+      "evidence lane"
+     ]
+    ]
+   },
+   "title": "Identity-based ethical wall between two matter teams, with DLP and an evidence lane",
+   "desc": "Two matter teams on the same office LAN and a remote fee-earner cross a Cato PoP enforcing an identity-based ethical wall: each team reaches only its own DMS workspace, a cross-wall attempt is blocked, DLP blocks a privileged document bound for personal cloud storage, and every decision lands in the CMA as evidence.",
+   "legend": [
+    [
+     "flow",
+     "Matter teams — each to its own workspace"
+    ],
+    [
+     "https",
+     "Remote fee-earner — same wall, wherever they work"
+    ],
+    [
+     "down",
+     "Blocked at the PoP — cross-wall access · privileged-doc exfil"
+    ],
+    [
+     "dim",
+     "Evidence lane to the CMA"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "One office · same floor · same LAN",
+    "Matter A team · IdP group · WALL-A; Matter B team · IdP group · WALL-B",
+    "Remote fee-earner · Cato Client · anywhere",
+    "Identity-based ethical wall · WAN FW · DMS app segments",
+    "Matter A — DMS (privileged workspace); Matter B — DMS (opposing matter)",
+    "Personal storage · consumer cloud drive — DLP blocks privileged upload",
+    "CMA — evidence: events · Audit Trail · questionnaire pack",
+    "No DMS vendor named (iManage/NetDocuments-class only in prose)"
+   ]
+  },
+  "security-ai": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "ai",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse",
+     "ai"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "eg-genai"
+     },
+     {
+      "p": "ag1"
+     },
+     {
+      "p": "ag2"
+     },
+     {
+      "p": "m2"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Employee prompts and uploads reach the Cato SASE cloud via the Cato Client or browser plugin.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "SPACE applies CASB, DLP and TLS inspection: sanctioned GenAI is allowed with a prompt-level audit log.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "A sensitive-data upload to an unsanctioned GenAI tool is blocked at the PoP.",
+      "marks": [
+       "genai"
+      ]
+     },
+     {
+      "t": "Homegrown GenAI apps and autonomous agents run inside a guardrail ring, observed via APIs and IDE hooks.",
+      "marks": [
+       "ai"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: nd 'Employee' ('Cato Client · browser plugin', icon 'user') with fl-https labelled 'prompts & uploads' into a centre popBox 'Cato SASE Cloud' ('SPACE · CASB · DLP · TLS inspection') under a ring 'Global Private Backbone'. Right top: cloud cls 'ai' 'Public GenAI' ('sanctioned AI apps') reached by fl-flow green; a small tap on that path to nd 'Prompt auditing' ('prompt-level audit log', icon 'file') via fl-sig. Right middle: cloud cls 'ai' 'Public GenAI' second instance ('unsanctioned · free-tier tools') reached by fl-down ending in xmark pill 'sensitive-data upload · blocked' (r). Bottom: a dashed ring/site box 'Guardrail ring' ('posture · runtime controls') containing nd 'Homegrown GenAI app' (icon 'code') and nd 'Autonomous agent' (icon 'agent'); from the ring up to the SASE cloud a fl-priv dashed line labelled 'APIs · IDE hooks'. Story: three surfaces — users, applications, agents — one engine. ≤8 nodes.",
+    "nodes": [
+     "Employee",
+     "Cato SASE Cloud",
+     "Public GenAI",
+     "Prompt auditing",
+     "Public GenAI",
+     "Guardrail ring",
+     "Homegrown GenAI app",
+     "Autonomous agent"
+    ],
+    "flows": [
+     [
+      "Employee→SASE cloud",
+      "fl-https",
+      "prompts & uploads"
+     ],
+     [
+      "cloud→sanctioned GenAI",
+      "fl-flow",
+      "allowed with prompt-level auditing"
+     ],
+     [
+      "path→Prompt auditing",
+      "fl-sig",
+      "prompt-level audit log"
+     ],
+     [
+      "cloud→unsanctioned GenAI",
+      "fl-down + xmark",
+      "sensitive-data upload · blocked"
+     ],
+     [
+      "Guardrail ring↔cloud",
+      "fl-priv dashed",
+      "APIs · IDE hooks"
+     ]
+    ]
+   },
+   "title": "Governing AI traffic for users, homegrown applications and agents",
+   "desc": "Employee prompts pass through the Cato SASE cloud, where sanctioned public GenAI is allowed with a prompt-level audit log and a sensitive-data upload to unsanctioned GenAI is blocked, while homegrown GenAI applications and autonomous agents run inside a guardrail ring observed through APIs and IDE hooks.",
+   "legend": [
+    [
+     "flow",
+     "Sanctioned & governed — allowed with prompt-level auditing"
+    ],
+    [
+     "down",
+     "Unsanctioned sensitive-data upload — blocked"
+    ],
+    [
+     "priv",
+     "Guardrail ring — APIs · IDE hooks observability"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Employee · Cato Client · browser plugin; prompts & uploads",
+    "Cato SASE Cloud: SPACE · CASB · DLP · TLS inspection",
+    "Prompt auditing · prompt-level audit log on the sanctioned path",
+    "Public GenAI sanctioned (allowed) vs unsanctioned · free-tier tools (sensitive-data upload blocked)",
+    "Guardrail ring · posture · runtime controls containing Homegrown GenAI app and Autonomous agent; APIs · IDE hooks",
+    "Note: aisec source figure rejected — its Proxy / LLM gateway (LiteLLM · Kong) and detector list are not claims this WIP page makes"
+   ]
+  },
+  "security-ai-visibility": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "xops"
+    ],
+    "mods": [
+     "sse",
+     "ai"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-genai"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Office and remote users' GenAI traffic already traverses the Cato PoP — no new agents or appliances.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "TLS inspection, CASB/DLP and the AI Interaction Policy run in monitor mode; nothing is blocked.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Sanctioned GenAI and shadow AI are both seen; an optional browser extension adds browser-level visibility.",
+      "marks": [
+       "genai"
+      ]
+     },
+     {
+      "t": "Prompt-level telemetry feeds the AI Security Dashboard and GenAI Report across the four-week assessment.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Left: 'Office users' ('behind Cato Sockets', icon 'building') and 'Remote users' ('Cato Client', 'laptop'); a small nd cls 'dash' 'AI Browser Extension' ('optional · Intune/MDM', icon 'ext') attached to remote users. fl-tun / fl-https into a centre popBox 'Cato PoP' ('TLS · CASB/DLP · AI policy (monitor)') under a tier 'Cato SASE Cloud' with a small ring. Right top: cloud cls 'ai' 'Sanctioned GenAI' ('ChatGPT · M365 Copilot') via fl-flow green pill 'allowed · logged'. Right bottom: cloud cls 'ai' 'Shadow AI apps' ('unsanctioned tools') via fl-ha amber pill 'visible · monitor mode'. From the PoP a grey fl-sig 'prompt-level telemetry' down to nd cls 'pop' 'AI Security Dashboard' ('GenAI Report · AI events', icon 'chart'); the browser extension also sends a thin fl-sig to the dashboard. Along the bottom a four-step timeline chipRow with tier 'FOUR WEEKS': 'W1 · Deploy' · 'W2 · Discover' · 'W3 · Protect' · 'W4 · Report'. ≤8 nodes.",
+    "nodes": [
+     "Office users",
+     "Remote users",
+     "AI Browser Extension",
+     "Cato PoP",
+     "Sanctioned GenAI",
+     "Shadow AI apps",
+     "AI Security Dashboard"
+    ],
+    "flows": [
+     [
+      "Office users→PoP",
+      "fl-tun"
+     ],
+     [
+      "Remote users→PoP",
+      "fl-https"
+     ],
+     [
+      "PoP→Sanctioned GenAI",
+      "fl-flow",
+      "allowed, every interaction logged"
+     ],
+     [
+      "PoP→Shadow AI apps",
+      "fl-ha",
+      "visible in monitor mode, nothing blocked"
+     ],
+     [
+      "PoP→Dashboard",
+      "fl-sig",
+      "prompt-level telemetry"
+     ],
+     [
+      "Extension→Dashboard",
+      "fl-sig thin"
+     ]
+    ]
+   },
+   "title": "AI Security Visibility Assessment data flow",
+   "desc": "Office and remote users' GenAI traffic flows through a Cato PoP where TLS inspection, CASB/DLP and the AI Interaction Policy in monitor mode observe it; sanctioned GenAI and shadow AI are both seen, an optional browser extension adds browser-level visibility, and prompt-level telemetry feeds the AI Security Dashboard and GenAI Report across a four-week engagement.",
+   "legend": [
+    [
+     "flow",
+     "Sanctioned GenAI — allowed, every interaction logged"
+    ],
+    [
+     "ha",
+     "Shadow AI — visible in monitor mode, nothing blocked"
+    ],
+    [
+     "dim",
+     "Prompt-level telemetry to the dashboard"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Office users behind Cato Sockets; Remote users on Cato Client",
+    "AI Browser Extension · optional · Intune/MDM",
+    "PoP: TLS · CASB/DLP · AI policy (monitor)",
+    "Sanctioned GenAI: ChatGPT · M365 Copilot; Shadow AI apps: unsanctioned tools",
+    "AI Security Dashboard · GenAI Report · AI events",
+    "Four-week timeline: W1 · Deploy, W2 · Discover, W3 · Protect, W4 · Report"
+   ]
+  }
+ }
+}

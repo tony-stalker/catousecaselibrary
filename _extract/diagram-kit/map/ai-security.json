@@ -1,0 +1,787 @@
+{
+  "category": "AI Security",
+  "notes": "8 pages matched /ai-|security-ai/. One page (security-ai, the category overview) maps onto the aisec source figure; the other seven need their own drawings because their stories are persona/verdict lanes (end-user GenAI, legal, EU AI Act, visibility assessment), agent-type funnels (agentic) or a Guard-in-the-path (homegrown) that no catalogue figure tells. The catalogue PNGs rendered with black filled boxes (CSS tokens missing in the headless render), so figure facts were checked against the FIGS source in kit-host.html rather than the pixels. aisec carries the engHead '← Single Pass Engine' back-button chip and a 'Full AI Security sheet ↗' gocomp chip, plus a KEY FEATURES chip 'Full sheet: AI Security' — all three are overview-app navigation and must be dropped for a static page. No journey (migration-journey-*) pages in this category.",
+  "pages": {
+    "security-ai": {
+      "spotlight": {
+        "hl": [
+          "users",
+          "ai",
+          "saas",
+          "pop",
+          "mgmt"
+        ],
+        "mods": [
+          "ai",
+          "sse"
+        ],
+        "flows": [
+          {
+            "p": "us1"
+          },
+          {
+            "p": "us2"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "ag1"
+          },
+          {
+            "p": "ag2"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Employees reach public GenAI through the Cato Client or the browser plugin; usage is discovered first.",
+            "marks": [
+              "users",
+              "genai"
+            ]
+          },
+          {
+            "t": "SPACE evaluates every prompt and upload against one AI policy set: audit, anonymise or block.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Homegrown apps and agents join the same engine through hooks, APIs and the AI Firewall.",
+            "marks": [
+              "ai"
+            ]
+          },
+          {
+            "t": "Discovery, usage and violation reporting lands in the Cato Management Application.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "fig": "aisec",
+        "edits": [
+          [
+            "Agent tools",
+            "AI agents"
+          ],
+          [
+            "MCP · APIs",
+            "MCP · APIs · Scout"
+          ],
+          [
+            "Model APIs",
+            "Homegrown AI apps"
+          ],
+          [
+            "OpenAI · Bedrock · Azure",
+            "model APIs · AI Gateway"
+          ],
+          [
+            "Interactions logged",
+            "Interactions logged"
+          ],
+          [
+            "compliance evidence",
+            "usage · risk · compliance"
+          ]
+        ],
+        "drop": [
+          "← Single Pass Engine",
+          "Full AI Security sheet ↗",
+          "Full sheet: AI Security"
+        ]
+      },
+      "title": "One AI Security engine for users, apps and agents",
+      "desc": "Five on-ramps — inline in the PoP, an existing proxy, API, LLM gateway and the browser plugin — feed one Cato AI Security engine whose detectors, profiles and actions govern employees' public AI tools, homegrown AI apps and AI agents alike, with every interaction logged as evidence.",
+      "caption": "One engine, three surfaces: employee prompts arrive inline or via the browser plugin, homegrown apps via API or an LLM gateway, agents via APIs and Scout. The same detectors and profile decide allow, anonymise, redirect, notify or block, and every interaction is logged for usage, risk and compliance reporting.",
+      "legend": [
+        [
+          "tun",
+          "On-ramp into the engine"
+        ],
+        [
+          "flow",
+          "Governed AI interaction"
+        ],
+        "live"
+      ],
+      "keepCaption": false,
+      "carry": [
+        "Three surfaces named exactly as the page: AI for Users (browser plugin + Cato Client), AI for Applications (IDE integration + hooks), Agentic AI (APIs); the figure's three right-hand destinations must map one-to-one onto them",
+        "Policy evaluated by SPACE / the Single Pass Cloud Engine (current diagram node 'SPACE · CASB · DLP · TLS inspection')",
+        "Prompt-level auditing produces a prompt-level audit log; discovery is passive and does not read prompt content",
+        "Actions the page names: Monitor, Anonymize and Monitor, Block, Engage User, Redirect — the figure's Allow · Anonymise · Redirect · Notify user · Block pills are compatible",
+        "Figure fact 'Playground-tested' and 'prompts, responses and tool calls, in one pass' agree with the page; keep",
+        "Do NOT add the overview's '#1 in latency, accuracy and throughput' claim (only in the ai figure, not aisec) — the page does not make it",
+        "AI for End Users and AI for Applications are separate per-user licences (page prerequisite) — not drawn, but no label may imply one licence"
+      ]
+    },
+    "ai-threat-landscape": {
+      "spotlight": {
+        "hl": [
+          "users",
+          "branch",
+          "pop",
+          "saas",
+          "backbone",
+          "xops"
+        ],
+        "mods": [
+          "sse",
+          "ai"
+        ],
+        "flows": [
+          {
+            "p": "atk"
+          },
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "eg-www"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "spine"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Deepfake fraud starts with a phishing message and ends with a stolen credential; both cross the PoP.",
+            "marks": [
+              "users"
+            ]
+          },
+          {
+            "t": "AI-orchestrated intrusions run the kill chain at machine speed; IPS virtual patching meets them in every PoP.",
+            "marks": [
+              "popL"
+            ]
+          },
+          {
+            "t": "Shadow AI prompts and uploads are discovered, governed and anonymised rather than banned.",
+            "marks": [
+              "genai"
+            ]
+          },
+          {
+            "t": "XDR correlates whatever survives each class into one incident story in the data lake.",
+            "marks": [
+              "xops"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Three horizontal lanes, left-to-right: ATTACK CLASS → CATO SASE CLOUD (one shared popBox spanning all three lanes, centre, title 'Cato SASE Cloud', sub 'one pass · every flow · every user') → THE OUTCOME. Use tier() labels 'AI ATTACK CLASSES' (x 14) and 'THE OUTCOME' (x ~560) at the top. LEFT column, three nd boxes cls 'hot'/red-tinted via cloud(...,'bad') or nd with xmark: (1) 'Deepfake fraud' sub 'voice & video imposters'; (2) 'AI-orchestrated attacks' sub 'agents · AI malware'; (3) 'Shadow AI & data leak' sub 'prompts · rogue AI tools'. CENTRE inside the popBox, one engine chip row per lane aligned with its class: lane 1 chipRow 'SWG · DNS · NGAM · ZTNA' with f-s under it 'phishing & stolen creds'; lane 2 chipRow 'IPS virtual patching' + 'SPACE · XDR stories'; lane 3 chipRow 'AI Security suite' + 'Discovery · UIP · GenAI DLP' with f-s 'governed, not banned'. FLOWS: lanes 1 and 2 enter the PoP as fl-attack (red dashed) and terminate at an xmark() on the PoP boundary — these are blocked; lane 3 enters as fl-https (employee prompts) and continues THROUGH the PoP as fl-flow to its outcome with an amber pill 'anonymise · monitor' — this is governed, not blocked. RIGHT column, three nd boxes cls 'soft' with a mark(...,'ok'): (1) 'Fraud chain broken' sub 'callback checks stay human' (keep this honesty line verbatim: the fake face on the call is a people control, not a network one); (2) 'Machine speed matched' sub 'blast radius capped'; (3) 'Data stays home' sub 'AI adoption governed'. BOTTOM strip (y ~500): T f-s centred: 'Every class crosses the same single-pass engine — and XDR correlates whatever survives into one story', with a small nd 'XDR · data lake' (icon db) fed by three thin fl-net lines from the three lanes. ≤ 13 nodes. Keep lane colours: red for blocked attack classes, amber/limit for the governed lane, mint for outcomes. No incident names, no vendor logos; the nine incidents stay in the prose.",
+        "vb": "0 0 760 560"
+      },
+      "title": "Three AI attack classes, one single-pass engine",
+      "desc": "Deepfake fraud, AI-orchestrated attacks and shadow-AI data leakage each cross the same Cato PoP: the first two are broken at the network kill chain by SWG, DNS, anti-malware, ZTNA and IPS virtual patching, the third is discovered and governed rather than banned, and XDR correlates whatever survives into one story.",
+      "legend": [
+        [
+          "attack",
+          "AI-assisted attack path"
+        ],
+        [
+          "https",
+          "Employee GenAI prompts"
+        ],
+        [
+          "down",
+          "Blocked at the PoP"
+        ],
+        [
+          "flow",
+          "Governed, not banned"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Three attack classes named exactly: 'Deepfake fraud' (voice & video imposters), 'AI-orchestrated attacks' (agents · AI malware), 'Shadow AI & data leak' (prompts · rogue AI tools)",
+        "Engine sets per class: 'SWG · DNS · NGAM · ZTNA' (phishing & stolen creds); 'IPS virtual patching' + 'SPACE · XDR stories'; 'AI Security suite' = 'Discovery · UIP · GenAI DLP'",
+        "Outcome honesty lines: 'Fraud chain broken · callback checks stay human' (no network platform detects a fake face); 'Machine speed matched · blast radius capped'; 'Data stays home · AI adoption governed'",
+        "Footer sentence: 'Every class crosses the same single-pass engine — and XDR correlates whatever survives into one story'",
+        "Shadow-AI lane is governed (Engage User / Anonymise / Block via the User Interaction Policy) — it must NOT be drawn as a blocked attack",
+        "No incident names, dollar figures or CVE ids on the diagram (page prose carries EchoLeak CVE-2025-32711 etc.); diagram claims no detection of deepfake media"
+      ]
+    },
+    "security-ai-visibility": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "users",
+          "pop",
+          "saas",
+          "mgmt"
+        ],
+        "mods": [
+          "ai"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "us2"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Office and remote users' GenAI traffic already crosses the PoP; an optional browser extension adds depth.",
+            "marks": [
+              "branch",
+              "users"
+            ]
+          },
+          {
+            "t": "TLS inspection, CASB/DLP and the AI Interaction Policy run in monitor mode: nothing is blocked.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Every sanctioned and shadow GenAI interaction is classified and logged across the four weeks.",
+            "marks": [
+              "genai"
+            ]
+          },
+          {
+            "t": "The AI Security dashboards and GenAI Report become the board-ready AI risk report.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Left-to-right monitor-mode flow with a four-week strip along the bottom. TOP: cloudTop()-style 'CATO SASE CLOUD' header is NOT needed; instead a popBox centre (x ~250–510, y 60–330) titled 'Cato PoP', sub 'TLS · CASB/DLP · AI policy (monitor)', containing a mono pill 'MONITOR MODE · nothing blocked' and a small nd 'Prompt-level telemetry' (icon eye). LEFT three nd boxes: 'Office users' sub 'Behind Cato Sockets' (icon building) → PoP via fl-tun; 'Remote users' sub 'Cato Client' (icon laptop) → PoP via fl-tun; 'AI Browser Extension' sub 'Optional · Intune/MDM' (icon browser, cls 'dash' because optional) → PoP via fl-https. RIGHT two destination nd boxes: 'Sanctioned GenAI' sub 'ChatGPT · M365 Copilot' (icon ai) reached by fl-flow with green pill 'allowed · logged'; 'Shadow AI apps' sub 'Unsanctioned tools' (icon ai, cls 'soft') reached by fl-flow with amber pill 'visible · monitored' — NOT blocked, no xmark anywhere. From the PoP downward-right a fl-net (static, np:0) to an nd 'AI Security Dashboard' sub 'GenAI Report · AI events' (icon chart) at x ~560 y ~360. BOTTOM (y 440–540): tier 'FOUR WEEKS' then four equal nd boxes with badge(1..4): 'W1 · Deploy' sub 'kickoff · TLSi · plugin'; 'W2 · Discover' sub 'Discovery · AI Users'; 'W3 · Protect' sub 'test group · monitor'; 'W4 · Report' sub 'AI risk report'. Connect with thin static arrows. ≤ 12 nodes. Stress the amber/limit lane for shadow AI and the absence of any red.",
+        "vb": "0 0 760 560"
+      },
+      "title": "GenAI Visibility Assessment in monitor mode",
+      "desc": "Office, remote and browser-plugin GenAI traffic crosses the Cato PoP where TLS inspection, CASB/DLP and the AI Interaction Policy run in monitor mode for four weeks, so sanctioned and shadow AI use is classified and reported without anything being blocked.",
+      "legend": [
+        [
+          "tun",
+          "Socket / Client tunnel"
+        ],
+        [
+          "https",
+          "Browser extension (optional)"
+        ],
+        [
+          "flow",
+          "GenAI interaction, monitored"
+        ],
+        [
+          "net",
+          "Telemetry to dashboards"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Monitor mode throughout — nothing blocked; the current diagram uses lane-limit (amber) for shadow AI and no block lane: preserve",
+        "Edges: 'Office users · Behind Cato sockets', 'Remote users · Cato Client', 'AI Browser Extension · Optional · Intune/MDM'",
+        "PoP controls: 'TLS · CASB/DLP · AI policy (monitor)'; telemetry node 'Prompt-level telemetry'",
+        "Destinations: 'Sanctioned GenAI · ChatGPT · M365 Copilot' and 'Shadow AI apps · Unsanctioned tools'",
+        "Evidence node: 'AI Security Dashboard · GenAI Report · AI events'",
+        "Four-week strip: W1 Deploy · W2 Discover · W3 Protect · W4 Report (30-min kickoff and weekly syncs; 30-day trial licence are prose facts, optional on the strip)",
+        "Scope is AI Security for End Users only; homegrown apps and agents are out of scope — do not draw them"
+      ]
+    },
+    "ai-genai-security": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "users",
+          "pop",
+          "saas",
+          "mgmt"
+        ],
+        "mods": [
+          "ai",
+          "sse"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "us2"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "AI Usage Discovery builds the inventory from Internet Firewall events the Cato Cloud already processes.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "The User Interaction Policy inspects each prompt at the PoP: monitor, anonymise or block, per interaction.",
+            "marks": [
+              "genai"
+            ]
+          },
+          {
+            "t": "The browser plugin enforces the same outcomes on managed devices Cato traffic never crosses.",
+            "marks": [
+              "users"
+            ]
+          },
+          {
+            "t": "Every decision is attributed and lands in the Overview and AI Users dashboards as evidence.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Persona-lane diagram, three users left, PoP centre, three destinations + evidence right. LEFT (x 14, w 150): nd 'Priya — office' sub 'Site behind a Socket' (icon building) → PoP via fl-tun; nd 'Marcus — remote' sub 'Cato Client · pastes PII' (icon laptop) → PoP via fl-tun; nd 'Omar — contractor' sub 'Browser plugin, off-net' (icon browser, cls 'dash') → this one does NOT go through the PoP: draw a fl-https line to the destination row with a small nd 'Browser plugin' badge on it labelled 'same policy, in the browser'. CENTRE popBox (x 230–500) 'Cato PoP', sub 'AI Security · User Interaction Policy', with chipRow inside: 'source · AI app · engine profile · action'. Optional ring() tube under it labelled 'Global Private Backbone' (carry-over from the current diagram) — if room is tight, drop the ring, keep the PoP. RIGHT (x 560, w 186) three destinations and one evidence box: 'Sanctioned GenAI' sub 'Approved AI assistant' (icon ai) — fl-flow from PoP, green pill 'allowed · logged'; 'Embedded SaaS AI' sub 'Copilots inside SaaS' (icon chat) — fl-flow, amber pill 'anonymised'; show Marcus's PII lane specifically ending here: label the flow 'PII masked in-flight'; 'Shadow AI apps' sub 'Unsanctioned tools' (icon ai, cls 'soft') — fl-down from PoP ending in xmark(), red pill 'blocked'; 'Dashboards & evidence' sub 'Overview · AI Users · Events' (icon chart) fed by fl-net static from the PoP. Three verdict colours must be distinct: green allow, amber anonymise, red block. ≤ 12 nodes.",
+        "vb": "0 0 760 560"
+      },
+      "title": "GenAI Security for End Users: one policy, three verdicts",
+      "desc": "Office, remote and off-net users reach sanctioned, embedded and shadow GenAI through the Cato PoP or the browser plugin, where the User Interaction Policy decides per prompt — allow and log, anonymise sensitive values, or block — and every decision lands in the dashboards as evidence.",
+      "legend": [
+        [
+          "tun",
+          "Socket / Client to the PoP"
+        ],
+        [
+          "https",
+          "Browser plugin, off-net"
+        ],
+        [
+          "flow",
+          "Allowed or anonymised prompt"
+        ],
+        [
+          "down",
+          "Blocked — nothing reaches the AI vendor"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Personas: 'Priya — office · Site behind a Socket', 'Marcus — remote · Cato Client · pastes PII', 'Omar — contractor · Browser plugin, off-net'",
+        "PoP label: 'AI Security · User Interaction Policy'; rule = source + AI applications + engine profile + action + optional notification template",
+        "Four actions: Monitor, Anonymize and Monitor, Anonymize and Block, Block — the diagram's three lanes collapse these to allowed / anonymised / blocked (current legend wording: 'Allowed — prompt inspected & logged', 'Anonymised — sensitive values masked, prompt proceeds', 'Blocked — nothing reaches the AI vendor')",
+        "Destinations: 'Sanctioned GenAI · Approved AI assistant', 'Embedded SaaS AI · Copilots inside SaaS', 'Shadow AI apps · Unsanctioned tools'; evidence 'Dashboards & evidence · Overview · AI Users · Events'",
+        "Browser plugin: Chrome/Edge/Chromium, deployable via Intune, enforces block / anonymise / engage on managed devices outside Cato coverage",
+        "'Global Private Backbone' ring on the current diagram — keep if space allows",
+        "Licence: AI Security for End Users, separate from AI Security for Apps — nothing on the diagram may imply apps/agents are covered"
+      ]
+    },
+    "ai-agentic-security": {
+      "spotlight": {
+        "hl": [
+          "users",
+          "ai",
+          "pop",
+          "cloud",
+          "mgmt"
+        ],
+        "mods": [
+          "ai"
+        ],
+        "flows": [
+          {
+            "p": "us1"
+          },
+          {
+            "p": "ag1"
+          },
+          {
+            "p": "ag2"
+          },
+          {
+            "p": "cl-aws"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Scout scans developer endpoints for local coding agents, their configurations and MCP servers.",
+            "marks": [
+              "users"
+            ]
+          },
+          {
+            "t": "Managed agents on Bedrock, AI Foundry and Copilot Studio are discovered and traced via platform APIs.",
+            "marks": [
+              "cloud"
+            ]
+          },
+          {
+            "t": "Custom agents route their LLM calls via the AI Firewall proxy; Guards inspect prompts, outputs and tool calls.",
+            "marks": [
+              "ai",
+              "pop"
+            ]
+          },
+          {
+            "t": "Every session is recorded with violations tagged inline in Local Agents and Agent Sessions.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Funnel: three agent types on the left converge on one control point, which fans out to three outcomes. LEFT (x 14, w 170): nd 'Local agents' sub 'Coding agents · laptops' (icon laptop) with a mono f-m under it 'via Scout + Agent Controls'; nd 'Managed agents' sub 'Bedrock · Copilot Studio' (icon cloud/cpu) with f-m 'via platform APIs'; nd 'Custom agents' sub 'LangChain · Agents SDK' (icon code) with f-m 'via AI-FW proxy endpoint'. Each → centre via fl-https (agent HTTPS), the custom one labelled 'LLM base URL redirected'. CENTRE popBox (x 240–520, y 70–340) 'Cato AI Security', sub 'Agent Policy · AI-FW Guards'; inside, a tier 'FOUR INSPECTION POINTS' and chips 'Prompts' 'Outputs' 'Tool calls' 'Tool messages' (2×2), then f-s 'Inspects prompts · outputs · tool calls · tool messages'. RIGHT (x 570, w 176): nd 'Sanctioned systems' sub 'Repos · APIs · MCP tools' (icon db) — fl-flow from the box, green pill 'governed · allowed'; nd 'Risky action' sub 'Injected exfil attempt' (icon bolt, cls 'hot') — fl-down ending in xmark(), red pill 'blocked', with a small f-s note 'payload arrived in a tool message'; nd 'Session telemetry' sub 'Agent Sessions · audit · violations' (icon file) — fl-net static. Bottom strip (y ~470): three small chips 'Discover' 'Observe' 'Govern' (the page's workflow) with f-s 'Local Agents = inventory & posture · Agent Sessions = runtime behaviour'. ≤ 11 nodes. Note explicitly in the brief: local-agent discovery is endpoint scanning and managed discovery is platform APIs — neither is network traffic, so do not draw them as tunnels through a PoP.",
+        "vb": "0 0 760 560"
+      },
+      "title": "Securing local, managed and custom AI agents",
+      "desc": "Local coding agents found by Scout, managed agents discovered through platform APIs and custom agents proxied through the AI Firewall all meet one control point, where Agent Policy and Guards inspect prompts, outputs, tool calls and tool messages, pass governed actions, block violations and record every session for audit.",
+      "legend": [
+        [
+          "https",
+          "Agent interaction"
+        ],
+        [
+          "flow",
+          "Governed action — allowed"
+        ],
+        [
+          "down",
+          "Policy violation — blocked"
+        ],
+        [
+          "net",
+          "Session telemetry"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Three agent types with the page's examples: Local (coding agents on laptops; Scout + Agent Controls), Managed (AWS Bedrock · Azure AI Foundry · Microsoft Copilot Studio; platform APIs), Custom (LangChain · OpenAI Agents SDK · direct LLM API; AI-FW proxy endpoint via redirected LLM base URL + auth header)",
+        "Control point label: 'Cato AI Security · Agent Policy · AI-FW Guards'; four inspection points: prompts, outputs, tool calls, tool messages",
+        "Outcomes: 'Sanctioned systems · Repos · APIs · MCP tools' allowed; 'Risky action · Injected exfil attempt' blocked (indirect prompt injection through a tool response); 'Session telemetry · Agent Sessions · Audit · violations'",
+        "Discovery mechanisms are endpoint scanning (Scout, deployed via MDM: Intune, Jamf, Kandji; no TLS inspection, proxy or browser extension) and platform APIs — not network traffic",
+        "Two monitoring lenses: Local Agents (inventory & posture) and Agent Sessions (runtime behaviour)",
+        "Enforcement is documented at overview level only; the page's PoV runs monitor mode — the diagram may show a block (demo narrative) but the desc should not overclaim"
+      ]
+    },
+    "ai-homegrown-apps": {
+      "spotlight": {
+        "hl": [
+          "ai",
+          "cloud",
+          "pop",
+          "saas",
+          "mgmt"
+        ],
+        "mods": [
+          "ai"
+        ],
+        "flows": [
+          {
+            "p": "ag1"
+          },
+          {
+            "p": "ag2"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "cl-aws"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "A homegrown chatbot, copilot or RAG app sends every prompt to a Cato Guard before it reaches a model.",
+            "marks": [
+              "ai"
+            ]
+          },
+          {
+            "t": "The engine's detectors redact PII and forward benign prompts; injection and jailbreak attempts are blocked.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Cleared requests reach OpenAI, Claude, Gemini, Bedrock or a self-hosted OpenAI-compatible model.",
+            "marks": [
+              "genai",
+              "cloud"
+            ]
+          },
+          {
+            "t": "Every session, verdict and analysis report is queryable in the Interaction Explorer; blocks alert the SOC.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Guard-in-the-path, strictly left-to-right. LEFT (x 14, w 150): nd 'Priya — app user' sub 'Benign prompt with PII' (icon user); below it cloud(…,'bad') or nd cls 'hot' 'Attacker' sub 'Injection · jailbreak' (icon bolt). Both → fl-https into nd 'Homegrown AI app' sub 'Chatbot · copilot · RAG' (icon code) at x ~190. From the app a single fl-flow into the CENTRE popBox (x 330–530, y 60–330) titled 'AI Security Guard', sub 'Proxy · API · AI Gateway', containing nd 'AI Security Engine · detectors' (icon ai) with f-s 'PII · secrets · injection · topics' and a mono chip 'Cato Cloud or Outpost'. From the Guard RIGHT: fl-flow to nd 'LLM providers' sub 'OpenAI · Claude · Gemini' (icon ai) with green pill 'PII redacted · forwarded'; fl-flow to nd 'Self-hosted models' sub 'OpenAI-compatible API' (icon cpu, cls 'soft'); the attacker's lane terminates inside the Guard at an xmark() with red pill 'blocked at the Guard'. BOTTOM-RIGHT two evidence boxes: nd 'Interaction Explorer' sub 'Sessions · detections' (icon file) via fl-net static from the Guard; nd 'SOC / XDR' sub 'Blocked-event alerts' (icon shield) via a thin fl-hot labelled 'alert'. Optionally a tiny chip 'Playground · test first' under the engine. ≤ 11 nodes. Make the Guard visibly sit BETWEEN app and models — that is the whole story.",
+        "vb": "0 0 760 560"
+      },
+      "title": "A Cato Guard in the homegrown AI interaction path",
+      "desc": "Every prompt and response from a homegrown chatbot, copilot or RAG app passes a Cato AI Security Guard — Proxy, API or AI Gateway — whose engine redacts PII and forwards benign prompts to the model, blocks injection and jailbreaks, alerts the SOC and records the whole session in the Interaction Explorer.",
+      "legend": [
+        [
+          "https",
+          "User or attacker prompt"
+        ],
+        [
+          "flow",
+          "Benign prompt — PII redacted, forwarded"
+        ],
+        [
+          "down",
+          "Injection / jailbreak — blocked at the Guard"
+        ],
+        [
+          "hot",
+          "Alert to SOC / XDR"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Personas: 'Priya — app user · Benign prompt with PII'; 'Attacker · Injection · jailbreak'",
+        "App node: 'Homegrown AI app · Chatbot · copilot · RAG'",
+        "Guard: three deployment types exactly — Proxy (inline, Cato acts), API (app gets a verdict and enforces), AI Gateway (single gateway-type guard; LiteLLM is the documented integration since July 2026; each LiteLLM virtual key maps to a Homegrown Agent)",
+        "Engine hosted 'Cato Cloud or Outpost' (Outpost = inspection stays in the customer environment; licensing not publicly documented — do not add detail)",
+        "Model side: 'LLM providers · OpenAI · Claude · Gemini' (page also lists Azure OpenAI and Bedrock) and 'Self-hosted models · OpenAI-compatible API'",
+        "Evidence: 'Interaction Explorer · Sessions · detections'; 'SOC / XDR · Blocked-event alerts'",
+        "Actions in the Guards Interaction Policy: Block, Anonymize, Monitor; stricter action wins when several rules match",
+        "Current diagram has a lane-info class for the SOC alert — keep a distinct (hot/highlight) line for it"
+      ]
+    },
+    "ai-legal-genai": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "users",
+          "pop",
+          "saas",
+          "mgmt"
+        ],
+        "mods": [
+          "ai"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "m2"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Fee-earners' prompts already cross a Cato PoP; nothing is deployed on their laptops.",
+            "marks": [
+              "branch",
+              "users"
+            ]
+          },
+          {
+            "t": "The User Interaction Policy redacts client identifiers per IdP group, mirroring the firm's ethical walls.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Sanctioned assistants answer with client names masked; a restricted matter team's GenAI use is blocked.",
+            "marks": [
+              "genai"
+            ]
+          },
+          {
+            "t": "Every redacted, monitored or blocked interaction is exportable as outside-counsel evidence.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Same persona-lane layout as ai-genai-security so the two read as siblings, but with the law-firm facts. LEFT (x 14, w 160): nd 'Rachel — associate' sub 'On-net · client IDs redacted' (icon user); nd 'Marcus — partner' sub 'Personal-tier tool' (icon laptop); nd 'Restricted team' sub 'Ethical-walled matter' (icon users, cls 'dash') with a mono chip 'IdP group · OCG: no AI'. All three → CENTRE popBox (x 240–510) 'Cato PoP', sub 'AI Security · User Interaction Policy' via fl-tun; inside the PoP a tier 'RULE SCOPE' and chips 'IdP group' 'AI app set' 'Engine profile' 'Action'. RIGHT (x 560, w 186): nd 'Sanctioned firm AI' sub 'Client IDs redacted' (icon ai) — fl-flow, green pill 'allowed · redacted'; nd 'Public GenAI' sub 'Personal-tier tools' (icon ai, cls 'soft') — fl-flow, amber pill 'anonymised · monitored'; nd 'Any GenAI app' sub 'Off-limits for team' (icon ai, cls 'soft') — fl-down ending in xmark(), red pill 'blocked · notified'; nd 'AI dashboards & evidence' sub 'Report · AI Users · Events' (icon chart) via fl-net static. Keep the 'Global Private Backbone' ring if room allows. Under the PoP a one-line f-s: 'rules scoped per IdP group mirror the firm's ethical walls'. ≤ 12 nodes. No real firm or client names ('Project Meridian' is the page's fictional team — may be used as a sub-label).",
+        "vb": "0 0 760 560"
+      },
+      "title": "GenAI for fee-earners with privilege intact",
+      "desc": "Fee-earners' prompts cross the Cato PoP where the User Interaction Policy, scoped per IdP group like the firm's ethical walls, redacts client identifiers for the sanctioned assistant, anonymises personal-tier use and blocks GenAI for a restricted matter team — each decision logged as client-facing evidence.",
+      "legend": [
+        [
+          "tun",
+          "Fee-earner traffic to the PoP"
+        ],
+        [
+          "flow",
+          "Allowed — client identifiers redacted"
+        ],
+        [
+          "down",
+          "Blocked — restricted team / OCG"
+        ],
+        [
+          "net",
+          "Evidence to dashboards"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Personas: 'Rachel — associate · On-net · redacted', 'Marcus — partner · Personal-tier tool', 'Restricted team · Ethical-walled matter'",
+        "PoP: 'AI Security · User Interaction Policy'; rule = IdP-group source + AI application set + engine profile + action (+ notification); per-client scoping via IdP groups mirrors ethical walls",
+        "Destinations: 'Sanctioned firm AI · Client IDs redacted'; 'Public GenAI · Personal-tier tools'; 'Any GenAI app · Off-limits for team'; evidence 'AI dashboards & evidence · Report · AI Users · Events'",
+        "Verdicts (current legend): 'Allowed — client identifiers redacted', 'Anonymised — personal-tier use, monitored', 'Blocked — restricted client team / OCG'",
+        "Action names: Monitor, Anonymize and Monitor, Anonymize and Block, Block; the demo rule is 'Anonymize and Monitor'",
+        "DLP backstop: recommended Legal profile (ML classifiers for agreements, patents, court documents, powers of attorney) against the Generative AI Tools category — optional footnote chip, not a node",
+        "Prerequisite TLS Inspection at account level; UIP rules take precedence over TLS bypass rules; QUIC block rule must stay enabled — prose facts, not diagram labels"
+      ]
+    },
+    "ai-eu-ai-act": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "users",
+          "pop",
+          "saas",
+          "mgmt",
+          "xops"
+        ],
+        "mods": [
+          "ai",
+          "sse"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "eg-genai"
+          },
+          {
+            "p": "m2"
+          },
+          {
+            "p": "spine"
+          }
+        ],
+        "steps": [
+          {
+            "t": "EU sites, the hybrid workforce and UK users whose AI output is used in the EU all cross a Cato PoP.",
+            "marks": [
+              "branch",
+              "users"
+            ]
+          },
+          {
+            "t": "Shadow AI Discovery builds the deployer's AI inventory passively, without reading prompt content.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "The User Interaction Policy allows, anonymises or blocks per prompt; org-classified prohibited use is blocked.",
+            "marks": [
+              "genai"
+            ]
+          },
+          {
+            "t": "Events, Audit Trail and SIEM export are the supporting evidence; risk classification stays with governance.",
+            "marks": [
+              "mgmt",
+              "xops"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "Persona-lane sibling of ai-genai-security with the Act's scope facts. LEFT (x 14, w 170): nd 'Madrid Office' sub 'Socket · EU deployer' (icon building) → fl-tun; nd 'Hybrid workforce' sub 'Cato Client · ZTNA' (icon laptop) → fl-tun; nd 'London HQ — UK' sub 'Output used in the EU' (icon building, cls 'soft') with a mono chip 'Art 2(1)(c)' → fl-tun. CENTRE popBox (x 240–510) 'Cato PoP', sub 'TLS inspection · User Interaction Policy'; inside, chips 'Shadow AI Discovery' 'User Access Policy' 'Interaction Policy' and f-s 'discovery first, policy second'. RIGHT (x 560, w 186): nd 'Sanctioned AI' sub 'Approved · risk-scored' (icon ai) — fl-flow, green pill 'allowed · inspected'; nd 'Unsanctioned AI' sub 'Monitor · anonymise' (icon ai, cls 'soft') — fl-flow, amber pill 'anonymised'; nd 'Prohibited-use AI' sub 'Org-classified · blocked' (icon ai, cls 'soft') — fl-down ending in xmark(), red pill 'blocked'. BOTTOM-RIGHT grey evidence lane: nd 'CMA — evidence' sub 'AI dashboards · Events export' (icon chart) via fl-net static, and a second small nd 'Audit Trail · SIEM feed' (icon db) chained from it, with f-m note 'supporting evidence — not the AI system's own logs'. Bottom-left tier 'STAYS WITH GOVERNANCE' and three mono chips 'Risk classification' 'FRIA · Art 27' 'Conformity · docs' to keep the honest-mapping promise on the picture. ≤ 13 nodes. Keep the 'Global Private Backbone' ring between the edges and the PoP if space allows.",
+        "vb": "0 0 760 560"
+      },
+      "title": "EU AI Act readiness from the network: inventory, control, evidence",
+      "desc": "AI traffic from EU sites, the hybrid workforce and UK users whose output is used in the Union crosses a Cato PoP where Shadow AI Discovery builds the deployer's inventory and the User Interaction Policy allows, anonymises or blocks per prompt, with attributable events, Audit Trail and SIEM export as supporting evidence while risk classification stays with governance.",
+      "legend": [
+        [
+          "tun",
+          "Site / Client to the PoP"
+        ],
+        [
+          "flow",
+          "Allowed or anonymised prompt"
+        ],
+        [
+          "down",
+          "Blocked — org-classified prohibited use"
+        ],
+        [
+          "net",
+          "Evidence to the CMA / SIEM"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Edges: 'Madrid Office · Socket · EU deployer', 'Hybrid workforce · Cato Client · ZTNA', 'London HQ — UK · Output used in the EU' (Art 2(1)(c) output-based trigger)",
+        "PoP: 'TLS inspection · User Interaction Policy'; Shadow AI Discovery is passive (does not block by default, does not inspect prompt content); User Access Policy is evaluated before Interaction Policies",
+        "Destinations: 'Sanctioned AI · Approved · risk-scored', 'Unsanctioned AI · Monitor · anonymise', 'Prohibited-use AI · Org-classified · blocked' — the word 'org-classified' is load-bearing: the legal classification is the customer's, not Cato's",
+        "Evidence: 'CMA — evidence · AI dashboards · Events export' and 'Audit Trail · SIEM feed' (grey lane); current legend: 'Allowed — prompt inspected & logged', 'Monitored / anonymised — sensitive values masked', 'Blocked — org-classified prohibited use'",
+        "Retention caveat: network events are supporting evidence, never the AI system's own logs (Art 26 ≥ 6 months); Cato Data Lake default 3 months, extendable by licence — footnote only",
+        "Dates on the page (do not put on the diagram): general application 2 Aug 2026; Annex III high-risk from 2 Dec 2027; Annex I from 2 Aug 2028; fines €35M/7%, €15M/3%, €7.5M/1%",
+        "Cato does not make anyone 'AI Act compliant' — no label may say 'compliant'"
+      ]
+    }
+  }
+}

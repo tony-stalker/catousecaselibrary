@@ -1,0 +1,622 @@
+{
+ "category": "access",
+ "pages": {
+  "access-third-party": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "dc",
+     "cloud",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "cl-az"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Contractors and suppliers connect with the Cato Client or a clientless browser portal, never a VPN.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "The nearest PoP pairs IdP identity with live device posture, re-checked throughout the session.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Compliant users reach only their named apps in the DC and cloud; anything unlisted falls to the block.",
+      "marks": [
+       "dc",
+       "cloud"
+      ]
+     },
+     {
+      "t": "Every allow and block lands in Events attributed to the contractor's identity, not an IP address.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Posture-and-identity outcome diagram, 760x560, left-to-right. LEFT column, three user lanes (nd, icon laptop/user): 'Authorised user' sub 'Compliant device' (green pill 'WAN + internet'); 'Authorised user' sub 'Non-compliant device' (amber pill 'Internet only'); 'Unauthorised user' sub 'Non-compliant device' (red pill 'Blocked'). All three lanes converge on CENTRE popBox 'Cato PoP' sub 'SPACE · ZTNA · FWaaS · CASB · DLP' with a small chip row inside: 'Identity (IdP group)' · 'Device posture' · 'Continuous re-check'. RIGHT column, three destinations behind a backbone ring label 'Global Private Backbone': 'London DC' sub 'Socket X1500 · apps' (icon server); 'Cloud DC — Azure' sub 'Cato vSocket' (icon db); 'SaaS & Internet' sub 'M365 · Salesforce · WWW' (icon globe). Flows: lane 1 fl-tun to PoP then fl-flow arrows to London DC, Azure and SaaS (all allowed). Lane 2 fl-tun to PoP then fl-flow to SaaS only; its paths toward London DC and Azure drawn fl-down with xmark at the PoP edge, label 'WAN blocked'. Lane 3 fl-down ending at the PoP boundary with xmark, label 'geo / user / posture rule'. Add tier labels 'WHO IS CONNECTING' (left) and 'WHAT THEY MAY REACH' (right). Bottom strip (optional mono): 'Client Connectivity Policy → WAN Firewall → Device Posture — first match, implicit block'. Max 12 nodes. UK English, no vendor logos."
+   },
+   "title": "Least-privileged third-party access",
+   "desc": "Three identical-looking connections get three different outcomes: identity and live device posture at the PoP decide whether a contractor reaches named apps, internet only, or nothing at all.",
+   "legend": [
+    [
+     "flow",
+     "WAN + internet — full access"
+    ],
+    [
+     "https",
+     "Internet only — WAN blocked"
+    ],
+    [
+     "down",
+     "Blocked — geo / user / posture rules"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Three lanes: Authorised+Compliant = WAN+internet; Authorised+Non-compliant = internet only, WAN blocked; Unauthorised+Non-compliant = blocked",
+    "PoP sub-label 'SPACE · ZTNA · FWaaS · CASB · DLP'",
+    "London DC · Socket X1500 · apps",
+    "Cloud DC — Azure · Cato vSocket",
+    "SaaS & Internet · M365 · Salesforce · WWW",
+    "Global Private Backbone"
+   ]
+  },
+  "access-hybrid-workforce": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "backbone",
+     "dc",
+     "saas"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya connects from home or a hotel with the always-on Cato Client, signing in with MFA/SSO via the IdP.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "At her desk the Client detects the Cato Socket and switches to office mode; the same rule base applies.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Every path enters the nearest PoP for full single-pass inspection; Microsoft 365 and SaaS egress locally.",
+      "marks": [
+       "pop",
+       "saas"
+      ]
+     },
+     {
+      "t": "Private apps behind the London DC Socket are reached over the backbone, with no VPN concentrator.",
+      "marks": [
+       "dc"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "One user, three chairs, 760x560. LEFT column three nodes for the same person: 'Priya — Office London' sub 'rides the site Socket · office mode' (icon building); 'Priya — Home Reading' sub 'Cato Client · always-on' (icon laptop); 'Priya — Hotel Dubai' sub 'Cato Client · always-on' (icon phone/laptop). CENTRE two map-pin PoPs on a backbone ring labelled 'Global Private Backbone': fpin 'London PoP' sub 'ZTNA · FWaaS · full inspection' and fpin 'Dubai PoP' sub 'same policy · same inspection'. RIGHT: 'London DC' sub 'Socket X1500 · apps' (icon server) and 'Microsoft 365 & SaaS' sub 'egress at the nearest PoP' (icon globe/cloud). Flows: Office London → London PoP fl-tun (label 'Socket tunnel'); Home Reading → London PoP fl-tun (label 'Client tunnel'); Hotel Dubai → Dubai PoP fl-tun; Dubai PoP → London PoP along the ring fl-flow (backbone); London PoP → London DC fl-tun; London PoP → SaaS fl-https (label 'local egress'); Dubai PoP → SaaS fl-https. One pill above the PoPs: 'One identity-driven policy — written once'. Optional small chip row under London PoP: 'ZTNA' 'FWaaS' 'SWG' 'IPS' 'anti-malware' 'TLSi'. Total ≤9 nodes. No concentrator drawn (the absence is the point) — if space allows a greyed, struck-through 'VPN concentrator' outside the ring labelled 'retired'."
+   },
+   "title": "Same user, same policy, nearest front door",
+   "desc": "Whether Priya is at her London desk, at home in Reading or in a Dubai hotel she enters the nearest Cato PoP and hits exactly the same identity-driven policy, with SaaS egressing locally and private apps reached over the backbone.",
+   "legend": [
+    [
+     "tun",
+     "Client or Socket tunnel to the nearest PoP"
+    ],
+    [
+     "flow",
+     "Backbone between PoPs"
+    ],
+    [
+     "https",
+     "Local SaaS egress"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Three Priya locations: Office London (site Socket · office mode), Home Reading (Client · always-on), Hotel Dubai (Client · always-on)",
+    "London PoP 'ZTNA · FWaaS · full inspection'; Dubai PoP 'Same policy · same inspection'",
+    "London DC · Socket X1500 · apps",
+    "Microsoft 365 & SaaS — egress at the nearest PoP",
+    "Global Private Backbone"
+   ]
+  },
+  "access-offshore-bpo": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "cloud",
+     "saas"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "cl-az"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Managed contractor laptops run the Cato Client with posture checks; unmanaged seats use a browser portal.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Both onramp at the nearest PoP, Johannesburg or Sydney, where ZTNA, RBI and CASB/DLP are enforced.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The private backbone carries repo, VDI and CRM traffic to where the apps are hosted, in the DC and Azure.",
+      "marks": [
+       "dc",
+       "cloud"
+      ]
+     },
+     {
+      "t": "DLP blocks source code and customer PII leaving approved apps for personal storage or webmail.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Offshore floor to in-region hosting, 760x560. LEFT: dashed site boundary (site()) 'Delivery centre' containing 'Offshore developers' sub 'Cato Client · posture' (icon laptop) and 'BPO contact centre' sub 'unmanaged · browser only' (icon browser). CENTRE-LEFT: fpin 'Nearest Cato PoP' sub 'Johannesburg · Sydney' with chip row 'ZTNA' 'RBI' 'CASB · DLP'. CENTRE: backbone ring 'Global Private Backbone'. RIGHT: 'London DC' sub 'Git repos · Socket X1500' (icon code/server); 'VDI & CRM' sub 'hosted on Azure vSocket' (icon db/cloud); 'Personal storage' sub 'consumer file sharing' (icon globe, cls dash). Flows: developers → PoP fl-tun (label 'posture-gated'); BPO → PoP fl-https (label 'portal · RBI pixels only'); PoP → ring → London DC fl-tun; PoP → ring → VDI & CRM fl-tun (label 'VDI · CRM'); PoP → Personal storage fl-down with xmark and pill(r) 'DLP: source-code upload blocked'. Tier labels 'OFFSHORE FLOOR', 'ENFORCED AT THE PoP', 'IN-REGION HOSTING'. Three lane legend kinds carried from the current caption: client ZTNA (tun), clientless + RBI (https), CASB/DLP block (down). ≤10 nodes."
+   },
+   "title": "Offshore developers and BPO agents on Cato",
+   "desc": "Developers and agents onramp at the nearest PoP where ZTNA, RBI and DLP are enforced; the backbone carries repo, VDI and CRM traffic to in-region hosting while DLP stops source code and PII leaving approved apps.",
+   "legend": [
+    [
+     "tun",
+     "Client ZTNA — posture-gated app access"
+    ],
+    [
+     "https",
+     "Clientless + RBI — pixels only, data off endpoint"
+    ],
+    [
+     "down",
+     "CASB/DLP — code & PII exfiltration blocked"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Nearest Cato PoP · Johannesburg · Sydney",
+    "Offshore developers · Cato Client · posture",
+    "BPO contact centre · unmanaged · browser only",
+    "London DC · Git repos · Socket X1500",
+    "VDI & CRM hosted on Azure vSocket",
+    "Personal storage / consumer file sharing · 'DLP: source-code upload blocked'",
+    "Global Private Backbone"
+   ]
+  },
+  "access-byod-clientless": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "dc",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us2"
+     },
+     {
+      "p": "us3"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Unmanaged devices use a browser on-ramp: the access portal, the Browser Extension or the Enterprise Browser.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Every session terminates at the Cato PoP; the device never receives a route, an address or a network path.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Published private apps and inspected SaaS are reached; DLP blocks downloads and RBI isolates risky web.",
+      "marks": [
+       "dc",
+       "saas"
+      ]
+     },
+     {
+      "t": "Each sign-in, app launch and block is one event attributed to a named user in the CMA.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Three browser on-ramps, one enforcement point, 760x560. LEFT: 'Unmanaged devices' sub 'contractor · BYOD · partner' (icon laptop) feeding three stacked small nodes: 'Access portal' sub 'any browser · no install'; 'Browser Extension' sub 'Chrome · SaaS access'; 'Enterprise Browser' sub 'SaaS + private apps'. Beneath them a soft side box 'Identity provider' sub 'Entra ID · SSO + MFA' (icon key) with a thin fl-flow dashed 'sign-in redirect · MFA' to the PoP. CENTRE: popBox 'Cato PoP' sub 'Portal · Extension · Enterprise Browser' with chip row 'ZTNA' 'CASB' 'DLP' 'RBI'; small mono under it 'no client · no enrolment · HTTPS · TLS-inspected'. RIGHT, four destinations: 'Published app' sub 'internal HR portal' (icon server) reached fl-https label 'browser stream'; 'SaaS apps' sub 'M365 · GenAI tools' (icon cloud) fl-https; 'Risky website' sub 'newly registered domain' (icon globe) reached via an 'RBI' box 'isolated session' with fl-flow purple-ish pill 'pixels only'; 'Rest of the WAN' sub 'unpublished · invisible' drawn cls dash, opacity .55, with fl-down + xmark 'no network path'. On the Published app lane add a small return arrow fl-down + xmark 'file download · DLP block'. Backbone ring behind the right column labelled 'Global Private Backbone'. ≤13 nodes. Note: current diagram says 'SAML + MFA' — use 'SSO + MFA' instead, since the identity page states Cato user SSO is OIDC."
+   },
+   "title": "Clientless ZTNA for unmanaged devices",
+   "desc": "Portal, Browser Extension and Enterprise Browser all terminate at the Cato PoP, so an unmanaged device reaches only published apps and inspected SaaS while RBI renders risky pages as pixels and DLP keeps files off the endpoint.",
+   "legend": [
+    [
+     "https",
+     "Allowed — published apps & inspected SaaS sessions"
+    ],
+    [
+     "flow",
+     "RBI — risky web rendered as pixels only"
+    ],
+    [
+     "down",
+     "Blocked — unpublished resources · downloads"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Three on-ramps: Access portal (any browser · no install), Browser Extension (Chrome · SaaS access), Enterprise Browser (SaaS + private apps)",
+    "Identity provider Entra ID with MFA (relabel SAML → SSO/OIDC)",
+    "PoP sub 'ZTNA · CASB · DLP · RBI'",
+    "Published app · Internal HR portal",
+    "SaaS apps · M365 · GenAI tools",
+    "Rest of the WAN · unpublished · invisible · no network path",
+    "Risky website · newly registered domain → RBI isolated session · pixels only",
+    "file download · DLP block"
+   ]
+  },
+  "access-remote-worker": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Brandon's always-on Cato Client tunnels to his nearest PoP, Santa Clara, with posture checked continuously.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Microsoft 365 egresses at the PoP; private apps ride the backbone to the London DC Socket.",
+      "marks": [
+       "pop",
+       "dc"
+      ]
+     },
+     {
+      "t": "Client and PoP instrument every segment, so a Fair score is pinned to device, last mile, backbone or app.",
+      "marks": [
+       "backbone"
+      ]
+     },
+     {
+      "t": "Experience Monitoring in the CMA shows per-user, per-app scores before the ticket is raised.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "One worker's path with four numbered measurement segments, 760x560, strictly left-to-right. LEFT: 'Brandon · home' sub 'Cato Client · always-on' (icon laptop) with a small 'Wi-Fi' icon; badge(1) on the node. Then 'Last mile · ISP' drawn as a soft/dash node or a labelled fl-tun span with badge(2). CENTRE: fpin 'Nearest Cato PoP' sub 'full inspection · egress' on a backbone ring 'Global Private Backbone'; badge(3) sits on the ring span between the PoP and the far side. RIGHT: 'Microsoft 365' sub 'SaaS · PoP egress' (icon cloud) and 'London DC' sub 'Socket · private apps' (icon server); badge(4) at each app-side endpoint. Flows: Brandon → PoP fl-tun (encrypted tunnel, label 'tunnel'); PoP → Microsoft 365 fl-https; PoP → ring → London DC fl-tun. Bottom strip (mono, four cells): '1 Device — CPU · RAM · Wi-Fi dBm' · '2 Last mile — tunnel loss · latency' · '3 Backbone — PoP to PoP' · '4 App side — TTFB · TCP · TLS'. Optional: tiny pill(g) 'Good' on segments 1,3,4 and pill(y) 'Fair' on segment 2 to echo the caption's 'loss at ② is the ISP' example — only if the caption is kept. ≤8 nodes."
+   },
+   "title": "Where a remote worker's experience is measured",
+   "desc": "Because Brandon's Client, his nearest PoP and the backbone are one platform, every segment of his path is instrumented, so a Fair score can be pinned to his device, his ISP, the backbone or the application.",
+   "legend": [
+    [
+     "tun",
+     "Encrypted tunnel — Client to nearest PoP, then backbone to each app"
+    ],
+    [
+     "https",
+     "SaaS egress at the PoP"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Four numbered segments: 1 Device — CPU · RAM · Wi-Fi dBm; 2 Last mile — tunnel loss · latency; 3 Backbone — PoP to PoP; 4 App side — TTFB · TCP · TLS",
+    "Brandon · home · Cato Client · always-on",
+    "Last mile · ISP",
+    "Nearest Cato PoP · full inspection · egress (prose: Santa Clara)",
+    "Microsoft 365 · SaaS · PoP egress",
+    "London DC · Socket · private apps",
+    "Global Private Backbone"
+   ]
+  },
+  "access-identity-design": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "SCIM provisions users and groups from Entra ID or Okta into the CMA; synced groups become the policy contract.",
+      "marks": [
+       "mgmt"
+      ]
+     },
+     {
+      "t": "Remote users sign in to the Cato Client by SSO with the IdP's MFA; the PoP validates the token.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Behind the Bristol Office Socket the Identity Agent or AD Query names the user behind each IP.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "The PoP enforces one identity-scoped policy; unidentified traffic only matches All Unidentified Users.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Control plane on top, data lanes below, 760x560. TOP ROW: 'Identity Provider' sub 'Entra ID · Okta' (icon key) → thin fl-flow dashed labelled 'SCIM provisioning · users & groups' → 'Cato Management App' sub 'users & groups via SCIM' (icon console); from the CMA a thin fl-flow dashed 'policy references IdP groups' down to the PoP. A second thin dashed line from the IdP to the remote user labelled 'SSO + MFA (OIDC)'. BOTTOM: three data lanes on the LEFT: site() 'Bristol Office' containing 'Priya · Socket X1500' (icon building) with a small 'Identity Agent' tag; 'Warehouse shared PC' sub 'no Client · no AD Query' (icon laptop, cls dash); 'Marcus — remote' sub 'Cato Client · SSO + MFA' (icon laptop). CENTRE-RIGHT: fpin/popBox 'Cato PoP' sub 'Identity-scoped policy' on a backbone ring 'Global Private Backbone'. Flows: Bristol → PoP fl-tun (label 'Identity Agent · ~30 s'); Marcus → PoP fl-tun (label 'Cato Client identity'); Warehouse PC → PoP fl-ha (amber) labelled 'All Unidentified Users' with mark 'warn' at the PoP. Inside/under the PoP two pills: pill(g) 'group-scoped rule matches' and pill(y) 'fallback rules only'. Tier labels 'CONTROL PLANE' and 'DATA PLANE'. ≤10 nodes."
+   },
+   "title": "One identity plane, every enforcement point",
+   "desc": "SCIM builds users and groups in the CMA, SSO with MFA authenticates the remote Client, the Identity Agent or AD Query names office users behind the Socket, and the PoP enforces the same group-scoped policy on all of them; the amber lane is the coverage gap the design closes.",
+   "legend": [
+    [
+     "tun",
+     "Identified & provisioned — group-scoped policy matches"
+    ],
+    [
+     "ha",
+     "Unidentified — only fallback rules apply"
+    ],
+    [
+     "flow",
+     "Control plane — SCIM, SSO + MFA, policy references"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Identity Provider · Entra ID · Okta",
+    "SCIM provisioning · users & groups → Cato Management App",
+    "SSO + MFA (OIDC) — not SAML",
+    "Bristol Office · Priya · Socket X1500 · Identity Agent",
+    "Warehouse shared PC · no Client · no AD Query → All Unidentified Users (amber lane)",
+    "Marcus — remote · Cato Client · SSO + MFA",
+    "Cato PoP · Identity-scoped policy",
+    "Global Private Backbone"
+   ]
+  },
+  "access-app-connectors": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "cloud",
+     "dc"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "cl-aws"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     }
+    ],
+    "steps": [
+     {
+      "t": "Users connect with the Cato Client or a browser; they never receive network access.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "The nearest PoP checks identity and device posture against the Private Access Policy.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Authorised sessions are brokered to the app through an outbound-only App Connector.",
+      "marks": [
+       "cloud",
+       "dc"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "fig": "cloudAppc",
+    "edits": [
+     [
+      "outbound only · TLS",
+      "outbound only · DTLS"
+     ],
+     [
+      "marketplace image · private IPs only · no inbound rules",
+      "marketplace image · internal addresses only · no inbound rules"
+     ]
+    ],
+    "drop": [],
+    "note": "Already implemented as _extract/diagram-kit/specs/access-app-connectors.js — keep as is. Optional extra edit if the kit allows: 'high availability' → 'high availability · up to 10 per group' (fact on page); 'Browser' stays (HTTP(S), RDP, SSH only)."
+   },
+   "title": "Private Access through App Connectors",
+   "desc": "Users reach private applications in cloud and in the data centre through outbound-only App Connectors; the PoP enforces the Private Access Policy before any session is brokered.",
+   "legend": [
+    [
+     "flow",
+     "Brokered session (DTLS tunnel)"
+    ],
+    [
+     "https",
+     "Client or browser to the PoP"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "DTLS (not TLS) outbound-only connector tunnel",
+    "Two connectors per group shown as 'App Connector' + 'App Connector 2 · high availability'",
+    "Internal addresses never exposed — users see the synthetic 100.65.x.x IP (prose; keep 'internal addresses only · no inbound rules')",
+    "Cloud (AWS · Azure · GCP · VPC/VNet · marketplace image) and private DC (VMware ESXi · KVM) both served by the same connector model",
+    "Existing page caption about probing and per-session connector selection stays"
+   ]
+  }
+ }
+}

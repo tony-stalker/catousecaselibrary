@@ -30,6 +30,15 @@ Vertical filter: Retail · Finance · Public Sector · Healthcare · Manufacturi
 Education · BPO · Legal.
 
 Start at `index.html` → the **Start here** journeys, search box, or clickable tags.
+Search is tokenised and ranked: each word is a prefix match (`ztn` finds ZTNA), a page must match
+every word, and hits score title ×6 · tags ×4 · summary ×2 · category ×2 · page text ×1, so a query
+shows one flat **Best matches** list (category chip on each card, `<mark>` highlights, a
+"matched in: title · tags · page text" line) instead of the category groups; the filter buttons
+show per-button hit counts while a query is active. `assets/js/search-synonyms.js` expands SE
+shorthand (`vpn replacement` → ZTNA, `sdwan` → SD-WAN; synonym hits score at half weight) and the
+empty state offers the six most-used tags.
+Filters live in the URL (`index.html?q=ZTNA&cat=Access&vert=Finance`, or `#cat-security`), so a
+filtered view is a shareable link; press `/` on any page to jump to the search box, Esc or × clears it.
 `whatsnew.html` lists every change.
 
 `planner.html` is an internal SE tool: describe an opportunity's existing estate and it composes
@@ -47,6 +56,8 @@ decks carry the demo click-path, so all deck tooling is stripped from the prospe
 ```bash
 bash _extract/verify.sh              # 8-check health pass (links, catalogue, SVG, console, mobile, search index, planner)
 python3 _extract/build-search.py     # regenerate the full-text search index after page edits
+python3 _extract/a11y-check.py       # accessibility lint (headings, th scope, link text, javascript: hrefs, nested controls, alt, dims, SVG titles, ids); --counts for the summary
+python3 _extract/checkfigures.py     # figure/image report (dims, lazy/eager, dup src, orphans, capture-wanted marker grammar); exit 1 only on broken src
 bash _extract/verify.sh --external   # + probe all external URLs (curl-based; see note)
 git add -A && git commit             # after a clean verify
 python3 _extract/whatsnew.py         # regenerate whatsnew.html, commit it
@@ -76,6 +87,20 @@ Conventions and gotchas:
 - **`_extract/BUILD-GUIDE.md`** is the authoring standard for new pages (structure,
   CSS classes, SVG diagram rules, allowed URLs). `assets/js/catalog.js` is the single
   source of truth driving the index, filters and pagers.
+- **Status model** (Oct 2026): every catalog entry carries `status: "ready" | "wip"` and
+  `added: "YYYY-MM-DD"` (the page's first commit — `git log --diff-filter=A --format=%as
+  -- usecases/«id».html | tail -1`). `app.js` shows the blue **New** badge while an entry is
+  ≤ 90 days old, then falls back to the field status (Field-ready / In development) on both
+  the index cards and the page hero — the hero's authored `badge-new` span is swapped at
+  runtime, so nothing needs re-editing when a page ages out. `ready` means the demo runbook
+  is complete and, where captures exist, they come from the demo tenant; `wip` flags gaps
+  on the page. Never hand-write `status: "new"` (legacy entries that still carry it are
+  treated as ready once aged out).
+- **Platform facts** (Oct 2026): PoP count, backbone SLA, customer count and the Gartner MQ
+  line live once in `assets/js/platform-facts.js` (`window.UC_FACTS`, each with source URL and
+  check date). Pages wrap the value in `data-fact="«key»"` and app.js fills it at load — the
+  index "Platform at a glance" strip is the reference use. Update the file, not the pages;
+  see BUILD-GUIDE "Platform facts".
 - **`_extract/STALENESS.md`** — register of dated facts (EOL dates, licensing, KB-dependent
   claims) with recheck triggers. Update it when adding dated claims; review quarterly.
 - **Generic-library rules**: no customer names, no account IDs, no tenant-specific stats,

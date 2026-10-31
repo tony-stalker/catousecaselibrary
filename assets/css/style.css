@@ -121,6 +121,16 @@ h3 { font-size: 1.12rem; margin: 1.2em 0 .4em; }
 .hero.hero-home { padding: 72px 20px 56px; }
 .hero.hero-home h1 { max-width: none; }
 
+/* Platform at a glance (index hero) — values filled from assets/js/platform-facts.js */
+.facts-strip { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; margin: 22px 0 0; padding: 0; }
+.facts-strip li { display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 10px 16px; border-radius: var(--radius); background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); min-width: 140px; }
+.facts-strip .fact-value { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; color: #fff; line-height: 1.2; }
+.facts-strip .fact-label { font-size: .78rem; color: #c6d8d1; }
+.facts-strip .fact-note { display: block; flex: 1 1 100%; background: none; border: 0; padding: 2px 0 0; min-width: 0; font-size: .76rem; color: #9fb3ac; }
+.facts-strip .fact-note code { font-size: .74rem; color: #c6d8d1; background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 6px; }
+@media (max-width: 480px) { .facts-strip li { flex: 1 1 calc(50% - 5px); min-width: 0; padding: 8px 12px; } .facts-strip .fact-value { font-size: 1.1rem; } }
+@media print { .facts-strip li { background: none; border-color: #999; } .facts-strip .fact-value, .facts-strip .fact-label, .facts-strip .fact-note { color: #000; } }
+
 /* ---------- Chips / badges / tags ---------- */
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -475,6 +485,17 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
   background: var(--surface); color: var(--ink);
 }
 .filter-bar input[type="search"]:focus { outline: 2px solid var(--green-300); border-color: var(--green-500); }
+.filter-bar .search-wrap { position: relative; display: flex; flex: 1 1 260px; }
+.filter-bar .search-wrap input[type="search"] { flex: 1 1 auto; width: 100%; padding-right: 40px; }
+.filter-bar .search-wrap input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.search-clear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%; border: 0; cursor: pointer;
+  font: inherit; font-size: 1.15rem; line-height: 1; color: var(--ink-3);
+  background: transparent; display: inline-flex; align-items: center; justify-content: center;
+}
+.search-clear:hover, .search-clear:focus-visible { background: var(--green-050); color: var(--green-700); outline: none; }
+.search-clear[hidden] { display: none; }
 .filter-btn {
   font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer;
   padding: 8px 15px; border-radius: 999px; border: 1px solid var(--hairline);
@@ -504,6 +525,25 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
 .category-h { display: flex; align-items: baseline; gap: 12px; margin: 40px 0 16px; }
 .category-h:first-of-type { margin-top: 0; }
 .category-h .cat-count { font-size: .85rem; color: var(--ink-3); }
+
+/* search v2 (A11): ranked flat results, highlights, "matched in", per-button counts, empty state */
+.uc-card mark, .uc-empty mark { background: #fff3b0; color: inherit; padding: 0 2px; border-radius: 3px; }
+.uc-card .tag.tag-hit { background: var(--green-050); border-color: var(--green-500); color: var(--green-700); font-weight: 600; }
+.uc-card .uc-matched { font-size: .76rem; color: var(--ink-3); letter-spacing: .01em; }
+.filter-btn .btn-count {
+  display: inline-block; margin-left: 7px; min-width: 20px; padding: 0 6px; border-radius: 999px;
+  font-size: .74rem; font-weight: 700; line-height: 18px; text-align: center;
+  background: var(--green-050); color: var(--green-700);
+}
+.filter-btn.active .btn-count { background: rgba(255,255,255,.22); color: #fff; }
+.filter-btn.is-empty { opacity: .55; }
+.filter-btn.is-empty .btn-count { background: var(--hairline); color: var(--ink-3); }
+.uc-empty { text-align: center; color: var(--ink-2); }
+.uc-empty p { margin: 0 0 10px; }
+.uc-empty .uc-empty-label { font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin: 18px 0 8px; }
+.uc-empty .uc-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.uc-empty button.tag { font: inherit; font-size: .78rem; cursor: pointer; }
+.uc-empty button.tag:hover, .uc-empty button.tag:focus-visible { background: var(--green-050); color: var(--green-700); border-color: var(--green-500); outline: none; }
 
 /* ---------- Prev / next pager ---------- */
 .pager { display: flex; gap: 14px; margin-top: 48px; }
@@ -647,9 +687,15 @@ table.data td.num { font-variant-numeric: tabular-nums; text-align: right; }
 
   /* Filter buttons — navy pill is invisible on a navy page */
   :root[data-theme="dark"] .filter-btn.active { background: #0b6e57; border-color: #0b6e57; color: #fff; }
+  :root[data-theme="dark"] .search-clear:hover, :root[data-theme="dark"] .search-clear:focus-visible { background: rgba(255,255,255,.1); color: #d9efe7; }
   :root[data-theme="dark"] .tag-vert { background: var(--navy-700); }
   :root[data-theme="dark"] .uc-card .tag-vert:hover { background: #1a4a60; }
   :root[data-theme="dark"] .uc-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,.35), 0 12px 32px rgba(0,0,0,.4); }
+  :root[data-theme="dark"] .uc-card mark, :root[data-theme="dark"] .uc-empty mark { background: #5a4a0f; color: #ffe9a3; }
+  :root[data-theme="dark"] .uc-card .tag.tag-hit { background: #0e3a2d; border-color: #2e6b58; color: #7ee0bf; }
+  :root[data-theme="dark"] .filter-btn .btn-count { background: rgba(255,255,255,.08); color: #7ee0bf; }
+  :root[data-theme="dark"] .filter-btn.is-empty .btn-count { color: var(--ink-3); }
+  :root[data-theme="dark"] .uc-empty button.tag:hover, :root[data-theme="dark"] .uc-empty button.tag:focus-visible { background: #0e3a2d; color: #7ee0bf; border-color: #2e6b58; }
 
   /* Code blocks & phase player controls: keep them distinct from the page */
   :root[data-theme="dark"] pre.code { border: 1px solid var(--hairline); }

@@ -42,8 +42,15 @@
     <div class="meta-row">
       <span class="badge badge-ready">Field-ready — demo verified</span>
       <span class="badge badge-wip">In development — gaps flagged</span>
-      <span class="badge badge-new">New — added with this library</span>
+      <span class="badge badge-new">New — added in the last 90 days</span>
     </div>
+    <ul class="facts-strip" aria-label="Platform at a glance">
+      <li><span class="fact-value" data-fact="customers">4,800+</span><span class="fact-label">customers</span></li>
+      <li><span class="fact-value" data-fact="pops">100+</span><span class="fact-label">PoPs worldwide</span></li>
+      <li><span class="fact-value" data-fact="backboneSla">99.999%</span><span class="fact-label">backbone uptime SLA</span></li>
+      <li><span class="fact-value" data-fact="mqShort">Gartner MQ Leader, 3 years running</span><span class="fact-label">SASE Platforms, 2026</span></li>
+      <li class="fact-note">Platform facts as of <span data-fact="asOfLabel">30 Oct 2026</span> — sourced in <code>assets/js/platform-facts.js</code></li>
+    </ul>
   </div>
 </header>
 
@@ -109,7 +116,10 @@
   </div>
 
   <div class="filter-bar" role="search">
-    <input id="uc-search" type="search" placeholder="Search full page text — e.g. ZTNA, MPLS, DLP, ransomware…" aria-label="Search use cases">
+    <span class="search-wrap">
+      <input id="uc-search" type="search" placeholder="Search full page text — e.g. ZTNA, MPLS, DLP, ransomware… (press / to focus)" aria-label="Search use cases">
+      <button type="button" class="search-clear" aria-label="Clear search" title="Clear search (Esc)" hidden>&times;</button>
+    </span>
     <button class="filter-btn active" data-cat="All">All</button>
     <button class="filter-btn" data-cat="Access">Access</button>
     <button class="filter-btn" data-cat="Management">Management</button>
@@ -138,6 +148,8 @@
 
 <script src="assets/js/catalog.js"></script>
 <script src="assets/js/search-index.js"></script>
+<script src="assets/js/search-synonyms.js"></script>
+<script src="assets/js/platform-facts.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/deck-brand.js"></script>
 <script src="assets/js/deck-content.js"></script>

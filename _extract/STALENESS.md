@@ -13,7 +13,7 @@ build time (July 2026) from the sources cited on each page.
 | CVE-2024-3400, CVE-2024-47575 (FortiJump), CVE-2024-39717 (Versa), 2025 Concerto CVEs | palo-alto, fortinet, versa pages | Stable as history; add newer CVEs quarterly |
 | CISA KEV counts (26 Fortinet CVEs / 13 ransomware-linked) | migration-fortinet | Quarterly — counts grow |
 | FortiOS 7.6.3 removes SSL-VPN tunnel mode | migration-fortinet | Stable |
-| 2025 Gartner MQ (Cato Leader, Cloudflare Visionary, ~400 via Gartner) | migration-cloudflare | On next MQ publication (~annual) |
+| 2026 Gartner MQ for SASE Platforms (report 28 Jul 2026; Cato Leader third consecutive year; Cloudflare sole Visionary; the 2025 ~400-customer estimate is NOT restated — page says so) — updated 31 Oct 2026, brief _extract/research-briefs/platform-facts.md | migration-cloudflare, platform-facts.js | Jul–Aug 2027 — next MQ publication |
 | Cloudflare One Appliance limits (no fail-open, ~30s failover, no QoS) | migration-cloudflare(-policy) | Quarterly — vendor docs move |
 | Client OS list NOW includes "Android and Chromebook" (KB verified 23 Jul 2026 — iboss caveat softened accordingly); Google Workspace SCIM still not in documented lists | access-byod-clientless, migration-iboss | Quarterly — support lists grow |
 | AI Security: End Users and Apps are separate per-user licences; Enterprise Browser included in ZTNA licence | AI Security pages, access-byod-clientless | On licensing announcements |

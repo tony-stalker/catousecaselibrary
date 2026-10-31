@@ -1,0 +1,706 @@
+{
+ "category": "platform-demo",
+ "pages": {
+  "demo-platform-60": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "dc",
+     "mgmt"
+    ],
+    "mods": [
+     "sse",
+     "uztna",
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A remote user on the Cato Client and a site behind a Socket both enter the nearest PoP.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "The single-pass engine makes every decision there; segments 1 to 6 are that engine from six angles.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The flow leaves for the internet, a SaaS application or a private app behind an App Connector.",
+      "marks": [
+       "saas",
+       "dc"
+      ]
+     },
+     {
+      "t": "Segment 7 is what the same engine tells you afterwards: telemetry from every flow in one console.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "Scene-setting picture, 760x560. TOP RAIL (y 20-70): seven small nd boxes in a row, cls 'soft', titled '1 · SWG' s 'Internet FW · TLSi' | '2 · Threats' s 'IPS · Anti-Malware' | '3 · CASB' s 'Cloud apps · risk' | '4 · DLP' s 'Data types · rules' | '5 · ZTNA' s 'Identity · posture' | '6 · Connectors' s 'Private apps' | '7 · DEM' s 'Score · path'; tier label above: 'SEVEN ANGLES ON ONE ENGINE'. Rail boxes 1-6 sit directly above the PoP; box 7 is tinted (cls 'pop' or mint chip) and linked by a thin fl-dim line to the telemetry flow. LEFT (two ways in): nd 'Remote user' s ['Cato Client'] icon laptop at (20,200); nd 'Branch site' s ['Cato Socket'] icon building at (20,330). CENTRE: popBox (250,160,260,230) titled 'Cato PoP' sub 'single-pass engine · one policy', behind it a ring label 'Global Private Backbone'. RIGHT (three ways out): cloud 'Internet' sub 'web · categories' at (650,200); cloud 'SaaS apps' sub 'sanctioned · shadow' at (650,310); nd 'Private app' s ['via App Connector'] icon server at (580,400). FLOWS: fl-tun from Remote user and Branch site into the PoP (arrows); fl-flow from PoP to each of the three destinations (arrows). A dashed fl-dim line from the PoP up to rail box 7 labelled 'telemetry from every flow'. No red/blocked paths on this picture; all three exits allowed. Legend kinds: flow = inspected by the single-pass engine, telemetry = feeds Experience Monitoring."
+   },
+   "title": "One engine, seven angles",
+   "desc": "Two ways in and three ways out of one single-pass engine in the Cato PoP; segments one to six are decisions the engine makes on the flow and segment seven is what it reports about them afterwards.",
+   "legend": [
+    [
+     "flow",
+     "Flows inspected by the single-pass engine"
+    ],
+    [
+     "dim",
+     "Telemetry feeding Experience Monitoring"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Seven rail labels with their subtitles exactly as on the current diagram (1 · SWG … 7 · DEM)",
+    "\"seven angles on one engine\" and \"single-pass engine · one policy\" labels",
+    "Three exits: Internet (web · categories), SaaS apps (sanctioned · shadow), Private app (via App Connector)",
+    "\"telemetry from every flow\" label on the DEM link",
+    "Global Private Backbone named"
+   ]
+  },
+  "demo-swg": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya at home on the Cato Client and the Bristol Office behind its Socket reach the nearest PoP.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "TLS inspection, staged by category, lets the Internet Firewall match on user, category and application.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The verdict is Allow, Prompt or Block, and every match is written to Events with user, rule and action.",
+      "marks": [
+       "saas",
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: nd 'Priya — Cato Client' s ['Home broadband'] icon laptop at (20,150); site(20,300,170,120,'Bristol Office') containing nd 'X1500 Socket · users' icon building. CENTRE: popBox (250,110,250,330) 'Cato PoP — London' sub 'nearest PoP · same policy', ring behind labelled 'Global Private Backbone'. Inside the PoP two stacked nd boxes with badge(1)/badge(2): '1 · TLS inspection' s ['staged by category'] and '2 · Internet Firewall' s ['who · where · action']; pill under them 'Allow · Prompt · Block'. RIGHT (three destinations, one per verdict): nd 'Business SaaS' s ['Allow — category rule'] with mark 'ok' and pill g 'Allow'; nd 'Social media' s ['Prompt — user decides'] with mark 'warn' and pill y 'Prompt'; nd 'Gambling' s ['Block — risky category'] with xmark and pill r 'Block'. BOTTOM RIGHT: nd 'Monitor → Events' s ['user · rule · action'] icon console cls 'soft'. FLOWS: fl-tun from both sources into the PoP; fl-flow (green arrow) PoP→Business SaaS; fl-ha (amber) PoP→Social media; fl-down (red, ends at xmark before the node) PoP→Gambling; fl-dim dashed from the PoP to Events labelled 'every verdict'. Both sources must visibly hit the SAME engine (converge on box 1)."
+   },
+   "title": "Who, where, should they — in one pass",
+   "desc": "A remote Client user and a branch Socket site hit the same single-pass engine at the nearest PoP, where staged TLS inspection feeds a user- and category-aware Internet Firewall whose Allow, Prompt or Block verdict is recorded as an event.",
+   "legend": [
+    [
+     "flow",
+     "Allowed"
+    ],
+    [
+     "ha",
+     "Prompt — user acknowledges"
+    ],
+    [
+     "down",
+     "Blocked"
+    ],
+    [
+     "dim",
+     "Event written for every verdict"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Priya on the Cato Client over home broadband; Bristol Office with X1500 socket",
+    "Cato PoP — London, \"nearest PoP · same policy\"",
+    "Two engine stages in order: TLS inspection (staged by category) then Internet Firewall (who · where · action)",
+    "Exactly three actions: Allow · Prompt · Block, mapped to Business SaaS / Social media / Gambling",
+    "Monitor → Events carrying user · rule · action"
+   ]
+  },
+  "demo-threat-prevention": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "xops"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "atk"
+     },
+     {
+      "p": "spine"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya on the Cato Client and the Bristol Office Socket send every flow to the nearest PoP.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "The engine inspects each flow once against IPS, anti-malware, the cloud sandbox and DNS security.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Clean traffic continues; malware, exploits and C2 beacons are blocked at the PoP as attributed events.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "The same events feed the Threats Dashboard and, when they belong together, one XDR story.",
+      "marks": [
+       "xops"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: nd 'Remote user' s ['Priya · Cato Client'] icon laptop at (20,160); site box 'Bristol Office' with nd 'Socket X1500' icon building at (20,330). CENTRE: popBox (250,120,250,300) 'Cato PoP' sub 'IPS · NGAM · Sandbox · DNS' with a chipRow of the four engines inside (cls g): 'IPS','NG Anti-Malware','Sandbox','DNS security'; ring behind labelled 'Global Private Backbone'. RIGHT TOP: cloud 'Internet & SaaS' sub 'clean traffic continues' at (650,170). RIGHT BOTTOM: cloud cls 'bad' 'Attacker server' sub 'malware · exploit · C2' at (650,330) with an xmark on the path just before it. BOTTOM: two nd boxes side by side under the PoP: 'Threats Dashboard' s ['every verdict is an event'] icon chart; 'XDR story' s ['related events, one incident'] icon eye. FLOWS: fl-tun from both sources into the PoP; fl-flow PoP→Internet & SaaS (arrow); fl-down PoP→Attacker server terminated by xmark (and a thin fl-attack dashed from the attacker back toward the PoP to show the inbound attempt also stopped); fl-dim dashed from the PoP down to both telemetry boxes, with a short fl-dim between Dashboard and XDR story."
+   },
+   "title": "One pass, every engine, one verdict",
+   "desc": "Both sources reach one engine that inspects each flow once against IPS, anti-malware, sandbox and DNS security; clean traffic continues, threats are blocked at the PoP, and the resulting events build the Threats Dashboard and XDR stories.",
+   "legend": [
+    [
+     "flow",
+     "Clean traffic — inspected and forwarded"
+    ],
+    [
+     "down",
+     "Threat — blocked at the PoP"
+    ],
+    [
+     "dim",
+     "Telemetry — dashboard, events, stories"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Priya · Cato Client and Bristol Office Socket X1500",
+    "Engine list exactly: IPS · NGAM · Sandbox · DNS (no RBI, no FWaaS on this picture)",
+    "Attacker server labelled malware · exploit · C2",
+    "Threats Dashboard \"every verdict is an event\" and XDR story \"related events, one incident\"",
+    "Global Private Backbone named"
+   ]
+  },
+  "demo-casb": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-genai"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Every user and site already sends its traffic through the PoP, so the SaaS inventory builds from traffic.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "The engine identifies the cloud application inline, looks up its risk score and checks the tenant.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Activity decides the action: corporate tenant allowed, personal tenant blocked, risky app browse-only.",
+      "marks": [
+       "saas",
+       "genai"
+      ]
+     },
+     {
+      "t": "Inventory, scores and decisions land in the Cloud Apps Dashboard and the same event stream.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: site 'Bristol Office' with nd 'Socket X1500 — all traffic' icon building at (20,150); nd 'Remote user — Priya' s ['Cato Client'] icon laptop at (20,330). CENTRE: popBox (240,110,260,320) 'Cato PoP — single-pass engine' sub 'app ID · risk score · tenant · activity'; inside, a chipRow (cls g) 'App ID','Risk score','Tenant','Activity' to show the four look-ups. RIGHT (three outcomes, top to bottom): cloud 'Corporate tenant' sub 'Sanctioned — M365 · Box' with mark ok and pill g 'Allow · monitor'; cloud 'Personal tenant' sub 'Same app — unsanctioned' with xmark on the path and pill r 'Block'; cloud cls 'bad'(or amber) 'Risky shadow app' sub 'Browse OK · no uploads' with mark warn and pill y 'Upload blocked'. BOTTOM: nd 'Cloud Apps Dashboard' s ['inventory · risk · users · events'] icon chart cls 'soft' under the PoP. FLOWS: fl-tun from both sources into the PoP; fl-flow PoP→Corporate tenant (arrow); fl-down PoP→Personal tenant ending at xmark; fl-ha (amber) PoP→Risky shadow app (arrow, label 'browse only'); fl-dim dashed PoP→Dashboard labelled 'classification · decisions'."
+   },
+   "title": "Classify the application, score it, control the activity",
+   "desc": "The same single-pass engine identifies each cloud application inline, scores its risk and checks the tenant, then the activity decides the action: sanctioned tenant allowed, personal tenant blocked, risky application restricted, with every decision feeding the Cloud Apps Dashboard.",
+   "legend": [
+    [
+     "flow",
+     "Sanctioned tenant — allowed and monitored"
+    ],
+    [
+     "down",
+     "Personal tenant — blocked"
+    ],
+    [
+     "ha",
+     "Risky application — activity restricted"
+    ],
+    [
+     "dim",
+     "Classification and decisions to the dashboard"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Socket X1500 — all traffic; Remote user — Priya on the Cato Client",
+    "Engine sub-label: app ID · risk score · tenant · activity",
+    "Three outcomes: Corporate tenant (Sanctioned — M365 · Box) / Personal tenant (Same app — unsanctioned) / Risky shadow app (Browse OK · no uploads)",
+    "Cloud Apps Dashboard: inventory · risk · users · events",
+    "No GenAI logos; \"shadow AI\" may be named in text only"
+   ]
+  },
+  "demo-dlp": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas",
+     "mgmt"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Marcus uploads a spreadsheet from the Cato Client; the Bristol Office Socket sends the same kind of flow.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "Decrypted once under the TLS inspection policy, the engine asks one more question: does the content match?",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "The Data Control rule blocks the card-number upload to personal storage; the SharePoint upload is allowed.",
+      "marks": [
+       "saas"
+      ]
+     },
+     {
+      "t": "The incident, with user, file, matched data type and evidence, lands in Events and the dashboard.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: site 'Bristol Office' with nd 'Socket X1500' icon building at (20,150); nd 'Marcus · Cato Client' s ['Upload: client-list.xlsx'] icon laptop at (20,330) with a doc() mini-document beside it showing one highlighted 'no' span (card number). CENTRE: popBox (240,100,260,340) 'Cato PoP' sub 'TLS inspection · single-pass engine'; inside, nd 'Data Control rule' s ['Credit cards profile · Upload'] icon shield, with pill r 'Block · notify · event' beneath it; a thin tier label 'Same engine as SWG · IPS · CASB — one more decision' along the bottom edge of the PoP box. RIGHT: cloud 'Sanctioned storage' sub 'SharePoint · allowed' at (650,170) with mark ok; cloud 'Personal storage' sub 'Blocked · user notified' at (650,330) with xmark on the path before it. BOTTOM: nd 'Monitor → Events' s ['Data incident · evidence'] icon file cls 'soft', with a small lock icon to signal role-gated evidence. FLOWS: fl-tun from both sources into the PoP; fl-flow PoP→Sanctioned storage (arrow); fl-down PoP→Personal storage ending at xmark; fl-dim dashed PoP→Events labelled 'who · file · data type · action'."
+   },
+   "title": "Content inspection as one more decision in the single pass",
+   "desc": "An upload is decrypted once at the PoP and the Data Control rule reads its content against a profile; the sanctioned destination is allowed, the sensitive upload to personal storage is blocked with the user notified, and the incident with its evidence comes out of the same pass.",
+   "legend": [
+    [
+     "flow",
+     "Sanctioned destination — allowed"
+    ],
+    [
+     "down",
+     "Sensitive content to unsanctioned storage — blocked"
+    ],
+    [
+     "dim",
+     "Incident telemetry — Events, dashboard, evidence"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Marcus · Cato Client uploading client-list.xlsx",
+    "Data Control rule: Credit cards profile · Upload; action Block · notify · event",
+    "SharePoint sanctioned and allowed vs personal storage blocked and user notified",
+    "\"Same engine as SWG · IPS · CASB — one more decision\" line",
+    "Monitor → Events: Data incident · evidence (evidence is role-gated; do not claim audit logging of views on the diagram)"
+   ]
+  },
+  "demo-ztna": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya connects from two laptops; the Client evaluates the Device Posture Profile on each before any tunnel.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "The Client Connectivity Policy admits the compliant device; the failing one gets no tunnel, only an event.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "WAN Firewall rule 1 allows Finance plus posture to the ERP application behind the London DC Socket.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "Everything beneath rule 1 is the implicit block; both the allow and the block are events under her name.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: two user boxes: nd 'Priya · managed laptop' s ['Finance group · posture pass'] icon laptop with mark ok at (20,150); nd 'Priya · personal laptop' s ['Finance group · posture fail'] icon laptop with mark no at (20,340). TOP CENTRE control plane: nd cls 'dash' 'Policy inputs' s ['IdP groups · posture profile'] icon key at (260,30), connected by thin fl-dim (np:0) lines to the two policy boxes inside the PoP. CENTRE: popBox (240,120,270,320) 'Cato PoP' sub 'Single-pass engine · ZTNA'; inside, three stacked nd boxes: 'Client Connectivity Policy' s ['Posture fail · no tunnel'] icon lock (first gate); 'WAN Firewall rule 1' s ['Allow · Finance → ERP'] icon firewall with pill g 'Allow'; 'WAN Firewall' s ['Implicit block · the rest'] cls 'soft' with pill r 'Block'. RIGHT: site 'London DC' containing nd 'Socket X1500 · ERP app' icon server at (600,200). FLOWS: fl-tun from the managed laptop into the Client Connectivity box then on through rule 1 and across to the ERP (arrow, label 'allowed'); fl-down from the personal laptop ending at an xmark AT the Client Connectivity Policy box edge (it never enters the PoP engine or the WAN Firewall) with label 'no tunnel'; a thin fl-dim from the xmark to a small nd 'Events' s ['Client Connectivity block'] cls 'soft' at bottom. Nothing connects to the implicit-block box except the dashed fall-through from rule 1."
+   },
+   "title": "Identity and posture decide; the WAN Firewall enforces",
+   "desc": "One identity on two devices: the compliant laptop passes the Client Connectivity Policy and WAN Firewall rule 1 to reach the ERP behind the London DC Socket, while the device that fails posture never gets a tunnel and leaves a block event; the implicit block sits beneath the single allow.",
+   "legend": [
+    [
+     "tun",
+     "Identity + posture match — named allow rule"
+    ],
+    [
+     "down",
+     "Posture fails — no tunnel, Client Connectivity block event"
+    ],
+    [
+     "dim",
+     "Control plane: SCIM groups and posture profile referenced by the rules"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Priya twice: managed laptop (Finance group · posture pass) and personal laptop (Finance group · posture fail)",
+    "Client Connectivity Policy as the first gate: posture fail · no tunnel; the failing device never reaches the WAN Firewall",
+    "WAN Firewall rule 1: Allow · Finance → ERP; implicit block beneath it",
+    "London DC with Socket X1500 hosting the ERP app",
+    "Policy inputs: IdP groups · posture profile as thin grey control-plane lines",
+    "Do not put the 10-minute re-check interval on the diagram (prose only)"
+   ]
+  },
+  "demo-app-connectors": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "mgmt"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Marcus and a contractor both type app.example.intranet on the Cato Client; neither knows an internal address.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "The PoP evaluates the Private Access Policy; for Marcus, Cato DNS answers with a synthetic IP.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "His session is brokered over the connector’s outbound DTLS tunnel to the app in the acquired data centre.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "The contractor matches no rule, so the lookup is denied and the name does not resolve; nothing is reached.",
+      "marks": [
+       "users",
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560. LEFT: nd 'Marcus · Cato Client' s ['Finance group · posture pass'] icon laptop mark ok at (20,150); nd 'Contractor · Cato Client' s ['No matching rule'] icon laptop mark no at (20,340); a mono T label 'app.example.intranet' between them (both type the same name). TOP CENTRE control plane: nd cls 'dash' 'Private Access Policy' s ['group · posture · app'] icon key at (260,30) with a thin fl-dim (np:0) line down into the PoP. CENTRE: popBox (240,120,270,320) 'Cato PoP' sub 'ZTNA broker · Cato DNS'; inside two verdict boxes: 'Rule matched · Allow' s ['DNS returns synthetic IP'] pill g, and 'No rule · Block' s ['Domain does not resolve'] pill r. RIGHT: site 'Internal application' sub 'acquired DC · LAN' containing nd 'App Connector' s ['outbound DTLS · group'] icon appc at (580,170) and nd 'Internal application' s ['app.example.intranet'] icon server at (580,330); a thin fl-net (LAN) line connector→app labelled 'local forward'. FLOWS: fl-tun Marcus→PoP (arrow); fl-tun from the App Connector TOWARD the PoP (arrow head at PoP, label 'dials out', to show outbound-only), then fl-flow PoP→connector for the brokered session riding it; fl-down Contractor→PoP ending at an xmark at the 'No rule · Block' box, label 'lookup denied'; nothing from that path reaches the right side. Legend kinds: flow (rule matched), down (no rule), dim (control plane)."
+   },
+   "title": "The PoP brokers; DNS is the gate; the connector forwards",
+   "desc": "Two users type the same published name: the PoP evaluates the Private Access Policy, Cato DNS returns a synthetic IP for the authorised user whose session is brokered over the App Connector’s outbound DTLS tunnel, while the unauthorised user’s lookup is denied and the application stays invisible.",
+   "legend": [
+    [
+     "flow",
+     "Rule matched — synthetic IP returned, session stitched through the connector"
+    ],
+    [
+     "down",
+     "No rule — Cato DNS denies the lookup, nothing reaches the application"
+    ],
+    [
+     "dim",
+     "Control plane: policy objects and the connector’s local forwarding"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Published domain app.example.intranet (archetype, not a real tenant name)",
+    "Synthetic IP returned on a rule match; lookup denied / domain does not resolve with no rule",
+    "App Connector is outbound-only DTLS and belongs to a connector group",
+    "Application sits in an acquired DC on the LAN; connector forwards locally",
+    "Marcus (Finance group · posture pass) allowed; Contractor (no matching rule) denied",
+    "Do not place CGNAT ranges, port numbers or Socket version on the diagram (prose only)"
+   ]
+  },
+  "demo-dem": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "backbone",
+     "saas",
+     "dc",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Priya’s Client and the Bristol Office Socket carry telemetry from the device and the last mile.",
+      "marks": [
+       "users",
+       "branch"
+      ]
+     },
+     {
+      "t": "The PoP and the global private backbone are the same platform, so the middle mile is measured too.",
+      "marks": [
+       "pop",
+       "backbone"
+      ]
+     },
+     {
+      "t": "The egress PoP nearest the app measures Microsoft 365 and the private app behind the London DC Socket.",
+      "marks": [
+       "saas",
+       "dc"
+      ]
+     },
+     {
+      "t": "Experience Monitoring scores each segment on its own; the one off-green node is the fault domain.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "draw": true,
+    "brief": "760x560, left-to-right path with four numbered segments. LEFT: nd 'Remote user' s ['Priya · Cato Client'] icon laptop at (20,150) and site 'Bristol Office' with nd 'Socket X1500' icon building at (20,330); badge(1) on the devices. A short stretch labelled 'ISP last mile' (T, f-m) between the sources and the PoP with badge(2) and pill y 'Fair' on that stretch. CENTRE: fpin 'Cato PoP — London' sub 'single-pass engine' at x≈300, ring 'Global Private Backbone' spanning to a second fpin 'Cato PoP — egress' sub 'nearest the app' at x≈520; badge(3) on the ring. RIGHT: cloud 'SaaS app' sub 'Microsoft 365' at (660,170) and site 'London DC' with nd 'Private app' s ['London DC Socket'] icon server at (600,330); badge(4) on the app links. FLOWS: fl-tun sources→London PoP with the segment-2 stretch drawn fl-ha (amber) to mark the degraded last mile; fl-tun London PoP→egress PoP along the ring (segment 3, green); fl-flow egress PoP→M365 and fl-tun egress PoP→London DC (segment 4, green). BOTTOM STRIP (y 450-540): four nd cls 'soft' score cards in a row: '1 Device' s ['CPU · memory · Wi-Fi'] mark ok; '2 Last mile — Fair' s ['tunnel loss · RTT · jitter'] mark warn; '3 Backbone' s ['PoP to PoP'] mark ok; '4 Application' s ['TTFB · TCP · TLS'] mark ok. Tier label above the strip: 'Experience Monitoring scores each segment on its own — the one off-green node is the fault domain'. Only segment 2 is amber; nothing is red or blocked."
+   },
+   "title": "Same engine, seen from the telemetry side",
+   "desc": "Because the Client, the Socket, the PoP and the private backbone are one platform, every hop from the device through the last mile and backbone to the application is measured and scored separately; the one off-green segment is the fault domain.",
+   "legend": [
+    [
+     "tun",
+     "User and site traffic through the engine, measured at every hop"
+    ],
+    [
+     "ha",
+     "Degraded segment — scored Fair"
+    ]
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Four numbered segments exactly: 1 Device (CPU · memory · Wi-Fi), 2 Last mile — Fair (tunnel loss · RTT · jitter), 3 Backbone (PoP to PoP), 4 Application (TTFB · TCP · TLS)",
+    "Only segment 2 is off-green; verdict line \"the one off-green node is the fault domain\"",
+    "Priya · Cato Client; Bristol Office Socket X1500; ISP last mile",
+    "Cato PoP — London (single-pass engine) and Cato PoP — egress (nearest the app) on the Global Private Backbone",
+    "Destinations: Microsoft 365 and a private app behind the London DC Socket",
+    "Do not put the runbook numbers (dBm, ms, loss %) on the diagram; they are screenshot facts"
+   ]
+  }
+ }
+}

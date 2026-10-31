@@ -1,0 +1,936 @@
+{
+  "category": "network",
+  "pages": {
+    "network-sdwan": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "pop",
+          "backbone",
+          "dc",
+          "cloud"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "br2"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "cl-aws"
+          }
+        ],
+        "steps": [
+          {
+            "t": "A Socket at the branch bonds any available last miles into active/active tunnels to the nearest PoP.",
+            "marks": [
+              "branch"
+            ]
+          },
+          {
+            "t": "The PoP applies app- and identity-aware QoS, TCP acceleration and packet-loss mitigation in the path.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Traffic crosses the global private backbone, Tier-1 carrier diverse, with a 99.999 % SLA between PoPs.",
+            "marks": [
+              "backbone"
+            ]
+          },
+          {
+            "t": "The datacentre socket and the AWS vSocket are reached privately; the single MPLS circuit is retired.",
+            "marks": [
+              "dc",
+              "cloud"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right. LEFT: site(…,'GLASGOW BRANCH') containing nd 'Glasgow branch' / sub 'Socket X1600' (sock or socketX1600 drawing) with two WAN lines leaving upward-right: 'Broadband last mile' and '4G/LTE last mile', both fl-tun with particles (active/active, equal weight, label pills 'broadband' and '4G/LTE'). Beneath the branch a small dashed nd (cls 'dash') 'Legacy MPLS' / sub 'one circuit · no on-ramp' with a short fl-down line towards the old DC and an xmark; pill 'retired at cutover' in red class. CENTRE: ring() labelled 'Cato Global Private Backbone' with f-s under it 'full mesh of PoPs · Tier-1 carrier diversity' and a second f-s 'TCP acceleration · packet-loss mitigation'; a pill (cls g) on the ring front '99.999 % uptime SLA between PoPs'. Two fpins on the ring: 'Manchester PoP' (left, halo, f-s under it 'nearest PoP — selected automatically') and 'London PoP' (right). Both branch tunnels terminate on the Manchester pin. A fl-hot arc along the ring front from Manchester to London with 2 particle groups. RIGHT: two destinations fed from the London pin by fl-tun: nd 'London DC' / sub 'Socket X1500 · core apps' (icon server) and nd 'Cloud DC — AWS' / sub 'vSocket · eu-west-2' (icon cpu, small cloud shape). Nothing in the public internet is drawn. Line classes: fl-tun for both last miles and both far-end tunnels, fl-hot for the backbone arc, fl-down for the retired MPLS stub. Node count 7 (branch, MPLS stub, two PoP pins, ring, London DC, AWS). Narrative: commodity links in, private backbone across, DC and cloud on the far side, MPLS crossed out."
+      },
+      "title": "Glasgow branch on-net over dual last miles and the Cato global private backbone",
+      "desc": "A Glasgow branch joins the WAN over broadband and 4G/LTE active/active tunnels to its nearest PoP, crosses the SLA-backed global private backbone, and reaches the London DC socket and the AWS vSocket; the single MPLS circuit it replaces is retired.",
+      "legend": [
+        [
+          "tun",
+          "Encrypted DTLS tunnels — active/active"
+        ],
+        [
+          "hot",
+          "Global private backbone"
+        ],
+        [
+          "down",
+          "Single MPLS circuit — retired"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Socket X1600 at the Glasgow branch; Socket X1500 at London DC; vSocket in AWS eu-west-2",
+        "Two last miles named: broadband and 4G/LTE, both active/active",
+        "Manchester PoP labelled as the nearest PoP, selected automatically; London PoP as the far end",
+        "99.999 % uptime SLA between PoPs; Tier-1 carrier diversity; TCP acceleration; packet-loss mitigation",
+        "Legacy MPLS: 'One circuit · no on-ramp', marked retired at cutover with a red cross"
+      ]
+    },
+    "network-agility-mna": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "pop",
+          "backbone",
+          "dc",
+          "mgmt"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "br2"
+          },
+          {
+            "p": "br3"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "m1"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Acquired sites are defined as code and created through the Cato GraphQL API with Terraform.",
+            "marks": [
+              "mgmt"
+            ]
+          },
+          {
+            "t": "Zero-touch Sockets ship to each acquired site and connect to the nearest PoP as they are plugged in.",
+            "marks": [
+              "branch",
+              "pop"
+            ]
+          },
+          {
+            "t": "The acquired estate joins the global backbone and reaches London DC under the existing converged policy.",
+            "marks": [
+              "backbone",
+              "dc"
+            ]
+          },
+          {
+            "t": "Entra ID provisions acquired users and groups, so WAN firewall rules can name them from day one.",
+            "marks": [
+              "mgmt"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right. LEFT column inside site(…,'ACQUIRED COMPANY'): three nd boxes stacked — 'Leeds Office' / sub 'Socket X1500 — live' (cls hot, pill 'DAY 1' in g), 'Sheffield Plant' / sub 'Socket X1500 — shipped', 'Aberdeen Depot' / sub 'Socket X1500 — shipped' (the two shipped ones at reduced opacity or cls soft). Below them a side box 'Microsoft Entra ID' / sub 'Acquired-company tenant' (icon key). LEFT-CENTRE control plane: nd 'Terraform · Cato API' / sub 'Site definitions as code' (icon code) above the sites, with a dashed fl-net (np:0, arrow) into the Cato cloud labelled 'Sites created via GraphQL API'; a second dashed fl-net from Entra ID into the Cato cloud labelled 'SCIM — users & groups provisioned'. CENTRE: ring() 'Global Private Backbone' with cloudTop-style fpin 'Cato Cloud' (halo) and f-s under it 'SPACE · FWaaS · routing · identity'. Data plane: fl-tun from Leeds to the PoP pin with particles; fl-tun fl-dim (np:0) from Sheffield and Aberdeen (shipped, not yet connected). RIGHT inside site(…,'EXISTING CATO ESTATE'): nd 'London DC' / sub 'Socket X1500 · core apps' (icon server) and nd 'On-prem lab' / sub 'Socket X1500 · HQ' (icon building), each joined to the ring with fl-tun. A fl-hot arc on the ring front from the acquired side to the existing side carries the 'acquired-site traffic' particles. Line classes: fl-tun (site tunnels), fl-hot (backbone), fl-net dashed (control plane: API and SCIM). Node count 9. Narrative: code on the left creates sites, Sockets light up as they arrive, identities arrive by SCIM, and the two estates become one network on the right."
+      },
+      "title": "M&A onboarding: acquired sites deployed through the Cato API onto the global backbone",
+      "desc": "Terraform pushes acquired-site definitions through the Cato API, zero-touch Sockets connect each site to the nearest PoP, Entra ID provisions the acquired users and groups, and the acquired estate reaches London DC and the HQ lab site over the global private backbone.",
+      "legend": [
+        [
+          "tun",
+          "Acquired-site traffic — on-net over the backbone"
+        ],
+        [
+          "net",
+          "Control plane — API site creation · Entra ID provisioning"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Three acquired sites: Leeds Office (Socket X1500 — live, DAY 1), Sheffield Plant and Aberdeen Depot (Socket X1500 — shipped)",
+        "Microsoft Entra ID — acquired-company tenant; 'SCIM — users & groups provisioned' as a dashed control-plane line",
+        "Terraform · Cato API — 'Site definitions as code' and 'Sites created via GraphQL API'",
+        "Cato Cloud labelled 'SPACE · FWaaS · routing · identity' on the Global Private Backbone",
+        "Existing estate: London DC (Socket X1500 · core apps) and On-prem lab (Socket X1500 · HQ)"
+      ]
+    },
+    "network-mpls-migration": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "dc",
+          "pop",
+          "backbone"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "br2"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          }
+        ],
+        "steps": [
+          {
+            "t": "The datacentre takes a Socket first and becomes the bridge between the Cato cloud and the MPLS network.",
+            "marks": [
+              "dc"
+            ]
+          },
+          {
+            "t": "The DC socket advertises the prefixes of sites still on MPLS, reached via the DC LAN and the MPLS CE router.",
+            "marks": [
+              "dc",
+              "pop"
+            ]
+          },
+          {
+            "t": "Each branch migrates on its own schedule with broadband and 4G last miles, reaching the DC over the backbone.",
+            "marks": [
+              "branch",
+              "backbone"
+            ]
+          },
+          {
+            "t": "Migrated sites reach un-migrated sites by transiting the DC; the legacy network is untouched until switch-off.",
+            "marks": [
+              "pop"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, three columns. LEFT: site(…,'BRISTOL — MIGRATED') with nd 'Bristol' / subs 'X1500 · 192.168.1.0/24' and 'Broadband + 4G last miles' (icon building); small f-m note 'Internet egress: via Cato PoP'. Two fl-tun lines (broadband, 4G) rise to the centre-top. TOP-CENTRE: popBox or ring labelled 'Cato Cloud' / sub 'Global private backbone · nearest PoP' with an fpin, plus a pill (cls g) 'One routing table for all sites'. CENTRE-BOTTOM: site(…,'LONDON DC · 192.168.2.0/24') containing three nd boxes in a row joined by fl-lan: 'Socket X1500' / sub 'advertises Leeds prefix too' (icon server, cls hot), 'Local firewall' / sub 'internet egress (today)' (icon firewall), 'MPLS CE router' / sub 'routes 192.168.3.0/24' (icon route). A fl-tun from the Cato cloud down into the DC Socket. RIGHT: cloud(…, 'MPLS', 'legacy — unchanged', cls default) in grey/net styling, then site(…,'LEEDS — ON MPLS') with nd 'Leeds' / subs '192.168.3.0/24 · CE router' and 'migrates at contract end' (icon building, cls soft). fl-net (np:0) from the DC MPLS CE router to the MPLS cloud and on to Leeds. FLOWS: (1) Bristol ↔ London DC: fl-tun up to the Cato cloud and fl-tun down to the DC Socket, particles both ways (label 'Bristol ↔ London DC — on-net via Cato'). (2) Bristol ↔ Leeds transit: a fl-hot path Bristol → cloud → DC Socket → via fl-lan across the firewall → MPLS CE → MPLS cloud → Leeds, with slow particles (label 'transits London DC during co-existence'). (3) Legacy: fl-net static between MPLS CE, MPLS cloud and Leeds. Nothing is blocked; nothing is red. Node count 10 (Bristol, Cato cloud pin, DC Socket, firewall, CE router, MPLS cloud, Leeds, plus the two site frames and ring). Narrative: new WAN on the left, bridge in the middle, old WAN on the right, with the transit path drawn through the bridge."
+      },
+      "title": "MPLS co-existence during migration: Bristol on Cato, Leeds on MPLS, London DC bridging both",
+      "desc": "Bristol, already migrated to a Socket with broadband and 4G last miles, reaches London DC over the Cato cloud and reaches Leeds, still on MPLS, by transiting the DC socket, local firewall and MPLS CE router; nothing on the legacy network changes until Leeds migrates.",
+      "legend": [
+        [
+          "tun",
+          "Bristol ↔ London DC — on-net via Cato"
+        ],
+        [
+          "hot",
+          "Bristol ↔ Leeds — transits London DC during co-existence"
+        ],
+        [
+          "net",
+          "Legacy MPLS — unchanged until Leeds migrates"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Prefixes: Bristol 192.168.1.0/24, London DC 192.168.2.0/24, Leeds 192.168.3.0/24",
+        "Bristol: X1500, broadband + 4G last miles, internet egress via Cato PoP",
+        "London DC: Socket X1500 (demo tenant runs an X1500, not the deck's X1700) advertising Leeds' prefix; local firewall for internet egress today; MPLS CE router routing 192.168.3.0/24",
+        "Leeds: on MPLS, CE router, migrates at contract end",
+        "Pill 'One routing table for all sites' on the Cato cloud"
+      ]
+    },
+    "network-cloud-datacenter": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "dc",
+          "pop",
+          "backbone",
+          "cloud"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "cl-aws"
+          },
+          {
+            "p": "cl-az"
+          },
+          {
+            "p": "cl-gcp"
+          }
+        ],
+        "steps": [
+          {
+            "t": "A branch user's traffic to a cloud workload enters the nearest PoP and crosses the private backbone.",
+            "marks": [
+              "branch",
+              "backbone"
+            ]
+          },
+          {
+            "t": "The cloud DC attaches by vSocket HA pair, IPsec from a native gateway, or a layer-2 cross-connect at the PoP.",
+            "marks": [
+              "cloud",
+              "popR"
+            ]
+          },
+          {
+            "t": "The WAN firewall governs branch-to-VPC traffic with the same rulebase and audit trail as physical sites.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "Egress to the VPC happens at the PoP nearest the cloud region, never across the public internet middle mile.",
+            "marks": [
+              "cloud"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right. LEFT: two nd boxes — 'Glasgow' / sub 'Branch · Socket X1600' (icon building) and 'London DC' / sub 'Socket X1500 · datacentre' (icon server) — each joined by fl-tun to an fpin 'London PoP' on the left of a central ring() labelled 'Cato Global Private Backbone'. A fl-hot arc along the ring front from the London PoP to a second fpin 'Cloud-adjacent PoP' (halo) on the right. RIGHT: four cloud destination boxes stacked (R soft with small cloud() glyph), each joined from the cloud-adjacent pin by a differently-classed line: (1) 'Azure VNet · UK South' / sub 'Azure-UKS-Hub-vSocket' with a pill 'vSocket HA pair' and an 'HA' amber pill — line fl-tun labelled 'vSocket · DTLS'; (2) 'AWS VPC · eu-west-2' / sub 'AWS eu-west-2' with pill 'vSocket HA pair' + 'HA' — line fl-tun labelled 'vSocket · DTLS'; (3) 'Azure Virtual WAN' / sub 'Azure vWAN hub' — line fl-ipsec labelled 'IPsec · IKEv2', note f-s 'IPsec from the vWAN hub'; (4) 'AWS region' / sub 'Cloud Interconnect' — line fl-priv (np:0 or slow) labelled 'L2 cross-connect', note f-s 'Cloud interconnect at the PoP'. All flows are allowed (green); nothing red. Optional pill (cls g) under the ring 'same policy · same visibility as every physical site'. Node count 8 (Glasgow, London DC, 2 pins, 4 cloud boxes) plus the ring. Narrative: physical estate on the left, one backbone in the middle, three attachment methods fanning out to four cloud destinations on the right."
+      },
+      "title": "Cloud datacentres connected to the Cato WAN by vSocket, IPsec and cross-connect",
+      "desc": "Glasgow and London DC reach every cloud datacentre across the global private backbone: an Azure VNet and an AWS VPC attach by vSocket HA pairs, Azure Virtual WAN by IPsec, and an AWS region by a layer-2 cross-connect at the PoP, all under the same policy and visibility.",
+      "legend": [
+        [
+          "tun",
+          "vSocket · DTLS tunnels"
+        ],
+        [
+          "ipsec",
+          "IPsec · IKEv2 from the cloud gateway"
+        ],
+        [
+          "priv",
+          "Layer-2 cross-connect at the PoP (no tunnel)"
+        ],
+        [
+          "hot",
+          "Backbone — same policy as physical sites"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Glasgow (Branch · Socket X1600) and London DC (Socket X1500 · datacentre) as the physical estate",
+        "Azure VNet · UK South — Azure-UKS-Hub-vSocket, vSocket HA pair; AWS VPC · eu-west-2 — vSocket HA pair (HA pills on both)",
+        "Azure Virtual WAN — Azure vWAN hub, IPsec · IKEv2 from the vWAN hub",
+        "AWS region — Cloud Interconnect, L2 cross-connect at the PoP",
+        "London PoP and a 'Cloud-adjacent PoP' on the backbone; egress at the PoP nearest the cloud region"
+      ]
+    },
+    "network-global-app-performance": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "pop",
+          "backbone",
+          "dc",
+          "saas"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "r-RL"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "eg-saas"
+          }
+        ],
+        "steps": [
+          {
+            "t": "The Sydney site enters its nearest PoP, where voice, video and bulk traffic are classified and prioritised.",
+            "marks": [
+              "branch",
+              "popL"
+            ]
+          },
+          {
+            "t": "Traffic rides the private backbone with TCP acceleration and packet-loss mitigation applied between PoPs.",
+            "marks": [
+              "backbone"
+            ]
+          },
+          {
+            "t": "Latency to the London DC is consistent, hop by hop, instead of varying with public-internet peering.",
+            "marks": [
+              "dc"
+            ]
+          },
+          {
+            "t": "Microsoft 365 leaves the backbone at the PoP nearest the application instance, not at a UK breakout.",
+            "marks": [
+              "saas"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right in two horizontal bands. TOP BAND (Cato): tier label 'Cato Global Private Backbone' with f-s 'Tier-1 carrier diversity · optimal routing per packet · 99.999 % SLA between PoPs'. LEFT: nd 'aws-sydney-ipsec' / sub 'Sydney · IPsec site' (icon cloud/cpu) joined by fl-ipsec to fpin 'Sydney PoP' (halo) with f-s 'nearest PoP — QoS applied at ingress'; beside the pin a vertical chip stack of three pills: 'voice P1' (g), 'video P2' (g), 'bulk P3' (m) — the QoS queues. A chain of four small backbone PoP nodes (brand-filled circles like the backbone figure, e.g. SIN · DXB · FRA) between Sydney and London, linked by fl-hot segments with 3 particle groups, and a label pill above the chain 'SYD → LDN ~280 ms — consistent, every packet (illustrative)'. RIGHT: fpin 'London PoP' feeding two destinations by fl-tun / fl-flow: nd 'London DC' / sub 'Socket X1500 · file servers' (icon server) and cloud() 'Microsoft 365' / sub 'egress near the app' reached by a fl-flow with arrow (smart egress). BOTTOM BAND (contrast): a long fl-net grey path (np:0) from Sydney to London with five hop dots like the backbone figure's public-internet path and a pill 'Public internet — variable latency, jitter and loss · no SLA'. No blocking marks; the contrast path is grey, not red. Node count 9 (Sydney site, Sydney PoP, 3 mid PoPs, London PoP, London DC, M365, QoS stack). Narrative: left to right, Sydney in, QoS at ingress, consistent backbone, London DC and M365 out; the internet alternative runs beneath."
+      },
+      "title": "Sydney to London application traffic over the Cato global private backbone",
+      "desc": "A Sydney IPsec site enters the Sydney PoP, where QoS prioritises voice, video and bulk traffic, crosses a chain of backbone PoPs with consistent latency to the London PoP, and reaches the London DC socket and Microsoft 365 via smart egress; the public internet path beneath shows variable latency and no SLA.",
+      "legend": [
+        [
+          "hot",
+          "Cato backbone — accelerated, QoS-enforced path"
+        ],
+        [
+          "ipsec",
+          "Sydney IPsec site to its nearest PoP"
+        ],
+        [
+          "net",
+          "Public internet — best-effort contrast path"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "aws-sydney-ipsec — Sydney · IPsec site (the demo-tenant site the runbook uses)",
+        "QoS queues at ingress: voice P1, video P2, bulk P3",
+        "Label 'SYD → LDN ~280 ms — consistent, every packet (illustrative)' — keep the word illustrative",
+        "London DC — Socket X1500 · file servers; Microsoft 365 — egress near the app",
+        "99.999 % SLA between PoPs; Tier-1 carrier diversity; optimal routing per packet",
+        "Public internet contrast: variable latency, jitter and loss · no SLA"
+      ]
+    },
+    "network-cloud-connectivity": {
+      "spotlight": {
+        "hl": [
+          "cloud",
+          "pop",
+          "backbone",
+          "branch",
+          "dc"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "cl-aws"
+          },
+          {
+            "p": "cl-az"
+          },
+          {
+            "p": "cl-gcp"
+          },
+          {
+            "p": "cl-pv"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "br1"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          }
+        ],
+        "steps": [
+          {
+            "t": "Azure, AWS and GCP can attach by vSocket — a Cato VM in the VNet or VPC building DTLS tunnels to the PoP.",
+            "marks": [
+              "cloud"
+            ]
+          },
+          {
+            "t": "All four clouds, including OCI, can attach by IPsec from the provider's native VPN gateway.",
+            "marks": [
+              "cloud",
+              "popR"
+            ]
+          },
+          {
+            "t": "A private layer-2 Cloud Interconnect circuit via a fabric provider reaches the PoP with no tunnel.",
+            "marks": [
+              "popR"
+            ]
+          },
+          {
+            "t": "Whichever door is used, the tenant lands on the same backbone, policy set and console as every site.",
+            "marks": [
+              "backbone",
+              "pop"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, three columns left-to-right. LEFT column: four cloud tiles (R soft + small cloud glyph): 'Azure' / sub 'VNets · vWAN'; 'AWS' / sub 'VPCs · TGW'; 'GCP' / sub 'VPCs · Cloud Router'; 'OCI' / sub 'VCNs · DRG' with a red-class pill 'no vSocket option' under it. MIDDLE column: three on-ramp nd boxes (cls hot): 'vSocket' / subs 'Azure · AWS · GCP' and 'Cato VM in the VNet/VPC' (icon cpu); 'IPsec site' / subs 'all four clouds' and 'native VPN gateway · IKEv2' (icon lock); 'Cloud Interconnect' / subs 'all four clouds' and 'private L2 via fabric' (icon plug). Connectors cloud→door: Azure, AWS, GCP → vSocket as fl-tun with particles; OCI → IPsec site as fl-ipsec with particles; OCI → Cloud Interconnect as fl-priv static (np:0) labelled 'FastConnect'; faint fl-dim lines from Azure/AWS/GCP to the IPsec and Interconnect doors to show availability without clutter (np:0). RIGHT: all three doors converge by their own line class (fl-tun, fl-ipsec, fl-priv) on one fpin 'Cato PoP' (halo) sitting on a ring() labelled 'Cato Global Private Backbone'; pill (cls g) under the pin 'one policy set · one console'. No branch/DC nodes needed (the backbone ring implies the rest of the estate). Node count 8 (4 clouds, 3 doors, 1 PoP pin) plus ring. Narrative: four clouds, three doors, one WAN; OCI is the one cloud with two doors only."
+      },
+      "title": "Azure, AWS, GCP and OCI reaching the Cato backbone via vSocket, IPsec or Cloud Interconnect",
+      "desc": "Four clouds on the left reach one Cato PoP through three doors — vSocket for Azure, AWS and GCP, IPsec from any native gateway, and a private layer-2 Cloud Interconnect circuit — and every door lands on the same backbone, policy set and console; OCI has no vSocket option.",
+      "legend": [
+        [
+          "tun",
+          "vSocket — DTLS tunnels"
+        ],
+        [
+          "ipsec",
+          "IPsec site — native gateway · IKEv2"
+        ],
+        [
+          "priv",
+          "Cloud Interconnect — private L2 circuit, no tunnel, no encryption overhead"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Four clouds with their constructs: Azure (VNets · vWAN), AWS (VPCs · TGW), GCP (VPCs · Cloud Router), OCI (VCNs · DRG)",
+        "OCI marked 'no vSocket option'; OCI's doors are IPsec or FastConnect into Cloud Interconnect",
+        "vSocket: Azure · AWS · GCP, 'Cato VM in the VNet/VPC'; IPsec site: all four clouds, 'native VPN gateway · IKEv2'; Cloud Interconnect: all four clouds, 'private L2 via fabric'",
+        "Cato PoP on the Cato Global Private Backbone — 'one policy set · one console'",
+        "The interconnect circuit is private but unencrypted (no encryption overhead) — the legend wording must not call it encrypted"
+      ]
+    },
+    "network-cloud-interconnect": {
+      "spotlight": {
+        "hl": [
+          "dc",
+          "cloud",
+          "pop",
+          "backbone",
+          "branch",
+          "users"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "dc3"
+          },
+          {
+            "p": "cl-az"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "br1"
+          },
+          {
+            "p": "us1"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Public clouds land their private-link services on an exchange fabric such as Equinix Fabric or Megaport.",
+            "marks": [
+              "cloud"
+            ]
+          },
+          {
+            "t": "A private datacentre or colo cage reaches the same fabric by physical cross-connect — no socket, no tunnel.",
+            "marks": [
+              "dc"
+            ]
+          },
+          {
+            "t": "One VLAN-coordinated layer-2 circuit carries both into the Cato PoP, where the security stack already sits.",
+            "marks": [
+              "popR"
+            ]
+          },
+          {
+            "t": "The interconnect site is just a site: same policy, visibility and backbone routing to branches and users.",
+            "marks": [
+              "backbone",
+              "branch",
+              "users"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right. LEFT column: two source boxes — nd 'Public clouds' / subs 'AWS · Azure · GCP · OCI' and 'private-link services' (icon cpu, small cloud glyph) and nd 'Private datacentre' / subs 'Customer DC · colo cage' and 'physical cross-connect' (icon server). Both run fl-priv lines (particles) into a CENTRE-LEFT nd (cls hot) 'Exchange fabric' / subs 'Equinix Fabric · Megaport' and 'one VLAN, all parties' (icon plug). From the fabric one thick fl-priv line labelled pill 'dedicated layer-2 · private, deterministic' into an fpin 'Cato PoP' (halo) with f-s under it 'VLAN handoff · FWaaS · IPS'. The pin sits on a ring() 'Cato Global Private Backbone'. RIGHT: nd 'Branch site' / sub 'Bristol Office · Socket' (icon building) joined to the ring by fl-tun, and nd 'Remote users' / sub 'SDP Client · ZTNA' (icon users) joined by fl-https. A fl-hot arc on the ring front from the PoP to the right-hand side. CONTRAST LANE above: a fl-ha (amber) dashed path from the Public clouds box arching over the fabric straight to the PoP through a small cloud() labelled 'Public internet' / sub 'best-effort · variable', pill (cls y) 'Traditional IPsec over the internet — the path this replaces'. Nothing red; the old path is amber, not failed. Node count 8 (public clouds, private DC, fabric, PoP pin, internet cloud, branch, users) plus ring. Narrative: two kinds of peer converge on one fabric, one wire into the PoP, the whole WAN on the far side; the amber lane shows what the wire replaces."
+      },
+      "title": "Cloud Interconnect: public clouds and a private datacentre reach the Cato PoP over one layer-2 circuit",
+      "desc": "Public clouds via their private-link services and a private datacentre via physical cross-connect converge on an exchange fabric such as Equinix Fabric or Megaport; one VLAN-coordinated layer-2 circuit carries both into the Cato PoP and onto the global private backbone, replacing IPsec over the public internet.",
+      "legend": [
+        [
+          "priv",
+          "Dedicated layer-2 interconnect — private, deterministic"
+        ],
+        [
+          "ha",
+          "Traditional IPsec over the internet — the path this replaces"
+        ],
+        [
+          "tun",
+          "Branch socket tunnel"
+        ],
+        [
+          "https",
+          "Remote users · SDP Client"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Public clouds: AWS · Azure · GCP · OCI via private-link services (ExpressRoute / Direct Connect / Partner Interconnect / FastConnect class)",
+        "Private datacentre: Customer DC · colo cage via physical cross-connect",
+        "Exchange fabric: Equinix Fabric · Megaport — 'one VLAN, all parties'",
+        "Cato PoP: 'VLAN handoff · FWaaS · IPS'; branch archetype 'Bristol Office · Socket'; remote users 'SDP Client · ZTNA'",
+        "No socket appliance and no IPsec tunnel anywhere in the interconnect data path; the circuit is private but unencrypted (MD5 is BGP auth only)",
+        "Redundancy is active/passive to two PoPs — do not imply load-sharing if a second PoP is drawn"
+      ]
+    },
+    "network-ipsec-asa": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "pop",
+          "backbone",
+          "dc",
+          "cloud",
+          "saas"
+        ],
+        "mods": [
+          "sse"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "cl-aws"
+          },
+          {
+            "p": "eg-www"
+          }
+        ],
+        "steps": [
+          {
+            "t": "A branch LAN behind a Cisco ASA joins Cato over IPsec — a route-based VTI on IKEv2, or a crypto map on IKEv1.",
+            "marks": [
+              "branch"
+            ]
+          },
+          {
+            "t": "The primary tunnel lands on an allocated IP at the nearest PoP; the secondary on one at an alternate PoP.",
+            "marks": [
+              "popL",
+              "popR"
+            ]
+          },
+          {
+            "t": "If every primary tunnel drops, routes fail over to the secondary — IPsec sites never roam PoPs on their own.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "From the PoP, traffic rides the backbone to Socket sites, cloud datacentres and secure internet egress.",
+            "marks": [
+              "backbone",
+              "dc",
+              "cloud",
+              "saas"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, left-to-right. LEFT inside site(…,'BRANCH BEHIND CISCO ASA'): nd 'Branch LAN' / sub '10.20.0.0/24' (icon laptop/users) joined by fl-lan to nd (cls hot) 'Cisco ASA' / subs '203.0.113.10 · outside' and 'VTI (IKEv2) / crypto map (IKEv1)' (icon firewall). Two IPsec lines leave the ASA: PRIMARY fl-ipsec with particles to fpin 'London PoP' (halo) with f-s 'Primary — London PoP' and f-m 'Allocated IP 198.51.100.10'; SECONDARY fl-ipsec fl-dim with an fl-ha amber dash overlay (np:0) to fpin 'Manchester PoP' with f-s 'Secondary — Manchester' and f-m 'Allocated IP 198.51.100.20'; pill (cls y) on the secondary 'standby'. Both pins sit on a ring() 'Global Private Backbone'. RIGHT: three destinations fed from the ring by fl-tun / fl-flow: nd 'London DC' / sub 'Socket X1500 · apps' (icon server); nd 'AWS eu-west-2' / sub 'vSocket HA pair' (icon cpu, cloud glyph); cloud() 'SaaS & internet' / sub 'Secure egress at PoP' reached by fl-flow with arrow. Optional small chip row under the ring: 'FWaaS · IPS · anti-malware · CASB · DLP' (the stack applied at the PoP). Nothing red. Node count 8 (LAN, ASA, 2 pins, London DC, AWS, SaaS cloud, chip row) plus ring. Narrative: an existing ASA on the left, two tunnels to two fixed allocated IPs at two PoPs, the full WAN and secure egress on the right."
+      },
+      "title": "Cisco ASA site connected to Cato over dual IPsec tunnels",
+      "desc": "A branch LAN behind a Cisco ASA runs a primary IPsec tunnel to a Cato allocated IP at the nearest PoP and a standby secondary tunnel to an allocated IP at an alternate PoP; both PoPs join the global private backbone, which carries traffic to the London DC socket, an AWS vSocket and secure internet egress.",
+      "legend": [
+        [
+          "ipsec",
+          "Primary tunnel — active, nearest PoP"
+        ],
+        [
+          "ha",
+          "Secondary tunnel — standby, alternate PoP"
+        ],
+        [
+          "tun",
+          "Backbone to Socket and vSocket sites"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Branch LAN 10.20.0.0/24; Cisco ASA outside 203.0.113.10 (documentation-range placeholders)",
+        "Primary — London PoP, Allocated IP 198.51.100.10; Secondary — Manchester, Allocated IP 198.51.100.20",
+        "'VTI (IKEv2) / crypto map (IKEv1)' on the ASA node",
+        "Destinations: London DC (Socket X1500 · apps), AWS eu-west-2 (vSocket HA pair), SaaS & internet (Secure egress at PoP)",
+        "Secondary tunnel is standby, not load-sharing; IPsec sites do not roam PoPs automatically"
+      ]
+    },
+    "network-global-expansion": {
+      "spotlight": {
+        "hl": [
+          "branch",
+          "users",
+          "pop",
+          "backbone",
+          "dc"
+        ],
+        "mods": [
+          "sdwan",
+          "sse"
+        ],
+        "flows": [
+          {
+            "p": "br1"
+          },
+          {
+            "p": "br2"
+          },
+          {
+            "p": "us1"
+          },
+          {
+            "p": "r-LC"
+          },
+          {
+            "p": "r-CR"
+          },
+          {
+            "p": "r-RL"
+          },
+          {
+            "p": "dc1",
+            "rev": true
+          }
+        ],
+        "steps": [
+          {
+            "t": "The backbone of 100+ PoPs already exists in the target region, with the full security stack in every PoP.",
+            "marks": [
+              "backbone",
+              "pop"
+            ]
+          },
+          {
+            "t": "A zero-touch Socket ships direct to the new office; anyone who can plug in power and WAN installs it.",
+            "marks": [
+              "branch"
+            ]
+          },
+          {
+            "t": "The landing team works from day one on the Cato Client or over IPsec while the hardware is in transit.",
+            "marks": [
+              "users"
+            ]
+          },
+          {
+            "t": "The new site inherits the same policy and visibility as London DC the moment it connects to its nearest PoP.",
+            "marks": [
+              "dc"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, a wide ring() across the centre labelled 'Cato Global Private Backbone' with f-s '100+ PoPs · full security stack in every PoP'. Four fpins on the ring: 'London PoP' (left, f-s 'FWaaS · IPS · ZTNA · WAN opt.'), 'Madrid PoP', 'Johannesburg PoP', 'Sydney PoP' (right). LEFT below the ring: nd 'London DC' / sub 'Existing estate · X1500' (icon server) joined to the London pin by fl-tun. RIGHT/BELOW, three new sites each to its own pin: nd 'Madrid Office' / sub 'Socket X1600 · zero-touch' (icon building) — fl-tun to Madrid PoP; nd 'aws-sydney-ipsec' / sub 'Sydney · IPsec · day one' (icon cpu) — fl-ipsec to Sydney PoP; a site frame 'NEW PLANT — DAY 1' containing nd 'Users on Cato Client' (icon laptop) with fl-https to the Johannesburg PoP, and a dimmed nd (cls dash, reduced opacity) 'Socket X1500 in transit' with an fl-tun fl-dim (np:0) towards the same pin. BOTTOM-LEFT corner: nd 'Shanghai office' / subs 'Compliant on-ramp' and 'via licensed partner' (icon building) joined to the ring by fl-priv through a small intermediate chip 'licensed local partner' with f-m 'in-country presence'; keep this generic — no Chinese PoP city names, no 'traffic stays in country' claims. fl-hot arcs along the ring front connect the London pin to the others (one particle group). Nothing red, nothing blocked. Node count 11 (London DC, 4 pins, Madrid, Sydney, plant users, plant socket, Shanghai, partner chip) plus ring. Narrative: existing estate on the left, new regions landing on their nearest PoP across the ring, China joining compliantly through a licensed partner in the corner."
+      },
+      "title": "A growing global footprint joining the Cato backbone through nearest PoPs",
+      "desc": "The existing London DC connects to the London PoP; new sites join on their nearest PoPs — Madrid over a zero-touch Socket, Sydney over IPsec, and a new plant whose day-one users are on the Cato Client while its Socket is in transit — and a Shanghai office joins compliantly through a licensed local partner.",
+      "legend": [
+        [
+          "tun",
+          "Zero-touch Socket — nearest-PoP on-ramp"
+        ],
+        [
+          "ipsec",
+          "IPsec on day one, no Cato hardware"
+        ],
+        [
+          "https",
+          "Users on the Cato Client while hardware ships"
+        ],
+        [
+          "priv",
+          "Compliant China on-ramp via licensed local partner"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "'100+ PoPs · full security stack in every PoP' (page body says 100+; the lede says 80+ — use 100+ as the current diagram does)",
+        "London PoP: 'FWaaS · IPS · ZTNA · WAN opt.'; London DC: 'Existing estate · X1500'",
+        "Madrid Office — Socket X1600 · zero-touch; aws-sydney-ipsec — Sydney · IPsec · day one",
+        "New plant — Day 1: 'Users on Cato Client' and 'Socket X1500 in transit'",
+        "Shanghai office — 'Compliant on-ramp', 'via licensed partner', 'in-country presence', 'licensed local partner' — nothing more specific about China (no cities, licensing detail or in-country routing claims)"
+      ]
+    },
+    "network-resilient-site-design": {
+      "spotlight": {
+        "hl": [
+          "dc",
+          "branch",
+          "pop",
+          "backbone"
+        ],
+        "mods": [
+          "sdwan"
+        ],
+        "flows": [
+          {
+            "p": "dc1",
+            "rev": true
+          },
+          {
+            "p": "br1"
+          },
+          {
+            "p": "br2"
+          },
+          {
+            "p": "br3"
+          },
+          {
+            "p": "r-LC"
+          }
+        ],
+        "steps": [
+          {
+            "t": "Every link is scored every second on loss, jitter and latency; a cut last mile re-homes flows to the survivor.",
+            "marks": [
+              "branch"
+            ]
+          },
+          {
+            "t": "On critical sites an HA Socket pair takes over after 3 s of missed keepalives; LTE idles as the last resort.",
+            "marks": [
+              "dc"
+            ]
+          },
+          {
+            "t": "If every link fails the SLA against the current PoP, the Socket moves to another — preferred PoPs steer it.",
+            "marks": [
+              "pop"
+            ]
+          },
+          {
+            "t": "With no PoP reachable, Internet and WAN Recovery keep traffic moving off-cloud, uninspected but working.",
+            "marks": [
+              "backbone"
+            ]
+          }
+        ]
+      },
+      "diagram": {
+        "draw": true,
+        "brief": "760x560, bottom-to-top inside one site frame, Cato at the top like the branch figure. TOP: ring() 'Global Private Backbone' with two fpins: 'PoP 1 — London' (left, f-s 'primary preferred') and 'PoP 2 — Manchester' (right, f-s 'secondary preferred'). SITE: site(…,'CRITICAL SITE — LONDON DC') with f-s 'HA pair · diverse last miles · LTE'. Inside, two Socket drawings side by side (socketX1700 or sock(...,'X1700')): nd label 'Socket A — X1700' / sub 'HA master · active' (cls hot) and 'Socket B — X1700' / sub 'Standby · Ready'; between them an fl-ha double arrow with pill (cls y) 'VRRP keepalive' and f-m '3 s → failover'. To the right a small nd 'LTE / 5G modem' / sub 'precedence 3 · last resort' (icon cell). Below the Sockets a fl-lan bus to nd 'Site LAN' / sub 'users · servers · OT' (icon switch). WAN LINES from the Socket pair up to the PoPs: (1) 'ISP A fibre — cut' to PoP 1: fl-tun fl-down (np:0) with an xmark mid-line and red pill 'ISP A fibre — cut'; (2) 'ISP B — all flows re-home' to PoP 2: fl-tun with dense particles and green pill 'ISP B — all flows re-home'; (3) from the LTE modem to PoP 2: fl-ha amber (np:0 or very slow) with pill (cls y) 'idle until wired links fail'. Socket B holds its own thin fl-tun fl-dim tunnel to a PoP (standby). Node count 8 (2 pins, Socket A, Socket B, LTE modem, Site LAN, ring, site frame). Narrative: a mid-incident snapshot — one last mile cut and crossed out, everything riding the diverse second link, the HA standby and the LTE last resort both visibly in reserve, two PoPs on the backbone."
+      },
+      "title": "Critical site resilience: HA Socket pair, diverse last miles, LTE last resort and two PoPs",
+      "desc": "A critical site runs an HA pair of X1700 Sockets with VRRP keepalives, two diverse last miles and an LTE last-resort link; the primary last mile to PoP 1 has failed and every flow has re-homed over the second last mile to PoP 2, while the standby Socket and the idle LTE link stay in reserve on the Cato global private backbone.",
+      "legend": [
+        [
+          "tun",
+          "Active last mile — carries all flows"
+        ],
+        [
+          "ha",
+          "LTE last resort — idle, minimal system traffic"
+        ],
+        [
+          "down",
+          "Failed last mile — flows re-homed by SLA scoring"
+        ],
+        "live"
+      ],
+      "keepCaption": true,
+      "carry": [
+        "Socket A — X1700, HA master · active; Socket B — X1700, Standby · Ready; VRRP keepalive, 3 s → failover",
+        "LTE / 5G modem — precedence 3 · last resort, 'idle until wired links fail' (carries only minimal system traffic while idle)",
+        "PoP 1 — London (primary preferred); PoP 2 — Manchester (secondary preferred)",
+        "ISP A fibre — cut (red X); ISP B — all flows re-home",
+        "Site LAN — users · servers · OT",
+        "Do not draw LTE as carrying traffic (off-cloud transport is disabled on precedence-3 links and it is idle in this scene)"
+      ]
+    }
+  }
+}

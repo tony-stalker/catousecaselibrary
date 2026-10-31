@@ -1,0 +1,3092 @@
+{
+ "category": "Migration playbooks (vendor displacement + remote-access plays + methodology)",
+ "notes": {
+  "catalogue": "The catalogue PNGs at scratchpad/catalogue/*.png render as solid black shapes (CSS fills missing), so figure content was checked against the README figure list and the FIGS label text in _extract/diagram-kit/kit-host.html. No source figure tells a co-existence story with an incumbent (parallel Socket + legacy edge + handoff, or two steering planes), which is what every page in this category draws, so every page is {draw:true}; each diagram carries a figConsidered note naming the figures weighed and why they were rejected.",
+  "slots": "Every page has one diagram-card -> slot 'main'. migration-methodology has two cards: the hub-interconnect topology (inside section#solution, slot 'main') and the Option F regional-eBGP diagram (slot 'card-2').",
+  "viewbox": "vb is '0 0 760 560' (kit default, matching the other categories). Briefs are positional (LEFT/CENTRE/RIGHT/TOP/BOTTOM) so they re-flow; current page SVGs are 960 wide, and '0 0 960 540' is an acceptable fallback if the auto-fit warns on labels. Node counts are <=11 per diagram.",
+  "logos": "No vendor logos in the kit. Incumbents are named in node text only (FortiGate, Viptela, ZIA, PA firewall, Quantum gateway, XGS, ASA 5500-X, NSa/TZ, ProxySG/WSS, iboss, Netskope NewEdge, Cloudflare Zero Trust, VOS, EC appliance, Forcepoint cloud, DirectAccess gateway, ASA/FTD headend).",
+  "legend_kinds": "Legend kinds use the fl-* line classes without the prefix: tun, ipsec, priv, https, flow, ha, net, hot, dim, down, attack, plus 'live'. Interim/legacy paths are drawn with fl-ha (amber) and retired/blocked paths with fl-down (red) to match the current pages' amber/red convention.",
+  "convention": "In every brief: GREEN = Cato tunnel (fl-tun) or brokered flow (fl-flow); AMBER = interim/legacy path (fl-ha); RED = retired/blocked (fl-down) or attack (fl-attack); DASHED GREY = rollback lever (fl-dim, np:0, arrow).",
+  "shape": "Per page: {spotlight, diagram, title, desc, legend, keepCaption, carry}. 'diagram' is the main card. migration-methodology additionally carries 'diagrams' (main + card-2 Option F) with per-card title/desc/legend, and picSlot 'main'. Each diagram has 'brief' (prose drawing instructions), plus structured 'nodes' ([title<=22ch, sub, cls, icon]) and 'flows' ([path, fl-class (+ decorations), label]) that the brief must agree with.",
+  "spotlight": "All flow ids, marker anchors and hl components validated against the README tables; every step <=110 chars; 3-6 hl components per page.",
+  "journeys": "No journey pages in this set (migration-journey-* are excluded by the id regex and belong to migration-policy-journeys.json)."
+ },
+ "pages": {
+  "migration-methodology": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Discovery first: where does the routing decision between legacy and Cato live at each site?",
+      "marks": [
+       "branch",
+       "dc"
+      ]
+     },
+     {
+      "t": "An interconnect hub holds legacy CPE and a Cato Socket; an L3 switch or firewall routes between them.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "Migrated sites reach legacy sites over the Cato backbone and the hub; sites move in waves.",
+      "marks": [
+       "backbone",
+       "pop"
+      ]
+     },
+     {
+      "t": "Rollback is a route change: re-add the routed range or withdraw the BGP prefix, no site visit.",
+      "marks": [
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Interconnect hub co-existence topology, left-to-right. LEFT column (legacy island): two site() boxes 'Leeds branch | 192.168.3.0/24 · MPLS' and 'Manchester branch | 192.168.4.0/24 · MPLS' feeding a cloud(cls:'bad' NOT used; plain grey cloud) labelled 'MPLS | Legacy WAN'. CENTRE: a large site() boundary 'LONDON DC — INTERCONNECT HUB' containing three nd boxes in a row: nd 'Legacy CPE / router | MPLS termination' (icon route), nd cls:'hot' 'L3 switch | Route decision (DG)' (icon switch), nd 'Cato Socket X1700 | Hub interconnect' (icon socket via socketIcon or sock(x,y,'X1700')). fl-net (np:0) LAN lines CPE->L3 switch->Socket. TOP: cloudTop() header is NOT used; instead ring() backbone tube labelled 'Cato Global Backbone' across the top with fpin 'Cato PoP' above the hub. fl-tun from hub Socket up to the PoP pin. RIGHT column (Cato island): nd 'Bristol branch | Migrated · X1500' (icon building, pill g 'migrated') with fl-tun to the PoP; nd cls:'dash' 'Glasgow branch | Migrating next' (icon building, pill y 'next wave') with fl-dim (np:0) toward the PoP. STORY FLOW: one animated fl-flow (arrow, label 'Migrated ↔ legacy via the hub') tracing Bristol -> PoP -> backbone -> hub Socket -> L3 switch -> CPE -> MPLS -> Leeds. Legacy MPLS links drawn fl-net np:0. ≤12 nodes. No customer names.",
+    "nodes": [
+     {
+      "t": "Leeds branch",
+      "s": "192.168.3.0/24 · MPLS",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Manchester branch",
+      "s": "192.168.4.0/24 · MPLS",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "MPLS",
+      "s": "Legacy WAN",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "Legacy CPE / router",
+      "s": "MPLS termination",
+      "cls": "",
+      "icon": "route"
+     },
+     {
+      "t": "L3 switch",
+      "s": "Route decision (DG)",
+      "cls": "hot",
+      "icon": "switch"
+     },
+     {
+      "t": "Cato Socket X1700",
+      "s": "Hub interconnect",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "Cato Global Backbone",
+      "cls": "pop",
+      "icon": "fpin+ring"
+     },
+     {
+      "t": "Bristol branch",
+      "s": "Migrated · X1500",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Glasgow branch",
+      "s": "Migrating next",
+      "cls": "dash",
+      "icon": "building"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Leeds/Manchester→MPLS",
+      "cls": "fl-net np:0",
+      "label": ""
+     },
+     {
+      "path": "MPLS→Legacy CPE",
+      "cls": "fl-net np:0",
+      "label": "Existing links"
+     },
+     {
+      "path": "CPE→L3 switch→Socket X1700",
+      "cls": "fl-net np:0",
+      "label": "LAN"
+     },
+     {
+      "path": "Socket X1700→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Bristol→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Glasgow→Cato PoP",
+      "cls": "fl-dim np:0",
+      "label": "next wave"
+     },
+     {
+      "path": "Bristol→PoP→backbone→hub Socket→L3 switch→CPE→MPLS→Leeds",
+      "cls": "fl-flow arrow",
+      "label": "Migrated ↔ legacy via the hub"
+     }
+    ],
+    "figConsidered": "Considered dc (view socket) and backbone: both show a Cato-only end state with no legacy CPE, L3 switch route-decision or MPLS island, so the hub co-existence story would be lost. Drawn."
+   },
+   "title": "Interconnect hub co-existence topology",
+   "desc": "During a phased migration one hub site holds both legacy CPE and a Cato Socket; an L3 switch owns the routing decision so migrated sites reach legacy sites over the Cato backbone and the hub, and rollback is a route change.",
+   "legend": [
+    [
+     "flow",
+     "Migrated ↔ legacy traffic via the hub"
+    ],
+    [
+     "net",
+     "Existing links"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "main: Leeds branch 192.168.3.0/24 · MPLS; Manchester branch 192.168.4.0/24 · MPLS; London DC is the interconnect hub holding Legacy CPE/router (MPLS termination), L3 switch as route decision (DG), Cato Socket X1700; Bristol branch migrated on X1500; Glasgow branch migrating next; Cato PoP + Cato Global Backbone",
+    "card-2: London PoP and Singapore PoP; EMEA and APAC Cato hub sites each 'Socket · eBGP handoff'; EMEA/APAC legacy hubs are FortiGate SD-WAN; Legacy site EMEA · MPLS; Migrated site APAC · Socket; 'Legacy inter-region WAN' link; two 'eBGP' labels; 'Asymmetric return via APAC hub — Longer AS-PATH — not selected'",
+    "Prose facts not to contradict: community 32768 route isolation needs socket v15; ~20-site ceiling for parallel connectivity; ~300 sites migrated with routed-range pre-staging"
+   ],
+   "diagrams": [
+    {
+     "slot": "main",
+     "draw": true,
+     "vb": "0 0 760 560",
+     "brief": "Interconnect hub co-existence topology, left-to-right. LEFT column (legacy island): two site() boxes 'Leeds branch | 192.168.3.0/24 · MPLS' and 'Manchester branch | 192.168.4.0/24 · MPLS' feeding a cloud(cls:'bad' NOT used; plain grey cloud) labelled 'MPLS | Legacy WAN'. CENTRE: a large site() boundary 'LONDON DC — INTERCONNECT HUB' containing three nd boxes in a row: nd 'Legacy CPE / router | MPLS termination' (icon route), nd cls:'hot' 'L3 switch | Route decision (DG)' (icon switch), nd 'Cato Socket X1700 | Hub interconnect' (icon socket via socketIcon or sock(x,y,'X1700')). fl-net (np:0) LAN lines CPE->L3 switch->Socket. TOP: cloudTop() header is NOT used; instead ring() backbone tube labelled 'Cato Global Backbone' across the top with fpin 'Cato PoP' above the hub. fl-tun from hub Socket up to the PoP pin. RIGHT column (Cato island): nd 'Bristol branch | Migrated · X1500' (icon building, pill g 'migrated') with fl-tun to the PoP; nd cls:'dash' 'Glasgow branch | Migrating next' (icon building, pill y 'next wave') with fl-dim (np:0) toward the PoP. STORY FLOW: one animated fl-flow (arrow, label 'Migrated ↔ legacy via the hub') tracing Bristol -> PoP -> backbone -> hub Socket -> L3 switch -> CPE -> MPLS -> Leeds. Legacy MPLS links drawn fl-net np:0. ≤12 nodes. No customer names.",
+     "nodes": [
+      {
+       "t": "Leeds branch",
+       "s": "192.168.3.0/24 · MPLS",
+       "cls": "",
+       "icon": "building"
+      },
+      {
+       "t": "Manchester branch",
+       "s": "192.168.4.0/24 · MPLS",
+       "cls": "",
+       "icon": "building"
+      },
+      {
+       "t": "MPLS",
+       "s": "Legacy WAN",
+       "cls": "cloud",
+       "icon": ""
+      },
+      {
+       "t": "Legacy CPE / router",
+       "s": "MPLS termination",
+       "cls": "",
+       "icon": "route"
+      },
+      {
+       "t": "L3 switch",
+       "s": "Route decision (DG)",
+       "cls": "hot",
+       "icon": "switch"
+      },
+      {
+       "t": "Cato Socket X1700",
+       "s": "Hub interconnect",
+       "cls": "",
+       "icon": "socket"
+      },
+      {
+       "t": "Cato PoP",
+       "s": "Cato Global Backbone",
+       "cls": "pop",
+       "icon": "fpin+ring"
+      },
+      {
+       "t": "Bristol branch",
+       "s": "Migrated · X1500",
+       "cls": "",
+       "icon": "building"
+      },
+      {
+       "t": "Glasgow branch",
+       "s": "Migrating next",
+       "cls": "dash",
+       "icon": "building"
+      }
+     ],
+     "flows": [
+      {
+       "path": "Leeds/Manchester→MPLS",
+       "cls": "fl-net np:0",
+       "label": ""
+      },
+      {
+       "path": "MPLS→Legacy CPE",
+       "cls": "fl-net np:0",
+       "label": "Existing links"
+      },
+      {
+       "path": "CPE→L3 switch→Socket X1700",
+       "cls": "fl-net np:0",
+       "label": "LAN"
+      },
+      {
+       "path": "Socket X1700→Cato PoP",
+       "cls": "fl-tun",
+       "label": ""
+      },
+      {
+       "path": "Bristol→Cato PoP",
+       "cls": "fl-tun",
+       "label": ""
+      },
+      {
+       "path": "Glasgow→Cato PoP",
+       "cls": "fl-dim np:0",
+       "label": "next wave"
+      },
+      {
+       "path": "Bristol→PoP→backbone→hub Socket→L3 switch→CPE→MPLS→Leeds",
+       "cls": "fl-flow arrow",
+       "label": "Migrated ↔ legacy via the hub"
+      }
+     ],
+     "figConsidered": "Considered dc (view socket) and backbone: both show a Cato-only end state with no legacy CPE, L3 switch route-decision or MPLS island, so the hub co-existence story would be lost. Drawn.",
+     "title": "Interconnect hub co-existence topology",
+     "desc": "During a phased migration one hub site holds both legacy CPE and a Cato Socket; an L3 switch owns the routing decision so migrated sites reach legacy sites over the Cato backbone and the hub, and rollback is a route change.",
+     "legend": [
+      [
+       "flow",
+       "Migrated ↔ legacy traffic via the hub"
+      ],
+      [
+       "net",
+       "Existing links"
+      ],
+      "live"
+     ]
+    },
+    {
+     "slot": "card-2",
+     "draw": true,
+     "vb": "0 0 760 560",
+     "brief": "Option F — regional eBGP hubs preserve routing symmetry. TOP: ring() 'Cato Global Backbone' with two fpin PoPs on it: 'London PoP' (left third) and 'Singapore PoP' (right third). MIDDLE row, two regions: LEFT region tier 'EMEA': nd 'EMEA Cato hub site | Socket · eBGP handoff' (icon socket) under the London PoP (fl-tun up to the pin), beside nd 'EMEA legacy hub | FortiGate SD-WAN' (icon firewall); pill m 'eBGP' on a short fl-net line between them. RIGHT region tier 'APAC': mirror — nd 'APAC Cato hub site | Socket · eBGP handoff' under the Singapore PoP, nd 'APAC legacy hub | FortiGate SD-WAN', pill 'eBGP'. BOTTOM row: LEFT nd 'Legacy site | EMEA · MPLS' (icon building) connected fl-net np:0 to the EMEA legacy hub; RIGHT nd 'Migrated site | APAC · Socket' (icon building, pill g) with fl-tun to the Singapore PoP. A fl-net np:0 line labelled 'Legacy inter-region WAN' joins the two legacy hubs. STORY: animated fl-flow (arrow, cls hot) 'Symmetric flow — anchored to its regional hub': Legacy site -> EMEA legacy hub -> eBGP -> EMEA Cato hub -> London PoP -> backbone -> Singapore PoP -> Migrated site, with a second particle set running the reverse direction on the same path. A fl-down (dashed red, np:0, arrow) 'Asymmetric return via APAC hub' from Migrated site toward the APAC legacy hub and the inter-region WAN, with xmark() on it and pill r 'Longer AS-PATH — not selected'. 11 nodes.",
+     "nodes": [
+      {
+       "t": "London PoP",
+       "s": "",
+       "cls": "fpin",
+       "icon": ""
+      },
+      {
+       "t": "Singapore PoP",
+       "s": "",
+       "cls": "fpin",
+       "icon": ""
+      },
+      {
+       "t": "EMEA Cato hub site",
+       "s": "Socket · eBGP handoff",
+       "cls": "",
+       "icon": "socket"
+      },
+      {
+       "t": "EMEA legacy hub",
+       "s": "FortiGate SD-WAN",
+       "cls": "",
+       "icon": "firewall"
+      },
+      {
+       "t": "APAC Cato hub site",
+       "s": "Socket · eBGP handoff",
+       "cls": "",
+       "icon": "socket"
+      },
+      {
+       "t": "APAC legacy hub",
+       "s": "FortiGate SD-WAN",
+       "cls": "",
+       "icon": "firewall"
+      },
+      {
+       "t": "Legacy site",
+       "s": "EMEA · MPLS",
+       "cls": "dash",
+       "icon": "building"
+      },
+      {
+       "t": "Migrated site",
+       "s": "APAC · Socket",
+       "cls": "",
+       "icon": "building"
+      }
+     ],
+     "flows": [
+      {
+       "path": "EMEA Cato hub↔EMEA legacy hub",
+       "cls": "fl-net + pill m",
+       "label": "eBGP"
+      },
+      {
+       "path": "APAC Cato hub↔APAC legacy hub",
+       "cls": "fl-net + pill m",
+       "label": "eBGP"
+      },
+      {
+       "path": "EMEA Cato hub→London PoP",
+       "cls": "fl-tun",
+       "label": ""
+      },
+      {
+       "path": "APAC Cato hub→Singapore PoP",
+       "cls": "fl-tun",
+       "label": ""
+      },
+      {
+       "path": "Migrated site→Singapore PoP",
+       "cls": "fl-tun",
+       "label": ""
+      },
+      {
+       "path": "Legacy site→EMEA legacy hub",
+       "cls": "fl-net np:0",
+       "label": ""
+      },
+      {
+       "path": "EMEA legacy hub↔APAC legacy hub",
+       "cls": "fl-net np:0",
+       "label": "Legacy inter-region WAN"
+      },
+      {
+       "path": "Legacy site→EMEA legacy hub→EMEA Cato hub→London PoP→backbone→Singapore PoP→Migrated site (and reverse)",
+       "cls": "fl-hot arrow",
+       "label": "Symmetric flow — anchored to its regional hub"
+      },
+      {
+       "path": "Migrated site→APAC legacy hub→inter-region WAN",
+       "cls": "fl-down np:0 arrow + xmark",
+       "label": "Asymmetric return via APAC hub · Longer AS-PATH — not selected"
+      }
+     ],
+     "title": "Option F — regional eBGP hubs preserve routing symmetry",
+     "desc": "Each region keeps its own eBGP handoff between the Cato hub site and the legacy hub; cross-region routes carry a longer AS-PATH, so best-path selection anchors each flow and its return to the same regional hub.",
+     "legend": [
+      [
+       "hot",
+       "Symmetric flow — anchored to its regional hub"
+      ],
+      [
+       "down",
+       "Cross-region return — rejected by best-path"
+      ],
+      [
+       "net",
+       "Links & eBGP peerings"
+      ]
+     ],
+     "keepCaption": true,
+     "figConsidered": "Considered backbone (two PoPs on the ring): no regional legacy hubs or eBGP peerings. Drawn."
+    }
+   ],
+   "picSlot": "main"
+  },
+  "migration-zscaler": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "backbone",
+     "saas"
+    ],
+    "mods": [
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Sockets and the Cato Client take transport and WAN security first; ZCC stays on the endpoint.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     },
+     {
+      "t": "During transition the PoP backhauls internet traffic to ZIA over parallel IKEv2 IPsec tunnels.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Converted internet policy is proven on a test cohort, then flipped to direct PoP breakout.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Phased co-existence of Cato and Zscaler ZIA. LEFT column (edges): nd 'Branch site | Cato Socket X1500 · WAN + internet via PoP' (icon building, sub-line 2 may be 'WAN + internet via PoP'); below it nd 'Remote user | Cato Client + ZCC' (icon laptop) with a small pill m 'ZCC rides inside Cato tunnel'. CENTRE: popBox 'Cato PoP | SWG · CASB/DLP · TLSi' sitting on a ring() 'Global Private Backbone'. RIGHT: cloud 'Internet & SaaS | M365 · web · cloud apps' top-right; nd cls:'dash' 'Zscaler ZIA | interim · being retired' (icon globe, pill y 'interim') bottom-right. FLOWS: fl-tun (green, animated) Branch -> PoP and Remote user -> PoP. fl-ha (amber, animated, label 'IKEv2 IPsec · LB by src / dst') PoP -> Zscaler ZIA, then fl-ha np:0 arrow ZIA -> Internet (legacy egress). fl-flow (green, arrow, label 'direct breakout — target') PoP -> Internet & SaaS. 6 nodes + cloud. Keep the amber path visibly temporary (dashed) and the green direct path solid.",
+    "nodes": [
+     {
+      "t": "Branch site",
+      "s": "Cato Socket X1500 · WAN + internet via PoP",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Remote user",
+      "s": "Cato Client + ZCC",
+      "cls": "",
+      "icon": "laptop"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · CASB/DLP · TLSi",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Zscaler ZIA",
+      "s": "interim · being retired",
+      "cls": "dash",
+      "icon": "globe"
+     },
+     {
+      "t": "Internet & SaaS",
+      "s": "M365 · web · cloud apps",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Branch site→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Remote user→Cato PoP",
+      "cls": "fl-tun",
+      "label": "ZCC rides inside Cato tunnel"
+     },
+     {
+      "path": "Cato PoP→Zscaler ZIA",
+      "cls": "fl-ha",
+      "label": "IKEv2 IPsec · LB by src / dst"
+     },
+     {
+      "path": "Zscaler ZIA→Internet & SaaS",
+      "cls": "fl-ha np:0 arrow",
+      "label": "legacy egress"
+     },
+     {
+      "path": "Cato PoP→Internet & SaaS",
+      "cls": "fl-flow arrow",
+      "label": "direct breakout — target"
+     }
+    ],
+    "figConsidered": "Considered saas (egress) and dc (view ipsec): neither shows a second security cloud reached over IPsec from the PoP nor the ZCC-inside-Cato-tunnel endpoint; drawn so the amber interim backhaul and green target breakout can co-exist."
+   },
+   "title": "Phased co-existence of Cato and Zscaler ZIA during migration",
+   "desc": "Sites and users connect to the nearest Cato PoP; internet traffic is tunnelled on to ZIA over parallel IKEv2 IPsec while policies are converted, then flipped to direct breakout from the Cato PoP — no big-bang cutover.",
+   "legend": [
+    [
+     "tun",
+     "Cato tunnels & target PoP breakout"
+    ],
+    [
+     "ha",
+     "Interim backhaul to ZIA (temporary)"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Branch site uses Cato Socket X1500; remote user runs Cato Client + ZCC with the ZCC tunnel riding inside the Cato tunnel",
+    "PoP stack label: SWG · CASB/DLP · TLSi; backbone labelled Global Private Backbone",
+    "Interim path label exactly: 'IKEv2 IPsec · LB by src / dst'; target path 'direct breakout — target'; ZIA marked 'interim · being retired'",
+    "Internet & SaaS examples: M365 · web · cloud apps",
+    "Prose: interim ZIA tunnels egress from the Cato PoP nearest Zscaler over the Tier-1 backbone; deck example 3 active + 3 backup tunnels; up to six active tunnels per HA role; two other interim patterns (site FW → ZIA; FW/Cato VLAN termination) keep breakout on existing kit"
+   ]
+  },
+  "migration-palo-alto": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Socket installs in parallel; the PA firewall stays default gateway while subnets hand off per prefix.",
+      "marks": [
+       "branch",
+       "dc"
+      ]
+     },
+     {
+      "t": "Migrated subnets reach the internet and other Cato sites through the PoP; the rest keeps its PA route.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "GlobalProtect cohorts move to the Cato Client wave by wave; rollback is a route withdrawal.",
+      "marks": [
+       "users"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Parallel-socket co-existence with a Palo Alto firewall. LEFT: site() boundary 'BRANCH / DC SITE' containing nd cls:'dash' 'PA firewall (HA) | default gateway — today' (icon firewall, pill y) and nd 'Cato Socket X1500 | installed in parallel' (icon socket) side by side; between them a short fl-net line with pill m 'eBGP / static handoff' and under it f-s text 'over LAN transit VLAN'. CENTRE-TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | FWaaS · IPS · TLSi · SWG'. CENTRE-BOTTOM: cloud (plain) 'Legacy WAN | MPLS · Internet · GP VPN'. RIGHT-TOP: cloud 'Internet & Cato sites | direct PoP breakout'. RIGHT-MIDDLE: nd 'Interconnect hub | Socket + legacy CPE · bridges Cato ↔ legacy' (icon route) linked fl-tun to the PoP and fl-ha np:0 to the Legacy WAN. BOTTOM row (users): nd cls:'dash' 'GlobalProtect cohort | being retired in waves' (icon users) with fl-ha arrow labelled 'GP VPN → PA gateway' into the PA firewall; nd 'Cato Client cohort | SDP · target state' (icon users, pill g) with fl-tun to the PoP; a fl-dim arrow between the two cohorts labelled 'users migrate in waves →'. FLOWS: fl-tun green animated Socket -> PoP labelled 'migrated subnets'; fl-ha amber animated PA -> Legacy WAN labelled 'default route'; fl-flow green arrow PoP -> Internet & Cato sites. 9 nodes + 2 clouds.",
+    "nodes": [
+     {
+      "t": "PA firewall (HA)",
+      "s": "default gateway — today",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Cato Socket X1500",
+      "s": "installed in parallel",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "FWaaS · IPS · TLSi · SWG",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Legacy WAN",
+      "s": "MPLS · Internet · GP VPN",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "Internet & Cato sites",
+      "s": "direct PoP breakout",
+      "cls": "cloud",
+      "icon": "globe"
+     },
+     {
+      "t": "Interconnect hub",
+      "s": "Socket + legacy CPE · bridges Cato ↔ legacy",
+      "cls": "",
+      "icon": "route"
+     },
+     {
+      "t": "GlobalProtect cohort",
+      "s": "being retired in waves",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "Cato Client cohort",
+      "s": "SDP · target state",
+      "cls": "",
+      "icon": "users"
+     }
+    ],
+    "flows": [
+     {
+      "path": "PA firewall↔Cato Socket",
+      "cls": "fl-net + pill m",
+      "label": "eBGP / static handoff · over LAN transit VLAN"
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": "migrated subnets"
+     },
+     {
+      "path": "PA firewall→Legacy WAN",
+      "cls": "fl-ha",
+      "label": "default route"
+     },
+     {
+      "path": "Cato PoP→Internet & Cato sites",
+      "cls": "fl-flow arrow",
+      "label": ""
+     },
+     {
+      "path": "Interconnect hub→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Interconnect hub→Legacy WAN",
+      "cls": "fl-ha np:0",
+      "label": ""
+     },
+     {
+      "path": "GlobalProtect cohort→PA firewall",
+      "cls": "fl-ha arrow",
+      "label": "GP VPN → PA gateway"
+     },
+     {
+      "path": "Cato Client cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "GlobalProtect cohort→Cato Client cohort",
+      "cls": "fl-dim arrow",
+      "label": "users migrate in waves →"
+     }
+    ],
+    "figConsidered": "Considered branch (HA Socket pair) and dc (view socket): both lack the incumbent firewall as default gateway, the LAN-transit eBGP/static handoff and the two user cohorts. Drawn."
+   },
+   "title": "Phased co-existence of a Palo Alto firewall and a Cato Socket during migration",
+   "desc": "The PA firewall stays default gateway while a parallel Socket takes migrated subnets per prefix over an eBGP or static handoff on a LAN transit VLAN; an interconnect hub keeps the legacy and Cato islands talking and GlobalProtect cohorts move to the Cato Client in waves.",
+   "legend": [
+    [
+     "tun",
+     "Cato path — migrated subnets & users"
+    ],
+    [
+     "ha",
+     "Legacy path via the PA — interim, retired at cutover"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "PA firewall (HA) is 'default gateway — today'; Cato Socket X1500 'installed in parallel'; handoff is 'eBGP / static handoff over LAN transit VLAN'",
+    "PoP stack: FWaaS · IPS · TLSi · SWG; Legacy WAN: MPLS · Internet · GP VPN; Interconnect hub = Socket + legacy CPE bridging Cato ↔ legacy",
+    "Two user cohorts: GlobalProtect cohort (GP VPN → PA gateway, being retired in waves) and Cato Client cohort (SDP · target state); 'users migrate in waves →'",
+    "Flow labels 'default route' (legacy) and 'migrated subnets' (Cato); prose: community 32768 isolation, no zone construct, dual VPN clients not recommended",
+    "Prose dates not on the diagram: PA-3200/5200 support ends 31 Aug 2028 (EOS Aug 2023); CVE-2024-3400 CVSS 10.0; Expedition EOL 31 Dec 2024; TLSi not supported on Android"
+   ]
+  },
+  "migration-netskope": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "dc",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Each cohort swaps the Netskope Client for the Cato Client in one window — never both tunnels at once.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Sites run the legacy IPsec/GRE tunnel and a Cato Socket side by side, split per VLAN.",
+      "marks": [
+       "branch"
+      ]
+     },
+     {
+      "t": "Private apps go on-net behind a Socket, replacing NPA Publishers; API Data Protection retires last.",
+      "marks": [
+       "dc",
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Cohort-based Netskope-to-Cato co-existence. LEFT column, top to bottom: nd cls:'dash' 'Wave 2 user cohort | Netskope Client' (icon users, pill y 'wave 2'); nd 'Bristol Office | FW IPsec/GRE — interim · Socket X1500 — target' (icon building; two sub-lines); nd 'Wave 1 user cohort | Cato Client' (icon users, pill g 'wave 1'). CENTRE-TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | SWG · CASB · DLP · ZTNA · FWaaS'. CENTRE-BOTTOM: cloud (plain, amber-tinted via cls 'bad' is too strong — use plain) 'Netskope NewEdge | SWG · CASB · NPA' with pill y 'interim'. RIGHT: nd 'London DC apps | Socket X1700 · private apps on-net' (icon server) and, below it, nd cls:'dash' 'NPA Publisher | dormant after cutover' (icon plug, pill m 'dormant'). FLOWS: amber fl-ha animated Wave 2 cohort -> NewEdge, amber fl-ha animated Bristol (interim leg) -> NewEdge, amber fl-ha np:0 arrow NewEdge -> NPA Publisher -> London DC apps labelled 'NPA private access'. Green fl-tun animated Wave 1 cohort -> PoP and Bristol (Socket leg) -> PoP; green fl-flow arrow PoP -> London DC apps labelled 'WAN FW · ZTNA'. 7 nodes + 1 cloud. Interim lines dashed amber; target lines solid green.",
+    "nodes": [
+     {
+      "t": "Wave 2 user cohort",
+      "s": "Netskope Client",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "Bristol Office",
+      "s": "FW IPsec/GRE — interim · Socket X1500 — target",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Wave 1 user cohort",
+      "s": "Cato Client",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · CASB · DLP · ZTNA · FWaaS",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Netskope NewEdge",
+      "s": "SWG · CASB · NPA",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "London DC apps",
+      "s": "Socket X1700 · private apps on-net",
+      "cls": "",
+      "icon": "server"
+     },
+     {
+      "t": "NPA Publisher",
+      "s": "dormant after cutover",
+      "cls": "dash",
+      "icon": "plug"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Wave 2 cohort→NewEdge",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "Bristol (interim leg)→NewEdge",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "NewEdge→NPA Publisher→London DC apps",
+      "cls": "fl-ha np:0 arrow",
+      "label": "NPA private access"
+     },
+     {
+      "path": "Wave 1 cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Bristol (Socket leg)→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato PoP→London DC apps",
+      "cls": "fl-flow arrow",
+      "label": "WAN FW · ZTNA"
+     }
+    ],
+    "figConsidered": "Considered users/ztna: Cato-only; no NewEdge cloud, NPA Publisher or per-VLAN dual-path site. Drawn."
+   },
+   "title": "Cohort-based Netskope-to-Cato co-existence",
+   "desc": "Each wave uninstalls the Netskope Client and installs the Cato Client in one window; the site runs parallel paths per VLAN, and private apps move from NPA Publishers to routed reachability behind a Socket while the Publisher stays dormant as the rollback.",
+   "legend": [
+    [
+     "ha",
+     "Interim — steered via Netskope NewEdge"
+    ],
+    [
+     "tun",
+     "Target — steered via Cato PoP"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Wave 2 cohort on Netskope Client (interim); Wave 1 cohort on Cato Client (target)",
+    "Bristol Office carries two legs: 'FW IPsec/GRE — interim' and 'Socket X1500 — target'",
+    "Netskope NewEdge labelled 'SWG · CASB · NPA'; NPA Publisher 'dormant after cutover'; London DC apps behind Socket X1700 'private apps on-net'",
+    "PoP stack: SWG · CASB · DLP · ZTNA · FWaaS; flow labels 'NPA private access' and 'WAN FW · ZTNA'; macOS cannot run Cato Client beside another connected VPN (prose)",
+    "Prose: API Data Protection is out-of-band and retires last; PAC/explicit-proxy users are the lowest-risk cohort; EDM datasets regenerated from source (nothing exports from Netskope)"
+   ]
+  },
+  "migration-cisco": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "pop",
+     "backbone",
+     "saas",
+     "users"
+    ],
+    "mods": [
+     "sdwan",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "us1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Regional Cato hubs peer over eBGP with each Viptela hub (or the L3 core behind a Meraki MX), keeping symmetry.",
+      "marks": [
+       "branch",
+       "backbone"
+      ]
+     },
+     {
+      "t": "A migrated spoke rides the Cato backbone with DNS and web security enforced at the PoP — Umbrella bypassed.",
+      "marks": [
+       "pop",
+       "saas"
+      ]
+     },
+     {
+      "t": "AnyConnect cohorts swap to the Cato Client; disabling a spoke withdraws its routes, re-enabling it rolls back.",
+      "marks": [
+       "users"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Regional co-existence of Cato and a Cisco Viptela overlay. TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | FWaaS · SWG · DNS Security · ZTNA' and, top-right, cloud 'Internet & SaaS | M365 · web · cloud apps'. LEFT column: nd 'Bristol Office | Cato Socket X1500 · live · DNS + web policy at PoP' (icon building, pill g 'migrated') and below nd cls:'dash' 'Glasgow branch | cEdge spoke · OMP/TLOC · waiting for wave 2' (icon building, pill y 'wave 2'). CENTRE: site() 'REGIONAL INTERCONNECT' containing nd 'Interconnect hub site | Cato Socket · eBGP peer · AS-path keeps symmetry' (icon socket) and nd 'Viptela regional hub | OMP ↔ BGP redistribute' (icon route); short fl-net between them with pill m 'eBGP handoff'. RIGHT-BOTTOM: nd cls:'dash' 'Cisco Umbrella | DNS / SWG · retiring' (icon globe, pill y 'retiring'). FLOWS: green fl-tun animated Bristol -> PoP; green fl-tun hub Socket -> PoP; green fl-flow arrow PoP -> Internet & SaaS with pill g 'Umbrella bypassed — enforced at PoP'. Amber fl-ha animated Glasgow -> Viptela hub labelled 'OMP / TLOC overlay'; amber fl-ha arrow Viptela hub -> Umbrella labelled 'legacy DNS / web egress'; amber fl-ha np:0 arrow Umbrella -> Internet & SaaS. 7 nodes + 1 cloud.",
+    "nodes": [
+     {
+      "t": "Bristol Office",
+      "s": "Cato Socket X1500 · live · DNS + web policy at PoP",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Glasgow branch",
+      "s": "cEdge spoke · OMP/TLOC · waiting for wave 2",
+      "cls": "dash",
+      "icon": "building"
+     },
+     {
+      "t": "Interconnect hub site",
+      "s": "Cato Socket · eBGP peer · AS-path keeps symmetry",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Viptela regional hub",
+      "s": "OMP ↔ BGP redistribute",
+      "cls": "",
+      "icon": "route"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "FWaaS · SWG · DNS Security · ZTNA",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Internet & SaaS",
+      "s": "M365 · web · cloud apps",
+      "cls": "cloud",
+      "icon": "globe"
+     },
+     {
+      "t": "Cisco Umbrella",
+      "s": "DNS / SWG · retiring",
+      "cls": "dash",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Interconnect hub↔Viptela hub",
+      "cls": "fl-net + pill m",
+      "label": "eBGP handoff"
+     },
+     {
+      "path": "Bristol→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Interconnect hub→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato PoP→Internet & SaaS",
+      "cls": "fl-flow arrow + pill g",
+      "label": "Umbrella bypassed — enforced at PoP"
+     },
+     {
+      "path": "Glasgow→Viptela hub",
+      "cls": "fl-ha",
+      "label": "OMP / TLOC overlay"
+     },
+     {
+      "path": "Viptela hub→Cisco Umbrella",
+      "cls": "fl-ha arrow",
+      "label": "legacy DNS / web egress"
+     },
+     {
+      "path": "Cisco Umbrella→Internet & SaaS",
+      "cls": "fl-ha np:0 arrow",
+      "label": ""
+     }
+    ],
+    "figConsidered": "Considered backbone and dc (view socket): no Viptela hub, OMP↔BGP redistribution, eBGP interconnect or Umbrella egress. Drawn."
+   },
+   "title": "Regional co-existence of Cato and a Cisco Viptela overlay during migration",
+   "desc": "The migrated spoke rides the Cato backbone with DNS and web security enforced at the PoP; the legacy spoke stays on the Viptela overlay and Umbrella, and eBGP at the regional interconnect with OMP-to-BGP redistribution keeps routing symmetric so spoke cutover withdraws routes automatically.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Cato tunnel, DNS/SWG at the PoP"
+    ],
+    [
+     "ha",
+     "Interim — OMP overlay + Umbrella until the wave completes"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Bristol Office: Cato Socket X1500 · live, DNS + web policy at PoP; Glasgow branch: cEdge spoke · OMP/TLOC, waiting for wave 2",
+    "Interconnect hub site: Cato Socket · eBGP peer, AS-path keeps symmetry; Viptela regional hub: OMP ↔ BGP redistribute; label 'eBGP handoff'",
+    "Cisco Umbrella 'DNS / SWG · retiring'; callout 'Umbrella bypassed — enforced at PoP'; flow labels 'OMP / TLOC overlay' and 'legacy DNS / web egress'",
+    "PoP stack: FWaaS · SWG · DNS Security · ZTNA; prose: Cato default ASN 64515, eBGP-only, Meraki handoff anchored at L3 core not the MX, BGP filtering needs Socket v21.1+",
+    "Prose dates: ASA 5506/5508/5516-X EOS 31 Aug 2026; Umbrella legacy SKUs end of software maintenance 30 Sep 2026 (TAC to 2030); AnyConnect 4.x EOS 31 Mar 2027; Meraki MX64 EOS 26 Jul 2027; Umbrella VAs stay until the final DNS repoint"
+   ]
+  },
+  "migration-fortinet": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "r-CR"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A parallel Socket at each FortiGate regional hub exchanges routes with the hub over an eBGP handoff.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "Cross-region routes carry an extra AS hop, so best-path keeps every flow symmetric via its local hub.",
+      "marks": [
+       "backbone"
+      ]
+     },
+     {
+      "t": "Disable the FortiGate spoke, bring up the Cato site, routes propagate; rollback is re-enabling the spoke.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "eBGP regional-hub co-existence with a FortiGate SD-WAN estate. TOP: ring() 'Global private backbone' with popBox 'Cato PoP | SPACE · one global rulebase'. CENTRE: site() 'REGIONAL HUB SITE — PARALLEL DEPLOYMENT' containing nd 'Cato Socket | parallel at the hub' (icon socket) and nd 'FortiGate hub | SD-WAN / ADVPN core' (icon firewall); between them fl-net with pill m 'eBGP' and f-s 'AS-path anchors symmetry'. BOTTOM-LEFT: nd 'Branch A — migrated | Cato Socket X1500' (icon building, pill g). BOTTOM-RIGHT: nd cls:'dash' 'Branch B — legacy | FortiGate ADVPN spoke' (icon building, pill y). FLOWS: green fl-tun animated Branch A -> PoP; green fl-tun hub Socket -> PoP; amber fl-ha animated Branch B -> FortiGate hub labelled 'ADVPN overlay'. ROLLBACK: fl-dim dashed (np:0, arrow) from Branch A curving to the FortiGate hub with label 'Rollback — re-enable the FortiGate spoke · BGP reconverges'. 5 nodes. Spacing generous; the two hub boxes are the visual centre.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "SPACE · one global rulebase",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Cato Socket",
+      "s": "parallel at the hub",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "FortiGate hub",
+      "s": "SD-WAN / ADVPN core",
+      "cls": "",
+      "icon": "firewall"
+     },
+     {
+      "t": "Branch A — migrated",
+      "s": "Cato Socket X1500",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Branch B — legacy",
+      "s": "FortiGate ADVPN spoke",
+      "cls": "dash",
+      "icon": "building"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cato Socket↔FortiGate hub",
+      "cls": "fl-net + pill m",
+      "label": "eBGP · AS-path anchors symmetry"
+     },
+     {
+      "path": "Branch A→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Branch B→FortiGate hub",
+      "cls": "fl-ha",
+      "label": "ADVPN overlay"
+     },
+     {
+      "path": "Branch A→FortiGate hub",
+      "cls": "fl-dim np:0 arrow",
+      "label": "Rollback — re-enable the FortiGate spoke · BGP reconverges"
+     }
+    ],
+    "figConsidered": "Considered backbone: no FortiGate hub, eBGP handoff or ADVPN spoke. Drawn (this page's diagram is also the methodology Option F field example)."
+   },
+   "title": "eBGP regional-hub co-existence between Cato and a FortiGate SD-WAN estate",
+   "desc": "A parallel Socket at each FortiGate regional hub exchanges routes over eBGP; routes crossing regions carry an extra AS hop so best-path selection anchors traffic to its local hub, and spoke cutover or rollback is BGP reconverging.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Cato socket via nearest PoP"
+    ],
+    [
+     "ha",
+     "Legacy — FortiGate ADVPN overlay"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Hub site is 'Regional hub site — parallel deployment' with 'Cato Socket | parallel at the hub' and 'FortiGate hub | SD-WAN / ADVPN core'; eBGP label 'AS-path anchors symmetry'",
+    "Branch A — migrated on Cato Socket X1500; Branch B — legacy FortiGate ADVPN spoke; 'ADVPN overlay' label",
+    "Rollback arrow text: 'Rollback — re-enable the FortiGate spoke · BGP reconverges'",
+    "PoP label 'SPACE · one global rulebase'; prose facts: Cato ASN 64515 default, eBGP-only, community 32768 needs Socket v15+, BGP filtering v21.1+, FortiOS 7.6.3 removes SSL-VPN tunnel mode"
+   ]
+  },
+  "migration-forcepoint": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Cohort A keeps its GPO-pushed PAC and steers explicitly to the policy-frozen Forcepoint cloud.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Cohort B steers transparently — Cato Client with Always-On, sites via Socket — to the nearest PoP.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "One TLS inspection owner per cohort; the Forcepoint DLP endpoint agent stays for USB, print and clipboard.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Dual steering planes during the Forcepoint-to-Cato transition. Two horizontal lanes. TOP LANE (amber, interim): nd cls:'dash' 'Cohort A — on PAC | Explicit proxy via GPO · browser → PAC → proxy' (icon users, pill y) -> fl-ha animated labelled 'PAC via GPO — explicit' -> nd cls:'dash' 'Forcepoint cloud | policy-frozen · interim' (icon globe, pill y 'web policy still here') -> fl-ha arrow -> shared cloud at far right 'Internet & SaaS | M365 · web · SaaS apps'. BOTTOM LANE (green, target): nd 'Cohort B — migrated | Cato Client · Always-On · sites steer via Socket' (icon users, pill g) -> fl-tun animated labelled 'transparent — no PAC' -> popBox 'Cato PoP | SWG · TLSi · CASB · DLP' sitting on a short ring() 'Global Private Backbone' -> fl-flow arrow labelled 'direct PoP breakout' -> the same Internet & SaaS cloud. NOTE NODE bottom-left under Cohort B: side() 'DLP hybrid | FP endpoint agent stays · USB · print · clipboard' (icon shield). 5 nodes + 1 cloud. The two lanes never cross.",
+    "nodes": [
+     {
+      "t": "Cohort A — on PAC",
+      "s": "Explicit proxy via GPO · browser → PAC → proxy",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "Forcepoint cloud",
+      "s": "policy-frozen · interim",
+      "cls": "dash",
+      "icon": "globe"
+     },
+     {
+      "t": "Cohort B — migrated",
+      "s": "Cato Client · Always-On · sites steer via Socket",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · TLSi · CASB · DLP",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "DLP hybrid",
+      "s": "FP endpoint agent stays · USB · print · clipboard",
+      "cls": "side",
+      "icon": "shield"
+     },
+     {
+      "t": "Internet & SaaS",
+      "s": "M365 · web · SaaS apps",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cohort A→Forcepoint cloud",
+      "cls": "fl-ha",
+      "label": "PAC via GPO — explicit"
+     },
+     {
+      "path": "Forcepoint cloud→Internet & SaaS",
+      "cls": "fl-ha arrow",
+      "label": "web policy still here"
+     },
+     {
+      "path": "Cohort B→Cato PoP",
+      "cls": "fl-tun",
+      "label": "transparent — no PAC"
+     },
+     {
+      "path": "Cato PoP→Internet & SaaS",
+      "cls": "fl-flow arrow",
+      "label": "direct PoP breakout"
+     }
+    ],
+    "figConsidered": "Considered swg and saas: single-plane Cato egress only; the two independent steering planes (explicit PAC vs transparent Client/Socket) and the retained DLP endpoint agent are the story. Drawn."
+   },
+   "title": "Dual steering planes during the Forcepoint-to-Cato transition",
+   "desc": "Cohort A's PAC still sends web traffic explicitly to the policy-frozen Forcepoint cloud while cohort B steers transparently through the Cato Client and Sockets to the Cato PoP; exactly one platform owns TLS inspection per cohort and the Forcepoint DLP endpoint agent stays for its exclusive channels.",
+   "legend": [
+    [
+     "ha",
+     "Explicit — PAC → Forcepoint (interim)"
+    ],
+    [
+     "tun",
+     "Transparent — Cato Client / Socket"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Cohort A — on PAC: explicit proxy via GPO, 'browser → PAC → proxy'; Forcepoint cloud 'policy-frozen · interim', 'web policy still here'",
+    "Cohort B — migrated: Cato Client · Always-On, 'sites steer via Socket'; labels 'transparent — no PAC' and 'direct PoP breakout'",
+    "DLP hybrid note: 'FP endpoint agent stays — USB · print · clipboard'",
+    "PoP stack: SWG · TLSi · CASB · DLP; prose: 3 allocated egress IPs included per account, Proxy Configuration Policy can serve a transitional PAC",
+    "Prose: Forcepoint has no citable EOL for web security/NGFW — do not add an EOL marker to the Forcepoint node; Proxy Configuration Policy PAC serves Windows, macOS and iOS clients"
+   ]
+  },
+  "migration-anyconnect": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "saas"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Cato Client connects to the nearest PoP with SSO and MFA at the IdP — no concentrator to find.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Device posture is checked continuously at the PoP, and access is to named apps, not a subnet.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Private apps are reached over the backbone to the DC Socket; SaaS breaks out locally — no hairpin.",
+      "marks": [
+       "dc",
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "AnyConnect concentrator hairpin versus Cato Client via the nearest PoP. Two users on the LEFT: top nd cls:'dash' 'Priya — AnyConnect | everything via the DC' (icon laptop, pill y); bottom nd 'Marcus — Cato Client | SDP · always-on ZTNA' (icon laptop, pill g). TOP-CENTRE: cloud (plain) 'Internet' is implied by the amber lane crossing open space — draw a small cloud 'Internet' with the amber lane passing through. TOP-RIGHT: nd cls:'dash' 'VPN concentrator | ASA/FTD headend' (icon firewall) with pill r 'Marked for retirement' and xmark(); it sits in a site() boundary 'DATACENTRE' together with nd 'Datacentre apps | behind a Cato Socket' (icon server). BOTTOM-CENTRE: ring() 'Global Private Backbone' with popBox 'Nearest Cato PoP | ZTNA · posture · inspection' and a side() beside Marcus's lane 'SAML SSO + MFA at IdP' (icon key). FAR RIGHT MIDDLE: cloud 'SaaS & internet | M365 · Salesforce · WWW'. FLOWS (amber, Priya): fl-ha animated Priya -> Internet -> VPN concentrator; fl-ha arrow concentrator -> Datacentre apps; fl-ha dashed arrow concentrator -> SaaS cloud labelled 'hairpin — cloud traffic backhauled via the DC'. FLOWS (green, Marcus): fl-tun animated Marcus -> Nearest Cato PoP (passing the IdP side box); fl-flow arrow PoP -> Datacentre apps (via the backbone ring); fl-flow arrow PoP -> SaaS cloud. 6 nodes + 2 clouds.",
+    "nodes": [
+     {
+      "t": "Priya — AnyConnect",
+      "s": "everything via the DC",
+      "cls": "dash",
+      "icon": "laptop"
+     },
+     {
+      "t": "Marcus — Cato Client",
+      "s": "SDP · always-on ZTNA",
+      "cls": "",
+      "icon": "laptop"
+     },
+     {
+      "t": "Internet",
+      "s": "",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "VPN concentrator",
+      "s": "ASA/FTD headend · Marked for retirement",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Datacentre apps",
+      "s": "behind a Cato Socket",
+      "cls": "",
+      "icon": "server"
+     },
+     {
+      "t": "Nearest Cato PoP",
+      "s": "ZTNA · posture · inspection",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "SAML SSO + MFA at IdP",
+      "s": "",
+      "cls": "side",
+      "icon": "key"
+     },
+     {
+      "t": "SaaS & internet",
+      "s": "M365 · Salesforce · WWW",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Priya→Internet→VPN concentrator",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "VPN concentrator→Datacentre apps",
+      "cls": "fl-ha arrow",
+      "label": ""
+     },
+     {
+      "path": "VPN concentrator→SaaS & internet",
+      "cls": "fl-ha dashed arrow",
+      "label": "hairpin — cloud traffic backhauled via the DC"
+     },
+     {
+      "path": "Marcus→Nearest Cato PoP",
+      "cls": "fl-tun",
+      "label": "via IdP SSO + MFA"
+     },
+     {
+      "path": "Nearest Cato PoP→Datacentre apps",
+      "cls": "fl-flow arrow",
+      "label": "over the backbone"
+     },
+     {
+      "path": "Nearest Cato PoP→SaaS & internet",
+      "cls": "fl-flow arrow",
+      "label": ""
+     }
+    ],
+    "figConsidered": "Considered users and ztna (closest: who/how/trust signals): they show only the Cato half; the concentrator hairpin lane is the contrast the page makes. Drawn, same two-lane layout as DirectAccess."
+   },
+   "title": "AnyConnect concentrator hairpin versus Cato Client via the nearest PoP",
+   "desc": "AnyConnect backhauls every flow through an internet-exposed ASA/FTD headend; the Cato Client terminates at the nearest PoP with SAML SSO, MFA and continuous posture, and reaches datacentre and cloud applications directly over the backbone.",
+   "legend": [
+    [
+     "ha",
+     "AnyConnect — hairpin via the DC concentrator"
+    ],
+    [
+     "tun",
+     "Cato Client — nearest PoP, direct to apps"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Two named users: Priya — AnyConnect ('everything via the DC'); Marcus — Cato Client ('SDP · always-on ZTNA')",
+    "VPN concentrator is an ASA/FTD headend 'Marked for retirement'; hairpin label 'hairpin — cloud traffic backhauled via the DC'",
+    "'SAML SSO + MFA at IdP' on the green path; 'Nearest Cato PoP | ZTNA · posture · inspection'; Datacentre apps 'behind a Cato Socket'; SaaS & internet 'M365 · Salesforce · WWW'",
+    "Prose dates not on the diagram: AnyConnect 4.x end of support 31 Mar 2027; ASA 5506-X/5508-X/5516-X end of support 31 Aug 2026",
+    "Prose: Always-On covers Windows, macOS, iOS, Android — not Linux; one-time bypass passcode valid up to 15 minutes; two users are fictional archetypes"
+   ]
+  },
+  "migration-directaccess": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "pop",
+     "backbone",
+     "dc",
+     "saas"
+    ],
+    "mods": [
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us3"
+     },
+     {
+      "p": "r-CR"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Cato Client is always-on like DirectAccess, but runs on Windows, macOS and mobile with no domain join.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "IdP SSO with MFA and continuous device posture are enforced at the nearest PoP — no NLS, PKI or IP-HTTPS.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Named applications in the datacentre and cloud are reached directly; the DA gateway hairpin disappears.",
+      "marks": [
+       "dc",
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "DirectAccess gateway hairpin versus Cato Client via the nearest PoP — same two-lane layout as the AnyConnect page so the sibling plays read alike. LEFT: top nd cls:'dash' 'Priya — DirectAccess | domain-joined Windows' (icon laptop, pill y); bottom nd 'Marcus — Cato Client | laptop + phone · any OS' (icons laptop + phone, pill g). TOP-RIGHT inside site() 'DATACENTRE': nd cls:'dash' 'DirectAccess gateway | NLS · PKI · IP-HTTPS' (icon server) with pill r 'Deprecated — being removed' and xmark(); nd 'Datacentre apps | behind a Cato Socket' (icon server). A small cloud 'Internet' on Priya's lane. BOTTOM-CENTRE: ring() 'Global Private Backbone' with popBox 'Nearest Cato PoP | ZTNA · posture · inspection' and side() 'IdP SSO + MFA · posture' (icon key) on Marcus's lane. FAR RIGHT: cloud 'Cloud & SaaS apps | M365 · Salesforce · WWW'. FLOWS (amber): fl-ha animated Priya -> Internet -> DA gateway labelled 'IP-HTTPS tunnel'; fl-ha arrow gateway -> Datacentre apps; fl-ha dashed arrow gateway -> Cloud & SaaS labelled 'hairpin — all traffic via the datacentre'. FLOWS (green): fl-tun animated Marcus -> PoP; fl-flow arrows PoP -> Datacentre apps and PoP -> Cloud & SaaS. 6 nodes + 2 clouds.",
+    "nodes": [
+     {
+      "t": "Priya — DirectAccess",
+      "s": "domain-joined Windows",
+      "cls": "dash",
+      "icon": "laptop"
+     },
+     {
+      "t": "Marcus — Cato Client",
+      "s": "laptop + phone · any OS",
+      "cls": "",
+      "icon": "laptop+phone"
+     },
+     {
+      "t": "Internet",
+      "s": "",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "DirectAccess gateway",
+      "s": "NLS · PKI · IP-HTTPS · Deprecated — being removed",
+      "cls": "dash",
+      "icon": "server"
+     },
+     {
+      "t": "Datacentre apps",
+      "s": "behind a Cato Socket",
+      "cls": "",
+      "icon": "server"
+     },
+     {
+      "t": "Nearest Cato PoP",
+      "s": "ZTNA · posture · inspection",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "SSO · MFA · posture",
+      "s": "at the IdP, re-checked continuously",
+      "cls": "side",
+      "icon": "key"
+     },
+     {
+      "t": "Cloud & SaaS apps",
+      "s": "M365 · Salesforce · WWW",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Priya→Internet→DirectAccess gateway",
+      "cls": "fl-ha",
+      "label": "IP-HTTPS tunnel"
+     },
+     {
+      "path": "DirectAccess gateway→Datacentre apps",
+      "cls": "fl-ha arrow",
+      "label": ""
+     },
+     {
+      "path": "DirectAccess gateway→Cloud & SaaS apps",
+      "cls": "fl-ha dashed arrow",
+      "label": "hairpin — all traffic via the datacentre"
+     },
+     {
+      "path": "Marcus→Nearest Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Nearest Cato PoP→Datacentre apps",
+      "cls": "fl-flow arrow",
+      "label": ""
+     },
+     {
+      "path": "Nearest Cato PoP→Cloud & SaaS apps",
+      "cls": "fl-flow arrow",
+      "label": ""
+     }
+    ],
+    "figConsidered": "Considered users and ztna: same reasoning as AnyConnect — no DA gateway/NLS/PKI lane. Drawn, mirrored layout to AnyConnect so the sibling plays read alike."
+   },
+   "title": "DirectAccess gateway hairpin versus Cato Client via the nearest PoP",
+   "desc": "DirectAccess hairpins a domain-joined Windows laptop over IP-HTTPS through a deprecated gateway, NLS and PKI; the Cato Client terminates a laptop and a phone at the nearest PoP with IdP SSO, MFA and posture, reaching datacentre and cloud applications directly.",
+   "legend": [
+    [
+     "ha",
+     "DirectAccess — IP-HTTPS to the DC gateway, network-level"
+    ],
+    [
+     "tun",
+     "Cato Client — nearest PoP, app-level, any device"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Priya — DirectAccess on a domain-joined Windows laptop; Marcus — Cato Client on laptop + phone · any OS",
+    "DirectAccess gateway labelled 'NLS · PKI · IP-HTTPS' and 'Deprecated — being removed'; amber lane labelled 'IP-HTTPS tunnel' and 'hairpin — all traffic via the datacentre'",
+    "'IdP SSO + MFA · posture' on the green path; 'Nearest Cato PoP | ZTNA · posture · inspection'; Datacentre apps behind a Cato Socket; Cloud & SaaS apps M365 · Salesforce · WWW",
+    "Prose: Always-On covers Windows, macOS, iOS, Android — not Linux; DA supports only domain-joined Enterprise Windows"
+   ]
+  },
+  "migration-versa": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone",
+     "mgmt"
+    ],
+    "mods": [
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "m1"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A parallel Socket at each Versa hub peers with the VOS hub over eBGP; the MP-BGP overlay stays intact.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "AS-path length anchors each region to its local hub, so stateful VOS firewalls never see half a flow.",
+      "marks": [
+       "backbone"
+      ]
+     },
+     {
+      "t": "Disable the Versa spoke, bring up the Cato site, routes propagate; the Director head-end retires last.",
+      "marks": [
+       "branch",
+       "mgmt"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "eBGP hub co-existence between Cato and a Versa MP-BGP overlay. TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | SPACE · FWaaS · ZTNA · SWG'. LEFT column: nd 'Bristol branch | Cato Socket · migrated · one policy at the PoP' (icon building, pill g) and nd cls:'dash' 'Leeds branch | VOS CSG spoke · awaiting wave 2' (icon building, pill y). CENTRE: site() 'MANCHESTER HUB — SAME SITE, NEW LEG' containing nd 'Manchester hub | parallel Cato Socket' (icon socket) and nd 'Manchester hub | VOS hub · MP-BGP intact' (icon firewall); fl-net between them with pill m 'eBGP handoff' and f-s 'AS-path symmetry'. RIGHT: nd cls:'dash' 'Head-end · retire last | Director · Controller · Analytics · Concerto' (icon console, pill y 'retire last') with a fl-dim dashed line to the VOS hub labelled 'control plane: templates · MP-BGP SAs'. FLOWS: green fl-tun animated Bristol -> PoP and hub Socket -> PoP; amber fl-ha animated Leeds -> VOS hub labelled 'MP-BGP overlay · IPsec SAs'. ROLLBACK: fl-dim dashed arrow from Bristol toward the VOS hub labelled 'rollback: re-enable the VOS spoke — BGP reconverges'. 6 nodes.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "SPACE · FWaaS · ZTNA · SWG",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Bristol branch",
+      "s": "Cato Socket · migrated · one policy at the PoP",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Leeds branch",
+      "s": "VOS CSG spoke · awaiting wave 2",
+      "cls": "dash",
+      "icon": "building"
+     },
+     {
+      "t": "Manchester hub",
+      "s": "parallel Cato Socket · same site, new leg",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Manchester hub",
+      "s": "VOS hub · MP-BGP intact",
+      "cls": "",
+      "icon": "firewall"
+     },
+     {
+      "t": "Head-end · retire last",
+      "s": "Director · Controller · Analytics · Concerto",
+      "cls": "dash",
+      "icon": "console"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Manchester Socket↔VOS hub",
+      "cls": "fl-net + pill m",
+      "label": "eBGP handoff · AS-path symmetry"
+     },
+     {
+      "path": "Bristol→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Manchester Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Leeds→VOS hub",
+      "cls": "fl-ha",
+      "label": "MP-BGP overlay · IPsec SAs"
+     },
+     {
+      "path": "Head-end→VOS hub",
+      "cls": "fl-dim dashed",
+      "label": "control plane: templates · MP-BGP SAs"
+     },
+     {
+      "path": "Bristol→VOS hub",
+      "cls": "fl-dim np:0 arrow",
+      "label": "rollback: re-enable the VOS spoke — BGP reconverges"
+     }
+    ],
+    "figConsidered": "Considered backbone and dc (view socket): no VOS hub, MP-BGP overlay or Director head-end. Drawn."
+   },
+   "title": "eBGP hub co-existence between Cato and a Versa MP-BGP overlay during migration",
+   "desc": "A parallel Socket at the Versa hub exchanges routes with the VOS hub over eBGP and AS-path length anchors each region's traffic to its local hub; cutover per spoke is a routing event, rollback its mirror image, and the Director/Controller head-end is retired only after the final wave.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Socket to the nearest PoP"
+    ],
+    [
+     "ha",
+     "Interim — Versa MP-BGP overlay until each wave completes"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Bristol branch: Cato Socket · migrated, 'one policy at the PoP'; Leeds branch: VOS CSG spoke, 'awaiting wave 2'",
+    "Manchester hub appears twice — 'parallel Cato Socket · same site, new leg' and 'VOS hub · MP-BGP intact'; 'eBGP handoff · AS-path symmetry'; overlay label 'MP-BGP overlay · IPsec SAs'",
+    "Head-end node 'Director · Controller · Analytics · Concerto — retire last' with 'control plane: templates · MP-BGP SAs'",
+    "Rollback text 'rollback: re-enable the VOS spoke — BGP reconverges'; PoP stack 'SPACE · FWaaS · ZTNA · SWG'; prose: Cato ASN 64515, community 32768 v15+, summary routes v19+, BGP filtering v21.1+, CVE-2024-39717 and CVE-2025-34027 not on the diagram"
+   ]
+  },
+  "migration-cloudflare": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "dc",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse",
+     "uztna",
+     "sdwan"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1",
+      "rev": true
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "User cohorts swap WARP for the Cato Client one wave at a time — never both agents on one device.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Sites run Magic WAN and a Socket in parallel; private apps move from cloudflared to SDP app by app.",
+      "marks": [
+       "branch",
+       "dc"
+      ]
+     },
+     {
+      "t": "The public web estate never leaves Cloudflare: CDN, WAF, authoritative DNS and Magic Transit stay.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane. TOP BAND (tier label 'RETAINED — NOT PART OF THIS MIGRATION', soft grey R() background): nd cls:'soft' 'Public website | customer web traffic · stays on Cloudflare' (icon globe) -> fl-net np:0 arrow -> nd cls:'soft' 'Cloudflare CDN / WAF | auth. DNS · Magic Transit' (icon shield). MAIN BAND (tier label 'MIGRATION SCOPE — ZERO TRUST + WAN'): LEFT column top to bottom: nd cls:'dash' 'Wave 2 user cohort | WARP (Cloudflare One)' (icon users, pill y); nd 'Bristol Office | Magic WAN IPsec — interim · Socket X1500 — target' (icon building); nd 'Wave 1 user cohort | Cato Client' (icon users, pill g). CENTRE-TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | SWG · DNS · ZTNA · FWaaS'. CENTRE-BOTTOM: cloud 'Cloudflare Zero Trust | Access · Gateway · Magic WAN' with pill y 'retiring'. RIGHT: nd 'London DC apps | Socket X1700 · SDP app segments' (icon server) and below it nd cls:'dash' 'cloudflared connector | retires app-by-app' (icon plug). FLOWS: amber fl-ha animated Wave 2 -> Zero Trust cloud; amber fl-ha animated Bristol interim leg -> Zero Trust cloud; amber fl-ha arrow Zero Trust -> cloudflared connector -> London DC apps labelled 'private access — retiring'. Green fl-tun animated Wave 1 -> PoP and Bristol Socket leg -> PoP; green fl-flow arrow PoP -> London DC apps labelled 'WAN FW · SDP rules'. 9 nodes + 1 cloud.",
+    "nodes": [
+     {
+      "t": "Public website",
+      "s": "customer web traffic · stays on Cloudflare",
+      "cls": "soft",
+      "icon": "globe"
+     },
+     {
+      "t": "Cloudflare CDN / WAF",
+      "s": "auth. DNS · Magic Transit",
+      "cls": "soft",
+      "icon": "shield"
+     },
+     {
+      "t": "Wave 2 user cohort",
+      "s": "WARP (Cloudflare One)",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "Bristol Office",
+      "s": "Magic WAN IPsec — interim · Socket X1500 — target",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Wave 1 user cohort",
+      "s": "Cato Client",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · DNS · ZTNA · FWaaS",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Cloudflare Zero Trust",
+      "s": "Access · Gateway · Magic WAN",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "London DC apps",
+      "s": "Socket X1700 · SDP app segments",
+      "cls": "",
+      "icon": "server"
+     },
+     {
+      "t": "cloudflared connector",
+      "s": "retires app-by-app",
+      "cls": "dash",
+      "icon": "plug"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Public website→Cloudflare CDN / WAF",
+      "cls": "fl-net np:0 arrow",
+      "label": "Retained — not part of this migration"
+     },
+     {
+      "path": "Wave 2 cohort→Cloudflare Zero Trust",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "Bristol (Magic WAN leg)→Cloudflare Zero Trust",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "Zero Trust→cloudflared connector→London DC apps",
+      "cls": "fl-ha arrow",
+      "label": "private access — retiring"
+     },
+     {
+      "path": "Wave 1 cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Bristol (Socket leg)→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato PoP→London DC apps",
+      "cls": "fl-flow arrow",
+      "label": "WAN FW · SDP rules"
+     }
+    ],
+    "figConsidered": "Considered saas and cloudAppc: no retained CDN/WAF lane, Zero Trust cloud, cloudflared connector or Magic WAN leg. Drawn."
+   },
+   "title": "Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane",
+   "desc": "User cohorts swap agents one wave at a time, the site runs Magic WAN and Socket paths in parallel, and private apps move from cloudflared connectors to SDP app segments — while the public web estate stays on Cloudflare's CDN, WAF, authoritative DNS and Magic Transit.",
+   "legend": [
+    [
+     "ha",
+     "Interim — via Cloudflare Zero Trust (retiring)"
+    ],
+    [
+     "tun",
+     "Target — via Cato PoP and backbone"
+    ],
+    [
+     "net",
+     "Retained — CDN / WAF / DNS / Magic Transit stay"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Retained lane: 'Public website — customer web traffic — stays on Cloudflare' -> 'Cloudflare CDN / WAF — auth. DNS · Magic Transit'; band label 'Retained — not part of this migration'",
+    "Wave 2 cohort on WARP (Cloudflare One); Wave 1 cohort on Cato Client; Bristol Office with 'Magic WAN IPsec — interim' and 'Socket X1500 — target' legs",
+    "Cloudflare Zero Trust 'Access · Gateway · Magic WAN'; cloudflared connector 'retires app-by-app'; London DC apps 'Socket X1700 · SDP app segments'; labels 'private access — retiring' and 'WAN FW · SDP rules'",
+    "PoP stack: SWG · DNS · ZTNA · FWaaS; prose: Cloudflare One Appliance failover up to 30 s, no fail-open, no QoS in the reference; Terraform parallelism=1",
+    "Prose: Access service tokens have no like-for-like equivalent (out of pilot scope); tenant is downgraded, never closed; dedicated egress IPs are an Enterprise add-on — keep 'Retained' band grey/soft, never red"
+   ]
+  },
+  "migration-iboss": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-saas"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Both root CAs are deployed side by side first, so TLS inspection works whichever way a cohort steers.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Wave 1 devices and the pilot site steer to the nearest PoP; later waves stay on PAC and connector steering.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "SaaS allowlists carry both vendors' egress IPs; any wave rolls back by re-pointing to the hosted PAC.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Wave-based steering cutover from iboss to Cato. LEFT column: nd 'Wave 1 cohort | Cato Client via MDM · atomic per-device swap' (icon users, pill g 'wave 1'); nd 'School / branch site | Cato Socket X1500 · replaces GRE/IPsec tunnel' (icon building, pill g); nd cls:'dash' 'Waves 2+ cohorts | iboss connector + PAC · PAC stays hosted · frozen' (icon users, pill y 'waves 2+'). CENTRE-TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | SWG · TLSi · CASB · DLP'. CENTRE-BOTTOM: cloud 'iboss cloud | interim · being retired' with pill y 'interim'. RIGHT: cloud 'SaaS & internet | M365 · Google · exam apps' with pill m 'allowlists dual-list both IPs'. FLOWS: green fl-tun animated Wave 1 -> PoP and School site -> PoP; green fl-flow arrow PoP -> SaaS labelled 'PoP breakout · allocated IPs'. Amber fl-ha animated Waves 2+ -> iboss cloud labelled 'PAC / connector steering — unchanged during waves'; amber fl-ha arrow iboss cloud -> SaaS labelled 'legacy egress'. ROLLBACK: fl-dim dashed arrow from Wave 1 cohort curving down to the Waves 2+ node labelled '⟲ rollback: re-point wave to hosted PAC'. 3 nodes + 2 clouds + PoP.",
+    "nodes": [
+     {
+      "t": "Wave 1 cohort",
+      "s": "Cato Client via MDM · atomic per-device swap",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "School / branch site",
+      "s": "Cato Socket X1500 · replaces GRE/IPsec tunnel",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Waves 2+ cohorts",
+      "s": "iboss connector + PAC · PAC stays hosted · frozen",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · TLSi · CASB · DLP",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "iboss cloud",
+      "s": "interim · being retired",
+      "cls": "cloud",
+      "icon": ""
+     },
+     {
+      "t": "SaaS & internet",
+      "s": "M365 · Google · exam apps · allowlists dual-list both IPs",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Wave 1 cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "School / branch site→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato PoP→SaaS & internet",
+      "cls": "fl-flow arrow",
+      "label": "PoP breakout · allocated IPs"
+     },
+     {
+      "path": "Waves 2+→iboss cloud",
+      "cls": "fl-ha",
+      "label": "PAC / connector steering — unchanged during waves"
+     },
+     {
+      "path": "iboss cloud→SaaS & internet",
+      "cls": "fl-ha arrow",
+      "label": "legacy egress"
+     },
+     {
+      "path": "Wave 1 cohort→Waves 2+ (hosted PAC)",
+      "cls": "fl-dim np:0 arrow",
+      "label": "⟲ rollback: re-point wave to hosted PAC"
+     }
+    ],
+    "figConsidered": "Considered swg and saas: no iboss cloud, PAC/connector steering or dual-listed egress IPs. Drawn."
+   },
+   "title": "Wave-based steering cutover from iboss to Cato",
+   "desc": "Migrated cohorts and sites steer transparently to the nearest Cato PoP while remaining waves stay on PAC and connector steering into iboss; SaaS allowlists carry both vendors' egress IPs during transition and any wave rolls back with a single change re-pointing to the hosted PAC.",
+   "legend": [
+    [
+     "tun",
+     "Migrated waves — Client / Socket to Cato PoP"
+    ],
+    [
+     "ha",
+     "Remaining waves — PAC / connector to iboss (frozen)"
+    ],
+    [
+     "dim",
+     "⟲ Dashed — rollback rail back to PAC"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Wave 1 cohort: Cato Client via MDM, 'atomic per-device swap'; School / branch site: Cato Socket X1500 'replaces GRE/IPsec tunnel'; Waves 2+: 'iboss connector + PAC — PAC stays hosted · frozen'",
+    "SaaS & internet examples 'M365 · Google · exam apps' with 'allowlists dual-list both IPs'; iboss cloud 'interim · being retired'",
+    "Flow labels: 'PoP breakout · allocated IPs', 'PAC / connector steering — unchanged during waves', 'legacy egress'; rollback '⟲ rollback: re-point wave to hosted PAC'",
+    "PoP stack SWG · TLSi · CASB · DLP; prose: 3 allocated IPs in the default licence; DoH bypasses Content Restrictions; Chromebook/Google Workspace identity are qualification items",
+    "Prose: both root CAs deployed side by side before any steering change; Content Restrictions bypassed by DoH browsers; pupils out of pilot scope (staff cohort only) — do not label the cohort as pupils"
+   ]
+  },
+  "migration-checkpoint": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "The Socket installs beside the Quantum gateway, which keeps the default gateway role during the build.",
+      "marks": [
+       "branch",
+       "dc"
+      ]
+     },
+     {
+      "t": "A transit-VLAN handoff — static or eBGP, routes tagged community 32768 — moves subnets one prefix at a time.",
+      "marks": [
+       "pop"
+      ]
+     },
+     {
+      "t": "Cohorts swap Endpoint Security VPN or the Harmony SASE agent for the Cato Client; rollback withdraws a prefix.",
+      "marks": [
+       "users"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff. TOP: ring() 'Global private backbone' with popBox 'Cato PoP | FWaaS · SWG · IPS · TLSi — single pass'. CENTRE: site() 'BRANCH / DC SITE — PARALLEL BUILD, PER-PREFIX CUTOVER' containing nd 'Cato Socket | migrated prefixes' (icon socket, pill g) and nd cls:'dash' 'Quantum gateway | default GW · EOS Dec 2025' (icon firewall, pill y 'EOS Dec 2025'); fl-net between them with pill m 'eBGP / static' and f-s 'transit VLAN · community 32768'. BOTTOM-LEFT: nd 'Migrated cohort | Cato Client (SDP)' (icon users, pill g). BOTTOM-RIGHT: nd cls:'dash' 'Legacy cohort | Endpoint Security VPN · or Harmony SASE agent' (icon users, pill y). FLOWS: green fl-tun animated Socket -> PoP; green fl-tun animated Migrated cohort -> PoP; amber fl-ha animated Legacy cohort -> Quantum gateway; amber fl-ha np:0 arrow Quantum gateway upward/outward labelled 'legacy default route'. ROLLBACK: fl-dim dashed arrow from the Socket to the Quantum gateway labelled 'Rollback — withdraw the prefix and traffic reverts to Check Point'. 4 nodes + PoP.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "FWaaS · SWG · IPS · TLSi — single pass",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Cato Socket",
+      "s": "migrated prefixes",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Quantum gateway",
+      "s": "default GW · EOS Dec 2025",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Migrated cohort",
+      "s": "Cato Client (SDP)",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Legacy cohort",
+      "s": "Endpoint Security VPN · or Harmony SASE agent",
+      "cls": "dash",
+      "icon": "users"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cato Socket↔Quantum gateway",
+      "cls": "fl-net + pill m",
+      "label": "eBGP / static · transit VLAN · community 32768"
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Migrated cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Legacy cohort→Quantum gateway",
+      "cls": "fl-ha",
+      "label": ""
+     },
+     {
+      "path": "Quantum gateway→(legacy internet/WAN)",
+      "cls": "fl-ha np:0 arrow",
+      "label": "legacy default route"
+     },
+     {
+      "path": "Cato Socket→Quantum gateway",
+      "cls": "fl-dim np:0 arrow",
+      "label": "Rollback — withdraw the prefix and traffic reverts to Check Point"
+     }
+    ],
+    "figConsidered": "Considered branch and dc (view socket): no Quantum gateway as default gateway or transit-VLAN handoff. Drawn."
+   },
+   "title": "Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff",
+   "desc": "The Socket sits alongside the Quantum gateway, which keeps the default gateway role; a transit-VLAN handoff moves subnets to Cato one prefix at a time while user cohorts swap from Endpoint Security VPN or the Harmony SASE agent to the Cato Client, and rollback at every step is a route withdrawal.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — via the Cato PoP (socket / Cato Client)"
+    ],
+    [
+     "ha",
+     "Legacy — via the Quantum gateway (Endpoint VPN)"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Quantum gateway 'default GW · EOS Dec 2025'; Cato Socket 'migrated prefixes'; handoff 'eBGP / static — transit VLAN · community 32768'",
+    "Migrated cohort on Cato Client (SDP); Legacy cohort on 'Endpoint Security VPN or Harmony SASE agent'",
+    "Rollback text 'Rollback — withdraw the prefix and traffic reverts to Check Point'; PoP stack 'FWaaS · SWG · IPS · TLSi — single pass'",
+    "Prose: R81.10 EOS Mar 2026; CVE-2024-24919; sk184452 Harmony Connect EOL; community 32768 needs socket v15+"
+   ]
+  },
+  "migration-edgeconnect": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "pop",
+     "backbone",
+     "saas"
+    ],
+    "mods": [
+     "sdwan",
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "r-LC"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A parallel Socket at each EdgeConnect hub peers over eBGP; subnet sharing and every BIO stay intact.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "AS-path length anchors each region to its local hub; a migrated spoke is inspected at the PoP, not chained.",
+      "marks": [
+       "backbone",
+       "pop"
+      ]
+     },
+     {
+      "t": "The site's SSE tunnel is simply not rebuilt; Orchestrator and the SSE tenant retire after the final wave.",
+      "marks": [
+       "branch",
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "eBGP hub co-existence between Cato and an EdgeConnect fabric. TOP: ring() 'Global Private Backbone' with popBox 'Cato PoP | SPACE · FWaaS · SWG · ZTNA'. TOP-RIGHT: nd cls:'dash' 'Third-party SSE | Zscaler · HPE SSE tenant · retire after final wave' (icon globe, pill y). LEFT column: nd 'Bristol branch | Cato Socket · migrated · inspected at the PoP' (icon building, pill g) with a fl-down red dashed stub toward the SSE box ending in xmark() labelled 'SSE tunnel · retired'; below it nd cls:'dash' 'Glasgow branch | EC appliance spoke · BIO overlays · wave 2' (icon building, pill y). CENTRE: site() 'MANCHESTER HUB — SAME SITE, NEW LEG' containing nd 'Manchester hub | parallel Cato Socket' (icon socket) and nd 'Manchester hub | EC hub · subnet sharing' (icon route); fl-net between them with pill m 'eBGP handoff' and f-s 'AS-path symmetry'. RIGHT-MIDDLE: nd cls:'dash' 'Orchestrator | templates · preconfig YAML' (icon console, pill y 'retire last') with fl-dim dashed line to the EC hub labelled 'control plane: BIOs · templates'. FLOWS: green fl-tun animated Bristol -> PoP and hub Socket -> PoP; amber fl-ha animated Glasgow -> EC hub labelled 'EC fabric · BIO overlays'; amber fl-ha arrow EC hub -> Third-party SSE labelled 'service chain · GRE/IPsec'. ROLLBACK: fl-dim dashed arrow Bristol -> EC hub labelled 'rollback: re-enable the EC spoke — routing reconverges'. 7 nodes.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "SPACE · FWaaS · SWG · ZTNA",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Third-party SSE",
+      "s": "Zscaler · HPE SSE tenant · retire after final wave",
+      "cls": "dash",
+      "icon": "globe"
+     },
+     {
+      "t": "Bristol branch",
+      "s": "Cato Socket · migrated · inspected at the PoP",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Glasgow branch",
+      "s": "EC appliance spoke · BIO overlays · wave 2",
+      "cls": "dash",
+      "icon": "building"
+     },
+     {
+      "t": "Manchester hub",
+      "s": "parallel Cato Socket · same site, new leg",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "Manchester hub",
+      "s": "EC hub · subnet sharing",
+      "cls": "",
+      "icon": "route"
+     },
+     {
+      "t": "Orchestrator",
+      "s": "templates · preconfig YAML · retire last",
+      "cls": "dash",
+      "icon": "console"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Manchester Socket↔EC hub",
+      "cls": "fl-net + pill m",
+      "label": "eBGP handoff · AS-path symmetry"
+     },
+     {
+      "path": "Bristol→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Manchester Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Bristol→Third-party SSE",
+      "cls": "fl-down np:0 + xmark",
+      "label": "SSE tunnel · retired"
+     },
+     {
+      "path": "Glasgow→EC hub",
+      "cls": "fl-ha",
+      "label": "EC fabric · BIO overlays"
+     },
+     {
+      "path": "EC hub→Third-party SSE",
+      "cls": "fl-ha arrow",
+      "label": "service chain · GRE/IPsec"
+     },
+     {
+      "path": "Orchestrator→EC hub",
+      "cls": "fl-dim dashed",
+      "label": "control plane: BIOs · templates"
+     },
+     {
+      "path": "Bristol→EC hub",
+      "cls": "fl-dim np:0 arrow",
+      "label": "rollback: re-enable the EC spoke — routing reconverges"
+     }
+    ],
+    "figConsidered": "Considered backbone: no EC hub, BIO overlays, Orchestrator or third-party SSE service chain. Drawn."
+   },
+   "title": "eBGP hub co-existence between Cato and an EdgeConnect fabric during migration",
+   "desc": "A parallel Socket at the EdgeConnect hub exchanges routes with the EC hub over eBGP and AS-path length anchors each region's traffic to its local hub; a migrated spoke is inspected at the PoP and its SSE tunnel is retired rather than rebuilt, while Orchestrator and the SSE tenant retire only after the final wave.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Socket to the nearest PoP, one policy plane"
+    ],
+    [
+     "ha",
+     "Interim — EC fabric + SSE service chain until each wave completes"
+    ],
+    [
+     "down",
+     "Retired — SSE tunnel not rebuilt"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Bristol branch: Cato Socket · migrated, 'inspected at the PoP', with 'SSE tunnel · retired' red X; Glasgow branch: EC appliance spoke, 'BIO overlays · wave 2'",
+    "Third-party SSE 'Zscaler · HPE SSE tenant — retire after final wave'; Orchestrator 'templates · preconfig YAML' with 'control plane: BIOs · templates'",
+    "Manchester hub twice: 'parallel Cato Socket · same site, new leg' and 'EC hub · subnet sharing · service chain · GRE/IPsec'; 'eBGP handoff · AS-path symmetry'; overlay label 'EC fabric · BIO overlays'",
+    "Rollback 'rollback: re-enable the EC spoke — routing reconverges'; PoP stack 'SPACE · FWaaS · SWG · ZTNA'; prose: Cato ASN 64515, BGP-PE-learned routes not shared into subnet sharing, ECOS 9.4 EoM 31 Dec 2026"
+   ]
+  },
+  "migration-symantec": {
+   "spotlight": {
+    "hl": [
+     "users",
+     "branch",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sse"
+    ],
+    "flows": [
+     {
+      "p": "us1"
+     },
+     {
+      "p": "us2"
+     },
+     {
+      "p": "br1"
+     },
+     {
+      "p": "eg-www"
+     },
+     {
+      "p": "eg-saas"
+     }
+    ],
+    "steps": [
+     {
+      "t": "Cohort A keeps its PAC and WSS Agent, steering explicitly to the EOL-marked, policy-frozen ProxySG/WSS estate.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "Cohort B steers transparently via the Cato Client and site Sockets to the PoP; the WCCP redirect is retired.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "One TLS inspection owner per cohort; the Symantec DLP endpoint agent stays for USB, print and Discover.",
+      "marks": [
+       "saas"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Dual steering planes during the Symantec-to-Cato transition — same two-lane layout as the Forcepoint page. TOP LANE (amber): nd cls:'dash' 'Cohort A — on PAC | Explicit proxy · GPO/PFMS · roamers on WSS Agent' (icon users, pill y) -> fl-ha animated labelled 'PAC — explicit steering' -> nd cls:'dash' 'ProxySG / ASG · WSS | appliances EOL — retiring · policy-frozen · interim' (icon server, pill r 'EOL', pill y 'web policy still here') -> fl-ha arrow -> shared cloud far right 'Internet & SaaS | M365 · web · SaaS apps'. BOTTOM LANE (green): nd 'Cohort B — migrated | Cato Client · Always-On · sites steer via Socket' (icon users, pill g) -> fl-tun animated labelled 'transparent — no PAC' -> popBox 'Cato PoP | SWG · TLSi · CASB · DLP' on a short ring() 'Global Private Backbone' -> fl-flow arrow labelled 'single-pass breakout' -> Internet & SaaS cloud. RETIRED PATH: fl-down red dashed (np:0) from Cohort B's Socket sub-line up to the ProxySG box ending in xmark() labelled 'WCCP redirect — retired'. NOTE NODE bottom-left: side() 'DLP hybrid | Symantec DLP agent stays · USB · print · Discover' (icon shield). 5 nodes + 1 cloud.",
+    "nodes": [
+     {
+      "t": "Cohort A — on PAC",
+      "s": "Explicit proxy · GPO/PFMS · roamers on WSS Agent",
+      "cls": "dash",
+      "icon": "users"
+     },
+     {
+      "t": "ProxySG / ASG · WSS",
+      "s": "appliances EOL — retiring · policy-frozen · interim",
+      "cls": "dash",
+      "icon": "server"
+     },
+     {
+      "t": "Cohort B — migrated",
+      "s": "Cato Client · Always-On · sites steer via Socket",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Cato PoP",
+      "s": "SWG · TLSi · CASB · DLP",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "DLP hybrid",
+      "s": "Symantec DLP agent stays · USB · print · Discover",
+      "cls": "side",
+      "icon": "shield"
+     },
+     {
+      "t": "Internet & SaaS",
+      "s": "M365 · web · SaaS apps",
+      "cls": "cloud",
+      "icon": "globe"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cohort A→ProxySG / ASG · WSS",
+      "cls": "fl-ha",
+      "label": "PAC — explicit steering"
+     },
+     {
+      "path": "ProxySG / WSS→Internet & SaaS",
+      "cls": "fl-ha arrow",
+      "label": "web policy still here"
+     },
+     {
+      "path": "Cohort B→Cato PoP",
+      "cls": "fl-tun",
+      "label": "transparent — no PAC"
+     },
+     {
+      "path": "Cato PoP→Internet & SaaS",
+      "cls": "fl-flow arrow",
+      "label": "single-pass breakout"
+     },
+     {
+      "path": "Cohort B (Socket sites)→ProxySG",
+      "cls": "fl-down np:0 + xmark",
+      "label": "WCCP redirect — retired"
+     }
+    ],
+    "figConsidered": "Considered swg and saas: same reasoning as Forcepoint; additionally needs the retired WCCP redirect. Drawn, same two-lane layout as Forcepoint."
+   },
+   "title": "Dual steering planes during the Symantec-to-Cato transition",
+   "desc": "Cohort A's PAC still sends web traffic to the EOL-marked ProxySG/WSS estate while cohort B steers transparently to the Cato PoP and the old WCCP redirect from migrated sites is retired; exactly one platform owns TLS inspection per cohort and the Symantec DLP endpoint agent stays for its exclusive channels.",
+   "legend": [
+    [
+     "ha",
+     "Explicit — PAC → ProxySG/WSS (interim)"
+    ],
+    [
+     "tun",
+     "Transparent — Cato Client / Socket"
+    ],
+    [
+     "down",
+     "WCCP redirect — retired"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Cohort A — on PAC: 'Explicit proxy · GPO/PFMS', 'roamers on WSS Agent'; ProxySG / ASG · WSS 'appliances EOL — retiring', 'policy-frozen · interim', 'web policy still here'",
+    "Cohort B — migrated: Cato Client · Always-On, 'sites steer via Socket'; labels 'transparent — no PAC', 'single-pass breakout'",
+    "'WCCP redirect — retired' with X; DLP hybrid 'Symantec DLP agent stays — USB · print · Discover'",
+    "PoP stack SWG · TLSi · CASB · DLP; prose dates: SG-S200/400/500 EOL backstop 31 Oct 2026, ASG backstop 30 Apr 2027, SGOS 7.3 window closes Dec 2026, on-prem Reporter EOL announced 1 Mar 2025"
+   ]
+  },
+  "migration-sophos": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "br2"
+     },
+     {
+      "p": "dc2"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A parallel Socket at HQ exchanges routes with the XGS hub over IPsec or eBGP, default routes filtered.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "SD-RED sites swap to zero-touch Sockets first; XGS branches follow in waves, legacy kit still racked.",
+      "marks": [
+       "branch",
+       "pop"
+      ]
+     },
+     {
+      "t": "Remote users move from Sophos Connect to the Cato Client; Sophos Central keeps endpoint, XDR and MDR.",
+      "marks": [
+       "users"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Co-existence between a Sophos XGS/SD-RED estate and Cato. TOP: ring() 'Global private backbone' with popBox 'Cato PoP | One global rulebase · full inspection'. CENTRE: site() 'HQ SITE — PARALLEL DEPLOYMENT' containing nd 'Cato Socket | parallel at the HQ' (icon socket) and nd cls:'dash' 'XGS hub firewall | Central Orchestration' (icon firewall); fl-net between them with pill m 'IPsec/eBGP' and f-s 'default routes filtered'. LEFT-TOP: nd 'Priya — remote | Cato Client, was Connect' (icon laptop, pill g). BOTTOM-LEFT: nd 'Branch A — migrated | Socket replaces SD-RED' (icon building, pill g). BOTTOM-RIGHT: nd cls:'dash' 'Branch B — legacy | SD-RED tunnel to hub' (icon building, pill y). FLOWS: green fl-tun animated Priya -> PoP, Branch A -> PoP, hub Socket -> PoP; amber fl-ha animated Branch B -> XGS hub labelled 'tunnel-everything'. ROLLBACK: fl-dim dashed arrow Branch A -> XGS hub labelled 'Rollback — re-plug the SD-RED · its tunnel re-establishes to the hub'. 5 nodes + PoP.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "One global rulebase · full inspection",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Cato Socket",
+      "s": "parallel at the HQ",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "XGS hub firewall",
+      "s": "Central Orchestration",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Priya — remote",
+      "s": "Cato Client, was Connect",
+      "cls": "",
+      "icon": "laptop"
+     },
+     {
+      "t": "Branch A — migrated",
+      "s": "Socket replaces SD-RED",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Branch B — legacy",
+      "s": "SD-RED tunnel to hub",
+      "cls": "dash",
+      "icon": "building"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cato Socket↔XGS hub",
+      "cls": "fl-net + pill m",
+      "label": "IPsec/eBGP · default routes filtered"
+     },
+     {
+      "path": "Priya→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Branch A→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Branch B→XGS hub",
+      "cls": "fl-ha",
+      "label": "tunnel-everything"
+     },
+     {
+      "path": "Branch A→XGS hub",
+      "cls": "fl-dim np:0 arrow",
+      "label": "Rollback — re-plug the SD-RED · its tunnel re-establishes to the hub"
+     }
+    ],
+    "figConsidered": "Considered dc (view ipsec) for the XGS hub handoff: shows one IPsec DC only — no SD-RED spoke, parallel Socket or remote user. Drawn."
+   },
+   "title": "Co-existence between a Sophos XGS/SD-RED estate and Cato during phased migration",
+   "desc": "A parallel Socket at HQ exchanges routes with the XGS hub over an IPsec or eBGP handoff carrying un-migrated branch traffic; SD-RED sites swap to zero-touch Sockets first, remote users move from Sophos Connect to the Cato Client, and rollback is re-plugging the RED so its tunnel re-establishes.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Cato Socket / Client via nearest PoP"
+    ],
+    [
+     "ha",
+     "Legacy — SD-RED tunnel to the hub XGS"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "HQ site — parallel deployment: 'Cato Socket | parallel at the HQ' and 'XGS hub firewall | Central Orchestration'; handoff 'IPsec/eBGP — default routes filtered'",
+    "Priya — remote: 'Cato Client, was Connect'; Branch A — migrated: 'Socket replaces SD-RED'; Branch B — legacy: 'SD-RED tunnel to hub', flow 'tunnel-everything'",
+    "Rollback text 'Rollback — re-plug the SD-RED · its tunnel re-establishes to the hub'; PoP 'One global rulebase · full inspection'",
+    "Prose: XG-series EOL 31 Mar 2025; 10% XGS price rise 1 Jul 2026; pilot BGP example ASN 65001/65002; SD-RED 20/60 has no declared EOL — do not mark it EOL",
+    "Prose: Sophos endpoint stack (Intercept X, XDR, MDR) stays in Sophos Central — the diagram shows the network stack only; SD-RED sites hairpin all traffic to the hub (no local inspection)"
+   ]
+  },
+  "migration-cisco-asa": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "backbone"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc1"
+     },
+     {
+      "p": "dc2"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "r-LC"
+     }
+    ],
+    "steps": [
+     {
+      "t": "A parallel Socket at the DC takes migrated subnets over an L3 handoff; the ASA HA pair stays racked.",
+      "marks": [
+       "dc"
+      ]
+     },
+     {
+      "t": "The hub ASA also comes up as an interim IPsec IKEv2 site so un-migrated branches reach Cato-side resources.",
+      "marks": [
+       "pop",
+       "backbone"
+      ]
+     },
+     {
+      "t": "Branches swap to Sockets and AnyConnect cohorts to the Cato Client; rollback is restoring the ASA routes.",
+      "marks": [
+       "branch",
+       "users"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Co-existence between a perimeter ASA estate and Cato. TOP: ring() 'Global private backbone' with popBox 'Cato PoP | One global policy · greenfield engines in monitor'. CENTRE: site() 'LONDON DC — PARALLEL DEPLOYMENT' containing nd 'Cato Socket | parallel at the DC' (icon socket) and nd cls:'dash' 'ASA 5500-X HA pair | being displaced' (icon firewall, pill y 'EOS'); fl-net between them with pill m 'L3 handoff' and f-s 'default routes filtered'. From the ASA pair an fl-ipsec (animated, amber-ish ipsec class) line up to the PoP labelled 'IPsec IKEv2 site — interim on-ramp'. LEFT-TOP: nd 'Priya — remote | Client, was AnyConnect' (icon laptop, pill g). BOTTOM-LEFT: nd 'Bristol — migrated | Socket replaces the ASA' (icon building, pill g). BOTTOM-RIGHT: nd cls:'dash' 'Leeds — un-migrated | ASA IPsec mesh to hub' (icon building, pill y). FLOWS: green fl-tun animated Priya -> PoP, Bristol -> PoP, DC Socket -> PoP; amber fl-ha animated Leeds -> ASA pair labelled 'crypto-map mesh'. ROLLBACK: fl-dim dashed arrow Bristol -> ASA pair labelled 'Rollback — restore the default gateway / static routes to the ASA'. 5 nodes + PoP.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "One global policy · greenfield engines in monitor",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Cato Socket",
+      "s": "parallel at the DC",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "ASA 5500-X HA pair",
+      "s": "being displaced",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Priya — remote",
+      "s": "Client, was AnyConnect",
+      "cls": "",
+      "icon": "laptop"
+     },
+     {
+      "t": "Bristol — migrated",
+      "s": "Socket replaces the ASA",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Leeds — un-migrated",
+      "s": "ASA IPsec mesh to hub",
+      "cls": "dash",
+      "icon": "building"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Cato Socket↔ASA pair",
+      "cls": "fl-net + pill m",
+      "label": "L3 handoff · default routes filtered"
+     },
+     {
+      "path": "ASA pair→Cato PoP",
+      "cls": "fl-ipsec",
+      "label": "IPsec IKEv2 site — interim on-ramp"
+     },
+     {
+      "path": "Priya→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Bristol→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Leeds→ASA pair",
+      "cls": "fl-ha",
+      "label": "crypto-map mesh"
+     },
+     {
+      "path": "Bristol→ASA pair",
+      "cls": "fl-dim np:0 arrow",
+      "label": "Rollback — restore the default gateway / static routes to the ASA"
+     }
+    ],
+    "figConsidered": "Considered dc (view ipsec) for the interim ASA IPsec IKEv2 site: the handoff is one leg of a five-node co-existence story (parallel Socket, ASA mesh branch, migrated branch, remote user). Drawn."
+   },
+   "title": "Co-existence between a perimeter ASA estate and Cato during phased migration",
+   "desc": "A parallel Socket at the DC takes migrated subnets over an L3 handoff while the ASA HA pair keeps its legacy IPsec mesh and comes up as a Cato IPsec IKEv2 site, so un-migrated branches reach Cato-side resources; rollback is restoring the default gateway and static routes to the ASA.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Socket / Client via the nearest PoP"
+    ],
+    [
+     "ipsec",
+     "Interim — hub ASA as an IPsec IKEv2 site"
+    ],
+    [
+     "ha",
+     "Legacy — ASA crypto-map mesh"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "London DC — parallel deployment: 'Cato Socket | parallel at the DC' and 'ASA 5500-X HA pair | being displaced'; 'L3 handoff — default routes filtered'; 'IPsec IKEv2 site — interim on-ramp' from the ASA to the PoP",
+    "Priya — remote: 'Client, was AnyConnect'; Bristol — migrated: 'Socket replaces the ASA'; Leeds — un-migrated: 'ASA IPsec mesh to hub', flow 'crypto-map mesh'",
+    "Rollback text 'Rollback — restore the default gateway / static routes to the ASA'; PoP 'One global policy · greenfield engines in monitor'",
+    "Prose: 5525/5545/5555-X last support 30 Sep 2025; 5506/5508/5516-X 31 Aug 2026; ASA 9.16 final train; TS_UNACCEPTABLE single-traffic-selector trap (VTI needs 9.7(1)+, IKEv2-on-VTI 9.8(1)+); CISA ED 25-03",
+    "Prose: the hub ASA on-ramp should be IKEv2 route-based VTI (dual tunnels to two Cato allocated IPs); partner VPNs keep terminating on the hub ASA until re-homed"
+   ]
+  },
+  "migration-sonicwall": {
+   "spotlight": {
+    "hl": [
+     "branch",
+     "dc",
+     "users",
+     "pop",
+     "saas"
+    ],
+    "mods": [
+     "sdwan",
+     "sse",
+     "uztna"
+    ],
+    "flows": [
+     {
+      "p": "br1"
+     },
+     {
+      "p": "dc2"
+     },
+     {
+      "p": "us1"
+     },
+     {
+      "p": "eg-www"
+     }
+    ],
+    "steps": [
+     {
+      "t": "SSL-VPN cohorts move to ZTNA first: IdP MFA and posture at the PoP, and the WAN-facing portal is retired.",
+      "marks": [
+       "users"
+      ]
+     },
+     {
+      "t": "TZ branches swap to parallel Sockets in waves; the NSa hub runs an interim IPsec IKEv2 on-ramp to the PoP.",
+      "marks": [
+       "branch",
+       "dc"
+      ]
+     },
+     {
+      "t": "Default routes are filtered at the on-ramp; rollback is re-plugging the TZ so its site-to-site VPN returns.",
+      "marks": [
+       "pop"
+      ]
+     }
+    ]
+   },
+   "diagram": {
+    "slot": "main",
+    "draw": true,
+    "vb": "0 0 760 560",
+    "brief": "Co-existence between a SonicWall TZ/NSa estate and Cato, with the exploited surface removed. TOP: ring() 'Global private backbone' with popBox 'Cato PoP | One global policy · full inspection'. TOP-RIGHT: cloud cls:'bad' 'Internet attacker | scans for SSL-VPN portals' with a fl-attack (red dashed, animated) line toward the NSa hub that ends in xmark() and pill r 'SSL-VPN portal retired' before reaching the firewall. CENTRE: site() 'HQ — PARALLEL DEPLOYMENT' containing nd 'Cato Socket | parallel at HQ' (icon socket) and nd cls:'dash' 'NSa hub firewall | NSM-managed' (icon firewall); fl-net between them with pill m 'L3 handoff'. From the NSa an fl-ipsec animated line to the PoP labelled 'IPsec IKEv2 on-ramp (interim)'. LEFT-TOP: nd 'Remote cohort — ZTNA | Cato Client · IdP MFA · was NetExtender / GVC / SMA' (icon users, pill g). BOTTOM-LEFT: nd 'Branch A — migrated | Socket replaces TZ' (icon building, pill g). BOTTOM-RIGHT: nd cls:'dash' 'Branch B — legacy | TZ tunnels to hub' (icon building, pill y). FLOWS: green fl-tun animated Remote cohort -> PoP, Branch A -> PoP, HQ Socket -> PoP; amber fl-ha animated Branch B -> NSa labelled 'S2S VPN'. ROLLBACK: fl-dim dashed arrow Branch A -> NSa labelled 'Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub'. 5 nodes + PoP + attacker cloud.",
+    "nodes": [
+     {
+      "t": "Cato PoP",
+      "s": "One global policy · full inspection",
+      "cls": "pop",
+      "icon": "popBox+ring"
+     },
+     {
+      "t": "Internet attacker",
+      "s": "scans for SSL-VPN portals",
+      "cls": "cloud bad",
+      "icon": ""
+     },
+     {
+      "t": "Cato Socket",
+      "s": "parallel at HQ",
+      "cls": "",
+      "icon": "socket"
+     },
+     {
+      "t": "NSa hub firewall",
+      "s": "NSM-managed",
+      "cls": "dash",
+      "icon": "firewall"
+     },
+     {
+      "t": "Remote cohort — ZTNA",
+      "s": "Cato Client · IdP MFA · was NetExtender / GVC / SMA",
+      "cls": "",
+      "icon": "users"
+     },
+     {
+      "t": "Branch A — migrated",
+      "s": "Socket replaces TZ",
+      "cls": "",
+      "icon": "building"
+     },
+     {
+      "t": "Branch B — legacy",
+      "s": "TZ tunnels to hub",
+      "cls": "dash",
+      "icon": "building"
+     }
+    ],
+    "flows": [
+     {
+      "path": "Internet attacker→NSa hub",
+      "cls": "fl-attack + xmark + pill r",
+      "label": "SSL-VPN portal retired"
+     },
+     {
+      "path": "Cato Socket↔NSa hub",
+      "cls": "fl-net + pill m",
+      "label": "L3 handoff"
+     },
+     {
+      "path": "NSa hub→Cato PoP",
+      "cls": "fl-ipsec",
+      "label": "IPsec IKEv2 on-ramp (interim)"
+     },
+     {
+      "path": "Remote cohort→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Branch A→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Cato Socket→Cato PoP",
+      "cls": "fl-tun",
+      "label": ""
+     },
+     {
+      "path": "Branch B→NSa hub",
+      "cls": "fl-ha",
+      "label": "S2S VPN"
+     },
+     {
+      "path": "Branch A→NSa hub",
+      "cls": "fl-dim np:0 arrow",
+      "label": "Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub"
+     }
+    ],
+    "figConsidered": "Considered dc (view ipsec) and fwaas: neither carries the NSa on-ramp plus TZ spokes plus the retired SSL-VPN portal with the blocked attacker. Drawn."
+   },
+   "title": "Co-existence between a SonicWall TZ/NSa estate and Cato during phased migration",
+   "desc": "SSL-VPN cohorts move to ZTNA first, retiring the exploited WAN-facing portal; TZ branches swap to parallel Sockets in waves and the NSa hub runs an interim IPsec IKEv2 on-ramp carrying un-migrated branch traffic with default routes filtered, so rollback is re-plugging the TZ and its site-to-site VPN re-establishes.",
+   "legend": [
+    [
+     "tun",
+     "Migrated — Sockets and ZTNA cohorts via the nearest PoP"
+    ],
+    [
+     "ha",
+     "Legacy / interim — SonicWall S2S VPN and IPsec on-ramp"
+    ],
+    [
+     "attack",
+     "Attack path — removed with the SSL-VPN portal"
+    ],
+    "live"
+   ],
+   "keepCaption": true,
+   "carry": [
+    "Internet attacker 'scans for SSL-VPN portals' blocked with red X 'SSL-VPN portal retired'",
+    "HQ — parallel deployment: 'Cato Socket | parallel at HQ' and 'NSa hub firewall | NSM-managed'; 'L3 handoff'; 'IPsec IKEv2 on-ramp (interim)' from the NSa to the PoP",
+    "Remote cohort — ZTNA: 'Cato Client · IdP MFA', 'was NetExtender / GVC / SMA'; Branch A — migrated: 'Socket replaces TZ'; Branch B — legacy: 'TZ tunnels to hub', flow 'S2S VPN'",
+    "Rollback text 'Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub'; PoP 'One global policy · full inspection'; prose: CVE-2024-40766 CVSS 9.3, Gen 6 LRM 20 Apr 2024, SMA 100 retired 31 Oct 2025, TZ400/600 EOS 1 Aug 2026, pilot ASN 65001/65002, MySonicWall backup breach concluded 8 Oct 2025",
+    "Prose: SSL-VPN cohorts migrate FIRST (deliberate inversion); no firewall-local VPN accounts are recreated on Cato; new PSK for the on-ramp; S2S VPN stays authoritative for un-migrated sites"
+   ]
+  }
+ }
+}

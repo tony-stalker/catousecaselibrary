@@ -149,7 +149,9 @@ def main():
     index_src = INTERNAL_CARD_RE.sub("", index_src).replace("five guided journeys", "four guided journeys")
     (OUT / "index.html").write_text(strip_internal_links(transform(index_src), skip))
 
-    # assets (css/js/img) — catalog.js gets the wording pass too
+    # assets (css/js/img) — catalog.js gets the wording pass too. platform-facts.js
+    # (sourced headline numbers, read by app.js via data-fact) and search-synonyms.js (query
+    # expansion groups for the index search) ship unchanged.
     shutil.copytree(SRC / "assets", OUT / "assets")
     for internal in ("planner.js", "planner-rules.js", "planner-export.js", "planner-topology.js", "planner-logos.js",
                      # deck generator is an internal SE tool too: the decks it builds carry
