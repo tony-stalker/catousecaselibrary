@@ -169,6 +169,8 @@ def main():
         f = OUT / "assets" / "js" / internal
         if f.exists():
             f.unlink()  # planner is an internal SE tool; never ships to prospects
+    # the deck pictures belong to the deck generator (internal), ~16 MB — never ship them
+    shutil.rmtree(OUT / "assets" / "js" / "deck-pics", ignore_errors=True)
     cat = OUT / "assets" / "js" / "catalog.js"
     cat_src = re.sub(r'deck: "[^"]*"', "deck: null", transform(strip_catalog(cat.read_text())))
     cat.write_text(cat_src)
