@@ -1,4 +1,32 @@
-# Library improvement pass — change log (30–31 Oct 2026)
+# Library improvement pass — change log (30 Oct – 1 Nov 2026)
+
+## Summary
+| Area | Result |
+|---|---|
+| Diagrams | All 94 pages redrawn in the platform-overview style, plus a "Where this sits in the Cato SASE platform" spotlight on every page |
+| Diagram QA | 94 specs authored + independently reviewed; 12-agent visual QA in light, dark, phone and lightbox; 171 follow-up fixes |
+| Content | 183 page-level fixes (dated claims re-verified, provenance captions, orphan captures embedded, image dims); 9 overdue staleness rows re-verified |
+| Facts | 100+ PoPs, 99.999% SLA, 4,800+ customers, 2026 Gartner MQ Leader (3rd year) — single source in `platform-facts.js` |
+| Placeholders | Every capture-wanted marker renders an illustrative mock console (SE edition only) |
+| Search | Ranked results, synonyms, shareable URLs, two-tier relevance; shared page chrome no longer pollutes the index |
+| Index and pages | Collapsible Start-here/deck folds, sticky filter dock, related pages, category pager, progress bar, responsive TOC |
+| Accessibility | a11y-check 904 → 0 defects; contrast fixed to WCAG AA; keyboard tabs, modal lightbox, focus rings |
+| Decks | Diagram slides use the new diagrams as pictures; "Platform demo (60 min)" preset unchanged |
+| Tooling | build-diagrams, staleness-check, a11y-check, checkfigures, check-deck-content, optimise-img, decktest; verify.sh 10 steps |
+| Images | assets/img 42.9 MB → 33.2 MB with no visible loss |
+
+**Verification (1 Nov 2026):** `verify.sh` all 10 checks pass; `a11y-check.py` 0 defects on 97 pages;
+`build-diagrams.py --check` clean (no label overflow); decktest builds compact (17) and full (31) decks;
+prospect edition regenerated (86 pages, no SE-only content, no deck pictures, no placeholders, links resolve).
+**Released:** SE library pushed (`fbf2980`), prospect edition pushed (`80c78d9`). **Not yet deployed:** the live host
+(10.7.0.4) timed out on SSH — reconnect the Cato Client, then run `bash _extract/deploy.sh`.
+
+**Still open (could not be verified from public sources — wording left hedged on-page):** EU AI Act post-June
+authority tallies; Versa Concerto remediation date; Portkey/AI-gateway scope (KB login-gated); Sophos second XGS
+price rise; Inbound-IPS coverage counts (source deck only); interconnect QoS direction. 3 staleness rows remain
+overdue (warn-only) and `checkfigures.py` still lists 24 orphan images and 59 capture markers without a CMA path.
+
+---
 
 Scope requested: adopt the platform-overview diagram style across every page, add spotlight
 context diagrams and placeholder captures, then make any improvements, updates or innovations that
