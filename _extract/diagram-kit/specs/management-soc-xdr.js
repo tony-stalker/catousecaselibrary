@@ -3,14 +3,14 @@ DG.page('management-soc-xdr', {
   spotlight: {
     hl: ['branch', 'users', 'cloud', 'pop', 'xops', 'msvc'],
     mods: ['sse'],
-    flows: [{p: 'br1'}, {p: 'us1'}, {p: 'cl-aws'}, {p: 'spine'}, {p: 'atk'}],
+    flows: [{p: 'br1'}, {p: 'us1'}, {p: 'cl-aws'}, {p: 'spine'}],   // 'atk' removed: the kit lights it as a green flow (no .attack view in the spotlight)
     steps: [
       {t: 'Every flow from every site, user and cloud instance already traverses a PoP: full telemetry on day one.', marks: ['branch', 'users', 'cloud']},
       {t: 'The single-pass engine inspects each flow once; attack traffic is blocked at the PoP, evidence recorded.', marks: ['pop']},
       {t: 'Cato XDR correlates the signals into one ranked story queue: ML criticality score, mapped to MITRE ATT&CK.', marks: ['xops']},
       {t: 'The analyst pivots story → events → policy fix in one console; Cato MDR works the same queue 24×7.', marks: ['msvc']},
     ],
-    anchors: {msvc: [1423, 212]},
+    anchors: {msvc: [1524, 154], cloud: [1450, 326]},   // msvc inside the Managed services box right of its title; cloud beside AWS
   },
   diagrams: [{
     slot: 'main',
@@ -56,8 +56,8 @@ DG.page('management-soc-xdr', {
       s += fl(`M482 ${IY + IH} L482 ${XY}`, 'fl-flow', {arrow: true, dur: .7});
       s += fl(`M${XX + XW - 28} ${XY} C ${XX + XW - 28} ${XY - 52}, 654 ${IY + IH + 52}, 654 ${IY + IH}`, 'fl-flow', {arrow: true, dur: .9});
       s += T(494, 160, 'alerts in', 'f-m');
-      s += T(338, 160, 'stories out', 'f-m', 'end');
-      s += T(622, 160, 'stories out', 'f-m');
+      s += T(326, 160, 'stories out', 'f-m', 'end');
+      s += T(634, 160, 'stories out', 'f-m');
 
       /* ---- right: one ranked queue, the analyst, MDR ---- */
       const QX = 600, QW = 146;

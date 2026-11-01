@@ -120,7 +120,7 @@ DG.page('migration-journey-firewall', {
     mods: ['sse'],
     flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'cl-aws'}, {p: 'm1'}],
     steps: [
-      {t: 'The Frankfurt interconnect hub takes the first Socket; its imported rules run in FWaaS in monitor mode.', marks: ['backbone']},
+      {t: 'The Frankfurt interconnect hub takes the first Socket; its imported rules run in FWaaS in monitor mode.', marks: ['dc']},
       {t: 'The London DC HA Socket and an AWS vSocket join; cloud egress moves onto the forming CMA rulebase.', marks: ['dc', 'cloud']},
       {t: 'Branches cut enforcement to FWaaS in waves; signed-off appliances drop to powered-on standby.', marks: ['branch']},
       {t: 'Madrid signs off and the renewal is cancelled: one global policy for every edge, enforced in the PoP.', marks: ['pop']},

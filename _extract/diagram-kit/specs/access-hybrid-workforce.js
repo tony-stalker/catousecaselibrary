@@ -45,7 +45,7 @@ DG.page('access-hybrid-workforce', {
       s += nd(550, 150, 196, 56, {t: 'Microsoft 365 & SaaS', s: ['egress at the nearest PoP'], ic: 'globe', is: 20, icls: 'g'});
       /* users → nearest PoP */
       s += fl('M200 68C240 68 250 181 336 181', 'fl-tun', {dur: 1.3, label: 'Socket tunnel', lx: 236, ly: 112});
-      s += fl('M200 218C250 218 300 196 338 194', 'fl-tun', {dur: 1.3, label: 'Client tunnel', lx: 258, ly: 240});
+      s += fl('M200 218C250 218 300 196 338 194', 'fl-tun', {dur: 1.3, label: 'Client tunnel', lx: 256, ly: 193});
       s += fl('M200 408C300 408 460 400 508 300', 'fl-tun', {dur: 1.5, label: 'Client tunnel', lx: 330, ly: 428});
       /* PoP → destinations */
       s += fl('M382 170C450 150 470 64 550 64', 'fl-tun', {dur: 1.3, arrow: 'arr-m'});

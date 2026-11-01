@@ -34,7 +34,7 @@ DG.page('migration-zscaler-policy', {
       });
       s += fl('M110 176V226', 'fl-flow', {np: 0, arrow: true});
       DOM.forEach(([x, t, sub]) => { s += nd(x, 50, 172, 60, {t, s: [sub]}); });
-      s += pill(630, 138, 'EDM / IDM do not export · EDM rebuilt', 'y');
+      s += pill(631, 32, 'EDM / IDM do not export · EDM rebuilt', 'y');   // above ZIA DLP, clear of its drop line
 
       /* ---- the pipeline: phases 1–3, left to right ---- */
       s += tier(14, 216, '1 · EXPORT');

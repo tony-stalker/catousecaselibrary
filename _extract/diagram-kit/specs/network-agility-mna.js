@@ -3,6 +3,7 @@ DG.page('network-agility-mna', {
   spotlight: {
     hl: ['branch', 'pop', 'backbone', 'dc', 'mgmt'],
     mods: ['sdwan'],
+    anchors: {mgmt: [312, 162]},   // step-1 marker left of the CMA tile, clear of its 'Terraform & API' text
     flows: [{p: 'br1'}, {p: 'br2'}, {p: 'br3'}, {p: 'r-LC'}, {p: 'dc1', rev: true}, {p: 'm1'}],
     steps: [
       {t: 'Acquired sites are defined as code and created through the Cato GraphQL API with Terraform.', marks: ['mgmt']},
@@ -13,7 +14,7 @@ DG.page('network-agility-mna', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 0 760 500',
     draw: K => {
       const {nd, fl, T, pill, tier, site, side, ring, fpin, fy, by} = K;
       let s = '';
@@ -43,11 +44,12 @@ DG.page('network-agility-mna', {
       s += fl('M198 119C300 119 340 198 407 206', 'fl-tun', {dur: 1.4});
       s += fl('M198 193C300 193 340 214 406 218', 'fl-tun fl-dim', {np: 0});
       s += fl('M198 267C300 267 340 230 408 230', 'fl-tun fl-dim', {np: 0});
+      s += T(214, 233, 'faded · not yet live', 'f-m');
       /* acquired-site traffic crosses the backbone to the existing estate */
       s += fl(`M${RG.cx - RG.rx} ${RG.cy}A${RG.rx} ${RG.ry} 0 0 0 ${RG.cx + RG.rx} ${RG.cy}`, 'fl-hot', {n: 3, dur: 2.6});
 
       /* control plane: Entra ID provisions users and groups into Cato */
-      s += fl(`M210 448C290 448 326 400 ${362} ${fy(RG, 362) + 10}`, 'fl-net', {np: 0, arrow: 'arr-n', label: 'SCIM — users & groups provisioned', lx: 326, ly: 480});
+      s += fl(`M210 448C290 448 326 400 ${362} ${fy(RG, 362) + 10}`, 'fl-net', {np: 0, arrow: 'arr-n', label: 'SCIM — users & groups provisioned', lx: 314, ly: 416});
 
       /* ---- right: the existing Cato estate ---- */
       s += site(566, 150, 180, 230, 'EXISTING CATO ESTATE');

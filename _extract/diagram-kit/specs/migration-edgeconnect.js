@@ -5,9 +5,9 @@ DG.page('migration-edgeconnect', {
     mods: ['sdwan', 'sse'],
     flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'eg-www'}],
     steps: [
-      {t: 'A parallel Socket at each EdgeConnect hub peers over eBGP; subnet sharing and every BIO stay intact.', marks: ['dc']},
+      {t: 'A parallel Socket at each EC hub peers over eBGP; subnet sharing and BIOs stay intact.', marks: ['dc']},
       {t: 'AS-path length anchors each region to its local hub; a migrated spoke is inspected at the PoP, not chained.', marks: ['backbone', 'pop']},
-      {t: "The site's SSE tunnel is simply not rebuilt; Orchestrator and the SSE tenant retire after the final wave.", marks: ['branch', 'saas']},
+      {t: 'Migrated sites egress inspected at the PoP; the third-party SSE tunnel is not rebuilt.', marks: ['branch', 'saas']},
     ],
     anchors: {saas: [302, 310], backbone: [1074, 592]},   // step-3 marker right of the SaaS cloud, clear of its subtitle
   },
@@ -38,10 +38,10 @@ DG.page('migration-edgeconnect', {
 
       /* ---- centre: the Manchester hub — same site, new leg ---- */
       s += site(232, 236, 286, 236, 'MANCHESTER HUB');
-      s += nd(262, 264, 236, 62, {t: 'Manchester hub', s: ['parallel Cato Socket', 'same site, new leg'], ic: 'cpu', is: 22, icls: 'g', cls: 'hot'});
+      s += nd(262, 264, 236, 62, {t: 'Cato Socket', s: ['parallel at the hub', 'same site, new leg'], ic: 'cpu', is: 22, icls: 'g', cls: 'hot'});
       s += fl('M380 326V396', 'fl-net', {np: 0});
       s += pill(380, 361, 'eBGP handoff · AS-path symmetry', 'm');
-      s += nd(262, 396, 236, 62, {t: 'Manchester hub', s: ['EC hub · subnet sharing'], ic: 'route', is: 22, icls: 'g'});
+      s += nd(262, 396, 236, 62, {t: 'EdgeConnect hub', s: ['subnet sharing · BIOs'], ic: 'route', is: 22, icls: 'g'});
 
       /* ---- left: the migrated branch; its SSE tunnel is retired ---- */
       s += fl('M36 264V206', 'fl-down', {np: 0});

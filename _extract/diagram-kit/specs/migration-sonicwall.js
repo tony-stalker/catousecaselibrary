@@ -6,8 +6,8 @@ DG.page('migration-sonicwall', {
     flows: [{p: 'br1'}, {p: 'dc2'}, {p: 'us1'}, {p: 'eg-www'}],
     steps: [
       {t: 'SSL-VPN cohorts move to ZTNA first: IdP MFA and posture at the PoP, and the WAN-facing portal is retired.', marks: ['users']},
-      {t: 'TZ branches swap to parallel Sockets in waves; the NSa hub runs an interim IPsec IKEv2 on-ramp to the PoP.', marks: ['branch', 'dc']},
-      {t: 'Default routes are filtered at the on-ramp; rollback is re-plugging the TZ so its site-to-site VPN returns.', marks: ['pop']},
+      {t: 'The NSa hub runs an interim IPsec IKEv2 on-ramp to the PoP, with default routes filtered.', marks: ['dc', 'pop']},
+      {t: 'TZ branches swap to Sockets in waves; rollback is re-plugging the TZ, restoring its S2S VPN.', marks: ['branch']},
     ],
   },
   diagrams: [{
@@ -63,7 +63,7 @@ DG.page('migration-sonicwall', {
 
       /* ---- rollback: re-plug the TZ ---- */
       s += fl('M214 468C340 520 520 500 600 364', 'fl-net', {np: 0, arrow: true});
-      s += T(378, 518, 'Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub', 'f-s', 'middle');
+      s += T(378, 542, 'Rollback — re-plug the TZ · its site-to-site VPN re-establishes to the hub', 'f-s', 'middle');
 
       /* the PoP pin on the front of the ring */
       s += fpin(380, Math.round(fy(RG, 380)) + 2, 22, 'PoP', {halo: true});

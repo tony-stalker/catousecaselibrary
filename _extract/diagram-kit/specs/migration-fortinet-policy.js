@@ -52,7 +52,7 @@ DG.page('migration-fortinet-policy', {
       s += fl(`M292 ${MY}H311`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M442 ${MY}H461`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
-      s += pill(640, 210, 'amber → green on evidence', 'y');   // above DEPLOY→ENFORCE, clear of the evidence lines
+      s += pill(640, 210, 'monitor → block on evidence', 'y');   // above DEPLOY→ENFORCE, clear of the evidence lines
       s += pill(378, 312, 'interface pairs → scopes', '');
 
       /* ---- discard branch: nothing leaves it ---- */
@@ -73,6 +73,6 @@ DG.page('migration-fortinet-policy', {
     },
     title: 'FortiOS policy conversion pipeline',
     desc: 'The four FortiOS policy domains are exported once, rationalised against hit-count evidence, and only surviving intent is mapped to CMA constructs; every mapped rule deploys in monitor and is promoted to enforcement when events prove it.',
-    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
+    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Promotion — monitor to block, per rule, on event evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });

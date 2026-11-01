@@ -14,7 +14,7 @@ DG.page('network-sdwan', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 50 760 380',
     draw: K => {
       const {nd, fl, T, pill, site, ring, fpin, fy, cloud, xmark, socketX1600} = K;
       let s = '';
@@ -26,10 +26,10 @@ DG.page('network-sdwan', {
       s += T(114, 272, 'broadband + 4G/LTE · active/active', 'f-s', 'middle');
 
       /* ---- the legacy circuit it replaces ---- */
-      s += `<g style="stroke-dasharray:5 4">${nd(26, 430, 176, 54, {t: 'Legacy MPLS', s: ['One circuit · no on-ramp'], ic: 'route', is: 20, cls: 'dash'})}</g>`;   // .nd.dash is not in the ported CSS; dash inline
-      s += fl('M202 457L330 457', 'fl-down', {np: 0});
-      s += xmark(266, 457);
-      s += pill(402, 457, 'retired at cutover', 'r');
+      s += `<g style="stroke-dasharray:5 4">${nd(26, 346, 176, 54, {t: 'Legacy MPLS', s: ['One circuit · no on-ramp'], ic: 'route', is: 20, cls: 'dash'})}</g>`;   // .nd.dash is not in the ported CSS; dash inline
+      s += fl('M202 373L330 373', 'fl-down', {np: 0});
+      s += xmark(266, 373);
+      s += pill(402, 373, 'retired at cutover', 'r');
 
       /* ---- centre: the global private backbone with the two PoPs on its front ---- */
       const RG = {cx: 430, cy: 190, rx: 140, ry: 50};
@@ -43,11 +43,11 @@ DG.page('network-sdwan', {
       /* both last miles terminate on the nearest PoP (drawn before the pins so they meet under the pin heads) */
       s += fl(`M194 222C250 222 298 ${FY - 30} ${LX - 3} ${FY - 5}`, 'fl-tun', {dur: 1.2, label: 'broadband', lx: 250, ly: 206});
       s += fl(`M194 236C250 236 298 ${FY + 2} ${LX - 2} ${FY + 1}`, 'fl-tun', {dur: 1.3, label: '4G/LTE', lx: 250, ly: 252});
-      /* across the backbone, Manchester to London */
+      /* across the backbone, nearest PoP to London */
       s += fl(`M${LX} ${FY}A${RG.rx} ${RG.ry} 0 0 0 ${CX} ${FY}`, 'fl-hot', {n: 2, dur: 2.2});
 
       /* ---- right: the destinations the branch now reaches privately ---- */
-      s += nd(570, 70, 176, 54, {t: 'London DC', s: ['Socket X1500 · core apps'], ic: 'server', is: 20, icls: 'g'});
+      s += nd(570, 70, 176, 54, {t: 'London DC', s: ['Socket · core apps'], ic: 'server', is: 20, icls: 'g'});
       s += nd(570, 330, 176, 54, {t: 'Cloud DC — AWS', s: ['vSocket · eu-west-2'], ic: 'cpu', is: 20, icls: 'g'});
       s += cloud(730, 344, .16);
       const PX = CX + 20, PY = FY - 36;
@@ -57,8 +57,8 @@ DG.page('network-sdwan', {
       /* the PoPs sit on the ring, above the flows */
       s += fpin(LX, FY, 24, 'PoP', {halo: true});
       s += fpin(CX, FY, 22, 'PoP', {fs: 9});
-      s += T(LX, 268, 'Manchester PoP', 'f-t', 'middle');
-      s += T(LX, 282, 'nearest PoP — selected automatically', 'f-s', 'middle');
+      s += T(LX, 268, 'Nearest PoP', 'f-t', 'middle');
+      s += T(LX, 282, 'selected automatically', 'f-s', 'middle');
       s += T(CX - 8, 268, 'London PoP', 'f-t', 'middle');
       return s;
     },

@@ -21,27 +21,27 @@ DG.page('migration-zscaler', {
       /* ---- centre: the Cato PoP on the global private backbone ---- */
       const RG = {cx: 380, cy: 300, rx: 150, ry: 40};
       s += ring(RG);
-      s += popBox(290, 190, 180, 70, 'Cato PoP', 'SWG · CASB/DLP · TLSi');
+      s += popBox(290, 174, 180, 70, 'Cato PoP', 'SWG · CASB/DLP · TLSi');
       s += T(380, 364, 'Global Private Backbone', 'f-s', 'middle');
 
       /* ---- left: the edges — on Cato first, ZCC still on the endpoint ---- */
       s += tier(14, 44, 'EDGES · ON CATO FIRST');
-      s += nd(14, 90, 200, 68, {t: 'Branch site', s: ['Cato Socket X1500', 'WAN + internet via PoP'], ic: 'building', is: 20, icls: 'g'});
+      s += nd(14, 90, 200, 68, {t: 'Branch site', s: ['Cato Socket', 'WAN + internet via PoP'], ic: 'building', is: 20, icls: 'g'});
       s += nd(14, 300, 200, 56, {t: 'Remote user', s: ['Cato Client + ZCC · dual tunnels'], ic: 'laptop', is: 20, icls: 'g'});
       s += pill(114, 176, 'ZCC rides inside Socket tunnel', 'm');
       s += pill(114, 380, 'ZCC + Cato tunnels side by side', 'm');
 
       /* Cato tunnels into the PoP */
-      s += fl('M214 124C250 124 258 206 290 208', 'fl-tun', {dur: 1.3});
-      s += fl('M180 300C180 252 240 238 290 238', 'fl-tun', {dur: 1.3});
+      s += fl('M214 124C250 124 258 196 290 198', 'fl-tun', {dur: 1.3});
+      s += fl('M180 300C180 246 240 226 290 226', 'fl-tun', {dur: 1.3});
 
       /* ---- right top: internet & SaaS — the target breakout ---- */
       s += tier(560, 44, 'INTERNET · SAAS');
-      s += fl('M470 206C520 196 548 146 584 126', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'direct breakout — target', lx: 556, ly: 184, lcls: 'g keep'});
+      s += fl('M470 194C520 184 548 146 584 126', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'direct breakout — target', lx: 556, ly: 184, lcls: 'g keep'});
       s += cloud(644, 110, 1.2, 'Internet & SaaS', 'M365 · web · cloud apps');
 
       /* ---- right bottom: Zscaler ZIA — interim, being retired ---- */
-      s += fl('M470 244C540 250 600 320 600 426', 'fl-ha', {dur: 1.8, label: 'IKEv2 IPsec · LB by src / dst', lx: 600, ly: 326, lcls: 'y keep'});
+      s += fl('M470 230C540 236 600 320 600 426', 'fl-ha', {dur: 1.8, label: 'IKEv2 IPsec · LB by src / dst', lx: 600, ly: 326, lcls: 'y keep'});
       s += nd(546, 426, 200, 60, {t: 'Zscaler ZIA', s: ['interim · being retired'], ic: 'globe', is: 20, icls: 'g'});
       s += R(546, 426, 200, 60, 'dash-card', 10);
       s += pill(650, 426, 'interim', 'y');

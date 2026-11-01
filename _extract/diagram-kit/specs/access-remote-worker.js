@@ -3,12 +3,12 @@ DG.page('access-remote-worker', {
   spotlight: {
     hl: ['users', 'pop', 'backbone', 'dc', 'saas', 'mgmt'],
     mods: ['uztna'],
-    anchors: {mgmt: [782, 132], backbone: [1262, 528]},   // step markers clear of the CMA subtitle and the ring label
+    anchors: {mgmt: [782, 132]},   // step marker clear of the CMA subtitle
     flows: [{p: 'us1'}, {p: 'r-LC'}, {p: 'dc1', rev: true}, {p: 'eg-saas'}],
     steps: [
       {t: "Brandon's always-on Cato Client tunnels to his nearest PoP, Santa Clara; posture is checked continuously.", marks: ['users']},
-      {t: 'Microsoft 365 egresses at the PoP; private applications ride the backbone to the London DC Socket.', marks: ['pop', 'dc']},
-      {t: 'Client and PoP instrument every segment, so a Fair score is pinned to device, last mile, backbone or app.', marks: ['backbone']},
+      {t: 'Microsoft 365 egresses at the PoP; private applications ride the backbone to the datacentre Socket.', marks: ['pop', 'dc']},
+      {t: 'The Client scores each node, so a Fair score is pinned to device, Wi-Fi, LAN gateway, last mile or app.', marks: ['users']},
       {t: 'Experience Monitoring in the CMA shows per-user, per-app scores before the ticket is raised.', marks: ['mgmt']},
     ],
   },
@@ -29,14 +29,14 @@ DG.page('access-remote-worker', {
       s += ring(RG);
       s += T(450, 292, 'Global Private Backbone', 'f-h', 'middle');
 
-      /* last mile: encrypted Client tunnel from home to the PoP · measurement point 2 */
+      /* home LAN gateway (point 2), then the last mile: encrypted Client tunnel from home to the PoP (point 3) */
       s += fl('M160 230L320 230', 'fl-tun', {dur: 1.3});
-      s += pill(240, 206, 'Last mile · ISP', 'keep');
-      s += badge(240, 230, '2');
+      s += badge(192, 230, '2') + T(192, 212, 'LAN gateway', 'f-s', 'middle');
+      s += pill(262, 254, 'Last mile · ISP', 'keep');
+      s += badge(262, 230, '3');
 
-      /* backbone leg to the London DC Socket (tunnel along the ring front) · measurement point 3 on the ring */
+      /* backbone leg to the datacentre Socket (tunnel along the ring front) */
       s += fl('M320 230A130 32 0 0 0 580 230C602 230 670 262 670 306', 'fl-tun', {dur: 2.2});
-      s += badge(450, 262, '3');
 
       /* SaaS egress at the PoP: Microsoft 365 */
       s += fl('M346 178C420 130 530 96 606 96', 'fl-https', {dur: 1.4, arrow: true});
@@ -48,14 +48,14 @@ DG.page('access-remote-worker', {
       /* RIGHT · two targets, measurement point 4 at each application side */
       s += cloud(670, 96, 1, 'Microsoft 365', 'SaaS · PoP egress');
       s += badge(557, 100, '4');
-      s += tile(595, 306, 150, 100, 'server', 'London DC', ['Socket · private apps']);
+      s += tile(595, 306, 150, 100, 'server', 'Datacentre', ['Socket · private apps']);
       s += badge(670, 282, '4');
 
-      /* BOTTOM · what Experience Monitoring scores at each point (Brandon's case: ①–③ Good, slow ④ is the app side) */
+      /* BOTTOM · the Connection Details nodes Experience Monitoring scores (Brandon's case: ①–③ Good, slow ④ is the app side) */
       s += tier(14, 462, 'WHERE EXPERIENCE MONITORING SCORES THE PATH');
       [['1', 'Device', 'CPU · RAM · Wi-Fi dBm', 'Good', 'g'],
-       ['2', 'Last mile', 'tunnel loss · latency', 'Good', 'g'],
-       ['3', 'Backbone', 'PoP to PoP', 'Good', 'g'],
+       ['2', 'LAN gateway', 'loss · latency', 'Good', 'g'],
+       ['3', 'Last mile', 'tunnel loss · latency', 'Good', 'g'],
        ['4', 'App side', 'TTFB · TCP · TLS', 'Fair', 'y']].forEach(([n, t, sub, v, c], i) => {
         const x = 14 + i * 184, y = 474;
         s += R(x, y, 176, 50, 'nd soft', 10) + badge(x + 20, y + 25, n);
@@ -66,7 +66,7 @@ DG.page('access-remote-worker', {
     },
     vb: '0 0 760 560',
     title: "Where a remote worker's experience is measured",
-    desc: "Because Brandon's Client, his nearest PoP and the backbone are one platform, every segment of his path is instrumented, so a Fair score can be pinned to his device, his ISP, the backbone or the application.",
+    desc: "Because Brandon's Client, his nearest PoP and the backbone are one platform, every node of his path is scored, so a Fair score can be pinned to his device, Wi-Fi, LAN gateway, last mile or the application.",
     legend: [['tun', 'Encrypted tunnel — Client to nearest PoP, then backbone to each app'], ['https', 'SaaS egress at the PoP']],
   }],
 });

@@ -49,7 +49,7 @@ DG.page('management-data-lake', {
       /* ---- the Data Lake ---- */
       const LX = 342, LW = 136, LH = 112, LYT = LY - LH / 2;
       s += fl(`M${GX + GW} ${LY} L${LX} ${LY}`, 'fl-flow', {arrow: true});
-      s += tile(LX, LYT, LW, LH, 'db', 'Cato Data Lake', ['3 / 6 / 12-month units', 'first unit included', 'deleted after retention'], {cls: 'pop'});
+      s += tile(LX, LYT, LW, LH, 'db', 'Cato Data Lake', ['3 / 6 / 12-month units', 'deleted after retention'], {cls: 'pop'});
       s += T(LX + LW / 2, LYT + LH + 18, 'one variant applies to all units', 'f-s', 'middle');
 
       /* ---- export destinations (right) ---- */
@@ -57,7 +57,7 @@ DG.page('management-data-lake', {
       const DST = [
         ['CMA Events page',  'Home → Events'],
         ['AWS S3 push feed', '60 s / 9.5 MB · .GZ'],
-        ['Azure Blob feed',  'feed target · cadence not published'],
+        ['Azure Blob feed',  'Azure Blob Storage target'],
         ['eventsFeed API',   'pull · gzip: storage up to −95%'],
         ['SIEM ingestion',   'filtered, trimmed feed'],
       ];
@@ -76,6 +76,6 @@ DG.page('management-data-lake', {
     },
     title: 'The event pipeline: generation, rate limit, retention, export',
     desc: 'Cato services generate events according to policy tracking; an hourly rate gate sized in Data Lake units of 2.5 million events per hour admits them into the Data Lake, where they are held for the 3, 6 or 12-month variant and consumed through the CMA, an S3 or Azure Blob feed, the eventsFeed API or a SIEM, all free of charge.',
-    legend: [['flow', 'Event generation — within the licensed hourly rate'], ['down', 'Beyond the hourly peak — may be discarded'], ['net', 'Export & ingestion — no additional Cato cost']],
+    legend: [['flow', 'Event generation — within the licensed hourly rate'], ['down', 'Beyond the hourly peak — may be discarded'], ['net', 'Consume & export — no additional Cato cost']],
   }],
 });

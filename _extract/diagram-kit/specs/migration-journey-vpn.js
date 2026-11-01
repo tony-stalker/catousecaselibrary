@@ -115,7 +115,7 @@
     spotlight: {
       hl: ['users', 'dc', 'cloud', 'pop', 'backbone'],
       mods: ['uztna'],
-      flows: [{p: 'us1'}, {p: 'us2'}, {p: 'dc1'}, {p: 'cl-az'}, {p: 'r-CR'}],
+      flows: [{p: 'us1'}, {p: 'us2'}, {p: 'dc1'}, {p: 'r-CR'}],
       steps: [
         {t: 'The rail goes in first: a Socket at London DC and a vSocket in Azure put both app estates on Cato.', marks: ['dc', 'cloud']},
         {t: 'The pilot cohort swaps to the Cato Client — ZTNA to named apps — while the headends stay live for the rest.', marks: ['users']},

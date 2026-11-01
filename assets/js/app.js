@@ -267,7 +267,8 @@
         var list = FIELD_ORDER.filter(function (k) { return hit.fields[k]; }).map(function (k) { return FIELD_LABEL[k]; });
         if (list.length) matchedIn = '<span class="uc-matched">matched in: ' + list.join(" · ") + "</span>";
       }
-      return '<a class="uc-card" href="' + esc(uc.file) + '">' +
+      // the card link sits in a cell so the deck builder's + button can be its sibling, not nested inside the link
+      return '<div class="uc-cell"><a class="uc-card" href="' + esc(uc.file) + '">' +
         '<div class="uc-top"><span class="' + catChipClass(uc.category) + '">' + esc(uc.category) + "</span>" +
         '<span class="badge ' + st.cls + '">' + st.label + "</span></div>" +
         "<h3>" + (words ? hl(uc.title, words) : esc(uc.title)) + "</h3>" +
@@ -280,7 +281,7 @@
           return '<span class="tag' + (on ? " tag-hit" : "") + '">' + esc(t) + "</span>";
         }).join("") + "</div>" +
         matchedIn +
-        '<span class="uc-cta">Open use case →</span></a>';
+        '<span class="uc-cta">Open use case →</span></a></div>';
     }
     // six most-used catalog tags, for the empty state
     function popularTags(n) {

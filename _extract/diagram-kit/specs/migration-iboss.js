@@ -20,10 +20,10 @@ DG.page('migration-iboss', {
 
       /* ---- top band: migrated waves steer to the Cato PoP ---- */
       s += tier(44, 40, 'MIGRATED · STEERED TO CATO');
-      const RG = {cx: 410, cy: 190, rx: 105, ry: 40};
+      const RG = {cx: 410, cy: 200, rx: 105, ry: 40};
       s += ring(RG);
-      s += popBox(320, 80, 180, 70, 'Cato PoP', 'SWG · TLSi · CASB · DLP');
-      s += T(410, 262, 'Global Private Backbone', 'f-s', 'middle');
+      s += popBox(320, 66, 180, 70, 'Cato PoP', 'SWG · TLSi · CASB · DLP');
+      s += T(410, 272, 'Global Private Backbone', 'f-s', 'middle');
 
       s += nd(44, 70, 180, 64, {t: 'Wave 1 cohort', s: ['Cato Client via MDM', 'atomic per-device swap'], ic: 'users', is: 20, icls: 'g'});
       s += pill(134, 152, 'wave 1 · migrated', 'g');
@@ -31,13 +31,13 @@ DG.page('migration-iboss', {
       s += pill(134, 272, 'pilot site', 'g');
 
       /* Cato tunnels: Client and Socket into the PoP */
-      s += fl('M224 102C270 102 280 108 320 108', 'fl-tun', {dur: 1.3});
-      s += fl('M224 222C276 222 276 136 320 136', 'fl-tun', {dur: 1.3});
+      s += fl('M224 102C270 102 280 94 320 94', 'fl-tun', {dur: 1.3});
+      s += fl('M224 222C276 222 276 122 320 122', 'fl-tun', {dur: 1.3});
 
       /* ---- right: SaaS & internet, keyed to both vendors' egress IPs ---- */
       s += cloud(640, 250, 1.4, 'SaaS & internet', 'M365 · Google · exam apps');
       s += pill(598, 312, 'allowlists dual-list both IPs', 'm');
-      s += fl('M500 110C590 110 630 140 636 192', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'PoP breakout · allocated IPs', lx: 600, ly: 122, lcls: 'g keep'});
+      s += fl('M500 96C590 96 630 140 636 192', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'PoP breakout · allocated IPs', lx: 640, ly: 152, lcls: 'g keep'});
 
       /* ---- bottom band: remaining waves stay on iboss, change-frozen ---- */
       s += tier(44, 398, 'REMAINING WAVES · STAY ON IBOSS');

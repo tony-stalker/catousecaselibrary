@@ -66,9 +66,10 @@ window.__EXPORT = function (svg, prefix, title, desc) {
   [...svg.attributes].forEach(a => svg.removeAttribute(a.name));
   svg.setAttribute('viewBox', vb); svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.setAttribute('class', ['x-fig'].concat(rootCls).join(' ')); svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-labelledby', prefix + '-title ' + prefix + '-desc');
-  svg.insertAdjacentHTML('afterbegin', '<title id="' + prefix + '-title"></title><desc id="' + prefix + '-desc"></desc>');
-  svg.querySelector('title').textContent = title || ''; svg.querySelector('desc').textContent = desc || '';
+  /* name from <title>; describe from <desc> only when there is one (an empty target is an a11y defect) */
+  svg.setAttribute('aria-labelledby', prefix + '-title' + (desc ? ' ' + prefix + '-desc' : ''));
+  svg.insertAdjacentHTML('afterbegin', '<title id="' + prefix + '-title"></title>' + (desc ? '<desc id="' + prefix + '-desc"></desc>' : ''));
+  svg.querySelector('title').textContent = title || ''; if (desc) svg.querySelector('desc').textContent = desc;
   const out = svg.outerHTML.replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ');
   return { svg: out, warnings, refs: [...refs].sort() };
 };

@@ -16,12 +16,10 @@ DG.page('access-byod-clientless', {
     slot: 'main',
     vb: '0 0 760 500',
     draw: K => {
-      const {nd, fl, T, TL, I, L, popBox, ring, side, chipRow, chips, tier, xmark} = K;
+      const {nd, fl, T, TL, I, L, popBox, side, chipRow, chips, tier, xmark} = K;
       let s = '';
-      /* ---- top band: the Cato cloud and its backbone ---- */
+      /* ---- top band: column labels (no backbone ring: no path on this figure uses it) ---- */
       s += tier(250, 12, 'CATO SASE CLOUD') + tier(556, 12, 'DESTINATIONS');
-      s += ring({cx: 500, cy: 50, rx: 190, ry: 24});
-      s += T(500, 54, 'Global Private Backbone', 't-ring', 'middle');
 
       /* ---- left: unmanaged devices and the three browser on-ramps ---- */
       s += I('laptop', 14, 28, 22, 'ic g') + T(44, 40, 'Unmanaged devices', 'nd-t') + T(44, 55, 'contractor · BYOD · partner', 'nd-s');

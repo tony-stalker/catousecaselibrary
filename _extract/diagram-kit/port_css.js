@@ -17,6 +17,9 @@
         s2.querySelectorAll('[data-vw]').forEach(g => { g.style.display = g.dataset.vw.split(' ').includes(v) ? '' : 'none'; }); });
     } catch (e) {} }); });
   [null].concat(K.USE_CASES).forEach(uc => { const h = document.createElement('div'); corpus.appendChild(h); K.spotlight(uc, h); });
+  /* states the bundled use cases never produce: two steps on one anchor (a pill marker) and the attack path */
+  { const h = document.createElement('div'); corpus.appendChild(h);
+    K.spotlight({ hl: ['pop'], flows: [{ p: 'atk' }, { p: 'br1' }], steps: [{ marks: ['pop'] }, { marks: ['pop'] }] }, h); }
 
   const UI = /(^|[\s>+~(,])(\.(stage|scene|detail|d-[\w-]+|bar|top|uc-rail|rail|panel|pn-[\w-]+|lic[\w-]*|popmap|pm-[\w-]+|help|menu|chips|chip-nav|btn|lightbox|laser|lens-tip|app|wrap)|#(scene|detail|panel|menu|help|popmap|app|stage))(?![\w-])/;
   const STATE = /:(hover|focus|focus-visible|focus-within|active|checked)/;

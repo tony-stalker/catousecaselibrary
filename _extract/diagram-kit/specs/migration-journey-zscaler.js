@@ -24,8 +24,8 @@ const zsScene = n => K => {
   }
 
   /* ---- Zscaler ZIA cloud (lower band) ---- */
-  const zSub = ['internet security · ZPA', 'internet security · ZPA', 'internet security · ZPA', 'draining to standby', 'internet security · ZPA'][n];
-  const zc = cloud(PX, 420, 1.3, 'Zscaler ZIA', zSub);
+  const zSub = ['internet security · ZPA', 'internet security · ZPA', 'internet security · ZPA', 'draining to standby', 'decommissioned'][n];
+  const zc = cloud(PX, 420, 1.3, 'Zscaler ZIA', zSub, n === 4 ? 'bad' : '');
   s += n >= 3 ? `<g opacity="${n === 3 ? 0.55 : 0.5}">${zc}</g>` : zc;
 
   /* ---- legacy lanes: edges into ZIA ---- */
@@ -33,21 +33,24 @@ const zsScene = n => K => {
   if (edgeCls) {
     const o = n >= 2 ? {np: 0} : {dur: 2.4};
     s += fl('M210 86C300 130 380 300 434 386', edgeCls, o);
-    s += fl('M210 420C300 420 350 420 404 420', edgeCls, o);
+    /* Priya's ZCC lane: grey while ZCC alone fronts her; amber 'side by side' with the Cato Client in phase 2, static in phase 3 */
+    if (n <= 1) s += fl('M210 420C300 420 350 420 404 420', edgeCls, o);
+    else s += fl('M210 420C300 420 350 420 404 420', 'fl-ha', n === 2 ? {dur: 2.2, label: 'ZCC side by side', lx: 300, ly: 442, lcls: 'y'}
+      : {np: 0, label: 'ZCC side by side', lx: 300, ly: 442, lcls: 'y'});
   }
   /* ---- legacy lanes: ZIA out to the internet and, over ZPA / backhaul, to the private apps ---- */
   const outCls = ['fl-net', 'fl-net', 'fl-net', 'fl-net fl-dim', 'fl-down'][n];
   const og = n === 4 ? {np: 0, g: 'zs-retired'} : n === 3 ? {np: 0} : {dur: 2.4};
   const outLanes = ['M546 392C670 330 712 170 750 88', 'M556 420C640 410 690 270 750 260', 'M552 446C640 456 690 432 750 430'];
   outLanes.forEach(d => { s += n === 4 ? `<g opacity="0.65">${fl(d, outCls, og)}</g>` : fl(d, outCls, og); });
-  if (n <= 2) s += pill(640, 458, 'ZPA / backhaul', 'm');
+  if (n <= 2) s += pill(650, 476, 'ZPA / backhaul', 'm');
 
   /* ---- Cato lanes ---- */
   if (n >= 1) {
     /* the private-app rail: PoP to the London DC Socket and the AWS vSocket */
     s += fl('M500 112C590 140 680 220 750 246', 'fl-tun', {dur: 1.6});
     s += fl('M494 128C560 220 660 360 750 404', 'fl-tun', {dur: 1.8});
-    if (n === 1) s += pill(640, 212, 'private-app rail', 'g');
+    if (n === 1) s += pill(600, 190, 'private-app rail', 'g');
   }
   if (n >= 2) {
     /* branch Socket and Priya's Client into the PoP, internet breakout at the PoP */
@@ -58,14 +61,13 @@ const zsScene = n => K => {
   if (n === 2 || n === 3) {
     /* dual agent: on-site ZCC rides inside the branch Socket tunnel; remote, ZCC runs side by side with the Cato Client */
     s += pill(300, 40, 'ZCC inside the tunnel', 'y');
-    s += fl('M210 430C330 396 432 240 474 130', 'fl-ha', {dur: 2.2, label: 'ZCC side by side', lx: 318, ly: 346, lcls: 'y'});
   }
   if (n === 2) s += fl('M480 146V372', 'fl-ha', {dur: 1.8, label: 'interim IPsec fallback', lx: 480, ly: 300, lcls: 'y'});
   if (n === 3) s += fl('M480 146V372', 'fl-net fl-dim', {np: 0, label: 'dormant fallback', lx: 480, ly: 300, lcls: 'm'});
 
   /* ---- PoP pin drawn over the lanes that meet it ---- */
   if (n >= 1) s += fpin(PX, TIP, PR, 'PoP', {halo: true});
-  if (n === 4) s += xmark(PX, 392) + pill(PX, 478, 'decommissioned', 'r keep');
+  if (n === 4) s += xmark(PX, 392);
 
   /* ---- left column: the branch and the remote user ---- */
   const brOn = n >= 2, prOn = n >= 2;
@@ -96,6 +98,7 @@ DG.page('migration-journey-zscaler', {
       {t: 'Cohorts follow in waves on the dual-agent bridge while ZIA, one flip away over IPsec, drains to standby.', marks: ['pop']},
       {t: 'ZCC uninstalled, ZIA and ZPA decommissioned: internet and private apps on one client, one platform.', marks: ['saas']},
     ],
+    anchors: {saas: [318, 318]},
   },
   diagrams: [
     {slot: 'phase-1', vb: ZS_VB, draw: zsScene(0), legend: ZS_LEGEND,

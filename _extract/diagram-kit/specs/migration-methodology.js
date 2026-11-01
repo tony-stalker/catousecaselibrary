@@ -1,6 +1,7 @@
 /* specs/migration-methodology.js — Migration Methodology & Co-existence Patterns */
 DG.page('migration-methodology', {
   spotlight: {
+    anchors: {mgmt: [782, 132], backbone: [1074, 592]},   // step-3 markers on the CMA top edge and beside the backbone label, clear of 'Terraform & API' and the SLA ring text
     hl: ['branch', 'dc', 'pop', 'backbone', 'mgmt'],
     mods: ['sdwan'],
     flows: [{p: 'br1'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'r-CR'}, {p: 'br2'}],
@@ -51,9 +52,9 @@ DG.page('migration-methodology', {
       s += cloud(CX, CY, .7, 'MPLS', 'Legacy WAN');   // drawn over the flow so its label stays clear
       s += fpin(384, 100, 20, 'PoP', {halo: true}) + T(414, 92, 'Cato PoP', 'nd-t g');
       /* nodes */
-      s += popNd(BRX, BRIS_Y, BRW, 54, {t: 'Bristol branch', s: ['Migrated · X1500']});
+      s += popNd(BRX, BRIS_Y, BRW, 54, {t: 'Bristol branch', s: ['Migrated · Cato Socket']});
       s += nd(BRX, GLAS_Y, BRW, 54, {t: 'Glasgow branch', s: ['Migrating next'], cls: 'dash'});
-      s += popNd(BX, SOY, BW, BH, {t: 'Cato Socket X1700', s: ['Hub interconnect'], ic: 'server', icls: 'g'});
+      s += popNd(BX, SOY, BW, BH, {t: 'Cato Socket', s: ['Hub interconnect'], ic: 'server', icls: 'g'});
       s += nd(BX, L3Y, BW, BH, {t: 'L3 switch', s: ['Route decision (DG)'], cls: 'hot', ic: 'switch', icls: 'g'});
       s += nd(BX, CPY, BW, BH, {t: 'Legacy CPE / router', s: ['MPLS termination'], cls: 'soft', ic: 'route'});
       s += pill(BX + BW - 48, L3Y, 'routing decision', 'y');
@@ -64,7 +65,7 @@ DG.page('migration-methodology', {
     },
     title: 'Interconnect hub co-existence topology',
     desc: 'During phased migration one interconnect hub holds both legacy CPE and a Cato Socket, and its L3 switch owns the routing decision, so a migrated branch still reaches a branch on legacy MPLS across the hub.',
-    legend: [['hot', 'Migrated ↔ legacy traffic via the hub'], ['tun', 'Cato tunnels'], ['net', 'Existing links']],
+    legend: [['hot', 'Migrated ↔ legacy traffic via the hub'], ['net', 'Existing links']],
   }, {
     /* ---- card-2: Option F, regional eBGP handoff (the second diagram-card on the page) ---- */
     slot: 'card-2',

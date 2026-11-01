@@ -10,6 +10,7 @@ DG.page('migration-versa-policy', {
       {t: "Cato applies the converted rules to every site and user, monitor-first: watch, don't block.", marks: ['users']},
       {t: 'Events and hit counts prove each rule before it is promoted from monitor to block.', marks: ['pop']},
     ],
+    anchors: {mgmt: [782, 132]},   // step 2 marker on the CMA top edge, clear of its subtitle
   },
   diagrams: [{
     slot: 'main',
@@ -55,7 +56,7 @@ DG.page('migration-versa-policy', {
       s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
       s += pill(80, 296, 'provider ticket', 'm');
       s += pill(378, 296, 'per-rule UTM → global layers', '');
-      s += pill(603, 296, 'amber → green on evidence', 'y');
+      s += pill(603, 296, 'monitor → block on evidence', 'y');
 
       /* ---- discard branch: nothing leaves it ---- */
       s += fl('M228 274C228 330 160 330 150 366', 'fl-down', {np: 0});
@@ -76,6 +77,6 @@ DG.page('migration-versa-policy', {
     },
     title: 'Versa policy pipeline — templates to one rulebase',
     desc: 'The four policy domains ride one pipeline: export (a provider change ticket in carrier-managed estates), clean-up on hit counts, mapping to CMA constructs, deployment in monitor mode and promotion on evidence; the greenfield domains skip translation, not monitor-first.',
-    legend: [['flow', 'Rulebase domains — exported, reviewed and mapped'], ['ha', 'Greenfield builds and monitor-first deployment'], ['down', 'Discarded at clean-up — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
+    legend: [['flow', 'Rulebase domains — exported, reviewed and mapped'], ['ha', 'Greenfield builds (enter at DEPLOY) · promotion, monitor to block on evidence'], ['down', 'Discarded at clean-up — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
   }],
 });

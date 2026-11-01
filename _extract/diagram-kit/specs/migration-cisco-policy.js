@@ -40,8 +40,7 @@ DG.page('migration-cisco-policy', {
 
       /* phase labels (page: EXPORT → REVIEW & MAP → DEPLOY → OPTIMISE) */
       s += tier(X[0], Y - 8, '1 · EXPORT');
-      s += tier(X[1], Y - 8, '2 · REVIEW');
-      s += tier(X[2], Y - 8, '2 · MAP');
+      s += tier(X[1], Y - 8, '2 · REVIEW & MAP');
       s += tier(X[3], Y - 8, '3 · DEPLOY');
       s += tier(X[4], Y - 8, '4 · OPTIMISE');
 
@@ -86,6 +85,6 @@ DG.page('migration-cisco-policy', {
     },
     title: 'Cisco policy conversion pipeline',
     desc: 'The four-phase pipeline applied to every Cisco policy domain: export each rule base, rationalise on hit counts, map the survivors to CMA constructs, deploy in monitor mode and enforce only once events and hit counts prove parity.',
-    legend: [['flow', 'Policy through the pipeline'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
+    legend: [['flow', 'Policy through the pipeline'], ['ha', 'Promotion — monitor to block, per rule, on event evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
   }],
 });

@@ -47,7 +47,7 @@ DG.page('migration-sophos-policy', {
 
       /* ---- the pipeline row ---- */
       s += nd(X[0], Y, W, H, {t: 'EXPORT', s: ['XML export · API', 'rule usage counters']});
-      s += nd(X[1], Y, W, H, {t: 'RATIONALISE', s: ['cull on usage', 'dedupe per-box objects'], cls: 'hot'});
+      s += nd(X[1], Y, W, H, {t: 'RATIONALISE', s: ['cull on usage', 'dedupe objects'], cls: 'hot'});
       s += nd(X[2], Y, W, H, {t: 'MAP TO CMA', s: ['FW · SWG · TLS rules', 'policies → layers']});
       s += nd(X[3], Y, W, H, {t: 'DEPLOY', s: ['monitor first', 'no user impact'], cls: 'dash'});
       s += nd(X[4], Y, W, H, {t: 'ENFORCE', s: ['flip to block', 'per rule'], cls: 'pop'});
@@ -56,7 +56,7 @@ DG.page('migration-sophos-policy', {
       s += fl(`M${X[0] + W} ${MID}H${X[1] - 2}`, 'fl-flow', {arrow: 'arr-n', dur: 0.8});
       s += fl(`M${X[1] + W} ${MID}H${X[2] - 2}`, 'fl-flow', {arrow: 'arr-n', dur: 0.8});
       s += fl(`M${X[2] + W} ${MID}H${X[3] - 2}`, 'fl-flow', {arrow: 'arr-n', dur: 0.8});
-      s += fl(`M${X[3] + W} ${MID}H${X[4] - 2}`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
+      s += fl(`M${X[3] + W} ${MID}H${X[4] - 2}`, 'fl-ha', {arrow: 'arr-y', np: 0});
       s += pill(X[4] + 4, Y + H + 20, 'amber → green on evidence', 'y');
       s += pill(X[2] + W / 2, Y + H + 20, 'zones → source scopes', '');
 
@@ -72,18 +72,18 @@ DG.page('migration-sophos-policy', {
       s += fl(`M${X[3]} 429C350 429 ${X[1] + 104} 396 ${X[1] + 104} ${Y + H + 2}`, 'fl-net', {arrow: 'arr-n', dur: 2, label: 'OPTIMISE loop', lx: 340, ly: 404, lcls: 'm'});
 
       /* ---- what changes in translation: the carry-over facts ---- */
-      s += tier(14, 480, 'WHAT CHANGES IN TRANSLATION');
+      s += tier(14, 474, 'WHAT CHANGES IN TRANSLATION');
       const notes = [
-        [14, 503, 'Security Heartbeat rules', 'Device Posture + Client Connectivity Policy'],
-        [390, 503, 'Decoupled NAT (SFOS 18+)', 'masquerade dissolves · DNAT → remote port forwarding'],
-        [14, 538, 'Identity first', 'Entra ID SSO + SCIM groups before mapping'],
-        [390, 538, 'XGS 4.8–5× TLS sizing', 'no throughput maths — scope by intent'],
+        [14, 495, 'Security Heartbeat rules', 'Device Posture + Client Connectivity Policy'],
+        [390, 495, 'Decoupled NAT (SFOS 18+)', 'masquerade dissolves · DNAT → remote port forwarding'],
+        [14, 530, 'Identity first', 'Entra ID SSO + SCIM groups before mapping'],
+        [390, 530, 'XGS 4.8–5× TLS sizing', 'no throughput maths — scope by intent'],
       ];
       notes.forEach(([x, y, t, sub]) => { s += mark(x + 8, y - 4, 'warn') + T(x + 24, y, t, 'nd-t') + T(x + 24, y + 15, sub, 'f-s'); });
       return s;
     },
     title: 'SFOS policy pipeline — rulebases and greenfield',
     desc: 'The two SFOS rulebase domains are exported as XML and rationalised on usage, the greenfield CASB and DLP pair enters with discovery inputs, and everything that survives is mapped to CMA, deployed in monitor and promoted to enforcement when events prove it.',
-    legend: [['flow', 'Rulebases — exported, reviewed and mapped'], ['https', 'Greenfield — discovery inputs, best-practice build'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
+    legend: [['flow', 'Rulebases — exported, reviewed and mapped'], ['https', 'Greenfield — discovery inputs, best-practice build'], ['ha', 'Promotion from monitor to block — on evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion']],
   }],
 });

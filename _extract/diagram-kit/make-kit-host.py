@@ -44,15 +44,18 @@ window.__KIT = (function(){
     if(cfg){
       const comps=cfg.hl||[], mods=cfg.mods||[], linkIds=(cfg.flows||[]).map(f=>f.p);
       sv.classList.add('focus-mode');
+      if(linkIds.includes('atk')) sv.classList.add('attack');   /* the attack path only exists in the source's attack view */
       sv.querySelectorAll('.cmp').forEach(g=>{ const c=g.dataset.c; g.classList.toggle('hl', c.startsWith('mod-')?mods.includes(c.slice(4)):comps.includes(c)); });
       sv.querySelectorAll('.lk').forEach(l=>l.classList.toggle('hl',linkIds.includes(l.dataset.p)));
       sv.querySelectorAll('.pt-g').forEach(l=>l.classList.toggle('hl',linkIds.includes(l.dataset.p)));
-      let s=''; (cfg.flows||[]).forEach(f=>{ if(PATHS[f.p]) s+=`<path d="${PATHS[f.p]}" class="ucl-glow"/><path d="${PATHS[f.p]}" class="ucl"/>`; });
+      let s=''; (cfg.flows||[]).forEach(f=>{ const a=f.p==='atk'?' ucl-atk':''; if(PATHS[f.p]) s+=`<path d="${PATHS[f.p]}" class="ucl-glow${a}"/><path d="${PATHS[f.p]}" class="ucl${a}"/>`; });
       (cfg.flows||[]).forEach((f,i)=>{ const el=sv.querySelector('#p-'+f.p); if(!el) return; const len=el.getTotalLength();
-        s+=particles(f.p,len,{speed:210,n:f.p==='r-RL'?5:Math.max(2,Math.round(len/90)),rev:!!f.rev,cls:'uc-pts',pcls:'ucpt',r:3.6,phase:i*.13}); });
+        s+=particles(f.p,len,{speed:210,n:f.p==='r-RL'?5:Math.max(2,Math.round(len/90)),rev:!!f.rev,cls:'uc-pts',pcls:f.p==='atk'?'ucpt red':'ucpt',r:3.6,phase:i*.13}); });
       const uf=sv.querySelector('#ucflow'); if(uf) uf.innerHTML=s;
       /* step markers: the source anchors, with 'cloud' moved off its heading; a spec may override any anchor */
-      const A=Object.assign({}, ANCHORS, {cloud:[1296,262]}, cfg.anchors||{});
+      /* defaults moved off the headings they used to cover (found by visual QA across many pages):
+         mgmt sat on 'Terraform & API', saas on 'direct-to-cloud', cloud on its own heading index */
+      const A=Object.assign({}, ANCHORS, {cloud:[1296,262], mgmt:[782,132], saas:[302,310]}, cfg.anchors||{});
       const by={}; (cfg.steps||[]).forEach((st,k)=>(st.marks||[]).forEach(a=>{ (by[a]=by[a]||[]).push(k); }));
       let m=''; Object.entries(by).forEach(([a,ks])=>{ if(!A[a]) return; const [x,y]=A[a]; const lab=ks.map(k=>k+1).join(' · '); const w=ks.length>1?18+lab.length*8:30;
         m+=`<g class="mark" transform="translate(${x} ${y})">`+(ks.length>1?`<rect x="${-w/2}" y="-15" width="${w}" height="30" rx="15" class="ring"/><rect x="${-w/2}" y="-15" width="${w}" height="30" rx="15"/>`:`<circle r="15" class="ring"/><circle r="15"/>`)+T(0,5.5,lab,'','middle')+`</g>`; });

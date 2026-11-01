@@ -62,12 +62,42 @@
   </div>
 </header>
 <main class="main">
-  <p class="wn-intro">97 changes across 4 months. Chips show which categories a change touched;
+  <p class="wn-intro">100 changes across 5 months. Chips show which categories a change touched;
   page names link to the use case. Open a month to see its weeks. Bookkeeping commits (67 “Regenerate what's-new”) are left out; <code>--all</code> includes them.</p>
-  <details class="wn-month" id="m-2026-10" open>
-    <summary><h2>October 2026</h2><span class="wn-n">4 changes</span></summary>
+  <details class="wn-month" id="m-2026-11" open>
+    <summary><h2>November 2026</h2><span class="wn-n">1 change</span></summary>
     <section class="wn-week">
       <h3>Week commencing 26 October</h3>
+      <article class="card wn-card" id="c-9ea0fc1">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-11-01">1 November 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-9ea0fc1">Search relevance: stop indexing shared spotlight/sprite/chrome; two-tier results (best matches + collapsed body-only)</a></h4>
+        
+      </article>
+    </section>
+  </details>
+  <details class="wn-month" id="m-2026-10">
+    <summary><h2>October 2026</h2><span class="wn-n">6 changes</span></summary>
+    <section class="wn-week">
+      <h3>Week commencing 26 October</h3>
+      <article class="card wn-card" id="c-d50a781">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-31">31 October 2026</time></span>
+          <span class="wn-chips"><span class="chip wn-chip-lib">Library</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-d50a781">Diagram kit rolled out to all 94 pages; front-end UX + a11y; 183 page content fixes</a></h4>
+        <ul><li>Every page: &#x27;Where this sits in the Cato SASE platform&#x27; spotlight (overview with the page&#x27;s components lit, flows animated, numbered steps) + its main diagram redrawn in the platform-overview language; five-phase journeys rebuilt with stable geometry; 94 specs in _extract/diagram-kit/specs, each authored, independently reviewed and fixed (229 agents); deck slides now carry the kit diagram as a picture (assets/js/deck-pics, on demand)</li><li>Index: collapsible Start-here (6 cards incl. &#x27;Running a PoV?&#x27;) and deck-builder folds, sticky filter dock</li><li>Keyboard + dialogs: ARIA runbook tabs with arrow keys and remembered choice, modal lightbox (close button, captions, prev/next, 1:1 zoom, focus return), phase-player pause persistence, accessible feedback dialog</li><li>Visual a11y tokens + focus rings; reading aids (progress bar, back-to-top, related pages, category pager, responsive TOC, print header)</li><li>Pages: platform-facts.js on every page, print link -&gt; button, 978 th scopes, 183 content fixes (dated claims re-verified against the KB, provenance captions, orphan captures embedded, img dims + lazy loading)</li><li>verify.sh: legacy SVG measurer skips kit diagrams; deck-pics excluded from the identifying-ref grep; 3 demo notes trimmed</li></ul>
+      </article>
+      <article class="card wn-card" id="c-5276801">
+        <div class="wn-head">
+          <span class="section-kicker"><time datetime="2026-10-31">31 October 2026</time></span>
+          <span class="wn-chips"><span class="chip chip-cat-migration">Migration</span></span>
+        </div>
+        <h4><a class="wn-anchor" href="#c-5276801">Improvement pass checkpoint: status model, platform facts, URL state, search v2, tooling, images, MQ 2026</a></h4>
+        <ul><li>catalog.js: added: dates for all 94 pages; &#x27;New&#x27; only within 90 days, else status; 11 demo-verified pages promoted to ready</li><li>platform-facts.js (4,800+ customers, 100+ PoPs, 99.999% SLA, 2026 Gartner MQ Leader 3rd year) + data-fact substitution in app.js + &#x27;Platform at a glance&#x27; strip on the index</li><li>index: URL-persisted search/filters (?q=&amp;cat=&amp;vert=), &#x27;/&#x27; focus shortcut, scored flat search results with highlights, synonyms (search-synonyms.js), empty-state suggestions</li><li>tooling: staleness-check.py (warn-only verify step), a11y-check.py, checkfigures.py, check-deck-content.py (verify 10/10), whatsnew.py rebuilt (grouped by month/week, category chips), optimise-img.py (assets/img 42.9 -&gt; 33.2 MB)</li><li>research-briefs/platform-facts.md (browser-verified 100+ PoPs / 99.999% SLA on Cato&#x27;s backbone page)</li><li><a href="usecases/migration-cloudflare.html" title="Cloudflare (Zero Trust &amp; Magic WAN) to Cato">migration-cloudflare</a> cites the 2026 MQ; last wrapped &#x27;80+ Cato PoPs&#x27; fixed; STALENESS rows updated</li><li>diagram-kit page maps + audit programme kept under _extract/diagram-kit/map/</li></ul>
+      </article>
       <article class="card wn-card" id="c-dc967bb">
         <div class="wn-head">
           <span class="section-kicker"><time datetime="2026-10-30">30 October 2026</time></span>

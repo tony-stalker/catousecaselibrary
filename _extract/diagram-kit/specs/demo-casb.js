@@ -1,7 +1,7 @@
 /* specs/demo-casb.js — Demo Segment: CASB */
 DG.page('demo-casb', {
   spotlight: {
-    hl: ['users', 'branch', 'pop', 'saas', 'mgmt'],
+    hl: ['users', 'branch', 'pop', 'saas', 'ai', 'mgmt'],   // 'ai' also lights the GenAI cloud that step 3 marks
     mods: ['sse'],
     flows: [{p: 'us1'}, {p: 'br1'}, {p: 'eg-saas'}, {p: 'eg-genai'}, {p: 'm1'}],
     steps: [
@@ -21,11 +21,11 @@ DG.page('demo-casb', {
       /* ---- sources: all traffic already reaches the PoP ---- */
       s += tier(16, 20, 'ALREADY ON CATO');
       s += site(16, 44, 196, 104, 'Bristol Office');
-      s += nd(28, 74, 172, 56, {t: 'Socket X1500', s: ['all traffic'], ic: 'building', icls: 'g'});
-      s += nd(16, 224, 196, 56, {t: 'Remote user — Priya', s: ['Cato Client'], ic: 'laptop', icls: 'g'});
+      s += nd(28, 74, 172, 56, {t: 'Socket', s: ['all traffic'], ic: 'building', icls: 'g'});
+      s += nd(16, 224, 196, 56, {t: 'Remote user', s: ['Cato Client'], ic: 'laptop', icls: 'g'});
 
       /* ---- the single-pass engine: four look-ups per flow ---- */
-      s += popBox(244, 34, 236, 300, 'Cato PoP — single-pass engine', 'app ID · risk score · tenant · activity');
+      s += popBox(244, 34, 236, 300, 'Cato PoP — single-pass engine', 'inline · every user and site');
       s += tier(262, 100, 'PER FLOW');
       s += chips(262, 112, ['App ID', 'Risk score', 'Tenant', 'Activity'], 200, 30, 14, 1, 'g');
       s += pill(362, 308, 'Application Control', 'm');
@@ -36,7 +36,7 @@ DG.page('demo-casb', {
 
       /* ---- three outcomes ---- */
       s += tier(588, 20, 'THREE OUTCOMES');
-      s += cloud(655, 74, 1.25, 'Corporate tenant', 'Sanctioned — M365 · Box');
+      s += cloud(655, 74, 1.25, 'Corporate tenant', 'Sanctioned tenant');
       s += mark(596, 42, 'ok');
       s += pill(655, 128, 'Allow · monitor', 'g');
       s += cloud(655, 199, 1.25, 'Personal tenant', 'Same app — unsanctioned');

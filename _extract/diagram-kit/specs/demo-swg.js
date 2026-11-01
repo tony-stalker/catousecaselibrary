@@ -24,12 +24,12 @@ DG.page('demo-swg', {
       s += T(375, 492, 'Global Private Backbone', 'f-h', 'middle');
 
       /* ---- left: the two origins ---- */
-      s += nd(20, 140, 170, 56, {t: 'Priya — Cato Client', s: ['Home broadband'], ic: 'laptop', is: 20, icls: 'g'});
+      s += nd(20, 140, 170, 56, {t: 'Remote user', s: ['Cato Client · at home'], ic: 'laptop', is: 20, icls: 'g'});
       s += site(20, 290, 170, 120, 'Bristol Office');
-      s += nd(34, 320, 142, 56, {t: 'X1500 Socket', s: ['office users'], ic: 'building', is: 20, icls: 'g'});
+      s += nd(34, 320, 142, 56, {t: 'Socket', s: ['office users'], ic: 'building', is: 20, icls: 'g'});
 
       /* ---- centre: the nearest PoP and its single-pass engine ---- */
-      s += popBox(240, 70, 270, 340, 'Cato PoP — London', 'nearest PoP · same policy');
+      s += popBox(240, 70, 270, 340, 'Nearest Cato PoP', 'same policy · every user and site');
       s += tier(256, 128, 'SINGLE-PASS ENGINE');
       s += nd(262, 146, 226, 60, {t: 'TLS inspection', s: ['staged by category']});
       s += fl('M375 206L375 234', 'fl-flow', {np: 0, arrow: 'arr-m'});
@@ -44,17 +44,17 @@ DG.page('demo-swg', {
       s += fl('M176 348C222 348 224 186 262 186', 'fl-tun', {dur: 1.3});
 
       /* ---- right: one destination per verdict ---- */
-      s += fl('M488 254C530 254 530 160 570 160', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'Allow', lx: 538, ly: 206, lcls: 'g keep'});
-      s += fl('M488 266L570 266', 'fl-ha', {dur: 1.1, arrow: 'arr-y', label: 'Prompt', lx: 538, ly: 247, lcls: 'y keep'});
-      s += fl('M488 278C530 278 516 372 537 372', 'fl-flow fl-down', {np: 0, label: 'Block', lx: 538, ly: 322, lcls: 'r keep'});
+      s += fl('M488 246C522 246 526 160 570 160', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'Allow', lx: 540, ly: 200, lcls: 'g keep'});
+      s += fl('M488 266L570 266', 'fl-ha', {dur: 1.1, arrow: 'arr-y', label: 'Prompt', lx: 540, ly: 284, lcls: 'y keep'});
+      s += fl('M488 288C526 288 516 372 537 372', 'fl-flow fl-down', {np: 0, label: 'Block', lx: 526, ly: 334, lcls: 'r keep'});
       s += xmark(548, 372);
-      s += nd(570, 130, 176, 60, {t: 'Business SaaS', s: ['Allow — category rule'], ic: 'chat', is: 20, icls: 'g'});
-      s += nd(570, 236, 176, 60, {t: 'Social media', s: ['Prompt — user decides'], ic: 'users', is: 20, icls: 'g'});
-      s += nd(570, 342, 176, 60, {t: 'Gambling', s: ['Block — risky category'], ic: 'globe', is: 20, icls: 'g'});
+      s += nd(570, 130, 176, 60, {t: 'Allowed', s: ['user or category rule'], ic: 'chat', is: 20, icls: 'g'});
+      s += nd(570, 236, 176, 60, {t: 'Prompt rule', s: ['user acknowledges'], ic: 'users', is: 20, icls: 'g'});
+      s += nd(570, 342, 176, 60, {t: 'Risky categories', s: ['Block — category rule'], ic: 'globe', is: 20, icls: 'g'});
       s += mark(746, 130, 'ok') + mark(746, 236, 'warn');
 
       /* ---- the record: every verdict lands in Monitor → Events ---- */
-      s += fl('M510 360C552 360 540 498 566 498', 'fl-flow fl-dim', {dur: 1.6, arrow: 'arr-n', label: 'every verdict', lx: 560, ly: 444, lcls: 'm keep'});
+      s += fl('M510 396C548 396 540 498 566 498', 'fl-flow fl-dim', {dur: 1.6, arrow: 'arr-n', label: 'every verdict', lx: 560, ly: 444, lcls: 'm keep'});
       s += nd(570, 470, 176, 56, {t: 'Monitor → Events', s: ['user · rule · action'], ic: 'console', is: 20, icls: 'g', cls: 'soft'});
       return s;
     },

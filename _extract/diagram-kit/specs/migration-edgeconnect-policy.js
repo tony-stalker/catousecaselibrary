@@ -32,8 +32,8 @@ DG.page('migration-edgeconnect-policy', {
       s += nd(386, 50, 172, 60, {t: 'SWG — in SSE tenant', s: ['Zscaler · Netskope · HPE']});
       s += nd(572, 50, 172, 60, {t: 'CASB / DLP — none', s: ['greenfield builds'], cls: 'dash'});
       s += T(482, 138, 'SSE CONSOLE, NOT ORCHESTRATOR', 'f-m');
-      s += T(640, 180, 'discovery inputs', 'f-s', 'middle');
-      s += T(640, 206, 'best-practice build', 'f-s', 'middle');
+      s += T(692, 162, 'discovery inputs', 'f-s', 'end');
+      s += T(692, 176, 'best-practice build', 'f-s', 'end');
 
       /* ---- the pipeline, left to right ---- */
       s += tier(14, 216, '1 · EXPORT');

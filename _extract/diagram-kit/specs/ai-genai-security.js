@@ -20,8 +20,8 @@ DG.page('ai-genai-security', {
       /* ---- section labels ---- */
       s += tier(14, 40, 'USERS') + tier(220, 40, 'CATO PoP · INLINE') + tier(574, 40, 'GENAI DESTINATIONS');
       /* ---- left: three personas; the first two onramp to the PoP ---- */
-      s += nd(14, 80, 172, 56, {t: 'Priya — office', s: ['Site behind a Socket'], ic: 'building', is: 20, icls: 'g'});
-      s += nd(14, 190, 172, 56, {t: 'Marcus — remote', s: ['Cato Client · pastes PII'], ic: 'laptop', is: 20, icls: 'g'});
+      s += nd(14, 80, 172, 56, {t: 'Office user', s: ['Site behind a Socket'], ic: 'building', is: 20, icls: 'g'});
+      s += nd(14, 190, 172, 56, {t: 'Remote user', s: ['Cato Client · pastes PII'], ic: 'laptop', is: 20, icls: 'g'});
       s += fl('M186 108L220 108', 'fl-tun', {dur: .8});
       s += fl('M186 218L220 218', 'fl-tun', {dur: .8});
       /* ---- centre: the PoP running the User Interaction Policy ---- */
@@ -35,7 +35,7 @@ DG.page('ai-genai-security', {
       s += fl('M440 110C500 110 510 98 574 98', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'allowed · logged', lx: 507, ly: 104, lcls: 'g keep'});
       s += fl('M440 190C500 190 510 208 574 208', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'anonymised', lx: 507, ly: 199, lcls: 'y keep'});
       s += T(507, 228, 'PII masked in-flight', 'f-m', 'middle');
-      s += fl('M440 240C500 240 536 318 548 318', 'fl-flow fl-down', {np: 0, label: 'blocked', lx: 498, ly: 262, lcls: 'r keep'});
+      s += fl('M440 240C496 240 516 300 529 300', 'fl-flow fl-down', {np: 0, label: 'blocked', lx: 494, ly: 258, lcls: 'r keep'});
       s += nd(574, 70, 172, 56, {t: 'Sanctioned GenAI', s: ['Approved AI assistant'], ic: 'ai', is: 20, icls: 'g'});
       s += nd(574, 180, 172, 56, {t: 'Embedded SaaS AI', s: ['Copilots inside SaaS'], ic: 'chat', is: 20, icls: 'g'});
       s += nd(574, 290, 172, 56, {t: 'Shadow AI apps', s: ['Unsanctioned tools'], ic: 'ai', is: 20, icls: 'g', cls: 'soft'});
@@ -45,12 +45,12 @@ DG.page('ai-genai-security', {
       s += nd(220, 330, 220, 56, {t: 'Dashboards & evidence', s: ['Overview · AI Users · Events'], ic: 'chart', is: 20, icls: 'g'});
       /* ---- bottom: the off-net contractor, covered by the browser plugin, never crosses the PoP ---- */
       s += tier(14, 424, 'OFF-NET MANAGED DEVICE');
-      s += nd(14, 437, 172, 56, {t: 'Omar — contractor', s: ['Browser plugin, off-net'], ic: 'browser', is: 20, icls: 'g', cls: 'dash'});
+      s += nd(14, 437, 172, 56, {t: 'Contractor', s: ['Browser plugin, off-net'], ic: 'browser', is: 20, icls: 'g', cls: 'dash'});
       s += fl('M186 465L220 465', 'fl-https', {dur: .8});
       s += nd(220, 440, 186, 50, {t: 'Browser plugin', s: ['same outcomes, in the browser']});
       s += fl('M330 440L330 386', 'fl-net', {np: 0, arrow: true});
-      s += fl('M406 465C520 465 540 330 574 330', 'fl-https', {arrow: 'arr-m', label: 'block · anonymise · engage', lx: 512, ly: 488, lcls: 'm keep'});
-      s += xmark(548, 318);
+      s += fl('M406 465C500 465 526 352 545 342', 'fl-https', {label: 'block · anonymise · engage', lx: 470, ly: 404, lcls: 'm keep'});
+      s += xmark(540, 300) + xmark(556, 338);   /* two verdicts, one per enforcement point: PoP above, plugin below */
       return s;
     },
     vb: '0 0 760 520',

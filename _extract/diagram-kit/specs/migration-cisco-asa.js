@@ -4,17 +4,18 @@ DG.page('migration-cisco-asa', {
     hl: ['branch', 'dc', 'users', 'pop', 'backbone'],
     mods: ['sdwan', 'sse', 'uztna'],
     flows: [{p: 'br1'}, {p: 'dc1'}, {p: 'dc2'}, {p: 'us1'}, {p: 'r-LC'}],
+    anchors: {backbone: [1074, 592]},   // step-2 marker beside the backbone label, clear of the SLA micro-label
     steps: [
       {t: 'A parallel Socket at the DC takes migrated subnets over an L3 handoff; the ASA HA pair stays racked.', marks: ['dc']},
       {t: 'The hub ASA comes up as an interim IPsec IKEv2 site so un-migrated branches reach Cato-side resources.', marks: ['pop', 'backbone']},
-      {t: 'Branches swap to Sockets and AnyConnect cohorts to the Cato Client; rollback is restoring the ASA routes.', marks: ['branch', 'users']},
+      {t: 'Branches move to Sockets, AnyConnect users to the Cato Client; rollback restores ASA routes.', marks: ['branch', 'users']},
     ],
   },
   diagrams: [{
     slot: 'main',
     vb: '0 0 760 560',
     draw: K => {
-      const {nd, fl, T, TL, pill, site, ring, fpin, fy, popBox} = K;
+      const {nd, fl, T, TL, pill, site, ring, fpin, fy, by, popBox} = K;
       let s = '';
 
       /* ---- top: the Cato PoP on the global private backbone ---- */
@@ -24,9 +25,10 @@ DG.page('migration-cisco-asa', {
       s += T(566, 144, 'Global private backbone', 'f-s', 'start');
 
       /* ---- top left: the remote user, already on the Cato Client ---- */
-      const pX = 300, pY = Math.round(fy(RG, pX));
-      s += fl(`M194 54C240 54 270 ${pY - 50} ${pX} ${pY - 2}`, 'fl-tun', {dur: 1.3});
-      s += nd(14, 24, 180, 60, {t: 'Priya — remote', s: ['Client, was AnyConnect'], ic: 'laptop', is: 20, icls: 'g', cls: 'hot'});
+      /* tunnel ducks under the PoP box and lands on the back of the ring */
+      const pX = 290, pY = Math.round(by(RG, pX));
+      s += fl(`M194 66C236 72 262 ${pY - 6} ${pX} ${pY + 2}`, 'fl-tun', {dur: 1.3});
+      s += nd(14, 24, 180, 60, {t: 'Remote user', s: ['Client, was AnyConnect'], ic: 'laptop', is: 20, icls: 'g', cls: 'hot'});
       s += pill(104, 102, 'migrated', 'g');
 
       /* ---- centre: London DC — Socket beside the ASA pair ---- */
@@ -43,7 +45,7 @@ DG.page('migration-cisco-asa', {
 
       /* hub ASA → PoP: the interim IPsec IKEv2 site */
       const aX = 470, aY = Math.round(fy(RG, aX));
-      s += fl(`M646 252C646 196 520 ${aY + 8} ${aX} ${aY - 2}`, 'fl-ipsec', {dur: 1.6, label: 'IPsec IKEv2 site — interim on-ramp', lx: 628, ly: 206});
+      s += fl(`M584 252C584 200 520 ${aY + 8} ${aX} ${aY - 2}`, 'fl-ipsec', {dur: 1.6, label: 'IPsec IKEv2 site — interim on-ramp', lx: 628, ly: 206});
 
       /* ---- bottom left: Bristol, migrated ---- */
       const bX = 222, bY = Math.round(fy(RG, bX));
@@ -51,9 +53,10 @@ DG.page('migration-cisco-asa', {
       s += nd(14, 440, 180, 64, {t: 'Bristol — migrated', s: ['Socket replaces the ASA'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
       s += pill(104, 524, 'via the nearest PoP', 'g');
 
-      /* rollback lever: Bristol back to the ASA */
-      s += fl('M194 466C410 466 600 436 600 320', 'fl-net', {np: 0, arrow: 'arr-n'});
-      s += TL(380, 494, ['Rollback — restore the default gateway /', 'static routes to the ASA'], 'f-s', 'middle', 13);
+      /* rollback lever: Bristol back to its own ASA, still racked */
+      s += fl('M194 472H252', 'fl-net', {np: 0, arrow: 'arr-n'});
+      s += nd(256, 446, 170, 52, {t: 'Bristol ASA', s: ['still racked'], ic: 'firewall', is: 18, icls: 'g', cls: 'dash'});
+      s += TL(341, 520, ['Rollback — restore the default gateway /', 'static routes to the branch ASA'], 'f-s', 'middle', 13);
 
       /* ---- bottom right: Leeds, still on the ASA crypto-map mesh ---- */
       s += fl('M690 456V320', 'fl-ha', {dur: 1.6, arrow: 'arr-y', label: 'crypto-map mesh', lx: 690, ly: 396, lcls: 'y'});
@@ -66,6 +69,6 @@ DG.page('migration-cisco-asa', {
     },
     title: 'Co-existence between a perimeter ASA estate and Cato during phased migration',
     desc: 'A parallel Socket at the DC takes migrated subnets over an L3 handoff while the ASA HA pair keeps its legacy IPsec mesh and comes up as a Cato IPsec IKEv2 site, so un-migrated branches reach Cato-side resources; rollback is restoring the default gateway and static routes to the ASA.',
-    legend: [['tun', 'Migrated — Socket / Client via the nearest PoP'], ['ipsec', 'Interim — hub ASA as an IPsec IKEv2 site'], ['ha', 'Legacy — ASA crypto-map mesh'], ['net', 'Rollback — restore routes to the ASA'], 'live'],
+    legend: [['tun', 'Migrated — Socket / Client via the nearest PoP'], ['ipsec', 'Interim — hub ASA as an IPsec IKEv2 site'], ['ha', 'Legacy — ASA crypto-map mesh'], ['net', 'Rollback — restore routes to the branch ASA'], 'live'],
   }],
 });

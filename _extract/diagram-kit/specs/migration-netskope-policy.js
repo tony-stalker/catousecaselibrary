@@ -85,7 +85,6 @@ DG.page('migration-netskope-policy', {
     legend: [
       ['flow', 'Policy pipeline and evidence loop — export, map, prove'],
       ['ha', "Monitor-first deployment — log, don't block"],
-      ['hot', 'Enforced — promoted on event evidence'],
       ['down', 'Discarded at rationalisation — never reaches CMA'],
     ],
   }],

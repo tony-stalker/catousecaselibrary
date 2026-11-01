@@ -3,7 +3,7 @@ DG.page('access-offshore-bpo', {
   spotlight: {
     hl: ['users', 'pop', 'backbone', 'dc', 'cloud', 'saas'],
     mods: ['uztna', 'sse'],
-    anchors: {saas: [302, 310]},   // step-4 marker clear of the "Smart egress" subtitle
+    anchors: {saas: [302, 310], cloud: [1362, 408]},   // step-4 marker clear of the "Smart egress" subtitle; cloud marker on the lit Azure leg, clear of the heading index
     flows: [{p: 'us1'}, {p: 'us2'}, {p: 'r-LC'}, {p: 'dc1', rev: true}, {p: 'cl-az'}, {p: 'eg-saas'}],
     steps: [
       {t: 'Managed contractor laptops run the Cato Client with posture checks; unmanaged seats use a browser portal.', marks: ['users']},
@@ -44,7 +44,7 @@ DG.page('access-offshore-bpo', {
       s += chipRow(PX - 96, 342, ['ZTNA', 'RBI', 'CASB · DLP'], 60, 20, 6, 'g');
       /* ---- right: where the apps are hosted, and where data may not go ---- */
       s += nd(574, 120, 172, 60, {t: 'London DC', s: ['Git repos · Socket X1500'], ic: 'server', is: 20, icls: 'g'});
-      s += nd(574, 220, 172, 60, {t: 'VDI & CRM', s: ['hosted on Azure vSocket'], ic: 'db', is: 20, icls: 'g'});
+      s += nd(574, 220, 172, 60, {t: 'VDI & CRM', s: ['Azure UK · vSocket'], ic: 'db', is: 20, icls: 'g'});
       s += tier(574, 408, 'OUTSIDE APPROVED APPS');
       /* .nd.dash is not in the ported CSS: dash the box inline, keep the globe icon solid */
       s += `<g style="stroke-dasharray:5 4">${nd(574, 420, 172, 60, {t: 'Personal storage', s: ['consumer file sharing'], ic: 'globe', is: 20, icls: 'g'})
@@ -54,6 +54,6 @@ DG.page('access-offshore-bpo', {
     vb: '0 0 760 560',
     title: 'Offshore developers and BPO agents on Cato',
     desc: 'Developers and agents onramp at the nearest PoP where ZTNA, RBI and DLP are enforced; the backbone carries repo, VDI and CRM traffic to in-region hosting while DLP stops source code and PII leaving approved apps.',
-    legend: [['tun', 'Client ZTNA — posture-gated app access'], ['https', 'Clientless + RBI — pixels only, data off endpoint'], ['down', 'CASB/DLP — code & PII exfiltration blocked']],
+    legend: [['tun', 'Encrypted tunnel: Client ZTNA, then the backbone to in-region hosting'], ['https', 'Clientless + RBI — pixels only, data off endpoint'], ['down', 'CASB/DLP — code & PII exfiltration blocked']],
   }],
 });

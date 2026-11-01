@@ -27,10 +27,15 @@
   const handoff = `M${PX} ${SOY + BH}V${LGY}`;              // eBGP handoff between the fabrics
 
   const draw = P => K => {
-    const {nd, fl, T, R, ring, fpin, pill, site, xmark} = K;
+    const {nd, fl, T, R, ring, fpin, pill, site, xmark, tier} = K;
     const popNd = (x, y, w, h, o) => R(x, y, w, h, 'nd', 10) + nd(x, y, w, h, {...o, cls: 'pop'});   // opaque under the mint fill
     const box = (on, x, y, w, h, o) => on ? popNd(x, y, w, h, o) : nd(x, y, w, h, {...o, cls: 'soft'});
     let s = '';
+
+    /* section labels */
+    s += tier(LX, 26, P.cato ? 'CATO BACKBONE' : 'NO CATO YET');
+    s += tier(LX, 146, 'BRANCHES');
+    s += tier(RX, 146, 'DC · CLOUD');
 
     /* upper band: backbone (from phase 1) */
     if (P.cato) s += ring(RG, 'Cato Global Backbone');
@@ -106,9 +111,9 @@
     spotlight: {
       hl: ['branch', 'dc', 'cloud', 'pop', 'backbone'],
       mods: ['sdwan'],
-      flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'cl-az'}, {p: 'r-LC'}, {p: 'r-CR'}],
+      flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'r-CR'}],
       steps: [
-        {t: 'A Cato Socket runs in parallel at the London hub; an eBGP handoff exchanges routes between the fabrics.', marks: ['pop']},
+        {t: 'A Cato Socket runs in parallel at the London hub; an eBGP handoff exchanges routes between the fabrics.', marks: ['dc']},
         {t: 'Slough DC comes up on HA Sockets and the Azure vWAN hub on a vSocket — the low-risk wins first.', marks: ['dc', 'cloud']},
         {t: 'Bristol and Glasgow cut over in waves, each with instant rollback; AS-path length keeps routing symmetric.', marks: ['branch']},
         {t: 'The legacy hub appliance, overlay and licences are decommissioned — one Cato fabric remains.', marks: ['backbone']},

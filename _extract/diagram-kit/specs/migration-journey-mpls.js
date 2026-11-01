@@ -39,7 +39,7 @@ const MPLS_J = (() => {
     s += tier(LX, 486, 'LEGACY MPLS');
 
     /* ---- upper band: ring + PoP (from phase 1) ---- */
-    if (on(1)) s += ring(RG, 'Cato Global Backbone');
+    if (on(1)) s += ring(RG, '');                         // tier already reads CATO BACKBONE
 
     /* ---- lanes ---- */
     const live = (d, o = {}) => fl(d, 'fl-net', {dur: 2.6, n: 2, ...o});
@@ -120,7 +120,7 @@ DG.page('migration-journey-mpls', {
     flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'cl-aws'}, {p: 'r-LC'}, {p: 'r-CR'}],
     steps: [
       {t: 'Manchester becomes the bridge: the first Socket goes in beside the MPLS CE and peers eBGP with it.', marks: ['dc']},
-      {t: 'London DC and AWS eu-west-2 come on-net first; branches still on MPLS reach them across the handoff.', marks: ['cloud']},
+      {t: 'London DC and AWS eu-west-2 come on-net first; branches still on MPLS reach them across the handoff.', marks: ['dc', 'cloud']},
       {t: 'Bristol and Leeds swing up to the PoP in waves; Glasgow rides the emptying MPLS cloud until its turn.', marks: ['branch', 'pop']},
       {t: 'The last circuit is switched off: every site, DC and cloud rides the Cato backbone, one routing table.', marks: ['backbone']},
     ],

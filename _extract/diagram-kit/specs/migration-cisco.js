@@ -1,11 +1,12 @@
 /* specs/migration-cisco.js — Cisco (Umbrella, AnyConnect, Catalyst SD-WAN, Meraki) to Cato */
 DG.page('migration-cisco', {
   spotlight: {
-    hl: ['branch', 'pop', 'backbone', 'saas', 'users'],
+    anchors: {saas: [302, 310]},   // step-3 marker right of the SaaS cloud, clear of the 'Smart egress' subtitle
+    hl: ['branch', 'dc', 'pop', 'backbone', 'saas', 'users'],
     mods: ['sdwan', 'sse'],
-    flows: [{p: 'br1'}, {p: 'br2'}, {p: 'r-LC'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'us1'}],
+    flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'us1'}],
     steps: [
-      {t: 'Regional Cato hubs peer over eBGP with each Viptela hub, or the L3 core behind a Meraki MX, for symmetry.', marks: ['backbone']},
+      {t: 'Regional Cato hubs peer over eBGP with each Viptela hub, or the L3 core behind a Meraki MX, for symmetry.', marks: ['dc']},
       {t: 'Disabling a legacy spoke lets OMP withdraw its routes; re-enabling it is the rollback.', marks: ['branch']},
       {t: 'Migrated sites get DNS and web security inline at the PoP, so Umbrella is bypassed.', marks: ['pop', 'saas']},
       {t: 'AnyConnect cohorts swap to the Cato Client and reach the nearest PoP with the same inspection stack.', marks: ['users']},
@@ -36,7 +37,7 @@ DG.page('migration-cisco', {
       s += pill(490, 88, 'Umbrella bypassed — enforced at PoP', 'g');
 
       /* ---- left: the branches ---- */
-      s += nd(16, 236, 190, 70, {t: 'Bristol Office', s: ['Cato Socket X1500 · live', 'DNS + web policy at PoP'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
+      s += nd(16, 236, 190, 70, {t: 'Bristol Office', s: ['Cato Socket · live', 'DNS + web policy at PoP'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
       s += pill(166, 236, 'migrated', 'g');
       s += nd(16, 420, 190, 70, {t: 'Glasgow branch', s: ['cEdge spoke · OMP/TLOC', 'waiting for wave 2'], ic: 'building', is: 20, icls: 'g', cls: 'dash'});
       s += pill(172, 420, 'wave 2', 'y');

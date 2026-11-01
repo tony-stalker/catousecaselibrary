@@ -46,10 +46,10 @@ DG.page('migration-anyconnect', {
       const RG = {cx: 460, cy: 410, rx: 140, ry: 32};
       s += ring(RG);
       s += T(460, 415, 'Global Private Backbone', 'f-h', 'middle');
-      s += pill(480, 300, 'over the backbone', 'g keep');
 
       /* PoP → datacentre apps along the backbone, then up to the Socket */
       s += fl('M320 410A140 32 0 0 0 600 410C600 330 540 290 540 220', 'fl-flow', {dur: 2.2, arrow: 'arr-m'});
+      s += pill(549, 268, 'over the backbone', 'g keep');   // on the backbone → datacentre-apps leg
       /* PoP → SaaS: local breakout, no hairpin */
       s += fl('M320 410C334 500 520 506 614 486', 'fl-flow', {dur: 1.6, arrow: 'arr-m'});
 

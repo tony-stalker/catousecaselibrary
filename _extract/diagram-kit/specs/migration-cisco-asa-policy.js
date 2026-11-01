@@ -6,7 +6,7 @@ DG.page('migration-cisco-asa-policy', {
     anchors: {mgmt: [782, 132]},   // merged 1 · 2 marker on the CMA box's top edge, clear of its subtitle
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'm1'}],
     steps: [
-      {t: 'ACLs export with hitcnt over a 30–90 day window and NAT via show nat detail; DAP has no export path and is restated from intent.', marks: ['mgmt']},
+      {t: 'ACLs export with 30–90 days of hitcnt, NAT via show nat detail; DAP has no export and is restated from intent.', marks: ['mgmt']},
       {t: 'East-west ACEs land on the WAN Firewall allowlist; NAT dissolves; SWG, CASB and DLP start as Cato baselines.', marks: ['mgmt']},
       {t: 'The PoP applies the converted rules to every site and user, monitor-first: logged, not blocked.', marks: ['pop', 'branch', 'users']},
       {t: 'Events and hit counts prove each rule before it is promoted from monitor to block.', marks: ['pop']},
@@ -26,10 +26,12 @@ DG.page('migration-cisco-asa-policy', {
         [200, 'NAT table', 'twice · object · after-auto'],
         [386, 'AnyConnect · DAP', 'posture — no export path'],
       ];
-      /* fan-in: the three exported domains drop onto one bus into EXPORT */
+      /* fan-in: the two exportable domains drop onto one bus into EXPORT */
       s += fl('M286 94V130Q286 140 276 140H110Q100 140 100 150', 'fl-flow', {np: 0});
-      s += fl('M472 94V130Q472 140 462 140H296Q286 140 286 140', 'fl-flow', {np: 0});
       s += fl('M100 94V196', 'fl-flow', {arrow: 'arr-n', dur: 1.6});
+      /* DAP / HostScan: no export path, restated from intent at REVIEW & MAP */
+      s += fl('M420 94V160Q420 170 410 170H350Q340 170 340 180V196', 'fl-https', {arrow: 'arr-n', dur: 1.6});
+      s += T(380, 158, 'restated from intent', 'f-s', 'middle');
       DOM.forEach(([x, t, sub]) => { s += nd(x, 34, 172, 60, {t, s: [sub]}); });
 
       /* greenfield: nothing to export, enters at DEPLOY as Cato baselines */
@@ -74,7 +76,7 @@ DG.page('migration-cisco-asa-policy', {
       return s;
     },
     title: 'Cisco ASA policy migration pipeline',
-    desc: 'The ACLs, NAT table and posture artefacts are rationalised against the hit-count window before anything is mapped, while SWG, CASB, DLP and TLS inspection enter at DEPLOY as Cato baselines in monitor mode; both streams are promoted to enforcement only on evidence.',
-    legend: [['flow', 'Exported intent — reviewed and mapped'], ['ha', 'Monitor first — log, don\'t block'], ['down', 'Discarded — culled at review with sign-off'], ['net', 'Telemetry — events and hit counts']],
+    desc: 'The ACLs and NAT table are exported and rationalised against the hit-count window before anything is mapped, DAP posture has no export path and is restated from intent at review, while SWG, CASB, DLP and TLS inspection enter at DEPLOY as Cato baselines in monitor mode; both streams are promoted to enforcement only on evidence.',
+    legend: [['flow', 'Exported intent — reviewed and mapped'], ['https', 'Restated from intent — DAP posture, no export path'], ['ha', 'Monitor first — log, don\'t block'], ['down', 'Discarded — culled at review with sign-off'], ['net', 'Telemetry — events and hit counts']],
   }],
 });

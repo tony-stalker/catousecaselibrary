@@ -10,18 +10,19 @@ DG.page('security-tls-inspection', {
       {t: 'A pilot cohort is inspected first with the downstream engines in monitor, so breakage lands as events.', marks: ['pop']},
       {t: 'Inspection widens category by category to full enforcement; pinned and mTLS apps get owned bypass rules.', marks: ['saas']},
     ],
+    anchors: {saas: [302, 310]},   // marker clear of the "Smart egress · direct-to-cloud" subtitle
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 392',
+    vb: '0 40 760 352',
     draw: K => {
       const {nd, tile, fl, T, L, pill, tier, cloud, xmark} = K;
       let s = '';
       const RY = 181;                       // centre line of the stage row
 
       /* ---- input: everything encrypted, from users, sites and clouds ---- */
-      s += cloud(66, RY, 0.9, 'HTTPS traffic', 'users · sites · cloud');
-      s += fl(L(120, RY, 146, RY), 'fl-tun', {dur: .6});
+      s += cloud(66, RY, 1.0, 'HTTPS traffic', 'users · sites · cloud');
+      s += fl(L(124, RY, 140, RY), 'fl-tun', {dur: .6});
 
       /* ---- QUIC side door, shut by the auto-created Internet Firewall rules ---- */
       s += tier(139, 54, 'INTERNET FIREWALL · AUTO-CREATED RULES');
@@ -31,18 +32,18 @@ DG.page('security-tls-inspection', {
       s += T(170, 90, 'browsers fall back to TCP', 'f-s');
 
       /* ---- the four stages, left to right ---- */
-      s += tier(146, 122, 'TLS INSPECTION POLICY · EVERY STAGE GATES THE NEXT');
+      s += tier(140, 122, 'TLS INSPECTION POLICY · EVERY STAGE GATES THE NEXT');
       const ST = [
-        ['key',   'Root cert fleet-wide', 'MDM / GPO · verified'],
+        ['key',   'Root certificate',     'MDM / GPO · verified'],
         ['users', 'Pilot cohort',         'monitor-first inspect'],
-        ['globe', 'Category expansion',   'inspect · wave by wave'],
+        ['globe', 'Category rollout',     'inspect · wave by wave'],
         ['lock',  'Full enforcement',     'inspect by default'],
       ];
-      const X0 = 146, W = 130, G = 26, TY = RY - 45;
+      const X0 = 140, W = 136, G = 20, TY = RY - 45;
       ST.forEach(([ic, t, sub], i) => {
         const x = X0 + i * (W + G);
         s += tile(x, TY, W, 90, ic, t, [sub], i === 3 ? {cls: 'pop'} : {});
-        if (i < 3) s += fl(L(x + W, RY, x + W + G, RY), 'fl-flow', {np: 0, arrow: 'arr-m'});
+        if (i < 3) s += fl(L(x + W, RY - 20, x + W + G, RY - 20), 'fl-flow', {np: 0, arrow: 'arr-m'});
       });
 
       /* ---- gates: each one must pass before the next stage opens ---- */
@@ -56,13 +57,15 @@ DG.page('security-tls-inspection', {
       s += tier(196, 296, 'BYPASS LANE · GOVERNED EXCEPTIONS');
       s += fl(L(66, 218, 66, 304), 'fl-priv', {np: 0});
       s += nd(14, 304, 170, 56, {t: 'Bypass lane', s: ['pinned · mTLS · legacy'], ic: 'shield', is: 20, icls: 'g', cls: 'dash'});
-      s += fl(L(184, 332, 744, 332), 'fl-priv', {dur: 2.4, arrow: 'arr-n', label: 'no decryption — explicit bypass rules', lx: 464, ly: 332, lcls: 'm'});
-      s += T(464, 358, 'time-bound · reviewed · audited · owner on every rule', 'f-s', 'middle');
+      s += fl(L(184, 332, 612, 332), 'fl-priv', {dur: 2.4, arrow: 'arr-n', label: 'no decryption — explicit bypass rules', lx: 400, ly: 332, lcls: 'm'});
+      s += nd(620, 310, 126, 44, {t: 'Destination', s: ['not decrypted'], ic: 'globe', is: 18, icls: 'g'});
+      s += T(400, 358, 'time-bound · reviewed · audited · owner on every rule', 'f-s', 'middle');
 
       return s;
     },
     title: 'Staged TLS inspection rollout funnel',
     desc: 'All HTTPS traffic passes a staged funnel — root certificate fleet-wide, a monitor-first pilot cohort, category-by-category expansion, then full enforcement — with a gate between each stage, a governed bypass lane for pinned, mTLS and legacy applications, and QUIC blocked so browsers fall back to inspectable TCP.',
+    caption: 'Staging discipline: certificates before decryption, a quiet pilot before expansion, owned bypasses before enforcement. The bottom lane is the governed exception path — never a silent one.',
     legend: [['tun', 'All HTTPS traffic — enters the staged policy'], ['flow', 'Stage gate — advance only when quiet'], ['down', 'QUIC — blocked, falls back to TCP'], ['priv', 'Bypass lane — governed exception path'], 'live'],
   }],
 });

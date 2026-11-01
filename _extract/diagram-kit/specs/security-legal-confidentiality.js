@@ -14,7 +14,7 @@ DG.page('security-legal-confidentiality', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 0 760 520',
     draw: K => {
       const {nd, fl, T, tier, site, fpin, ring, pill, xmark} = K;
       let s = '';
@@ -30,7 +30,7 @@ DG.page('security-legal-confidentiality', {
       /* centre: the Cato PoP on the backbone, the ethical-wall policy above it */
       s += tier(230, 88, 'CATO SASE CLOUD');
       s += nd(230, 100, 220, 50, {t: 'Identity-based ethical wall', s: ['WAN FW · DMS app segments'], cls: 'soft'});
-      s += fl('M340 150V188', 'fl-sig', {np: 0, arrow: 'arr-ms'});
+      s += fl('M340 150V188', 'fl-sig', {np: 0, arrow: 'arr-ms'}) + T(332, 173, 'pushed to the PoP', 'f-s', 'end');
       s += ring(RG);
       s += fpin(340, 288, 24, 'PoP', {halo: true});
       s += T(340, 324, 'Cato PoP', 'nd-t g', 'middle');
@@ -38,9 +38,9 @@ DG.page('security-legal-confidentiality', {
       s += pill(340, 358, 'WAN FW · ZTNA · DLP', 'g keep');
 
       /* inbound: both teams and the remote fee-earner cross the same PoP */
-      s += fl('M208 95C226 95 222 200 245 222', 'fl-flow', {dur: 1.3});
+      s += fl('M208 95C238 95 236 200 250 220', 'fl-flow', {dur: 1.3});
       s += fl('M208 171C220 171 214 236 236 242', 'fl-flow', {dur: 1.3});
-      s += fl('M208 325C250 325 222 278 252 278', 'fl-https', {dur: 1.2});
+      s += fl('M208 325C250 325 222 278 252 278', 'fl-tun', {dur: 1.2});
 
       /* right: destinations */
       s += tier(570, 38, 'DESTINATIONS');
@@ -55,10 +55,10 @@ DG.page('security-legal-confidentiality', {
       /* blocked: the cross-wall attempt, and the privileged upload DLP catches */
       s += fl('M446 235C488 235 505 194 526 194', 'fl-flow fl-down', {np: 0});
       s += xmark(538, 194);
-      s += pill(622, 150, 'cross-wall attempt', 'r keep');
+      s += pill(548, 170, 'cross-wall attempt', 'r keep');
       s += fl('M444 268C480 268 490 355 526 355', 'fl-flow fl-down', {np: 0});
       s += xmark(536, 355);
-      s += pill(632, 312, 'DLP — privileged upload', 'r keep');
+      s += pill(520, 390, 'DLP — privileged upload', 'r keep');
       /* evidence lane: every allow and block lands in the CMA */
       s += fl('M410 292C430 400 470 472 570 472', 'fl-net', {np: 0, arrow: 'arr-n'});
       s += T(486, 500, 'every allow · every block', 'f-s', 'middle');
@@ -66,6 +66,6 @@ DG.page('security-legal-confidentiality', {
     },
     title: 'Identity-based ethical wall between two matter teams, with DLP and an evidence lane',
     desc: 'Two matter teams on the same office LAN and a remote fee-earner cross a Cato PoP enforcing an identity-based ethical wall: each team reaches only its own DMS workspace, a cross-wall attempt is blocked, DLP blocks a privileged document bound for personal cloud storage, and every decision lands in the CMA as evidence.',
-    legend: [['flow', 'Matter teams — each to its own workspace'], ['https', 'Remote fee-earner — same wall, wherever they work'], ['down', 'Blocked at the PoP — cross-wall access · privileged-doc exfil'], ['net', 'Evidence lane to the CMA'], 'live'],
+    legend: [['flow', 'Matter teams — each to its own workspace'], ['tun', 'Remote fee-earner — Cato Client tunnel, same wall wherever they work'], ['down', 'Blocked at the PoP — cross-wall access · privileged-doc exfil'], ['net', 'Evidence lane to the CMA'], 'live'],
   }],
 });

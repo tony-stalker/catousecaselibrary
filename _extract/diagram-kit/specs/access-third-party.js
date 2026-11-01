@@ -23,7 +23,7 @@ DG.page('access-third-party', {
 
       /* three lanes: y = 150 · 262 · 374 */
       const LANES = [
-        {y: 150, t: 'Authorised user',   sub: 'Compliant device',     ic: 'laptop', v: 'WAN + internet', vc: 'g'},
+        {y: 150, t: 'Authorised user',   sub: 'Compliant device',     ic: 'laptop', v: 'Named apps',     vc: 'g'},
         {y: 262, t: 'Authorised user',   sub: 'Non-compliant device', ic: 'laptop', v: 'Internet only',  vc: 'y'},
         {y: 374, t: 'Unauthorised user', sub: 'Non-compliant device', ic: 'user',   v: 'Blocked',        vc: 'r'},
       ];
@@ -39,7 +39,7 @@ DG.page('access-third-party', {
       s += fl('M184 262L' + BX + ' 262', 'fl-tun', {dur: 1.2});
       s += fl('M184 374L' + BX + ' 374', 'fl-down', {np: 0}) + xmark(BX, 374);
 
-      s += mark(262, 150, 'ok') + T(278, 146, 'Allow WAN + internet', 'nd-t') + T(278, 160, 'authorised · compliant device', 'nd-s');
+      s += mark(262, 150, 'ok') + T(278, 146, 'Named apps + internet', 'nd-t') + T(278, 160, 'WAN Firewall: named apps only', 'nd-s');
       s += mark(262, 262, 'warn') + T(278, 258, 'Internet only', 'nd-t') + T(278, 272, 'posture check failed · WAN blocked', 'nd-s');
       s += tier(262, 410, 'CHECKED ON EVERY SESSION');
       s += chips(262, 418, ['IdP identity · group', 'Device posture', 'Re-checked in session', 'WAN Firewall rules'], 108, 18, 8, 2, 'g');
@@ -49,11 +49,11 @@ DG.page('access-third-party', {
       const RG = {cx: 656, cy: 262, rx: 88, ry: 200};
       s += ring(RG);
       s += T(656, 484, 'GLOBAL PRIVATE BACKBONE', 'tier', 'middle');
-      s += nd(566, 124, 180, 52, {t: 'London DC', s: ['Socket X1500 · apps'], ic: 'server', is: 18, icls: 'g'});
-      s += nd(566, 236, 180, 52, {t: 'Cloud DC — Azure', s: ['Cato vSocket'], ic: 'db', is: 18, icls: 'g'});
+      s += nd(566, 124, 180, 52, {t: 'London DC', s: ['Socket · named apps'], ic: 'server', is: 18, icls: 'g'});
+      s += nd(566, 236, 180, 52, {t: 'Cloud DC — Azure', s: ['vSocket · named apps'], ic: 'db', is: 18, icls: 'g'});
       s += nd(566, 348, 180, 52, {t: 'SaaS & Internet', s: ['M365 · Salesforce · WWW'], ic: 'globe', is: 18, icls: 'g'});
 
-      /* lane 1: full access */
+      /* lane 1: the contractor group's named apps (WAN Firewall) + internet; anything unlisted falls to the implicit block */
       s += fl(`M${BR} 142C${BR + 30} 142 ${BR + 46} 150 566 150`, 'fl-flow', {arrow: 'arr-m', dur: 1});
       s += fl(`M${BR} 150C${BR + 52} 150 ${BR + 40} 262 566 262`, 'fl-flow', {arrow: 'arr-m', dur: 1.1});
       s += fl(`M${BR} 158C${BR + 22} 158 ${BR + 22} 362 566 362`, 'fl-flow', {arrow: 'arr-m', dur: 1.2});
@@ -67,6 +67,6 @@ DG.page('access-third-party', {
     },
     title: 'Least-privileged third-party access',
     desc: 'Three identical-looking connections get three different outcomes: identity and live device posture at the PoP decide whether a contractor reaches named apps, internet only, or nothing at all.',
-    legend: [['tun', 'Cato Client tunnel to the PoP'], ['flow', 'WAN + internet — full access'], ['https', 'Internet only — WAN blocked'], ['down', 'Blocked — geo / user / posture rules']],
+    legend: [['tun', 'Cato Client tunnel to the PoP'], ['flow', 'Allowed: named apps (WAN Firewall) + internet'], ['https', 'Internet only — WAN blocked'], ['down', 'Blocked — geo / user / posture rules']],
   }],
 });

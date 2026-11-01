@@ -10,7 +10,7 @@ DG.page('network-cloud-connectivity', {
       {t: 'A private layer-2 Cloud Interconnect circuit via a fabric provider reaches the PoP with no tunnel.', marks: ['popR']},
       {t: 'Whichever door is used, the tenant lands on the same backbone, policy set and console as every site.', marks: ['backbone', 'pop']},
     ],
-    anchors: {cloud: [1500, 470]},   // 1 · 2 marker clear of the cloud component badge, in the gap right of GCP
+    anchors: {cloud: [1484, 322]},   // 1 · 2 marker inside the cloud group (between AWS and Azure), clear of the ④ badge
   },
   diagrams: [{
     slot: 'main',
@@ -41,27 +41,25 @@ DG.page('network-cloud-connectivity', {
       s += nd(DX, 226, DW, 72, {t: 'IPsec site',         s: ['all four clouds',    'native VPN gateway · IKEv2'], ic: 'lock', is: 22, icls: 'g', cls: 'hot'});
       s += nd(DX, 378, DW, 72, {t: 'Cloud Interconnect', s: ['all four clouds',    'private L2 via fabric'],      ic: 'plug', is: 22, icls: 'g', cls: 'hot'});
 
-      /* cloud → door. Faint lines first: Azure / AWS / GCP may also use IPsec or the interconnect */
+      /* cloud → door: one drawn door per cloud; the door sub-lines and the footer say which other doors each cloud may use */
       const c2d = (i, y2) => `M184 ${cy(i)}C232 ${cy(i)} 232 ${y2} ${DX} ${y2}`;
-      [248, 256, 264].forEach((y2, i) => { s += fl(c2d(i, y2), 'fl-ipsec fl-dim', {np: 0}); });
-      [400, 408, 416].forEach((y2, i) => { s += fl(c2d(i, y2), 'fl-flow fl-dim', {np: 0}); });
       /* the doors each cloud is drawn taking: Azure, AWS, GCP → vSocket; OCI → IPsec, and FastConnect → Cloud Interconnect */
       [96, 110, 124].forEach((y2, i) => { s += fl(c2d(i, y2), 'fl-tun', {dur: 1.2}); });
       s += fl(c2d(3, 276), 'fl-ipsec', {dur: 1.3});
-      s += fl(c2d(3, 426), 'fl-priv', {np: 0, label: 'FastConnect', lx: 242, ly: 446, lcls: 'm keep'});
+      s += fl(c2d(3, 426), 'fl-priv', {np: 0, label: 'FastConnect', lx: 232, ly: 450, lcls: 'm keep'});
 
       /* RIGHT · one PoP on the global private backbone */
       const RG = {cx: 620, cy: 262, rx: 112, ry: 44};
       s += ring(RG);
       s += fl(`M${DR} 110C540 110 560 238 595 238`, 'fl-tun',   {dur: 1.1});
       s += fl(`M${DR} 262C530 262 550 255 590 255`, 'fl-ipsec', {dur: 1.1});
-      s += fl(`M${DR} 414C530 414 590 330 596 274`, 'fl-priv',  {np: 0});
+      s += fl(`M${DR} 414C536 414 584 330 596 274`, 'fl-priv',  {np: 0});
       s += fpin(620, 306, 30, 'PoP', {halo: true});
       s += T(656, 192, 'Cato PoP', 'nd-t g', 'middle') + T(656, 206, 'same PoP, whichever door', 'f-s', 'middle');
       /* labels sit right of the interconnect line, which climbs to the pin at x ≈ 555–575 here */
-      s += T(660, 338, 'GLOBAL PRIVATE BACKBONE', 'tier', 'middle');
-      s += pill(660, 364, 'one policy set · one console', 'g keep');
-      s += T(660, 392, 'same backbone as every site', 'f-s', 'middle');
+      s += T(668, 340, 'GLOBAL PRIVATE BACKBONE', 'tier', 'middle');
+      s += pill(668, 366, 'one policy set · one console', 'g keep');
+      s += T(668, 394, 'same backbone as every site', 'f-s', 'middle');
 
       /* footer */
       s += T(380, 540, 'Azure · AWS · GCP: any of the three doors  ·  OCI: IPsec or FastConnect into Cloud Interconnect', 'f-m', 'middle');

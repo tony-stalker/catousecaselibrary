@@ -3,10 +3,10 @@ DG.page('security-dlp-forensics', {
   spotlight: {
     hl: ['users', 'pop', 'saas', 'cloud', 'mgmt'],
     mods: ['sse'],
-    anchors: {mgmt: [782, 132], cloud: [1443, 331]},   // step-4 marker on the CMA top edge; step-3 marker right of the AWS cloud, clear of the '4' heading
+    anchors: {mgmt: [782, 132], cloud: [1443, 331], genai: [105, 338]},   // step-4 marker on the CMA top edge; step-3 right of the AWS cloud, clear of the '4' heading; step-1 above the GenAI cloud
     flows: [{p: 'us1'}, {p: 'm1'}],   // no live traffic into the blocked GenAI app; evidence path is an API integration, not a tunnel
     steps: [
-      {t: 'Priya uploads a document containing credit-card PII towards Microsoft Copilot.', marks: ['users']},
+      {t: 'Priya uploads a document containing credit-card PII towards Microsoft Copilot.', marks: ['users', 'genai']},
       {t: 'The PoP DLP engine blocks the upload inline and raises a DLP event with its metadata.', marks: ['pop']},
       {t: "An encrypted forensic snippet is written to the customer's own S3 bucket under a per-account key.", marks: ['cloud']},
       {t: 'Marcus opens the Data Incident in the CMA and views the evidence under RBAC; every view is audited.', marks: ['mgmt']},
@@ -14,7 +14,7 @@ DG.page('security-dlp-forensics', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 40 760 470',
     draw: K => {
       const {nd, tile, fl, T, cloud, fpin, ring, pill, tier, xmark} = K;
       let s = '';
@@ -28,12 +28,12 @@ DG.page('security-dlp-forensics', {
       /* --- left: the user and her upload --- */
       s += tier(20, 100, 'USER');
       s += nd(20, 112, 180, 64, {t: 'Priya', s: ['Uploads a document', 'with credit-card PII'], ic: 'user'});
-      s += fl('M200 144H352', 'fl-https', {dur: 1.2, label: 'Upload · file with credit-card PII', lx: 284, ly: 94});
+      s += fl('M200 144H352', 'fl-https', {dur: 1.2, label: 'Upload · PII', lx: 300, ly: 144});
 
       /* --- top right: the GenAI destination, never reached --- */
-      s += cloud(660, 110, 1.05, 'Microsoft Copilot', 'GenAI SaaS app', 'ai');
-      s += fl('M400 132C460 112 520 110 568 110', 'fl-down', {np: 0, label: 'Blocked by DLP rule', lcls: 'r', lx: 486, ly: 86});
-      s += xmark(582, 110);
+      s += cloud(655, 108, 1.2, 'Microsoft Copilot', 'GenAI SaaS app', 'ai');
+      s += fl('M400 132C460 112 520 110 556 110', 'fl-down', {np: 0, label: 'Blocked by DLP rule', lcls: 'r', lx: 480, ly: 86});
+      s += xmark(566, 110);
 
       /* --- bottom row: investigator, CMA, customer-owned evidence --- */
       s += tier(20, 346, 'INVESTIGATION');
@@ -44,7 +44,7 @@ DG.page('security-dlp-forensics', {
       /* PoP → CMA: the event and its metadata */
       s += fl('M380 246V328', 'fl-flow', {arrow: 'arr-m', dur: 1, label: 'DLP event + metadata', lx: 380, ly: 288});
       /* PoP → S3: the encrypted forensic snippet */
-      s += fl('M482 234C540 234 620 250 651 328', 'fl-flow', {arrow: 'arr-m', dur: 1.4, label: 'Encrypted forensic snippet', lx: 584, ly: 242});
+      s += fl('M482 234C540 234 620 250 651 328', 'fl-flow', {arrow: 'arr-m', dur: 1.4, label: 'Encrypted forensic snippet', lx: 652, ly: 228});
       /* Marcus → CMA */
       s += fl('M196 390H298', 'fl-https', {dur: 1, label: 'Investigates', lx: 248, ly: 390});
       /* CMA ↔ S3: governed retrieval */

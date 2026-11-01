@@ -10,6 +10,7 @@ DG.page('security-compliance', {
       {t: 'Every enforcement decision lands as an event in one management application and data lake.', marks: ['mgmt', 'xops']},
       {t: 'That single, correlated record is the evidence source for ISO 27001, NIS2 and SOC 2 auditors.', marks: ['mgmt']},
     ],
+    anchors: {mgmt: [782, 132]},   // '3 · 4' marker on the CMA top edge, clear of the 'Terraform & API' subtitle
   },
   diagrams: [{
     slot: 'main',
@@ -36,15 +37,15 @@ DG.page('security-compliance', {
         [338, 'shield',   'IPS',   'threat prevention'],
       ];
       ENG.forEach(([y, ic, t, sub]) => { s += nd(EX, y, EW, EH, {t, s: [sub], ic, is: 20, icls: 'g'}); });
-      s += T(PC, 430, 'every decision logged', 'f-s', 'middle');
+      s += T(PC, 428, 'every site and remote user', 'f-s', 'middle') + T(PC, 442, 'every decision logged', 'f-s', 'middle');
 
       /* ---- centre: the management plane ---- */
       const CX = 300, CW = 184, CH = 112, CY = 267 - CH / 2, CR = CX + CW;
       ENG.forEach(([y], i) => {
-        const cy = y + EH / 2, ty = 267 + (i - 1.5) * 14;
+        const cy = y + EH / 2, ty = 267 + (i - 1.5) * 24;
         s += fl(`M${PX + PW} ${cy} C ${PX + PW + 30} ${cy}, ${CX - 30} ${ty}, ${CX} ${ty}`, 'fl-flow', {arrow: 'arr-m', dur: 1.1 + i * .1});
       });
-      s += T(272, 134, 'unified events', 'f-m', 'middle');
+      s += T(260, 146, 'unified', 'f-m', 'middle') + T(260, 159, 'events', 'f-m', 'middle');
       s += tile(CX, CY, CW, CH, 'console', 'Cato Management App', ['one management plane', 'audit trail · data lake'], {cls: 'pop'});
 
       /* ---- right: the frameworks the evidence is mapped to ---- */
@@ -59,7 +60,7 @@ DG.page('security-compliance', {
         s += fl(`M${CR} 267 C ${CR + 30} 267, ${FX - 30} ${cy}, ${FX} ${cy}`, 'fl-flow', {arrow: true, dur: 1.2 + i * .1});
         s += nd(FX, y, FW, FH, {t, s: [sub]});
       });
-      s += T(522, 410, 'unified audit evidence', 'f-m', 'middle');
+      s += T(510, 146, 'unified', 'f-m', 'middle') + T(510, 159, 'audit evidence', 'f-m', 'middle');
       return s;
     },
     title: 'From enforcement at the PoP to unified compliance evidence',

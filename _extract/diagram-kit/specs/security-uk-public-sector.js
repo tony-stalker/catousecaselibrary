@@ -38,8 +38,8 @@ DG.page('security-uk-public-sector', {
       s += tier(EX, 108, 'PUBLIC-BODY ESTATE');
       const EDGES = [
         [120, 'building', 'Council HQ',           'Socket · civic centre',  'fl-tun',   `C 290 148, 330 196, ${PX - 14} ${TIP - 6}`],
-        [210, 'building', 'Depots & schools',     'branch Sockets · IPsec', 'fl-ipsec', `C 270 238, 320 234, ${PX - 22} ${TIP}`],
-        [300, 'users',    'Remote & field staff', 'Cato Client · ZTNA',     'fl-https', `C 300 328, 340 300, ${PX - 12} ${TIP + 8}`],
+        [210, 'building', 'Depots & schools',     'branch Sockets',         'fl-tun',   `C 270 238, 320 234, ${PX - 22} ${TIP}`],
+        [300, 'users',    'Remote & field staff', 'Cato Client · ZTNA',     'fl-tun',   `C 300 328, 340 300, ${PX - 12} ${TIP + 8}`],
       ];
       EDGES.forEach(([y, ic, t, sub, cls, c], i) => {
         s += fl(`M${EX + EW} ${y + EH / 2} ${c}`, cls, {dur: 1.3 + i * .15});
@@ -67,6 +67,6 @@ DG.page('security-uk-public-sector', {
     },
     title: 'One estate, one policy, one evidence lane',
     desc: 'A council HQ, depots and schools, and remote and field staff all connect through a UK Cato PoP where one policy — FWaaS, IPS, anti-malware, ZTNA and DLP — is enforced before traffic reaches cloud and internet services, while a grey evidence lane carries policy, posture and event data into the CMA for a Cyber Essentials Plus assessor and a CAF assessment.',
-    legend: [['tun', 'Council HQ — Socket tunnel'], ['ipsec', 'Depots & schools — branch Sockets · IPsec'], ['https', 'Remote & field staff — Cato Client'], ['flow', 'Egress to cloud & internet services'], ['net', 'Evidence lane — policy, posture and events to the CMA'], 'live'],
+    legend: [['tun', 'HQ, depots & schools (Sockets) and remote & field staff (Cato Client) — encrypted tunnels to the PoP'], ['flow', 'Egress to cloud & internet services'], ['net', 'Evidence lane — policy, posture and events to the CMA'], 'live'],
   }],
 });

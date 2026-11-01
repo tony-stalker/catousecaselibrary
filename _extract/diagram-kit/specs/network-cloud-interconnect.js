@@ -3,6 +3,7 @@ DG.page('network-cloud-interconnect', {
   spotlight: {
     hl: ['dc', 'cloud', 'pop', 'backbone', 'branch', 'users'],
     mods: ['sdwan'],
+    anchors: {cloud: [1484, 322]},   // step-1 marker inside the cloud group (between AWS and Azure), clear of the overview's own ④ badge
     flows: [{p: 'dc3'}, {p: 'cl-az'}, {p: 'r-CR'}, {p: 'r-LC'}, {p: 'br1'}, {p: 'us1'}],
     steps: [
       {t: 'Public clouds land their private-link services on an exchange fabric such as Equinix Fabric or Megaport.', marks: ['cloud']},

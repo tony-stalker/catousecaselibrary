@@ -15,7 +15,7 @@ DG.page('security-inbound-ips', {
     slot: 'main',
     vb: '0 0 760 500',
     draw: K => {
-      const {nd, fl, T, R, I, pill, site, popBox, tile, cloud, tier, xmark} = K;
+      const {nd, fl, T, I, pill, site, popBox, tile, cloud, tier, xmark, socketIcon} = K;
       let s = '';
 
       /* ---- section labels ---- */
@@ -24,23 +24,22 @@ DG.page('security-inbound-ips', {
       /* ---- centre: the London PoP, drawn first so everything else sits on it ---- */
       s += popBox(266, 60, 180, 380, 'Cato PoP — London', 'SPACE · Inbound IPS');
       s += T(356, 116, 'Virtual patching', 'f-s', 'middle');
-      s += pill(356, 206, 'Allow list · IP · country', 'keep');
       s += T(356, 410, 'signatures written & deployed', 'f-s', 'middle');
       s += T(356, 424, 'by Cato Security Research', 'f-s', 'middle');
 
       /* ---- right: the on-prem lab site, dark to the internet ---- */
-      s += site(566, 180, 180, 260, 'ON-PREM LAB');
-      s += T(656, 236, 'Socket', 'f-s', 'middle');
-      s += R(581, 245, 150, 46, 'dev', 9) + `<circle cx="607" cy="268" r="9" class="sock-ring"/>` + T(721, 275, 'X1500', 't-sock', 'end');
-      s += fl('M656 291V330', 'fl-net', {np: 0});
-      s += nd(581, 330, 150, 62, {t: 'Web server', s: ['no inbound ports'], ic: 'server', is: 20, icls: 'g'});
-      s += pill(656, 418, 'site stays dark', 'g keep');
+      s += site(576, 180, 172, 260, 'ON-PREM LAB');
+      s += T(662, 236, 'Cato Socket X1500', 'f-s', 'middle');
+      s += socketIcon(602, 246, 120);
+      s += fl('M662 272V330', 'fl-net', {np: 0});
+      s += nd(588, 330, 148, 62, {t: 'Web server', s: ['no inbound ports'], ic: 'server', is: 20, icls: 'g'});
+      s += pill(662, 418, 'site stays dark', 'g keep');
 
       /* ---- the tunnel: dialled out by the Socket, so the arrow points at the PoP ---- */
-      s += fl('M581 268H446', 'fl-tun', {np: 0, arrow: 'arr'});
-      s += T(506, 248, 'Remote Port Forward', 'f-t', 'middle');
-      s += T(506, 296, 'outbound DTLS tunnel', 'f-s', 'middle');
-      s += T(506, 310, 'dialled out', 'f-s', 'middle') + T(506, 324, 'by the Socket', 'f-s', 'middle');
+      s += fl('M602 250H446', 'fl-tun', {np: 0, arrow: 'arr'});
+      s += T(511, 232, 'Remote Port Forward', 'f-t', 'middle');
+      s += T(511, 292, 'outbound DTLS tunnel', 'f-s', 'middle');
+      s += T(511, 306, 'dialled out', 'f-s', 'middle') + T(511, 320, 'by the Socket', 'f-s', 'middle');
 
       /* ---- left: who is connecting ---- */
       s += tile(14, 140, 124, 100, 'user', 'Legitimate user', ['HTTPS to the', 'published service']);
@@ -52,9 +51,8 @@ DG.page('security-inbound-ips', {
       s += fl('M128 382C168 370 168 304 196 304', 'fl-attack', {dur: 1.4});
 
       /* ---- the legitimate request: through the PoP and down the tunnel to the server ---- */
-      s += fl('M346 268H446', 'fl-https', {dur: .6});
-      s += fl('M446 278H581', 'fl-https', {dur: 1.2});
-      s += fl('M656 291V330', 'fl-https', {dur: .5});
+      s += fl('M346 270H602', 'fl-https', {dur: 1.6});
+      s += fl('M662 272V330', 'fl-https', {dur: .5});
 
       /* ---- the attack dies inside the PoP ---- */
       s += fl('M346 304C362 304 374 338 388 354', 'fl-attack', {dur: .9});
@@ -64,6 +62,8 @@ DG.page('security-inbound-ips', {
       /* ---- the allocated IP straddles the PoP edge: the only public address ---- */
       s += nd(196, 250, 150, 78, {t: 'Allocated IP', s: ['static IP · London PoP', 'the only address', 'you publish'], cls: 'hot'});
       s += I('globe', 206, 258, 16, 'ic g');
+      /* the allow list is applied at the allocated IP, before the IPS */
+      s += pill(334, 236, 'Allow list · IP · country', 'keep');
       return s;
     },
     title: 'Inbound protection: allocated IP, PoP IPS and Remote Port Forwarding',

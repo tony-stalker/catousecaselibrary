@@ -48,6 +48,7 @@ DG.page('migration-palo-alto-policy', {
       s += fl(`M${X[1] + BW} ${MID}H${X[2]}`, 'fl-flow', {dur: 1.2, arrow: 'arr-n'});
       s += fl(`M${X[2] + BW} ${MID}H${X[3]}`, 'fl-flow', {dur: 1.2, arrow: 'arr-n'});
       s += fl(`M${X[3] + BW} ${MID}H${X[4]}`, 'fl-ha', {dur: 1.4, arrow: 'arr-y'});
+      s += pill(X[4] - 11, BY + BH + 24, 'monitor → block', 'y');   // names the promotion (the connector is too short to show its dashes), below the CMA box edge, between the evidence lines
 
       /* ---- discard branch: dead rules never reach CMA ---- */
       const RX = X[1] + 36;
@@ -76,6 +77,6 @@ DG.page('migration-palo-alto-policy', {
     },
     title: 'PAN-OS policy conversion pipeline',
     desc: 'Every PAN-OS policy domain runs the same pipeline — export with usage data, rationalise on hit counts, map to the WAN and Internet Firewalls, CASB, DLP and TLS Inspection, deploy monitor-first and enforce on evidence.',
-    legend: [['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['flow', 'Policy through the pipeline'], ['net', 'Evidence loop — events feed the next review']],
+    legend: [['ha', 'Promotion — monitor to block, per rule, on event evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['flow', 'Policy through the pipeline'], ['net', 'Evidence loop — events feed the next review']],
   }],
 });

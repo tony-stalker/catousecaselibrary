@@ -1,6 +1,7 @@
 /* specs/migration-fortinet.js — Fortinet (FortiGate & FortiSASE) to Cato */
 DG.page('migration-fortinet', {
   spotlight: {
+    anchors: {backbone: [1074, 592]},   // step-2 marker beside the backbone label, clear of the SLA ring text
     hl: ['branch', 'dc', 'pop', 'backbone'],
     mods: ['sdwan', 'sse'],
     flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'r-CR'}],
@@ -14,13 +15,14 @@ DG.page('migration-fortinet', {
     slot: 'main',
     vb: '0 0 760 560',
     draw: K => {
-      const {nd, fl, T, pill, site, ring, fpin, fy, popBox} = K;
+      const {nd, fl, T, pill, site, ring, fpin, pinTop, fy, popBox} = K;
       let s = '';
 
       /* ---- top: the Cato PoP on the global private backbone ---- */
       const RG = {cx: 380, cy: 160, rx: 170, ry: 34};
       s += popBox(290, 40, 180, 70, 'Cato PoP', 'SPACE · one global rulebase');
       s += ring(RG);
+      s += fl('M380 110V' + (pinTop(Math.round(fy(RG, 380)) + 2, 22) - 2), 'fl-lan', {np: 0});   // the PoP box sits on the backbone pin
       s += T(556, 198, 'Global private backbone', 'f-s', 'start');
 
       /* Branch A → PoP (green tunnel, lands just left of the pin) and hub Socket → PoP
@@ -40,7 +42,7 @@ DG.page('migration-fortinet', {
       s += T(380, 374, 'AS-path anchors symmetry', 'f-s', 'middle');
 
       /* ---- bottom left: the migrated branch ---- */
-      s += nd(14, 440, 192, 64, {t: 'Branch A — migrated', s: ['Cato Socket X1500'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
+      s += nd(14, 440, 192, 64, {t: 'Branch A — migrated', s: ['Cato Socket'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
       s += pill(110, 522, 'on Cato · via nearest PoP', 'g');
 
       /* ---- bottom right: the legacy spoke, still behind the FortiGate hub ---- */

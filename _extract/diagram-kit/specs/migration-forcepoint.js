@@ -35,7 +35,7 @@ DG.page('migration-forcepoint', {
       s += popBox(350, 290, 170, 64, 'Cato PoP', 'SWG · TLSi · CASB · DLP');
       s += fpin(435, Math.round(fy(RG, 435)) + 2, 20, 'PoP', {halo: true});
       s += T(435, 456, 'Global Private Backbone', 'f-s', 'middle');
-      s += fl('M520 322C566 322 572 258 592 250', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'direct PoP breakout', lx: 640, ly: 306, lcls: 'g keep'});
+      s += fl('M520 322C566 322 572 258 592 250', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'direct PoP breakout', lx: 574, ly: 276, lcls: 'g keep'});
 
       /* ---- shared destination ---- */
       s += cloud(650, 230, 1.1, 'Internet & SaaS', 'M365 · web · SaaS apps');

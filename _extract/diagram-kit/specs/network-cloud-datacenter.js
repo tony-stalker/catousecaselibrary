@@ -10,7 +10,7 @@ DG.page('network-cloud-datacenter', {
       {t: 'The WAN firewall governs branch-to-VPC traffic with the same rulebase and audit trail as physical sites.', marks: ['pop']},
       {t: 'Traffic egresses to the VPC at the PoP nearest the cloud region, never across the public internet.', marks: ['cloud']},
     ],
-    anchors: {cloud: [1470, 468]},
+    anchors: {cloud: [1484, 322]},   // step-4 marker inside the cloud group (between AWS and Azure), clear of the ④ badge
   },
   diagrams: [{
     slot: 'main',
@@ -48,17 +48,18 @@ DG.page('network-cloud-datacenter', {
         if (ha) s += pill(BX + BW - 30, y, 'HA', 'y');
       };
       const Y = [40, 170, 300, 430];
-      box(Y[0], 'Azure VNet · UK South', 'Azure-UKS-Hub-vSocket', 'vSocket HA pair', true);
-      box(Y[1], 'AWS VPC · eu-west-2', 'AWS eu-west-2', 'vSocket HA pair', true);
-      box(Y[2], 'Azure Virtual WAN', 'Azure vWAN hub', 'IPsec from the vWAN hub', false);
-      box(Y[3], 'AWS region', 'Cloud Interconnect', 'Interconnect at the PoP', false);
+      box(Y[0], 'Azure VNet · UK South', 'Azure-UKS-Hub-vSocket', 'vSocket HA pair · DTLS', true);
+      box(Y[1], 'AWS VPC · eu-west-2', 'AWS eu-west-2', 'vSocket HA pair · DTLS', true);
+      box(Y[2], 'Azure Virtual WAN', 'Azure vWAN hub', 'IPsec · IKEv2 tunnel', false);
+      box(Y[3], 'AWS region', 'Cloud Interconnect', 'L2 cross-connect at PoP', false);
 
-      /* attachments from the cloud-adjacent PoP: two vSocket tunnels, one IPsec tunnel, one layer-2 cross-connect */
-      const PX = CX + 20, PY = FY - 36, mid = y => ({lx: 512, ly: Math.round(PY + (y - PY) * .56)});
-      s += fl(`M${PX} ${PY - 6}C500 ${PY - 40} 530 ${Y[0] + 36} ${BX} ${Y[0] + 36}`, 'fl-tun', {dur: 1.1, label: 'vSocket · DTLS', ...mid(Y[0] + 36)});
-      s += fl(`M${PX} ${PY - 2}C500 ${PY - 10} 530 ${Y[1] + 36} ${BX} ${Y[1] + 36}`, 'fl-tun', {dur: 1.1, label: 'vSocket · DTLS', ...mid(Y[1] + 36)});
-      s += fl(`M${PX} ${PY + 4}C500 ${PY + 14} 530 ${Y[2] + 36} ${BX} ${Y[2] + 36}`, 'fl-ipsec', {dur: 1.1, label: 'IPsec · IKEv2', ...mid(Y[2] + 36)});
-      s += fl(`M${PX} ${PY + 10}C500 ${PY + 50} 530 ${Y[3] + 36} ${BX} ${Y[3] + 36}`, 'fl-priv', {np: 0, label: 'L2 cross-connect', ...mid(Y[3] + 36)});
+      /* attachments from the cloud-adjacent PoP: two vSocket tunnels, one IPsec tunnel, one layer-2 cross-connect.
+         The attachment type is named in each cloud box (and the legend), not on the lines, which bunch together near the PoP. */
+      const PX = CX + 20, PY = FY - 36;
+      s += fl(`M${PX} ${PY - 6}C500 ${PY - 40} 530 ${Y[0] + 36} ${BX} ${Y[0] + 36}`, 'fl-tun', {dur: 1.1});
+      s += fl(`M${PX} ${PY - 2}C500 ${PY - 10} 530 ${Y[1] + 36} ${BX} ${Y[1] + 36}`, 'fl-tun', {dur: 1.1});
+      s += fl(`M${PX} ${PY + 4}C500 ${PY + 14} 530 ${Y[2] + 36} ${BX} ${Y[2] + 36}`, 'fl-ipsec', {dur: 1.1});
+      s += fl(`M${PX} ${PY + 10}C500 ${PY + 50} 530 ${Y[3] + 36} ${BX} ${Y[3] + 36}`, 'fl-priv', {np: 0});
 
       /* the PoPs sit on the ring, above the flows */
       s += fpin(LX, FY, 20, 'PoP', {fs: 9});

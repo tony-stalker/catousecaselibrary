@@ -24,11 +24,11 @@ DG.page('demo-dlp', {
 
       /* ---- left: the branch Socket and the remote user ---- */
       s += site(14, 92, 200, 112, 'Bristol Office');
-      s += nd(28, 120, 172, 60, {t: 'Socket X1500', s: ['branch uploads'], ic: 'building', is: 22, icls: 'g'});
-      s += nd(14, 270, 200, 60, {t: 'Marcus · Cato Client', s: ['Upload: client-list.xlsx'], ic: 'laptop', is: 22, icls: 'g'});
+      s += nd(28, 120, 172, 60, {t: 'Socket', s: ['branch uploads'], ic: 'building', is: 22, icls: 'g'});
+      s += nd(14, 270, 200, 60, {t: 'Marcus · Cato Client', s: ['Upload: spreadsheet.xlsx'], ic: 'laptop', is: 22, icls: 'g'});
       s += fl(L(114, 330, 114, 352), 'fl-lan fl-dim', {np: 0});
       s += doc(64, 352, 100, 84, [[2, 8, 58, 'no']]);
-      s += T(114, 454, 'client-list.xlsx', 'f-m', 'middle');
+      s += T(114, 454, 'spreadsheet.xlsx', 'f-m', 'middle');
       s += T(114, 468, 'card numbers inside', 'f-s', 'middle');
 
       /* tunnels into the PoP */

@@ -14,7 +14,7 @@ DG.page('ai-homegrown-apps', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 0 760 480',
     draw: K => {
       const {nd, fl, T, L, tile, tier, pill, popBox, xmark} = K;
       let s = '';
@@ -23,7 +23,7 @@ DG.page('ai-homegrown-apps', {
       s += tier(14, 34, 'WHO PROMPTS') + tier(172, 34, 'HOMEGROWN APP') + tier(340, 34, 'CATO AI SECURITY GUARD') + tier(560, 34, 'MODELS');
 
       /* ---- left: the two personas ---- */
-      s += tile(14, 80, 136, 92, 'user', 'Priya — app user', ['Benign prompt with PII']);
+      s += tile(14, 80, 136, 92, 'user', 'App user', ['Benign prompt with PII']);
       s += tile(14, 270, 136, 92, 'bolt', 'Attacker', ['Injection · jailbreak']);
 
       /* ---- the app both of them talk to ---- */
@@ -53,15 +53,16 @@ DG.page('ai-homegrown-apps', {
       s += fl(`M${GX + GW} 150C546 150 546 258 560 258`, 'fl-flow', {arrow: true, dur: 1.1});
 
       /* ---- bottom: the evidence ---- */
-      s += tier(448, 426, 'AUDIT TRAIL') + tier(560, 426, 'ALERTING');
-      s += fl(L(GC, GY + GH, GC, 440), 'fl-net', {np: 0, arrow: true});
-      s += nd(340, 440, 192, 56, {t: 'Interaction Explorer', s: ['Sessions · detections'], ic: 'file', is: 20, icls: 'g'});
-      s += fl(`M${GC + 11} 284C520 300 610 340 650 440`, 'fl-hot', {arrow: true, label: 'alert', lx: 578, ly: 372, lcls: 'r', dur: 1.4});
-      s += nd(560, 440, 186, 56, {t: 'SOC / XDR', s: ['Blocked-event alerts'], ic: 'shield', is: 20, icls: 'g'});
+      const BY = 408;   /* evidence row */
+      s += tier(GX, BY - 12, 'AUDIT TRAIL') + tier(560, BY - 12, 'ALERTING');
+      s += fl(L(GC, GY + GH, GC, BY), 'fl-net', {np: 0, arrow: true});
+      s += nd(340, BY, 192, 56, {t: 'Interaction Explorer', s: ['Sessions · detections'], ic: 'file', is: 20, icls: 'g'});
+      s += fl(`M${GX + GW} 300C610 300 653 330 653 ${BY}`, 'fl-hot', {arrow: 'arr-ms', label: 'alert', lx: 610, ly: 312, lcls: 'r', dur: 1.4});
+      s += nd(560, BY, 186, 56, {t: 'SOC', s: ['Blocked-event alerts'], ic: 'shield', is: 20, icls: 'g'});
       return s;
     },
     title: 'A Cato Guard in the homegrown AI interaction path',
     desc: 'Every prompt and response from a homegrown chatbot, copilot or RAG app passes a Cato AI Security Guard — Proxy, API or AI Gateway — whose engine redacts PII and forwards benign prompts to the model, blocks injection and jailbreaks, alerts the SOC and records the whole session in the Interaction Explorer.',
-    legend: [['https', 'User or attacker prompt'], ['flow', 'Benign prompt — PII redacted, forwarded'], ['down', 'Injection / jailbreak — blocked at the Guard'], ['hot', 'Alert to SOC / XDR'], ['net', 'Session record to the Interaction Explorer'], 'live'],
+    legend: [['https', 'User or attacker prompt'], ['flow', 'Benign prompt — PII redacted, forwarded'], ['down', 'Injection / jailbreak — blocked at the Guard'], ['hot', 'Alert to SOC'], ['net', 'Session record to the Interaction Explorer'], 'live'],
   }],
 });

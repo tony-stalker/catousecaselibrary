@@ -14,58 +14,60 @@ DG.page('demo-dem', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 0 760 500',
     draw: K => {
-      const {nd, fl, T, L, R, tier, pill, mark, badge, fpin, ring, cloud, site} = K;
+      const {nd, fl, T, L, tier, pill, mark, badge, fpin, ring, cloud, site} = K;
       let s = '';
-      const B = 232;                                  // the path baseline (PoP heads, ring centre)
+      const B = 262;                                  // the path baseline: LAN gateway, last mile, PoP heads, ring centre
       const PA = 350, PB = 560, PR = 22, TIP = B + PR * 1.7;
 
-      s += tier(14, 30, 'ONE PLATFORM · EVERY HOP THE TRAFFIC TAKES IS MEASURED');
+      s += tier(14, 22, 'ONE PLATFORM · EVERY HOP THE TRAFFIC TAKES IS MEASURED');
 
-      /* ---- LEFT · the two sources (segment 1: the device) ---- */
-      s += nd(20, B - 122, 170, 58, {t: 'Remote user', s: ['Priya · Cato Client'], ic: 'laptop'});
-      s += site(12, B + 40, 186, 92, 'Bristol Office');
-      s += nd(20, B + 58, 170, 58, {t: 'Socket X1500', s: ['site traffic'], ic: 'building'});
-      s += badge(190, B - 122, 1) + badge(190, B + 58, 1);
+      /* ---- LEFT · the office: device, Wi-Fi, LAN gateway (nodes 1-3) ---- */
+      s += site(12, 46, 214, 248, 'Office site');
+      s += nd(24, 66, 190, 52, {t: 'Device', s: ['Marcus · Cato Client'], ic: 'laptop'});
+      s += nd(24, 150, 190, 52, {t: 'Wi-Fi', s: ['office access point'], ic: 'wifi'});
+      s += nd(24, 234, 190, 52, {t: 'LAN gateway', s: ['site Socket'], ic: 'building'});
+      s += fl(L(119, 118, 119, 150), 'fl-tun', {dur: .8});
+      s += fl(L(119, 202, 119, 234), 'fl-tun', {dur: .8});
+      s += badge(214, 66, 1) + badge(214, 150, 2) + badge(214, 234, 3);
 
-      /* ---- segment 2 · the ISP last mile into the London PoP, degraded (amber) ---- */
-      const MX = 232;
-      s += fl(`M190 ${B - 93}C214 ${B - 93} 208 ${B} ${MX} ${B}`, 'fl-tun', {dur: 1.2});
-      s += fl(`M190 ${B + 87}C214 ${B + 87} 208 ${B} ${MX} ${B}`, 'fl-tun', {dur: 1.2});
-      s += fl(L(MX, B, PA - PR, B), 'fl-ha', {dur: 1.6});
-      s += T(282, B - 10, 'ISP last mile', 'f-m', 'middle');
-      s += badge(258, B + 26, 2) + pill(298, B + 26, 'Fair', 'y');
+      /* ---- node 4 · the ISP last mile into the London PoP, degraded (amber) ---- */
+      s += fl(L(214, B, PA - PR, B), 'fl-ha', {dur: 1.6});
+      s += T(272, B - 10, 'last mile', 'f-m', 'middle');
+      s += badge(250, B + 26, 4) + pill(290, B + 26, 'Fair', 'y');
 
-      /* ---- CENTRE · two PoPs on the Global Private Backbone (segment 3) ---- */
+      /* ---- CENTRE · the London PoP (node 5) and the Global Private Backbone ---- */
       const RG = {cx: (PA + PB) / 2, cy: B, rx: (PB - PA) / 2, ry: 26};
       s += ring(RG);
       s += fl(`M${PA} ${B}A${RG.rx} ${RG.ry} 0 0 0 ${PB} ${B}`, 'fl-tun', {dur: 1.8});
       s += T(RG.cx, B + 62, 'Global Private Backbone', 'f-s', 'middle');
-      s += badge(RG.cx, B - RG.ry - 4, 3);
 
-      /* ---- RIGHT · the applications (segment 4) ---- */
-      s += fl(L(PB + PR, B, 626, B), 'fl-flow', {arrow: true, dur: 1});
-      s += cloud(682, B, .9, 'SaaS app', 'Microsoft 365');
-      s += site(578, B + 82, 176, 92, 'London DC');
-      s += nd(582, B + 100, 168, 58, {t: 'Private app', s: ['London DC Socket'], ic: 'server'});
-      s += fl(`M${PB + 6} ${B + 30}C${PB + 6} ${B + 100} ${PB + 6} ${B + 129} 582 ${B + 129}`, 'fl-tun', {arrow: 'arr-ms', dur: 1.4});
-      s += badge(604, B - 22, 4);
+      /* ---- RIGHT · the applications (node 6) ---- */
+      s += fl(`M${PB + PR} ${B}C604 ${B} 600 ${B - 72} 628 ${B - 72}`, 'fl-flow', {arrow: true, dur: 1});
+      s += cloud(682, B - 72, .9, 'SaaS app', 'Microsoft 365');
+      s += site(596, B + 24, 158, 84, 'Data centre');
+      s += nd(604, B + 42, 142, 54, {t: 'Private app', s: ['DC Socket'], ic: 'server'});
+      s += fl(`M${PB + PR - 4} ${B + 10}C596 ${B + 24} 572 ${B + 69} 604 ${B + 69}`, 'fl-tun', {arrow: 'arr-ms', dur: 1.4});
+      s += badge(628, B - 106, 6) + badge(746, B + 42, 6);
 
       /* the PoP pins, drawn after the flows so the flows meet beneath their heads */
       s += fpin(PA, TIP, PR, 'PoP', {halo: true}) + fpin(PB, TIP, PR, 'PoP');
+      s += badge(PA - 26, B - 26, 5);
       s += T(PA, B - 64, 'Cato PoP — London', 'nd-t g', 'middle') + T(PA, B - 50, 'single-pass engine', 'f-s', 'middle');
-      s += T(PB, B - 64, 'Cato PoP — egress', 'nd-t g', 'middle') + T(PB, B - 50, 'nearest the app', 'f-s', 'middle');
+      s += T(PB, B - 64, 'Cato PoP', 'nd-t g', 'middle') + T(PB, B - 50, 'nearest the app', 'f-s', 'middle');
 
-      /* ---- BOTTOM · one score per segment; only segment 2 is off-green ---- */
-      s += tier(14, 426, 'EXPERIENCE MONITORING · EACH SEGMENT SCORED ON ITS OWN');
-      s += T(14, 446, 'The one off-green node is the fault domain: here, the ISP last mile.', 'f-t');
-      const CW = 176, CG = 9, CY = 476;
+      /* ---- BOTTOM · one score per node; only the last mile is off-green ---- */
+      s += tier(14, 372, 'EXPERIENCE MONITORING · EACH NODE SCORED ON ITS OWN');
+      s += T(14, 392, 'The one off-green node is the fault domain: here, the last mile.', 'f-t');
+      const CW = 116, CG = 8, CY = 420;
       [
-        ['1 Device', 'CPU · memory · Wi-Fi', 'ok'],
-        ['2 Last mile — Fair', 'tunnel loss · RTT · jitter', 'warn'],
-        ['3 Backbone', 'PoP to PoP', 'ok'],
-        ['4 Application', 'TTFB · TCP · TLS', 'ok'],
+        ['1 Device', 'CPU · memory', 'ok'],
+        ['2 Wi-Fi', 'signal strength', 'ok'],
+        ['3 LAN gateway', 'loss · latency', 'ok'],
+        ['4 Last mile', 'Fair · loss · RTT', 'warn'],
+        ['5 PoP', 'loss · latency', 'ok'],
+        ['6 Application', 'TTFB · baseline', 'ok'],
       ].forEach(([t, sub, k], i) => {
         const x = 14 + i * (CW + CG);
         s += nd(x, CY, CW, 58, {cls: 'soft', t, s: [sub]}) + mark(x + CW / 2, CY, k);
@@ -73,7 +75,7 @@ DG.page('demo-dem', {
       return s;
     },
     title: 'Same engine, seen from the telemetry side',
-    desc: 'Because the Client, the Socket, the PoP and the private backbone are one platform, every hop from the device through the last mile and backbone to the application is measured and scored separately; the one off-green segment is the fault domain.',
-    legend: [['tun', 'User and site traffic through the engine, measured at every hop'], ['ha', 'Degraded segment — scored Fair'], ['flow', 'Egress PoP to the SaaS app'], 'live'],
+    desc: 'Because the Client, the Socket, the PoP and the private backbone are one platform, every node from the device through the Wi-Fi, LAN gateway, last mile and PoP to the application is measured and scored separately; the one off-green node is the fault domain.',
+    legend: [['tun', 'User and site traffic through the engine, measured at every hop'], ['ha', 'Degraded node — scored Fair'], ['flow', 'PoP to the SaaS app'], 'live'],
   }],
 });

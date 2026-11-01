@@ -7,7 +7,7 @@ DG.page('migration-sophos', {
     steps: [
       {t: 'A parallel Socket at HQ exchanges routes with the XGS hub over IPsec or eBGP, default routes filtered.', marks: ['dc']},
       {t: 'SD-RED sites swap to zero-touch Sockets first; XGS branches follow in waves, legacy kit still racked.', marks: ['branch', 'pop']},
-      {t: 'Remote users move from Sophos Connect to the Cato Client; Sophos Central keeps endpoint, XDR and MDR.', marks: ['users']},
+      {t: 'Remote users swap Sophos Connect for the Cato Client; Sophos Central keeps endpoint, XDR, MDR.', marks: ['users']},
     ],
   },
   diagrams: [{
@@ -26,7 +26,7 @@ DG.page('migration-sophos', {
       /* ---- top left: the remote user, moved off Sophos Connect ---- */
       const uX = 290, uY = Math.round(by(RG, uX));
       s += fl(`M206 72C250 72 282 ${uY - 24} ${uX} ${uY + 2}`, 'fl-tun', {dur: 1.4});
-      s += nd(14, 40, 192, 64, {t: 'Priya — remote', s: ['Cato Client, was Connect'], ic: 'laptop', is: 20, icls: 'g', cls: 'hot'});
+      s += nd(14, 40, 192, 64, {t: 'Remote user', s: ['Cato Client, was Connect'], ic: 'laptop', is: 20, icls: 'g', cls: 'hot'});
       s += pill(110, 122, 'on Cato · nearest PoP', 'g');
 
       /* Branch A → PoP and hub Socket → PoP (green tunnels, drawn before the pin) */
@@ -49,7 +49,7 @@ DG.page('migration-sophos', {
       s += pill(110, 522, 'full inspection at the PoP', 'g');
 
       /* ---- bottom right: the legacy SD-RED branch, hairpinning to the hub ---- */
-      s += fl('M650 440C650 404 560 420 560 356', 'fl-ha', {dur: 1.8, label: 'tunnel-everything', lx: 676, ly: 408, lcls: 'y'});
+      s += fl('M650 440C650 404 560 420 560 356', 'fl-ha', {dur: 1.8, label: 'full tunnel to hub', lx: 676, ly: 408, lcls: 'y'});
       s += nd(554, 440, 192, 64, {t: 'Branch B — legacy', s: ['SD-RED tunnel to hub'], ic: 'building', is: 20, icls: 'g', cls: 'dash'});
       s += pill(650, 522, 'hairpins to the hub XGS', 'y');
 

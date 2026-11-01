@@ -2,7 +2,7 @@
 DG.page('management-vendor-consolidation', {
   spotlight: {
     hl: ['branch', 'users', 'pop', 'backbone', 'mgmt'],
-    anchors: {mgmt: [782, 132], backbone: [1230, 590]},   // mgmt: clear of 'Terraform & API'; backbone: below the ring text
+    anchors: {mgmt: [782, 132], backbone: [1030, 432]},   // mgmt: clear of 'Terraform & API'; backbone: on the ring's back arc between the SPACE pin and the right PoP
     mods: ['sdwan', 'sse', 'uztna'],
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'r-LC'}, {p: 'm1'}, {p: 'm2'}],
     steps: [
@@ -34,9 +34,9 @@ DG.page('management-vendor-consolidation', {
       const RG = {cx: 380, cy: 279, rx: 150, ry: 62};      // holds the whole PoP box inside the ring
       s += ring(RG);
       retired.forEach(([t, sub], i) => {
-        const y = 52 + i * 66, cy = y + 24, ty = PY + 6 + i * 9;
+        const y = 52 + i * 66, cy = y + 24, ty = PY + 15 + i * 6;   // PY+15…PY+51: on the PoP's straight left edge
         s += `<g style="stroke-dasharray:5 4">${nd(16, y, 170, 48, {t, s: [sub], cls: 'dash'})}</g>`;   // .nd.dash is not in the ported CSS; dash inline
-        s += fl(`M186 ${cy}C246 ${cy} 250 ${ty} ${PX} ${ty}`, 'fl-net fl-dim', {np: 0, arrow: 'arr-n'});
+        s += fl(`M186 ${cy}C246 ${cy} 250 ${ty} ${PX} ${ty}`, 'fl-net fl-dim', i === 3 ? {np: 0, arrow: 'arr-n'} : {np: 0});   // one arrowhead for the bundle, not a comb
       });
       /* CENTRE — one PoP on the global private backbone */
       s += T(380, 372, 'Global Private Backbone', 'nd-t g', 'middle');

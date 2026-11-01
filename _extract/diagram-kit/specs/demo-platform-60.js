@@ -53,11 +53,11 @@ DG.page('demo-platform-60', {
       s += nd(580, 400, 170, 58, {t: 'Private app', s: ['via App Connector'], ic: 'server'});
       s += fl('M406 262C480 240 560 212 602 212', 'fl-flow', {arrow: true, dur: 1.6});
       s += fl('M406 270C480 274 560 316 602 316', 'fl-flow', {arrow: true, dur: 1.6});
-      s += fl('M406 282C500 300 540 360 578 420', 'fl-flow', {arrow: true, dur: 1.8});
+      s += fl('M406 282C500 300 530 429 578 429', 'fl-flow', {arrow: true, dur: 1.8});
 
       /* TELEMETRY · from the PoP up to segment 7 */
       s += fl(`M500 158C560 132 ${RX(6) + RW / 2} 132 ${RX(6) + RW / 2} ${RY + RH + 2}`, 'fl-net', {arrow: true, dur: 2,
-        label: 'telemetry from every flow', lx: 560, ly: 128, lcls: 'm'});
+        label: 'telemetry from every flow', lx: 492, ly: 120, lcls: 'm'});
 
       /* the PoP pin, drawn after the flows so they meet beneath its head */
       s += fpin(PCX, 312, 28, 'PoP', {halo: true});

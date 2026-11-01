@@ -22,12 +22,12 @@ DG.page('security-firewall-refresh', {
       /* ---- centre: the Cato PoP on the global private backbone ---- */
       const RG = {cx: 400, cy: 240, rx: 160, ry: 44};
       s += T(400, 150, 'Cato PoP', 'f-h', 'middle');
-      s += pill(400, 172, 'Single-pass: FWaaS · IPS · TLS', 'g keep');
+      s += pill(400, 172, 'FWaaS · IPS · Anti-Malware · TLS', 'g keep');
       s += ring(RG);
 
       /* ---- left: two sites, Sockets only ---- */
       s += tier(14, 44, 'SITES · SOCKET ON THE LAST MILE');
-      s += nd(14, 58, 190, 62, {t: 'Bristol Office', s: ['Socket X1500 · no NGFW'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
+      s += nd(14, 58, 190, 62, {t: 'Madrid Office', s: ['Socket X1500 · no NGFW'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
       s += nd(14, 152, 190, 62, {t: 'Glasgow', s: ['Socket X1600 · no NGFW'], ic: 'building', is: 20, icls: 'g', cls: 'hot'});
       /* tunnels to the PoP, drawn before the pin so they end under it */
       s += fl('M204 89C258 89 268 200 376 232', 'fl-tun', {dur: 1.3});
@@ -44,7 +44,7 @@ DG.page('security-firewall-refresh', {
       s += cloud(640, 100, 1.2, 'Internet & SaaS', 'M365 · Salesforce · WWW');
 
       /* ---- right bottom: the data centre, reached over the backbone ---- */
-      s += fl(`M520 ${Math.round(fy(RG, 520)) - 2}C590 300 634 266 680 300`, 'fl-tun', {dur: 1.3});
+      s += fl(`M520 ${Math.round(fy(RG, 520)) - 2}C610 274 660 284 660 326`, 'fl-tun', {dur: 1.3});
       s += site(532, 300, 218, 150, 'LONDON DC');
       s += nd(544, 326, 196, 62, {t: 'Unpatched app server', s: ['CVE not yet patched'], ic: 'server', is: 20, icls: 'g', cls: 'hot'});
       s += pill(642, 418, 'Shielded by virtual patching', 'g keep');

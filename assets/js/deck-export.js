@@ -932,11 +932,15 @@
       var card = cards[i];
       var id = fileToId(card.getAttribute("href"));
       if (!id) continue;
-      var btn = card.querySelector(".uc-add");
+      /* the button is the card link's sibling inside .uc-cell (a button nested in a link is invalid and
+         unreachable for assistive tech); older markup without the cell falls back to the card itself */
+      var host = card.parentNode && card.parentNode.classList.contains("uc-cell") ? card.parentNode : card;
+      var btn = host.querySelector(".uc-add");
       if (!btn) {
         btn = el("button", { type: "button", "class": "uc-add", "data-id": id });
+        btn.setAttribute("aria-label", "Add to presentation: " + (findUc(id) || {}).title);
         btn.addEventListener("click", onCardBtn);
-        card.appendChild(btn);
+        host.appendChild(btn);
       }
       paintCardBtn(btn, inSel(id));
     }

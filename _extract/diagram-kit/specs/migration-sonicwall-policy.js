@@ -8,7 +8,7 @@ DG.page('migration-sonicwall-policy', {
     anchors: {mgmt: [764, 132], mgmt2: [800, 132], pop: [856, 334], pop4: [892, 334]},
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'm1'}],
     steps: [
-      {t: 'Access rules, NAT, CFS/App Control and security services export via TSR, API or NSM; counters cleared at discovery cull dead access rules after 30 days.', marks: ['mgmt']},
+      {t: 'Rules, NAT, CFS/App Control and services export via TSR, API or NSM; 30-day counters cull dead rules.', marks: ['mgmt']},
       {t: 'Zone matrices become scopes in one global rulebase; every secret in the export is rotated, never ported.', marks: ['mgmt2']},
       {t: 'The PoP applies the converted rulebase to every site and user, monitor-first before anything blocks.', marks: ['pop', 'branch', 'users']},
       {t: 'Events and hit counts prove each rule before it flips to block; the rotation log is auditable evidence.', marks: ['pop4']},
@@ -65,25 +65,28 @@ DG.page('migration-sonicwall-policy', {
 
       s += fl('M392 290V372', 'fl-down', {np: 0});
       s += xmark(392, 330);
-      s += nd(290, 372, 200, 66, {t: 'Every secret', s: ['local users · PSKs', 'TOTP seeds · SNMP', 'rotated, never ported'], ic: 'key', cls: 'dash'});
+      s += nd(290, 372, 200, 58, {t: 'Every secret', s: ['users · PSKs · TOTP · SNMP', 'rotated, never ported'], ic: 'key', cls: 'dash'});
 
       /* ---- evidence loop: phase 4, optimise ---- */
       s += fl('M500 290C500 336 556 344 566 370', 'fl-net', {np: 0, arrow: 'arr-n'});
       s += fl('M700 290C700 336 684 344 674 370', 'fl-net', {np: 0, arrow: 'arr-n'});
       s += side(520, 372, 200, 58, 'Events & hit counts', 'Monitor → Events', 'chart');
-      s += fl('M620 430V452Q620 462 610 462H258Q248 462 248 452V293', 'fl-net', {np: 0, arrow: 'arr-n',
-        label: '4 · OPTIMISE loop', lx: 434, ly: 462, lcls: 'm'});
+      s += fl('M620 430V438Q620 448 610 448H258Q248 448 248 438V293', 'fl-net', {np: 0, arrow: 'arr-n',
+        label: '4 · OPTIMISE loop', lx: 434, ly: 448, lcls: 'm'});
 
-      /* ---- footnotes: the carry-over facts ---- */
-      s += T(380, 494, 'SSLVPN-zone rules are re-authored as identity-scoped ZTNA, never translated', 'f-s', 'middle');
-      s += T(380, 508, 'CGSS/AGSS · EPSS/APSS licence bundles decide today\'s per-box protections', 'f-s', 'middle');
-      s += T(380, 522, 'DPI-SSL was rationed by connection limits, so Cato TLSi is often the first full inspection', 'f-s', 'middle');
-      s += T(380, 536, 'Rule zero: CVE-2024-40766 (CVSS 9.3 · CISA KEV 9 Sep 2024) · MySonicWall cloud-backup breach (every user, 8 Oct 2025)', 'f-s', 'middle');
-      s += T(380, 550, 'Essential Credential Reset: local users · TOTP bindings · IPsec keys', 'f-s', 'middle');
+      /* ---- what changes in translation: the carry-over facts ---- */
+      s += tier(14, 476, 'WHAT CHANGES IN TRANSLATION');
+      const notes = [
+        [14, 498, 'warn', 'Rule zero: rotate every secret', 'CVE-2024-40766 · cloud-backup breach (every backup user)'],
+        [390, 498, 'info', 'SSLVPN-zone rules', 're-authored as identity-scoped ZTNA, never translated'],
+        [14, 532, 'warn', 'Essential Credential Reset', 'local users · TOTP bindings · IPsec keys'],
+        [390, 532, 'info', 'DPI-SSL was rationed', 'Cato TLSi is often the first full inspection'],
+      ];
+      notes.forEach(([x, y, m, t, sub]) => { s += mark(x + 8, y - 4, m) + T(x + 24, y, t, 'nd-t') + T(x + 24, y + 15, sub, 'f-s'); });
       return s;
     },
     title: 'SonicOS policy pipeline — rotate, never port',
-    desc: 'The four SonicOS policy domains are exported once and rationalised against per-rule counters, where dead rules exit; at mapping every secret in the export exits too, rotated and replaced by IdP identity, and each mapped rule deploys in monitor before promotion on evidence.',
+    desc: 'The three exportable SonicOS domains are exported once and rationalised against per-rule counters, where dead rules exit, while greenfield CASB/DLP enters at MONITOR from discovery inputs; at mapping every secret in the export exits too, rotated and replaced by IdP identity, and each mapped rule deploys in monitor before promotion on evidence.',
     legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Monitor first — incl. greenfield CASB/DLP discovery inputs'], ['down', 'Never migrates — dead rules and every secret'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });

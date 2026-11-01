@@ -10,6 +10,7 @@ DG.page('migration-forcepoint-policy', {
       {t: 'The PoP applies the converted rules to every site and user, monitor-first and log-only.', marks: ['pop', 'branch', 'users']},
       {t: 'Events and hit counts prove each rule before it is promoted from monitor to block.', marks: ['pop']},
     ],
+    anchors: {mgmt: [782, 132]},   // steps 1·2 marker on the CMA top edge, clear of its subtitle and the XOps index
   },
   diagrams: [{
     slot: 'main',
@@ -52,7 +53,7 @@ DG.page('migration-forcepoint-policy', {
       s += fl(`M292 ${MY}H311`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M442 ${MY}H461`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
-      s += pill(603, 312, 'amber → green on evidence', 'y');
+      s += pill(603, 304, 'monitor → block', 'y');   // between the two evidence lines
       s += pill(378, 312, 'Web: Confirm → Prompt', '');
 
       /* ---- discard branch: nothing leaves it ---- */
@@ -76,6 +77,6 @@ DG.page('migration-forcepoint-policy', {
     },
     title: 'Forcepoint policy conversion pipeline',
     desc: 'All four Forcepoint policy domains move through one pipeline: export with hit data, discard the dead weight, map the survivors to CMA constructs, deploy in monitor and enforce only when the event telemetry matches expectations.',
-    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
+    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Promotion — monitor to block, per rule, on event evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });

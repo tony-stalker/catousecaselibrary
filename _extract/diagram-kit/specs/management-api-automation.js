@@ -27,7 +27,7 @@ DG.page('management-api-automation', {
       s += pill(169, Y - 16, 'merge');
       s += nd(184, Y, 140, H, {t: 'CI runner', s: ['terraform', 'catocli'], ic: 'route', is: 20, icls: 'g'});
       s += fl(`M324 ${CY}L360 ${CY}`, 'fl-https', {arrow: 'arr-m', dur: .9});
-      s += pill(292, Y - 16, 'HTTPS · x-api-key');
+      s += pill(342, Y - 16, 'HTTPS · x-api-key');   // centred on the CI → API arrow
       /* one API, three ways to consume it */
       s += tier(14, 332, 'ONE API · THREE WAYS TO CONSUME IT');
       s += chipRow(14, 344, ['GraphQL API', 'catocli', 'Terraform provider'], 104, 22, 8, 'g');
@@ -40,10 +40,10 @@ DG.page('management-api-automation', {
       s += pill(430, CY + 108, 'same API the CMA runs on', 'm');
       /* ---- right: sites created, policy applied ---- */
       const RX = 576, RW = 170, RH = 48;
-      const sites = [['Bristol Office', 48], ['Glasgow', 112], ['Madrid Office', 176]];
+      const sites = [['Bristol Office', 48], ['Glasgow', 112], ['London DC', 176]];
       sites.forEach(([t, y], i) => {
         const sy = CY - 12 + i * 8;
-        s += fl(`M500 ${sy}C545 ${sy} 545 ${y + 24} ${RX} ${y + 24}`, 'fl-tun', {arrow: 'arr-m', dur: 1.3});
+        s += fl(`M500 ${sy}C545 ${sy} 545 ${y + 24} ${RX} ${y + 24}`, 'fl-tun', {arrow: 'arr-ms', dur: 1.3});   // small marker: arr-m scales up with the thick tunnel stroke
         s += nd(RX, y, RW, RH, {t, s: ['cato_socket_site'], ic: 'building', is: 18, icls: 'g'});
       });
       s += fl(`M500 ${CY + 14}C545 ${CY + 14} 545 264 ${RX} 264`, 'fl-flow', {arrow: 'arr-m', dur: 1});

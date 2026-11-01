@@ -243,7 +243,7 @@ section { margin-bottom: 44px; scroll-margin-top: 80px; }
   background: var(--green-050); color: var(--green-700);
   display: grid; place-items: center; font-size: 1.1rem;
 }
-.benefit h4 { margin: 0 0 2px; font-size: .98rem; }
+.benefit h3, .benefit h4 { margin: 0 0 2px; font-size: .98rem; }
 .benefit p { margin: 0; font-size: .9rem; color: var(--ink-2); }
 
 /* ---------- Stat tiles (dataviz: hero numbers, direct-labeled) ---------- */
@@ -285,7 +285,7 @@ section { margin-bottom: 44px; scroll-margin-top: 80px; }
   font-weight: 700; font-size: .95rem;
   display: grid; place-items: center;
 }
-.steps > li h4 { margin: 0 0 4px; font-size: 1rem; }
+.steps > li h3, .steps > li h4 { margin: 0 0 4px; font-size: 1rem; }
 .steps > li p, .steps > li ul { margin: 4px 0 0; font-size: .93rem; color: var(--ink-2); }
 .steps .path { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; background: var(--green-050); color: var(--green-800); border: 1px solid var(--green-100); border-radius: 6px; padding: 1px 8px; margin: 2px 0; }
 
@@ -321,7 +321,7 @@ figure.shot-placeholder figcaption { font-style: italic; }
    --lb-h is the height left for the enlarged view once the bar and caption are reserved. */
 .lightbox {
   position: fixed; inset: 0; z-index: 200; display: none;
-  background: rgba(5, 24, 32, .97);
+  background: #051820;
   flex-direction: column; align-items: center; justify-content: center; gap: 12px;
   padding: 64px 4vw 3vh;
   --lb-h: calc(100vh - 64px - 3vh - 6.5rem);
@@ -443,6 +443,7 @@ figure.shot img:focus-visible, .diagram-card.zoomable svg:focus-visible { outlin
 /* ---------- Phased migration player ---------- */
 .phase-player { margin: 22px 0; }
 .phase-player:focus-visible { outline: 2px solid var(--green-600); outline-offset: 4px; border-radius: var(--radius); }
+.phase-player .phase { margin: 0; }
 .phase-player:not(.ready) .phase + .phase { margin-top: 16px; }
 .phase-player.ready .phase-stage { display: grid; }
 .phase-player.ready .phase { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .45s ease; }
@@ -919,6 +920,11 @@ body.has-reading-aids .footer-inner { padding-bottom: 72px; }
 /* + / ✓ toggle on index cards. The top-row padding is static CSS, so injecting
    (or stripping) the button never shifts the card layout. */
 .uc-card { position: relative; }
+.uc-cell { position: relative; display: flex; }
+.uc-cell > .uc-card { flex: 1 1 auto; min-width: 0; }
+.uc-cell > .uc-add { transition: transform .18s ease; }
+.uc-cell:hover > .uc-add { transform: translateY(-3px); }
+@media (prefers-reduced-motion: reduce) { .uc-cell > .uc-add { transition: none; } }
 .uc-card .uc-top { padding-right: 36px; }
 .uc-add {
   position: absolute; top: 15px; right: 14px;
@@ -1135,12 +1141,42 @@ svg.x-fig { display: block; width: 100%; height: auto; border-radius: 14px; font
 .diagram-card.spotlight { margin-bottom: 6px; }
 .spot-steps { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 10px 24px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.spot-steps:has(> li:nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .spot-steps:has(> li:nth-child(4):last-child) { grid-template-columns: 1fr; } }
 .spot-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; line-height: 1.45; color: var(--ink-2); }
 .spot-n { flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%; background: var(--x-amber); color: var(--x-amber-ink);
   font-weight: 800; font-size: .78rem; display: inline-flex; align-items: center; justify-content: center; }
 /* legend swatches drawn with the kit's own line styles */
 .x-legend .x-lg { display: inline-flex; align-items: center; gap: 7px; }
 .x-legend svg.x-sw { width: 32px; height: 10px; overflow: visible; flex: none; }
+
+/* ---- shared fixes from the visual QA pass (1 Nov 2026) ---- */
+/* merged step markers ("1 · 3") are rects; the source styles them with .mark rect, which the port can miss */
+.x-mark circle, .x-mark rect:not(.x-ring) { fill: var(--x-amber); }
+/* the attack path in a spotlight is red, not the mint highlight */
+.x-ucl.x-ucl-atk { stroke: var(--x-danger); stroke-dasharray: 6 5; }
+.x-ucl-glow.x-ucl-atk { stroke: var(--x-danger); }
+.x-ucpt.x-red circle { fill: var(--x-danger); }
+/* component index badges recede while numbered step markers are on the picture */
+.spotlight svg:has(.x-mark) .x-badge { opacity: .4; }
+/* labels that lit flows run across get a knock-out halo */
+.x-t-ring, .x-t-tag { paint-order: stroke; stroke: var(--x-stage-b); stroke-width: 4px; stroke-linejoin: round; }
+/* dark theme: generic flow lines were ~2.4:1 on the canvas */
+@media screen { :root[data-theme="dark"] { --x-link: #3F9C7E; } }
+/* lightbox: fit the whole diagram (legend included) instead of scrolling the card */
+.lightbox:not(.lb-zoomed) .lightbox-stage .diagram-card { overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+.lightbox:not(.lb-zoomed) .lightbox-stage .diagram-card svg.x-fig { width: auto; max-width: 100%; max-height: calc(var(--lb-h) - 4.5rem); margin: 0 auto; }
+/* phones: diagrams open in the lightbox at a readable native width and pan */
+@media (max-width: 640px) {
+  .lightbox-stage .diagram-card { overflow: auto; overscroll-behavior: contain; display: block; }
+  .lightbox:not(.lb-zoomed) .lightbox-stage .diagram-card svg.x-fig { width: 760px; max-width: none; max-height: none; }
+  .lightbox:not(.lb-zoomed) .lightbox-stage .diagram-card.spotlight svg.x-fig { width: 1100px; }
+  .diagram-card.zoomable { position: relative; }
+  .diagram-card.zoomable::after { content: "Tap to enlarge"; position: absolute; top: 8px; right: 8px; padding: 3px 9px; border-radius: 999px;
+    font-size: .72rem; font-weight: 600; background: rgba(5,24,32,.78); color: #fff; pointer-events: none; }
+  .x-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; font-size: .8rem; text-align: left; }
+}
+.lightbox .diagram-card.zoomable::after { content: none; }
 
 /* ---- generated by _extract/build-diagrams.py from the platform-overview kit — do not edit by hand ---- */
 :root{--x-bg: #D8E4DE; --x-stage-a: #FFFFFF; --x-stage-b: #EDF4F0; --x-surface: #FFFFFF; --x-surface-2: #E7F0EB; --x-surface-3: #D7E6DE; --x-line: #A7C3B7; --x-line-2: #C9DBD2; --x-link: #4E9A80; --x-ink: #07201A; --x-ink-2: #37554C; --x-ink-3: #5B766D; --x-brand: #128561; --x-brand-hi: #0E7353; --x-mint: #0A8259; --x-mint-soft: rgba(10,130,89,.13); --x-mint-glow: rgba(10,130,89,.26); --x-amber: #D48C05; --x-amber-ink: #FFFFFF; --x-purple: #6A4BD8; --x-blue: #1F6FD1; --x-danger-soft: rgba(207,63,53,.09); --x-danger: #CF3F35; --x-glass: rgba(255,255,255,.985); --x-scrim: rgba(216,228,222,.6); --x-shadow: 0 24px 56px rgba(8,45,32,.14); --x-pin-a: #1C9B6D; --x-pin-b: #0C6247; --x-pin-inner: #FFFFFF; --x-pin-label: #FFFFFF; --x-grid-dot: rgba(10,130,89,.14); --x-logo-main: #128561; --x-logo-sub: #6F7A76; --x-display: var(--font); --x-body: var(--font); --x-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
@@ -1226,7 +1262,7 @@ svg.x-focus-mode .x-pt-g.x-hl{opacity: 1;}
 .x-ucl-glow{fill: none; stroke: var(--x-mint); stroke-width: 12; stroke-linecap: round; opacity: 0.16;}
 .x-ucpt circle.x-c{fill: var(--x-mint);}
 .x-ucpt circle.x-h{fill: var(--x-mint); opacity: 0.3;}
-.x-mark circle{fill: var(--x-amber);}
+.x-mark circle,.x-mark rect{fill: var(--x-amber);}
 .x-mark text{font-family: var(--x-display); font-weight: 800; font-size: 15px; fill: var(--x-amber-ink);}
 .x-mark .x-ring{fill: none; stroke: var(--x-amber); stroke-width: 2; opacity: 0.6; transform-box: fill-box; transform-origin: center center; animation: 2s ease-out 0s infinite normal none running x-halo;}
 .x-mark{transition: opacity 0.3s;}

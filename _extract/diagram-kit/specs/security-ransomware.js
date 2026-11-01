@@ -7,10 +7,9 @@ DG.page('security-ransomware', {
     steps: [
       {t: 'Every flow from every site, remote user and cloud instance crosses a PoP; there is no unexamined path.', marks: ['branch', 'users']},
       {t: 'SPACE inspects it once against every engine: SWG, DNS, IPS, NGAM, sandbox, firewall and DLP.', marks: ['pop']},
-      {t: 'Six kill-chain stages meet six independent controls, from delivery through C2 to exfiltration.', marks: ['saas']},
+      {t: 'Six kill-chain stages meet six independent controls, from delivery through C2 to exfiltration.', marks: ['pop']},
       {t: 'XDR correlates every blocked attempt into one incident story mapped to MITRE ATT&CK.', marks: ['xops']},
     ],
-    anchors: {saas: [302, 316]},
   },
   diagrams: [{
     slot: 'main',
@@ -22,7 +21,7 @@ DG.page('security-ransomware', {
       s += T(395, 18, 'Legitimate traffic — inspected in a single pass, delivered without detour', 'f-s', 'middle');
       s += fl(L(20, 36, 770, 36), 'fl-flow', {arrow: 'arr-m', dur: 2.2, n: 3});
       /* attacker */
-      s += cloud(54, 122, .82, 'Attacker', 'ransomware gang', 'bad');
+      s += cloud(54, 122, .82, 'Attacker', 'threat actor', 'bad');
       /* kill chain */
       s += tier(110, 84, 'THE RANSOMWARE KILL CHAIN →');
       const stages = [['Delivery', 'phishing · drive-by'], ['Exploit', 'unpatched CVE'], ['Payload', 'malware executes'],

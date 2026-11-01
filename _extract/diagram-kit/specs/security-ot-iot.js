@@ -54,10 +54,9 @@ DG.page('security-ot-iot', {
 
       /* ---- allowed within a level (no direction implied) ---- */
       NY.forEach((y, i) => { s += fl(`M310 ${y + 24}H380`, 'fl-walk', {dur: 1.2}); });
-      s += pill(345, 202, 'allowed within level', 'g');
       /* ---- the one IT/OT allow the page names: historian northbound to enterprise apps ---- */
-      s += fl('M225 264V190', 'fl-walk', {dur: 1.4, arrow: 'arr-m'});
-      s += pill(225, 252, 'historian → ERP · allowed', 'g');
+      s += fl('M196 264V190', 'fl-walk', {dur: 1.4, arrow: 'arr-m'});
+      s += pill(286, 252, 'historian → ERP · allowed', 'g');
 
       /* ---- the Cato Socket: LAN firewall spanning every band ---- */
       s += R(596, 118, 150, 464, 'nd hot', 14);
@@ -80,8 +79,11 @@ DG.page('security-ot-iot', {
       /* ---- HMI → PLC through the Socket; PLC → internet blocked ---- */
       s += fl('M550 400H602V500H552', 'fl-walk', {dur: 1.8, arrow: 'arr-m'});
       s += pill(465, 471, 'HMI → PLC · allowed', 'g');
-      s += fl('M550 532H596', 'fl-down', {np: 0}) + xmark(572, 532);
-      s += pill(465, 561, 'PLC → internet · blocked', 'r');
+      /* PLC egress is forwarded by the Socket to the PoP, where the internet firewall drops it */
+      s += fl('M550 532H596', 'fl-net', {np: 0, arrow: 'arr-n'});
+      s += pill(465, 561, 'PLC → internet · blocked at the PoP', 'r');
+      s += fl('M694 55H726', 'fl-down', {np: 0}) + xmark(736, 55);
+      s += T(736, 82, 'internet', 'f-s', 'middle');
       return s;
     },
     title: 'Purdue-model segmentation on the Socket',

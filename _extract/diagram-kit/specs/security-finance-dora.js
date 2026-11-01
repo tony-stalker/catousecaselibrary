@@ -3,7 +3,7 @@ DG.page('security-finance-dora', {
   spotlight: {
     hl: ['branch', 'dc', 'users', 'pop', 'backbone', 'mgmt'],
     mods: ['sdwan', 'sse'],
-    anchors: {mgmt: [782, 132]},   // step-4 marker on the CMA box's top edge, clear of its subtitle
+    anchors: {mgmt: [782, 132], backbone: [1078, 592]},   // step-4 marker on the CMA top edge; step-2 marker below the ring text, clear of '99.999%'
     flows: [{p: 'br1'}, {p: 'dc1'}, {p: 'us1'}, {p: 'r-LC'}, {p: 'r-CR'}, {p: 'm1'}],
     steps: [
       {t: 'London DC, the Bristol branch and the hybrid workforce connect to the nearest PoP on the private backbone.', marks: ['branch', 'dc', 'users']},
@@ -21,8 +21,8 @@ DG.page('security-finance-dora', {
 
       /* ---- top: the backbone with the failed and the surviving PoP ---- */
       s += tier(14, 12, 'CATO SASE CLOUD');
-      s += T(390, 34, 'Global Private Backbone', 'f-h', 'middle');
-      s += T(390, 50, 'multiple Tier-1 carriers · full mesh', 'f-s', 'middle');
+      s += T(14, 34, 'Global Private Backbone', 'f-h', 'start');
+      s += T(14, 50, 'multiple Tier-1 carriers', 'f-s', 'start');
       const RG = {cx: 390, cy: 112, rx: 250, ry: 40};
       const PL = 265, PM = 445;                                   /* London (failed path) · Manchester (on-path) */
       const TL = Math.round(fy(RG, PL)), TM = Math.round(fy(RG, PM));
@@ -32,7 +32,7 @@ DG.page('security-finance-dora', {
       const EX = 14, EW = 180, EH = 56;
       s += tier(EX, 232, 'EDGES · SITES & USERS');
       const EDGES = [
-        [246, 'server',   'London DC',        'Socket X1500 · core apps'],
+        [246, 'server',   'London DC',        'Socket X1500 · data centre'],
         [336, 'building', 'Bristol Office',   'Socket X1600 branch'],
         [426, 'users',    'Hybrid workforce', 'Cato Client · ZTNA'],
       ];
@@ -51,11 +51,10 @@ DG.page('security-finance-dora', {
       });
       s += pill(366, 286, 'auto-steered to the next-best PoP', 'g');
 
-      /* PoPs on the ring, labels beside the pin heads */
+      /* PoPs on the ring; labels above the ring, clear of the tube, over their pins */
       s += fpin(PL, TL, 22, 'PoP', {dim: true}) + fpin(PM, TM, 22, 'PoP', {halo: true});
-      s += T(PL - 30, TL - 36, 'London PoP', 'nd-t', 'end');
-      const HM = TM - 22 * 1.7;
-      s += T(PM + 28, HM - 3, 'Manchester PoP', 'nd-t') + T(PM + 28, HM + 11, 'SPACE · full stack on-path', 'f-s');
+      s += T(PL, 56, 'London PoP', 'nd-t', 'middle');
+      s += T(PM, 40, 'Manchester PoP', 'nd-t', 'middle') + T(PM, 54, 'SPACE · full stack on-path', 'f-s', 'middle');
 
       /* ---- right: core banking applications, reached from the surviving PoP ---- */
       const RX = 566, RW = 180;

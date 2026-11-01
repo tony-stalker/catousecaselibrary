@@ -43,11 +43,13 @@ DG.page('network-global-app-performance', {
 
       /* London: the egress PoP feeds the DC socket and Microsoft 365 */
       s += fpin(540, 262, 24, 'PoP', {halo: true});
-      s += T(564, 292, 'London PoP', 'nd-t g', 'end');
+      s += T(570, 268, 'London PoP', 'nd-t g');
       s += nd(576, 72, 170, 60, {t: 'London DC', s: ['Socket X1500 · file servers'], ic: 'server', is: 20, icls: 'g'});
       s += fl('M548 198Q556 102 576 102', 'fl-tun', {dur: 1.2});
-      s += cloud(676, 330, 1, 'Microsoft 365', 'egress near the app');
-      s += fl('M562 232Q604 330 612 330', 'fl-flow', {arrow: true, dur: 1});
+      s += cloud(676, 330, 1, 'Microsoft 365', 'tenant front door');
+      /* smart egress: M365 leaves the backbone at the PoP nearest the tenant (here Frankfurt), not at a UK breakout */
+      s += fl('M490 236C490 300 556 330 610 330', 'fl-flow', {arrow: true, dur: 1});
+      s += T(470, 300, 'egress at the PoP', 'f-s', 'end') + T(470, 314, 'nearest the tenant', 'f-s', 'end');
 
       /* ---- bottom band: the public-internet alternative, hop by hop ---- */
       const H = [[70, 251], [90, 362], [190, 452], [380, 488], [560, 478], [664, 420], [704, 370]];
@@ -58,7 +60,7 @@ DG.page('network-global-app-performance', {
       return s;
     },
     title: 'Sydney to London application traffic over the Cato global private backbone',
-    desc: 'A Sydney IPsec site enters the Sydney PoP, where QoS prioritises voice, video and bulk traffic; the flow crosses a chain of backbone PoPs with consistent latency to the London PoP and on to the London DC socket and Microsoft 365 via smart egress, while the public-internet path beneath offers variable latency and no SLA.',
+    desc: 'A Sydney IPsec site enters the Sydney PoP, where QoS prioritises voice, video and bulk traffic; the flow crosses a chain of backbone PoPs with consistent latency to the London PoP and on to the London DC socket, while Microsoft 365 traffic leaves the backbone by smart egress at the PoP nearest the tenant rather than a UK breakout, and the public-internet path beneath offers variable latency and no SLA.',
     legend: [['hot', 'Cato backbone — accelerated, QoS-enforced path'], ['ipsec', 'Sydney IPsec site to its nearest PoP'], ['tun', 'London DC Socket tunnel'], ['flow', 'Smart egress near the SaaS instance'], ['net', 'Public internet — best-effort contrast path'], 'live'],
   }],
 });

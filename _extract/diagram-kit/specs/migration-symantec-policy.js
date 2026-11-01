@@ -52,13 +52,13 @@ DG.page('migration-symantec-policy', {
       s += fl(`M142 ${MY}H161`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M292 ${MY}H311`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M442 ${MY}H461`, 'fl-flow', {arrow: true, dur: 0.8});
-      s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
-      s += pill(603, 312, 'amber → green on evidence', 'y');
+      s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', np: 0});
+      s += pill(603, 312, 'amber → green', 'y');
       s += pill(378, 312, 'coach → Prompt', '');
       s += pill(378, 338, 'IWA / BCAAA → SCIM', 'b');
 
       /* ---- Reporter EOL: the evidence base is on borrowed time ---- */
-      s += T(14, 308, 'Reporter EOL Mar 2025', 'f-m');
+      s += T(14, 308, 'Reporter EOL announced Mar 2025', 'f-m');
       s += T(14, 322, 'archive in week one', 'f-m');
 
       /* ---- discard branch: nothing leaves it ---- */
@@ -82,6 +82,6 @@ DG.page('migration-symantec-policy', {
     },
     title: 'Symantec policy pipeline — CPL to intent',
     desc: 'All four Symantec policy domains move through one pipeline: export the CPL corpus and portal policy with Reporter and access-log hit data, discard dead layers and proxy plumbing, map the survivors to CMA, deploy in monitor and enforce only at telemetry parity.',
-    legend: [['flow', 'Surviving policy — exported, reviewed and mapped'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Dead CPL and plumbing — discarded on hit data'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
+    legend: [['flow', 'Surviving policy — exported, reviewed and mapped'], ['ha', 'Promotion from monitor to block — on evidence'], ['down', 'Dead CPL and plumbing — discarded on hit data'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });

@@ -53,7 +53,7 @@ DG.page('migration-iboss-policy', {
       s += fl(`M292 ${MY}H311`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M442 ${MY}H461`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
-      s += pill(603, 312, 'amber → green on evidence', 'y');
+      s += pill(603, 304, 'monitor → block', 'y');   // between the two evidence lines
       s += pill(378, 312, 'iboss + Cato CA side by side', '');
 
       /* ---- discard branch: nothing leaves it ---- */
@@ -77,6 +77,6 @@ DG.page('migration-iboss-policy', {
     },
     title: 'iboss policy pipeline — per domain, per cohort',
     desc: 'The policy pipeline run per domain and per cohort wave: export, rationalise on hit counts, map to CMA constructs, deploy in monitor and enforce on evidence, with events and hit counts feeding the Optimise phase.',
-    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Deploy in monitor — track events, no blocks'], ['down', 'Discarded at rationalisation — dead rules never reach CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
+    legend: [['flow', 'Surviving rules — exported, reviewed and mapped'], ['ha', 'Promotion — monitor to block, per rule, on event evidence'], ['down', 'Discarded at rationalisation — dead rules never reach CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });

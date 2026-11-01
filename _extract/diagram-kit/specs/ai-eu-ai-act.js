@@ -37,9 +37,10 @@ DG.page('ai-eu-ai-act', {
       s += T(PX + PW / 2, 338, 'access rules run before interaction rules', 'f-s', 'middle');
 
       /* flows onto the PoP */
-      s += fl(`M184 98C214 98 220 134 ${PX + 25} 134`, 'fl-tun', {dur: 1.3});
-      s += fl(`M184 188C214 188 222 134 ${PX + 25} 134`, 'fl-tun', {dur: 1.3});
-      s += fl(`M184 278C214 278 224 134 ${PX + 25} 134`, 'fl-tun', {dur: 1.3});
+      /* fanned onto three points of the Discovery box's left edge so no two tunnels cross */
+      s += fl(`M184 98C214 98 218 122 ${PX + 25} 122`, 'fl-tun', {dur: 1.3});
+      s += fl(`M184 188C214 188 218 134 ${PX + 25} 134`, 'fl-tun', {dur: 1.3});
+      s += fl(`M184 278C214 278 218 146 ${PX + 25} 146`, 'fl-tun', {dur: 1.3});
       /* the pipeline inside the PoP: discovery, then access, then interaction */
       s += fl(`M${PX + 135} 160L${PX + 135} 176`, 'fl-net', {np: 0, arrow: true});
       s += fl(`M${PX + 135} 228L${PX + 135} 244`, 'fl-net', {np: 0, arrow: true});
@@ -52,9 +53,10 @@ DG.page('ai-eu-ai-act', {
       s += nd(560, 250, 186, 56, {t: 'Prohibited-use AI', s: ['Org-classified · blocked'], ic: 'ai', is: 20, icls: 'g', cls: 'soft'});
       s += pill(653, 324, 'blocked · non-use evidenced', 'r');
       const OX = PX + 245;   /* right edge of the User Interaction Policy box */
-      s += fl(`M${OX} 270C530 270 530 98 560 98`, 'fl-flow', {dur: 1.1});
-      s += fl(`M${OX} 270C530 270 534 188 560 188`, 'fl-flow', {dur: 1.1});
-      s += fl(`M${OX} 270C512 270 520 278 534 278`, 'fl-down', {np: 0});
+      /* three separate exits on the policy box's right edge, one per verdict, so no two curves cross */
+      s += fl(`M${OX} 258C530 258 530 98 560 98`, 'fl-flow', {dur: 1.1});
+      s += fl(`M${OX} 270C536 270 540 188 560 188`, 'fl-flow', {dur: 1.1});
+      s += fl(`M${OX} 282C512 282 520 278 534 278`, 'fl-down', {np: 0});
       s += xmark(546, 278);
 
       /* ---- evidence lane: every decision lands in the CMA ---- */

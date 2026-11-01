@@ -26,7 +26,7 @@ DG.page('migration-palo-alto', {
 
       /* ---- left: the site — PA stays default gateway, Socket in parallel ---- */
       s += site(14, 60, 232, 230, 'BRANCH / DC SITE');
-      s += nd(28, 84, 204, 56, {t: 'Cato Socket X1500', s: ['installed in parallel'], ic: 'switch', is: 20, icls: 'g', cls: 'hot'});
+      s += nd(28, 84, 204, 56, {t: 'Cato Socket', s: ['installed in parallel'], ic: 'switch', is: 20, icls: 'g', cls: 'hot'});
       s += fl('M130 140V156M130 202V212', 'fl-net', {np: 0});
       s += pill(130, 166, 'eBGP / static handoff', 'm keep');
       s += T(130, 194, 'over LAN transit VLAN', 'f-s', 'middle');
@@ -42,7 +42,7 @@ DG.page('migration-palo-alto', {
 
       /* ---- top right: direct breakout from the PoP ---- */
       s += fl('M568 112C596 100 604 90 616 80', 'fl-flow', {dur: 1.1, arrow: 'arr-m'});
-      s += cloud(678, 64, 1.25, 'Internet & Cato sites', 'direct PoP breakout');
+      s += cloud(678, 64, 1.25, 'Internet & SaaS', 'direct PoP breakout');
 
       /* ---- right: the interconnect hub bridging the two islands ---- */
       const hY = Math.round(fy(RG, 520));

@@ -1,9 +1,10 @@
 /* specs/migration-versa.js — Versa Networks (SD-WAN & SASE) to Cato */
 DG.page('migration-versa', {
   spotlight: {
+    anchors: {mgmt: [782, 132], backbone: [1074, 592]},   // markers on the CMA top edge and beside the backbone label, clear of 'Terraform & API' and the SLA ring text
     hl: ['branch', 'dc', 'pop', 'backbone', 'mgmt'],
     mods: ['sdwan'],
-    flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}, {p: 'm1'}],
+    flows: [{p: 'br1'}, {p: 'br2'}, {p: 'dc1'}, {p: 'r-LC'}],
     steps: [
       {t: 'A parallel Socket at each Versa hub peers with the VOS hub over eBGP; the MP-BGP overlay stays intact.', marks: ['dc']},
       {t: 'AS-path length anchors each region to its local hub, so no flow returns via another VOS firewall.', marks: ['backbone']},
@@ -14,13 +15,14 @@ DG.page('migration-versa', {
     slot: 'main',
     vb: '0 0 760 560',
     draw: K => {
-      const {nd, fl, T, TL, pill, site, ring, fpin, fy, popBox} = K;
+      const {nd, fl, T, TL, pill, site, ring, fpin, pinTop, fy, popBox} = K;
       let s = '';
 
       /* ---- top: the Cato PoP on the global private backbone ---- */
       const RG = {cx: 380, cy: 140, rx: 200, ry: 36};
       s += popBox(290, 22, 180, 56, 'Cato PoP', 'SPACE · FWaaS · ZTNA · SWG');
       s += ring(RG);
+      s += fl('M380 78V' + (pinTop(Math.round(fy(RG, 380)) + 2, 22) - 2), 'fl-lan', {np: 0});   // the PoP box sits on the backbone pin
       s += T(548, 194, 'Global Private Backbone', 'f-s', 'middle');
 
       /* migrated paths into the backbone (drawn before the pin) */
@@ -32,17 +34,17 @@ DG.page('migration-versa', {
 
       /* ---- centre: the Manchester hub — same site, new leg ---- */
       s += site(232, 232, 286, 248, 'MANCHESTER HUB SITE');
-      s += nd(262, 262, 236, 62, {t: 'Manchester hub', s: ['parallel Cato Socket', 'same site, new leg'], ic: 'cpu', is: 22, icls: 'g', cls: 'hot'});
+      s += nd(262, 262, 236, 62, {t: 'Cato Socket (hub)', s: ['parallel to the VOS hub', 'same site, new leg'], ic: 'cpu', is: 22, icls: 'g', cls: 'hot'});
       s += fl('M380 324V396', 'fl-net', {np: 0});
       s += pill(380, 360, 'eBGP handoff · AS-path symmetry', 'm');
-      s += nd(262, 396, 236, 62, {t: 'Manchester hub', s: ['VOS hub · MP-BGP intact'], ic: 'firewall', is: 22, icls: 'g'});
+      s += nd(262, 396, 236, 62, {t: 'VOS hub', s: ['Versa · MP-BGP intact'], ic: 'firewall', is: 22, icls: 'g'});
 
       /* ---- left: the migrated branch ---- */
       s += nd(14, 262, 196, 62, {t: 'Bristol branch', s: ['Cato Socket · migrated'], ic: 'building', is: 22, icls: 'g', cls: 'hot'});
       s += pill(112, 342, 'one policy at the PoP', 'g');
 
       /* rollback lever: re-enable the VOS spoke */
-      s += fl('M210 300C250 300 234 430 258 430', 'fl-net fl-dim', {np: 0, arrow: 'arr-n'});
+      s += fl('M210 300C250 300 238 430 261 430', 'fl-net fl-dim', {np: 0, arrow: 'arr-n'});
       s += TL(224, 392, ['rollback: re-enable the', 'VOS spoke — BGP reconverges'], 'f-s', 'end', 14);
 
       /* ---- bottom left: the legacy spoke on the Versa overlay ---- */

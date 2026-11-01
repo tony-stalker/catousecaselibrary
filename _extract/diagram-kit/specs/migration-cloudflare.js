@@ -7,9 +7,9 @@ DG.page('migration-cloudflare', {
     steps: [
       {t: 'User cohorts swap WARP for the Cato Client one wave at a time; never both agents on one device.', marks: ['users']},
       {t: 'Sites run Magic WAN and a Socket in parallel; private apps move from cloudflared to SDP app by app.', marks: ['branch', 'dc']},
-      {t: 'The public web estate never leaves Cloudflare: CDN, WAF, authoritative DNS and Magic Transit stay.', marks: ['saas']},
+      {t: 'Cato egress replaces Gateway; the public web estate (CDN, WAF, DNS, Magic Transit) stays on Cloudflare.', marks: ['saas']},
     ],
-    anchors: {saas: [229, 432]},
+    anchors: {saas: [330, 400]},
   },
   diagrams: [{
     slot: 'main',
@@ -22,7 +22,7 @@ DG.page('migration-cloudflare', {
       s += R(14, 12, 732, 98, 'nd soft', 14);
       s += tier(30, 34, 'RETAINED — NOT PART OF THIS MIGRATION');
       s += nd(30, 48, 190, 50, {t: 'Public website', s: ['customer web traffic'], ic: 'globe', is: 20, icls: 'g'});
-      s += fl('M220 73H366', 'fl-net', {np: 0, arrow: 'arr-n', label: 'stays on Cloudflare', lx: 293, ly: 73, lcls: 'm keep'});
+      s += fl('M220 73H366', 'fl-net', {np: 0, arrow: 'arr-n', label: 'stays on Cloudflare', lx: 293, ly: 58, lcls: 'm'});
       s += nd(370, 48, 210, 50, {t: 'Cloudflare CDN / WAF', s: ['auth. DNS · Magic Transit'], ic: 'shield', is: 20, icls: 'g'});
       s += TL(598, 68, ['Tenant stays live;', 'Zero Trust seats reduced'], 'f-s', 'start', 14);
 
@@ -42,13 +42,13 @@ DG.page('migration-cloudflare', {
       /* left: cohorts and the site */
       s += nd(14, 150, 200, 56, {t: 'Wave 2 user cohort', s: ['WARP (Cloudflare One)'], ic: 'users', is: 20, icls: 'g', cls: 'dash'});
       s += pill(114, 224, 'wave 2 · not yet migrated', 'y');
-      s += nd(14, 288, 200, 68, {t: 'Bristol Office', s: ['Magic WAN IPsec — interim', 'Socket X1500 — target'], ic: 'building', is: 20, icls: 'g'});
+      s += nd(14, 288, 200, 68, {t: 'Bristol Office', s: ['Magic WAN IPsec — interim', 'Cato Socket — target'], ic: 'building', is: 20, icls: 'g'});
       s += nd(14, 430, 200, 56, {t: 'Wave 1 user cohort', s: ['Cato Client'], ic: 'users', is: 20, icls: 'g'});
       s += pill(114, 504, 'wave 1 · migrated', 'g');
 
       /* right: the retiring connector and the private apps */
       s += nd(540, 176, 200, 56, {t: 'cloudflared connector', s: ['retires app-by-app'], ic: 'plug', is: 20, icls: 'g', cls: 'dash'});
-      s += nd(540, 420, 200, 68, {t: 'London DC apps', s: ['Socket X1700', 'SDP app segments'], ic: 'server', is: 20, icls: 'g'});
+      s += nd(540, 420, 200, 68, {t: 'London DC apps', s: ['Cato Socket', 'SDP app segments'], ic: 'server', is: 20, icls: 'g'});
 
       /* interim flows (amber) */
       s += fl('M214 178C254 178 262 200 296 202', 'fl-ha', {dur: 1.8});

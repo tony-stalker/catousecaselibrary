@@ -10,7 +10,7 @@ DG.page('ai-agentic-security', {
       {t: 'Custom agents send LLM calls through the AI Firewall proxy; Guards inspect prompts, outputs and tool calls.', marks: ['ai', 'pop']},
       {t: 'Every session is recorded in Agent Sessions with violations tagged inline; Local Agents holds the inventory.', marks: ['mgmt']},
     ],
-    anchors: {mgmt: [730, 144]},
+    anchors: {mgmt: [730, 144], cloud: [1548, 396]},   // cloud marker on the cloud group, clear of its '4' heading badge
   },
   diagrams: [{
     slot: 'main',
@@ -37,8 +37,8 @@ DG.page('ai-agentic-security', {
 
       /* CENTRE · Cato AI Security */
       s += popBox(250, 70, 270, 270, 'Cato AI Security', 'Agent Policy · AI-FW Guards');
-      s += tier(266, 124, 'FOUR INSPECTION POINTS');
-      s += chips(266, 132, ['Prompts', 'Outputs', 'Tool calls', 'Tool messages'], 115, 26, 8, 2, 'g');
+      s += tier(266, 132, 'FOUR INSPECTION POINTS');
+      s += chips(266, 140, ['Prompts', 'Outputs', 'Tool calls', 'Tool messages'], 115, 26, 8, 2, 'g');
       s += TL(385, 222, ['Detects prompt injection, jailbreaks,', 'sensitive data exposure and policy violations'], 'f-s', 'middle', 14);
       s += tier(266, 270, 'ON A MATCH');
       s += pill(296, 298, 'alert', 'b') + pill(358, 298, 'log', 'm') + pill(420, 298, 'block', 'r') + pill(484, 298, 'redact', 'y');
@@ -50,8 +50,8 @@ DG.page('ai-agentic-security', {
       s += pill(658, 152, 'governed · allowed', 'g');
 
       s += nd(570, 220, 176, 56, {t: 'Risky action', s: ['Injected exfil attempt'], ic: 'bolt', is: 20, cls: 'dash'});
-      s += fl('M520 248L560 248', 'fl-down', {dur: 1.2});
-      s += xmark(568, 248);
+      s += fl('M520 248L545 248', 'fl-down', {np: 0});
+      s += xmark(556, 248);
       s += pill(658, 292, 'blocked', 'r');
       s += T(658, 312, 'payload arrived in a tool message', 'f-s', 'middle');
 

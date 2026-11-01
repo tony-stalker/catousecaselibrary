@@ -27,21 +27,21 @@ DG.page('security-ai-visibility', {
       s += nd(14, 250, 200, 56, {t: 'AI Browser Extension', s: ['Optional · Intune/MDM'], ic: 'browser', is: 20, icls: 'g', cls: 'dash'});
 
       /* ---- centre: the PoP, inspecting but never blocking ---- */
-      const PX = 250, PY = 60, PW = 260, PH = 270;
+      const PX = 250, PY = 60, PW = 272, PH = 270;
       s += popBox(PX, PY, PW, PH, 'Cato PoP', 'GenAI traffic already crosses it');
-      s += chipRow(PX + 6, 116, ['TLS inspection', 'CASB / DLP', 'AI policy'], 80, 20, 4, 'g');
+      s += chipRow(PX + 7, 116, ['TLS inspection', 'CASB / DLP', 'AI policy'], 84, 20, 3, 'g');
       s += pill(PX + PW / 2, 160, 'MONITOR MODE · nothing blocked', 'm keep');
-      s += nd(PX + 25, 192, 210, 56, {t: 'Prompt-level telemetry', s: ['every interaction classified'], ic: 'eye', is: 20, icls: 'g', cls: 'soft'});
+      s += nd(PX + (PW - 210) / 2, 192, 210, 56, {t: 'Prompt-level telemetry', s: ['every interaction classified'], ic: 'eye', is: 20, icls: 'g', cls: 'soft'});
       s += T(PX + PW / 2, 276, 'traffic flows exactly as before', 'f-s', 'middle');
       s += T(PX + PW / 2, 292, 'sanctioned or shadow, nothing is touched', 'f-s', 'middle');
 
       /* flows onto the PoP */
-      s += fl(`M214 98C232 98 236 130 ${PX} 130`, 'fl-tun', {dur: 1.3});
+      s += fl(`M214 98C232 98 236 142 ${PX} 142`, 'fl-tun', {dur: 1.3});   /* enters below the chip row */
       s += fl(`M214 188C232 188 236 185 ${PX} 185`, 'fl-tun', {dur: 1.3});
       s += fl(`M214 278C232 278 236 250 ${PX} 250`, 'fl-https', {dur: 1.3});
 
       /* ---- right: where the prompts go, both lanes monitored ---- */
-      s += nd(574, 90, 172, 56, {t: 'Sanctioned GenAI', s: ['ChatGPT · M365 Copilot'], ic: 'ai', is: 20, icls: 'g'});
+      s += nd(574, 90, 172, 56, {t: 'Sanctioned GenAI', s: ['Approved · M365 Copilot'], ic: 'ai', is: 20, icls: 'g'});
       s += pill(660, 164, 'allowed · logged', 'g');
       s += nd(574, 230, 172, 56, {t: 'Shadow AI apps', s: ['Unsanctioned tools'], ic: 'ai', is: 20, icls: 'g', cls: 'soft'});
       s += pill(660, 304, 'visible · monitored', 'y');

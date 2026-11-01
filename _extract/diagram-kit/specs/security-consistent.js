@@ -1,15 +1,16 @@
 /* specs/security-consistent.js — Consistent Security: configured once, applied everywhere */
 DG.page('security-consistent', {
   spotlight: {
-    hl: ['branch', 'dc', 'cloud', 'users', 'pop', 'backbone'],
+    hl: ['branch', 'dc', 'cloud', 'users', 'pop', 'backbone', 'mgmt'],
     mods: ['sse', 'uztna'],
     flows: [{p: 'br1'}, {p: 'dc1'}, {p: 'cl-az'}, {p: 'us1'}, {p: 'r-LC'}, {p: 'r-CR'}, {p: 'r-RL'}],
     steps: [
-      {t: 'One policy set is defined once in the CMA and distributed to every PoP on the backbone.', marks: ['pop']},
+      {t: 'One policy set is defined once in the CMA and distributed to every PoP on the backbone.', marks: ['mgmt']},
       {t: 'London DC, Glasgow, the Azure vSocket, Madrid and a home worker all cross the identical stack.', marks: ['branch', 'dc', 'cloud', 'users']},
       {t: 'Rules target IdP user groups and device-posture profiles, so a directory change alone changes access.', marks: ['users']},
       {t: 'A threat is stopped by the same IPS and Anti-Malware rules at whichever PoP it appears.', marks: ['popL']},
     ],
+    anchors: {mgmt: [782, 132], cloud: [1443, 331]},   // step-1 marker on the CMA top edge; step-2 cloud marker right of AWS, clear of the '4' heading badge
   },
   diagrams: [{
     slot: 'main',
@@ -27,7 +28,7 @@ DG.page('security-consistent', {
       s += nd(310, 150, 220, 70, {t: 'One policy set', s: ['WAN FW · Internet FW · IPS', 'AM · CASB · DLP'], ic: 'console', is: 22, icls: 'g', cls: 'pop'});
 
       /* four PoPs standing on the front of the ring; each name sits above its pin head */
-      const PR = 16;
+      const PR = 20;
       const POPS = [[260, 'London PoP', [318, 220]], [360, 'Manchester PoP', [352, 220]], [480, 'Frankfurt PoP', [488, 220]], [580, 'Dubai PoP', [522, 220]]];
       /* policy distribution: thin arrowed lines from the card to every PoP (drawn first, under the labels) */
       POPS.forEach(([x, , [sx, sy]]) => {
@@ -57,9 +58,9 @@ DG.page('security-consistent', {
       });
 
       /* ---- a threat on the left: blocked at the London PoP by the same IPS and Anti-Malware rules ---- */
-      s += cloud(66, 250, .65, 'Threat traffic', '', 'bad');
-      s += fl('M104 262C148 268 188 286 215 294', 'fl-attack', {np: 0});
-      s += xmark(226, 297);
+      s += cloud(70, 250, .9, 'Threat', 'traffic', 'bad');
+      s += fl('M120 262C152 268 184 282 207 290', 'fl-attack', {np: 0});
+      s += xmark(218, 293);
       s += pill(130, 345, 'Blocked by IPS · Anti-Malware', 'r');
       return s;
     },

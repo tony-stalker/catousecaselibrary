@@ -13,14 +13,15 @@ DG.page('ai-threat-landscape', {
   },
   diagrams: [{
     slot: 'main',
-    vb: '0 0 760 560',
+    vb: '0 0 760 524',
     draw: K => {
       const {nd, fl, T, R, I, tier, popBox, chipRow, pill, xmark, mark} = K;
       let s = '';
-      const Y = [116, 236, 356];                 // lane centres
-      const LX = 14, LW = 160;                   // attack-class boxes
-      const PX = 222, PW = 276;                  // Cato SASE Cloud
-      const RX = 586, RW = 160;                  // outcome boxes
+      const Y = [120, 224, 328];                 // lane centres
+      const LX = 14, LW = 172;                   // attack-class boxes
+      const PX = 228, PW = 264;                  // Cato SASE Cloud
+      const RX = 572, RW = 174;                  // outcome boxes
+      const PB = 380;                            // cloud box bottom
       const CX = PX + PW / 2;
 
       s += tier(LX, 20, 'AI ATTACK CLASSES');
@@ -34,7 +35,7 @@ DG.page('ai-threat-landscape', {
       s += bad(Y[2], 'Shadow AI & data leak', 'prompts · rogue AI tools', 'var(--amber)');
 
       /* the single-pass engine, one cell per lane */
-      s += popBox(PX, 44, PW, 360, 'Cato SASE Cloud', 'one pass · every flow · every user');
+      s += popBox(PX, 44, PW, PB - 44, 'Cato SASE Cloud', 'one pass · every flow · every user');
       const cell = (y, chip, sub) => chipRow(CX - 110, y - 24, [chip], 220, 22, 0, 'g') + T(CX, y + 14, sub, 'f-s', 'middle');
       s += cell(Y[0], 'SWG · DNS · NGAM · ZTNA', 'phishing & stolen creds');
       s += cell(Y[1], 'IPS virtual patching', 'SPACE · XDR stories');
@@ -60,10 +61,10 @@ DG.page('ai-threat-landscape', {
       s += pill(RX + RW / 2, Y[2] + 46, 'anonymise · monitor', 'y');
 
       /* whatever survives goes to XDR */
-      const XY = 440;
-      ['M320 404C320 424 350 420 350 ' + XY, `M${CX} 404V${XY}`, 'M400 404C400 424 370 420 370 ' + XY].forEach(d => { s += fl(d, 'fl-net', {np: 0}); });
+      const XY = 416;
+      [`M${CX - 40} ${PB}C${CX - 40} ${PB + 20} ${CX - 10} ${PB + 16} ${CX - 10} ${XY}`, `M${CX} ${PB}V${XY}`, `M${CX + 40} ${PB}C${CX + 40} ${PB + 20} ${CX + 10} ${PB + 16} ${CX + 10} ${XY}`].forEach(d => { s += fl(d, 'fl-net', {np: 0}); });
       s += nd(CX - 100, XY, 200, 48, {t: 'XDR · data lake', s: ['one incident story'], ic: 'db', is: 20, icls: 'g'});
-      s += T(380, 526, 'Every class crosses the same single-pass engine — and XDR correlates whatever survives into one story', 'f-s', 'middle');
+      s += T(380, 502, 'Every class crosses the same single-pass engine — and XDR correlates whatever survives into one story', 'f-s', 'middle');
       return s;
     },
     title: 'Three AI attack classes, one single-pass engine',

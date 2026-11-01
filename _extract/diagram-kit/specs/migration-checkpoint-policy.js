@@ -3,6 +3,7 @@ DG.page('migration-checkpoint-policy', {
   spotlight: {
     hl: ['branch', 'users', 'pop', 'saas', 'mgmt'],
     mods: ['sse'],
+    anchors: {mgmt: [782, 132]},   // merged 1 · 2 marker on the CMA box's top edge, clear of its subtitle and the XOps badge
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'm1'}],
     steps: [
       {t: 'SmartConsole layers export via mgmt_cli with hit counts; zero-hit, disabled and shadowed rules are stripped.', marks: ['mgmt']},
@@ -46,7 +47,7 @@ DG.page('migration-checkpoint-policy', {
       s += fl(`M${X[0] + BW} ${MID}H${X[1]}`, 'fl-flow', {dur: 1.2, arrow: 'arr-n'});
       s += fl(`M${X[1] + BW} ${MID}H${X[2]}`, 'fl-flow', {dur: 1.2, arrow: 'arr-n'});
       s += fl(`M${X[2] + BW} ${MID}H${X[3]}`, 'fl-flow', {dur: 1.2, arrow: 'arr-n'});
-      s += fl(`M${X[3] + BW} ${MID}H${X[4]}`, 'fl-ha', {dur: 1.4, arrow: 'arr-y'});
+      s += fl(`M${X[3] + BW} ${MID}H${X[4]}`, 'fl-ha', {np: 0, arrow: 'arr-y'});
 
       /* ---- discard branch: layer debt never reaches CMA ---- */
       const RX = X[1] + 36;
@@ -75,6 +76,6 @@ DG.page('migration-checkpoint-policy', {
     },
     title: 'Check Point policy conversion pipeline',
     desc: 'The four SmartConsole policy domains are exported via the Management API, rationalised against hit-count evidence, and only surviving intent is mapped to CMA; every mapped rule deploys in monitor and is promoted to enforcement on evidence.',
-    legend: [['flow', 'Policy through the pipeline'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — the OPTIMISE evidence loop']],
+    legend: [['flow', 'Policy through the pipeline'], ['ha', 'Promotion from monitor to block — on evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — the OPTIMISE evidence loop']],
   }],
 });

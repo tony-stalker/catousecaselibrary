@@ -32,7 +32,9 @@ DG.page('access-identity-design', {
       s += site(30, 232, 210, 112, 'Bristol Office');
       s += nd(44, 250, 182, 50, {t: 'Priya · Socket X1500', s: ['office user · managed laptop'], ic: 'building', is: 20, icls: 'g'});
       s += pill(135, 322, 'Identity Agent', 'g');
-      s += nd(30, 380, 210, 54, {t: 'Warehouse shared PC', s: ['no Client · no AD Query'], ic: 'laptop', cls: 'dash'});
+      /* .nd.dash is not in the ported CSS: dash the coverage-gap box inline, keep the laptop icon solid */
+      s += `<g style="stroke-dasharray:5 4">${nd(30, 380, 210, 54, {t: 'Warehouse shared PC', s: ['no Client · no AD Query'], ic: 'laptop'})
+        .replace('<use ', '<use style="stroke-dasharray:none" ')}</g>`;
 
       /* ---- the PoP on the backbone ---- */
       const RG = {cx: 595, cy: 460, rx: 140, ry: 38};

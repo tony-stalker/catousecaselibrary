@@ -51,7 +51,7 @@ DG.page('management-pov-framework', {
       s += pill(XX + 68, TY + 42, 'Unscoped asks — "can it also…?"', 'y');
       s += xmark(XX, XY);
       s += T(XX + 12, XY + 30, 'cut here → parked in writing', 'f-s', 'end');
-      s += nd(XX + 28, XY - 26, 146, 52, {t: 'Next-steps register', s: ['parked, not the PoV'], cls: 'dash'});
+      s += `<g style="stroke-dasharray:5 4">${nd(XX + 28, XY - 26, 146, 52, {t: 'Next-steps register', s: ['parked, not the PoV'], cls: 'dash'})}</g>`;   // .nd.dash is not in the ported CSS; dash inline
       return s;
     },
     title: 'The Cato PoV pipeline',

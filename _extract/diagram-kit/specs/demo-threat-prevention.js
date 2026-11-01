@@ -23,20 +23,20 @@ DG.page('demo-threat-prevention', {
       s += tier(20, 96, 'SOURCES') + tier(596, 96, 'DESTINATIONS');
 
       /* the backbone the PoP sits on */
-      s += ring({cx: 380, cy: 64, rx: 150, ry: 22});
-      s += T(380, 20, 'Global Private Backbone', 'f-h', 'middle');
+      s += ring({cx: 380, cy: 73, rx: 150, ry: 22});
+      s += T(380, 32, 'Global Private Backbone', 'f-h', 'middle');
 
       /* LEFT · the two sources */
       s += nd(20, 134, 170, 60, {t: 'Remote user', s: ['Priya · Cato Client'], ic: 'laptop', icls: 'g'});
       s += site(12, 236, 186, 96, 'Bristol Office');
-      s += nd(20, 256, 170, 60, {t: 'Socket X1500', s: ['all site traffic'], ic: 'building', icls: 'g'});
+      s += nd(20, 256, 170, 60, {t: 'Socket', s: ['all site traffic'], ic: 'building', icls: 'g'});
 
       /* tunnels into the PoP */
       s += fl('M190 164C222 164 222 188 250 188', 'fl-tun', {dur: 1.3});
       s += fl('M190 286C222 286 222 252 250 252', 'fl-tun', {dur: 1.3});
 
       /* CENTRE · the PoP and its single-pass engines */
-      s += popBox(250, 96, 260, 236, 'Cato PoP', 'IPS · NGAM · Sandbox · DNS');
+      s += popBox(250, 96, 260, 236, 'Cato PoP', 'single-pass engine');
       s += chips(266, 156, ['IPS', 'NG Anti-Malware', 'Sandbox', 'DNS security'], 110, 26, 8, 2, 'g');
       s += T(380, 242, 'each flow inspected once', 'f-s', 'middle');
       s += pill(328, 290, 'clean · allow', 'g keep');
@@ -48,12 +48,12 @@ DG.page('demo-threat-prevention', {
 
       /* RIGHT BOTTOM · attacker infrastructure: outbound blocked, inbound attempt stopped */
       s += cloud(660, 290, 1.15, 'Attacker server', 'malware · exploit · C2', 'bad');
-      s += fl('M510 262C530 262 534 272 546 272', 'fl-flow fl-down', {np: 0});
-      s += xmark(557, 272);
-      s += T(557, 252, 'outbound', 'f-s', 'middle');
-      s += fl('M592 310C576 310 566 310 548 310', 'fl-attack', {dur: 1.2, pcls: 'pt red'});
-      s += xmark(537, 310);
-      s += T(537, 338, 'inbound', 'f-s', 'middle');
+      s += fl('M484 262C496 262 498 272 504 272', 'fl-flow fl-down', {np: 0});
+      s += xmark(512, 272);
+      s += T(552, 262, 'outbound', 'f-s', 'middle');
+      s += fl('M592 310C570 310 540 310 522 310', 'fl-attack', {dur: 1.2, pcls: 'pt red'});
+      s += xmark(512, 310);
+      s += T(552, 330, 'inbound', 'f-s', 'middle');
 
       /* BOTTOM · telemetry from every verdict */
       s += tier(160, 390, 'TELEMETRY');

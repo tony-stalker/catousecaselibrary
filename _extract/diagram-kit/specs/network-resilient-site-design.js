@@ -24,29 +24,33 @@ DG.page('network-resilient-site-design', {
       const RG = {cx: 380, cy: 100, rx: 200, ry: 34};
       const P1 = 270, P2 = 490, TIP = Math.round(fy(RG, P1));   /* both pins sit on the front of the ring */
       s += ring(RG);
-      s += T(380, 97, 'PoP failover is automatic', 'f-t', 'middle') + T(380, 111, 'preferred PoPs steer it', 'f-s', 'middle');
+      s += T(380, 108, 'PoP failover is automatic', 'f-t', 'middle') + T(380, 122, 'only if every link fails SLA', 'f-s', 'middle');
 
       /* ---- the site ---- */
       /* the frame's tag sits on the bottom edge: every WAN line leaves through the top edge */
-      s += R(40, 196, 680, 348, 'site-box', 18) + R(58, 535, 196, 18, 'tag-bg', 9) + T(69, 548.5, 'CRITICAL SITE — LONDON DC', 'tier g');
+      s += R(40, 196, 680, 348, 'site-box', 18) + R(58, 535, 160, 18, 'tag-bg', 9) + T(69, 548.5, 'CRITICAL SITE — DC', 'tier g');
       s += T(702, 528, 'HA pair · both Sockets cabled to every ISP + LTE', 'f-s', 'end');
 
-      /* WAN lines (drawn before the pins so they meet under the pin heads) */
-      const ISPA = `M110 320C110 250 200 190 ${P1} ${TIP}`;          /* Socket A → PoP 1 over ISP A: cut */
-      const ISPB = `M200 320C200 250 440 200 ${P2 - 2} ${TIP}`;      /* Socket A → PoP 2 over ISP B: carries everything */
-      const STBY = `M400 320C400 250 505 210 ${P2 + 4} ${TIP}`;      /* Socket B's own standby tunnel */
-      const LTE = `M635 320C635 250 560 200 ${P2 + 8} ${TIP}`;       /* LTE last resort: idle */
-      s += fl(ISPA, 'fl-tun fl-down', {np: 0, label: 'ISP A fibre — cut', lx: 131, ly: 260, lcls: 'r'});
-      s += xmark(198, 184);
+      /* WAN lines (drawn before the pins so they meet under the pin heads): every link terminates on the primary PoP —
+         a cut last mile re-homes flows to the surviving link on the SAME PoP; PoP failover is a separate, later step */
+      const ISPA = `M110 320C110 250 200 196 ${P1 - 6} ${TIP}`;          /* Socket A → primary PoP over ISP A: cut */
+      const ISPB = `M200 320C200 262 262 214 ${P1 - 1} ${TIP}`;          /* Socket A → primary PoP over ISP B: carries everything */
+      const STBY = `M400 320C400 250 290 214 ${P1 + 4} ${TIP}`;          /* Socket B's own standby tunnel */
+      const LTE = `M635 320C635 220 330 200 ${P1 + 9} ${TIP}`;            /* LTE last resort: idle */
+      s += fl(ISPA, 'fl-tun fl-down', {np: 0, label: 'ISP A fibre — cut', lx: 100, ly: 296, lcls: 'r'});
+      s += xmark(160, 220);
       s += fl(STBY, 'fl-tun fl-dim', {np: 0});
-      s += T(452, 254, 'standby tunnel', 'f-m');
-      s += fl(ISPB, 'fl-tun', {n: 4, dur: 1.2, label: 'ISP B — all flows re-home', lx: 330, ly: 225, lcls: 'g'});
-      s += fl(LTE, 'fl-ha', {np: 0, label: 'idle until wired links fail', lx: 600, ly: 225, lcls: 'y'});
+      s += T(372, 262, 'standby tunnel', 'f-m');
+      s += fl(ISPB, 'fl-tun', {n: 4, dur: 1.2, label: 'ISP B — all flows re-home', lx: 252, ly: 256, lcls: 'g'});
+      s += fl(LTE, 'fl-ha', {np: 0, label: 'idle until wired links fail', lx: 560, ly: 236, lcls: 'y'});
+
+      /* PoP failover: a separate step, only when every link fails the SLA against the primary PoP */
+      s += fl(`M${P1 + 28} 90Q${(P1 + P2) / 2} 70 ${P2 - 30} 90`, 'fl-net', {np: 0, arrow: 'arr-n'});
 
       /* PoPs on the ring, labels beside the pin heads */
-      s += fpin(P1, TIP, 22, 'PoP', {halo: true}) + fpin(P2, TIP, 22, 'PoP', {halo: true});
-      s += T(162, 88, 'PoP 1 — London', 'nd-t', 'end') + T(162, 102, 'primary preferred', 'f-s', 'end');
-      s += T(598, 88, 'PoP 2 — Manchester', 'nd-t') + T(598, 102, 'secondary preferred', 'f-s');
+      s += fpin(P1, TIP, 22, 'PoP', {halo: true}) + fpin(P2, TIP, 22, 'PoP', {dim: true});
+      s += T(162, 88, 'Primary PoP', 'nd-t', 'end') + T(162, 102, 'preferred · all links land here', 'f-s', 'end');
+      s += T(598, 88, 'Secondary PoP', 'nd-t') + T(598, 102, 'preferred fallback', 'f-s');
 
       /* HA Socket pair */
       s += sock(58, 320, 'X1700') + R(58, 320, 190, 46, 'dev-hot', 9) + sock(338, 320, 'X1700');
@@ -57,7 +61,7 @@ DG.page('network-resilient-site-design', {
       s += T(293, 386, '3 s → failover', 'f-m', 'middle');
 
       /* LTE / 5G modem, cabled to the pair */
-      s += fl(L(528, 343, 560, 343), 'fl-net', {np: 0});
+      s += fl(L(528, 343, 560, 343), 'fl-lan', {np: 0});
       s += nd(560, 286, 150, 74, {t: 'LTE / 5G modem', s: ['precedence 3', 'last resort', 'cabled to both Sockets'], ic: 'cell', is: 20, icls: 'g'});
 
       /* LAN: both Sockets mirrored into the same LAN; traffic walks through the active one */
@@ -67,7 +71,7 @@ DG.page('network-resilient-site-design', {
       return s;
     },
     title: 'Critical site resilience, mid-incident',
-    desc: 'A critical site runs an HA pair of X1700 Sockets with VRRP keepalives, two diverse last miles and an LTE last-resort link: the primary last mile to PoP 1 has been cut and every flow has re-homed over the second last mile to PoP 2, while the standby Socket and the idle LTE link stay in reserve.',
-    legend: [['tun', 'Active last mile — carries all flows'], ['ha', 'HA keepalive · LTE last resort (idle, minimal system traffic)'], ['down', 'Failed last mile — flows re-homed by SLA scoring'], 'live'],
+    desc: 'A critical site runs an HA pair of X1700 Sockets with VRRP keepalives, two diverse last miles and an LTE last-resort link, all terminating on the primary PoP: the ISP A last mile has been cut and SLA scoring has re-homed every flow to the ISP B last mile on the same PoP, while the standby Socket and the idle LTE link stay in reserve; the Socket would move to the secondary PoP only if every link failed the SLA against the primary.',
+    legend: [['tun', 'Active last mile — carries all flows (faded: standby Socket tunnel)'], ['ha', 'HA keepalive · LTE last resort (idle, minimal system traffic)'], ['down', 'Failed last mile — flows re-homed by SLA scoring'], ['net', 'PoP failover — only if every link fails SLA against the primary PoP'], 'live'],
   }],
 });

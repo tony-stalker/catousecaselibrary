@@ -3,7 +3,7 @@ DG.page('demo-ztna', {
   spotlight: {
     hl: ['users', 'pop', 'backbone', 'dc', 'mgmt'],
     mods: ['uztna'],
-    flows: [{p: 'us1'}, {p: 'r-CR'}, {p: 'dc1', rev: true}, {p: 'm1'}],
+    flows: [{p: 'us1'}, {p: 'dc1', rev: true}, {p: 'm1'}],
     steps: [
       {t: 'Priya connects from two laptops; the Client evaluates the Device Posture Profile on each before any tunnel.', marks: ['users']},
       {t: 'The Client Connectivity Policy admits the compliant device; the failing one gets no tunnel, only an event.', marks: ['pop']},
@@ -24,7 +24,7 @@ DG.page('demo-ztna', {
       s += fl('M172 200H606', 'fl-tun', {dur: 2.2, arrow: true, label: 'allowed', lx: 209, ly: 200, lcls: 'g keep'});
 
       /* ---- top: what the rules reference ---- */
-      s += nd(280, 28, 260, 48, {t: 'Policy inputs', s: ['IdP groups · posture profile'], ic: 'key', is: 20, icls: 'g', cls: 'dash'});
+      s += nd(280, 28, 260, 48, {t: 'Policy inputs', s: ['SCIM groups · posture profile'], ic: 'key', is: 20, icls: 'g', cls: 'dash'});
 
       /* ---- left: Priya twice ---- */
       s += nd(10, 166, 162, 68, {t: 'Managed laptop', s: ['Priya · Finance group', 'posture pass'], ic: 'laptop', is: 20, icls: 'g'});
@@ -49,7 +49,7 @@ DG.page('demo-ztna', {
       s += T(466, 264, 'no match', 'f-s', 'end');
       s += nd(394, 290, 160, 60, {t: 'Implicit block', s: ['everything else'], ic: 'lock', is: 20, icls: 'g', cls: 'soft'});
       s += pill(530, 290, 'Block', 'r keep');
-      s += T(474, 378, 'top-down · first match', 'f-m', 'middle');
+      s += T(462, 378, 'top-down · first match', 'f-m', 'middle');
 
       /* control-plane references */
       s += fl('M300 76V170', 'fl-flow fl-dim', {np: 0});
@@ -61,16 +61,17 @@ DG.page('demo-ztna', {
 
       /* ---- right: the London DC Socket and the ERP application ---- */
       s += site(596, 140, 154, 122, 'London DC');
-      s += tile(606, 150, 134, 100, 'server', 'ERP application', ['behind Socket X1500']);
+      s += tile(606, 150, 134, 100, 'server', 'ERP application', ['behind the', 'London DC Socket']);
 
       /* ---- the record ---- */
       s += fl('M240 403C230 440 230 496 200 496', 'fl-down', {np: 0, arrow: 'arr-n'});
-      s += nd(10, 470, 190, 52, {t: 'Monitor → Events', s: ['Client Connectivity block'], ic: 'console', is: 20, icls: 'g', cls: 'soft'});
+      s += fl('M546 350V508H200', 'fl-net', {np: 0, arrow: 'arr-n', label: 'WAN Firewall verdicts', lx: 380, ly: 508});
+      s += nd(10, 466, 190, 62, {t: 'Monitor → Events', s: ['Rule 1 allow', 'Client Connectivity block'], ic: 'console', is: 20, icls: 'g', cls: 'soft'});
       return s;
     },
     vb: '0 0 760 540',
     title: 'Identity and posture decide; the WAN Firewall enforces',
     desc: 'One identity on two devices: the compliant laptop passes the Client Connectivity Policy and WAN Firewall rule 1 to reach the ERP behind the London DC Socket, while the device that fails posture never gets a tunnel and leaves a block event; the implicit block sits beneath the single allow.',
-    legend: [['tun', 'Identity + posture match — named allow rule'], ['down', 'Posture fails — no tunnel, Client Connectivity block event'], ['dim', 'Control plane: SCIM groups and posture profile referenced by the rules']],
+    legend: [['tun', 'Identity + posture match — named allow rule'], ['down', 'Posture fails — no tunnel, Client Connectivity block event'], ['dim', 'Control plane: SCIM groups and posture profile referenced by the rules'], ['net', 'Events under her name — the allow and the posture block']],
   }],
 });

@@ -20,19 +20,18 @@ DG.page('migration-netskope', {
       /* ---- top band: the interim Netskope path ---- */
       s += tier(14, 38, 'INTERIM · STEERED VIA NETSKOPE NEWEDGE');
       s += cloud(380, 110, 1.2, 'Netskope NewEdge', 'SWG · CASB · NPA');
-      s += pill(380, 176, 'interim', 'y');
 
       /* ---- bottom band: the target Cato path ---- */
-      s += tier(14, 320, 'TARGET · STEERED VIA CATO POP');
-      const RG = {cx: 380, cy: 424, rx: 115, ry: 40};
+      s += tier(14, 332, 'TARGET · STEERED VIA CATO POP');
+      const RG = {cx: 380, cy: 436, rx: 115, ry: 40};
       s += ring(RG);
-      s += popBox(280, 318, 200, 70, 'Cato PoP', 'SWG · CASB · DLP · ZTNA · FWaaS');
-      s += T(380, 492, 'Global Private Backbone', 'f-s', 'middle');
+      s += popBox(280, 300, 200, 70, 'Cato PoP', 'SWG · CASB · DLP · ZTNA · FWaaS');
+      s += T(380, 504, 'Global Private Backbone', 'f-s', 'middle');
 
       /* ---- left: cohorts and the site ---- */
       s += nd(14, 62, 200, 56, {t: 'Wave 2 user cohort', s: ['Netskope Client'], ic: 'users', is: 20, icls: 'g', cls: 'dash'});
       s += pill(114, 136, 'wave 2 · not yet migrated', 'y');
-      s += nd(14, 212, 200, 68, {t: 'Bristol Office', s: ['FW IPsec/GRE — interim', 'Socket X1500 — target'], ic: 'building', is: 20, icls: 'g'});
+      s += nd(14, 212, 200, 68, {t: 'Bristol Office', s: ['FW IPsec/GRE — interim', 'Cato Socket — target'], ic: 'building', is: 20, icls: 'g'});
       s += pill(114, 296, 'parallel per VLAN', 'm');
       s += nd(14, 420, 200, 56, {t: 'Wave 1 user cohort', s: ['Cato Client'], ic: 'users', is: 20, icls: 'g'});
       s += pill(114, 494, 'wave 1 · migrated', 'g');
@@ -40,18 +39,19 @@ DG.page('migration-netskope', {
       /* ---- right: the private apps and the dormant Publisher ---- */
       s += nd(546, 62, 200, 56, {t: 'NPA Publisher', s: ['dormant after cutover'], ic: 'plug', is: 20, icls: 'g', cls: 'dash'});
       s += pill(646, 136, 'dormant · rollback', 'm');
-      s += nd(546, 414, 200, 68, {t: 'London DC apps', s: ['Socket X1700', 'private apps on-net'], ic: 'server', is: 20, icls: 'g'});
+      s += nd(546, 414, 200, 68, {t: 'London DC apps', s: ['Cato Socket', 'private apps on-net'], ic: 'server', is: 20, icls: 'g'});
 
       /* interim flows (amber): cohort and site firewall into NewEdge; NewEdge on to the apps via the Publisher */
       s += fl('M214 90C260 90 272 104 310 104', 'fl-ha', {dur: 1.8});
       s += fl('M214 236C270 236 300 154 340 140', 'fl-ha', {dur: 1.8});
       s += fl('M450 104C490 104 500 90 546 90', 'fl-ha', {np: 0, arrow: 'arr-y'});
+      s += pill(283, 194, 'interim', 'y');   // on the Bristol → NewEdge leg
       s += fl('M646 118V414', 'fl-ha', {np: 0, arrow: 'arr-y', label: 'NPA private access', lx: 646, ly: 270, lcls: 'y keep'});
 
       /* target flows (green): cohort and Socket into the PoP; PoP on to the apps over the WAN */
-      s += fl('M214 258C260 258 250 338 280 338', 'fl-tun', {dur: 1.3});
-      s += fl('M214 448C260 448 250 370 280 370', 'fl-tun', {dur: 1.3});
-      s += fl('M480 352C520 352 510 448 546 448', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'WAN FW · ZTNA', lx: 586, ly: 372, lcls: 'g keep'});
+      s += fl('M214 258C260 258 250 326 280 326', 'fl-tun', {dur: 1.3});
+      s += fl('M214 448C260 448 250 356 280 356', 'fl-tun', {dur: 1.3});
+      s += fl('M480 340C564 340 520 448 546 448', 'fl-flow', {dur: 1.1, arrow: 'arr-m', label: 'WAN FW · ZTNA', lx: 534, ly: 392, lcls: 'g keep'});
 
       /* the PoP pin on the front of the ring */
       s += fpin(380, Math.round(fy(RG, 380)) + 2, 22, 'PoP', {halo: true});

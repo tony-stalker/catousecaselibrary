@@ -4,7 +4,7 @@ DG.page('management-visibility', {
     hl: ['branch', 'users', 'cloud', 'pop', 'xops', 'mgmt'],
     mods: [],
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'cl-aws'}, {p: 'spine'}],
-    anchors: {mgmt: [782, 132]},   // step-3 marker on the CMA box's top edge, clear of its subtitle
+    anchors: {mgmt: [782, 132], cloud: [1450, 326]},   // step-3 marker on the CMA box's top edge, clear of its subtitle; cloud marker beside AWS, off the '4' badge
     steps: [
       {t: 'Sites, remote users and cloud datacentres all connect through the nearest Cato PoP.', marks: ['branch', 'users', 'cloud']},
       {t: 'SPACE processes every flow once, with identity, device, application and risk context attached.', marks: ['pop']},
@@ -44,7 +44,7 @@ DG.page('management-visibility', {
 
       /* ONE context feed from the PoP to the console: the same single-pass data, not a collector */
       s += fl('M320 270C320 196 396 170 486 170', 'fl-flow', {arrow: 'arr-m', dur: 1.6, label: 'single-pass context feed', lx: 372, ly: 190, lcls: 'm'});
-      s += T(372, 214, 'identity · device · app · risk', 'f-m', 'middle');
+      s += T(478, 156, 'identity · device · app · risk', 'f-m', 'end');   // above the curve, clear of its rise from the PoP
 
       /* ---- right: the Cato Management Application ---- */
       s += R(486, 44, 260, 460, 'nd pop', 16);

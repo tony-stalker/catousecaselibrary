@@ -6,8 +6,8 @@ DG.page('migration-cloudflare-policy', {
     anchors: {mgmt: [782, 132]},   // step markers clear of the CMA subtitle
     flows: [{p: 'br1'}, {p: 'us1'}, {p: 'eg-www'}, {p: 'eg-saas'}, {p: 'm1'}],
     steps: [
-      {t: 'Gateway, Magic Firewall and DLP rules export to HCL with hit counts; CASB findings are recorded in discovery; dead rules are discarded.', marks: ['mgmt']},
-      {t: 'Survivors map to WAN and Internet Firewall, RBI Isolate, Tenant Restrictions, Data Control and TLS inspection exceptions.', marks: ['mgmt']},
+      {t: 'Gateway, Magic Firewall and DLP rules export to HCL with hit counts; dead rules go; CASB feeds discovery.', marks: ['mgmt']},
+      {t: 'Survivors map to WAN/Internet Firewall, RBI Isolate, Tenant Restrictions, Data Control and TLS exceptions.', marks: ['mgmt']},
       {t: 'The PoP applies the converted rules to every site and user, monitor-first with no user impact.', marks: ['pop', 'branch', 'users']},
       {t: 'Events and hit counts prove each rule before it is promoted from monitor to block.', marks: ['pop']},
     ],
@@ -52,8 +52,8 @@ DG.page('migration-cloudflare-policy', {
       s += fl(`M142 ${MY}H161`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M292 ${MY}H311`, 'fl-flow', {arrow: true, dur: 0.8});
       s += fl(`M442 ${MY}H461`, 'fl-flow', {arrow: true, dur: 0.8});
-      s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', dur: 0.8});
-      s += pill(603, 312, 'monitor → block on evidence', 'y');
+      s += fl(`M592 ${MY}H611`, 'fl-ha', {arrow: 'arr-y', np: 0});
+      s += pill(603, 312, 'monitor → block', 'y');
       s += pill(378, 312, 'Isolate → RBI action', 'p');
 
       /* ---- discard branch: nothing leaves it ---- */
@@ -74,6 +74,6 @@ DG.page('migration-cloudflare-policy', {
     },
     title: 'Cloudflare Zero Trust policy pipeline',
     desc: 'Each Cloudflare Zero Trust policy domain is exported with hit counts, stripped of dead rules, mapped to CMA constructs, deployed in monitor and enforced only when events and hit counts prove the translation.',
-    legend: [['flow', 'Policy pipeline — export → rationalise → map → deploy'], ['ha', 'Monitor-first deployment — log, don\'t block'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
+    legend: [['flow', 'Policy pipeline — export → rationalise → map → deploy'], ['ha', 'Promotion from monitor to block — on evidence'], ['down', 'Discarded at rationalisation — never reaches CMA'], ['net', 'Events and hit counts — evidence for promotion and clean-up']],
   }],
 });
