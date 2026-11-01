@@ -378,11 +378,20 @@
         var ranked = shown.map(function (u, i) { return { u: u, i: i, s: hits[u.id].score }; })
           .sort(function (a, b) { return b.s - a.s || a.i - b.i; });
         if (ranked.length) {
+          // two tiers: pages where the query hits the title, tags, summary or category lead;
+          // pages that only mention it in their body text sit in a collapsed group beneath
+          var strong = ranked.filter(function (r) { var f = hits[r.u.id].fields; return f.title || f.tags || f.summary || f.cat; });
+          var weak = ranked.filter(function (r) { return strong.indexOf(r) === -1; });
+          if (!strong.length) { strong = weak; weak = []; }
           html = '<div class="category-h"><h2 id="search-results">Best matches</h2>' +
-                 '<span class="cat-count">' + ranked.length + " for “" + esc(state.q) + "”" +
+                 '<span class="cat-count">' + strong.length + " for “" + esc(state.q) + "”" +
                  (state.cat !== "All" ? " in " + esc(state.cat) : "") +
                  (state.vert !== "All" ? " · " + esc(state.vert) : "") + "</span></div>" +
-                 '<div class="uc-grid uc-results">' + ranked.map(function (r) { return cardHTML(r.u, hits[r.u.id]); }).join("") + "</div>";
+                 '<div class="uc-grid uc-results">' + strong.map(function (r) { return cardHTML(r.u, hits[r.u.id]); }).join("") + "</div>";
+          if (weak.length) {
+            html += '<details class="uc-more"><summary>Also mentioned on ' + weak.length + " more page" + (weak.length > 1 ? "s" : "") +
+                    "</summary>" + '<div class="uc-grid uc-results">' + weak.map(function (r) { return cardHTML(r.u, hits[r.u.id]); }).join("") + "</div></details>";
+          }
         }
       } else {
         CATS.forEach(function (cat) {

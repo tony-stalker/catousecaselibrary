@@ -1420,3 +1420,13 @@ svg.x-focus-mode .x-pt-g.x-hl{opacity: 1;}
   100% { opacity: 0; transform: scale(1.45); }
 }
 /* ==== dg-kit:end ==== */
+
+/* search: body-only matches collapse under the best matches */
+details.uc-more { margin: 22px 0 8px; }
+details.uc-more > summary { cursor: pointer; font-weight: 600; color: var(--ink-2); padding: 10px 14px; border: 1px dashed var(--hairline);
+  border-radius: var(--radius); list-style: none; }
+details.uc-more > summary::-webkit-details-marker { display: none; }
+details.uc-more > summary::before { content: "▸ "; color: var(--green-700); }
+details.uc-more[open] > summary::before { content: "▾ "; }
+details.uc-more > .uc-grid { margin-top: 14px; }
+

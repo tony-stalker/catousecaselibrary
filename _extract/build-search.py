@@ -39,8 +39,16 @@ HEADER = (
 )
 
 
+# identical on every page, so indexing them makes every query match everything: the diagram-kit
+# spotlight (the platform overview), the icon sprite, the shared chrome (topnav, footer, pager)
+SHARED_BLOCKS = re.compile(
+    r"<!-- dg:(spotlight|sprite) -->.*?<!-- /dg:\1 -->|<nav class=\"topnav\".*?</nav>|<footer\b.*?</footer>",
+    re.S)
+
+
 def page_words(src):
-    txt = SCRIPT_STYLE.sub(" ", src)
+    txt = SHARED_BLOCKS.sub(" ", src)
+    txt = SCRIPT_STYLE.sub(" ", txt)
     txt = COMMENTS.sub(" ", txt)
     txt = TAGS.sub(" ", txt)
     txt = html.unescape(txt).lower()

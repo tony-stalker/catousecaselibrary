@@ -312,3 +312,129 @@ verification record.
 - **_extract/STALENESS.md**: Updated the App Connectors row: demo-app-connectors reframed 31 Oct 2026 with the KB update dates, and demo-platform-60 re-checked with no request-enabled wording found. Extended the Data Control user-notification row to cover demo-dlp. Added a new row for the demo-ztna continuous-posture facts (10-minute account default, 5–1,440 min range, Windows/macOS support with no version floor) with a quarterly recheck trigger. All other rows left intact. — *source: KB fetches listed above, 31 Oct 2026*
 - *left as is (could not verify / no match)*: A08 orphan captures: I opened each candidate PNG, and none shows what a capture-wanted marker on these pages asks for, so nothing was embedded and every marker stays. Reasons: cma-acc-overview shows A; Journey pages (migration-journey-mpls, -sdwan, -firewall, -vpn, -zscaler): no changes needed. There are no dated or future-tense claims outside the diagrams, no screenshots or capture markers, no bann; demo-platform-60: no change from this pass. It carries no request-enabled App Connectors wording (re-checked; the STALENESS row is now corrected), has no images, and no orphan fits its one marker. Its; Page-level house style across the group: there are no 'leverage' or 'seamless' hits, badge-new is only used as the hero status badge (not misused as a table marker), and none of the 13 pages has a per; Not fixed, outside this task's scope: demo-platform-60 path chips 'Access → Device Posture' (running-order table and staging step 4) disagree with demo-ztna's 'Resources → Device Posture', which is th; checkfigures.py reports 'first-lazy' on demo-swg, demo-threat-prevention, demo-casb, demo-dlp and demo-dem. This is expected: the task said to make every figure image lazy, and each page's first image
 
+
+## 8 · Diagram rollout — every page (spotlight + redrawn diagram)
+
+Every page now opens its solution with **“Where this sits in the Cato SASE platform”** (the overview with that page's components lit, its flows animated and 2–4 numbered steps listed underneath) and carries its main diagram redrawn in the overview's visual language. Each spec was authored, then reviewed by a separate agent against the page text (facts, story, legibility, warnings) and fixed; the column shows how many review findings were fixed.
+
+| Page | Main diagram | Approach | Review fixes |
+|---|---|---|---|
+| access-app-connectors | Private Access through App Connectors | source figure `cloudAppc` + corrections | — |
+| access-byod-clientless | Clientless ZTNA for unmanaged devices | custom redraw | 5 |
+| access-hybrid-workforce | Same user, same policy, nearest front door | custom redraw | 5 |
+| access-identity-design | One identity plane, every enforcement point | custom redraw | 2 |
+| access-offshore-bpo | Offshore developers and BPO agents on Cato | custom redraw | 2 |
+| access-remote-worker | Where a remote worker's experience is measured | custom redraw | 3 |
+| access-third-party | Least-privileged third-party access | custom redraw | 7 |
+| ai-agentic-security | Securing local, managed and custom AI agents | custom redraw | 7 |
+| ai-eu-ai-act | EU AI Act readiness from the network: inventory, control, evidence | custom redraw | 6 |
+| ai-genai-security | GenAI Security for End Users: one policy, three verdicts | custom redraw | 6 |
+| ai-homegrown-apps | A Cato Guard in the homegrown AI interaction path | custom redraw | 5 |
+| ai-legal-genai | GenAI for fee-earners with privilege intact | custom redraw | 5 |
+| ai-threat-landscape | Three AI attack classes, one single-pass engine | custom redraw | 6 |
+| demo-app-connectors | The PoP brokers; DNS is the gate; the connector forwards | custom redraw | 4 |
+| demo-casb | Classify the application, score it, control the activity | custom redraw | 2 |
+| demo-dem | Same engine, seen from the telemetry side | custom redraw | 4 |
+| demo-dlp | Content inspection as one more decision in the single pass | custom redraw | 3 |
+| demo-platform-60 | One engine, seven angles | custom redraw | 1 |
+| demo-swg | Who, where, should they — in one pass | custom redraw | 1 |
+| demo-threat-prevention | One pass, every engine, one verdict | custom redraw | 2 |
+| demo-ztna | Identity and posture decide; the WAN Firewall enforces | custom redraw | 1 |
+| management-api-automation | Network as code: Git to CI to the Cato GraphQL API | custom redraw | 8 |
+| management-asset-discovery | Passive device discovery at the Socket feeding one Device Inventory | custom redraw | 4 |
+| management-data-lake | The event pipeline: generation, rate limit, retention, export | custom redraw | 7 |
+| management-dem | Hop-by-hop experience monitoring, laptop to SaaS app | custom redraw | 4 |
+| management-pov-framework | The Cato PoV pipeline | custom redraw | 2 |
+| management-soc-xdr | Cato XDR: from full telemetry to a ranked story queue | custom redraw | 4 |
+| management-vendor-consolidation | The appliance estate collapses into the Cato platform | custom redraw | 5 |
+| management-visibility | All edges feed one management and analytics plane | custom redraw | 2 |
+| migration-anyconnect | AnyConnect concentrator hairpin versus Cato Client via the nearest PoP | custom redraw | 2 |
+| migration-checkpoint-policy | Check Point policy conversion pipeline | custom redraw | 5 |
+| migration-checkpoint | Parallel socket build alongside a Check Point Quantum gateway with per-prefix handoff | custom redraw | 5 |
+| migration-cisco-asa-policy | Cisco ASA policy migration pipeline | custom redraw | 4 |
+| migration-cisco-asa | Co-existence between a perimeter ASA estate and Cato during phased migration | custom redraw | 4 |
+| migration-cisco-policy | Cisco policy conversion pipeline | custom redraw | 4 |
+| migration-cisco | Regional co-existence of Cato and a Cisco Viptela overlay during migration | custom redraw | 3 |
+| migration-cloudflare-policy | Cloudflare Zero Trust policy pipeline | custom redraw | 8 |
+| migration-cloudflare | Scoped Cloudflare-to-Cato migration with a retained Cloudflare lane | custom redraw | 2 |
+| migration-directaccess | DirectAccess gateway hairpin versus Cato Client via the nearest PoP | custom redraw | 5 |
+| migration-edgeconnect-policy | EdgeConnect policy pipeline — overlays to intent | custom redraw | 4 |
+| migration-edgeconnect | eBGP hub co-existence between Cato and an EdgeConnect fabric during migration | custom redraw | 3 |
+| migration-forcepoint-policy | Forcepoint policy conversion pipeline | custom redraw | 8 |
+| migration-forcepoint | Dual steering planes during the Forcepoint-to-Cato transition | custom redraw | 7 |
+| migration-fortinet-policy | FortiOS policy conversion pipeline | custom redraw | 4 |
+| migration-fortinet | eBGP regional-hub co-existence between Cato and a FortiGate SD-WAN estate | custom redraw | 4 |
+| migration-iboss-policy | iboss policy pipeline — per domain, per cohort | custom redraw | 4 |
+| migration-iboss | Wave-based steering cutover from iboss to Cato | custom redraw | 1 |
+| migration-journey-firewall | — | custom redraw | 3 |
+| migration-journey-mpls | — | custom redraw | 2 |
+| migration-journey-sdwan | Legacy SD-WAN to Cato — phase 0: Legacy overlay | custom redraw | 1 |
+| migration-journey-vpn | VPN retirement — phase 0: Legacy | custom redraw | 2 |
+| migration-journey-zscaler | Zscaler to Cato — phase 0: On Zscaler | 5-phase redraw | 5 |
+| migration-methodology | Interconnect hub co-existence topology | custom redraw | 4 |
+| migration-netskope-policy | Netskope policy conversion pipeline | custom redraw | 2 |
+| migration-netskope | Cohort-based Netskope-to-Cato co-existence | custom redraw | 3 |
+| migration-palo-alto-policy | PAN-OS policy conversion pipeline | custom redraw | 3 |
+| migration-palo-alto | Phased co-existence of a Palo Alto firewall and a Cato Socket | custom redraw | 4 |
+| migration-sonicwall-policy | SonicOS policy pipeline — rotate, never port | custom redraw | 6 |
+| migration-sonicwall | SonicWall TZ/NSa co-existence during phased migration | custom redraw | 3 |
+| migration-sophos-policy | SFOS policy pipeline — rulebases and greenfield | custom redraw | 5 |
+| migration-sophos | Co-existence between a Sophos XGS/SD-RED estate and Cato during phased migration | custom redraw | 3 |
+| migration-symantec-policy | Symantec policy pipeline — CPL to intent | custom redraw | 5 |
+| migration-symantec | Dual steering planes during the Symantec-to-Cato transition | custom redraw | 5 |
+| migration-versa-policy | Versa policy pipeline — templates to one rulebase | custom redraw | 6 |
+| migration-versa | eBGP hub co-existence between Cato and a Versa MP-BGP overlay during migration | custom redraw | 3 |
+| migration-zscaler-policy | ZIA policy conversion pipeline | custom redraw | 3 |
+| migration-zscaler | Phased co-existence of Cato and Zscaler ZIA during migration | custom redraw | 5 |
+| network-agility-mna | M&A onboarding: acquired sites deployed through the Cato API onto the global backbone | custom redraw | 3 |
+| network-cloud-connectivity | — | custom redraw | 5 |
+| network-cloud-datacenter | Cloud datacentres connected to the Cato WAN by vSocket, IPsec and cross-connect | custom redraw | 6 |
+| network-cloud-interconnect | Cloud Interconnect: one layer-2 circuit into the PoP | custom redraw | 3 |
+| network-global-app-performance | Sydney to London application traffic over the Cato global private backbone | custom redraw | 3 |
+| network-global-expansion | A growing global footprint joining the Cato backbone through nearest PoPs | custom redraw | 5 |
+| network-ipsec-asa | Cisco ASA site connected to Cato over dual IPsec tunnels | custom redraw | 7 |
+| network-mpls-migration | MPLS co-existence: Bristol on Cato, Leeds on MPLS, London DC bridging both | custom redraw | 6 |
+| network-resilient-site-design | Critical site resilience, mid-incident | custom redraw | 3 |
+| network-sdwan | Glasgow branch on-net over dual last miles and the Cato global private backbone | custom redraw | 6 |
+| security-ai-visibility | GenAI Visibility Assessment in monitor mode | custom redraw | 5 |
+| security-ai | One AI Security engine for users, apps and agents | source figure `aisec` + corrections | 4 |
+| security-compliance | From enforcement at the PoP to unified compliance evidence | custom redraw | 5 |
+| security-consistent | One global policy set enforced identically at every Cato PoP | custom redraw | 6 |
+| security-data-casb-dlp | Inline CASB and DLP at the Cato PoP | custom redraw | 7 |
+| security-dlp-forensics | DLP forensics flow — blocked upload, encrypted evidence, governed retrieval | custom redraw | 5 |
+| security-finance-dora | Self-healing backbone with a single evidence plane | custom redraw | 4 |
+| security-firewall-refresh | Firewall refresh to FWaaS: enforcement at the Cato PoP | custom redraw | 5 |
+| security-healthcare-nhs | A segmented NHS-style trust estate | custom redraw | 6 |
+| security-inbound-ips | Inbound protection: allocated IP, PoP IPS and Remote Port Forwarding | custom redraw | 5 |
+| security-iso27001 | The ISMS loop with posture as the gate | custom redraw | 3 |
+| security-legal-confidentiality | Identity-based ethical wall between two matter teams, with DLP and an evidence lane | custom redraw | 5 |
+| security-ot-iot | Purdue-model segmentation on the Socket | custom redraw | 6 |
+| security-ransomware | Cato controls breaking the ransomware kill chain at every stage | custom redraw | 6 |
+| security-retail-pci | Segmented retail store connected through a Cato PoP | custom redraw | 4 |
+| security-tls-inspection | Staged TLS inspection rollout funnel | custom redraw | 4 |
+| security-uk-public-sector | One estate, one policy, one evidence lane | custom redraw | 5 |
+
+## 9 · Front-end, second half (index layout, keyboard, accessibility, reading aids)
+- **Index layout** (A13): "Start here" and "Build a demo presentation" are collapsible folds (state remembered;
+  open on first visit), six Start-here cards incl. a new **"Running a PoV?"** card; a sticky compact filter dock
+  (search, categories, verticals, result count). The prospect build drops the SE-only cards and the deck fold.
+- **Keyboard & dialogs** (A16): Demo/PoV runbook tabs are proper ARIA tabs (arrow keys, Home/End, remembered choice,
+  #demo/#pov deep links win); the lightbox is a modal dialog with a close button, caption, prev/next through the
+  page's figures ("n / N"), 1:1 zoom for large screenshots, scroll lock and focus return; figures open with
+  Enter/Space; the phase player's pause is remembered per page; the feedback dialog traps focus and closes on Esc.
+- **Visual accessibility** (A17): contrast recomputed from the tokens and every failing pair fixed without touching
+  brand green/navy — secondary ink 3.95→5.05:1, kickers 3.95→5.70:1, primary buttons 4.31→6.21:1 (dark 2.34→7.10:1),
+  focus rings 1.8→3.95:1, warning bar 1.70→3.52:1; a global `:focus-visible` ring; screenshots dimmed slightly in dark.
+- **Reading aids** (A25): read-progress bar, "↑ Top" button, a **Related pages** strip (shared tags, same category or
+  vertical; vendor playbook ↔ its policy page), a category-scoped pager ("n of N in Security"), a responsive TOC that
+  becomes a sticky "On this page · current section" bar on narrow screens with scroll-spy, and a print header.
+- **QA**: no regressions; fixed duplicate vertical tags on five index cards.
+
+## 10 · Search relevance fix
+- `build-search.py` no longer indexes text that is identical on every page (the spotlight overview, the icon sprite,
+  topnav and footer). Before the fix every page "mentioned" ZTNA, CASB, SD-WAN …; now "ztna" appears on the 47 pages
+  that genuinely discuss it.
+- Results are two-tier: **Best matches** (query hits title, tags, summary or category) lead; pages that only mention
+  the term in body text sit in a collapsed "Also mentioned on N more pages" group. Probed: ztna 16 best (+59),
+  pci 7 (+40), "dlp forensics" 8 (+4), "app connectors" 3 (+11); no console errors.
+- Trimmed three over-long demo speaker notes (demo-dem 188→158, demo-dlp 173→143, demo-swg 198→158 words).
